@@ -266,6 +266,23 @@ public class CallResolver {
                                                CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
     }
 
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(
+            @NotNull Call call,
+            @Nullable TracingStrategy tracing,
+            @NotNull JetReferenceExpression reference,
+            @NotNull ResolutionContext<?> context,
+            @NotNull CallableDescriptor candidate
+    ) {
+        Collection<ResolutionCandidate<CallableDescriptor>> resolutionCandidates = Lists.newArrayList();
+        resolutionCandidates.add(ResolutionCandidate.create(candidate, null));
+        BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED);
+
+        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks = TaskPrioritizer
+                .computePrioritizedTasksFromCandidates(basicCallResolutionContext, reference, resolutionCandidates, tracing);
+        return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE, basicCallResolutionContext, tasks,
+                                               CallTransformer.FUNCTION_CALL_TRANSFORMER, reference);
+    }
+
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallOrGetCachedResults(
             @NotNull ResolutionResultsCache.MemberType<F> memberType,
             @NotNull BasicCallResolutionContext context,

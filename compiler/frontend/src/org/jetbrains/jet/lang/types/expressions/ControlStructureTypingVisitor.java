@@ -22,10 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -54,6 +51,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.UNKNOWN_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
@@ -89,13 +87,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return visitIfExpression(expression, context, false);
     }
 
-    public JetTypeInfo visitIfExpression(JetIfExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+    public JetTypeInfo visitIfExpression(JetIfExpression ifExpression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
-        JetExpression condition = expression.getCondition();
+        JetExpression condition = ifExpression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(context.scope, condition, context);
 
-        JetExpression elseBranch = expression.getElse();
-        JetExpression thenBranch = expression.getThen();
+        JetExpression elseBranch = ifExpression.getElse();
+        JetExpression thenBranch = ifExpression.getThen();
 
         WritableScopeImpl thenScope = newWritableScopeImpl(context, "Then scope");
         WritableScopeImpl elseScope = newWritableScopeImpl(context, "Else scope");
@@ -105,17 +103,35 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (elseBranch == null) {
             if (thenBranch != null) {
                 return getTypeInfoWhenOnlyOneBranchIsPresent(
-                        thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, expression, isStatement);
+                        thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, ifExpression, isStatement);
             }
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
         if (thenBranch == null) {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
-                    elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, expression, isStatement);
+                    elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression, isStatement);
         }
-        CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-        JetTypeInfo thenTypeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo), context.trace);
-        JetTypeInfo elseTypeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(elseInfo), context.trace);
+
+        JetTypeInfo thenTypeInfo;
+        JetTypeInfo elseTypeInfo;
+
+        if (contextWithExpectedType.expectedType == UNKNOWN_EXPECTED_TYPE) {
+            Call callForIf = ControlStructureTypingUtils.createCallForIf(ifExpression, thenBranch, elseBranch);
+            ResolvedCall<FunctionDescriptor> resultingCall =
+                    ControlStructureTypingUtils.resolveIfAsCall(callForIf, contextWithExpectedType);
+
+            List<ValueParameterDescriptor> valueParameters = resultingCall.getResultingDescriptor().getValueParameters();
+            ValueParameterDescriptor thenParameter = valueParameters.get(0);
+            ValueParameterDescriptor elseParameter = valueParameters.get(1);
+            //todo correct dataFlowInfo
+            thenTypeInfo = JetTypeInfo.create(thenParameter.getType(), context.dataFlowInfo);
+            elseTypeInfo = JetTypeInfo.create(elseParameter.getType(), context.dataFlowInfo);
+        }
+        else {
+            CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
+            thenTypeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo), context.trace);
+            elseTypeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(elseInfo), context.trace);
+        }
         JetType thenType = thenTypeInfo.getType();
         JetType elseType = elseTypeInfo.getType();
         DataFlowInfo thenDataFlowInfo = thenTypeInfo.getDataFlowInfo();
@@ -138,7 +154,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             result = JetTypeInfo.create(CommonSupertypes.commonSupertype(Arrays.asList(thenType, elseType)), thenDataFlowInfo.or(elseDataFlowInfo));
         }
 
-        return DataFlowUtils.checkImplicitCast(result.getType(), expression, contextWithExpectedType, isStatement, result.getDataFlowInfo());
+        return DataFlowUtils.checkImplicitCast(result.getType(), ifExpression, contextWithExpectedType, isStatement, result.getDataFlowInfo());
     }
 
     @NotNull
