@@ -436,6 +436,7 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_CLASS_WITH_BODY, "Body is not allowed for annotation class");
         MAP.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member");
         MAP.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable");
+        MAP.put(ILLEGAL_ANNOTATION_KEYWORD, "''annotation'' keyword is only applicable for class");
 
         MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, "An overriding function is not allowed to specify default values for its parameters");
 

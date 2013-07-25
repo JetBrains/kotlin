@@ -550,6 +550,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotationForObject.kt");
             }
             
+            @TestMetadata("annotationModifier.kt")
+            public void testAnnotationModifier() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/annotationModifier.kt");
+            }
+            
             @TestMetadata("AnnotationsForClasses.kt")
             public void testAnnotationsForClasses() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotationsForClasses.kt");
