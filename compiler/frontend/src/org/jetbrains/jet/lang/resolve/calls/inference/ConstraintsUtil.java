@@ -64,12 +64,10 @@ public class ConstraintsUtil {
         }
         addToValuesIfDifferent(superTypeOfLowerBounds, values);
 
-        if (values.isEmpty()) {
-            Collection<JetType> upperBounds = typeConstraintsWithoutErrorTypes.getUpperBounds();
-            for (JetType upperBound : upperBounds) {
-                if (trySuggestion(upperBound, typeConstraints)) {
-                    return Collections.singleton(upperBound);
-                }
+        Collection<JetType> upperBounds = typeConstraintsWithoutErrorTypes.getUpperBounds();
+        for (JetType upperBound : upperBounds) {
+            if (trySuggestion(upperBound, typeConstraints)) {
+                return Collections.singleton(upperBound);
             }
         }
         //todo
