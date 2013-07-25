@@ -360,7 +360,9 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-        if (elements.isEmpty() || DumbService.getInstance(elements.get(0).getProject()).isDumb()) {
+        if (elements.isEmpty() ||
+            DumbService.getInstance(elements.get(0).getProject()).isDumb() ||
+            !JetPsiChecker.isInSourceContent(elements.get(0))) {
             return;
         }
 

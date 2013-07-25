@@ -276,7 +276,7 @@ public class JetPsiChecker implements Annotator {
         return annotation;
     }
 
-    static boolean isInSourceContent(PsiElement element) {
+    public static boolean isInSourceContent(PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
         if (containingFile == null) {
             return false;
