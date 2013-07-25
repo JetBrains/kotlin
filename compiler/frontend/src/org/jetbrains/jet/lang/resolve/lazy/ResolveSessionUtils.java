@@ -20,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -116,9 +117,9 @@ public class ResolveSessionUtils {
         }
     }
 
-    public static @NotNull BindingContext resolveToElement(@NotNull ResolveSession resolveSession, @NotNull JetElement jetElement) {
+    public static @NotNull BindingContext resolveToElement(@NotNull final ResolveSession resolveSession, @NotNull final JetElement jetElement) {
         @SuppressWarnings("unchecked")
-        PsiElement resolveElement = JetPsiUtil.getTopmostParentOfTypes(jetElement,
+        final PsiElement resolveElement = JetPsiUtil.getTopmostParentOfTypes(jetElement,
                 JetNamedFunction.class, JetClassInitializer.class,
                 JetProperty.class, JetDelegationSpecifierList.class,
                 JetImportDirective.class, JetAnnotationEntry.class,
@@ -127,46 +128,52 @@ public class ResolveSessionUtils {
 
         if (resolveElement != null) {
             // All additional resolve should be done to separate trace
-            BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(
+            final BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(
                     new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement));
 
-            JetFile file = (JetFile) jetElement.getContainingFile();
+            final JetFile file = (JetFile) jetElement.getContainingFile();
 
-            if (resolveElement instanceof JetNamedFunction) {
-                functionAdditionalResolve(resolveSession, (JetNamedFunction) resolveElement, trace, file);
-            }
-            else if (resolveElement instanceof JetClassInitializer) {
-                initializerAdditionalResolve(resolveSession, (JetClassInitializer) resolveElement, trace, file);
-            }
-            else if (resolveElement instanceof JetProperty) {
-                propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file);
-            }
-            else if (resolveElement instanceof JetDelegationSpecifierList) {
-                delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) resolveElement,
-                                                     trace, file);
-            }
-            else if (resolveElement instanceof JetImportDirective) {
-                JetImportDirective importDirective = (JetImportDirective) resolveElement;
-                JetScope scope = resolveSession.getInjector().getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
+            resolveSession.getStorageManager().compute(new Computable<Object>() {
+                @Override
+                public Object compute() {
+                    if (resolveElement instanceof JetNamedFunction) {
+                        functionAdditionalResolve(resolveSession, (JetNamedFunction) resolveElement, trace, file);
+                    }
+                    else if (resolveElement instanceof JetClassInitializer) {
+                        initializerAdditionalResolve(resolveSession, (JetClassInitializer) resolveElement, trace, file);
+                    }
+                    else if (resolveElement instanceof JetProperty) {
+                        propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file);
+                    }
+                    else if (resolveElement instanceof JetDelegationSpecifierList) {
+                        delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) resolveElement, trace, file);
+                    }
+                    else if (resolveElement instanceof JetImportDirective) {
+                        JetImportDirective importDirective = (JetImportDirective) resolveElement;
+                        JetScope scope = resolveSession.getInjector().getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
 
-                // Get all descriptors to force resolving all imports
-                scope.getAllDescriptors();
-            }
-            else if (resolveElement instanceof JetAnnotationEntry) {
-                annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
-            }
-            else if (resolveElement instanceof JetTypeParameter) {
-                typeParameterAdditionalResolve(resolveSession, (JetTypeParameter) resolveElement);
-            }
-            else if (resolveElement instanceof JetTypeConstraint) {
-                typeConstraintAdditionalResolve(resolveSession, jetElement);
-            }
-            else if (resolveElement instanceof JetNamespaceHeader) {
-                namespaceRefAdditionalResolve(resolveSession, (JetNamespaceHeader) resolveElement, trace, jetElement);
-            }
-            else {
-                assert false : "Invalid type of the topmost parent";
-            }
+                        // Get all descriptors to force resolving all imports
+                        scope.getAllDescriptors();
+                    }
+                    else if (resolveElement instanceof JetAnnotationEntry) {
+                        annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
+                    }
+                    else if (resolveElement instanceof JetTypeParameter) {
+                        typeParameterAdditionalResolve(resolveSession, (JetTypeParameter) resolveElement);
+                    }
+                    else if (resolveElement instanceof JetTypeConstraint) {
+                        typeConstraintAdditionalResolve(resolveSession, jetElement);
+                    }
+                    else if (resolveElement instanceof JetNamespaceHeader) {
+                        namespaceRefAdditionalResolve(resolveSession, (JetNamespaceHeader) resolveElement, trace, jetElement);
+                    }
+                    else {
+                        assert false : "Invalid type of the topmost parent";
+                    }
+
+                    return null;
+                }
+            });
 
             return trace.getBindingContext();
         }
