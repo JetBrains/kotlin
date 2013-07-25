@@ -116,10 +116,7 @@ public class ResolveSessionUtils {
         }
     }
 
-    public static @NotNull BindingContext resolveToElement(
-            @NotNull ResolveSession resolveSession,
-            @NotNull JetElement jetElement
-    ) {
+    public static @NotNull BindingContext resolveToElement(@NotNull ResolveSession resolveSession, @NotNull JetElement jetElement) {
         @SuppressWarnings("unchecked")
         PsiElement resolveElement = JetPsiUtil.getTopmostParentOfTypes(jetElement,
                 JetNamedFunction.class, JetClassInitializer.class,
@@ -130,7 +127,8 @@ public class ResolveSessionUtils {
 
         if (resolveElement != null) {
             // All additional resolve should be done to separate trace
-            BindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement);
+            BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(
+                    new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement));
 
             JetFile file = (JetFile) jetElement.getContainingFile();
 
@@ -338,8 +336,8 @@ public class ResolveSessionUtils {
     }
 
     public static JetScope getExpressionMemberScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
-        BindingTrace trace = new DelegatingBindingTrace(
-                resolveSession.getBindingContext(), "trace to resolve a member scope of expression", expression);
+        BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(new DelegatingBindingTrace(
+                resolveSession.getBindingContext(), "trace to resolve a member scope of expression", expression));
 
         if (BindingContextUtils.isExpressionWithValidReference(expression, resolveSession.getBindingContext())) {
             QualifiedExpressionResolver qualifiedExpressionResolver = resolveSession.getInjector().getQualifiedExpressionResolver();
