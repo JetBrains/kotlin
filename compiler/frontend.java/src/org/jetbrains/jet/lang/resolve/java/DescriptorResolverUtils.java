@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.ImmutableSet;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.util.PsiFormatUtil;
@@ -36,6 +37,8 @@ import static com.intellij.psi.util.PsiFormatUtilBase.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
+    private static final ImmutableSet<String> OBJECT_METHODS = ImmutableSet.of("hashCode()", "equals(java.lang.Object)", "toString()");
+
     private DescriptorResolverUtils() {
     }
 
@@ -143,5 +146,25 @@ public final class DescriptorResolverUtils {
                 AbiVersionUtil.reportIncompatibleAbiVersion(psiClass, actualVersion, trace);
             }
         };
+    }
+
+    public static boolean isObjectMethodInInterface(@NotNull PsiMember member) {
+        if (!(member instanceof PsiMethod)) {
+            return false;
+        }
+        PsiClass containingClass = member.getContainingClass();
+        assert containingClass != null : "containing class is null for " + member;
+
+        if (!containingClass.isInterface()) {
+            return false;
+        }
+
+        return isObjectMethod((PsiMethod) member);
+    }
+
+    public static boolean isObjectMethod(@NotNull PsiMethod method) {
+        String formattedMethod = PsiFormatUtil.formatMethod(
+                method, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+        return OBJECT_METHODS.contains(formattedMethod);
     }
 }

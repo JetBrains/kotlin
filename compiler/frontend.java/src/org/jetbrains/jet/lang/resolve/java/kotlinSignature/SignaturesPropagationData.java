@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -237,7 +236,7 @@ public class SignaturesPropagationData {
                                              : findSuperFunction(superclassToFunctions.get(classFqName), superMethod);
             if (superFun == null) {
                 // Super methods which are Object methods in interfaces are not loaded by JDR.
-                if (!MembersCache.isObjectMethodInInterface(superMethod)) {
+                if (!DescriptorResolverUtils.isObjectMethodInInterface(superMethod)) {
                     reportCantFindSuperFunction(method);
                 }
                 continue;

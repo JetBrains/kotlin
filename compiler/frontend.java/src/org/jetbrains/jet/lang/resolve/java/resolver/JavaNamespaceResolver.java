@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
@@ -250,7 +250,7 @@ public final class JavaNamespaceResolver {
         }
 
         for (PsiClass nestedClass : psiClass.getInnerClasses()) {
-            if (MembersCache.isSamInterface(nestedClass)) {
+            if (SingleAbstractMethodUtils.isSamInterface(nestedClass)) {
                 return true;
             }
             if (nestedClass.hasModifierProperty(PsiModifier.STATIC) && hasStaticMembers(nestedClass)) {

@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
-import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -312,7 +311,7 @@ public final class JavaClassResolver {
 
         trace.record(BindingContext.CLASS, psiClass, classDescriptor);
 
-        PsiMethod samInterfaceMethod = MembersCache.getSamInterfaceMethod(psiClass);
+        PsiMethod samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(psiClass);
         if (samInterfaceMethod != null) {
             SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod, classDescriptor);
             classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));

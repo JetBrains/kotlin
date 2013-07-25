@@ -17,6 +17,9 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.*;
+import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -25,7 +28,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -37,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.intellij.psi.util.MethodSignatureUtil.areSignaturesErasureEqual;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class SingleAbstractMethodUtils {
@@ -311,6 +315,40 @@ public class SingleAbstractMethodUtils {
     private SingleAbstractMethodUtils() {
     }
 
+    public static boolean isSamInterface(@NotNull PsiClass psiClass) {
+        return getSamInterfaceMethod(psiClass) != null;
+    }
+
+    // Returns null if not SAM interface
+    @Nullable
+    public static PsiMethod getSamInterfaceMethod(@NotNull PsiClass psiClass) {
+        String qualifiedName = psiClass.getQualifiedName();
+        if (qualifiedName == null || qualifiedName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".")) {
+            return null;
+        }
+        if (!psiClass.isInterface() || psiClass.isAnnotationType()) {
+            return null;
+        }
+
+        return findOnlyAbstractMethod(psiClass);
+    }
+
+    @Nullable
+    private static PsiMethod findOnlyAbstractMethod(@NotNull PsiClass psiClass) {
+        PsiClassType classType = JavaPsiFacade.getElementFactory(psiClass.getProject()).createType(psiClass);
+
+        OnlyAbstractMethodFinder finder = new OnlyAbstractMethodFinder();
+        if (finder.find(classType)) {
+            return finder.getFoundMethod();
+        }
+        return null;
+    }
+
+    private static boolean isVarargMethod(@NotNull PsiMethod method) {
+        PsiParameter lastParameter = ArrayUtil.getLastElement(method.getParameterList().getParameters());
+        return lastParameter != null && lastParameter.getType() instanceof PsiEllipsisType;
+    }
+
     private static class TypeParameters {
         public final List<TypeParameterDescriptor> descriptors;
         public final TypeSubstitutor substitutor;
@@ -327,5 +365,54 @@ public class SingleAbstractMethodUtils {
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @Nullable JetType returnType
         );
+    }
+
+    private static class OnlyAbstractMethodFinder {
+        private MethodSignatureBackedByPsiMethod found;
+
+        private boolean find(@NotNull PsiClassType classType) {
+            PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
+            PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
+            PsiClass psiClass = classResolveResult.getElement();
+            if (psiClass == null) {
+                return false; // can't resolve class -> not a SAM interface
+            }
+            if (CommonClassNames.JAVA_LANG_OBJECT.equals(psiClass.getQualifiedName())) {
+                return true;
+            }
+            for (PsiMethod method : psiClass.getMethods()) {
+                if (DescriptorResolverUtils.isObjectMethod(method)) { // e.g., ignore toString() declared in interface
+                    continue;
+                }
+                if (method.hasTypeParameters()) {
+                    return false; // if interface has generic methods, it is not a SAM interface
+                }
+
+                if (found == null) {
+                    found = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
+                    continue;
+                }
+                if (!found.getName().equals(method.getName())) {
+                    return false; // optimizing heuristic
+                }
+                MethodSignatureBackedByPsiMethod current = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
+                if (!areSignaturesErasureEqual(current, found) || isVarargMethod(method) != isVarargMethod(found.getMethod())) {
+                    return false; // different signatures
+                }
+            }
+
+            for (PsiType t : classType.getSuperTypes()) {
+                if (!find((PsiClassType) t)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        @Nullable
+        PsiMethod getFoundMethod() {
+            return found == null ? null : found.getMethod();
+        }
     }
 }
