@@ -141,7 +141,9 @@ public class Slices {
                         if (valueNotFound) {
                             for (ReadOnlySlice<K, V> slice : furtherLookupSlices) {
                                 V v = map.get(slice, key);
-                                if (v != null) return v;
+                                if (v != null) {
+                                    return v;
+                                }
                             }
                             return defaultValue;
                         }

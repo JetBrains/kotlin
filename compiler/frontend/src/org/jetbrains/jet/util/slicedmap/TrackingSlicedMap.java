@@ -26,13 +26,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-public class TrackingSlicedMap implements MutableSlicedMap {
+public class TrackingSlicedMap extends SlicedMapImpl {
 
-    private final MutableSlicedMap delegate;
+    // private final MutableSlicedMap delegate;
     private final Map<ReadOnlySlice<?, ?>, SliceWithStackTrace<?, ?>> sliceTranslationMap = Maps.newHashMap();
 
-    public TrackingSlicedMap(@NotNull MutableSlicedMap delegate) {
-        this.delegate = delegate;
+    public TrackingSlicedMap() {
+        super(Maps.<SlicedMapKey<?, ?>, Object>newLinkedHashMap());
     }
 
     private <K, V> SliceWithStackTrace<K, V> wrapSlice(ReadOnlySlice<K, V> slice) {
@@ -47,45 +47,51 @@ public class TrackingSlicedMap implements MutableSlicedMap {
 
     @Override
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-        return delegate.get(wrapSlice(slice), key).value;
+        return super.get(wrapSlice(slice), key).value;
     }
 
     @Override
     public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-        return delegate.getKeys(wrapSlice(slice));
+        return super.getKeys(wrapSlice(slice));
     }
 
     @NotNull
     @Override
     public Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator() {
         Map<SlicedMapKey<?, ?>, Object> map = Maps.newHashMap();
-        for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : delegate) {
+
+        Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator = super.iterator();
+
+        //noinspection WhileLoopReplaceableByForEach
+        while (iterator.hasNext()) {
+            Map.Entry<SlicedMapKey<?, ?>, ?> entry = iterator.next();
             map.put(entry.getKey(), ((WithStackTrace<?>) entry.getValue()).value);
         }
+
         //noinspection unchecked
         return (Iterator) map.entrySet().iterator();
     }
 
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
-        delegate.put(wrapSlice(slice), key, new WithStackTrace<V>(value));
+        super.put(wrapSlice(slice), key, new WithStackTrace<V>(value));
     }
 
     @Override
     public <K, V> V remove(RemovableSlice<K, V> slice, K key) {
-        return delegate.remove(wrapSlice(slice), key).value;
+        return super.remove(wrapSlice(slice), key).value;
     }
 
     @Override
     public void clear() {
-        delegate.clear();
+        super.clear();
     }
 
     @Override
     @NotNull
     @TestOnly
     public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-        return delegate.getSliceContents(slice);
+        return super.getSliceContents(slice);
     }
 
     private static class WithStackTrace<V> {
