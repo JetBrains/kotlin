@@ -31,6 +31,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -85,6 +86,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         try {
             if (file.getFileType() != JetFileType.INSTANCE) return null;
 
+            if (!ProjectFileIndex.SERVICE.getInstance(myProject).isInSourceContent(file)) return null;
             if (CompilerManager.getInstance(myProject).isExcludedFromCompilation(file)) return null;
 
             Module module = ModuleUtilCore.findModuleForFile(file, myProject);
