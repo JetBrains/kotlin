@@ -37,6 +37,21 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("annotationRetentionPolicyClass.kt")
+    public void testAnnotationRetentionPolicyClass() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/annotationRetentionPolicyClass.kt");
+    }
+    
+    @TestMetadata("annotationRetentionPolicyRuntime.kt")
+    public void testAnnotationRetentionPolicyRuntime() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/annotationRetentionPolicyRuntime.kt");
+    }
+    
+    @TestMetadata("annotationRetentionPolicySource.kt")
+    public void testAnnotationRetentionPolicySource() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/annotationRetentionPolicySource.kt");
+    }
+    
     @TestMetadata("componentEvaluatesOnlyOnce.kt")
     public void testComponentEvaluatesOnlyOnce() throws Exception {
         doTest("compiler/testData/codegen/bytecodeText/componentEvaluatesOnlyOnce.kt");

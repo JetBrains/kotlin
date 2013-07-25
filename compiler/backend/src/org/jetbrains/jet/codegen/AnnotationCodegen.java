@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.lang.annotation.RetentionPolicy;
@@ -224,19 +225,20 @@ public abstract class AnnotationCodegen {
     }
 
     private static RetentionPolicy getRetentionPolicy(ClassifierDescriptor descriptor, JetTypeMapper typeMapper) {
-        RetentionPolicy rp = RetentionPolicy.RUNTIME;
-        /*
-        @todo : when JavaDescriptoResolver provides ennough info
         for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
             String internalName = typeMapper.mapType(annotationDescriptor.getType()).getInternalName();
-            if("java/lang/annotation/RetentionPolicy".equals(internalName)) {
-                CompileTimeConstant<?> compileTimeConstant = annotationDescriptor.getValueArguments().get(0);
-                System.out.println(compileTimeConstant);
-                break;
+            if("java/lang/annotation/Retention".equals(internalName)) {
+                CompileTimeConstant<?> compileTimeConstant = annotationDescriptor.getAllValueArguments().values().iterator().next();
+                assert compileTimeConstant instanceof EnumValue : "Retention argument should be Enum value " + compileTimeConstant;
+                PropertyDescriptor propertyDescriptor = ((EnumValue) compileTimeConstant).getValue();
+                assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(propertyDescriptor.getType()).getInternalName()) :
+                                                                        "Retention argument should be of type RetentionPolicy";
+                String propertyDescriptorName = propertyDescriptor.getName().asString();
+                return RetentionPolicy.valueOf(propertyDescriptorName);
             }
         }
-        */
-        return rp;  //To change body of created methods use File | Settings | File Templates.
+
+        return RetentionPolicy.CLASS;
     }
 
     abstract AnnotationVisitor visitAnnotation(String descr, boolean visible);
