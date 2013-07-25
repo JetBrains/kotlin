@@ -20,7 +20,6 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -37,110 +36,6 @@ import java.util.Set;
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
-
-    public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
-        @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            return DescriptorUtils.isInSameNamespace(what, from);
-        }
-
-        @Override
-        protected Integer compareTo(@NotNull Visibility visibility) {
-            if (this == visibility) return 0;
-            if (visibility == Visibilities.PRIVATE) return 1;
-            return -1;
-        }
-
-        @Override
-        public String toString() {
-            return "public/*package*/";
-        }
-
-        @NotNull
-        @Override
-        public Visibility normalize() {
-            return Visibilities.INTERNAL;
-        }
-    };
-
-    public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", false) {
-        @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
-            if (fromClass == null) return false;
-
-            ClassDescriptor whatClass;
-            // protected static class
-            if (what instanceof ClassDescriptor) {
-                DeclarationDescriptor containingDeclaration = what.getContainingDeclaration();
-                assert containingDeclaration instanceof ClassDescriptor : "Only static nested classes can have protected_static visibility";
-                whatClass = (ClassDescriptor) containingDeclaration;
-            }
-            // protected static function or property
-            else {
-                DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
-                assert whatDeclarationDescriptor instanceof NamespaceDescriptor : "Only static declarations can have protected_static visibility";
-                whatClass = DescriptorUtils.getClassForCorrespondingJavaNamespace((NamespaceDescriptor) whatDeclarationDescriptor);
-            }
-
-            assert whatClass != null : "Couldn't find ClassDescriptor for protected static member " + what;
-
-            if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
-                return true;
-            }
-            return isVisible(what, fromClass.getContainingDeclaration());
-        }
-
-        @Override
-        public String toString() {
-            return "protected/*protected static*/";
-        }
-
-        @NotNull
-        @Override
-        public Visibility normalize() {
-            return Visibilities.PROTECTED;
-        }
-    };
-
-    public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", false) {
-        @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (DescriptorUtils.isInSameNamespace(what, from)) {
-                return true;
-            }
-
-            ClassDescriptor whatClass = DescriptorUtils.getParentOfType(what, ClassDescriptor.class, false);
-            if (whatClass == null) return false;
-
-            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
-            if (fromClass == null) return false;
-
-            if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
-                return true;
-            }
-            return isVisible(what, fromClass.getContainingDeclaration());
-        }
-
-        @Override
-        protected Integer compareTo(@NotNull Visibility visibility) {
-            if (this == visibility) return 0;
-            if (visibility == Visibilities.INTERNAL) return null;
-            if (visibility == Visibilities.PRIVATE) return 1;
-            return -1;
-        }
-
-        @Override
-        public String toString() {
-            return "protected/*protected and package*/";
-        }
-
-        @NotNull
-        @Override
-        public Visibility normalize() {
-            return Visibilities.PROTECTED;
-        }
-    };
 
     private JavaPropertyResolver propertiesResolver;
     private JavaClassResolver classResolver;

@@ -86,7 +86,7 @@ public final class JavaConstructorResolver {
                 constructors.add(trace.get(BindingContext.CONSTRUCTOR, psiClass));
             }
             else {
-                Visibility constructorVisibility = DescriptorResolverUtils.getConstructorVisibility(containingClass);
+                Visibility constructorVisibility = getConstructorVisibility(containingClass);
                 // We need to create default constructors for classes and abstract classes.
                 // Example:
                 // class Kotlin() : Java() {}
@@ -159,6 +159,15 @@ public final class JavaConstructorResolver {
         }
 
         return constructors;
+    }
+
+    @NotNull
+    private static Visibility getConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+        Visibility visibility = classDescriptor.getVisibility();
+        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
+            return JavaVisibilities.PROTECTED_AND_PACKAGE;
+        }
+        return visibility;
     }
 
     @Nullable

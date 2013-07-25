@@ -94,11 +94,11 @@ public final class DescriptorResolverUtils {
         }
         if (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED)) {
             if (modifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-                return JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY;
+                return JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
             }
-            return JavaDescriptorResolver.PROTECTED_AND_PACKAGE;
+            return JavaVisibilities.PROTECTED_AND_PACKAGE;
         }
-        return JavaDescriptorResolver.PACKAGE_VISIBILITY;
+        return JavaVisibilities.PACKAGE_VISIBILITY;
     }
 
     @Nullable
@@ -117,14 +117,6 @@ public final class DescriptorResolverUtils {
             }
         }
         return null;
-    }
-
-    public static Visibility getConstructorVisibility(ClassDescriptor classDescriptor) {
-        Visibility containingClassVisibility = classDescriptor.getVisibility();
-        if (containingClassVisibility == JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY) {
-            return JavaDescriptorResolver.PROTECTED_AND_PACKAGE;
-        }
-        return containingClassVisibility;
     }
 
     public static void checkPsiClassIsNotJet(@Nullable PsiClass psiClass) {
