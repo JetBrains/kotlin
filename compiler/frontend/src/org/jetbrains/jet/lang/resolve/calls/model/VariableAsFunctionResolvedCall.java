@@ -17,10 +17,12 @@
 package org.jetbrains.jet.lang.resolve.calls.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
@@ -95,6 +97,12 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     @Override
     public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
         return functionCall.getTypeArguments();
+    }
+
+    @Nullable
+    @Override
+    public DataFlowInfo getDataFlowInfoForValueArgument(@NotNull ValueArgument valueArgument) {
+        return functionCall.getDataFlowInfoForValueArgument(valueArgument);
     }
 
     @NotNull

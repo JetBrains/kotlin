@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -57,6 +58,9 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     /** Values (arguments) for value parameters indexed by parameter index */
     @NotNull
     List<ResolvedValueArgument> getValueArgumentsByIndex();
+
+    @Nullable
+    DataFlowInfo getDataFlowInfoForValueArgument(@NotNull ValueArgument valueArgument);
 
     /** What's substituted for type parameters */
     @NotNull

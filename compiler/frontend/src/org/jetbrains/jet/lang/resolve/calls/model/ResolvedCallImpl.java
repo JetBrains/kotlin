@@ -264,6 +264,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return dataFlowInfo;
     }
 
+    @Override
     @Nullable
     public DataFlowInfo getDataFlowInfoForValueArgument(@NotNull ValueArgument valueArgument) {
         return dataFlowInfoForArguments.get(valueArgument);
