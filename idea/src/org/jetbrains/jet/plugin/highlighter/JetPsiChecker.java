@@ -28,8 +28,10 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -100,18 +102,21 @@ public class JetPsiChecker implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+        if (!isInSourceContent(element)) {
+            return;
+        }
+
         for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
             element.accept(visitor);
         }
 
         if (element instanceof JetFile) {
-            JetFile file = (JetFile)element;
+            JetFile file = (JetFile) element;
 
             try {
                 BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
 
-                boolean isInContent = ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInContent(file.getVirtualFile());
-                if (errorReportingEnabled && isInContent) {
+                if (errorReportingEnabled) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
@@ -269,5 +274,17 @@ public class JetPsiChecker implements Annotator {
         Annotation annotation = holder.createErrorAnnotation(textRanges.get(0), "");
         annotation.setTooltip(getMessage(redeclarationDiagnostic));
         return annotation;
+    }
+
+    static boolean isInSourceContent(PsiElement element) {
+        PsiFile containingFile = element.getContainingFile();
+        if (containingFile == null) {
+            return false;
+        }
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        if (virtualFile == null) {
+            return false;
+        }
+        return ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInSourceContent(virtualFile);
     }
 }
