@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -27,19 +26,14 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.*;
 
 public abstract class JavaClassMembersScope extends JavaBaseScope {
-    @NotNull
-    protected final PsiClass psiClass;
-
     private Map<Name, ClassDescriptor> innerClassesMap = null;
 
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull PsiClass psiClass,
             @NotNull MembersProvider membersProvider,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
         super(descriptor, javaDescriptorResolver, membersProvider);
-        this.psiClass = psiClass;
     }
 
     @NotNull
@@ -56,7 +50,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
         if (members == null) {
             return Collections.emptySet();
         }
-        return javaDescriptorResolver.resolveFunctionGroupForClass(members, descriptor, psiClass);
+        return javaDescriptorResolver.resolveFunctionGroupForClass(members, descriptor);
     }
 
     @NotNull

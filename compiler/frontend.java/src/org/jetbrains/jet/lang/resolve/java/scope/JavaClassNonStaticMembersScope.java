@@ -32,11 +32,12 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
-
     private Collection<ConstructorDescriptor> constructors = null;
     private ConstructorDescriptor primaryConstructor = null;
     @NotNull
     private final ClassDescriptor descriptor;
+    @NotNull
+    private final PsiClass psiClass;
     private final boolean staticMembersOfPsiClass;
 
     public JavaClassNonStaticMembersScope(
@@ -45,8 +46,9 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
             boolean staticMembersOfPsiClass,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, psiClass, MembersProvider.forClass(psiClass, staticMembersOfPsiClass), javaDescriptorResolver);
+        super(descriptor, MembersProvider.forClass(psiClass, staticMembersOfPsiClass), javaDescriptorResolver);
         this.descriptor = descriptor;
+        this.psiClass = psiClass;
         this.staticMembersOfPsiClass = staticMembersOfPsiClass;
     }
 

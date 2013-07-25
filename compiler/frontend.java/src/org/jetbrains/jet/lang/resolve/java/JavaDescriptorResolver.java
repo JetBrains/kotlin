@@ -121,12 +121,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForClass(
-            @NotNull NamedMembers members,
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull PsiClass psiClass
-    ) {
-        return functionResolver.resolveFunctionGroupForClass(members, owner, psiClass);
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
+        return functionResolver.resolveFunctionGroupForClass(members, owner);
     }
 
     @NotNull

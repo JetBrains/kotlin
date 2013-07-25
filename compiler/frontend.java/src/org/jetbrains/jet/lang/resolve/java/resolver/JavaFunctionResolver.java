@@ -89,19 +89,15 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    SimpleFunctionDescriptor resolveFunctionMutely(
-            @NotNull PsiMethodWrapper method,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
-    ) {
-        PsiClass containingClass = method.getPsiMethod().getContainingClass();
-        assert containingClass != null : "containing class is null for " + method;
-        return resolveMethodToFunctionDescriptor(containingClass, method, ownerDescriptor, false);
+    SimpleFunctionDescriptor resolveFunctionMutely(@NotNull PsiMethodWrapper method, @NotNull ClassOrNamespaceDescriptor owner) {
+        return resolveMethodToFunctionDescriptor(method, owner, false);
     }
 
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
-            @NotNull PsiClass psiClass, PsiMethodWrapper method,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor, boolean record
+            @NotNull PsiMethodWrapper method,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            boolean record
     ) {
         if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method.getPsiMember())) {
             return null;
@@ -113,7 +109,6 @@ public final class JavaFunctionResolver {
         }
 
         PsiMethod psiMethod = method.getPsiMethod();
-        PsiClass containingClass = psiMethod.getContainingClass();
 
         if (trace.get(BindingContext.FUNCTION, psiMethod) != null) {
             return trace.get(BindingContext.FUNCTION, psiMethod);
@@ -129,7 +124,7 @@ public final class JavaFunctionResolver {
         List<TypeParameterDescriptor> methodTypeParameters = signatureResolver.resolveMethodTypeParameters(method, functionDescriptorImpl);
 
         TypeVariableResolver methodTypeVariableResolver = new TypeVariableResolver(
-                methodTypeParameters, functionDescriptorImpl, "method " + method.getName() + " in class " + psiClass.getQualifiedName());
+                methodTypeParameters, functionDescriptorImpl, "method " + method.getName() + " in class " + psiMethod.getContainingClass());
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
@@ -182,10 +177,6 @@ public final class JavaFunctionResolver {
 
         if (record) {
             trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
-        }
-
-        if (containingClass != psiClass && !method.isStatic()) {
-            throw new IllegalStateException("non-static method in subclass");
         }
 
         if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod)
@@ -243,12 +234,8 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForClass(
-            @NotNull NamedMembers namedMembers,
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull PsiClass psiClass
-    ) {
-        Name methodName = namedMembers.getName();
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
+        Name methodName = members.getName();
 
         Set<SimpleFunctionDescriptor> functionsFromSupertypes = null;
         if (owner instanceof ClassDescriptor) {
@@ -256,9 +243,8 @@ public final class JavaFunctionResolver {
         }
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
-        for (PsiMethodWrapper method : namedMembers.getMethods()) {
-            SimpleFunctionDescriptor function =
-                    resolveMethodToFunctionDescriptor(psiClass, method, owner, true);
+        for (PsiMethodWrapper method : members.getMethods()) {
+            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(method, owner, true);
             if (function != null) {
                 functionsFromCurrent.add(function);
                 ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
@@ -266,7 +252,7 @@ public final class JavaFunctionResolver {
         }
 
         if (owner instanceof NamespaceDescriptor) {
-            ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamConstructor((NamespaceDescriptor) owner, namedMembers));
+            ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamConstructor((NamespaceDescriptor) owner, members));
         }
 
 
