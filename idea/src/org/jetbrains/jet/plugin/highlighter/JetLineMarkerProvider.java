@@ -59,6 +59,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher;
@@ -362,7 +363,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
         if (elements.isEmpty() ||
             DumbService.getInstance(elements.get(0).getProject()).isDumb() ||
-            !JetPsiChecker.isInSourceContent(elements.get(0))) {
+            !JetPluginUtil.isInSourceContent(elements.get(0))) {
             return;
         }
 

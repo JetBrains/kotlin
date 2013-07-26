@@ -26,12 +26,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +41,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
@@ -102,7 +100,7 @@ public class JetPsiChecker implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!isInSourceContent(element)) {
+        if (!JetPluginUtil.isInSourceContent(element)) {
             return;
         }
 
@@ -274,17 +272,5 @@ public class JetPsiChecker implements Annotator {
         Annotation annotation = holder.createErrorAnnotation(textRanges.get(0), "");
         annotation.setTooltip(getMessage(redeclarationDiagnostic));
         return annotation;
-    }
-
-    public static boolean isInSourceContent(PsiElement element) {
-        PsiFile containingFile = element.getContainingFile();
-        if (containingFile == null) {
-            return false;
-        }
-        VirtualFile virtualFile = containingFile.getVirtualFile();
-        if (virtualFile == null) {
-            return false;
-        }
-        return ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInSourceContent(virtualFile);
     }
 }

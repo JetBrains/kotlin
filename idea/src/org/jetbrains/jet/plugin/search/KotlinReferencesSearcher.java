@@ -28,7 +28,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     public static void processJetClassOrObject(
@@ -51,7 +51,7 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
     @Override
     public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
         PsiElement element = queryParameters.getElementToSearch();
-        if (!JetPsiChecker.isInSourceContent(element)) {
+        if (!JetPluginUtil.isInSourceContent(element)) {
             return;
         }
         if (element instanceof JetClass) {

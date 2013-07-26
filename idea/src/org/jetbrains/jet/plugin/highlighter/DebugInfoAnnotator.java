@@ -26,6 +26,7 @@ import org.jetbrains.jet.checkers.DebugInfoUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
@@ -39,7 +40,7 @@ public class DebugInfoAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (!isDebugInfoEnabled() || !JetPsiChecker.isErrorReportingEnabled() || !JetPsiChecker.isInSourceContent(element)) {
+        if (!isDebugInfoEnabled() || !JetPsiChecker.isErrorReportingEnabled() || !JetPluginUtil.isInSourceContent(element)) {
             return;
         }
 

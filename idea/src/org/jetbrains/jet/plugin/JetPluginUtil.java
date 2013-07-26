@@ -21,6 +21,10 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -76,6 +80,18 @@ public class JetPluginUtil {
             assert declaration != null;
         }
         return libraryScope == ((NamespaceDescriptor) declaration).getMemberScope();
+    }
+
+    public static boolean isInSourceContent(@NotNull PsiElement element) {
+        PsiFile containingFile = element.getContainingFile();
+        if (containingFile == null) {
+            return false;
+        }
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        if (virtualFile == null) {
+            return false;
+        }
+        return ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInSourceContent(virtualFile);
     }
 
     @NotNull
