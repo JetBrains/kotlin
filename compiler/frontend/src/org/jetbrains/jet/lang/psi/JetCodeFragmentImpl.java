@@ -31,7 +31,7 @@ public class JetCodeFragmentImpl extends JetFile implements PsiCodeFragment {
 
     public JetCodeFragmentImpl(Project project, String name, CharSequence text, IElementType elementType, PsiElement context) {
         super(((PsiManagerEx) PsiManager.getInstance(project)).getFileManager().createFileViewProvider(
-                new LightVirtualFile(name, JetFileType.INSTANCE, text), true));
+                new LightVirtualFile(name, JetFileType.INSTANCE, text), true), false);
         ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
         init(TokenType.CODE_FRAGMENT, elementType);
         this.context = context;

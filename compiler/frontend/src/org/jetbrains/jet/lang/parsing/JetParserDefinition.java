@@ -106,7 +106,7 @@ public class JetParserDefinition implements ParserDefinition {
 
     @Override
     public PsiFile createFile(FileViewProvider fileViewProvider) {
-        return new JetFile(fileViewProvider);
+        return new JetFile(fileViewProvider, false);
     }
 
     @Override

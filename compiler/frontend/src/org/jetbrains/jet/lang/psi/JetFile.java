@@ -18,9 +18,22 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.FileASTNode;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLock;
+import com.intellij.psi.stubs.ObjectStubTree;
+import com.intellij.psi.stubs.StubBase;
+import com.intellij.psi.stubs.StubTree;
+import com.intellij.psi.stubs.StubTreeLoader;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,8 +45,21 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import java.util.List;
 
 public class JetFile extends PsiFileBase implements JetDeclarationContainer, JetElement {
-    public JetFile(FileViewProvider viewProvider) {
+
+    private final boolean isCompiled;
+
+    public JetFile(FileViewProvider viewProvider, boolean compiled) {
         super(viewProvider, JetLanguage.INSTANCE);
+        this.isCompiled = compiled;
+    }
+
+    @Override
+    public FileASTNode getNode() {
+        return super.getNode();
+    }
+
+    public boolean isCompiled() {
+        return isCompiled;
     }
 
     @Override
@@ -76,7 +102,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @Nullable
     public String getPackageName() {
-        PsiJetFileStub stub = (PsiJetFileStub)getStub();
+        PsiJetFileStub stub = (PsiJetFileStub) getStub();
         if (stub != null) {
             return stub.getPackageName();
         }
@@ -91,7 +117,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     }
 
     public boolean isScript() {
-        PsiJetFileStub stub = (PsiJetFileStub)getStub();
+        PsiJetFileStub stub = (PsiJetFileStub) getStub();
         if (stub != null) {
             return stub.isScript();
         }
