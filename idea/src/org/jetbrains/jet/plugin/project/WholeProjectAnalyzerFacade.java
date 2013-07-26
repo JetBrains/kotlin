@@ -21,8 +21,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 
 public final class WholeProjectAnalyzerFacade {
 
@@ -35,12 +33,12 @@ public final class WholeProjectAnalyzerFacade {
     }
 
     @NotNull
-    public static ResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
+    public static CancelableResolveSession getLazyResolveResultForFile(@NotNull JetFile file) {
         return AnalyzerFacadeWithCache.getLazyResolveSession(file);
     }
 
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
-        ResolveSession resolveSession = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
-        return ResolveSessionUtils.resolveToElement(resolveSession, jetElement);
+        CancelableResolveSession cancelableResolveSession = getLazyResolveResultForFile((JetFile) jetElement.getContainingFile());
+        return cancelableResolveSession.resolveToElement(jetElement);
     }
 }

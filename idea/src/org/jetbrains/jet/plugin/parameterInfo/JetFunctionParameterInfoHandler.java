@@ -37,14 +37,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -58,7 +57,7 @@ import java.util.List;
  */
 public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWithTabActionSupport<
         JetValueArgumentList,
-        Pair<? extends FunctionDescriptor, ResolveSession>,
+        Pair<? extends FunctionDescriptor, CancelableResolveSession>,
         JetValueArgument>
 {
     public final static Color GREEN_BACKGROUND = new JBColor(new Color(231, 254, 234), Gray._100);
@@ -112,7 +111,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
     @Nullable
     @Override
-    public Object[] getParametersForDocumentation(Pair<? extends FunctionDescriptor, ResolveSession> p, ParameterInfoContext context) {
+    public Object[] getParametersForDocumentation(Pair<? extends FunctionDescriptor, CancelableResolveSession> p, ParameterInfoContext context) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY; //todo: ?
     }
 
@@ -200,7 +199,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
     }
 
     @Override
-    public void updateUI(Pair<? extends FunctionDescriptor, ResolveSession> itemToShow, ParameterInfoUIContext context) {
+    public void updateUI(Pair<? extends FunctionDescriptor, CancelableResolveSession> itemToShow, ParameterInfoUIContext context) {
         //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context == null || context.getParameterOwner() == null || !context.getParameterOwner().isValid()) {
             context.setUIComponentEnabled(false);
@@ -216,7 +215,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
 
         FunctionDescriptor functionDescriptor = itemToShow.first;
-        ResolveSession resolveSession = itemToShow.second;
+        CancelableResolveSession resolveSession = itemToShow.second;
 
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         List<JetValueArgument> valueArguments = argumentList.getArguments();
@@ -239,7 +238,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         StringBuilder builder = new StringBuilder();
 
         PsiElement owner = context.getParameterOwner();
-        BindingContext bindingContext = ResolveSessionUtils.resolveToElement(resolveSession, (JetElement) owner);
+        BindingContext bindingContext = resolveSession.resolveToElement((JetElement) owner);
 
         for (int i = 0; i < valueParameters.size(); ++i) {
             if (i != 0) {
@@ -382,9 +381,9 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
+        CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile(
                 (JetFile) callNameExpression.getContainingFile());
-        BindingContext bindingContext = ResolveSessionUtils.resolveToElement(resolveSession, callNameExpression);
+        BindingContext bindingContext = resolveSession.resolveToElement(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         DeclarationDescriptor placeDescriptor = null;
@@ -396,7 +395,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
         Name refName = callNameExpression.getReferencedNameAsName();
 
-        Collection<Pair<? extends DeclarationDescriptor, ResolveSession>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSession>>();
+        Collection<Pair<? extends DeclarationDescriptor, CancelableResolveSession>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, CancelableResolveSession>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;

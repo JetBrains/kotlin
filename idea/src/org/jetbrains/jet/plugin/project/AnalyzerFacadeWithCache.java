@@ -32,7 +32,6 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.Function;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,12 +60,6 @@ public final class AnalyzerFacadeWithCache {
     private final static Key<CachedValue<SLRUCache<JetFile, AnalyzeExhaust>>> ANALYZE_EXHAUST_FULL = Key.create("ANALYZE_EXHAUST_FULL");
 
     private static final Object lock = new Object();
-    public static final Function<JetFile, Collection<JetFile>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
-        @Override
-        public Collection<JetFile> fun(JetFile file) {
-            return Collections.singleton(file);
-        }
-    };
 
     private AnalyzerFacadeWithCache() {
     }
@@ -174,17 +167,38 @@ public final class AnalyzerFacadeWithCache {
         LOG.error(e);
     }
 
+    private static final SLRUCache<JetFile, CachedValue<CancelableResolveSession>> RESOLVE_SESSION_CACHE = new SLRUCache<JetFile, CachedValue<CancelableResolveSession>>(2, 4) {
+        @NotNull
+        @Override
+        public CachedValue<CancelableResolveSession> createValue(final JetFile file) {
+            final Project fileProject = file.getProject();
+            return CachedValuesManager.getManager(fileProject).createCachedValue(
+                    new CachedValueProvider<CancelableResolveSession>() {
+                        @Nullable
+                        @Override
+                        public Result<CancelableResolveSession> compute() {
+                            Project project = file.getProject();
+                            Collection<JetFile> files =
+                                    JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
+
+                            // Given file can differ from the original because it can be a virtual copy with some modifications
+                            JetFile originalFile = (JetFile) file.getOriginalFile();
+                            files.remove(originalFile);
+                            files.add(file);
+
+                            ResolveSession resolveSession =
+                                    AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(fileProject, files);
+                            return Result.create(new CancelableResolveSession(file, resolveSession), PsiModificationTracker.MODIFICATION_COUNT);
+                        }
+                    },
+                    true);
+        }
+    };
+
     @NotNull
-    public static ResolveSession getLazyResolveSession(@NotNull JetFile file) {
-        Project fileProject = file.getProject();
-
-        Collection<JetFile> files = JetFilesProvider.getInstance(fileProject).allInScope(GlobalSearchScope.allScope(fileProject));
-
-        // Given file can differ from the original because it can be a virtual copy with some modifications
-        JetFile originalFile = (JetFile) file.getOriginalFile();
-        files.remove(originalFile);
-        files.add(file);
-
-        return AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(fileProject, files);
+    public static CancelableResolveSession getLazyResolveSession(@NotNull JetFile file) {
+        synchronized (RESOLVE_SESSION_CACHE) {
+            return RESOLVE_SESSION_CACHE.get(file).getValue();
+        }
     }
 }

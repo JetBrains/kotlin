@@ -32,13 +32,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -60,8 +59,8 @@ public class CompletionSession {
         this.parameters = parameters;
         this.jetReference = jetReference;
 
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
-        BindingContext expressionBindingContext = ResolveSessionUtils.resolveToElement(resolveSession, jetReference.getExpression());
+        CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile((JetFile) position.getContainingFile());
+        BindingContext expressionBindingContext = resolveSession.resolveToElement(jetReference.getExpression());
         JetScope scope = expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
 
         inDescriptor = scope != null ? scope.getContainingDeclaration() : null;
@@ -264,7 +263,7 @@ public class CompletionSession {
         return jetResult.getBindingContext();
     }
 
-    private ResolveSession getResolveSession() {
+    private CancelableResolveSession getResolveSession() {
         return jetResult.getResolveSession();
     }
 

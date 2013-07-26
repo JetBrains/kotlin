@@ -26,11 +26,10 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 public class JetSimpleNameReference extends JetPsiReference {
@@ -57,8 +56,9 @@ public class JetSimpleNameReference extends JetPsiReference {
     @NotNull
     @Override
     public Object[] getVariants() {
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) getExpression().getContainingFile());
-        BindingContext bindingContext = ResolveSessionUtils.resolveToElement(resolveSession, getExpression());
+        CancelableResolveSession resolveSession =
+                WholeProjectAnalyzerFacade.getLazyResolveResultForFile((JetFile) getExpression().getContainingFile());
+        BindingContext bindingContext = resolveSession.resolveToElement(getExpression());
 
         return DescriptorLookupConverter.collectLookupElements(
                 resolveSession, bindingContext, TipsManager.getReferenceVariants(myExpression, bindingContext));

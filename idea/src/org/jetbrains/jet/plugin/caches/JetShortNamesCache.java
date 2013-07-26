@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -49,6 +48,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.stubindex.*;
 
 import java.util.*;
@@ -177,10 +177,10 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<ClassDescriptor> getTopLevelObjectsByName(
             @NotNull String name,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull ResolveSession resolveSession,
+            @NotNull CancelableResolveSession resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
-        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, expression);
+        BindingContext context = resolveSession.resolveToElement(expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
         if (jetScope == null) {
@@ -212,7 +212,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
             @NotNull String name,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull ResolveSession resolveSession,
+            @NotNull CancelableResolveSession resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
         // name parameter can differ from expression.getReferenceName() when expression contains completion suffix
@@ -221,7 +221,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             return Collections.emptyList();
         }
 
-        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, expression);
+        BindingContext context = resolveSession.resolveToElement(expression);
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
         if (jetScope == null) {
@@ -297,12 +297,12 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<DeclarationDescriptor> getJetCallableExtensions(
             @NotNull Condition<String> acceptedNameCondition,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull ResolveSession resolveSession,
+            @NotNull CancelableResolveSession resolveSession,
             @NotNull GlobalSearchScope searchScope
     ) {
         Collection<DeclarationDescriptor> resultDescriptors = new ArrayList<DeclarationDescriptor>();
 
-        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, expression);
+        BindingContext context = resolveSession.resolveToElement(expression);
         JetExpression receiverExpression = expression.getReceiverExpression();
 
         if (receiverExpression != null) {

@@ -47,12 +47,12 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil;
 
@@ -86,15 +86,16 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             return Collections.emptyList();
         }
 
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) element.getContainingFile());
+        CancelableResolveSession cancelableResolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile(
+                (JetFile) element.getContainingFile());
 
         List<FqName> result = Lists.newArrayList();
         if (!isSuppressedTopLevelImportInPosition(element)) {
-            result.addAll(getClassNames(referenceName, (JetFile) file, resolveSession));
-            result.addAll(getJetTopLevelFunctions(referenceName, element, resolveSession, file.getProject()));
+            result.addAll(getClassNames(referenceName, (JetFile) file, cancelableResolveSession));
+            result.addAll(getJetTopLevelFunctions(referenceName, element, cancelableResolveSession, file.getProject()));
         }
 
-        result.addAll(getJetExtensionFunctions(referenceName, element, resolveSession, file.getProject()));
+        result.addAll(getJetExtensionFunctions(referenceName, element, cancelableResolveSession, file.getProject()));
 
         return Collections2.filter(result, new Predicate<FqName>() {
             @Override
@@ -112,7 +113,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     private static Collection<FqName> getJetTopLevelFunctions(
             @NotNull String referenceName,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull ResolveSession resolveSession,
+            @NotNull CancelableResolveSession resolveSession,
             @NotNull Project project
     ) {
         JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
@@ -132,7 +133,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     private static Collection<FqName> getJetExtensionFunctions(
             @NotNull final String referenceName,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull ResolveSession resolveSession,
+            @NotNull CancelableResolveSession resolveSession,
             @NotNull Project project
     ) {
         JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);

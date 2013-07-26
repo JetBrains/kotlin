@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.plugin.refactoring.inline;
 
 import com.google.common.collect.Lists;
@@ -39,17 +55,20 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class KotlinInlineValHandler extends InlineActionHandler {
     @Override
@@ -211,8 +230,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return null;
         }
 
-        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession((JetFile) initializer.getContainingFile());
-        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, initializer);
+        BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(initializer);
         SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
         if (fun == null || ErrorUtils.containsErrorType(fun)) {
             return null;
@@ -242,12 +260,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
-        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
+        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
 
-            if (needToAddParameterTypes(functionLiteralExpression, resolveSession)) {
+            if (needToAddParameterTypes(functionLiteralExpression, cancelableResolveSession)) {
                 functionsToAddParameters.add(functionLiteralExpression);
             }
         }
@@ -281,10 +299,10 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     private static boolean needToAddParameterTypes(
             @NotNull JetFunctionLiteralExpression functionLiteralExpression,
-            @NotNull ResolveSession resolveSession
+            @NotNull CancelableResolveSession cancelableResolveSession
     ) {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, functionLiteralExpression);
+        BindingContext context = cancelableResolveSession.resolveToElement(functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             AbstractDiagnosticFactory factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
@@ -302,12 +320,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
-        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
+        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetCallExpression callExpression = getCallExpression(inlinedExpression);
             assert callExpression != null : "can't find call expression for " + inlinedExpression.getText();
 
-            if (hasIncompleteTypeInferenceDiagnostic(callExpression, resolveSession) && callExpression.getTypeArgumentList() == null) {
+            if (hasIncompleteTypeInferenceDiagnostic(callExpression, cancelableResolveSession) && callExpression.getTypeArgumentList() == null) {
                 callsToAddArguments.add(callExpression);
             }
         }
@@ -327,8 +345,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         }
 
         JetExpression callee = callExpression.getCalleeExpression();
-        ResolveSession resolveSession = AnalyzerFacadeWithCache.getLazyResolveSession((JetFile) initializer.getContainingFile());
-        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, initializer);
+        BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(initializer);
         ResolvedCall<? extends CallableDescriptor> call = context.get(BindingContext.RESOLVED_CALL, callee);
         if (call == null) {
             return null;
@@ -350,10 +367,10 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     private static boolean hasIncompleteTypeInferenceDiagnostic(
             @NotNull JetCallExpression callExpression,
-            @NotNull ResolveSession resolveSession
+            @NotNull CancelableResolveSession cancelableResolveSession
     ) {
         JetExpression callee = callExpression.getCalleeExpression();
-        BindingContext context = ResolveSessionUtils.resolveToElement(resolveSession, callExpression);
+        BindingContext context = cancelableResolveSession.resolveToElement(callExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             if (diagnostic.getFactory() == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER && diagnostic.getPsiElement() == callee) {
                 return true;
