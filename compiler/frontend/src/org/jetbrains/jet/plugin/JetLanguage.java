@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin;
 import com.intellij.lang.Language;
 
 public class JetLanguage extends Language {
-    public static JetLanguage INSTANCE = new JetLanguage();
-    public static String NAME = "Kotlin";
+    public static final JetLanguage INSTANCE = new JetLanguage();
+    public static final String NAME = "Kotlin";
 
     private JetLanguage() {
         super("jet");
