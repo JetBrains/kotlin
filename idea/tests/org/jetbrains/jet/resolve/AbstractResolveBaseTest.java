@@ -53,8 +53,16 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
     }
 
     protected static void doSingleResolveTest() {
+        boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), "REF_EMPTY");
         String referenceToString = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "REF:");
-        Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString);
+
+        if (shouldBeUnresolved) {
+            Assert.assertNull("REF: directives will be ignored for REF_EMPTY test", referenceToString);
+            referenceToString = "<empty>";
+        }
+        else {
+            Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString);
+        }
 
         int offset = getEditor().getCaretModel().getOffset();
         PsiReference psiReference = getFile().findReferenceAt(offset);
@@ -67,9 +75,11 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
                 assertEquals(notEqualMessage, referenceToString, resolvedToElementStr);
             }
             else {
-                Assert.assertNull(
-                        String.format("Element %s wasn't resolved to anything, but %s was expected", psiReference, referenceToString),
-                        referenceToString);
+                if (!shouldBeUnresolved) {
+                    Assert.assertNull(
+                            String.format("Element %s wasn't resolved to anything, but %s was expected", psiReference, referenceToString),
+                            referenceToString);
+                }
             }
         }
         else {

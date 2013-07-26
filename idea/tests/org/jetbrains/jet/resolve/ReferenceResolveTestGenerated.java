@@ -106,6 +106,11 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         doTest("idea/testData/resolve/references/PackageReferenceInImport.kt");
     }
     
+    @TestMetadata("PropertyPlaceInClassObjectInObject.kt")
+    public void testPropertyPlaceInClassObjectInObject() throws Exception {
+        doTest("idea/testData/resolve/references/PropertyPlaceInClassObjectInObject.kt");
+    }
+    
     @TestMetadata("ReferenceInClassWhereConstraint.kt")
     public void testReferenceInClassWhereConstraint() throws Exception {
         doTest("idea/testData/resolve/references/ReferenceInClassWhereConstraint.kt");

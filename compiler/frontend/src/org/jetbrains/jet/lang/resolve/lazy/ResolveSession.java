@@ -259,9 +259,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
             @Override
             public DeclarationDescriptor visitClassObject(JetClassObject classObject, Void data) {
-                DeclarationDescriptor containingDeclaration =
-                        getInjector().getScopeProvider().getResolutionScopeForDeclaration(classObject).getContainingDeclaration();
-                return ((ClassDescriptor) containingDeclaration).getClassObjectDescriptor();
+                return getClassObjectDescriptor(classObject);
             }
 
             @Override
