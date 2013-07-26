@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
@@ -51,6 +52,9 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     private PsiClassFinder psiClassFinder;
 
     private JavaClassResolver javaClassResolver;
+
+    private VirtualFileFinder virtualFileFinder;
+
 
     // TODO: a single instance of StorageManager for all computations in resolve-java
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
@@ -73,6 +77,11 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @Inject
     public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
         this.psiClassFinder = psiClassFinder;
+    }
+
+    @Inject
+    public void setVirtualFileFinder(VirtualFileFinder virtualFileFinder) {
+        this.virtualFileFinder = virtualFileFinder;
     }
 
     @Inject
@@ -108,6 +117,10 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @NotNull
     private VirtualFile findVirtualFileByClass(@NotNull ClassDescriptor descriptor) {
         FqName fqName = kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor));
+        VirtualFile fileForKotlinFile = virtualFileFinder.find(fqName);
+        if (fileForKotlinFile != null) {
+            return fileForKotlinFile;
+        }
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE /* TODO: ?! */);
         if (psiClass == null) {
             throw new IllegalStateException("Psi class is not found for class: " + descriptor);
@@ -127,11 +140,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @NotNull
     private VirtualFile findVirtualFileByPackage(@NotNull NamespaceDescriptor descriptor) {
         FqName fqName = PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe());
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE /* TODO: ?! */);
-        if (psiClass == null) {
-            throw new IllegalStateException("Psi class is not found for package: " + descriptor);
-        }
-        VirtualFile virtualFile = psiClass.getContainingFile().getVirtualFile();
+        VirtualFile virtualFile = virtualFileFinder.find(fqName);
         if (virtualFile == null) {
             throw new IllegalStateException("Virtual file is not found for package: " + descriptor);
         }

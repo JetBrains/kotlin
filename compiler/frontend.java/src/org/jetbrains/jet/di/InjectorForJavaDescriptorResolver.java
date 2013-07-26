@@ -125,6 +125,7 @@ public class InjectorForJavaDescriptorResolver {
 
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
         annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
+        annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
 
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
