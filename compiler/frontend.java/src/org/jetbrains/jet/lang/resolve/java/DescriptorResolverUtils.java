@@ -27,9 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.psi.util.PsiFormatUtilBase.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
@@ -154,5 +152,21 @@ public final class DescriptorResolverUtils {
         String formattedMethod = PsiFormatUtil.formatMethod(
                 method, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
         return OBJECT_METHODS.contains(formattedMethod);
+    }
+
+    @NotNull
+    public static Collection<PsiClass> filterDuplicateClasses(@NotNull PsiClass[] classes) {
+        Set<String> addedQualifiedNames = new HashSet<String>(classes.length);
+        List<PsiClass> result = new ArrayList<PsiClass>(classes.length);
+
+        for (PsiClass psiClass : classes) {
+            String qualifiedName = psiClass.getQualifiedName();
+
+            if (qualifiedName != null && addedQualifiedNames.add(qualifiedName)) {
+                result.add(psiClass);
+            }
+        }
+
+        return result;
     }
 }

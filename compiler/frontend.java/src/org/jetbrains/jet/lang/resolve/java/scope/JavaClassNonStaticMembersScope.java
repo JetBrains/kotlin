@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.ArrayList;
@@ -44,10 +43,9 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
             @NotNull ClassDescriptor descriptor,
             @NotNull PsiClass psiClass,
             boolean staticMembersOfPsiClass,
-            @NotNull PsiClassFinder psiClassFinder,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, psiClass, MembersProvider.forClass(psiClassFinder, psiClass, staticMembersOfPsiClass), javaDescriptorResolver);
+        super(descriptor, psiClass, MembersProvider.forClass(psiClass, staticMembersOfPsiClass), javaDescriptorResolver);
         this.descriptor = descriptor;
         this.staticMembersOfPsiClass = staticMembersOfPsiClass;
     }

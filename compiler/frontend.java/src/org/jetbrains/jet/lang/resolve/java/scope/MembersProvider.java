@@ -20,7 +20,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -28,34 +27,26 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 
 /* package */ class MembersProvider {
-    @NotNull
-    private final PsiClassFinder psiClassFinder;
     @Nullable
     private final PsiClass psiClass;
     @Nullable
     private final PsiPackage psiPackage;
     private final boolean staticMembers;
 
-    private MembersProvider(
-            @NotNull PsiClassFinder psiClassFinder,
-            @Nullable PsiClass psiClass,
-            @Nullable PsiPackage psiPackage,
-            boolean staticMembers
-    ) {
-        this.psiClassFinder = psiClassFinder;
+    private MembersProvider(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, boolean staticMembers) {
         this.psiClass = psiClass;
         this.psiPackage = psiPackage;
         this.staticMembers = staticMembers;
     }
 
     @NotNull
-    public static MembersProvider forPackage(@NotNull PsiClassFinder psiClassFinder, @NotNull PsiPackage psiPackage) {
-        return new MembersProvider(psiClassFinder, null, psiPackage, true);
+    public static MembersProvider forPackage(@NotNull PsiPackage psiPackage) {
+        return new MembersProvider(null, psiPackage, true);
     }
 
     @NotNull
-    public static MembersProvider forClass(@NotNull PsiClassFinder psiClassFinder, @NotNull PsiClass psiClass, boolean staticMembers) {
-        return new MembersProvider(psiClassFinder, psiClass, null, staticMembers);
+    public static MembersProvider forClass(@NotNull PsiClass psiClass, boolean staticMembers) {
+        return new MembersProvider(psiClass, null, staticMembers);
     }
 
     @Nullable
@@ -72,7 +63,7 @@ import java.util.Collection;
     @NotNull
     private MembersCache getMembersCache() {
         if (membersCache == null) {
-            membersCache = MembersCache.buildMembersByNameCache(psiClassFinder, psiClass, psiPackage, staticMembers);
+            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers);
         }
         return membersCache;
     }

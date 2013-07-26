@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -40,10 +39,9 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
             @NotNull NamespaceDescriptor descriptor,
             @NotNull FqName packageFQN,
             @NotNull PsiClass psiClass,
-            @NotNull PsiClassFinder psiClassFinder,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, psiClass, MembersProvider.forClass(psiClassFinder, psiClass, true), javaDescriptorResolver);
+        super(descriptor, psiClass, MembersProvider.forClass(psiClass, true), javaDescriptorResolver);
         this.packageFQN = packageFQN;
     }
 

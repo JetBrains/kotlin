@@ -297,8 +297,7 @@ public final class JavaClassResolver {
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, psiClass, false, psiClassFinder,
-                                                                                  javaDescriptorResolver);
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, psiClass, false, javaDescriptorResolver);
         classDescriptor.setScopeForMemberLookup(scope);
         classDescriptor.setScopeForConstructorResolve(scope);
 
@@ -504,7 +503,7 @@ public final class JavaClassResolver {
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, psiClass, true, psiClassFinder,
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, psiClass, true,
                                                                                   javaDescriptorResolver);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(scope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");

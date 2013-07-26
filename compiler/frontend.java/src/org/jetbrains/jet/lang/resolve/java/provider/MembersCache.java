@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
@@ -32,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public final class MembersCache {
@@ -91,7 +89,6 @@ public final class MembersCache {
 
     @NotNull
     public static MembersCache buildMembersByNameCache(
-            @NotNull PsiClassFinder finder,
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
             boolean staticMembers
@@ -100,21 +97,23 @@ public final class MembersCache {
 
         if (psiClass != null) {
             membersCache.new ClassMemberProcessor(psiClass, staticMembers).process();
+            Collection<PsiClass> innerClasses = DescriptorResolverUtils.filterDuplicateClasses(psiClass.getInnerClasses());
+            membersCache.new ExtraPackageMembersProcessor(innerClasses).process();
         }
-
-        //TODO:
-        List<PsiClass> classes = psiPackage != null ? finder.findPsiClasses(psiPackage) : finder.findInnerPsiClasses(psiClass);
-        membersCache.new ExtraPackageMembersProcessor(classes).process();
+        else if (psiPackage != null) {
+            Collection<PsiClass> classes = DescriptorResolverUtils.filterDuplicateClasses(psiPackage.getClasses());
+            membersCache.new ExtraPackageMembersProcessor(classes).process();
+        }
 
         return membersCache;
     }
 
     private class ExtraPackageMembersProcessor { // 'extra' means that PSI elements for these members are not just top-level classes
         @NotNull
-        private final List<PsiClass> psiClasses;
+        private final Collection<PsiClass> psiClasses;
 
-        private ExtraPackageMembersProcessor(@NotNull List<PsiClass> classes) {
-            psiClasses = classes;
+        private ExtraPackageMembersProcessor(@NotNull Collection<PsiClass> psiClasses) {
+            this.psiClasses = psiClasses;
         }
 
         private void process() {
