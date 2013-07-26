@@ -60,12 +60,6 @@ public final class JavaPackageScope extends JavaBaseScope {
     }
 
     @Override
-    @NotNull
-    public PsiPackage getPsiElement() {
-        return psiPackage;
-    }
-
-    @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
         if (classDescriptor == null || classDescriptor.getKind().isObject()) {

@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -158,10 +157,6 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         }
         return result;
     }
-
-    //TODO: remove this method
-    @NotNull
-    public abstract PsiElement getPsiElement();
 
     @NotNull
     protected Collection<ClassDescriptor> getInnerClasses() {

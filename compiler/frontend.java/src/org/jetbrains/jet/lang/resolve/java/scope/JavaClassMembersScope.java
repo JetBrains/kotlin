@@ -44,12 +44,6 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
 
     @NotNull
     @Override
-    public PsiClass getPsiElement() {
-        return psiClass;
-    }
-
-    @NotNull
-    @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         throw new UnsupportedOperationException(); // TODO
     }
