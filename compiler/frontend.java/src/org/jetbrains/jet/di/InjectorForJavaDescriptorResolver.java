@@ -130,6 +130,7 @@ public class InjectorForJavaDescriptorResolver {
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaNamespaceResolver.setPsiClassFinder(psiClassFinder);
         javaNamespaceResolver.setTrace(bindingTrace);
+        javaNamespaceResolver.setVirtualFileFinder(virtualFileFinder);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setTrace(bindingTrace);
