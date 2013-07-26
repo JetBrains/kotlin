@@ -126,7 +126,7 @@ public class LazyImportScope implements JetScope {
     ) {
         this.resolveSession = resolveSession;
         this.packageDescriptor = packageDescriptor;
-        this.importsProvider = new ImportsProvider(imports);
+        this.importsProvider = new ImportsProvider(resolveSession.getStorageManager(), imports);
         this.traceForImportResolve = traceForImportResolve;
         this.debugName = debugName;
 
