@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.storage;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -215,20 +217,62 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
+    private static class LockProtectedContext implements BindingContext {
+        private final Object lock;
+        private final BindingContext context;
+
+        private LockProtectedContext(Object lock, BindingContext context) {
+            this.lock = lock;
+            this.context = context;
+        }
+
+        @Override
+        public Collection<Diagnostic> getDiagnostics() {
+            synchronized (lock) {
+                return context.getDiagnostics();
+            }
+        }
+
+        @Nullable
+        @Override
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            synchronized (lock) {
+                return context.get(slice, key);
+            }
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            synchronized (lock) {
+                return context.getKeys(slice);
+            }
+        }
+
+        @NotNull
+        @Override
+        @TestOnly
+        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+            synchronized (lock) {
+                return context.getSliceContents(slice);
+            }
+        }
+    }
+
     private static class LockProtectedTrace implements BindingTrace {
         private final Object lock;
         private final BindingTrace trace;
+        private final BindingContext context;
 
         public LockProtectedTrace(@NotNull Object lock, @NotNull BindingTrace trace) {
             this.lock = lock;
             this.trace = trace;
+            this.context = new LockProtectedContext(lock, trace.getBindingContext());
         }
 
         @Override
         public BindingContext getBindingContext() {
-            synchronized (lock) {
-                return trace.getBindingContext();
-            }
+            return context;
         }
 
         @Override
