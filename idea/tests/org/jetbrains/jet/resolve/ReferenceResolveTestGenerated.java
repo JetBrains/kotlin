@@ -71,6 +71,16 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         doTest("idea/testData/resolve/references/CtrlClickResolve.kt");
     }
     
+    @TestMetadata("GenericFunctionParameter.kt")
+    public void testGenericFunctionParameter() throws Exception {
+        doTest("idea/testData/resolve/references/GenericFunctionParameter.kt");
+    }
+    
+    @TestMetadata("GenericTypeInFunctionParameter.kt")
+    public void testGenericTypeInFunctionParameter() throws Exception {
+        doTest("idea/testData/resolve/references/GenericTypeInFunctionParameter.kt");
+    }
+    
     @TestMetadata("InClassParameter.kt")
     public void testInClassParameter() throws Exception {
         doTest("idea/testData/resolve/references/InClassParameter.kt");
@@ -84,6 +94,11 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
     @TestMetadata("InFunctionParameterType.kt")
     public void testInFunctionParameterType() throws Exception {
         doTest("idea/testData/resolve/references/InFunctionParameterType.kt");
+    }
+    
+    @TestMetadata("InMethodParameter.kt")
+    public void testInMethodParameter() throws Exception {
+        doTest("idea/testData/resolve/references/InMethodParameter.kt");
     }
     
     @TestMetadata("InObjectClassObject.kt")
