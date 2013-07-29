@@ -110,6 +110,12 @@ public class ConstraintsUtil {
     @Nullable
     private static JetType commonSupertype(@NotNull Collection<JetType> lowerBounds) {
         if (lowerBounds.isEmpty()) return null;
+        if (lowerBounds.size() == 1) {
+            JetType type = lowerBounds.iterator().next();
+            if (type.getConstructor() instanceof IntersectionTypeConstructor) {
+                return commonSupertype(type.getConstructor().getSupertypes());
+            }
+        }
         return CommonSupertypes.commonSupertype(lowerBounds);
     }
 
@@ -124,6 +130,7 @@ public class ConstraintsUtil {
             @NotNull TypeConstraints typeConstraints
     ) {
         if (suggestion == null) return false;
+        if (!suggestion.getConstructor().isDenotable()) return false;
         if (typeConstraints.getExactBounds().size() > 1) return false;
 
         for (JetType exactBound : typeConstraints.getExactBounds()) {

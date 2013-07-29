@@ -578,12 +578,28 @@ public class CandidateResolver {
         CallResolutionContext<?> newContext = context.replaceBindingTrace(traceToResolveArgument).replaceExpectedType(expectedType);
         JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext,
                                                                                resolveFunctionArgumentBodies, traceToResolveArgument);
-        JetType type = typeInfoForCall.getType();
+        JetType type = updateResultTypeForSmartCasts(typeInfoForCall.getType(), argumentExpression, context);
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         if (isErrorType != null) {
             isErrorType[0] = type == null || ErrorUtils.isErrorType(type);
         }
+    }
+
+    @Nullable
+    private static JetType updateResultTypeForSmartCasts(
+            @Nullable JetType type,
+            @Nullable JetExpression argumentExpression,
+            @NotNull CallCandidateResolutionContext<?> context
+    ) {
+        if (argumentExpression == null || type == null) return type;
+
+        DataFlowValue dataFlowValue =
+                DataFlowValueFactory.INSTANCE.createDataFlowValue(argumentExpression, type, context.trace.getBindingContext());
+        Set<JetType> possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue);
+        if (possibleTypes.isEmpty()) return type;
+
+        return TypeUtils.intersect(JetTypeChecker.INSTANCE, possibleTypes);
     }
 
     private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(

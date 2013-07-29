@@ -5070,6 +5070,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/smartCasts")
+        @InnerTestClasses({SmartCasts.Inference.class})
         public static class SmartCasts extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInSmartCasts() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -5115,6 +5116,40 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabelAsReceiverPart.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/inference")
+            public static class Inference extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInInference() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/smartCasts/inference"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("intersectionTypes.kt")
+                public void testIntersectionTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/intersectionTypes.kt");
+                }
+                
+                @TestMetadata("kt1355.kt")
+                public void testKt1355() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt1355.kt");
+                }
+                
+                @TestMetadata("kt2746.kt")
+                public void testKt2746() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt2746.kt");
+                }
+                
+                @TestMetadata("kt2851.kt")
+                public void testKt2851() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt2851.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("SmartCasts");
+                suite.addTestSuite(SmartCasts.class);
+                suite.addTestSuite(Inference.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/substitutions")
@@ -5345,7 +5380,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Scopes.class);
             suite.addTestSuite(SenselessComparison.class);
             suite.addTestSuite(Shadowing.class);
-            suite.addTestSuite(SmartCasts.class);
+            suite.addTest(SmartCasts.innerSuite());
             suite.addTestSuite(Substitutions.class);
             suite.addTestSuite(Subtyping.class);
             suite.addTestSuite(ThisAndSuper.class);
