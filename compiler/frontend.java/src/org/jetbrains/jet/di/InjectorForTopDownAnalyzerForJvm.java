@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
@@ -81,6 +82,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final JavaBridgeConfiguration javaBridgeConfiguration;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final PsiClassFinderImpl psiClassFinder;
+    private final JavaClassFinderImpl javaClassFinder;
     private final NamespaceFactoryImpl namespaceFactory;
     private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
@@ -133,6 +135,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
+        this.javaClassFinder = new JavaClassFinderImpl();
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.declarationResolver = new DeclarationResolver();
@@ -208,6 +211,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         psiClassFinder.setProject(project);
 
+        javaClassFinder.setPsiClassFinder(psiClassFinder);
+
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
         this.namespaceFactory.setTrace(bindingTrace);
 
@@ -279,10 +284,10 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
+        javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
-        javaClassResolver.setPsiClassFinder(psiClassFinder);
         javaClassResolver.setSignatureResolver(javaSignatureResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTrace(bindingTrace);
@@ -315,8 +320,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
 
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaNamespaceResolver.setPsiClassFinder(psiClassFinder);
         javaNamespaceResolver.setTrace(bindingTrace);
         javaNamespaceResolver.setVirtualFileFinder(virtualFileFinder);
 

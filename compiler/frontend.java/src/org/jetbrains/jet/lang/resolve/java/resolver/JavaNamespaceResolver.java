@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiPackage;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +39,8 @@ import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -61,7 +62,7 @@ public final class JavaNamespaceResolver {
     @NotNull
     private final Set<FqName> unresolvedCache = Sets.newHashSet();
 
-    private PsiClassFinder psiClassFinder;
+    private JavaClassFinder javaClassFinder;
     private BindingTrace trace;
     private JavaDescriptorResolver javaDescriptorResolver;
 
@@ -77,8 +78,8 @@ public final class JavaNamespaceResolver {
     }
 
     @Inject
-    public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
-        this.psiClassFinder = psiClassFinder;
+    public void setJavaClassFinder(JavaClassFinder javaClassFinder) {
+        this.javaClassFinder = javaClassFinder;
     }
 
     @Inject
@@ -156,8 +157,8 @@ public final class JavaNamespaceResolver {
             @NotNull NamespaceDescriptor namespaceDescriptor,
             boolean record
     ) {
-        PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
-        if (psiPackage != null) {
+        JavaPackage javaPackage = javaClassFinder.findPackage(fqName);
+        if (javaPackage != null) {
             FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName);
             VirtualFile virtualFile = virtualFileFinder.find(packageClassFqName);
 
@@ -175,19 +176,21 @@ public final class JavaNamespaceResolver {
 
             // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
             if (record) {
-                trace.record(BindingContext.NAMESPACE, psiPackage, namespaceDescriptor);
+                trace.record(BindingContext.NAMESPACE, javaPackage.getPsiPackage(), namespaceDescriptor);
             }
 
-            return new JavaPackageScope(namespaceDescriptor, psiPackage, fqName, javaDescriptorResolver);
+            return new JavaPackageScope(namespaceDescriptor, javaPackage, fqName, javaDescriptorResolver);
         }
 
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
-        if (psiClass == null) {
+        JavaClass javaClass = javaClassFinder.findClass(fqName);
+        if (javaClass == null) {
             return null;
         }
-        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
+
+        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass)) {
             return null;
         }
+        PsiClass psiClass = javaClass.getPsiClass();
         if (!hasStaticMembers(psiClass)) {
             return null;
         }
@@ -198,7 +201,7 @@ public final class JavaNamespaceResolver {
             trace.record(BindingContext.NAMESPACE, psiClass, namespaceDescriptor);
         }
 
-        return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, psiClass, javaDescriptorResolver);
+        return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, javaClass, javaDescriptorResolver);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JetScope packageScope) {
@@ -248,14 +251,14 @@ public final class JavaNamespaceResolver {
 
     @NotNull
     public Collection<Name> getClassNamesInPackage(@NotNull FqName packageName) {
-        PsiPackage psiPackage = psiClassFinder.findPsiPackage(packageName);
-        if (psiPackage == null) return Collections.emptyList();
+        JavaPackage javaPackage = javaClassFinder.findPackage(packageName);
+        if (javaPackage == null) return Collections.emptyList();
 
-        PsiClass[] classes = psiPackage.getClasses();
-        List<Name> result = new ArrayList<Name>(classes.length);
-        for (PsiClass psiClass : classes) {
-            if (DescriptorResolverUtils.isCompiledKotlinClass(psiClass)) {
-                result.add(Name.identifier(psiClass.getName()));
+        Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
+        List<Name> result = new ArrayList<Name>(classes.size());
+        for (JavaClass javaClass : classes) {
+            if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass)) {
+                result.add(Name.identifier(javaClass.getName()));
             }
         }
 

@@ -22,7 +22,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
@@ -39,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -91,7 +91,7 @@ public final class JavaClassResolver {
     private JavaSignatureResolver signatureResolver;
     private JavaDescriptorResolver javaDescriptorResolver;
     private JavaAnnotationResolver annotationResolver;
-    private PsiClassFinder psiClassFinder;
+    private JavaClassFinder javaClassFinder;
     private JavaNamespaceResolver namespaceResolver;
     private JavaSupertypeResolver supertypesResolver;
     private JavaFunctionResolver functionResolver;
@@ -132,8 +132,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
-        this.psiClassFinder = psiClassFinder;
+    public void setJavaClassFinder(JavaClassFinder javaClassFinder) {
+        this.javaClassFinder = javaClassFinder;
     }
 
     @Inject
@@ -237,17 +237,14 @@ public final class JavaClassResolver {
             }
         }
 
-        PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName);
-        if (psiClass == null) {
+        JavaClass javaClass = javaClassFinder.findClass(qualifiedName);
+        if (javaClass == null) {
             cacheNegativeValue(javaClassToKotlinFqName(qualifiedName));
             return null;
         }
 
         if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            PsiAnnotation assertInvisibleAnnotation = JavaAnnotationResolver.findOwnAnnotation(
-                    psiClass, JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().asString());
-
-            if (assertInvisibleAnnotation != null) {
+            if (javaClass.findAnnotation(JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().asString()) != null) {
                 if (ApplicationManager.getApplication().isInternal()) {
                     LOG.error("classpath is configured incorrectly:" +
                               " class " + qualifiedName + " from runtime must not be loaded by compiler");
@@ -257,10 +254,12 @@ public final class JavaClassResolver {
         }
 
         // Class may have been resolved previously by different Java resolver instance, and we are reusing its trace
-        ClassDescriptor alreadyResolved = trace.get(BindingContext.CLASS, psiClass);
+        ClassDescriptor alreadyResolved = trace.get(BindingContext.CLASS, javaClass.getPsiClass());
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
+
+        PsiClass psiClass = javaClass.getPsiClass();
         //TODO: code duplication
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, isContainedInClass(psiClass));
         // class may be resolved during resolution of parent
@@ -275,7 +274,7 @@ public final class JavaClassResolver {
         checkPsiClassIsNotJet(psiClass);
 
 
-        return doCreateClassDescriptor(qualifiedName, psiClass, tasks, containingDeclaration);
+        return doCreateClassDescriptor(qualifiedName, javaClass, tasks, containingDeclaration);
     }
 
     private void cacheNegativeValue(@NotNull FqNameBase qualifiedName) {
@@ -293,10 +292,12 @@ public final class JavaClassResolver {
     @NotNull
     private ClassDescriptorFromJvmBytecode doCreateClassDescriptor(
             @NotNull FqName fqName,
-            @NotNull PsiClass psiClass,
+            @NotNull JavaClass javaClass,
             @NotNull PostponedTasks taskList,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
+        PsiClass psiClass = javaClass.getPsiClass();
+
         ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, getClassKind(psiClass),
                                                                                             isInnerClass(psiClass));
 
@@ -314,7 +315,7 @@ public final class JavaClassResolver {
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, psiClass, false, javaDescriptorResolver);
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, javaClass, false, javaDescriptorResolver);
         classDescriptor.setScopeForMemberLookup(scope);
         classDescriptor.setScopeForConstructorResolve(scope);
 
@@ -326,7 +327,7 @@ public final class JavaClassResolver {
         supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, psiClass, classTypeParameters));
 
         if (psiClass.isEnum()) {
-            ClassDescriptorFromJvmBytecode classObjectDescriptor = createClassObjectDescriptorForEnum(classDescriptor, psiClass);
+            ClassDescriptorFromJvmBytecode classObjectDescriptor = createClassObjectDescriptorForEnum(classDescriptor, javaClass);
             cache(getFqNameForClassObject(psiClass), classObjectDescriptor);
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
@@ -497,11 +498,8 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassDescriptorFromJvmBytecode createClassObjectDescriptorForEnum(
-            @NotNull ClassDescriptor containing,
-            @NotNull PsiClass psiClass
-    ) {
-        ClassDescriptorFromJvmBytecode classObjectDescriptor = createSyntheticClassObject(containing, psiClass);
+    private ClassDescriptorFromJvmBytecode createClassObjectDescriptorForEnum(@NotNull ClassDescriptor containing, @NotNull JavaClass javaClass) {
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = createSyntheticClassObject(containing, javaClass);
 
         classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
         classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
@@ -510,7 +508,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
+    private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull JavaClass javaClass) {
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
                 new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
 
@@ -520,7 +518,7 @@ public final class JavaClassResolver {
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, psiClass, true,
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, javaClass, true,
                                                                                   javaDescriptorResolver);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(scope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");

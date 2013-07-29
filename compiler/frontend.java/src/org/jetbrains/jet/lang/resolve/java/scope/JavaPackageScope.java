@@ -18,15 +18,15 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -39,18 +39,18 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_K
 
 public final class JavaPackageScope extends JavaBaseScope {
     @NotNull
-    private final PsiPackage psiPackage;
+    private final JavaPackage javaPackage;
     @NotNull
     private final FqName packageFQN;
 
     public JavaPackageScope(
             @NotNull NamespaceDescriptor descriptor,
-            @NotNull PsiPackage psiPackage,
+            @NotNull JavaPackage javaPackage,
             @NotNull FqName packageFQN,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, javaDescriptorResolver, MembersProvider.forPackage(psiPackage));
-        this.psiPackage = psiPackage;
+        super(descriptor, javaDescriptorResolver, MembersProvider.forPackage(javaPackage));
+        this.javaPackage = javaPackage;
         this.packageFQN = packageFQN;
     }
 
@@ -89,24 +89,24 @@ public final class JavaPackageScope extends JavaBaseScope {
     private Collection<DeclarationDescriptor> computeAllPackageDeclarations() {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
 
-        for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
-            FqName fqName = new FqName(psiSubPackage.getQualifiedName());
+        for (JavaPackage subPackage : javaPackage.getSubPackages()) {
+            FqName fqName = new FqName(subPackage.getFqName());
             NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(fqName, IGNORE_KOTLIN_SOURCES);
             if (childNs != null) {
                 result.add(childNs);
             }
         }
 
-        for (PsiClass psiClass : DescriptorResolverUtils.filterDuplicateClasses(psiPackage.getClasses())) {
-            if (DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass)) continue;
+        for (JavaClass javaClass : DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses())) {
+            if (DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass)) continue;
 
-            if (psiClass instanceof JetJavaMirrorMarker) continue;
+            if (isKotlinLightClass(javaClass)) continue;
 
-            if (!psiClass.hasModifierProperty(PsiModifier.PUBLIC)) continue;
+            if (!javaClass.getPsiClass().hasModifierProperty(PsiModifier.PUBLIC)) continue;
 
             ProgressIndicatorProvider.checkCanceled();
 
-            String qualifiedName = psiClass.getQualifiedName();
+            String qualifiedName = javaClass.getFqName();
             if (qualifiedName == null) continue;
             FqName fqName = new FqName(qualifiedName);
 
@@ -122,6 +122,10 @@ public final class JavaPackageScope extends JavaBaseScope {
         }
 
         return result;
+    }
+
+    private static boolean isKotlinLightClass(@NotNull JavaClass javaClass) {
+        return javaClass.getPsiClass() instanceof JetJavaMirrorMarker;
     }
 
     @Override

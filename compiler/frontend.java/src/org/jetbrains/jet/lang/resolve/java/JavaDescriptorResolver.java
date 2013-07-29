@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -81,8 +81,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
-        return constructorResolver.resolveConstructors(psiClass, classDescriptor);
+    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull JavaClass javaClass, @NotNull ClassDescriptor classDescriptor) {
+        return constructorResolver.resolveConstructors(javaClass, classDescriptor);
     }
 
     @Nullable

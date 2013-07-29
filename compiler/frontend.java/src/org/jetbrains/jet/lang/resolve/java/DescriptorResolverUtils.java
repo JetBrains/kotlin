@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -38,33 +39,29 @@ public final class DescriptorResolverUtils {
     private DescriptorResolverUtils() {
     }
 
-    public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
-        if (psiClass instanceof ClsClassImpl) {
-            String qualifiedName = psiClass.getQualifiedName();
-            if (qualifiedName != null && PackageClassUtils.isPackageClassFqName(new FqName(qualifiedName))) {
-                return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
+    public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
+        if (javaClass.getPsiClass() instanceof ClsClassImpl) {
+            String fqName = javaClass.getFqName();
+            if (fqName != null && PackageClassUtils.isPackageClassFqName(new FqName(fqName))) {
+                return hasAnnotation(javaClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
             }
         }
         return false;
     }
 
-    public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
-        if (psiClass instanceof ClsClassImpl) {
-            return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
+    public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
+        if (javaClass.getPsiClass() instanceof ClsClassImpl) {
+            return hasAnnotation(javaClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
         }
         return false;
     }
 
-    public static boolean hasAnnotation(@NotNull PsiClass psiClass, @NotNull FqName annotationFqName) {
-        PsiModifierList list = psiClass.getModifierList();
-        if (list != null) {
-            return list.findAnnotation(annotationFqName.asString()) != null;
-        }
-        return false;
+    public static boolean hasAnnotation(@NotNull JavaClass javaClass, @NotNull FqName annotationFqName) {
+        return javaClass.findAnnotation(annotationFqName.asString()) != null;
     }
 
-    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull PsiClass psiClass) {
-        return isCompiledKotlinClass(psiClass) || isCompiledKotlinPackageClass(psiClass);
+    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
+        return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
     }
 
     @NotNull
@@ -155,15 +152,14 @@ public final class DescriptorResolverUtils {
     }
 
     @NotNull
-    public static Collection<PsiClass> filterDuplicateClasses(@NotNull PsiClass[] classes) {
-        Set<String> addedQualifiedNames = new HashSet<String>(classes.length);
-        List<PsiClass> result = new ArrayList<PsiClass>(classes.length);
+    public static Collection<JavaClass> filterDuplicateClasses(@NotNull Collection<JavaClass> classes) {
+        Set<String> addedQualifiedNames = new HashSet<String>(classes.size());
+        List<JavaClass> result = new ArrayList<JavaClass>(classes.size());
 
-        for (PsiClass psiClass : classes) {
-            String qualifiedName = psiClass.getQualifiedName();
-
-            if (qualifiedName != null && addedQualifiedNames.add(qualifiedName)) {
-                result.add(psiClass);
+        for (JavaClass javaClass : classes) {
+            String fqName = javaClass.getFqName();
+            if (fqName != null && addedQualifiedNames.add(fqName)) {
+                result.add(javaClass);
             }
         }
 

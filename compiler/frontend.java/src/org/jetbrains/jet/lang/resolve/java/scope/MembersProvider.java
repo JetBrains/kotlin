@@ -16,37 +16,37 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
 /* package */ class MembersProvider {
     @Nullable
-    private final PsiClass psiClass;
+    private final JavaClass javaClass;
     @Nullable
-    private final PsiPackage psiPackage;
+    private final JavaPackage javaPackage;
     private final boolean staticMembers;
 
-    private MembersProvider(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, boolean staticMembers) {
-        this.psiClass = psiClass;
-        this.psiPackage = psiPackage;
+    private MembersProvider(@Nullable JavaClass javaClass, @Nullable JavaPackage javaPackage, boolean staticMembers) {
+        this.javaClass = javaClass;
+        this.javaPackage = javaPackage;
         this.staticMembers = staticMembers;
     }
 
     @NotNull
-    public static MembersProvider forPackage(@NotNull PsiPackage psiPackage) {
-        return new MembersProvider(null, psiPackage, true);
+    public static MembersProvider forPackage(@NotNull JavaPackage javaPackage) {
+        return new MembersProvider(null, javaPackage, true);
     }
 
     @NotNull
-    public static MembersProvider forClass(@NotNull PsiClass psiClass, boolean staticMembers) {
-        return new MembersProvider(psiClass, null, staticMembers);
+    public static MembersProvider forClass(@NotNull JavaClass javaClass, boolean staticMembers) {
+        return new MembersProvider(javaClass, null, staticMembers);
     }
 
     @Nullable
@@ -63,7 +63,7 @@ import java.util.Collection;
     @NotNull
     private MembersCache getMembersCache() {
         if (membersCache == null) {
-            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers);
+            membersCache = MembersCache.buildMembersByNameCache(javaClass, javaPackage, staticMembers);
         }
         return membersCache;
     }

@@ -18,12 +18,17 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -89,19 +94,19 @@ public final class MembersCache {
 
     @NotNull
     public static MembersCache buildMembersByNameCache(
-            @Nullable PsiClass psiClass,
-            @Nullable PsiPackage psiPackage,
+            @Nullable JavaClass javaClass,
+            @Nullable JavaPackage javaPackage,
             boolean staticMembers
     ) {
         MembersCache membersCache = new MembersCache();
 
-        if (psiClass != null) {
-            membersCache.new ClassMemberProcessor(psiClass, staticMembers).process();
-            Collection<PsiClass> innerClasses = DescriptorResolverUtils.filterDuplicateClasses(psiClass.getInnerClasses());
+        if (javaClass != null) {
+            membersCache.new ClassMemberProcessor(javaClass, staticMembers).process();
+            Collection<JavaClass> innerClasses = javaClass.getInnerClasses();
             membersCache.new ExtraPackageMembersProcessor(innerClasses).process();
         }
-        else if (psiPackage != null) {
-            Collection<PsiClass> classes = DescriptorResolverUtils.filterDuplicateClasses(psiPackage.getClasses());
+        else if (javaPackage != null) {
+            Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
             membersCache.new ExtraPackageMembersProcessor(classes).process();
         }
 
@@ -110,14 +115,16 @@ public final class MembersCache {
 
     private class ExtraPackageMembersProcessor { // 'extra' means that PSI elements for these members are not just top-level classes
         @NotNull
-        private final Collection<PsiClass> psiClasses;
+        private final Collection<JavaClass> javaClasses;
 
-        private ExtraPackageMembersProcessor(@NotNull Collection<PsiClass> psiClasses) {
-            this.psiClasses = psiClasses;
+        private ExtraPackageMembersProcessor(@NotNull Collection<JavaClass> javaClasses) {
+            this.javaClasses = javaClasses;
         }
 
         private void process() {
-            for (PsiClass psiClass : psiClasses) {
+            for (JavaClass javaClass : javaClasses) {
+                PsiClass psiClass = javaClass.getPsiClass();
+
                 if (!(psiClass instanceof JetJavaMirrorMarker)) { // to filter out JetLightClasses
                     if (SingleAbstractMethodUtils.isSamInterface(psiClass)) {
                         processSamInterface(psiClass);
@@ -137,8 +144,8 @@ public final class MembersCache {
         private final PsiClass psiClass;
         private final boolean staticMembers;
 
-        private ClassMemberProcessor(@NotNull PsiClass psiClass, boolean staticMembers) {
-            this.psiClass = psiClass;
+        private ClassMemberProcessor(@NotNull JavaClass javaClass, boolean staticMembers) {
+            this.psiClass = javaClass.getPsiClass();
             this.staticMembers = staticMembers;
         }
 

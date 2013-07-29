@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.ArrayList;
@@ -37,18 +37,18 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     @NotNull
     private final ClassDescriptor descriptor;
     @NotNull
-    private final PsiClass psiClass;
+    private final JavaClass javaClass;
     private final boolean staticMembersOfPsiClass;
 
     public JavaClassNonStaticMembersScope(
             @NotNull ClassDescriptor descriptor,
-            @NotNull PsiClass psiClass,
+            @NotNull JavaClass javaClass,
             boolean staticMembersOfPsiClass,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, MembersProvider.forClass(psiClass, staticMembersOfPsiClass), javaDescriptorResolver);
+        super(descriptor, MembersProvider.forClass(javaClass, staticMembersOfPsiClass), javaDescriptorResolver);
         this.descriptor = descriptor;
-        this.psiClass = psiClass;
+        this.javaClass = javaClass;
         this.staticMembersOfPsiClass = staticMembersOfPsiClass;
     }
 
@@ -67,7 +67,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
 
     private void initConstructorsIfNeeded() {
         if (constructors == null) {
-            constructors = javaDescriptorResolver.resolveConstructors(psiClass, descriptor);
+            constructors = javaDescriptorResolver.resolveConstructors(javaClass, descriptor);
 
             for (ConstructorDescriptor constructor : constructors) {
                 if (constructor.isPrimary()) {
@@ -88,18 +88,18 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
             return Collections.emptyList();
         }
 
-        PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
-        List<ClassDescriptor> result = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
-        for (PsiClass innerPsiClass : innerPsiClasses) {
-            result.add(resolveInnerClass(innerPsiClass));
+        Collection<JavaClass> innerClasses = javaClass.getInnerClasses();
+        List<ClassDescriptor> result = new ArrayList<ClassDescriptor>(innerClasses.size());
+        for (JavaClass innerClass : innerClasses) {
+            result.add(resolveInnerClass(innerClass));
         }
         return result;
     }
 
     @NotNull
-    private ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
-        String name = innerPsiClass.getQualifiedName();
-        assert name != null : "Inner class has no qualified name: " + innerPsiClass;
+    private ClassDescriptor resolveInnerClass(@NotNull JavaClass innerClass) {
+        String name = innerClass.getFqName();
+        assert name != null : "Inner class has no qualified name: " + innerClass;
         ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName(name), IGNORE_KOTLIN_SOURCES);
         assert classDescriptor != null : "Couldn't resolve inner class " + name;
         return classDescriptor;

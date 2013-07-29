@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
@@ -103,6 +104,7 @@ public class GenerateInjectors {
         generator.addPublicField(JavaBridgeConfiguration.class);
         generator.addField(JavaDescriptorResolver.class);
         generator.addField(PsiClassFinderImpl.class);
+        generator.addField(JavaClassFinderImpl.class);
         generator.addPublicField(NamespaceFactoryImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(
@@ -119,6 +121,7 @@ public class GenerateInjectors {
         generator.addParameter(BindingTrace.class);
 
         // Fields
+        generator.addField(JavaClassFinderImpl.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
