@@ -178,6 +178,14 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
+    @Override
+    public PsiFile getStubBindingRoot() {
+        PsiFile psi = getPsi(getBaseLanguage());
+        assert psi != null;
+        return psi;
+    }
+
     public static JetFile createJetFile(PsiManager psiManager, VirtualFile file, String text) {
         return new JetDummyClassFileViewProvider(psiManager, file, text).getPsi(JetLanguage.INSTANCE);
     }

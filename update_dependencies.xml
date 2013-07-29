@@ -1,6 +1,6 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="1991596"/>
-    <property name="public.buildserver.build.id" value="86986"/>
+    <property name="jb.buildserver.build.id" value="1996871"/>
+    <property name="public.buildserver.build.id" value="87482"/>
     <property name="idea.archive.name" value="ideaIC-130.SNAPSHOT.win.zip"/>
 
     <property name="idea.sdk.fetch.needed" value="true"/>
