@@ -17,7 +17,8 @@ fun box(): String {
     if (ann == null) return "fail: cannot find Ann on MyClass}"
     if (ann.i != 1) return "fail: annotation parameter i should be 1, but was ${ann.i}"
     if (ann.s != "a") return "fail: annotation parameter s should be \"a\", but was ${ann.s}"
-    if (ann.a.toString() != "@Ann2()") return "fail: annotation parameter a should be of class Ann2, but was ${ann.a}"
+    val annSimpleName = ann.a.annotationType().getSimpleName()
+    if (annSimpleName != "Ann2") return "fail: annotation parameter a should be of class Ann2, but was $annSimpleName"
     if (ann.e != MyEnum.A) return "fail: annotation parameter e should be MyEnum.A, but was ${ann.e}"
     if (ann.c != javaClass<A>()) return "fail: annotation parameter c should be of class A, but was ${ann.c}"
     if (ann.ia[0] != 1 || ann.ia[1] != 2) return "fail: annotation parameter ia should be [1, 2], but was ${ann.ia}"
