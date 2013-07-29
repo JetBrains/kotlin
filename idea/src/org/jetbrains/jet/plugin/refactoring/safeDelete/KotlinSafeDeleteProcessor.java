@@ -29,6 +29,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.*;
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor;
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo;
+import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverrideAnnotation;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverridingMethodUsageInfo;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo;
 import com.intellij.usageView.UsageInfo;
@@ -177,6 +178,12 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 SafeDeleteOverridingMethodUsageInfo overrideUsageInfo = (SafeDeleteOverridingMethodUsageInfo) usageInfo;
                 usageInfo = new KotlinSafeDeleteOverridingUsageInfo(
                         overrideUsageInfo.getSmartPointer().getElement(), overrideUsageInfo.getReferencedElement()
+                );
+            }
+            else if (usageInfo instanceof SafeDeleteOverrideAnnotation) {
+                SafeDeleteOverrideAnnotation overrideAnnotationUsageInfo = (SafeDeleteOverrideAnnotation) usageInfo;
+                usageInfo = new KotlinSafeDeleteOverrideAnnotation(
+                        overrideAnnotationUsageInfo.getSmartPointer().getElement(), overrideAnnotationUsageInfo.getReferencedElement()
                 );
             }
             result.add(usageInfo);
@@ -501,7 +508,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return result.toArray(new UsageInfo[result.size()]);
     }
 
-    private static void removeOverrideModifier(@NotNull PsiElement element) {
+    static void removeOverrideModifier(@NotNull PsiElement element) {
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
             JetModifierList modifierList = ((JetModifierListOwner) element).getModifierList();
             if (modifierList == null) return;
@@ -563,7 +570,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return method1.equals(method2);
     }
 
-    private static void cleanUpOverrides(PsiMethod method) {
+    public static void cleanUpOverrides(PsiMethod method) {
         Collection<PsiMethod> superMethods = Arrays.asList(method.findSuperMethods(true));
         Collection<PsiMethod> overridingMethods = OverridingMethodsSearch.search(method, true).findAll();
         overrideLoop:
