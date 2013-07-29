@@ -235,8 +235,7 @@ public class DependencyInjectorGenerator {
 
     private void generateFields(Printer out) {
         for (Field field : fields) {
-            String _final = backsParameter.contains(field) ? "final " : "";
-            out.println("private " + _final + type(InjectorGeneratorUtil.getEffectiveFieldType(field)) + " " + field.getName() + ";");
+            out.println("private final " + type(InjectorGeneratorUtil.getEffectiveFieldType(field)) + " " + field.getName() + ";");
         }
     }
 
@@ -299,7 +298,7 @@ public class DependencyInjectorGenerator {
     private void generateGetters(Printer out) {
         for (Field field : fields) {
             if (!field.isPublic()) continue;
-            String visibility = field.isPublic() ? "public" : "private";
+            String visibility = "public";
             out.println(visibility + " " + type(field.getType()) + " " + field.getGetterName() + "() {");
             out.pushIndent();
 

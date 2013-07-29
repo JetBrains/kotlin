@@ -46,24 +46,24 @@ public class InjectorForJavaDescriptorResolver {
     private final Project project;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
-    private JavaBridgeConfiguration javaBridgeConfiguration;
-    private JavaSemanticServices javaSemanticServices;
-    private JavaDescriptorResolver javaDescriptorResolver;
-    private PsiClassFinderImpl psiClassFinder;
-    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
-    private JavaTypeTransformer javaTypeTransformer;
-    private JavaClassResolver javaClassResolver;
-    private JavaAnnotationResolver javaAnnotationResolver;
-    private JavaCompileTimeConstResolver javaCompileTimeConstResolver;
-    private JavaClassObjectResolver javaClassObjectResolver;
-    private JavaSupertypeResolver javaSupertypeResolver;
-    private JavaFunctionResolver javaFunctionResolver;
-    private JavaValueParameterResolver javaValueParameterResolver;
-    private JavaSignatureResolver javaSignatureResolver;
-    private JavaNamespaceResolver javaNamespaceResolver;
-    private JavaConstructorResolver javaConstructorResolver;
-    private JavaInnerClassResolver javaInnerClassResolver;
-    private JavaPropertyResolver javaPropertyResolver;
+    private final JavaBridgeConfiguration javaBridgeConfiguration;
+    private final JavaSemanticServices javaSemanticServices;
+    private final JavaDescriptorResolver javaDescriptorResolver;
+    private final PsiClassFinderImpl psiClassFinder;
+    private final PsiDeclarationProviderFactory psiDeclarationProviderFactory;
+    private final JavaTypeTransformer javaTypeTransformer;
+    private final JavaClassResolver javaClassResolver;
+    private final JavaAnnotationResolver javaAnnotationResolver;
+    private final JavaCompileTimeConstResolver javaCompileTimeConstResolver;
+    private final JavaClassObjectResolver javaClassObjectResolver;
+    private final JavaSupertypeResolver javaSupertypeResolver;
+    private final JavaFunctionResolver javaFunctionResolver;
+    private final JavaValueParameterResolver javaValueParameterResolver;
+    private final JavaSignatureResolver javaSignatureResolver;
+    private final JavaNamespaceResolver javaNamespaceResolver;
+    private final JavaConstructorResolver javaConstructorResolver;
+    private final JavaInnerClassResolver javaInnerClassResolver;
+    private final JavaPropertyResolver javaPropertyResolver;
     
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,

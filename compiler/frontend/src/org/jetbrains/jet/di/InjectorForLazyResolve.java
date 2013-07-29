@@ -40,18 +40,18 @@ public class InjectorForLazyResolve {
     private final Project project;
     private final ResolveSession resolveSession;
     private final ModuleDescriptor moduleDescriptor;
-    private DescriptorResolver descriptorResolver;
-    private ExpressionTypingServices expressionTypingServices;
-    private TypeResolver typeResolver;
-    private ScopeProvider scopeProvider;
-    private AnnotationResolver annotationResolver;
-    private QualifiedExpressionResolver qualifiedExpressionResolver;
-    private JetImportsFactory jetImportsFactory;
-    private NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
-    private CallExpressionResolver callExpressionResolver;
-    private CallResolver callResolver;
-    private ArgumentTypeResolver argumentTypeResolver;
-    private CandidateResolver candidateResolver;
+    private final DescriptorResolver descriptorResolver;
+    private final ExpressionTypingServices expressionTypingServices;
+    private final TypeResolver typeResolver;
+    private final ScopeProvider scopeProvider;
+    private final AnnotationResolver annotationResolver;
+    private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final JetImportsFactory jetImportsFactory;
+    private final NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
+    private final CallExpressionResolver callExpressionResolver;
+    private final CallResolver callResolver;
+    private final ArgumentTypeResolver argumentTypeResolver;
+    private final CandidateResolver candidateResolver;
     
     public InjectorForLazyResolve(
         @NotNull Project project,
