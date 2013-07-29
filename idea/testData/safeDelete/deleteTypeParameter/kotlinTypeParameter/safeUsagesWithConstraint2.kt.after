@@ -1,0 +1,3 @@
+class A<out X: Comparable<X>, Z>
+
+val a = A<String, Any>()

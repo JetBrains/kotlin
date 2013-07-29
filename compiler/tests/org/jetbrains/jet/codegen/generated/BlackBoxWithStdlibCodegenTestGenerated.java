@@ -36,13 +36,13 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
     public void testAllFilesPresentInBoxWithStdlib() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithStdlib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
-
+    
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/annotations")
     public static class Annotations extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
-
+        
         @TestMetadata("defaultParameterValues.kt")
         public void testDefaultParameterValues() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/defaultParameterValues.kt");

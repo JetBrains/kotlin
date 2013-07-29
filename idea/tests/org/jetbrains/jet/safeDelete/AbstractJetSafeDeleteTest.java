@@ -29,10 +29,7 @@ import com.intellij.refactoring.safeDelete.SafeDeleteHandler;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetObjectDeclarationName;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -85,6 +82,14 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
 
     public void doJavaPropertyTest(@NotNull String path) throws Exception {
         doTest(path, PsiMethod.class, true);
+    }
+
+    public void doTypeParameterTest(@NotNull String path) throws Exception {
+        doTest(path, JetTypeParameter.class, false);
+    }
+
+    public void doTypeParameterTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetTypeParameter.class, true);
     }
 
     private <T extends PsiElement> void doTest(

@@ -1,0 +1,9 @@
+class A<X> {
+    fun foo<Y>() {
+
+    }
+}
+
+fun bar(a: A<String>) {
+    a.foo<Int>()
+}
