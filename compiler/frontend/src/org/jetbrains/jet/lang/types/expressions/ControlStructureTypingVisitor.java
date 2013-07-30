@@ -22,7 +22,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -117,15 +120,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (contextWithExpectedType.expectedType == UNKNOWN_EXPECTED_TYPE) {
             Call callForIf = ControlStructureTypingUtils.createCallForIf(ifExpression, thenBranch, elseBranch);
-            ResolvedCall<FunctionDescriptor> resultingCall =
-                    ControlStructureTypingUtils.resolveIfAsCall(callForIf, contextWithExpectedType);
+            ControlStructureTypingUtils.resolveIfAsCall(callForIf, contextWithExpectedType, thenInfo, elseInfo);
 
-            List<ValueParameterDescriptor> valueParameters = resultingCall.getResultingDescriptor().getValueParameters();
-            ValueParameterDescriptor thenParameter = valueParameters.get(0);
-            ValueParameterDescriptor elseParameter = valueParameters.get(1);
-            //todo correct dataFlowInfo
-            thenTypeInfo = JetTypeInfo.create(thenParameter.getType(), context.dataFlowInfo);
-            elseTypeInfo = JetTypeInfo.create(elseParameter.getType(), context.dataFlowInfo);
+            thenTypeInfo = BindingContextUtils.getRecordedTypeInfo(thenBranch, context.trace.getBindingContext());
+            elseTypeInfo = BindingContextUtils.getRecordedTypeInfo(elseBranch, context.trace.getBindingContext());
+            assert thenTypeInfo != null : "'Then' branch of if expression  was not processed: " + ifExpression;
+            assert elseTypeInfo != null : "'Else' branch of if expression  was not processed: " + ifExpression;
         }
         else {
             CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;

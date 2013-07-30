@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
@@ -138,28 +139,35 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
-        if (!noExpectedType(context.expectedType)) {
-            context.trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, context.expectedType);
+        return checkType(expressionType, expression, context.expectedType, context.dataFlowInfo, context.trace);
+    }
+
+    @Nullable
+    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression,
+            @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace
+    ) {
+        if (!noExpectedType(expectedType)) {
+            trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, expectedType);
         }
 
-        if (expressionType == null || noExpectedType(context.expectedType) ||
-            JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, context.expectedType)) {
+        if (expressionType == null || noExpectedType(expectedType) ||
+            JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, expectedType)) {
             return expressionType;
         }
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, expressionType, context.trace.getBindingContext());
-        for (JetType possibleType : context.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, context.expectedType)) {
+        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, expressionType, trace.getBindingContext());
+        for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
                 if (dataFlowValue.isStableIdentifier()) {
-                    context.trace.record(AUTOCAST, expression, possibleType);
+                    trace.record(AUTOCAST, expression, possibleType);
                 }
                 else {
-                    context.trace.report(AUTOCAST_IMPOSSIBLE.on(expression, possibleType, expression.getText()));
+                    trace.report(AUTOCAST_IMPOSSIBLE.on(expression, possibleType, expression.getText()));
                 }
                 return possibleType;
             }
         }
-        context.trace.report(TYPE_MISMATCH.on(expression, context.expectedType, expressionType));
+        trace.report(TYPE_MISMATCH.on(expression, expectedType, expressionType));
         return expressionType;
     }
 

@@ -28,11 +28,14 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategyImpl;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -58,7 +61,9 @@ public class ControlStructureTypingUtils {
 
     /*package*/ static ResolvedCall<FunctionDescriptor> resolveIfAsCall(
             @NotNull Call callForIf,
-            @NotNull ExpressionTypingContext context
+            @NotNull ExpressionTypingContext context,
+            @NotNull DataFlowInfo thenInfo,
+            @NotNull DataFlowInfo elseInfo
     ) {
         List<AnnotationDescriptor> noAnnotations = Collections.emptyList();
         Name specialFunctionName = Name.identifierNoValidate("<SPECIAL-FUNCTION-FOR-IF-RESOLVE>");
@@ -89,14 +94,49 @@ public class ControlStructureTypingUtils {
 
         JetReferenceExpression ifReference = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeIfCall");
         TracingStrategy tracingForIf = createTracingForIf(callForIf);
+        MutableDataFlowInfoForArguments dataFlowInfoForArguments = createDataFlowInfoForArgumentsForCall(callForIf, thenInfo, elseInfo);
+        ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(ifFunction, null);
         OverloadResolutionResults<FunctionDescriptor>
                 results = context.expressionTypingServices.getCallResolver().resolveCallWithKnownCandidate(
-                callForIf, tracingForIf, ifReference, context, ifFunction);
+                callForIf, tracingForIf, ifReference, context, resolutionCandidate, dataFlowInfoForArguments);
         assert results.isSingleResult() : "Not single result after resolving one known candidate";
         return results.getResultingCall();
     }
 
+    private static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsForCall(
+            final Call callForIf, final DataFlowInfo thenInfo, final DataFlowInfo elseInfo
+    ) {
+        return new MutableDataFlowInfoForArguments() {
+            private DataFlowInfo initialDataFlowInfo;
 
+            @Override
+            public void setInitialDataFlowInfo(@NotNull DataFlowInfo dataFlowInfo) {
+                this.initialDataFlowInfo = dataFlowInfo;
+            }
+
+            @Override
+            public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
+            }
+
+            @NotNull
+            @Override
+            public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
+                if (valueArgument == callForIf.getValueArguments().get(0)) {
+                    return thenInfo;
+                }
+                if (valueArgument == callForIf.getValueArguments().get(1)) {
+                    return elseInfo;
+                }
+                throw new IllegalArgumentException();
+            }
+
+            @NotNull
+            @Override
+            public DataFlowInfo getResultInfo() {
+                return initialDataFlowInfo;
+            }
+        };
+    }
 
     /*package*/ static Call createCallForIf(
             final JetIfExpression ifExpression,

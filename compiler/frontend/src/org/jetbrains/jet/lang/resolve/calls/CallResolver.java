@@ -29,9 +29,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
-import org.jetbrains.jet.lang.resolve.calls.results.*;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.tasks.*;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
@@ -271,14 +275,14 @@ public class CallResolver {
             @Nullable TracingStrategy tracing,
             @NotNull JetReferenceExpression reference,
             @NotNull ResolutionContext<?> context,
-            @NotNull CallableDescriptor candidate
+            @NotNull ResolutionCandidate<CallableDescriptor> candidate,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        Collection<ResolutionCandidate<CallableDescriptor>> resolutionCandidates = Lists.newArrayList();
-        resolutionCandidates.add(ResolutionCandidate.create(candidate, null));
-        BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED);
+        BasicCallResolutionContext basicCallResolutionContext =
+                BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED, dataFlowInfoForArguments);
 
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks = TaskPrioritizer
-                .computePrioritizedTasksFromCandidates(basicCallResolutionContext, reference, resolutionCandidates, tracing);
+                .computePrioritizedTasksFromCandidates(basicCallResolutionContext, reference, Collections.singleton(candidate), tracing);
         return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE, basicCallResolutionContext, tasks,
                                                CallTransformer.FUNCTION_CALL_TRANSFORMER, reference);
     }
