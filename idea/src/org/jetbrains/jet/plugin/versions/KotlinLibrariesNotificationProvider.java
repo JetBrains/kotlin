@@ -17,6 +17,8 @@
 package org.jetbrains.jet.plugin.versions;
 
 import com.intellij.ProjectTopics;
+import com.intellij.facet.Facet;
+import com.intellij.facet.FacetManager;
 import com.intellij.framework.addSupport.impl.AddSupportForSingleFrameworkDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
@@ -105,13 +107,24 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
     }
 
     public static boolean isModuleAlreadyConfigured(Module module) {
-        return isMavenModule(module) || KotlinFrameworkDetector.isJsKotlinModule(module) || KotlinFrameworkDetector.isJavaKotlinModule(module);
+        return isMavenModule(module) || isAndroidGradleModule(module) || KotlinFrameworkDetector.isJsKotlinModule(module) || KotlinFrameworkDetector.isJavaKotlinModule(module);
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
         // This constant could be acquired from MavenProjectsManager, but we don't want to depend on the Maven plugin...
         // See MavenProjectsManager.isMavenizedModule()
         return "true".equals(module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule"));
+    }
+
+    private static boolean isAndroidGradleModule(@NotNull Module module) {
+        // We don't want to depend on the Android-Gradle plugin
+        // See com.android.tools.idea.gradle.util.Projects.isGradleProject()
+        for (Facet facet : FacetManager.getInstance(module).getAllFacets()) {
+            if (facet.getName().equals("Android-Gradle")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
