@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -39,16 +40,20 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull ResolveMode resolveMode,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition, resolveMode, resolutionResultsCache);
         this.call = call;
         this.checkArguments = checkArguments;
-        if (checkArguments == CheckValueArgumentsMode.ENABLED) {
-            dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
+        if (dataFlowInfoForArguments != null) {
+            this.dataFlowInfoForArguments = dataFlowInfoForArguments;
+        }
+        else if (checkArguments == CheckValueArgumentsMode.ENABLED) {
+            this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
         }
         else {
-            dataFlowInfoForArguments = MutableDataFlowInfoForArguments.WITHOUT_ARGUMENTS_CHECK;
+            this.dataFlowInfoForArguments = MutableDataFlowInfoForArguments.WITHOUT_ARGUMENTS_CHECK;
         }
     }
 

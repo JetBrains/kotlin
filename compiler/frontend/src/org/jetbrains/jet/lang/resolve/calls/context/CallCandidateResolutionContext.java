@@ -45,7 +45,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache);
+        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache, null);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
