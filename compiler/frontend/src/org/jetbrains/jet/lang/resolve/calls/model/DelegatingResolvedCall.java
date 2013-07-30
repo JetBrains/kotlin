@@ -17,12 +17,9 @@
 package org.jetbrains.jet.lang.resolve.calls.model;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
@@ -85,16 +82,10 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
         return resolvedCall.getTypeArguments();
     }
 
-    @Nullable
-    @Override
-    public DataFlowInfo getDataFlowInfoForValueArgument(@NotNull ValueArgument valueArgument) {
-        return resolvedCall.getDataFlowInfoForValueArgument(valueArgument);
-    }
-
     @NotNull
     @Override
-    public DataFlowInfo getDataFlowInfo() {
-        return resolvedCall.getDataFlowInfo();
+    public DataFlowInfoForArguments getDataFlowInfoForArguments() {
+        return resolvedCall.getDataFlowInfoForArguments();
     }
 
     @Override

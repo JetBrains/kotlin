@@ -20,12 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.DataFlowInfoForArgumentsImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     public final Call call;
     public final CheckValueArgumentsMode checkArguments;
+    public final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
 
     protected CallResolutionContext(
             @NotNull BindingTrace trace,
@@ -41,6 +44,12 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition, resolveMode, resolutionResultsCache);
         this.call = call;
         this.checkArguments = checkArguments;
+        if (checkArguments == CheckValueArgumentsMode.ENABLED) {
+            dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
+        }
+        else {
+            dataFlowInfoForArguments = MutableDataFlowInfoForArguments.WITHOUT_ARGUMENTS_CHECK;
+        }
     }
 
     public BasicCallResolutionContext toBasic() {

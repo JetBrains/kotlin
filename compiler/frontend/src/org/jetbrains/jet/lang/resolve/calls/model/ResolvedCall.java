@@ -59,15 +59,12 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     @NotNull
     List<ResolvedValueArgument> getValueArgumentsByIndex();
 
-    @Nullable
-    DataFlowInfo getDataFlowInfoForValueArgument(@NotNull ValueArgument valueArgument);
-
     /** What's substituted for type parameters */
     @NotNull
     Map<TypeParameterDescriptor, JetType> getTypeArguments();
 
     @NotNull
-    DataFlowInfo getDataFlowInfo();
+    DataFlowInfoForArguments getDataFlowInfoForArguments();
 
     boolean isSafeCall();
 }

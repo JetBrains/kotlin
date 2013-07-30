@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -418,7 +419,7 @@ public class CandidateResolver {
             }
             return;
         }
-        DataFlowInfo dataFlowInfoForValueArgument = context.candidateCall.getDataFlowInfoForValueArgument(argument);
+        DataFlowInfo dataFlowInfoForValueArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(argument);
         ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType);
         if (dataFlowInfoForValueArgument != null) {
             newContext = newContext.replaceDataFlowInfo(dataFlowInfoForValueArgument);
@@ -663,6 +664,7 @@ public class CandidateResolver {
             @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
         ResolutionStatus resultStatus = SUCCESS;
         List<JetType> argumentTypes = Lists.newArrayList();
+        MutableDataFlowInfoForArguments infoForArguments = candidateCall.getDataFlowInfoForArguments();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
@@ -676,13 +678,13 @@ public class CandidateResolver {
                 if (TypeUtils.dependsOnTypeParameters(expectedType, candidateCall.getCandidateDescriptor().getTypeParameters())) {
                     expectedType = NO_EXPECTED_TYPE;
                 }
-                candidateCall.setDataFlowInfoForArgument(argument, candidateCall.getDataFlowInfo());
-                CallResolutionContext<?> newContext = context.replaceDataFlowInfo(candidateCall.getDataFlowInfo()).replaceBindingTrace(trace)
-                        .replaceExpectedType(expectedType);
+
+                CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument))
+                        .replaceBindingTrace(trace).replaceExpectedType(expectedType);
                 JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
                         expression, newContext, resolveFunctionArgumentBodies, null);
                 JetType type = typeInfoForCall.getType();
-                candidateCall.addDataFlowInfo(typeInfoForCall.getDataFlowInfo());
+                infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
 
                 if (type == null || (ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE)) {
                     candidateCall.argumentHasNoType();

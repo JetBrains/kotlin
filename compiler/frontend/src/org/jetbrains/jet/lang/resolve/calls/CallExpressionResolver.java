@@ -311,7 +311,7 @@ public class CallExpressionResolver {
             }
             JetType type = functionDescriptor.getReturnType();
 
-            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfo());
+            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
