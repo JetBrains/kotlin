@@ -420,10 +420,7 @@ public class CandidateResolver {
             return;
         }
         DataFlowInfo dataFlowInfoForValueArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(argument);
-        ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType);
-        if (dataFlowInfoForValueArgument != null) {
-            newContext = newContext.replaceDataFlowInfo(dataFlowInfoForValueArgument);
-        }
+        ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType).replaceDataFlowInfo(dataFlowInfoForValueArgument);
         DataFlowUtils.checkType(type, expression, newContext);
     }
 
@@ -573,13 +570,19 @@ public class CandidateResolver {
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
+
         TemporaryBindingTrace traceToResolveArgument = TemporaryBindingTrace.create(
                 context.trace, "transient trace to resolve argument", argumentExpression);
         JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
-        CallResolutionContext<?> newContext = context.replaceBindingTrace(traceToResolveArgument).replaceExpectedType(expectedType);
-        JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext,
-                                                                               resolveFunctionArgumentBodies, traceToResolveArgument);
-        JetType type = updateResultTypeForSmartCasts(typeInfoForCall.getType(), argumentExpression, context);
+        DataFlowInfo dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument);
+        CallResolutionContext<?> newContext = context.replaceBindingTrace(traceToResolveArgument)
+                .replaceExpectedType(expectedType).replaceDataFlowInfo(dataFlowInfoForArgument);
+
+        JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
+                argumentExpression, newContext, resolveFunctionArgumentBodies, traceToResolveArgument);
+        context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.getDataFlowInfo());
+
+        JetType type = updateResultTypeForSmartCasts(typeInfoForCall.getType(), argumentExpression, dataFlowInfoForArgument, context.trace);
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         if (isErrorType != null) {
@@ -591,13 +594,13 @@ public class CandidateResolver {
     private static JetType updateResultTypeForSmartCasts(
             @Nullable JetType type,
             @Nullable JetExpression argumentExpression,
-            @NotNull CallCandidateResolutionContext<?> context
+            @NotNull DataFlowInfo dataFlowInfoForArgument,
+            @NotNull BindingTrace trace
     ) {
         if (argumentExpression == null || type == null) return type;
 
-        DataFlowValue dataFlowValue =
-                DataFlowValueFactory.INSTANCE.createDataFlowValue(argumentExpression, type, context.trace.getBindingContext());
-        Set<JetType> possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue);
+        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(argumentExpression, type, trace.getBindingContext());
+        Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;
 
         return TypeUtils.intersect(JetTypeChecker.INSTANCE, possibleTypes);

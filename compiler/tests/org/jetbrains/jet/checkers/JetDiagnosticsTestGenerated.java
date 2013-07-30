@@ -5122,6 +5122,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/smartCasts/inference"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("dependentOnPrevArg.kt")
+                public void testDependentOnPrevArg() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/dependentOnPrevArg.kt");
+                }
+                
                 @TestMetadata("intersectionTypes.kt")
                 public void testIntersectionTypes() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/smartCasts/inference/intersectionTypes.kt");
