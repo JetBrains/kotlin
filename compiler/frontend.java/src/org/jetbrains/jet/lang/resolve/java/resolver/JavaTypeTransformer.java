@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -24,8 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
+import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -45,10 +47,10 @@ public class JavaTypeTransformer {
 
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
-    private JavaDescriptorResolver resolver;
+    private JavaClassResolver resolver;
 
     @Inject
-    public void setResolver(JavaDescriptorResolver resolver) {
+    public void setResolver(JavaClassResolver resolver) {
         this.resolver = resolver;
     }
 
@@ -58,8 +60,7 @@ public class JavaTypeTransformer {
             @NotNull final TypeVariableResolver typeVariableByPsiResolver,
             @NotNull final TypeUsage howThisTypeIsUsed
     ) {
-        TypeProjection result = javaType.accept(new PsiTypeVisitor<TypeProjection>() {
-
+        return javaType.accept(new PsiTypeVisitor<TypeProjection>() {
             @Override
             public TypeProjection visitCapturedWildcardType(PsiCapturedWildcardType capturedWildcardType) {
                 throw new UnsupportedOperationException(); // TODO
@@ -82,23 +83,20 @@ public class JavaTypeTransformer {
                 return new TypeProjection(transformToType(type, howThisTypeIsUsed, typeVariableByPsiResolver));
             }
         });
-        return result;
     }
 
     @NotNull
-    public JetType transformToType(@NotNull PsiType javaType,
-                                   @NotNull TypeVariableResolver typeVariableResolver) {
+    public JetType transformToType(@NotNull PsiType javaType, @NotNull TypeVariableResolver typeVariableResolver) {
         return transformToType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT, typeVariableResolver);
     }
 
     @NotNull
     public JetType transformToType(@NotNull PsiType javaType, @NotNull final TypeUsage howThisTypeIsUsed,
             @NotNull final TypeVariableResolver typeVariableResolver) {
-        JetType result = javaType.accept(new PsiTypeVisitor<JetType>() {
+        return javaType.accept(new PsiTypeVisitor<JetType>() {
             @Override
             public JetType visitClassType(PsiClassType classType) {
-                PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
-                PsiClass psiClass = classResolveResult.getElement();
+                PsiClass psiClass = classType.resolve();
                 if (psiClass == null) {
                     return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
                 }
@@ -135,11 +133,14 @@ public class JavaTypeTransformer {
                     // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
                     boolean nullable = !EnumSet.of(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
 
-                    ClassDescriptor classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(new FqName(psiClass.getQualifiedName()),
-                                                                                                    howThisTypeIsUsed);
+                    String qualifiedName = psiClass.getQualifiedName();
+                    assert qualifiedName != null : "Class type should have a FQ name: " + psiClass;
+                    FqName fqName = new FqName(qualifiedName);
+
+                    ClassDescriptor classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, howThisTypeIsUsed);
 
                     if (classData == null) {
-                        classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), INCLUDE_KOTLIN_SOURCES);
+                        classData = resolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES);
                     }
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
@@ -165,7 +166,7 @@ public class JavaTypeTransformer {
                     }
                     else {
                         PsiType[] psiArguments = classType.getParameters();
-                        
+
                         if (parameters.size() != psiArguments.length) {
                             // Most of the time this means there is an error in the Java code
                             LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length +
@@ -246,7 +247,6 @@ public class JavaTypeTransformer {
                 throw new UnsupportedOperationException("Unsupported type: " + type.getPresentableText()); // TODO
             }
         });
-        return result;
     }
 
     private static boolean isRaw(@NotNull PsiClassType classType, boolean argumentsExpected) {
