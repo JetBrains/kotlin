@@ -27,16 +27,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class JavaClassType {
-    private final PsiClassType psiClassType;
-
+public class JavaClassType extends JavaType {
     public JavaClassType(@NotNull PsiClassType psiClassType) {
-        this.psiClassType = psiClassType;
+        super(psiClassType);
     }
 
     @NotNull
+    @Override
     public PsiClassType getPsi() {
-        return psiClassType;
+        return (PsiClassType) super.getPsi();
     }
 
     @Nullable

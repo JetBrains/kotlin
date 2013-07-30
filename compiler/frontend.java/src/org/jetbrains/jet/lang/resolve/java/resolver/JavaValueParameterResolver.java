@@ -17,15 +17,16 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiEllipsisType;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
+import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -33,10 +34,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public final class JavaValueParameterResolver {
     private JavaTypeTransformer typeTransformer;
@@ -49,21 +47,19 @@ public final class JavaValueParameterResolver {
             @NotNull DeclarationDescriptor containingDeclaration,
             int i,
             @NotNull JavaValueParameter parameter,
-            @NotNull TypeVariableResolver typeVariableResolver
+            @NotNull TypeVariableResolver typeVariableResolver,
+            boolean isVararg
     ) {
-        PsiParameter psiParameter = parameter.getPsi();
-
-        PsiType psiType = psiParameter.getType();
-
         // TODO: must be very slow, make it lazy?
         Name name = getParameterName(i, parameter);
 
         TypeUsage typeUsage = JavaTypeTransformer
-                .adjustTypeUsageWithMutabilityAnnotations(psiParameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
-        JetType outType = typeTransformer.transformToType(psiType, typeUsage, typeVariableResolver);
+                .adjustTypeUsageWithMutabilityAnnotations(parameter.getPsi(), TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
+        JetType outType = typeTransformer.transformToType(parameter.getType(), typeUsage, typeVariableResolver);
 
         JetType varargElementType;
-        if (psiType instanceof PsiEllipsisType) {
+        if (isVararg) {
+            // TODO: test this code
             varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(TypeUtils.makeNotNullable(outType));
             outType = TypeUtils.makeNotNullable(outType);
         }
@@ -73,7 +69,7 @@ public final class JavaValueParameterResolver {
 
         JetType transformedType;
         PsiAnnotation notNullAnnotation = JavaAnnotationResolver
-                .findAnnotationWithExternal(psiParameter, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
+                .findAnnotationWithExternal(parameter.getPsi(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
         if (notNullAnnotation != null) {
             transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
         }
@@ -105,14 +101,18 @@ public final class JavaValueParameterResolver {
     @NotNull
     public JavaDescriptorResolver.ValueParameterDescriptors resolveParameterDescriptors(
             @NotNull DeclarationDescriptor container,
-            @NotNull Collection<JavaValueParameter> parameters,
+            @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
+        Collection<JavaValueParameter> parameters = method.getValueParameters();
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(parameters.size());
         int index = 0;
-        for (JavaValueParameter parameter : parameters) {
-            ValueParameterDescriptor parameterDescriptor = resolveParameterDescriptor(container, index, parameter, typeVariableResolver);
-            result.add(parameterDescriptor);
+        for (Iterator<JavaValueParameter> iterator = parameters.iterator(); iterator.hasNext(); ) {
+            JavaValueParameter parameter = iterator.next();
+
+            boolean isVararg = method.isVararg() && !iterator.hasNext();
+            ValueParameterDescriptor descriptor = resolveParameterDescriptor(container, index, parameter, typeVariableResolver, isVararg);
+            result.add(descriptor);
             index++;
         }
         return new JavaDescriptorResolver.ValueParameterDescriptors(null, result);

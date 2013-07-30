@@ -17,8 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiArrayType;
-import com.intellij.psi.PsiType;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +32,10 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
@@ -147,14 +147,14 @@ public final class JavaConstructorResolver {
             JavaMethod method = iterator.next();
             assert method.getValueParameters().isEmpty() : "Annotation method can't have parameters: " + method;
 
-            PsiType returnType = method.getPsi().getReturnType();
+            JavaType returnType = method.getReturnType();
             assert returnType != null : "Annotation method has no return type: " + method;
 
             // We take the following heuristic convention:
             // if the last method of the @interface is an array, we convert it into a vararg
             JetType varargElementType = null;
-            if (!iterator.hasNext() && returnType instanceof PsiArrayType) {
-                PsiType componentType = ((PsiArrayType) returnType).getComponentType();
+            if (!iterator.hasNext() && returnType instanceof JavaArrayType) {
+                JavaType componentType = ((JavaArrayType) returnType).getComponentType();
                 varargElementType = typeTransformer.transformToType(componentType, typeVariableResolver);
             }
 
@@ -201,7 +201,7 @@ public final class JavaConstructorResolver {
         List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
-                constructorDescriptor, constructor.getValueParameters(),
+                constructorDescriptor, constructor,
                 new TypeVariableResolver(typeParameters, classDescriptor, "constructor of class " + javaClass.getFqName())
         );
 

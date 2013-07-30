@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -75,25 +76,25 @@ public class JavaTypeTransformer {
 
                 PsiType bound = wildcardType.getBound();
                 assert bound != null;
-                return new TypeProjection(variance, transformToType(bound, UPPER_BOUND, typeVariableByPsiResolver));
+                return new TypeProjection(variance, transformToType(JavaType.create(bound), UPPER_BOUND, typeVariableByPsiResolver));
             }
 
             @Override
             public TypeProjection visitType(PsiType type) {
-                return new TypeProjection(transformToType(type, howThisTypeIsUsed, typeVariableByPsiResolver));
+                return new TypeProjection(transformToType(JavaType.create(type), howThisTypeIsUsed, typeVariableByPsiResolver));
             }
         });
     }
 
     @NotNull
-    public JetType transformToType(@NotNull PsiType javaType, @NotNull TypeVariableResolver typeVariableResolver) {
+    public JetType transformToType(@NotNull JavaType javaType, @NotNull TypeVariableResolver typeVariableResolver) {
         return transformToType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT, typeVariableResolver);
     }
 
     @NotNull
-    public JetType transformToType(@NotNull PsiType javaType, @NotNull final TypeUsage howThisTypeIsUsed,
+    public JetType transformToType(@NotNull JavaType javaType, @NotNull final TypeUsage howThisTypeIsUsed,
             @NotNull final TypeVariableResolver typeVariableResolver) {
-        return javaType.accept(new PsiTypeVisitor<JetType>() {
+        return javaType.getPsi().accept(new PsiTypeVisitor<JetType>() {
             @Override
             public JetType visitClassType(PsiClassType classType) {
                 PsiClass psiClass = classType.resolve();
@@ -110,7 +111,7 @@ public class JavaTypeTransformer {
                         if (psiMethod.isConstructor()) {
                             Set<JetType> supertypesJet = Sets.newHashSet();
                             for (PsiClassType supertype : typeParameter.getExtendsListTypes()) {
-                                supertypesJet.add(transformToType(supertype, UPPER_BOUND, typeVariableResolver));
+                                supertypesJet.add(transformToType(JavaType.create(supertype), UPPER_BOUND, typeVariableResolver));
                             }
                             return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
                         }
@@ -227,7 +228,7 @@ public class JavaTypeTransformer {
                 Variance projectionKind = arrayElementTypeProjectionKind(vararg);
                 TypeUsage howArgumentTypeIsUsed = vararg ? MEMBER_SIGNATURE_CONTRAVARIANT : TYPE_ARGUMENT;
 
-                JetType type = transformToType(componentType, howArgumentTypeIsUsed, typeVariableResolver);
+                JetType type = transformToType(JavaType.create(componentType), howArgumentTypeIsUsed, typeVariableResolver);
                 return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, type));
             }
 

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiClassType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -106,8 +105,7 @@ public final class JavaSignatureResolver {
         }
         else {
             for (JavaClassType upperBound : upperBounds) {
-                PsiClassType psiClassType = upperBound.getPsi();
-                JetType transformedType = typeTransformer.transformToType(psiClassType, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver);
+                JetType transformedType = typeTransformer.transformToType(upperBound, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver);
                 typeParameterDescriptor.addUpperBound(transformedType);
             }
         }

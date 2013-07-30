@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagation
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -103,12 +103,13 @@ public final class JavaFunctionResolver {
             return null;
         }
 
-        PsiMethod psiMethod = method.getPsi();
-
-        PsiType returnPsiType = psiMethod.getReturnType();
-        if (returnPsiType == null) {
+        JavaType returnJavaType = method.getReturnType();
+        if (returnJavaType == null) {
+            // This means that the method is a constructor
             return null;
         }
+
+        PsiMethod psiMethod = method.getPsi();
 
         SimpleFunctionDescriptor alreadyResolved = trace.get(BindingContext.FUNCTION, psiMethod);
         if (alreadyResolved != null) {
@@ -128,8 +129,8 @@ public final class JavaFunctionResolver {
                 methodTypeParameters, functionDescriptorImpl, "method " + method.getName() + " in class " + method.getContainingClass());
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
-                .resolveParameterDescriptors(functionDescriptorImpl, method.getValueParameters(), methodTypeVariableResolver);
-        JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
+                .resolveParameterDescriptors(functionDescriptorImpl, method, methodTypeVariableResolver);
+        JetType returnType = makeReturnType(returnJavaType, method, methodTypeVariableResolver);
 
         List<String> signatureErrors = Lists.newArrayList();
 
@@ -362,7 +363,7 @@ public final class JavaFunctionResolver {
 
     @NotNull
     private JetType makeReturnType(
-            @NotNull PsiType returnType,
+            @NotNull JavaType returnType,
             @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {

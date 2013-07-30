@@ -16,30 +16,17 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiWildcardType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaValueParameter extends JavaElementImpl {
-    public JavaValueParameter(@NotNull PsiParameter psiParameter) {
-        super(psiParameter);
+public class JavaWildcardType extends JavaType {
+    public JavaWildcardType(@NotNull PsiWildcardType psiWildcardType) {
+        super(psiWildcardType);
     }
 
     @NotNull
     @Override
-    public PsiParameter getPsi() {
-        return (PsiParameter) super.getPsi();
-    }
-
-    @Nullable
-    public Name getName() {
-        String name = getPsi().getName();
-        return name == null ? null : Name.identifier(name);
-    }
-
-    @NotNull
-    public JavaType getType() {
-        return JavaType.create(getPsi().getType());
+    public PsiWildcardType getPsi() {
+        return (PsiWildcardType) super.getPsi();
     }
 }

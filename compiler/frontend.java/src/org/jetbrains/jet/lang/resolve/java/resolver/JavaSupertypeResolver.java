@@ -125,7 +125,7 @@ public final class JavaSupertypeResolver {
                 }
             }
 
-            JetType transformed = typeTransformer.transformToType(type.getPsi(), TypeUsage.SUPERTYPE, typeVariableResolver);
+            JetType transformed = typeTransformer.transformToType(type, TypeUsage.SUPERTYPE, typeVariableResolver);
             if (!ErrorUtils.isErrorType(transformed)) {
                 result.add(TypeUtils.makeNotNullable(transformed));
             }

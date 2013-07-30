@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import com.intellij.psi.PsiAnnotationMethod;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -71,5 +72,15 @@ public class JavaMethod extends JavaMemberImpl implements JavaTypeParameterListO
             return ((PsiAnnotationMethod) psiMethod).getDefaultValue();
         }
         return null;
+    }
+
+    @Nullable
+    public JavaType getReturnType() {
+        PsiType psiType = getPsi().getReturnType();
+        return psiType == null ? null : JavaType.create(psiType);
+    }
+
+    public boolean isVararg() {
+        return getPsi().isVarArgs();
     }
 }

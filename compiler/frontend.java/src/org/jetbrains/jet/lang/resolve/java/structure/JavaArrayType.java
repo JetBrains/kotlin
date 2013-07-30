@@ -16,36 +16,22 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiArrayType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class JavaField extends JavaMemberImpl {
-    public JavaField(@NotNull PsiField psiField) {
-        super(psiField);
+public class JavaArrayType extends JavaType {
+    public JavaArrayType(@NotNull PsiArrayType psiArrayType) {
+        super(psiArrayType);
     }
 
     @NotNull
     @Override
-    public PsiField getPsi() {
-        return (PsiField) super.getPsi();
-    }
-
-    @Nullable
-    @Override
-    public JavaClass getContainingClass() {
-        PsiClass psiClass = getPsi().getContainingClass();
-        return psiClass == null ? null : new JavaClass(psiClass);
-    }
-
-    public boolean isEnumEntry() {
-        return getPsi() instanceof PsiEnumConstant;
+    public PsiArrayType getPsi() {
+        return (PsiArrayType) super.getPsi();
     }
 
     @NotNull
-    public JavaType getType() {
-        return JavaType.create(getPsi().getType());
+    public JavaType getComponentType() {
+        return JavaType.create(getPsi().getComponentType());
     }
 }
