@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver.findAnnotationWithExternal;
-
 public final class JavaValueParameterResolver {
 
     private JavaTypeTransformer typeTransformer;
@@ -70,8 +68,8 @@ public final class JavaValueParameterResolver {
         }
 
         JetType transformedType;
-        PsiAnnotation notNullAnnotation =
-                findAnnotationWithExternal(parameter, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString());
+        PsiAnnotation notNullAnnotation = JavaAnnotationResolver
+                .findAnnotationWithExternal(parameter, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
         if (notNullAnnotation != null) {
             transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
         }

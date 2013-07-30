@@ -376,10 +376,7 @@ public final class JavaFunctionResolver {
                 .adjustTypeUsageWithMutabilityAnnotations(method.getPsiMethod(), TypeUsage.MEMBER_SIGNATURE_COVARIANT);
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
-        if (JavaAnnotationResolver
-                    .findAnnotationWithExternal(method.getPsiMethod(),
-                                                JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
-            null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }
         else {

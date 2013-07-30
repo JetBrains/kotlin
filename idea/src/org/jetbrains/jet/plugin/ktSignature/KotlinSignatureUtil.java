@@ -80,7 +80,7 @@ class KotlinSignatureUtil {
     static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
         if (!(element instanceof PsiModifierListOwner)) return null;
         PsiModifierListOwner annotationOwner = getAnnotationOwner(element);
-        PsiAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+        PsiAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(annotationOwner, JvmAnnotationNames.KOTLIN_SIGNATURE);
         if (annotation == null) return null;
         if (annotation.getParameterList().getAttributes().length == 0) return null;
         return annotation;

@@ -263,10 +263,10 @@ public class JavaTypeTransformer {
         if (!signatureTypeUsages.contains(originalTypeUsage)) {
             return originalTypeUsage;
         }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION.getFqName().asString()) != null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION) != null) {
             return TypeUsage.MEMBER_SIGNATURE_COVARIANT;
         }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION.getFqName().asString()) != null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null) {
             return TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
         }
         return originalTypeUsage;

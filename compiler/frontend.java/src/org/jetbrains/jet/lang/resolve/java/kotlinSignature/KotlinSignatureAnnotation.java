@@ -43,8 +43,7 @@ public class KotlinSignatureAnnotation {
 
     @NotNull
     public static KotlinSignatureAnnotation get(@NotNull PsiMember member) {
-        PsiAnnotation annotation = JavaAnnotationResolver.
-                findAnnotationWithExternal(member, JvmAnnotationNames.KOTLIN_SIGNATURE.getFqName().asString());
+        PsiAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(member, JvmAnnotationNames.KOTLIN_SIGNATURE);
         return annotation != null ? new KotlinSignatureAnnotation(annotation) : NULL_ANNOTATION;
     }
 
