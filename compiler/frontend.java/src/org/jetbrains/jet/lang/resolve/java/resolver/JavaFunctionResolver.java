@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -89,16 +90,18 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    SimpleFunctionDescriptor resolveFunctionMutely(@NotNull PsiMethodWrapper method, @NotNull ClassOrNamespaceDescriptor owner) {
+    SimpleFunctionDescriptor resolveFunctionMutely(@NotNull JavaMethod method, @NotNull ClassOrNamespaceDescriptor owner) {
         return resolveMethodToFunctionDescriptor(method, owner, false);
     }
 
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethod javaMethod,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
             boolean record
     ) {
+        PsiMethodWrapper method = new PsiMethodWrapper(javaMethod.getPsi());
+
         if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method.getPsiMember())) {
             return null;
         }
@@ -244,7 +247,7 @@ public final class JavaFunctionResolver {
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : members.getMethods()) {
-            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(method, owner, true);
+            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(new JavaMethod(method.getPsiMethod()), owner, true);
             if (function != null) {
                 functionsFromCurrent.add(function);
                 ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
@@ -374,7 +377,8 @@ public final class JavaFunctionResolver {
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
         if (JavaAnnotationResolver
-                    .findAnnotationWithExternal(method.getPsiMethod(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
+                    .findAnnotationWithExternal(method.getPsiMethod(),
+                                                JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString()) !=
             null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }

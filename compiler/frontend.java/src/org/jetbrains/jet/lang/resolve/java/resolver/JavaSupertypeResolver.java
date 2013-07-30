@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
@@ -28,6 +26,8 @@ import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
@@ -63,46 +64,45 @@ public final class JavaSupertypeResolver {
         this.classResolver = classResolver;
     }
 
+    @NotNull
     public Collection<JetType> getSupertypes(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull PsiClass psiClass,
+            @NotNull JavaClass javaClass,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
+        TypeVariableResolver typeVariableResolver = new TypeVariableResolver(typeParameters, classDescriptor,
+                                                                                          "class " + javaClass.getFqName());
 
-        List<JetType> result = new ArrayList<JetType>();
-
-        String context = "class " + psiClass.getQualifiedName();
-
-        TypeVariableResolver typeVariableResolverForSupertypes = new TypeVariableResolver(typeParameters, classDescriptor, context);
-        transformSupertypeList(result, psiClass.getExtendsListTypes(), typeVariableResolverForSupertypes);
-        transformSupertypeList(result, psiClass.getImplementsListTypes(), typeVariableResolverForSupertypes);
+        List<JetType> result = transformSupertypeList(javaClass.getSupertypes(), typeVariableResolver);
 
         reportIncompleteHierarchyForErrorTypes(classDescriptor, result);
 
         if (result.isEmpty()) {
-            addBaseClass(psiClass, classDescriptor, result);
+            return Collections.singletonList(getDefaultSupertype(javaClass));
         }
+
         return result;
     }
 
-    private void addBaseClass(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor, @NotNull List<JetType> result) {
-        if (OBJECT_FQ_NAME.asString().equals(psiClass.getQualifiedName()) || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
-            result.add(KotlinBuiltIns.getInstance().getAnyType());
+    @NotNull
+    private JetType getDefaultSupertype(@NotNull JavaClass javaClass) {
+        if (OBJECT_FQ_NAME.equals(javaClass.getFqName()) || javaClass.getKind() == ClassKind.ANNOTATION_CLASS) {
+            return KotlinBuiltIns.getInstance().getAnyType();
         }
         else {
             ClassDescriptor object = classResolver.resolveClass(OBJECT_FQ_NAME, IGNORE_KOTLIN_SOURCES);
             if (object != null) {
-                result.add(object.getDefaultType());
+                return object.getDefaultType();
             }
             else {
                 //TODO: hack here
-                result.add(KotlinBuiltIns.getInstance().getAnyType());
+                return KotlinBuiltIns.getInstance().getAnyType();
                 // throw new IllegalStateException("Could not resolve java.lang.Object");
             }
         }
     }
 
-    private void reportIncompleteHierarchyForErrorTypes(ClassDescriptor classDescriptor, List<JetType> result) {
+    private void reportIncompleteHierarchyForErrorTypes(@NotNull ClassDescriptor classDescriptor, @NotNull List<JetType> result) {
         for (JetType supertype : result) {
             if (ErrorUtils.isErrorType(supertype)) {
                 trace.record(BindingContext.INCOMPLETE_HIERARCHY, classDescriptor);
@@ -110,28 +110,27 @@ public final class JavaSupertypeResolver {
         }
     }
 
-    private void transformSupertypeList(
-            List<JetType> result,
-            PsiClassType[] extendsListTypes,
-            TypeVariableResolver typeVariableResolver
+    @NotNull
+    private List<JetType> transformSupertypeList(
+            @NotNull Collection<JavaClassType> supertypes,
+            @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        for (PsiClassType type : extendsListTypes) {
-            PsiClass resolved = type.resolve();
+        List<JetType> result = new ArrayList<JetType>(supertypes.size());
+        for (JavaClassType type : supertypes) {
+            JavaClass resolved = type.resolve();
             if (resolved != null) {
-                String qualifiedName = resolved.getQualifiedName();
-                assert qualifiedName != null;
-                if (JvmAbi.JET_OBJECT.getFqName().equalsTo(qualifiedName)) {
+                FqName fqName = resolved.getFqName();
+                assert fqName != null : "Unresolved supertype: " + resolved;
+                if (JvmAbi.JET_OBJECT.getFqName().equals(fqName)) {
                     continue;
                 }
             }
 
-            JetType transform = typeTransformer
-                    .transformToType(type, TypeUsage.SUPERTYPE, typeVariableResolver);
-            if (ErrorUtils.isErrorType(transform)) {
-                continue;
+            JetType transformed = typeTransformer.transformToType(type.getPsi(), TypeUsage.SUPERTYPE, typeVariableResolver);
+            if (!ErrorUtils.isErrorType(transformed)) {
+                result.add(TypeUtils.makeNotNullable(transformed));
             }
-
-            result.add(TypeUtils.makeNotNullable(transform));
         }
+        return result;
     }
 }

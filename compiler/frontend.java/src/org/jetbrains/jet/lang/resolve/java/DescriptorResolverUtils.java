@@ -40,9 +40,9 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getPsiClass() instanceof ClsClassImpl) {
-            String fqName = javaClass.getFqName();
-            if (fqName != null && PackageClassUtils.isPackageClassFqName(new FqName(fqName))) {
+        if (javaClass.getPsi() instanceof ClsClassImpl) {
+            FqName fqName = javaClass.getFqName();
+            if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
                 return hasAnnotation(javaClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
             }
         }
@@ -50,7 +50,7 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getPsiClass() instanceof ClsClassImpl) {
+        if (javaClass.getPsi() instanceof ClsClassImpl) {
             return hasAnnotation(javaClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
         }
         return false;
@@ -153,11 +153,11 @@ public final class DescriptorResolverUtils {
 
     @NotNull
     public static Collection<JavaClass> filterDuplicateClasses(@NotNull Collection<JavaClass> classes) {
-        Set<String> addedQualifiedNames = new HashSet<String>(classes.size());
+        Set<FqName> addedQualifiedNames = new HashSet<FqName>(classes.size());
         List<JavaClass> result = new ArrayList<JavaClass>(classes.size());
 
         for (JavaClass javaClass : classes) {
-            String fqName = javaClass.getFqName();
+            FqName fqName = javaClass.getFqName();
             if (fqName != null && addedQualifiedNames.add(fqName)) {
                 result.add(javaClass);
             }

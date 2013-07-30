@@ -90,8 +90,7 @@ public final class JavaPackageScope extends JavaBaseScope {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
 
         for (JavaPackage subPackage : javaPackage.getSubPackages()) {
-            FqName fqName = new FqName(subPackage.getFqName());
-            NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(fqName, IGNORE_KOTLIN_SOURCES);
+            NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(subPackage.getFqName(), IGNORE_KOTLIN_SOURCES);
             if (childNs != null) {
                 result.add(childNs);
             }
@@ -102,13 +101,12 @@ public final class JavaPackageScope extends JavaBaseScope {
 
             if (isKotlinLightClass(javaClass)) continue;
 
-            if (!javaClass.getPsiClass().hasModifierProperty(PsiModifier.PUBLIC)) continue;
+            if (!javaClass.getPsi().hasModifierProperty(PsiModifier.PUBLIC)) continue;
 
             ProgressIndicatorProvider.checkCanceled();
 
-            String qualifiedName = javaClass.getFqName();
-            if (qualifiedName == null) continue;
-            FqName fqName = new FqName(qualifiedName);
+            FqName fqName = javaClass.getFqName();
+            if (fqName == null) continue;
 
             ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
             if (classDescriptor != null) {
@@ -125,7 +123,7 @@ public final class JavaPackageScope extends JavaBaseScope {
     }
 
     private static boolean isKotlinLightClass(@NotNull JavaClass javaClass) {
-        return javaClass.getPsiClass() instanceof JetJavaMirrorMarker;
+        return javaClass.getPsi() instanceof JetJavaMirrorMarker;
     }
 
     @Override

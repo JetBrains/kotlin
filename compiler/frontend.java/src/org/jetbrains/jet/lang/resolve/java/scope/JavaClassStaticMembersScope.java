@@ -58,7 +58,7 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
         for (JavaClass nested : javaClass.getInnerClasses()) {
-            ContainerUtil.addIfNotNull(result, getNamespace(Name.identifier(nested.getName())));
+            ContainerUtil.addIfNotNull(result, getNamespace(nested.getName()));
         }
         return result;
     }

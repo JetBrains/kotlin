@@ -123,7 +123,7 @@ public final class MembersCache {
 
         private void process() {
             for (JavaClass javaClass : javaClasses) {
-                PsiClass psiClass = javaClass.getPsiClass();
+                PsiClass psiClass = javaClass.getPsi();
 
                 if (!(psiClass instanceof JetJavaMirrorMarker)) { // to filter out JetLightClasses
                     if (SingleAbstractMethodUtils.isSamInterface(psiClass)) {
@@ -145,7 +145,7 @@ public final class MembersCache {
         private final boolean staticMembers;
 
         private ClassMemberProcessor(@NotNull JavaClass javaClass, boolean staticMembers) {
-            this.psiClass = javaClass.getPsiClass();
+            this.psiClass = javaClass.getPsi();
             this.staticMembers = staticMembers;
         }
 

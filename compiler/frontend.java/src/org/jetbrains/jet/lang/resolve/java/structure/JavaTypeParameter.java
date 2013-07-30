@@ -16,38 +16,37 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.classes;
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.packages;
+import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.classTypes;
 
-public class JavaPackage extends JavaElementImpl {
-    public JavaPackage(@NotNull PsiPackage psiPackage) {
-        super(psiPackage);
+public class JavaTypeParameter extends JavaElementImpl implements JavaNamedElement {
+    public JavaTypeParameter(@NotNull PsiTypeParameter psiTypeParameter) {
+        super(psiTypeParameter);
     }
 
     @NotNull
     @Override
-    public PsiPackage getPsi() {
-        return (PsiPackage) super.getPsi();
+    public PsiTypeParameter getPsi() {
+        return (PsiTypeParameter) super.getPsi();
+    }
+
+    public int getIndex() {
+        return getPsi().getIndex();
     }
 
     @NotNull
-    public Collection<JavaClass> getClasses() {
-        return classes(getPsi().getClasses());
+    @Override
+    public Name getName() {
+        return Name.identifier(getPsi().getName());
     }
 
     @NotNull
-    public Collection<JavaPackage> getSubPackages() {
-        return packages(getPsi().getSubPackages());
-    }
-
-    @NotNull
-    public FqName getFqName() {
-        return new FqName(getPsi().getQualifiedName());
+    public Collection<JavaClassType> getUpperBounds() {
+        return classTypes(getPsi().getExtendsList().getReferencedTypes());
     }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
 import com.intellij.util.ArrayUtil;
@@ -31,6 +32,10 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -316,26 +321,26 @@ public class SingleAbstractMethodUtils {
     }
 
     public static boolean isSamInterface(@NotNull PsiClass psiClass) {
-        return getSamInterfaceMethod(psiClass) != null;
+        return getSamInterfaceMethod(new JavaClass(psiClass), psiClass.getProject()) != null;
     }
 
     // Returns null if not SAM interface
     @Nullable
-    public static PsiMethod getSamInterfaceMethod(@NotNull PsiClass psiClass) {
-        String qualifiedName = psiClass.getQualifiedName();
-        if (qualifiedName == null || qualifiedName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".")) {
+    public static JavaMethod getSamInterfaceMethod(@NotNull JavaClass javaClass, @NotNull Project project) {
+        FqName fqName = javaClass.getFqName();
+        if (fqName == null || fqName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) {
             return null;
         }
-        if (!psiClass.isInterface() || psiClass.isAnnotationType()) {
+        if (!javaClass.isInterface() || javaClass.isAnnotationType()) {
             return null;
         }
 
-        return findOnlyAbstractMethod(psiClass);
+        return findOnlyAbstractMethod(javaClass, project);
     }
 
     @Nullable
-    private static PsiMethod findOnlyAbstractMethod(@NotNull PsiClass psiClass) {
-        PsiClassType classType = JavaPsiFacade.getElementFactory(psiClass.getProject()).createType(psiClass);
+    private static JavaMethod findOnlyAbstractMethod(@NotNull JavaClass javaClass, @NotNull Project project) {
+        JavaClassType classType = new JavaClassType(JavaPsiFacade.getElementFactory(project).createType(javaClass.getPsi()));
 
         OnlyAbstractMethodFinder finder = new OnlyAbstractMethodFinder();
         if (finder.find(classType)) {
@@ -370,39 +375,40 @@ public class SingleAbstractMethodUtils {
     private static class OnlyAbstractMethodFinder {
         private MethodSignatureBackedByPsiMethod found;
 
-        private boolean find(@NotNull PsiClassType classType) {
-            PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
+        private boolean find(@NotNull JavaClassType classType) {
+            PsiClassType.ClassResolveResult classResolveResult = classType.getPsi().resolveGenerics();
             PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
-            PsiClass psiClass = classResolveResult.getElement();
-            if (psiClass == null) {
+            JavaClass javaClass = classType.resolve();
+            if (javaClass == null) {
                 return false; // can't resolve class -> not a SAM interface
             }
-            if (CommonClassNames.JAVA_LANG_OBJECT.equals(psiClass.getQualifiedName())) {
+            if (new FqName(CommonClassNames.JAVA_LANG_OBJECT).equals(javaClass.getFqName())) {
                 return true;
             }
-            for (PsiMethod method : psiClass.getMethods()) {
-                if (DescriptorResolverUtils.isObjectMethod(method)) { // e.g., ignore toString() declared in interface
+            for (JavaMethod method : javaClass.getMethods()) {
+                PsiMethod psiMethod = method.getPsi();
+                if (DescriptorResolverUtils.isObjectMethod(psiMethod)) { // e.g., ignore toString() declared in interface
                     continue;
                 }
-                if (method.hasTypeParameters()) {
+                if (!method.getTypeParameters().isEmpty()) {
                     return false; // if interface has generic methods, it is not a SAM interface
                 }
 
                 if (found == null) {
-                    found = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
+                    found = (MethodSignatureBackedByPsiMethod) psiMethod.getSignature(classSubstitutor);
                     continue;
                 }
-                if (!found.getName().equals(method.getName())) {
+                if (!found.getName().equals(method.getName().asString())) {
                     return false; // optimizing heuristic
                 }
-                MethodSignatureBackedByPsiMethod current = (MethodSignatureBackedByPsiMethod) method.getSignature(classSubstitutor);
-                if (!areSignaturesErasureEqual(current, found) || isVarargMethod(method) != isVarargMethod(found.getMethod())) {
+                MethodSignatureBackedByPsiMethod current = (MethodSignatureBackedByPsiMethod) psiMethod.getSignature(classSubstitutor);
+                if (!areSignaturesErasureEqual(current, found) || isVarargMethod(psiMethod) != isVarargMethod(found.getMethod())) {
                     return false; // different signatures
                 }
             }
 
-            for (PsiType t : classType.getSuperTypes()) {
-                if (!find((PsiClassType) t)) {
+            for (JavaClassType t : classType.getSupertypes()) {
+                if (!find(t)) {
                     return false;
                 }
             }
@@ -411,8 +417,8 @@ public class SingleAbstractMethodUtils {
         }
 
         @Nullable
-        PsiMethod getFoundMethod() {
-            return found == null ? null : found.getMethod();
+        private JavaMethod getFoundMethod() {
+            return found == null ? null : new JavaMethod(found.getMethod());
         }
     }
 }

@@ -69,7 +69,7 @@ public final class JavaConstructorResolver {
 
     @NotNull
     public Collection<ConstructorDescriptor> resolveConstructors(@NotNull JavaClass javaClass, @NotNull ClassDescriptor containingClass) {
-        PsiClass psiClass = javaClass.getPsiClass();
+        PsiClass psiClass = javaClass.getPsi();
 
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
