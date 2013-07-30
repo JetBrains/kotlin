@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiAnnotationMethod;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
@@ -61,5 +62,14 @@ public class JavaMethod extends JavaMemberImpl implements JavaTypeParameterListO
     @NotNull
     public Collection<JavaValueParameter> getValueParameters() {
         return valueParameters(getPsi().getParameterList().getParameters());
+    }
+
+    @Nullable
+    public Object getAnnotationParameterDefaultValue() {
+        PsiMethod psiMethod = getPsi();
+        if (psiMethod instanceof PsiAnnotationMethod) {
+            return ((PsiAnnotationMethod) psiMethod).getDefaultValue();
+        }
+        return null;
     }
 }
