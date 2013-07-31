@@ -120,7 +120,7 @@ public class InjectorForJavaDescriptorResolver {
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
-        javaTypeTransformer.setResolver(javaClassResolver);
+        javaTypeTransformer.setClassResolver(javaClassResolver);
 
         javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
 

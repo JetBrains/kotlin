@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiWildcardType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class JavaWildcardType extends JavaType {
     public JavaWildcardType(@NotNull PsiWildcardType psiWildcardType) {
@@ -28,5 +30,15 @@ public class JavaWildcardType extends JavaType {
     @Override
     public PsiWildcardType getPsi() {
         return (PsiWildcardType) super.getPsi();
+    }
+
+    @Nullable
+    public JavaType getBound() {
+        PsiType bound = getPsi().getBound();
+        return bound == null ? null : JavaType.create(bound);
+    }
+
+    public boolean isExtends() {
+        return getPsi().isExtends();
     }
 }

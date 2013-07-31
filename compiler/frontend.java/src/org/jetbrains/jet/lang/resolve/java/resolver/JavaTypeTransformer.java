@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -48,213 +48,231 @@ public class JavaTypeTransformer {
 
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
-    private JavaClassResolver resolver;
+    private JavaClassResolver classResolver;
 
     @Inject
-    public void setResolver(JavaClassResolver resolver) {
-        this.resolver = resolver;
+    public void setClassResolver(JavaClassResolver classResolver) {
+        this.classResolver = classResolver;
     }
 
     @NotNull
-    private TypeProjection transformToTypeProjection(@NotNull PsiType javaType,
-            @NotNull final TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull final TypeVariableResolver typeVariableByPsiResolver,
-            @NotNull final TypeUsage howThisTypeIsUsed
+    private TypeProjection transformToTypeProjection(
+            @NotNull JavaType type,
+            @NotNull TypeParameterDescriptor typeParameterDescriptor,
+            @NotNull TypeVariableResolver typeVariableResolver,
+            @NotNull TypeUsage howThisTypeIsUsed
     ) {
-        return javaType.accept(new PsiTypeVisitor<TypeProjection>() {
-            @Override
-            public TypeProjection visitCapturedWildcardType(PsiCapturedWildcardType capturedWildcardType) {
-                throw new UnsupportedOperationException(); // TODO
-            }
+        if (!(type instanceof JavaWildcardType)) {
+            return new TypeProjection(transformToType(type, howThisTypeIsUsed, typeVariableResolver));
+        }
 
-            @Override
-            public TypeProjection visitWildcardType(PsiWildcardType wildcardType) {
-                if (!wildcardType.isBounded()) {
-                    return SubstitutionUtils.makeStarProjection(typeParameterDescriptor);
-                }
-                Variance variance = wildcardType.isExtends() ? OUT_VARIANCE : IN_VARIANCE;
+        JavaWildcardType wildcardType = (JavaWildcardType) type;
+        JavaType bound = wildcardType.getBound();
+        if (bound == null) {
+            return SubstitutionUtils.makeStarProjection(typeParameterDescriptor);
+        }
 
-                PsiType bound = wildcardType.getBound();
-                assert bound != null;
-                return new TypeProjection(variance, transformToType(JavaType.create(bound), UPPER_BOUND, typeVariableByPsiResolver));
-            }
+        Variance variance = wildcardType.isExtends() ? OUT_VARIANCE : IN_VARIANCE;
 
-            @Override
-            public TypeProjection visitType(PsiType type) {
-                return new TypeProjection(transformToType(JavaType.create(type), howThisTypeIsUsed, typeVariableByPsiResolver));
-            }
-        });
+        return new TypeProjection(variance, transformToType(bound, UPPER_BOUND, typeVariableResolver));
     }
 
     @NotNull
-    public JetType transformToType(@NotNull JavaType javaType, @NotNull TypeVariableResolver typeVariableResolver) {
-        return transformToType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT, typeVariableResolver);
+    public JetType transformToType(@NotNull JavaType type, @NotNull TypeVariableResolver typeVariableResolver) {
+        return transformToType(type, TypeUsage.MEMBER_SIGNATURE_INVARIANT, typeVariableResolver);
     }
 
     @NotNull
-    public JetType transformToType(@NotNull JavaType javaType, @NotNull final TypeUsage howThisTypeIsUsed,
-            @NotNull final TypeVariableResolver typeVariableResolver) {
-        return javaType.getPsi().accept(new PsiTypeVisitor<JetType>() {
-            @Override
-            public JetType visitClassType(PsiClassType classType) {
-                PsiClass psiClass = classType.resolve();
-                if (psiClass == null) {
-                    return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
-                }
+    public JetType transformToType(
+            @NotNull JavaType type,
+            @NotNull TypeUsage howThisTypeIsUsed,
+            @NotNull TypeVariableResolver typeVariableResolver
+    ) {
+        if (type instanceof JavaClassType) {
+            return transformClassType((JavaClassType) type, howThisTypeIsUsed, typeVariableResolver);
+        }
+        else if (type instanceof JavaPrimitiveType) {
+            String canonicalText = ((JavaPrimitiveType) type).getCanonicalText();
+            JetType jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass(canonicalText);
+            assert jetType != null : "Primitive type is not found: " + canonicalText;
+            return jetType;
+        }
+        else if (type instanceof JavaArrayType) {
+            return transformArrayType((JavaArrayType) type, howThisTypeIsUsed, typeVariableResolver, false);
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported type: " + type); // TODO
+        }
+    }
 
-                if (psiClass instanceof PsiTypeParameter) {
-                    PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
+    @NotNull
+    private JetType transformClassType(
+            @NotNull JavaClassType classType,
+            @NotNull TypeUsage howThisTypeIsUsed,
+            @NotNull TypeVariableResolver typeVariableResolver
+    ) {
+        JavaClass javaClass = classType.resolve();
+        if (javaClass == null) {
+            return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
+        }
 
-                    PsiTypeParameterListOwner typeParameterListOwner = typeParameter.getOwner();
-                    if (typeParameterListOwner instanceof PsiMethod) {
-                        PsiMethod psiMethod = (PsiMethod) typeParameterListOwner;
-                        if (psiMethod.isConstructor()) {
-                            Set<JetType> supertypesJet = Sets.newHashSet();
-                            for (PsiClassType supertype : typeParameter.getExtendsListTypes()) {
-                                supertypesJet.add(transformToType(JavaType.create(supertype), UPPER_BOUND, typeVariableResolver));
-                            }
-                            return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
-                        }
+        PsiClass psiClass = javaClass.getPsi();
+
+        if (psiClass instanceof PsiTypeParameter) {
+            PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
+
+            PsiTypeParameterListOwner typeParameterListOwner = typeParameter.getOwner();
+            if (typeParameterListOwner instanceof PsiMethod) {
+                PsiMethod psiMethod = (PsiMethod) typeParameterListOwner;
+                if (psiMethod.isConstructor()) {
+                    Set<JetType> supertypesJet = Sets.newHashSet();
+                    for (PsiClassType supertype : typeParameter.getExtendsListTypes()) {
+                        supertypesJet.add(transformToType(JavaType.create(supertype), UPPER_BOUND, typeVariableResolver));
                     }
-
-                    TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
-
-                    // In Java: ArrayList<T>
-                    // In Kotlin: ArrayList<T>, not ArrayList<T?>
-                    // nullability will be taken care of in individual member signatures
-                    boolean nullable = !EnumSet.of(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT).contains(howThisTypeIsUsed);
-                    if (nullable) {
-                        return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
-                    }
-                    else {
-                        return typeParameterDescriptor.getDefaultType();
-                    }
-                }
-                else {
-                    // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
-                    boolean nullable = !EnumSet.of(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
-
-                    String qualifiedName = psiClass.getQualifiedName();
-                    assert qualifiedName != null : "Class type should have a FQ name: " + psiClass;
-                    FqName fqName = new FqName(qualifiedName);
-
-                    ClassDescriptor classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, howThisTypeIsUsed);
-
-                    if (classData == null) {
-                        classData = resolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES);
-                    }
-                    if (classData == null) {
+                    JetType type = TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
+                    if (type == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
                     }
-
-                    List<TypeProjection> arguments = Lists.newArrayList();
-                    List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
-                    if (isRaw(classType, !parameters.isEmpty())) {
-                        for (TypeParameterDescriptor parameter : parameters) {
-                            // not making a star projection because of this case:
-                            // Java:
-                            // class C<T extends C> {}
-                            // The upper bound is raw here, and we can't compute the projection: it would be infinite:
-                            // C<*> = C<out C<out C<...>>>
-                            // this way we loose some type information, even when the case is not so bad, but it doesn't seem to matter
-
-                            // projections are not allowed in immediate arguments of supertypes
-                            Variance projectionKind = parameter.getVariance() == OUT_VARIANCE || howThisTypeIsUsed == SUPERTYPE
-                                                      ? INVARIANT
-                                                      : OUT_VARIANCE;
-                            arguments.add(new TypeProjection(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType()));
-                        }
-                    }
-                    else {
-                        PsiType[] psiArguments = classType.getParameters();
-
-                        if (parameters.size() != psiArguments.length) {
-                            // Most of the time this means there is an error in the Java code
-                            LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length +
-                                     " in " + classType.getPresentableText() + "\n PsiClass: \n" + psiClass.getText());
-
-                            for (TypeParameterDescriptor parameter : parameters) {
-                                arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().asString())));
-                            }
-                        }
-                        else {
-                            for (int i = 0; i < parameters.size(); i++) {
-                                PsiType psiArgument = psiArguments[i];
-                                TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-
-                                TypeUsage howTheProjectionIsUsed = howThisTypeIsUsed == SUPERTYPE ? SUPERTYPE_ARGUMENT : TYPE_ARGUMENT;
-                                TypeProjection typeProjection = transformToTypeProjection(
-                                        psiArgument, typeParameterDescriptor, typeVariableResolver, howTheProjectionIsUsed);
-
-                                if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
-                                    // remove redundant 'out' and 'in'
-                                    arguments.add(new TypeProjection(INVARIANT, typeProjection.getType()));
-                                }
-                                else {
-                                    arguments.add(typeProjection);
-                                }
-                            }
-                        }
-                    }
-
-                    return new JetTypeImpl(
-                            Collections.<AnnotationDescriptor>emptyList(),
-                            classData.getTypeConstructor(),
-                            nullable,
-                            arguments,
-                            classData.getMemberScope(arguments));
+                    return type;
                 }
             }
 
-            @Override
-            public JetType visitPrimitiveType(PsiPrimitiveType primitiveType) {
-                String canonicalText = primitiveType.getCanonicalText();
-                JetType type = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass(canonicalText);
-                assert type != null : canonicalText;
-                return type;
+            TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
+
+            // In Java: ArrayList<T>
+            // In Kotlin: ArrayList<T>, not ArrayList<T?>
+            // nullability will be taken care of in individual member signatures
+            boolean nullable = !EnumSet.of(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT).contains(howThisTypeIsUsed);
+            if (nullable) {
+                return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
+            }
+            else {
+                return typeParameterDescriptor.getDefaultType();
+            }
+        }
+        else {
+            // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
+            boolean nullable = !EnumSet.of(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
+
+            FqName fqName = javaClass.getFqName();
+            assert fqName != null : "Class type should have a FQ name: " + javaClass;
+
+            ClassDescriptor classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, howThisTypeIsUsed);
+
+            if (classData == null) {
+                classData = classResolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES);
+            }
+            if (classData == null) {
+                return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
             }
 
-            @Override
-            public JetType visitArrayType(PsiArrayType arrayType) {
-                PsiType componentType = arrayType.getComponentType();
-                if (componentType instanceof PsiPrimitiveType) {
-                    JetType jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + componentType.getCanonicalText());
-                    if (jetType != null)
-                        return TypeUtils.makeNullable(jetType);
+            List<TypeProjection> arguments = Lists.newArrayList();
+            List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
+            if (isRaw(classType, !parameters.isEmpty())) {
+                for (TypeParameterDescriptor parameter : parameters) {
+                    // not making a star projection because of this case:
+                    // Java:
+                    // class C<T extends C> {}
+                    // The upper bound is raw here, and we can't compute the projection: it would be infinite:
+                    // C<*> = C<out C<out C<...>>>
+                    // this way we loose some type information, even when the case is not so bad, but it doesn't seem to matter
+
+                    // projections are not allowed in immediate arguments of supertypes
+                    Variance projectionKind = parameter.getVariance() == OUT_VARIANCE || howThisTypeIsUsed == SUPERTYPE
+                                              ? INVARIANT
+                                              : OUT_VARIANCE;
+                    arguments.add(new TypeProjection(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType()));
                 }
-
-                boolean vararg = arrayType instanceof PsiEllipsisType;
-
-                Variance projectionKind = arrayElementTypeProjectionKind(vararg);
-                TypeUsage howArgumentTypeIsUsed = vararg ? MEMBER_SIGNATURE_CONTRAVARIANT : TYPE_ARGUMENT;
-
-                JetType type = transformToType(JavaType.create(componentType), howArgumentTypeIsUsed, typeVariableResolver);
-                return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, type));
             }
+            else {
+                PsiType[] psiArguments = classType.getPsi().getParameters();
 
-            private Variance arrayElementTypeProjectionKind(boolean vararg) {
-                Variance variance;
-                if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !vararg) {
-                    variance = OUT_VARIANCE;
+                if (parameters.size() != psiArguments.length) {
+                    // Most of the time this means there is an error in the Java code
+                    LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length +
+                             " in " + classType.getPresentableText() + "\n PsiClass: \n" + psiClass.getText());
+
+                    for (TypeParameterDescriptor parameter : parameters) {
+                        arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().asString())));
+                    }
                 }
                 else {
-                    variance = INVARIANT;
+                    for (int i = 0; i < parameters.size(); i++) {
+                        PsiType psiArgument = psiArguments[i];
+                        TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+
+                        TypeUsage howTheProjectionIsUsed = howThisTypeIsUsed == SUPERTYPE ? SUPERTYPE_ARGUMENT : TYPE_ARGUMENT;
+                        TypeProjection typeProjection = transformToTypeProjection(
+                                JavaType.create(psiArgument), typeParameterDescriptor, typeVariableResolver,
+                                howTheProjectionIsUsed);
+
+                        if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
+                            // remove redundant 'out' and 'in'
+                            arguments.add(new TypeProjection(INVARIANT, typeProjection.getType()));
+                        }
+                        else {
+                            arguments.add(typeProjection);
+                        }
+                    }
                 }
-                return variance;
             }
 
-            @Override
-            public JetType visitType(PsiType type) {
-                throw new UnsupportedOperationException("Unsupported type: " + type.getPresentableText()); // TODO
-            }
-        });
+            return new JetTypeImpl(
+                    Collections.<AnnotationDescriptor>emptyList(),
+                    classData.getTypeConstructor(),
+                    nullable,
+                    arguments,
+                    classData.getMemberScope(arguments));
+        }
     }
 
-    private static boolean isRaw(@NotNull PsiClassType classType, boolean argumentsExpected) {
+    @NotNull
+    private JetType transformArrayType(
+            @NotNull JavaArrayType arrayType,
+            @NotNull TypeUsage howThisTypeIsUsed,
+            @NotNull TypeVariableResolver typeVariableResolver,
+            boolean vararg
+    ) {
+        JavaType componentType = arrayType.getComponentType();
+        if (componentType instanceof JavaPrimitiveType) {
+            JetType jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass(
+                    "[" + ((JavaPrimitiveType) componentType).getCanonicalText());
+            if (jetType != null) {
+                return TypeUtils.makeNullable(jetType);
+            }
+        }
+
+        Variance projectionKind = arrayElementTypeProjectionKind(howThisTypeIsUsed, vararg);
+        TypeUsage howArgumentTypeIsUsed = vararg ? MEMBER_SIGNATURE_CONTRAVARIANT : TYPE_ARGUMENT;
+
+        JetType type = transformToType(componentType, howArgumentTypeIsUsed, typeVariableResolver);
+        return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, type));
+    }
+
+    @NotNull
+    private static Variance arrayElementTypeProjectionKind(@NotNull TypeUsage howThisTypeIsUsed, boolean vararg) {
+        if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !vararg) {
+            return OUT_VARIANCE;
+        }
+        else {
+            return INVARIANT;
+        }
+    }
+
+    @NotNull
+    public JetType transformVarargType(
+            @NotNull JavaArrayType type,
+            @NotNull TypeUsage howThisTypeIsUsed,
+            @NotNull TypeVariableResolver typeVariableResolver
+    ) {
+        return transformArrayType(type, howThisTypeIsUsed, typeVariableResolver, true);
+    }
+
+    private static boolean isRaw(@NotNull JavaClassType classType, boolean argumentsExpected) {
         // The second option is needed because sometimes we get weird versions of JDK classes in the class path,
         // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
         // their Kotlin analogs, so we treat them as raw to avoid exceptions
-        return classType.isRaw() || argumentsExpected && classType.getParameterCount() == 0;
+        return classType.getPsi().isRaw() || argumentsExpected && classType.getPsi().getParameterCount() == 0;
     }
 
     public static TypeUsage adjustTypeUsageWithMutabilityAnnotations(PsiModifierListOwner owner, TypeUsage originalTypeUsage) {

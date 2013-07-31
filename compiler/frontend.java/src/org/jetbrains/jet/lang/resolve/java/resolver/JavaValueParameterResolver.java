@@ -26,7 +26,9 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -50,38 +52,41 @@ public final class JavaValueParameterResolver {
             @NotNull TypeVariableResolver typeVariableResolver,
             boolean isVararg
     ) {
-        // TODO: must be very slow, make it lazy?
-        Name name = getParameterName(i, parameter);
-
         TypeUsage typeUsage = JavaTypeTransformer
                 .adjustTypeUsageWithMutabilityAnnotations(parameter.getPsi(), TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
-        JetType outType = typeTransformer.transformToType(parameter.getType(), typeUsage, typeVariableResolver);
+
+        JavaType parameterType = parameter.getType();
 
         JetType varargElementType;
+        JetType outType;
         if (isVararg) {
             // TODO: test this code
-            varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(TypeUtils.makeNotNullable(outType));
-            outType = TypeUtils.makeNotNullable(outType);
+            assert parameterType instanceof JavaArrayType : "Vararg parameter should be an array: " + parameterType;
+            JetType arrayType = typeTransformer.transformVarargType(((JavaArrayType) parameterType), typeUsage, typeVariableResolver);
+
+            outType = TypeUtils.makeNotNullable(arrayType);
+            varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(outType);
         }
         else {
+            JetType transformedType = typeTransformer.transformToType(parameterType, typeUsage, typeVariableResolver);
+            if (transformedType.isNullable()) {
+                PsiAnnotation notNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
+                        parameter.getPsi(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
+                if (notNullAnnotation != null) {
+                    transformedType = TypeUtils.makeNotNullable(transformedType);
+                }
+            }
+
+            outType = transformedType;
             varargElementType = null;
         }
 
-        JetType transformedType;
-        PsiAnnotation notNullAnnotation = JavaAnnotationResolver
-                .findAnnotationWithExternal(parameter.getPsi(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
-        if (notNullAnnotation != null) {
-            transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
-        }
-        else {
-            transformedType = outType;
-        }
         return new ValueParameterDescriptorImpl(
                 containingDeclaration,
                 i,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                name,
-                transformedType,
+                getParameterName(i, parameter), // TODO: must be very slow, make it lazy?
+                outType,
                 false,
                 varargElementType
         );

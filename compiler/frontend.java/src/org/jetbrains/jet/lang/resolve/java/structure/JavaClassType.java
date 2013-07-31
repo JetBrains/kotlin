@@ -57,4 +57,9 @@ public class JavaClassType extends JavaType {
         }
         return result;
     }
+
+    @NotNull
+    public String getPresentableText() {
+        return getPsi().getPresentableText();
+    }
 }

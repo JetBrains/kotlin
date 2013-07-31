@@ -29,4 +29,9 @@ public class JavaPrimitiveType extends JavaType {
     public PsiPrimitiveType getPsi() {
         return (PsiPrimitiveType) super.getPsi();
     }
+
+    @NotNull
+    public String getCanonicalText() {
+        return getPsi().getCanonicalText();
+    }
 }
