@@ -48,16 +48,11 @@ public class ConstraintsUtil {
         }
         values.addAll(exactBounds);
 
-        Collection<JetType> lowerBounds = Sets.newHashSet();
-        Collection<JetType> numberLowerBounds = Sets.newHashSet();
-        for (JetType lowerBound : typeConstraintsWithoutErrorTypes.getLowerBounds()) {
-            if (lowerBound.getConstructor() instanceof NumberValueTypeConstructor) {
-                numberLowerBounds.add(lowerBound);
-            }
-            else {
-                lowerBounds.add(lowerBound);
-            }
-        }
+        Pair<Collection<JetType>, Collection<JetType>> pair =
+                TypeUtils.filterNumberTypes(typeConstraintsWithoutErrorTypes.getLowerBounds());
+        Collection<JetType> lowerBounds = pair.getFirst();
+        Collection<JetType> numberLowerBounds = pair.getSecond();
+
         JetType superTypeOfLowerBounds = commonSupertype(lowerBounds);
         if (trySuggestion(superTypeOfLowerBounds, typeConstraints)) {
             return Collections.singleton(superTypeOfLowerBounds);
