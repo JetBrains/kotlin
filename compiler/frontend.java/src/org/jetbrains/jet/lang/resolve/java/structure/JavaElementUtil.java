@@ -16,12 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,11 +62,21 @@ import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectio
     }
 
     @NotNull
-    public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaModifierListOwner owner) {
+    public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaAnnotationOwner owner) {
         PsiModifierList modifierList = owner.getPsi().getModifierList();
         if (modifierList != null) {
             return annotations(modifierList.getAnnotations());
         }
         return Collections.emptyList();
+    }
+
+    @Nullable
+    public static JavaAnnotation findAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName) {
+        PsiModifierList modifierList = owner.getPsi().getModifierList();
+        if (modifierList != null) {
+            PsiAnnotation psiAnnotation = modifierList.findAnnotation(fqName.asString());
+            return psiAnnotation == null ? null : new JavaAnnotation(psiAnnotation);
+        }
+        return null;
     }
 }

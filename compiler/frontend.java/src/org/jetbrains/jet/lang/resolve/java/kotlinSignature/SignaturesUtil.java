@@ -72,7 +72,7 @@ public class SignaturesUtil {
 
     @Nullable
     public static String getKotlinSignature(@NotNull JavaMember member) {
-        PsiAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(member.getPsi(), JvmAnnotationNames.KOTLIN_SIGNATURE);
+        PsiAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(member, JvmAnnotationNames.KOTLIN_SIGNATURE);
 
         if (annotation != null) {
             PsiAnnotationMemberValue attribute = annotation.findAttributeValue(JvmAnnotationNames.KOTLIN_SIGNATURE_VALUE_FIELD_NAME);

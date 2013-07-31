@@ -19,14 +19,11 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
@@ -37,10 +34,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
@@ -198,11 +192,11 @@ public class JavaTypeTransformer {
             }
         }
         else {
-            PsiType[] psiArguments = classifierType.getPsi().getParameters();
+            Collection<JavaType> javaTypeArguments = classifierType.getTypeArguments();
 
-            if (parameters.size() != psiArguments.length) {
+            if (parameters.size() != javaTypeArguments.size()) {
                 // Most of the time this means there is an error in the Java code
-                LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length +
+                LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + javaTypeArguments.size() +
                          " in " + classifierType.getPresentableText() + "\n fqName: \n" + fqName);
 
                 for (TypeParameterDescriptor parameter : parameters) {
@@ -210,13 +204,13 @@ public class JavaTypeTransformer {
                 }
             }
             else {
-                for (int i = 0; i < parameters.size(); i++) {
-                    PsiType psiArgument = psiArguments[i];
-                    TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+                int index = 0;
+                for (JavaType typeArgument : javaTypeArguments) {
+                    TypeParameterDescriptor typeParameterDescriptor = parameters.get(index);
+                    index++;
 
                     TypeUsage howTheProjectionIsUsed = howThisTypeIsUsed == SUPERTYPE ? SUPERTYPE_ARGUMENT : TYPE_ARGUMENT;
-                    TypeProjection typeProjection = transformToTypeProjection(
-                            JavaType.create(psiArgument), typeParameterDescriptor, typeVariableResolver,
+                    TypeProjection typeProjection = transformToTypeProjection(typeArgument, typeParameterDescriptor, typeVariableResolver,
                             howTheProjectionIsUsed);
 
                     if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
@@ -284,22 +278,6 @@ public class JavaTypeTransformer {
         // The second option is needed because sometimes we get weird versions of JDK classes in the class path,
         // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
         // their Kotlin analogs, so we treat them as raw to avoid exceptions
-        return classifierType.getPsi().isRaw() || argumentsExpected && classifierType.getPsi().getParameterCount() == 0;
-    }
-
-    public static TypeUsage adjustTypeUsageWithMutabilityAnnotations(PsiModifierListOwner owner, TypeUsage originalTypeUsage) {
-        // Overrides type usage in method signature depending on mutability annotation present
-        EnumSet<TypeUsage> signatureTypeUsages =
-                EnumSet.of(TypeUsage.MEMBER_SIGNATURE_COVARIANT, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, TypeUsage.MEMBER_SIGNATURE_INVARIANT);
-        if (!signatureTypeUsages.contains(originalTypeUsage)) {
-            return originalTypeUsage;
-        }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION) != null) {
-            return TypeUsage.MEMBER_SIGNATURE_COVARIANT;
-        }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null) {
-            return TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
-        }
-        return originalTypeUsage;
+        return classifierType.isRaw() || argumentsExpected && classifierType.getTypeArguments().isEmpty();
     }
 }

@@ -16,16 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public interface JavaMember extends JavaModifierListOwner, JavaAnnotationOwner, JavaNamedElement {
+import java.util.Collection;
+
+public interface JavaAnnotationOwner extends JavaElement {
     @NotNull
     @Override
-    PsiMember getPsi();
+    PsiModifierListOwner getPsi();
 
-    // TODO: NotNull ?
+    @NotNull
+    Collection<JavaAnnotation> getAnnotations();
+
     @Nullable
-    JavaClass getContainingClass();
+    JavaAnnotation findAnnotation(@NotNull FqName fqName);
 }

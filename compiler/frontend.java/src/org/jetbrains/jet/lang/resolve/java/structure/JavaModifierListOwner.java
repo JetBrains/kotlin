@@ -20,8 +20,6 @@ import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 
-import java.util.Collection;
-
 public interface JavaModifierListOwner extends JavaElement {
     @NotNull
     @Override
@@ -35,7 +33,4 @@ public interface JavaModifierListOwner extends JavaElement {
 
     @NotNull
     Visibility getVisibility();
-
-    @NotNull
-    Collection<JavaAnnotation> getAnnotations();
 }

@@ -367,13 +367,13 @@ public final class JavaFunctionResolver {
             @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        PsiMethod psiMethod = method.getPsi();
-
-        TypeUsage typeUsage = JavaTypeTransformer.adjustTypeUsageWithMutabilityAnnotations(psiMethod, TypeUsage.MEMBER_SIGNATURE_COVARIANT);
+        TypeUsage typeUsage = JavaAnnotationResolver.hasReadonlyAnnotation(method) && !JavaAnnotationResolver.hasMutableAnnotation(method)
+                              ? TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
+                              : TypeUsage.MEMBER_SIGNATURE_COVARIANT;
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
-        if (JavaAnnotationResolver.findAnnotationWithExternal(psiMethod, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null) {
-            return TypeUtils.makeNullableAsSpecified(transformedType, false);
+        if (JavaAnnotationResolver.hasNotNullAnnotation(method)) {
+            return TypeUtils.makeNotNullable(transformedType);
         }
         else {
             return transformedType;

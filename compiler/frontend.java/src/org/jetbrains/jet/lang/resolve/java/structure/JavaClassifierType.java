@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.types;
+
 public class JavaClassifierType extends JavaType {
     public JavaClassifierType(@NotNull PsiClassType psiClassType) {
         super(psiClassType);
@@ -61,5 +63,14 @@ public class JavaClassifierType extends JavaType {
     @NotNull
     public String getPresentableText() {
         return getPsi().getPresentableText();
+    }
+
+    public boolean isRaw() {
+        return getPsi().isRaw();
+    }
+
+    @NotNull
+    public Collection<JavaType> getTypeArguments() {
+        return types(getPsi().getParameters());
     }
 }

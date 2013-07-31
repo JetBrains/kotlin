@@ -33,7 +33,8 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.*;
 
-public class JavaClass extends JavaClassifier implements JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner {
+public class JavaClass extends JavaClassifier
+        implements JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
     public JavaClass(@NotNull PsiClass psiClass) {
         super(psiClass);
         assert !(psiClass instanceof PsiTypeParameter)
@@ -160,5 +161,11 @@ public class JavaClass extends JavaClassifier implements JavaNamedElement, JavaT
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
         return JavaElementUtil.getAnnotations(this);
+    }
+
+    @Nullable
+    @Override
+    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
+        return JavaElementUtil.findAnnotation(this, fqName);
     }
 }

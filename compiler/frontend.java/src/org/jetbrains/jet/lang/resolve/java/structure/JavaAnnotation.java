@@ -19,10 +19,14 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.NotNull;
 
-public class JavaAnnotation {
-    private final PsiAnnotation psiAnnotation;
-
+public class JavaAnnotation extends JavaElementImpl {
     public JavaAnnotation(@NotNull PsiAnnotation psiAnnotation) {
-        this.psiAnnotation = psiAnnotation;
+        super(psiAnnotation);
+    }
+
+    @NotNull
+    @Override
+    public PsiAnnotation getPsi() {
+        return (PsiAnnotation) super.getPsi();
     }
 }

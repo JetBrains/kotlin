@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
@@ -52,8 +50,9 @@ public final class JavaValueParameterResolver {
             @NotNull TypeVariableResolver typeVariableResolver,
             boolean isVararg
     ) {
-        TypeUsage typeUsage = JavaTypeTransformer
-                .adjustTypeUsageWithMutabilityAnnotations(parameter.getPsi(), TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
+        TypeUsage typeUsage = JavaAnnotationResolver.hasMutableAnnotation(parameter)
+                              ? TypeUsage.MEMBER_SIGNATURE_COVARIANT
+                              : TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 
         JavaType parameterType = parameter.getType();
 
@@ -69,12 +68,8 @@ public final class JavaValueParameterResolver {
         }
         else {
             JetType transformedType = typeTransformer.transformToType(parameterType, typeUsage, typeVariableResolver);
-            if (transformedType.isNullable()) {
-                PsiAnnotation notNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
-                        parameter.getPsi(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
-                if (notNullAnnotation != null) {
-                    transformedType = TypeUtils.makeNotNullable(transformedType);
-                }
+            if (transformedType.isNullable() && JavaAnnotationResolver.hasNotNullAnnotation(parameter)) {
+                transformedType = TypeUtils.makeNotNullable(transformedType);
             }
 
             outType = transformedType;

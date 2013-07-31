@@ -21,11 +21,12 @@ import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-public abstract class JavaMemberImpl extends JavaElementImpl implements JavaMember, JavaModifierListOwner {
+public abstract class JavaMemberImpl extends JavaElementImpl implements JavaMember {
     protected JavaMemberImpl(@NotNull PsiMember psiMember) {
         super(psiMember);
     }
@@ -77,5 +78,11 @@ public abstract class JavaMemberImpl extends JavaElementImpl implements JavaMemb
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
         return JavaElementUtil.getAnnotations(this);
+    }
+
+    @Nullable
+    @Override
+    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
+        return JavaElementUtil.findAnnotation(this, fqName);
     }
 }

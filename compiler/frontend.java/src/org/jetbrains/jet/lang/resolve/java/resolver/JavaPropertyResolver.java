@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
@@ -231,14 +230,10 @@ public final class JavaPropertyResolver {
     private JetType getPropertyType(@NotNull JavaField field, @NotNull TypeVariableResolver typeVariableResolver) {
         JetType propertyType = typeTransformer.transformToType(field.getType(), typeVariableResolver);
 
-        boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
-                field.getPsi(),
-                JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
-        ) != null;
-
-        if (hasNotNullAnnotation || isStaticFinalField(field)) {
-            propertyType = TypeUtils.makeNotNullable(propertyType);
+        if (JavaAnnotationResolver.hasNotNullAnnotation(field) || isStaticFinalField(field) /* TODO: WTF? */) {
+            return TypeUtils.makeNotNullable(propertyType);
         }
+
         return propertyType;
     }
 

@@ -19,9 +19,12 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaValueParameter extends JavaElementImpl {
+import java.util.Collection;
+
+public class JavaValueParameter extends JavaElementImpl implements JavaAnnotationOwner {
     public JavaValueParameter(@NotNull PsiParameter psiParameter) {
         super(psiParameter);
     }
@@ -30,6 +33,18 @@ public class JavaValueParameter extends JavaElementImpl {
     @Override
     public PsiParameter getPsi() {
         return (PsiParameter) super.getPsi();
+    }
+
+    @NotNull
+    @Override
+    public Collection<JavaAnnotation> getAnnotations() {
+        return JavaElementUtil.getAnnotations(this);
+    }
+
+    @Nullable
+    @Override
+    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
+        return JavaElementUtil.findAnnotation(this, fqName);
     }
 
     @Nullable
