@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
@@ -29,51 +28,39 @@ import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.annotations;
 
-public abstract class JavaModifierListOwnerImpl extends JavaElementImpl implements JavaModifierListOwner {
-    protected JavaModifierListOwnerImpl(@NotNull PsiModifierListOwner psiModifierListOwner) {
-        super(psiModifierListOwner);
+/* package */ class JavaElementUtil {
+    private JavaElementUtil() {
+    }
+
+    public static boolean isAbstract(@NotNull JavaModifierListOwner owner) {
+        return owner.getPsi().hasModifierProperty(PsiModifier.ABSTRACT);
+    }
+
+    public static boolean isStatic(@NotNull JavaModifierListOwner owner) {
+        return owner.getPsi().hasModifierProperty(PsiModifier.STATIC);
+    }
+
+    public static boolean isFinal(@NotNull JavaModifierListOwner owner) {
+        return owner.getPsi().hasModifierProperty(PsiModifier.FINAL);
     }
 
     @NotNull
-    @Override
-    public PsiModifierListOwner getPsi() {
-        return (PsiModifierListOwner) super.getPsi();
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return getPsi().hasModifierProperty(PsiModifier.ABSTRACT);
-    }
-
-    @Override
-    public boolean isStatic() {
-        return getPsi().hasModifierProperty(PsiModifier.STATIC);
-    }
-
-    @Override
-    public boolean isFinal() {
-        return getPsi().hasModifierProperty(PsiModifier.FINAL);
-    }
-
-    @NotNull
-    @Override
-    public Visibility getVisibility() {
-        if (getPsi().hasModifierProperty(PsiModifier.PUBLIC)) {
+    public static Visibility getVisibility(@NotNull JavaModifierListOwner owner) {
+        if (owner.getPsi().hasModifierProperty(PsiModifier.PUBLIC)) {
             return Visibilities.PUBLIC;
         }
-        if (getPsi().hasModifierProperty(PsiModifier.PRIVATE)) {
+        if (owner.getPsi().hasModifierProperty(PsiModifier.PRIVATE)) {
             return Visibilities.PRIVATE;
         }
-        if (getPsi().hasModifierProperty(PsiModifier.PROTECTED)) {
-            return isStatic() ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY : JavaVisibilities.PROTECTED_AND_PACKAGE;
+        if (owner.getPsi().hasModifierProperty(PsiModifier.PROTECTED)) {
+            return owner.isStatic() ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY : JavaVisibilities.PROTECTED_AND_PACKAGE;
         }
         return JavaVisibilities.PACKAGE_VISIBILITY;
     }
 
     @NotNull
-    @Override
-    public Collection<JavaAnnotation> getAnnotations() {
-        PsiModifierList modifierList = getPsi().getModifierList();
+    public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaModifierListOwner owner) {
+        PsiModifierList modifierList = owner.getPsi().getModifierList();
         if (modifierList != null) {
             return annotations(modifierList.getAnnotations());
         }

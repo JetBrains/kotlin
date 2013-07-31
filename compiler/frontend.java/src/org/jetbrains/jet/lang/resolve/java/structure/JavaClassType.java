@@ -39,9 +39,9 @@ public class JavaClassType extends JavaType {
     }
 
     @Nullable
-    public JavaClass resolve() {
+    public JavaClassifier resolve() {
         PsiClass psiClass = getPsi().resolve();
-        return psiClass == null ? null : new JavaClass(psiClass);
+        return psiClass == null ? null : JavaClassifier.create(psiClass);
     }
 
     @NotNull

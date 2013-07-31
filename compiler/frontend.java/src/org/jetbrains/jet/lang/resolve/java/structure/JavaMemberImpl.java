@@ -16,11 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public abstract class JavaMemberImpl extends JavaModifierListOwnerImpl implements JavaMember {
+import java.util.Collection;
+
+public abstract class JavaMemberImpl extends JavaElementImpl implements JavaMember, JavaModifierListOwner {
     protected JavaMemberImpl(@NotNull PsiMember psiMember) {
         super(psiMember);
     }
@@ -37,5 +42,40 @@ public abstract class JavaMemberImpl extends JavaModifierListOwnerImpl implement
         String name = getPsi().getName();
         assert name != null : "Member must have a name: " + getPsi();
         return Name.identifier(name);
+    }
+
+    // TODO: NotNull?
+    @Nullable
+    @Override
+    public JavaClass getContainingClass() {
+        PsiClass psiClass = getPsi().getContainingClass();
+        return psiClass == null ? null : new JavaClass(psiClass);
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return JavaElementUtil.isAbstract(this);
+    }
+
+    @Override
+    public boolean isStatic() {
+        return JavaElementUtil.isStatic(this);
+    }
+
+    @Override
+    public boolean isFinal() {
+        return JavaElementUtil.isFinal(this);
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return JavaElementUtil.getVisibility(this);
+    }
+
+    @NotNull
+    @Override
+    public Collection<JavaAnnotation> getAnnotations() {
+        return JavaElementUtil.getAnnotations(this);
     }
 }

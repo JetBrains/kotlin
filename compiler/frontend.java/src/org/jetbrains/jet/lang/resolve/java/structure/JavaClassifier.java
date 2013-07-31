@@ -16,27 +16,28 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
 
-public class JavaField extends JavaMemberImpl {
-    public JavaField(@NotNull PsiField psiField) {
-        super(psiField);
+public abstract class JavaClassifier extends JavaElementImpl {
+    protected JavaClassifier(@NotNull PsiClass psiClass) {
+        super(psiClass);
     }
 
     @NotNull
     @Override
-    public PsiField getPsi() {
-        return (PsiField) super.getPsi();
-    }
-
-    public boolean isEnumEntry() {
-        return getPsi() instanceof PsiEnumConstant;
+    public PsiClass getPsi() {
+        return (PsiClass) super.getPsi();
     }
 
     @NotNull
-    public JavaType getType() {
-        return JavaType.create(getPsi().getType());
+    public static JavaClassifier create(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof PsiTypeParameter) {
+            return new JavaTypeParameter((PsiTypeParameter) psiClass);
+        }
+        else {
+            return new JavaClass(psiClass);
+        }
     }
 }

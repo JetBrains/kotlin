@@ -27,7 +27,6 @@ import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -93,7 +92,7 @@ public class JetTypesCompletionHelper {
             return true;
         }
 
-        if (DescriptorResolverUtils.isCompiledKotlinClass(new JavaClass(aClass))) {
+        if (DescriptorResolverUtils.isCompiledKotlinClass(aClass)) {
             if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
                 String qualifiedName = aClass.getQualifiedName();
                 if (qualifiedName != null) {

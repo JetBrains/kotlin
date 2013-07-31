@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiAnnotationMethod;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
@@ -44,14 +43,6 @@ public class JavaMethod extends JavaMemberImpl implements JavaTypeParameterListO
     @Override
     public Name getName() {
         return Name.identifier(getPsi().getName());
-    }
-
-    // TODO: NotNull?
-    @Nullable
-    @Override
-    public JavaClass getContainingClass() {
-        PsiClass psiClass = getPsi().getContainingClass();
-        return psiClass == null ? null : new JavaClass(psiClass);
     }
 
     @NotNull
@@ -82,5 +73,10 @@ public class JavaMethod extends JavaMemberImpl implements JavaTypeParameterListO
 
     public boolean isVararg() {
         return getPsi().isVarArgs();
+    }
+
+    public boolean isConstructor() {
+        // TODO: class JavaConstructor extends JavaMethod
+        return getPsi().isConstructor();
     }
 }

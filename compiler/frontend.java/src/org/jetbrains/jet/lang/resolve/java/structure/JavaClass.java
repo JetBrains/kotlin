@@ -19,11 +19,13 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiTypeParameter;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -31,15 +33,11 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.*;
 
-public class JavaClass extends JavaModifierListOwnerImpl implements JavaNamedElement, JavaTypeParameterListOwner {
+public class JavaClass extends JavaClassifier implements JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner {
     public JavaClass(@NotNull PsiClass psiClass) {
         super(psiClass);
-    }
-
-    @NotNull
-    @Override
-    public PsiClass getPsi() {
-        return (PsiClass) super.getPsi();
+        assert !(psiClass instanceof PsiTypeParameter)
+                : "PsiTypeParameter should be wrapped in JavaTypeParameter, not JavaClass: use JavaClassifier.create()";
     }
 
     @NotNull
@@ -135,5 +133,32 @@ public class JavaClass extends JavaModifierListOwnerImpl implements JavaNamedEle
     @NotNull
     public Collection<JavaMethod> getConstructors() {
         return methods(getPsi().getConstructors());
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return JavaElementUtil.isAbstract(this);
+    }
+
+    @Override
+    public boolean isStatic() {
+        return JavaElementUtil.isStatic(this);
+    }
+
+    @Override
+    public boolean isFinal() {
+        return JavaElementUtil.isFinal(this);
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return JavaElementUtil.getVisibility(this);
+    }
+
+    @NotNull
+    @Override
+    public Collection<JavaAnnotation> getAnnotations() {
+        return JavaElementUtil.getAnnotations(this);
     }
 }

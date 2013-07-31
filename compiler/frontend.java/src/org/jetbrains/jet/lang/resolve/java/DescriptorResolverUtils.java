@@ -43,8 +43,9 @@ public final class DescriptorResolverUtils {
     private DescriptorResolverUtils() {
     }
 
-    public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getPsi() instanceof ClsClassImpl) {
+    public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof ClsClassImpl) {
+            JavaClass javaClass = new JavaClass(psiClass);
             FqName fqName = javaClass.getFqName();
             if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
                 return hasAnnotation(javaClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
@@ -53,9 +54,9 @@ public final class DescriptorResolverUtils {
         return false;
     }
 
-    public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getPsi() instanceof ClsClassImpl) {
-            return hasAnnotation(javaClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
+    public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof ClsClassImpl) {
+            return hasAnnotation(new JavaClass(psiClass), JvmAnnotationNames.KOTLIN_CLASS.getFqName());
         }
         return false;
     }
@@ -64,8 +65,8 @@ public final class DescriptorResolverUtils {
         return javaClass.findAnnotation(annotationFqName.asString()) != null;
     }
 
-    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
-        return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
+    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull PsiClass psiClass) {
+        return isCompiledKotlinClass(psiClass) || isCompiledKotlinPackageClass(psiClass);
     }
 
     @NotNull

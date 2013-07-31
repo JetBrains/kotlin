@@ -16,15 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.PsiTypeParameterListOwner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.classTypes;
 
-public class JavaTypeParameter extends JavaElementImpl implements JavaNamedElement {
+public class JavaTypeParameter extends JavaClassifier implements JavaNamedElement {
     public JavaTypeParameter(@NotNull PsiTypeParameter psiTypeParameter) {
         super(psiTypeParameter);
     }
@@ -48,5 +52,22 @@ public class JavaTypeParameter extends JavaElementImpl implements JavaNamedEleme
     @NotNull
     public Collection<JavaClassType> getUpperBounds() {
         return classTypes(getPsi().getExtendsList().getReferencedTypes());
+    }
+
+    @Nullable
+    public JavaTypeParameterListOwner getOwner() {
+        PsiTypeParameterListOwner owner = getPsi().getOwner();
+        // TODO: a separate factory for such things
+        if (owner instanceof PsiMethod) {
+            return new JavaMethod((PsiMethod) owner);
+        }
+        else if (owner instanceof PsiClass) {
+            return new JavaClass((PsiClass) owner);
+        }
+        else if (owner != null) {
+            throw new UnsupportedOperationException("Unsupported type parameter list owner: " + owner);
+        }
+
+        return null;
     }
 }

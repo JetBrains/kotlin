@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -378,10 +379,12 @@ public class SingleAbstractMethodUtils {
         private boolean find(@NotNull JavaClassType classType) {
             PsiClassType.ClassResolveResult classResolveResult = classType.getPsi().resolveGenerics();
             PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
-            JavaClass javaClass = classType.resolve();
-            if (javaClass == null) {
+            JavaClassifier javaClassifier = classType.resolve();
+            if (javaClassifier == null) {
                 return false; // can't resolve class -> not a SAM interface
             }
+            assert javaClassifier instanceof JavaClass : "Classifier should be a class here: " + javaClassifier;
+            JavaClass javaClass = (JavaClass) javaClassifier;
             if (new FqName(CommonClassNames.JAVA_LANG_OBJECT).equals(javaClass.getFqName())) {
                 return true;
             }
