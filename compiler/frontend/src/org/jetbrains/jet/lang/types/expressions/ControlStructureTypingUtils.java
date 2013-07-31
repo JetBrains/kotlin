@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -37,21 +38,16 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategyImpl;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeImpl;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
@@ -216,6 +212,50 @@ public class ControlStructureTypingUtils {
     }
 
     /*package*/ static TracingStrategy createTracingForIf(final @NotNull Call callForIf) {
+        class CheckTypeContext {
+            public BindingTrace trace;
+            public JetType expectedType;
+
+            CheckTypeContext(@NotNull BindingTrace trace, @NotNull JetType expectedType) {
+                this.trace = trace;
+                this.expectedType = expectedType;
+            }
+        }
+
+        final JetVisitor<Void, CheckTypeContext> checkTypeVisitor = new JetVisitor<Void, CheckTypeContext>() {
+            private void checkExpressionType(@Nullable JetExpression expression, CheckTypeContext c) {
+                if (expression == null) return;
+                expression.accept(this, c);
+            }
+
+            @Override
+            public Void visitIfExpression(JetIfExpression ifExpression, CheckTypeContext c) {
+                checkExpressionType(ifExpression.getThen(), c);
+                checkExpressionType(ifExpression.getElse(), c);
+                return null;
+            }
+
+            @Override
+            public Void visitBlockExpression(JetBlockExpression expression, CheckTypeContext c) {
+                List<JetElement> statements = expression.getStatements();
+                if (!statements.isEmpty()) {
+                    JetElement lastElement = statements.get(statements.size() - 1);
+                    if (lastElement instanceof JetExpression) {
+                        checkExpressionType((JetExpression) lastElement, c);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public Void visitExpression(JetExpression expression, CheckTypeContext c) {
+                JetTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
+                if (typeInfo != null) {
+                    DataFlowUtils.checkType(typeInfo.getType(), expression, c.expectedType, typeInfo.getDataFlowInfo(), c.trace);
+                }
+                return null;
+            }
+        };
 
         return new ThrowingOnErrorTracingStrategy("resolve 'if' as a call") {
             @Override
@@ -245,9 +285,10 @@ public class ControlStructureTypingUtils {
                     return;
                 }
                 if (constraintSystem.hasOnlyExpectedTypeMismatch()) {
-                    JetExpression ifExpression = callForIf.getCalleeExpression();
-                    assert ifExpression != null;
-                    TracingStrategyImpl.reportTypeInferenceExpectedTypeMismatch(TYPE_MISMATCH, ifExpression, data, trace);
+                    JetExpression expression = callForIf.getCalleeExpression();
+                    if (expression != null) {
+                        expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
+                    }
                     return;
                 }
                 super.typeInferenceFailed(trace, data);

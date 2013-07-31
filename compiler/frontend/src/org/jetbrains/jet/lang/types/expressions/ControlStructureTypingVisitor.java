@@ -151,7 +151,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             result = thenTypeInfo;
         }
         else {
-            result = JetTypeInfo.create(CommonSupertypes.commonSupertype(Arrays.asList(thenType, elseType)), thenDataFlowInfo.or(elseDataFlowInfo));
+            result = JetTypeInfo.create(TypeUtils.commonSupertypeForPossiblyNumberTypes(Arrays.asList(thenType, elseType)), thenDataFlowInfo.or(elseDataFlowInfo));
         }
 
         return DataFlowUtils.checkImplicitCast(result.getType(), ifExpression, contextWithExpectedType, isStatement, result.getDataFlowInfo());
