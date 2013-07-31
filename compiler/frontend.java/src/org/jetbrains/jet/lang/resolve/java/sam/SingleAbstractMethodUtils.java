@@ -33,8 +33,8 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -341,10 +341,10 @@ public class SingleAbstractMethodUtils {
 
     @Nullable
     private static JavaMethod findOnlyAbstractMethod(@NotNull JavaClass javaClass, @NotNull Project project) {
-        JavaClassType classType = new JavaClassType(JavaPsiFacade.getElementFactory(project).createType(javaClass.getPsi()));
+        JavaClassifierType classifierType = new JavaClassifierType(JavaPsiFacade.getElementFactory(project).createType(javaClass.getPsi()));
 
         OnlyAbstractMethodFinder finder = new OnlyAbstractMethodFinder();
-        if (finder.find(classType)) {
+        if (finder.find(classifierType)) {
             return finder.getFoundMethod();
         }
         return null;
@@ -376,10 +376,10 @@ public class SingleAbstractMethodUtils {
     private static class OnlyAbstractMethodFinder {
         private MethodSignatureBackedByPsiMethod found;
 
-        private boolean find(@NotNull JavaClassType classType) {
-            PsiClassType.ClassResolveResult classResolveResult = classType.getPsi().resolveGenerics();
+        private boolean find(@NotNull JavaClassifierType classifierType) {
+            PsiClassType.ClassResolveResult classResolveResult = classifierType.getPsi().resolveGenerics();
             PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
-            JavaClassifier javaClassifier = classType.resolve();
+            JavaClassifier javaClassifier = classifierType.resolve();
             if (javaClassifier == null) {
                 return false; // can't resolve class -> not a SAM interface
             }
@@ -410,7 +410,7 @@ public class SingleAbstractMethodUtils {
                 }
             }
 
-            for (JavaClassType t : classType.getSupertypes()) {
+            for (JavaClassifierType t : classifierType.getSupertypes()) {
                 if (!find(t)) {
                     return false;
                 }

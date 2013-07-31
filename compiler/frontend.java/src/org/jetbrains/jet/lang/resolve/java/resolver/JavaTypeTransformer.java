@@ -90,11 +90,11 @@ public class JavaTypeTransformer {
             @NotNull TypeUsage howThisTypeIsUsed,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        if (type instanceof JavaClassType) {
-            JavaClassType classType = (JavaClassType) type;
-            JetType jetType = transformClassType(classType, howThisTypeIsUsed, typeVariableResolver);
+        if (type instanceof JavaClassifierType) {
+            JavaClassifierType classifierType = (JavaClassifierType) type;
+            JetType jetType = transformClassifierType(classifierType, howThisTypeIsUsed, typeVariableResolver);
             if (jetType == null) {
-                return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
+                return ErrorUtils.createErrorType("Unresolved java class: " + classifierType.getPresentableText());
             }
             return jetType;
         }
@@ -113,12 +113,12 @@ public class JavaTypeTransformer {
     }
 
     @Nullable
-    private JetType transformClassType(
-            @NotNull JavaClassType classType,
+    private JetType transformClassifierType(
+            @NotNull JavaClassifierType classifierType,
             @NotNull TypeUsage howThisTypeIsUsed,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        JavaClassifier javaClassifier = classType.resolve();
+        JavaClassifier javaClassifier = classifierType.resolve();
         if (javaClassifier == null) {
             return null;
         }
@@ -128,7 +128,7 @@ public class JavaTypeTransformer {
         else if (javaClassifier instanceof JavaClass) {
             FqName fqName = ((JavaClass) javaClassifier).getFqName();
             assert fqName != null : "Class type should have a FQ name: " + javaClassifier;
-            return transformClassType(fqName, classType, howThisTypeIsUsed, typeVariableResolver);
+            return transformClassType(fqName, classifierType, howThisTypeIsUsed, typeVariableResolver);
         }
         else {
             throw new UnsupportedOperationException("Unsupported classifier: " + javaClassifier);
@@ -144,7 +144,7 @@ public class JavaTypeTransformer {
         JavaTypeParameterListOwner owner = typeParameter.getOwner();
         if (owner instanceof JavaMethod && ((JavaMethod) owner).isConstructor()) {
             Set<JetType> supertypesJet = Sets.newHashSet();
-            for (JavaClassType supertype : typeParameter.getUpperBounds()) {
+            for (JavaClassifierType supertype : typeParameter.getUpperBounds()) {
                 supertypesJet.add(transformToType(supertype, UPPER_BOUND, typeVariableResolver));
             }
             return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
@@ -163,7 +163,7 @@ public class JavaTypeTransformer {
     @Nullable
     private JetType transformClassType(
             @NotNull FqName fqName,
-            @NotNull JavaClassType classType,
+            @NotNull JavaClassifierType classifierType,
             @NotNull TypeUsage howThisTypeIsUsed,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
@@ -181,7 +181,7 @@ public class JavaTypeTransformer {
 
         List<TypeProjection> arguments = Lists.newArrayList();
         List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
-        if (isRaw(classType, !parameters.isEmpty())) {
+        if (isRaw(classifierType, !parameters.isEmpty())) {
             for (TypeParameterDescriptor parameter : parameters) {
                 // not making a star projection because of this case:
                 // Java:
@@ -198,12 +198,12 @@ public class JavaTypeTransformer {
             }
         }
         else {
-            PsiType[] psiArguments = classType.getPsi().getParameters();
+            PsiType[] psiArguments = classifierType.getPsi().getParameters();
 
             if (parameters.size() != psiArguments.length) {
                 // Most of the time this means there is an error in the Java code
                 LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length +
-                         " in " + classType.getPresentableText() + "\n fqName: \n" + fqName);
+                         " in " + classifierType.getPresentableText() + "\n fqName: \n" + fqName);
 
                 for (TypeParameterDescriptor parameter : parameters) {
                     arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().asString())));
@@ -280,11 +280,11 @@ public class JavaTypeTransformer {
         return transformArrayType(type, howThisTypeIsUsed, typeVariableResolver, true);
     }
 
-    private static boolean isRaw(@NotNull JavaClassType classType, boolean argumentsExpected) {
+    private static boolean isRaw(@NotNull JavaClassifierType classifierType, boolean argumentsExpected) {
         // The second option is needed because sometimes we get weird versions of JDK classes in the class path,
         // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
         // their Kotlin analogs, so we treat them as raw to avoid exceptions
-        return classType.getPsi().isRaw() || argumentsExpected && classType.getPsi().getParameterCount() == 0;
+        return classifierType.getPsi().isRaw() || argumentsExpected && classifierType.getPsi().getParameterCount() == 0;
     }
 
     public static TypeUsage adjustTypeUsageWithMutabilityAnnotations(PsiModifierListOwner owner, TypeUsage originalTypeUsage) {

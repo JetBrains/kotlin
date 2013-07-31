@@ -27,8 +27,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class JavaClassType extends JavaType {
-    public JavaClassType(@NotNull PsiClassType psiClassType) {
+public class JavaClassifierType extends JavaType {
+    public JavaClassifierType(@NotNull PsiClassType psiClassType) {
         super(psiClassType);
     }
 
@@ -45,15 +45,15 @@ public class JavaClassType extends JavaType {
     }
 
     @NotNull
-    public Collection<JavaClassType> getSupertypes() {
+    public Collection<JavaClassifierType> getSupertypes() {
         PsiType[] psiTypes = getPsi().getSuperTypes();
         if (psiTypes.length == 0) return Collections.emptyList();
-        List<JavaClassType> result = new ArrayList<JavaClassType>(psiTypes.length);
+        List<JavaClassifierType> result = new ArrayList<JavaClassifierType>(psiTypes.length);
         for (PsiType psiType : psiTypes) {
             if (!(psiType instanceof PsiClassType)) {
                 throw new IllegalStateException("Supertype should be a class: " + psiType + ", type: " + getPsi());
             }
-            result.add(new JavaClassType((PsiClassType) psiType));
+            result.add(new JavaClassifierType((PsiClassType) psiType));
         }
         return result;
     }

@@ -56,7 +56,7 @@ public abstract class JavaType {
             @Nullable
             @Override
             public JavaType visitClassType(PsiClassType classType) {
-                return new JavaClassType(classType);
+                return new JavaClassifierType(classType);
             }
 
             @Nullable

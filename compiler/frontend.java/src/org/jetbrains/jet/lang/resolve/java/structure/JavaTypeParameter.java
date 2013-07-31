@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.classTypes;
+import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.classifierTypes;
 
 public class JavaTypeParameter extends JavaClassifier implements JavaNamedElement {
     public JavaTypeParameter(@NotNull PsiTypeParameter psiTypeParameter) {
@@ -50,8 +50,8 @@ public class JavaTypeParameter extends JavaClassifier implements JavaNamedElemen
     }
 
     @NotNull
-    public Collection<JavaClassType> getUpperBounds() {
-        return classTypes(getPsi().getExtendsList().getReferencedTypes());
+    public Collection<JavaClassifierType> getUpperBounds() {
+        return classifierTypes(getPsi().getExtendsList().getReferencedTypes());
     }
 
     @Nullable

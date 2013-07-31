@@ -108,10 +108,10 @@ public class JavaClass extends JavaClassifier implements JavaNamedElement, JavaT
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public Collection<JavaClassType> getSupertypes() {
+    public Collection<JavaClassifierType> getSupertypes() {
         // TODO: getPsi().getSuperTypes() ?
-        Collection<JavaClassType> superClasses = classTypes(getPsi().getExtendsListTypes());
-        Collection<JavaClassType> superInterfaces = classTypes(getPsi().getImplementsListTypes());
+        Collection<JavaClassifierType> superClasses = classifierTypes(getPsi().getExtendsListTypes());
+        Collection<JavaClassifierType> superInterfaces = classifierTypes(getPsi().getImplementsListTypes());
         return ContainerUtil.collect(ContainerUtil.concat(superClasses, superInterfaces).iterator());
     }
 

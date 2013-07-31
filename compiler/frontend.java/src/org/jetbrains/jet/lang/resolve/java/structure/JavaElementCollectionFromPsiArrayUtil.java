@@ -89,11 +89,11 @@ import java.util.List;
     }
 
     @NotNull
-    public static Collection<JavaClassType> classTypes(@NotNull PsiClassType[] classTypes) {
+    public static Collection<JavaClassifierType> classifierTypes(@NotNull PsiClassType[] classTypes) {
         if (classTypes.length == 0) return Collections.emptyList();
-        List<JavaClassType> result = new ArrayList<JavaClassType>(classTypes.length);
+        List<JavaClassifierType> result = new ArrayList<JavaClassifierType>(classTypes.length);
         for (PsiClassType psiClassType : classTypes) {
-            result.add(new JavaClassType(psiClassType));
+            result.add(new JavaClassifierType(psiClassType));
         }
         return result;
     }

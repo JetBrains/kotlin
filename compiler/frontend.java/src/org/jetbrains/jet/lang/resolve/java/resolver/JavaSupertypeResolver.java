@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -112,11 +112,11 @@ public final class JavaSupertypeResolver {
 
     @NotNull
     private List<JetType> transformSupertypeList(
-            @NotNull Collection<JavaClassType> supertypes,
+            @NotNull Collection<JavaClassifierType> supertypes,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
         List<JetType> result = new ArrayList<JetType>(supertypes.size());
-        for (JavaClassType type : supertypes) {
+        for (JavaClassifierType type : supertypes) {
             JavaClassifier resolved = type.resolve();
             if (resolved != null) {
                 assert resolved instanceof JavaClass : "Supertype should be a class: " + resolved;

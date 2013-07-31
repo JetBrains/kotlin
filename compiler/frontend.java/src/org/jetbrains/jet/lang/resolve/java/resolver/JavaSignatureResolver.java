@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter;
 import org.jetbrains.jet.lang.types.JetType;
@@ -99,12 +99,12 @@ public final class JavaSignatureResolver {
             TypeVariableResolver typeVariableByPsiResolver
     ) {
         TypeParameterDescriptorImpl typeParameterDescriptor = typeParameter.descriptor;
-        Collection<JavaClassType> upperBounds = typeParameter.javaTypeParameter.getUpperBounds();
+        Collection<JavaClassifierType> upperBounds = typeParameter.javaTypeParameter.getUpperBounds();
         if (upperBounds.isEmpty()) {
             typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
         }
         else {
-            for (JavaClassType upperBound : upperBounds) {
+            for (JavaClassifierType upperBound : upperBounds) {
                 JetType transformedType = typeTransformer.transformToType(upperBound, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver);
                 typeParameterDescriptor.addUpperBound(transformedType);
             }
