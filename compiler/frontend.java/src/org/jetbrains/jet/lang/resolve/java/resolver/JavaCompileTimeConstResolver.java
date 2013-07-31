@@ -189,6 +189,9 @@ public final class JavaCompileTimeConstResolver {
         else if (literalValue instanceof Double) {
             return new DoubleValue((Double) literalValue);
         }
+        else if (literalValue instanceof Boolean) {
+            return ((Boolean) literalValue) ? BooleanValue.TRUE : BooleanValue.FALSE;
+        }
         else if (literalValue == null) {
             return NullValue.NULL;
         }
