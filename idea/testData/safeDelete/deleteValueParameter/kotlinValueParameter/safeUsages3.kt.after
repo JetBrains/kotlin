@@ -1,0 +1,11 @@
+class A {
+    fun foo(a: Int, b: String) {
+
+    }
+}
+
+class B {
+    fun bar(a: A) {
+        a.foo(1, "1")
+    }
+}

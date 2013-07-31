@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler;
@@ -90,6 +91,14 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
 
     public void doTypeParameterTestWithJava(@NotNull String path) throws Exception {
         doTest(path, JetTypeParameter.class, true);
+    }
+
+    public void doValueParameterTest(@NotNull String path) throws Exception {
+        doTest(path, JetParameter.class, false);
+    }
+
+    public void doValueParameterTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetParameter.class, true);
     }
 
     private <T extends PsiElement> void doTest(

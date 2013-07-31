@@ -419,7 +419,9 @@ public class GenerateTests {
                 testModel("idea/testData/safeDelete/deleteProperty/kotlinPropertyWithJava", "doPropertyTestWithJava"),
                 testModel("idea/testData/safeDelete/deleteProperty/javaPropertyWithKotlin", "doJavaPropertyTest"),
                 testModel("idea/testData/safeDelete/deleteTypeParameter/kotlinTypeParameter", "doTypeParameterTest"),
-                testModel("idea/testData/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava", "doTypeParameterTestWithJava")
+                testModel("idea/testData/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava", "doTypeParameterTestWithJava"),
+                testModel("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter", "doValueParameterTest"),
+                testModel("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava", "doValueParameterTestWithJava")
         );
 
         generateTest(
