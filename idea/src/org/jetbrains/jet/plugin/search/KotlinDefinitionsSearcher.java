@@ -31,7 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 
 public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
     @Override

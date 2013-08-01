@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.provider;
+package org.jetbrains.jet.lang.resolve.java.scope;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;

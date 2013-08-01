@@ -18,8 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
-import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;

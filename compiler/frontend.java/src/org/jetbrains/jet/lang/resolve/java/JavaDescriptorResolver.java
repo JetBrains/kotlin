@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;

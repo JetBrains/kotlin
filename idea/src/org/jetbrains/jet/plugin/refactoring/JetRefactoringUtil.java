@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;

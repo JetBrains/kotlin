@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
-import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.name.Name;

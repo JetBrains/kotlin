@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.provider;
+package org.jetbrains.jet.lang.resolve.java.scope;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class MembersCache {
+/* package */ final class MembersCache {
     private final Multimap<Name, Runnable> memberProcessingTasks = HashMultimap.create();
     private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
@@ -141,7 +141,7 @@ public final class MembersCache {
             this.staticMembers = staticMembers;
         }
 
-        public void process() {
+        private void process() {
             processFields();
             processMethods();
             processNestedClasses();

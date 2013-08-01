@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.asJava.wrappers;
+package org.jetbrains.jet.asJava;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.ClsMethodImpl;
@@ -22,7 +22,7 @@ import com.intellij.psi.impl.java.stubs.PsiMethodStub;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 
 public class JetClsMethodImpl extends ClsMethodImpl implements JetClsMethod {
     @NotNull

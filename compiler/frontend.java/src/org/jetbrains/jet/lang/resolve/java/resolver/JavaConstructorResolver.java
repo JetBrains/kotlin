@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;

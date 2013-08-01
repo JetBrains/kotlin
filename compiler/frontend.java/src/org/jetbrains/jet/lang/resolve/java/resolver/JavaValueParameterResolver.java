@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;

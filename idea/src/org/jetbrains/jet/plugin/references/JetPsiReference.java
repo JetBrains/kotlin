@@ -30,8 +30,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
-import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;

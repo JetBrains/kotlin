@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 
 import java.util.List;
 
-public class TypeVariableResolver {
+/* package */ class TypeVariableResolver {
     @NotNull
     protected final List<TypeParameterDescriptor> typeParameters;
     @NotNull

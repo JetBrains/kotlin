@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.jetAsJava;
 
-import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 
-public interface JetJavaMirrorMarker extends PsiClass {
+/** ClsMethod created for Kotlin declaration for it to be resolved from Java */
+public interface JetClsMethod extends PsiMethod {
+    JetDeclaration getOrigin();
 }
