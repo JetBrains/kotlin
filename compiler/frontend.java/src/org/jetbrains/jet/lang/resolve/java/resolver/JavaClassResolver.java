@@ -22,7 +22,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
@@ -327,12 +326,11 @@ public final class JavaClassResolver {
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
 
-        PsiClass psiClass = javaClass.getPsi();
-        classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(psiClass, taskList));
+        classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(javaClass, taskList));
 
-        trace.record(BindingContext.CLASS, psiClass, classDescriptor);
+        trace.record(BindingContext.CLASS, javaClass.getPsi(), classDescriptor);
 
-        JavaMethod samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(javaClass, psiClass.getProject());
+        JavaMethod samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(javaClass, javaClass.getPsi().getProject());
         if (samInterfaceMethod != null) {
             SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod, classDescriptor);
             classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));

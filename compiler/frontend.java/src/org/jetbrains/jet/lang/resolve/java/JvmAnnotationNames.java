@@ -20,6 +20,7 @@ import jet.KotlinClass;
 import jet.KotlinPackage;
 import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 public final class JvmAnnotationNames {
@@ -39,7 +40,7 @@ public final class JvmAnnotationNames {
 
     public static final JvmClassName KOTLIN_SIGNATURE = JvmClassName.byClass(KotlinSignature.class);
 
-    public static final String KOTLIN_SIGNATURE_VALUE_FIELD_NAME = "value";
+    public static final Name KOTLIN_SIGNATURE_VALUE_FIELD_NAME = Name.identifier("value");
 
     public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION = JvmClassName.byClass(NotNull.class);
 

@@ -118,7 +118,7 @@ public final class JavaFunctionResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 ownerDescriptor,
-                annotationResolver.resolveAnnotations(psiMethod),
+                annotationResolver.resolveAnnotations(method),
                 method.getName(),
                 CallableMemberDescriptor.Kind.DECLARATION
         );

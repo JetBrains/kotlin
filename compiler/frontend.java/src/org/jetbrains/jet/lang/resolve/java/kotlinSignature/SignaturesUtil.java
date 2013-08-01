@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -28,6 +25,9 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaLiteralAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -72,12 +72,12 @@ public class SignaturesUtil {
 
     @Nullable
     public static String getKotlinSignature(@NotNull JavaMember member) {
-        PsiAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(member, JvmAnnotationNames.KOTLIN_SIGNATURE);
+        JavaAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(member, JvmAnnotationNames.KOTLIN_SIGNATURE);
 
         if (annotation != null) {
-            PsiAnnotationMemberValue attribute = annotation.findAttributeValue(JvmAnnotationNames.KOTLIN_SIGNATURE_VALUE_FIELD_NAME);
-            if (attribute instanceof PsiLiteralExpression) {
-                Object value = ((PsiLiteralExpression) attribute).getValue();
+            JavaAnnotationArgument argument = annotation.findArgument(JvmAnnotationNames.KOTLIN_SIGNATURE_VALUE_FIELD_NAME);
+            if (argument instanceof JavaLiteralAnnotationArgument) {
+                Object value = ((JavaLiteralAnnotationArgument) argument).getValue();
                 if (value instanceof String) {
                     return StringUtil.unescapeStringCharacters((String) value);
                 }

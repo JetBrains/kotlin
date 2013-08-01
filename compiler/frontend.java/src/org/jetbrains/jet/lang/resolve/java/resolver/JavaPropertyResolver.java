@@ -175,7 +175,7 @@ public final class JavaPropertyResolver {
             @NotNull JavaField field,
             boolean isVar
     ) {
-        List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(field.getPsi());
+        List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(field);
         Visibility visibility = field.getVisibility();
 
         if (field.isEnumEntry()) {

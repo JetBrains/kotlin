@@ -16,9 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.ExternalAnnotationsManager;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -30,18 +31,21 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaAnnotationResolver {
+    public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
+
     private JavaClassResolver classResolver;
     private JavaCompileTimeConstResolver compileTimeConstResolver;
 
@@ -59,20 +63,20 @@ public final class JavaAnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(@NotNull PsiModifierListOwner owner, @NotNull PostponedTasks tasks) {
-        PsiAnnotation[] psiAnnotations = getAllAnnotations(owner);
-        List<AnnotationDescriptor> r = Lists.newArrayListWithCapacity(psiAnnotations.length);
-        for (PsiAnnotation psiAnnotation : psiAnnotations) {
-            AnnotationDescriptor annotation = resolveAnnotation(psiAnnotation, tasks);
+    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JavaAnnotationOwner owner, @NotNull PostponedTasks tasks) {
+        Collection<JavaAnnotation> annotations = getAnnotationsWithExternal(owner);
+        List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(annotations.size());
+        for (JavaAnnotation javaAnnotation : annotations) {
+            AnnotationDescriptor annotation = resolveAnnotation(javaAnnotation, tasks);
             if (annotation != null) {
-                r.add(annotation);
+                result.add(annotation);
             }
         }
-        return r;
+        return result;
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(@NotNull PsiModifierListOwner owner) {
+    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JavaAnnotationOwner owner) {
         PostponedTasks postponedTasks = new PostponedTasks();
         List<AnnotationDescriptor> annotations = resolveAnnotations(owner, postponedTasks);
         postponedTasks.performTasks();
@@ -80,30 +84,28 @@ public final class JavaAnnotationResolver {
     }
 
     @Nullable
-    public AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull PostponedTasks postponedTasks) {
+    public AnnotationDescriptor resolveAnnotation(@NotNull JavaAnnotation javaAnnotation, @NotNull PostponedTasks postponedTasks) {
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
-        String qname = psiAnnotation.getQualifiedName();
-        if (qname == null) {
+        FqName fqName = javaAnnotation.getFqName();
+        if (fqName == null) {
             return null;
         }
 
         // Don't process internal jet annotations and jetbrains NotNull annotations
-        if (qname.startsWith("jet.runtime.typeinfo.")
-            || qname.equals(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().asString())
-            || qname.equals(JvmAnnotationNames.KOTLIN_CLASS.getFqName().asString())
-            || qname.equals(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName().asString())
+        if (fqName.asString().startsWith("jet.runtime.typeinfo.")
+            || fqName.equals(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName())
+            || fqName.equals(JvmAnnotationNames.KOTLIN_CLASS.getFqName())
+            || fqName.equals(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName())
         ) {
             return null;
         }
 
-        FqName annotationFqName = new FqName(qname);
-
-        AnnotationDescriptor mappedClassDescriptor = JavaToKotlinClassMap.getInstance().mapToAnnotationClass(annotationFqName);
+        AnnotationDescriptor mappedClassDescriptor = JavaToKotlinClassMap.getInstance().mapToAnnotationClass(fqName);
         if (mappedClassDescriptor != null) {
             return mappedClassDescriptor;
         }
 
-        final ClassDescriptor annotationClass = classResolver.resolveClass(annotationFqName, INCLUDE_KOTLIN_SOURCES, postponedTasks);
+        final ClassDescriptor annotationClass = classResolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES, postponedTasks);
         if (annotationClass == null) {
             return null;
         }
@@ -116,22 +118,15 @@ public final class JavaAnnotationResolver {
         });
 
 
-        PsiAnnotationParameterList parameterList = psiAnnotation.getParameterList();
-        for (PsiNameValuePair psiNameValuePair : parameterList.getAttributes()) {
-            PsiAnnotationMemberValue value = psiNameValuePair.getValue();
-            String name = psiNameValuePair.getName();
-            if (name == null) name = "value";
-            Name identifier = Name.identifier(name);
+        for (JavaAnnotationArgument argument : javaAnnotation.getArguments()) {
+            CompileTimeConstant value = compileTimeConstResolver.resolveAnnotationArgument(fqName, argument, postponedTasks);
+            if (value == null) continue;
 
-            if (value == null) return null;
-            CompileTimeConstant compileTimeConst =
-                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, postponedTasks);
-            if (compileTimeConst != null) {
-                ValueParameterDescriptor valueParameterDescriptor =
-                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(identifier, annotationClass);
-                if (valueParameterDescriptor != null) {
-                    annotation.setValueArgument(valueParameterDescriptor, compileTimeConst);
-                }
+            Name name = argument.getName();
+            ValueParameterDescriptor descriptor = DescriptorResolverUtils.getAnnotationParameterByName(
+                    name == null ? DEFAULT_ANNOTATION_MEMBER_NAME : name, annotationClass);
+            if (descriptor != null) {
+                annotation.setValueArgument(descriptor, value);
             }
         }
 
@@ -139,30 +134,31 @@ public final class JavaAnnotationResolver {
     }
 
     @NotNull
-    private static PsiAnnotation[] getAllAnnotations(@NotNull PsiModifierListOwner owner) {
-        List<PsiAnnotation> result = new ArrayList<PsiAnnotation>();
+    private static Collection<JavaAnnotation> getAnnotationsWithExternal(@NotNull JavaAnnotationOwner owner) {
+        List<JavaAnnotation> result = new ArrayList<JavaAnnotation>();
 
-        PsiModifierList list = owner.getModifierList();
-        if (list != null) {
-            result.addAll(Arrays.asList(list.getAnnotations()));
-        }
+        result.addAll(owner.getAnnotations());
 
-        PsiAnnotation[] externalAnnotations = ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotations(owner);
+        PsiAnnotation[] externalAnnotations =
+                ExternalAnnotationsManager.getInstance(owner.getPsi().getProject()).findExternalAnnotations(owner.getPsi());
         if (externalAnnotations != null) {
-            result.addAll(Arrays.asList(externalAnnotations));
+            for (PsiAnnotation annotation : externalAnnotations) {
+                result.add(new JavaAnnotation(annotation));
+            }
         }
 
-        return result.toArray(new PsiAnnotation[result.size()]);
+        return result;
     }
 
     @Nullable
-    public static PsiAnnotation findAnnotationWithExternal(@NotNull JavaAnnotationOwner owner, @NotNull JvmClassName name) {
+    public static JavaAnnotation findAnnotationWithExternal(@NotNull JavaAnnotationOwner owner, @NotNull JvmClassName name) {
         JavaAnnotation annotation = owner.findAnnotation(name.getFqName());
         if (annotation != null) {
-            return annotation.getPsi();
+            return annotation;
         }
 
-        return findExternalAnnotation(owner.getPsi(), name);
+        PsiAnnotation externalAnnotation = findExternalAnnotation(owner.getPsi(), name);
+        return externalAnnotation == null ? null : new JavaAnnotation(externalAnnotation);
     }
 
     public static boolean hasNotNullAnnotation(@NotNull JavaAnnotationOwner owner) {

@@ -33,9 +33,9 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
@@ -110,11 +110,11 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     }
 
     @NotNull
-    private static AnnotationDescriptor getAnnotationDescriptorForJavaLangDeprecated(@NotNull ClassDescriptor classDescriptor) {
+    private static AnnotationDescriptor getAnnotationDescriptorForJavaLangDeprecated(@NotNull ClassDescriptor annotationClass) {
         AnnotationDescriptor annotation = new AnnotationDescriptor();
-        annotation.setAnnotationType(classDescriptor.getDefaultType());
-        ValueParameterDescriptor value =
-                DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(Name.identifier("value"), classDescriptor);
+        annotation.setAnnotationType(annotationClass.getDefaultType());
+        ValueParameterDescriptor value = DescriptorResolverUtils.getAnnotationParameterByName(
+                JavaAnnotationResolver.DEFAULT_ANNOTATION_MEMBER_NAME, annotationClass);
         assert value != null : "jet.deprecated must have one parameter called value";
         annotation.setValueArgument(value, new StringValue("Deprecated in Java"));
         return annotation;

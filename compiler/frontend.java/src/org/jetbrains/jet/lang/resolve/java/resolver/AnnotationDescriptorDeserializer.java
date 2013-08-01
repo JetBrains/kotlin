@@ -217,7 +217,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
             private void setArgumentValueByName(@NotNull String name, @NotNull CompileTimeConstant<?> argumentValue) {
                 ValueParameterDescriptor parameter =
-                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(Name.identifier(name), annotationClass);
+                        DescriptorResolverUtils.getAnnotationParameterByName(Name.identifier(name), annotationClass);
                 if (parameter != null) {
                     annotation.setValueArgument(parameter, argumentValue);
                 }

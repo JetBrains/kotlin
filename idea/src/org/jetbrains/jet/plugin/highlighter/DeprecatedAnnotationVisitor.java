@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -237,10 +237,10 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
     private static String getMessageFromAnnotationDescriptor(@NotNull AnnotationDescriptor descriptor) {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType());
         assert classDescriptor != null : "ClassDescriptor for jet.deprecated mustn't be null";
-        ValueParameterDescriptor parameterDescriptor =
-                DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(Name.identifier("value"), classDescriptor);
-        assert parameterDescriptor != null : "jet.deprecated must have one parameter called value";
-        CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameterDescriptor);
+        ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(
+                JavaAnnotationResolver.DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
+        assert parameter != null : "jet.deprecated must have one parameter called value";
+        CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameter);
         assert valueArgument != null : "jet.deprecated must have value argument";
         return (String) valueArgument.getValue();
     }
