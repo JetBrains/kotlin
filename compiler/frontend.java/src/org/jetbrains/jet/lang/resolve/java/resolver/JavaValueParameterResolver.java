@@ -17,11 +17,11 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
@@ -39,7 +39,7 @@ public final class JavaValueParameterResolver {
     private JavaTypeTransformer typeTransformer;
 
     @NotNull
-    private ValueParameterDescriptor resolveParameterDescriptor(
+    private ValueParameterDescriptor resolveValueParameter(
             @NotNull DeclarationDescriptor containingDeclaration,
             int i,
             @NotNull JavaValueParameter parameter,
@@ -95,7 +95,7 @@ public final class JavaValueParameterResolver {
     }
 
     @NotNull
-    public JavaDescriptorResolver.ValueParameterDescriptors resolveParameterDescriptors(
+    public ValueParameters resolveValueParameters(
             @NotNull DeclarationDescriptor container,
             @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
@@ -107,10 +107,30 @@ public final class JavaValueParameterResolver {
             JavaValueParameter parameter = iterator.next();
 
             boolean isVararg = method.isVararg() && !iterator.hasNext();
-            ValueParameterDescriptor descriptor = resolveParameterDescriptor(container, index, parameter, typeVariableResolver, isVararg);
+            ValueParameterDescriptor descriptor = resolveValueParameter(container, index, parameter, typeVariableResolver, isVararg);
             result.add(descriptor);
             index++;
         }
-        return new JavaDescriptorResolver.ValueParameterDescriptors(null, result);
+        return new ValueParameters(null, result);
+    }
+
+    public static class ValueParameters {
+        private final JetType receiverType;
+        private final List<ValueParameterDescriptor> descriptors;
+
+        public ValueParameters(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
+            this.receiverType = receiverType;
+            this.descriptors = descriptors;
+        }
+
+        @Nullable
+        public JetType getReceiverType() {
+            return receiverType;
+        }
+
+        @NotNull
+        public List<ValueParameterDescriptor> getDescriptors() {
+            return descriptors;
+        }
     }
 }

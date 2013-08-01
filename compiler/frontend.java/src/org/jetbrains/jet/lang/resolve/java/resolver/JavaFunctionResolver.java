@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
@@ -132,8 +131,8 @@ public final class JavaFunctionResolver {
 
         TypeVariableResolver typeVariableResolver = new TypeVariableResolver(methodTypeParameters, functionDescriptorImpl);
 
-        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver
-                .resolveParameterDescriptors(functionDescriptorImpl, method, typeVariableResolver);
+        JavaValueParameterResolver.ValueParameters valueParameters = valueParameterResolver
+                .resolveValueParameters(functionDescriptorImpl, method, typeVariableResolver);
         JetType returnType = makeReturnType(returnJavaType, method, typeVariableResolver);
 
         List<String> signatureErrors = Lists.newArrayList();
@@ -141,11 +140,11 @@ public final class JavaFunctionResolver {
         List<FunctionDescriptor> superFunctions;
         if (ownerDescriptor instanceof ClassDescriptor) {
             SignaturesPropagationData signaturesPropagationData = new SignaturesPropagationData(
-                    (ClassDescriptor) ownerDescriptor, returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
+                    (ClassDescriptor) ownerDescriptor, returnType, valueParameters, methodTypeParameters, method, trace);
             superFunctions = signaturesPropagationData.getSuperFunctions();
 
             returnType = signaturesPropagationData.getModifiedReturnType();
-            valueParameterDescriptors = signaturesPropagationData.getModifiedValueParameters();
+            valueParameters = signaturesPropagationData.getModifiedValueParameters();
             methodTypeParameters = signaturesPropagationData.getModifiedTypeParameters();
 
             signatureErrors.addAll(signaturesPropagationData.getSignatureErrors());
@@ -155,10 +154,10 @@ public final class JavaFunctionResolver {
         }
 
         AlternativeMethodSignatureData alternativeMethodSignatureData =
-                new AlternativeMethodSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters,
+                new AlternativeMethodSignatureData(method, valueParameters, returnType, methodTypeParameters,
                                                    !superFunctions.isEmpty());
         if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
-            valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
+            valueParameters = alternativeMethodSignatureData.getValueParameters();
             returnType = alternativeMethodSignatureData.getReturnType();
             methodTypeParameters = alternativeMethodSignatureData.getTypeParameters();
         }
@@ -167,10 +166,10 @@ public final class JavaFunctionResolver {
         }
 
         functionDescriptorImpl.initialize(
-                valueParameterDescriptors.getReceiverType(),
+                valueParameters.getReceiverType(),
                 DescriptorUtils.getExpectedThisObjectIfNeeded(ownerDescriptor),
                 methodTypeParameters,
-                valueParameterDescriptors.getDescriptors(),
+                valueParameters.getDescriptors(),
                 returnType,
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
                 method.getVisibility(),

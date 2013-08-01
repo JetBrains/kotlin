@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
@@ -198,30 +197,28 @@ public final class JavaConstructorResolver {
 
         List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
 
-        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
+        JavaValueParameterResolver.ValueParameters valueParameters = valueParameterResolver.resolveValueParameters(
                 constructorDescriptor, constructor,
                 new TypeVariableResolver(typeParameters, classDescriptor)
         );
 
-        if (valueParameterDescriptors.getReceiverType() != null) {
+        if (valueParameters.getReceiverType() != null) {
             throw new IllegalStateException();
         }
 
         AlternativeMethodSignatureData alternativeMethodSignatureData =
-                new AlternativeMethodSignatureData(constructor, valueParameterDescriptors, null,
+                new AlternativeMethodSignatureData(constructor, valueParameters, null,
                                                    Collections.<TypeParameterDescriptor>emptyList(), false);
         if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
-            valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
+            valueParameters = alternativeMethodSignatureData.getValueParameters();
         }
         else if (alternativeMethodSignatureData.hasErrors()) {
             trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, constructorDescriptor,
                          Collections.singletonList(alternativeMethodSignatureData.getError()));
         }
 
-        constructorDescriptor.initialize(typeParameters,
-                                         valueParameterDescriptors.getDescriptors(),
-                                         constructor.getVisibility(),
-                                         isStaticClass);
+        constructorDescriptor.initialize(typeParameters, valueParameters.getDescriptors(), constructor.getVisibility(), isStaticClass);
+
         trace.record(BindingContext.CONSTRUCTOR, constructor.getPsi(), constructorDescriptor);
         return constructorDescriptor;
     }

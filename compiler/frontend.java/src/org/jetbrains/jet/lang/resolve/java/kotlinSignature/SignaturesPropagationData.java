@@ -36,10 +36,10 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -58,7 +58,7 @@ public class SignaturesPropagationData {
     private static final Logger LOG = Logger.getInstance(SignaturesPropagationData.class);
 
     private final List<TypeParameterDescriptor> modifiedTypeParameters;
-    private final JavaDescriptorResolver.ValueParameterDescriptors modifiedValueParameters;
+    private final JavaValueParameterResolver.ValueParameters modifiedValueParameters;
     private final JetType modifiedReturnType;
 
     private final List<String> signatureErrors = Lists.newArrayList();
@@ -69,7 +69,7 @@ public class SignaturesPropagationData {
     public SignaturesPropagationData(
             @NotNull ClassDescriptor containingClass,
             @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
-            @NotNull JavaDescriptorResolver.ValueParameterDescriptors autoValueParameters, // descriptors built by parameters resolver
+            @NotNull JavaValueParameterResolver.ValueParameters autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
             @NotNull JavaMethod method,
             @NotNull BindingTrace trace
@@ -88,7 +88,7 @@ public class SignaturesPropagationData {
         return modifiedTypeParameters;
     }
 
-    public JavaDescriptorResolver.ValueParameterDescriptors getModifiedValueParameters() {
+    public JavaValueParameterResolver.ValueParameters getModifiedValueParameters() {
         return modifiedValueParameters;
     }
 
@@ -157,8 +157,8 @@ public class SignaturesPropagationData {
         return result;
     }
 
-    private JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
-            @NotNull JavaDescriptorResolver.ValueParameterDescriptors parameters // descriptors built by parameters resolver
+    private JavaValueParameterResolver.ValueParameters modifyValueParametersAccordingToSuperMethods(
+            @NotNull JavaValueParameterResolver.ValueParameters parameters // descriptors built by parameters resolver
     ) {
         assert parameters.getReceiverType() == null : "Parameters before propagation have receiver type," +
                                                       " but propagation should be disabled for functions compiled from Kotlin in class: " +
@@ -205,7 +205,7 @@ public class SignaturesPropagationData {
             }
         }
 
-        return new JavaDescriptorResolver.ValueParameterDescriptors(receiverType, resultParameters);
+        return new JavaValueParameterResolver.ValueParameters(receiverType, resultParameters);
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
