@@ -18,15 +18,12 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
@@ -66,7 +63,7 @@ public final class JavaSignatureResolver {
     }
 
     @NotNull
-    private static List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(
+    public static List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(
             @NotNull DeclarationDescriptor container,
             @NotNull Collection<JavaTypeParameter> typeParameters
     ) {
@@ -94,17 +91,17 @@ public final class JavaSignatureResolver {
     }
 
     private void initializeTypeParameter(
-            TypeParameterDescriptorInitialization typeParameter,
-            TypeVariableResolver typeVariableByPsiResolver
+            @NotNull TypeParameterDescriptorInitialization initialization,
+            @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        TypeParameterDescriptorImpl typeParameterDescriptor = typeParameter.descriptor;
-        Collection<JavaClassifierType> upperBounds = typeParameter.javaTypeParameter.getUpperBounds();
+        TypeParameterDescriptorImpl typeParameterDescriptor = initialization.descriptor;
+        Collection<JavaClassifierType> upperBounds = initialization.javaTypeParameter.getUpperBounds();
         if (upperBounds.isEmpty()) {
             typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
         }
         else {
             for (JavaClassifierType upperBound : upperBounds) {
-                JetType transformedType = typeTransformer.transformToType(upperBound, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver);
+                JetType transformedType = typeTransformer.transformToType(upperBound, TypeUsage.UPPER_BOUND, typeVariableResolver);
                 typeParameterDescriptor.addUpperBound(transformedType);
             }
         }
@@ -112,9 +109,8 @@ public final class JavaSignatureResolver {
     }
 
     public void initializeTypeParameters(
-            List<TypeParameterDescriptorInitialization> typeParametersInitialization,
-            @NotNull DeclarationDescriptor typeParametersOwner,
-            @NotNull String context
+            @NotNull List<TypeParameterDescriptorInitialization> typeParametersInitialization,
+            @NotNull DeclarationDescriptor typeParametersOwner
     ) {
         List<TypeParameterDescriptor> prevTypeParameters = Lists.newArrayList();
 
@@ -126,43 +122,25 @@ public final class JavaSignatureResolver {
         for (TypeParameterDescriptorInitialization psiTypeParameter : typeParametersInitialization) {
             prevTypeParameters.add(psiTypeParameter.descriptor);
 
-            initializeTypeParameter(psiTypeParameter, new TypeVariableResolver(typeParameters, typeParametersOwner, context));
+            initializeTypeParameter(psiTypeParameter, new TypeVariableResolver(typeParameters, typeParametersOwner));
         }
     }
 
-
     @NotNull
-    public static List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(
-            JavaClass javaClass, ClassDescriptor classDescriptor
+    public List<TypeParameterDescriptor> resolveTypeParameters(
+            @NotNull DeclarationDescriptor owner,
+            @NotNull Collection<JavaTypeParameter> typeParameters
     ) {
-        List<TypeParameterDescriptorInitialization> result = Lists.newArrayList();
-        for (JavaTypeParameter typeParameter : javaClass.getTypeParameters()) {
-            TypeParameterDescriptorInitialization typeParameterDescriptor = makeUninitializedTypeParameter(classDescriptor, typeParameter);
-            result.add(typeParameterDescriptor);
+        List<TypeParameterDescriptorInitialization> initializations = makeUninitializedTypeParameters(owner, typeParameters);
+
+        initializeTypeParameters(initializations, owner);
+
+        List<TypeParameterDescriptor> result = Lists.newArrayListWithCapacity(initializations.size());
+
+        for (TypeParameterDescriptorInitialization initialization : initializations) {
+            result.add(initialization.descriptor);
         }
+
         return result;
-    }
-
-
-    @NotNull
-    public List<TypeParameterDescriptor> resolveMethodTypeParameters(
-            @NotNull JavaMethod method,
-            @NotNull DeclarationDescriptor functionDescriptor
-    ) {
-        List<TypeParameterDescriptorInitialization> typeParametersIntialization =
-                makeUninitializedTypeParameters(functionDescriptor, method.getTypeParameters());
-
-        JavaClass containingClass = method.getContainingClass();
-        assert containingClass != null;
-        initializeTypeParameters(typeParametersIntialization, functionDescriptor,
-                                 "method " + method.getName() + " in class " + containingClass.getFqName());
-
-        List<TypeParameterDescriptor> typeParameters = Lists.newArrayListWithCapacity(typeParametersIntialization.size());
-
-        for (TypeParameterDescriptorInitialization tpdi : typeParametersIntialization) {
-            typeParameters.add(tpdi.descriptor);
-        }
-
-        return typeParameters;
     }
 }

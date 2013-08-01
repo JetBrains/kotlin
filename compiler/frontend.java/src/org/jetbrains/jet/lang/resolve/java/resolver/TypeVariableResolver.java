@@ -22,25 +22,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
 /* package */ class TypeVariableResolver {
     @NotNull
-    protected final List<TypeParameterDescriptor> typeParameters;
+    private final List<TypeParameterDescriptor> typeParameters;
     @NotNull
-    protected final DeclarationDescriptor owner;
-    @NotNull
-    protected final String context;
+    private final DeclarationDescriptor owner;
 
     public TypeVariableResolver(
             @NotNull List<TypeParameterDescriptor> typeParameters,
-            @NotNull DeclarationDescriptor owner,
-            @NotNull String context
+            @NotNull DeclarationDescriptor owner
     ) {
         this.typeParameters = typeParameters;
         this.owner = owner;
-        this.context = context;
 
         assert ContainerUtil.and(typeParameters, new Condition<TypeParameterDescriptor>() {
             @Override
@@ -51,18 +48,18 @@ import java.util.List;
     }
 
     @NotNull
-    public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
+    public TypeParameterDescriptor getTypeVariable(@NotNull Name name) {
         return getTypeVariable(name, typeParameters, owner);
     }
 
     @NotNull
-    private TypeParameterDescriptor getTypeVariable(
-            @NotNull String name,
+    private static TypeParameterDescriptor getTypeVariable(
+            @NotNull Name name,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull DeclarationDescriptor owner
     ) {
         for (TypeParameterDescriptor typeParameter : typeParameters) {
-            if (typeParameter.getName().asString().equals(name)) {
+            if (typeParameter.getName().equals(name)) {
                 return typeParameter;
             }
         }
@@ -72,6 +69,6 @@ import java.util.List;
             return getTypeVariable(name, ((ClassDescriptor) container).getTypeConstructor().getParameters(), container);
         }
 
-        throw new IllegalStateException("Type parameter not found by name '" + name + "' in " + context);
+        throw new IllegalStateException("Type parameter not found by name: " + name);
     }
 }

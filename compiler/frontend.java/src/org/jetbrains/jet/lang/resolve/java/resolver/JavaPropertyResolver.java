@@ -77,8 +77,7 @@ public final class JavaPropertyResolver {
         if (fields.size() == 1) {
             JavaField field = fields.iterator().next();
             if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, field)) {
-                propertiesFromCurrent.add(resolveProperty(ownerDescriptor, propertyName,
-                                                          "class or namespace " + DescriptorUtils.getFQName(ownerDescriptor), field));
+                propertiesFromCurrent.add(resolveProperty(ownerDescriptor, propertyName, field));
             }
         }
 
@@ -124,23 +123,16 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private PropertyDescriptor resolveProperty(
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull Name propertyName,
-            @NotNull String context,
-            @NotNull JavaField field
-    ) {
+    private PropertyDescriptor resolveProperty(@NotNull ClassOrNamespaceDescriptor owner, @NotNull Name name, @NotNull JavaField field) {
         boolean isVar = !field.isFinal();
 
-        PropertyDescriptorImpl propertyDescriptor = createPropertyDescriptor(owner, propertyName, field, isVar);
-
+        PropertyDescriptorImpl propertyDescriptor = createPropertyDescriptor(owner, name, field, isVar);
         propertyDescriptor.initialize(null, null);
 
-        TypeVariableResolver typeVariableResolverForPropertyInternals =
-                new TypeVariableResolver(Collections.<TypeParameterDescriptor>emptyList(), propertyDescriptor,
-                                         "property " + propertyName + " in " + context);
+        TypeVariableResolver typeVariableResolver =
+                new TypeVariableResolver(Collections.<TypeParameterDescriptor>emptyList(), propertyDescriptor);
 
-        JetType propertyType = getPropertyType(field, typeVariableResolverForPropertyInternals);
+        JetType propertyType = getPropertyType(field, typeVariableResolver);
 
         propertyType = getAlternativeSignatureData(isVar, field, propertyDescriptor, propertyType);
 
@@ -150,6 +142,7 @@ public final class JavaPropertyResolver {
                 DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
                 (JetType) null
         );
+
         trace.record(BindingContext.VARIABLE, field.getPsi(), propertyDescriptor);
 
         trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);

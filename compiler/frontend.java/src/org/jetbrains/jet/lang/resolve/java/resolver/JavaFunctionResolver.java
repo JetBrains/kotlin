@@ -28,7 +28,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
@@ -123,14 +126,14 @@ public final class JavaFunctionResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
 
-        List<TypeParameterDescriptor> methodTypeParameters = signatureResolver.resolveMethodTypeParameters(method, functionDescriptorImpl);
+        List<TypeParameterDescriptor> methodTypeParameters =
+                signatureResolver.resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters());
 
-        TypeVariableResolver methodTypeVariableResolver = new TypeVariableResolver(
-                methodTypeParameters, functionDescriptorImpl, "method " + method.getName() + " in class " + method.getContainingClass());
+        TypeVariableResolver typeVariableResolver = new TypeVariableResolver(methodTypeParameters, functionDescriptorImpl);
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
-                .resolveParameterDescriptors(functionDescriptorImpl, method, methodTypeVariableResolver);
-        JetType returnType = makeReturnType(returnJavaType, method, methodTypeVariableResolver);
+                .resolveParameterDescriptors(functionDescriptorImpl, method, typeVariableResolver);
+        JetType returnType = makeReturnType(returnJavaType, method, typeVariableResolver);
 
         List<String> signatureErrors = Lists.newArrayList();
 

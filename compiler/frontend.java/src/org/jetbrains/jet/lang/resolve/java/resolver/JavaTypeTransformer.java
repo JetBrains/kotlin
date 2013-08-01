@@ -143,7 +143,7 @@ public class JavaTypeTransformer {
             return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
         }
 
-        TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName().asString());
+        TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
 
         // In Java: ArrayList<T>
         // In Kotlin: ArrayList<T>, not ArrayList<T?>
