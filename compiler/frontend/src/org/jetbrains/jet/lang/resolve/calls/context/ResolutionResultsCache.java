@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.calls.context;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
@@ -29,6 +31,8 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImp
 import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+
+import static org.jetbrains.jet.lang.psi.Call.CallType;
 
 public class ResolutionResultsCache {
 
@@ -81,8 +85,15 @@ public class ResolutionResultsCache {
     }
 
     @Nullable
-    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@NotNull CallKey callKey) {
-        return trace.get(DEFERRED_COMPUTATION_FOR_CALL, callKey);
+    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@NotNull JetExpression expression) {
+        for (CallType callType : Lists.newArrayList(CallType.DEFAULT, CallType.ARRAY_GET_METHOD, CallType.ARRAY_SET_METHOD)) {
+            CallKey callKey = CallKey.create(callType, expression);
+            CallCandidateResolutionContext<FunctionDescriptor> context = trace.get(DEFERRED_COMPUTATION_FOR_CALL, callKey);
+            if (context != null) {
+                return context;
+            }
+        }
+        return null;
     }
 
     @NotNull

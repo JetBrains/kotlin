@@ -344,7 +344,7 @@ public class CandidateResolver {
 
         JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
         CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
-                context.resolutionResultsCache.getDeferredComputation(CallKey.create(Call.CallType.DEFAULT, keyExpression));
+                context.resolutionResultsCache.getDeferredComputation(keyExpression);
 
         if (storedContextForArgument == null) {
             PsiElement parent = expression.getParent();

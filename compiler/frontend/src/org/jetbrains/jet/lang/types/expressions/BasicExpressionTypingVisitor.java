@@ -1139,7 +1139,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext context) {
-        JetTypeInfo typeInfo = resolveArrayAccessGetMethod(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        JetTypeInfo typeInfo = resolveArrayAccessGetMethod(expression, context);
         return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
     }
 
@@ -1289,7 +1289,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression arrayExpression = arrayAccessExpression.getArrayExpression();
         if (arrayExpression == null) return JetTypeInfo.create(null, oldContext.dataFlowInfo);
 
-        JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayExpression, oldContext);
+        JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayExpression, oldContext.replaceExpectedType(NO_EXPECTED_TYPE));
         JetType arrayType = arrayTypeInfo.getType();
         if (arrayType == null) return arrayTypeInfo;
 
@@ -1315,7 +1315,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = facade.getTypeInfo(rightHandSide, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
         }
 
-        if (!functionResults.isSuccess()) {
+        if (!functionResults.isSingleResult()) {
             traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
             return JetTypeInfo.create(null, dataFlowInfo);
         }
