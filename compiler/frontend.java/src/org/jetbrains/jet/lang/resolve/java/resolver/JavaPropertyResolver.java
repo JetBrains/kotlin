@@ -158,7 +158,7 @@ public final class JavaPropertyResolver {
         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
             PsiExpression initializer = field.getPsi().getInitializer();
             if (initializer instanceof PsiLiteralExpression) {
-                CompileTimeConstant<?> constant = JavaCompileTimeConstResolver
+                CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver
                         .resolveCompileTimeConstantValue(((PsiLiteralExpression) initializer).getValue(), propertyType);
                 if (constant != null) {
                     trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);

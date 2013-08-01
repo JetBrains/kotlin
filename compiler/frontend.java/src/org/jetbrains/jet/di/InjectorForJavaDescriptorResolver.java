@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
@@ -49,7 +49,7 @@ public class InjectorForJavaDescriptorResolver {
     private final VirtualFileFinder virtualFileFinder;
     private final JavaClassResolver javaClassResolver;
     private final JavaAnnotationResolver javaAnnotationResolver;
-    private final JavaCompileTimeConstResolver javaCompileTimeConstResolver;
+    private final JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
     private final JavaFunctionResolver javaFunctionResolver;
     private final JavaValueParameterResolver javaValueParameterResolver;
     private final JavaTypeTransformer javaTypeTransformer;
@@ -73,7 +73,7 @@ public class InjectorForJavaDescriptorResolver {
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
-        this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
+        this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
         this.javaFunctionResolver = new JavaFunctionResolver();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
@@ -106,11 +106,11 @@ public class InjectorForJavaDescriptorResolver {
         javaClassResolver.setTrace(bindingTrace);
         javaClassResolver.setVirtualFileFinder(virtualFileFinder);
 
+        javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
         javaAnnotationResolver.setClassResolver(javaClassResolver);
-        javaAnnotationResolver.setCompileTimeConstResolver(javaCompileTimeConstResolver);
 
-        javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
+        javaAnnotationArgumentResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setParameterResolver(javaValueParameterResolver);

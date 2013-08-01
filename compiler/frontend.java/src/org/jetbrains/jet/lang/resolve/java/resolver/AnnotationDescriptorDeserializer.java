@@ -191,7 +191,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             // TODO: arrays, annotations
             @Override
             public void visit(String name, Object value) {
-                CompileTimeConstant<?> argument = JavaCompileTimeConstResolver.resolveCompileTimeConstantValue(value, null);
+                CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);
                 if (argument != null) {
                     setArgumentValueByName(name, argument);
                 }

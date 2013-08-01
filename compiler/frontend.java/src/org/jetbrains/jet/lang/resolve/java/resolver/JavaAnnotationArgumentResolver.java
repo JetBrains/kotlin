@@ -40,12 +40,9 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
-public final class JavaCompileTimeConstResolver {
+public final class JavaAnnotationArgumentResolver {
     private JavaAnnotationResolver annotationResolver;
     private JavaClassResolver classResolver;
-
-    public JavaCompileTimeConstResolver() {
-    }
 
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {

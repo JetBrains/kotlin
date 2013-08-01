@@ -47,7 +47,7 @@ public final class JavaAnnotationResolver {
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 
     private JavaClassResolver classResolver;
-    private JavaCompileTimeConstResolver compileTimeConstResolver;
+    private JavaAnnotationArgumentResolver argumentResolver;
 
     public JavaAnnotationResolver() {
     }
@@ -58,8 +58,8 @@ public final class JavaAnnotationResolver {
     }
 
     @Inject
-    public void setCompileTimeConstResolver(JavaCompileTimeConstResolver compileTimeConstResolver) {
-        this.compileTimeConstResolver = compileTimeConstResolver;
+    public void setArgumentResolver(JavaAnnotationArgumentResolver argumentResolver) {
+        this.argumentResolver = argumentResolver;
     }
 
     @NotNull
@@ -119,7 +119,7 @@ public final class JavaAnnotationResolver {
 
 
         for (JavaAnnotationArgument argument : javaAnnotation.getArguments()) {
-            CompileTimeConstant value = compileTimeConstResolver.resolveAnnotationArgument(fqName, argument, postponedTasks);
+            CompileTimeConstant value = argumentResolver.resolveAnnotationArgument(fqName, argument, postponedTasks);
             if (value == null) continue;
 
             Name name = argument.getName();
