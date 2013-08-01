@@ -30,6 +30,18 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.types;
 
 public class JavaClassifierType extends JavaType {
+    private static class ResolutionResult {
+        private final JavaClassifier classifier;
+        private final JavaTypeSubstitutor substitutor;
+
+        private ResolutionResult(@Nullable JavaClassifier classifier, @NotNull JavaTypeSubstitutor substitutor) {
+            this.classifier = classifier;
+            this.substitutor = substitutor;
+        }
+    }
+
+    private ResolutionResult resolutionResult;
+
     public JavaClassifierType(@NotNull PsiClassType psiClassType) {
         super(psiClassType);
     }
@@ -41,9 +53,26 @@ public class JavaClassifierType extends JavaType {
     }
 
     @Nullable
-    public JavaClassifier resolve() {
-        PsiClass psiClass = getPsi().resolve();
-        return psiClass == null ? null : JavaClassifier.create(psiClass);
+    public JavaClassifier getClassifier() {
+        resolve();
+        return resolutionResult.classifier;
+    }
+
+    @NotNull
+    public JavaTypeSubstitutor getSubstitutor() {
+        resolve();
+        return resolutionResult.substitutor;
+    }
+
+    private void resolve() {
+        if (resolutionResult == null) {
+            PsiClassType.ClassResolveResult result = getPsi().resolveGenerics();
+            PsiClass psiClass = result.getElement();
+            resolutionResult = new ResolutionResult(
+                    psiClass == null ? null : JavaClassifier.create(psiClass),
+                    new JavaTypeSubstitutor(result.getSubstitutor())
+            );
+        }
     }
 
     @NotNull

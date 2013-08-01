@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -167,5 +164,10 @@ public class JavaClass extends JavaClassifier
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
         return JavaElementUtil.findAnnotation(this, fqName);
+    }
+
+    @NotNull
+    public JavaClassifierType getDefaultType() {
+        return new JavaClassifierType(JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi()));
     }
 }

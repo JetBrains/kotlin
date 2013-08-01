@@ -66,4 +66,9 @@ public abstract class JavaType {
             }
         });
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof JavaType && getPsi().equals(((JavaType) obj).getPsi());
+    }
 }

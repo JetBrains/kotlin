@@ -17,10 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
-import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
-import com.intellij.util.ArrayUtil;
+import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -32,24 +29,20 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static com.intellij.psi.util.MethodSignatureUtil.areSignaturesErasureEqual;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class SingleAbstractMethodUtils {
+    private SingleAbstractMethodUtils() {
+    }
 
     @NotNull
     public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
@@ -158,12 +151,14 @@ public class SingleAbstractMethodUtils {
         JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
         assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type " + samInterface.getDefaultType();
         JetType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
-        assert parameterType != null : "couldn't substitute type: " + parameterType + ", substitutor = " + typeParameters.substitutor;
+        assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
+                                       ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
                 result, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("function"), parameterType, false, null);
 
         JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
-        assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParameters.substitutor;
+        assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +
+                                    ", substitutor = " + typeParameters.substitutor;
 
         result.initialize(
                 null,
@@ -263,7 +258,8 @@ public class SingleAbstractMethodUtils {
         }
         else {
             returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
-            assert returnType != null : "couldn't substitute type: " + returnType + ", substitutor = " + typeParameters.substitutor;
+            assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
+                                        ", substitutor = " + typeParameters.substitutor;
         }
 
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
@@ -318,16 +314,13 @@ public class SingleAbstractMethodUtils {
         return getAbstractMethodOfSamType(samInterface.getDefaultType());
     }
 
-    private SingleAbstractMethodUtils() {
-    }
-
     public static boolean isSamInterface(@NotNull JavaClass javaClass) {
-        return getSamInterfaceMethod(javaClass, javaClass.getPsi().getProject()) != null;
+        return getSamInterfaceMethod(javaClass) != null;
     }
 
     // Returns null if not SAM interface
     @Nullable
-    public static JavaMethod getSamInterfaceMethod(@NotNull JavaClass javaClass, @NotNull Project project) {
+    public static JavaMethod getSamInterfaceMethod(@NotNull JavaClass javaClass) {
         FqName fqName = javaClass.getFqName();
         if (fqName == null || fqName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) {
             return null;
@@ -336,23 +329,16 @@ public class SingleAbstractMethodUtils {
             return null;
         }
 
-        return findOnlyAbstractMethod(javaClass, project);
+        return findOnlyAbstractMethod(javaClass);
     }
 
     @Nullable
-    private static JavaMethod findOnlyAbstractMethod(@NotNull JavaClass javaClass, @NotNull Project project) {
-        JavaClassifierType classifierType = new JavaClassifierType(JavaPsiFacade.getElementFactory(project).createType(javaClass.getPsi()));
-
+    private static JavaMethod findOnlyAbstractMethod(@NotNull JavaClass javaClass) {
         OnlyAbstractMethodFinder finder = new OnlyAbstractMethodFinder();
-        if (finder.find(classifierType)) {
+        if (finder.find(javaClass.getDefaultType())) {
             return finder.getFoundMethod();
         }
         return null;
-    }
-
-    private static boolean isVarargMethod(@NotNull PsiMethod method) {
-        PsiParameter lastParameter = ArrayUtil.getLastElement(method.getParameterList().getParameters());
-        return lastParameter != null && lastParameter.getType() instanceof PsiEllipsisType;
     }
 
     private static class TypeParameters {
@@ -374,38 +360,35 @@ public class SingleAbstractMethodUtils {
     }
 
     private static class OnlyAbstractMethodFinder {
-        private MethodSignatureBackedByPsiMethod found;
+        private JavaMethod foundMethod;
+        private JavaTypeSubstitutor foundClassSubstitutor;
 
         private boolean find(@NotNull JavaClassifierType classifierType) {
-            PsiClassType.ClassResolveResult classResolveResult = classifierType.getPsi().resolveGenerics();
-            PsiSubstitutor classSubstitutor = classResolveResult.getSubstitutor();
-            JavaClassifier javaClassifier = classifierType.resolve();
-            if (javaClassifier == null) {
+            JavaTypeSubstitutor classSubstitutor = classifierType.getSubstitutor();
+            JavaClassifier classifier = classifierType.getClassifier();
+            if (classifier == null) {
                 return false; // can't resolve class -> not a SAM interface
             }
-            assert javaClassifier instanceof JavaClass : "Classifier should be a class here: " + javaClassifier;
-            JavaClass javaClass = (JavaClass) javaClassifier;
-            if (new FqName(CommonClassNames.JAVA_LANG_OBJECT).equals(javaClass.getFqName())) {
+            assert classifier instanceof JavaClass : "Classifier should be a class here: " + classifier;
+            JavaClass javaClass = (JavaClass) classifier;
+            if (JavaSupertypeResolver.OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
                 return true;
             }
             for (JavaMethod method : javaClass.getMethods()) {
-                PsiMethod psiMethod = method.getPsi();
-                if (DescriptorResolverUtils.isObjectMethod(psiMethod)) { // e.g., ignore toString() declared in interface
+                if (DescriptorResolverUtils.isObjectMethod(method.getPsi())) { // e.g., ignore toString() declared in interface
                     continue;
                 }
                 if (!method.getTypeParameters().isEmpty()) {
                     return false; // if interface has generic methods, it is not a SAM interface
                 }
 
-                if (found == null) {
-                    found = (MethodSignatureBackedByPsiMethod) psiMethod.getSignature(classSubstitutor);
+                if (foundMethod == null) {
+                    foundMethod = method;
+                    foundClassSubstitutor = classSubstitutor;
                     continue;
                 }
-                if (!found.getName().equals(method.getName().asString())) {
-                    return false; // optimizing heuristic
-                }
-                MethodSignatureBackedByPsiMethod current = (MethodSignatureBackedByPsiMethod) psiMethod.getSignature(classSubstitutor);
-                if (!areSignaturesErasureEqual(current, found) || isVarargMethod(psiMethod) != isVarargMethod(found.getMethod())) {
+
+                if (!areSignaturesErasureEqual(method, classSubstitutor, foundMethod, foundClassSubstitutor)) {
                     return false; // different signatures
                 }
             }
@@ -419,9 +402,41 @@ public class SingleAbstractMethodUtils {
             return true;
         }
 
+        /**
+         * @see com.intellij.psi.util.MethodSignatureUtil#areSignaturesErasureEqual
+         */
+        private static boolean areSignaturesErasureEqual(
+                @NotNull JavaMethod method1,
+                @NotNull JavaTypeSubstitutor substitutor1,
+                @NotNull JavaMethod method2,
+                @NotNull JavaTypeSubstitutor substitutor2
+        ) {
+            if (method1.isConstructor() != method2.isConstructor()) return false;
+            if (!method1.isConstructor() && !method1.getName().equals(method2.getName())) return false;
+
+            if (method1.isVararg() != method2.isVararg()) return false;
+
+            Collection<JavaValueParameter> parameters1 = method1.getValueParameters();
+            Collection<JavaValueParameter> parameters2 = method2.getValueParameters();
+            if (parameters1.size() != parameters2.size()) return false;
+
+            for (Iterator<JavaValueParameter> it1 = parameters1.iterator(), it2 = parameters2.iterator(); it1.hasNext(); ) {
+                JavaType type1 = erasure(substitutor1.substitute(it1.next().getType()), substitutor1);
+                JavaType type2 = erasure(substitutor2.substitute(it2.next().getType()), substitutor2);
+                if (!type1.equals(type2)) return false;
+            }
+
+            return true;
+        }
+
+        @NotNull
+        private static JavaType erasure(@NotNull JavaType type, @NotNull JavaTypeSubstitutor substitutor) {
+            return JavaType.create(TypeConversionUtil.erasure(type.getPsi(), substitutor.getPsi()));
+        }
+
         @Nullable
         private JavaMethod getFoundMethod() {
-            return found == null ? null : new JavaMethod(found.getMethod());
+            return foundMethod;
         }
     }
 }

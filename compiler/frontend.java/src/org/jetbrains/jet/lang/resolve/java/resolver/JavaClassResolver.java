@@ -331,7 +331,7 @@ public final class JavaClassResolver {
 
         trace.record(BindingContext.CLASS, javaClass.getPsi(), classDescriptor);
 
-        JavaMethod samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(javaClass, javaClass.getPsi().getProject());
+        JavaMethod samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(javaClass);
         if (samInterfaceMethod != null) {
             SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod, classDescriptor);
             classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));

@@ -111,7 +111,7 @@ public class JavaTypeTransformer {
             @NotNull TypeUsage howThisTypeIsUsed,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        JavaClassifier javaClassifier = classifierType.resolve();
+        JavaClassifier javaClassifier = classifierType.getClassifier();
         if (javaClassifier == null) {
             return null;
         }
