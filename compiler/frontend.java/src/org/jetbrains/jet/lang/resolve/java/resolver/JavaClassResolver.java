@@ -86,7 +86,7 @@ public final class JavaClassResolver {
     private final Set<FqNameBase> unresolvedCache = Sets.newHashSet();
 
     private BindingTrace trace;
-    private JavaSignatureResolver signatureResolver;
+    private JavaTypeParameterResolver typeParameterResolver;
     private JavaDescriptorResolver javaDescriptorResolver;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassFinder javaClassFinder;
@@ -115,8 +115,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setSignatureResolver(JavaSignatureResolver signatureResolver) {
-        this.signatureResolver = signatureResolver;
+    public void setTypeParameterResolver(JavaTypeParameterResolver typeParameterResolver) {
+        this.typeParameterResolver = typeParameterResolver;
     }
 
     @Inject
@@ -300,7 +300,7 @@ public final class JavaClassResolver {
 
         classDescriptor.setName(javaClass.getName());
 
-        JavaSignatureResolver.Initializer typeParameterInitializer = signatureResolver.resolveTypeParameters(classDescriptor, javaClass);
+        JavaTypeParameterResolver.Initializer typeParameterInitializer = typeParameterResolver.resolveTypeParameters(classDescriptor, javaClass);
         classDescriptor.setTypeParameterDescriptors(typeParameterInitializer.getDescriptors());
 
         List<JetType> supertypes = Lists.newArrayList();

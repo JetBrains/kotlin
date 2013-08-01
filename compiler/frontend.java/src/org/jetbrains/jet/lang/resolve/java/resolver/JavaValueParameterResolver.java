@@ -38,9 +38,6 @@ import java.util.*;
 public final class JavaValueParameterResolver {
     private JavaTypeTransformer typeTransformer;
 
-    public JavaValueParameterResolver() {
-    }
-
     @NotNull
     private ValueParameterDescriptor resolveParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,

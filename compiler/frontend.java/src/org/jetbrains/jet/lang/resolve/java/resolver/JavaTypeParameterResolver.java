@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.*;
 
-public final class JavaSignatureResolver {
+public final class JavaTypeParameterResolver {
     @NotNull
     private JavaTypeTransformer typeTransformer;
 

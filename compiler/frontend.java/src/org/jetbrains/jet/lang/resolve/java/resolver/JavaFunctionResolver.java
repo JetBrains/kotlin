@@ -59,8 +59,8 @@ public final class JavaFunctionResolver {
 
     private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
-    private JavaSignatureResolver signatureResolver;
-    private JavaValueParameterResolver parameterResolver;
+    private JavaTypeParameterResolver typeParameterResolver;
+    private JavaValueParameterResolver valueParameterResolver;
     private JavaAnnotationResolver annotationResolver;
 
     public JavaFunctionResolver() {
@@ -77,13 +77,13 @@ public final class JavaFunctionResolver {
     }
 
     @Inject
-    public void setSignatureResolver(JavaSignatureResolver signatureResolver) {
-        this.signatureResolver = signatureResolver;
+    public void setTypeParameterResolver(JavaTypeParameterResolver typeParameterResolver) {
+        this.typeParameterResolver = typeParameterResolver;
     }
 
     @Inject
-    public void setParameterResolver(JavaValueParameterResolver parameterResolver) {
-        this.parameterResolver = parameterResolver;
+    public void setValueParameterResolver(JavaValueParameterResolver valueParameterResolver) {
+        this.valueParameterResolver = valueParameterResolver;
     }
 
     @Inject
@@ -126,13 +126,13 @@ public final class JavaFunctionResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
 
-        JavaSignatureResolver.Initializer typeParameterInitializer = signatureResolver.resolveTypeParameters(functionDescriptorImpl, method);
+        JavaTypeParameterResolver.Initializer typeParameterInitializer = typeParameterResolver.resolveTypeParameters(functionDescriptorImpl, method);
         typeParameterInitializer.initialize();
         List<TypeParameterDescriptor> methodTypeParameters = typeParameterInitializer.getDescriptors();
 
         TypeVariableResolver typeVariableResolver = new TypeVariableResolver(methodTypeParameters, functionDescriptorImpl);
 
-        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
+        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver
                 .resolveParameterDescriptors(functionDescriptorImpl, method, typeVariableResolver);
         JetType returnType = makeReturnType(returnJavaType, method, typeVariableResolver);
 

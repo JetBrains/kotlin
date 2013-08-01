@@ -53,9 +53,9 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
@@ -105,9 +105,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
     private final JavaFunctionResolver javaFunctionResolver;
-    private final JavaValueParameterResolver javaValueParameterResolver;
+    private final JavaTypeParameterResolver javaTypeParameterResolver;
     private final JavaTypeTransformer javaTypeTransformer;
-    private final JavaSignatureResolver javaSignatureResolver;
+    private final JavaValueParameterResolver javaValueParameterResolver;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final JavaNamespaceResolver javaNamespaceResolver;
@@ -158,9 +158,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
         this.javaFunctionResolver = new JavaFunctionResolver();
-        this.javaValueParameterResolver = new JavaValueParameterResolver();
+        this.javaTypeParameterResolver = new JavaTypeParameterResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
-        this.javaSignatureResolver = new JavaSignatureResolver();
+        this.javaValueParameterResolver = new JavaValueParameterResolver();
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
@@ -288,9 +288,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
-        javaClassResolver.setSignatureResolver(javaSignatureResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTrace(bindingTrace);
+        javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
         javaClassResolver.setVirtualFileFinder(virtualFileFinder);
 
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
@@ -300,16 +300,16 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaFunctionResolver.setParameterResolver(javaValueParameterResolver);
-        javaFunctionResolver.setSignatureResolver(javaSignatureResolver);
         javaFunctionResolver.setTrace(bindingTrace);
+        javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
         javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
+        javaFunctionResolver.setValueParameterResolver(javaValueParameterResolver);
 
-        javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
+        javaTypeParameterResolver.setTypeTransformer(javaTypeTransformer);
 
         javaTypeTransformer.setClassResolver(javaClassResolver);
 
-        javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
+        javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
