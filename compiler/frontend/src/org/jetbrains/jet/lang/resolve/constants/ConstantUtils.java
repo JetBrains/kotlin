@@ -68,21 +68,4 @@ public class ConstantUtils {
             }
         }
     }
-
-    public static JetType updateConstantValueType(
-            @NotNull NumberValueTypeConstructor numberValueTypeConstructor,
-            @NotNull JetType expectedType,
-            @NotNull JetExpression expression,
-            @NotNull ResolutionContext<?> context
-    ) {
-        JetTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
-        assert recordedTypeInfo != null : "Expression " + expression + " should have been analyzed";
-        JetScope resolutionScope = context.trace.get(BindingContext.RESOLUTION_SCOPE, expression);
-        assert resolutionScope != null : "Expression " + expression + " should have been analyzed";
-
-        JetType type = TypeUtils.getPrimitiveNumberType(numberValueTypeConstructor, expectedType);
-        BindingContextUtils.recordExpressionType(expression, context.trace, resolutionScope,
-                                                 JetTypeInfo.create(type, recordedTypeInfo.getDataFlowInfo()));
-        return type;
-    }
 }

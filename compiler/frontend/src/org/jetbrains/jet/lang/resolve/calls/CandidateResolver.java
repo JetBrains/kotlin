@@ -367,7 +367,7 @@ public class CandidateResolver {
             type = completeNestedCallsInference(contextForArgument);
             checkValueArgumentTypes(contextForArgument);
         }
-
+        BindingContextUtils.updateRecordedType(type, expression, context.trace);
         DataFlowUtils.checkType(type, expression, contextForArgument);
     }
 
@@ -397,7 +397,8 @@ public class CandidateResolver {
         if (type != null && !type.getConstructor().isDenotable()) {
             if (type.getConstructor() instanceof NumberValueTypeConstructor) {
                 NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
-                type = ConstantUtils.updateConstantValueType(constructor, context.expectedType, expression, context);
+                type = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
+                BindingContextUtils.updateRecordedType(type, expression, context.trace);
             }
         }
         return type;

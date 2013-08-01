@@ -274,21 +274,14 @@ public class BindingContextUtils {
         trace.report(AMBIGUOUS_LABEL.on(targetLabel));
     }
 
-    public static void recordExpressionType(
-            @NotNull JetExpression expression, @NotNull BindingTrace trace,
-            @NotNull JetScope resolutionScope, @NotNull JetTypeInfo result
+    public static void updateRecordedType(
+            @Nullable JetType type,
+            @NotNull JetExpression expression,
+            @NotNull BindingTrace trace
     ) {
-        JetType type = result.getType();
-        if (type != null) {
-            trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
-        }
+        if (type == null) return;
+        trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
         trace.record(BindingContext.PROCESSED, expression);
-        if (result.getDataFlowInfo() != DataFlowInfo.EMPTY) {
-            trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
-        }
-        if (!isExpressionWithValidReference(expression, trace.getBindingContext())) {
-            trace.record(BindingContext.RESOLUTION_SCOPE, expression, resolutionScope);
-        }
     }
 
     @Nullable
