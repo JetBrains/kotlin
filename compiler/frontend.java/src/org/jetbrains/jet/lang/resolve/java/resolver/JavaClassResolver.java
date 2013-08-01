@@ -300,10 +300,9 @@ public final class JavaClassResolver {
 
         classDescriptor.setName(javaClass.getName());
 
-        List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
-                = JavaSignatureResolver.makeUninitializedTypeParameters(classDescriptor, javaClass.getTypeParameters());
+        JavaSignatureResolver.Initializer typeParameterInitializer = signatureResolver.resolveTypeParameters(classDescriptor, javaClass);
+        classDescriptor.setTypeParameterDescriptors(typeParameterInitializer.getDescriptors());
 
-        classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
         List<JetType> supertypes = Lists.newArrayList();
         classDescriptor.setSupertypes(supertypes);
         classDescriptor.setVisibility(javaClass.getVisibility());
@@ -314,7 +313,7 @@ public final class JavaClassResolver {
         classDescriptor.setScopeForMemberLookup(scope);
         classDescriptor.setScopeForConstructorResolve(scope);
 
-        signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor);
+        typeParameterInitializer.initialize();
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
@@ -398,17 +397,6 @@ public final class JavaClassResolver {
             ClassDescriptor oldValue = classDescriptorCache.put(fqName, classDescriptor);
             assert oldValue == null;
         }
-    }
-
-    @NotNull
-    private static List<TypeParameterDescriptor> getTypeParametersDescriptors(
-            @NotNull List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
-    ) {
-        List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
-        for (JavaSignatureResolver.TypeParameterDescriptorInitialization typeParameter : typeParameterDescriptorInitializations) {
-            typeParameters.add(typeParameter.getDescriptor());
-        }
-        return typeParameters;
     }
 
     private void checkFqNamesAreConsistent(@NotNull JavaClass javaClass, @NotNull FqName desiredFqName) {

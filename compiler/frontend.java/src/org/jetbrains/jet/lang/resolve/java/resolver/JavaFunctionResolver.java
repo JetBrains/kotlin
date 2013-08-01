@@ -126,8 +126,9 @@ public final class JavaFunctionResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
 
-        List<TypeParameterDescriptor> methodTypeParameters =
-                signatureResolver.resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters());
+        JavaSignatureResolver.Initializer typeParameterInitializer = signatureResolver.resolveTypeParameters(functionDescriptorImpl, method);
+        typeParameterInitializer.initialize();
+        List<TypeParameterDescriptor> methodTypeParameters = typeParameterInitializer.getDescriptors();
 
         TypeVariableResolver typeVariableResolver = new TypeVariableResolver(methodTypeParameters, functionDescriptorImpl);
 
