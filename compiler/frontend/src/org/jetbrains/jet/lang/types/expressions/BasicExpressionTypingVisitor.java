@@ -1013,32 +1013,43 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = booleanType;
             }
             else if (operationType == JetTokens.ELVIS) {
-                JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
-
-                JetType leftType = leftTypeInfo.getType();
-                dataFlowInfo = leftTypeInfo.getDataFlowInfo();
-
-                if (left != null && leftType != null) {
-                    if (isKnownToBeNotNull(left, leftType, context)) {
-                        context.trace.report(USELESS_ELVIS.on(left, leftType));
-                    }
-
-                    ExpressionTypingContext newContext = contextWithExpectedType.replaceDataFlowInfo(dataFlowInfo).replaceScope(context.scope);
-                    JetType rightType = right == null ? null : facade.getTypeInfo(right, newContext).getType();
-
-                    if (rightType != null) {
-                        DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
-                        return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(
-                                CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable()),
-                                                  dataFlowInfo);
-                    }
-                }
+                return visitElvisExpression(expression, contextWithExpectedType);
             }
             else {
                 context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             }
         }
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType, dataFlowInfo);
+    }
+
+    @NotNull
+    private JetTypeInfo visitElvisExpression(
+            @NotNull JetBinaryExpression expression,
+            @NotNull ExpressionTypingContext contextWithExpectedType
+    ) {
+        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+        JetExpression left = expression.getLeft();
+        JetExpression right = expression.getRight();
+
+        JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
+        JetType leftType = leftTypeInfo.getType();
+        DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
+
+        if (left == null || leftType == null) return JetTypeInfo.create(null, dataFlowInfo);
+
+        if (isKnownToBeNotNull(left, leftType, context)) {
+            context.trace.report(USELESS_ELVIS.on(left, leftType));
+        }
+
+        ExpressionTypingContext newContext = contextWithExpectedType.replaceDataFlowInfo(dataFlowInfo).replaceScope(context.scope);
+        JetType rightType = right == null ? null : facade.getTypeInfo(right, newContext).getType();
+
+        if (rightType != null) {
+            DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
+            return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(
+                    CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable()), dataFlowInfo);
+        }
+        return JetTypeInfo.create(null, dataFlowInfo);
     }
 
     @NotNull
