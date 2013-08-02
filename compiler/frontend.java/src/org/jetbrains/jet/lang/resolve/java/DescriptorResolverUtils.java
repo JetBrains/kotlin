@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.ImmutableSet;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +30,9 @@ import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -95,22 +100,22 @@ public final class DescriptorResolverUtils {
      * @return true if {@code member} is a static member of enum class, which is to be put into its class object (and not into the
      *         corresponding package). This applies to enum entries, values() and valueOf(String) methods
      */
-    public static boolean shouldBeInEnumClassObject(@NotNull PsiMember member) {
-        PsiClass psiClass = member.getContainingClass();
-        if (psiClass == null || !psiClass.isEnum()) return false;
+    public static boolean shouldBeInEnumClassObject(@NotNull JavaMember member) {
+        JavaClass javaClass = member.getContainingClass();
+        if (javaClass == null || !javaClass.isEnum()) return false;
 
-        if (member instanceof PsiEnumConstant) return true;
+        if (member instanceof JavaField && ((JavaField) member).isEnumEntry()) return true;
 
-        if (!(member instanceof PsiMethod)) return false;
-        String signature = PsiFormatUtil.formatMethod((PsiMethod) member,
-                                                      PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+        if (!(member instanceof JavaMethod)) return false;
+        String signature = PsiFormatUtil.formatMethod(((JavaMethod) member).getPsi(), PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS,
+                                                      SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);
     }
 
     public static boolean isCorrectOwnerForEnumMember(@NotNull ClassOrNamespaceDescriptor ownerDescriptor, @NotNull JavaMember member) {
-        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member.getPsi());
+        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member);
     }
 
     public static boolean isObjectMethodInInterface(@NotNull PsiMember member) {

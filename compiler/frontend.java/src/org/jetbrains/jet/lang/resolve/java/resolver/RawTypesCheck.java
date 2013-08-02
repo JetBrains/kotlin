@@ -16,70 +16,56 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.psi.*;
+import com.intellij.psi.HierarchicalMethodSignature;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
 
 public class RawTypesCheck {
-    private static boolean isPartiallyRawType(@NotNull PsiType type) {
-        return type.accept(new PsiTypeVisitor<Boolean>() {
-            @Nullable
-            @Override
-            public Boolean visitPrimitiveType(PsiPrimitiveType primitiveType) {
-                return false;
+    private static boolean isPartiallyRawType(@NotNull JavaType type) {
+        if (type instanceof JavaPrimitiveType) {
+            return false;
+        }
+        else if (type instanceof JavaClassifierType) {
+            JavaClassifierType classifierType = (JavaClassifierType) type;
+
+            if (classifierType.isRaw()) {
+                return true;
             }
 
-            @Nullable
-            @Override
-            public Boolean visitClassType(PsiClassType classType) {
-                if (classType.isRaw()) {
+            for (JavaType argument : classifierType.getTypeArguments()) {
+                if (isPartiallyRawType(argument)) {
                     return true;
                 }
-
-                for (PsiType argument : classType.getParameters()) {
-                    if (argument.accept(this)) {
-                        return true;
-                    }
-                }
-
-                return false;
             }
 
-            @Nullable
-            @Override
-            public Boolean visitArrayType(PsiArrayType arrayType) {
-                return arrayType.getComponentType().accept(this);
-            }
-
-            @Nullable
-            @Override
-            public Boolean visitWildcardType(PsiWildcardType wildcardType) {
-                PsiType bound = wildcardType.getBound();
-                return bound == null ? false : bound.accept(this);
-            }
-
-            @Nullable
-            @Override
-            public Boolean visitType(PsiType type) {
-                throw new IllegalStateException(type.getClass().getSimpleName() + " is unexpected");
-            }
-        });
+            return false;
+        }
+        else if (type instanceof JavaArrayType) {
+            return isPartiallyRawType(((JavaArrayType) type).getComponentType());
+        }
+        else if (type instanceof JavaWildcardType) {
+            JavaType bound = ((JavaWildcardType) type).getBound();
+            return bound != null && isPartiallyRawType(bound);
+        }
+        else {
+            throw new IllegalStateException("Unexpected type: " + type);
+        }
     }
 
-    private static boolean hasRawTypesInSignature(@NotNull PsiMethod method) {
-        PsiType returnType = method.getReturnType();
+    private static boolean hasRawTypesInSignature(@NotNull JavaMethod method) {
+        JavaType returnType = method.getReturnType();
         if (returnType != null && isPartiallyRawType(returnType)) {
             return true;
         }
 
-        for (PsiParameter parameter : method.getParameterList().getParameters()) {
+        for (JavaValueParameter parameter : method.getValueParameters()) {
             if (isPartiallyRawType(parameter.getType())) {
                 return true;
             }
         }
 
-        for (PsiTypeParameter typeParameter : method.getTypeParameters()) {
-            for (PsiClassType upperBound : typeParameter.getExtendsList().getReferencedTypes()) {
+        for (JavaTypeParameter typeParameter : method.getTypeParameters()) {
+            for (JavaClassifierType upperBound : typeParameter.getUpperBounds()) {
                 if (isPartiallyRawType(upperBound)) {
                     return true;
                 }
@@ -89,17 +75,17 @@ public class RawTypesCheck {
         return false;
     }
 
-    static boolean hasRawTypesInHierarchicalSignature(@NotNull PsiMethod method) {
+    static boolean hasRawTypesInHierarchicalSignature(@NotNull JavaMethod method) {
         // This is a very important optimization: package-classes are big and full of static methods
         // building method hierarchies for such classes takes a very long time
-        if (method.hasModifierProperty(PsiModifier.STATIC)) return false;
+        if (method.isStatic()) return false;
 
         if (hasRawTypesInSignature(method)) {
             return true;
         }
 
-        for (HierarchicalMethodSignature superSignature : method.getHierarchicalMethodSignature().getSuperSignatures()) {
-            PsiMethod superMethod = superSignature.getMethod();
+        for (HierarchicalMethodSignature superSignature : method.getPsi().getHierarchicalMethodSignature().getSuperSignatures()) {
+            JavaMethod superMethod = new JavaMethod(superSignature.getMethod());
             if (superSignature.isRaw() || typeParameterIsErased(method, superMethod) || hasRawTypesInSignature(superMethod)) {
                 return true;
             }
@@ -108,12 +94,12 @@ public class RawTypesCheck {
         return false;
     }
 
-    private static boolean typeParameterIsErased(@NotNull PsiMethod a, @NotNull PsiMethod b) {
+    private static boolean typeParameterIsErased(@NotNull JavaMethod method, @NotNull JavaMethod superMethod) {
         // Java allows you to write
         //   <T extends Foo> T foo(), in the superclass and then
         //   Foo foo(), in the subclass
         // this is a valid Java override, but in fact it is an erasure
-        return a.getTypeParameters().length != b.getTypeParameters().length;
+        return method.getTypeParameters().size() != superMethod.getTypeParameters().size();
     }
 
     private RawTypesCheck() {

@@ -22,44 +22,44 @@ import com.intellij.psi.util.MethodSignatureUtil;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 
 import java.util.List;
 
 // originally from com.intellij.codeInsight.daemon.impl.analysis.HighlightMethodUtil
 class JavaMethodSignatureUtil {
     // This and following methods are originally from com.intellij.codeInsight.daemon.impl.analysis.HighlightMethodUtil
-    static boolean isMethodReturnTypeCompatible(@NotNull PsiMethod method) {
-        if (method.hasModifierProperty(PsiModifier.STATIC)) return true;
-        HierarchicalMethodSignature methodSignature = method.getHierarchicalMethodSignature();
+    static boolean isMethodReturnTypeCompatible(@NotNull JavaMethod method) {
+        if (method.isStatic()) return true;
+        if (method.getContainingClass() == null) return false;
+
+        HierarchicalMethodSignature methodSignature = method.getPsi().getHierarchicalMethodSignature();
         List<HierarchicalMethodSignature> superSignatures = methodSignature.getSuperSignatures();
 
-        PsiType returnType = methodSignature.getSubstitutor().substitute(method.getReturnType());
-        PsiClass aClass = method.getContainingClass();
-        if (aClass == null) return false;
+        PsiType returnType = methodSignature.getSubstitutor().substitute(method.getPsi().getReturnType());
+        if (returnType == null) return true;
+
         for (MethodSignatureBackedByPsiMethod superMethodSignature : superSignatures) {
             PsiMethod superMethod = superMethodSignature.getMethod();
             PsiType declaredReturnType = superMethod.getReturnType();
-            PsiType superReturnType = declaredReturnType;
-            if (superMethodSignature.isRaw()) superReturnType = TypeConversionUtil.erasure(declaredReturnType);
-            if (returnType == null || superReturnType == null || method == superMethod) continue;
-            PsiClass superClass = superMethod.getContainingClass();
-            if (superClass == null) continue;
-            if (!areMethodsReturnTypesCompatible(superMethodSignature, superReturnType, method, methodSignature, returnType)) return false;
+            PsiType superReturnType = superMethodSignature.isRaw() ? TypeConversionUtil.erasure(declaredReturnType) : declaredReturnType;
+            if (superReturnType == null || method == superMethod || superMethod.getContainingClass() == null) continue;
+            if (!areMethodsReturnTypesCompatible(superMethodSignature, superReturnType, methodSignature, returnType)) {
+                return false;
+            }
         }
 
         return true;
     }
 
     private static boolean areMethodsReturnTypesCompatible(
-            MethodSignatureBackedByPsiMethod superMethodSignature,
-            PsiType superReturnType,
-            PsiMethod method,
-            MethodSignatureBackedByPsiMethod methodSignature,
-            PsiType returnType
+            @NotNull MethodSignatureBackedByPsiMethod superMethodSignature,
+            @NotNull PsiType superReturnType,
+            @NotNull MethodSignatureBackedByPsiMethod methodSignature,
+            @NotNull PsiType returnType
     ) {
-        if (superReturnType == null) return false;
         PsiType substitutedSuperReturnType;
-        boolean isJdk15 = PsiUtil.isLanguageLevel5OrHigher(method);
+        boolean isJdk15 = PsiUtil.isLanguageLevel5OrHigher(methodSignature.getMethod());
         if (isJdk15 && !superMethodSignature.isRaw() && superMethodSignature.equals(methodSignature)) { //see 8.4.5
             PsiSubstitutor unifyingSubstitutor = MethodSignatureUtil.getSuperMethodSignatureSubstitutor(methodSignature,
                                                                                                         superMethodSignature);

@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -61,9 +60,6 @@ public final class JavaFunctionResolver {
     private JavaTypeParameterResolver typeParameterResolver;
     private JavaValueParameterResolver valueParameterResolver;
     private JavaAnnotationResolver annotationResolver;
-
-    public JavaFunctionResolver() {
-    }
 
     @Inject
     public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
@@ -111,9 +107,7 @@ public final class JavaFunctionResolver {
             return null;
         }
 
-        PsiMethod psiMethod = method.getPsi();
-
-        SimpleFunctionDescriptor alreadyResolved = trace.get(BindingContext.FUNCTION, psiMethod);
+        SimpleFunctionDescriptor alreadyResolved = trace.get(BindingContext.FUNCTION, method.getPsi());
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
@@ -177,15 +171,15 @@ public final class JavaFunctionResolver {
         );
 
         if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION && record) {
-            BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, psiMethod, functionDescriptorImpl);
+            BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, method.getPsi(), functionDescriptorImpl);
         }
 
         if (record) {
             trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
         }
 
-        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod)
-            && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(psiMethod)
+        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(method)
+            && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(method)
             && !containsErrorType(superFunctions, functionDescriptorImpl)) {
             if (signatureErrors.isEmpty()) {
                 checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);

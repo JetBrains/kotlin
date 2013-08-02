@@ -124,6 +124,11 @@ public class JavaClass extends JavaClassifier
     }
 
     @NotNull
+    public Collection<JavaField> getFields() {
+        return fields(getPsi().getFields());
+    }
+
+    @NotNull
     public Collection<JavaField> getAllFields() {
         return fields(getPsi().getAllFields());
     }

@@ -19,10 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMember;
-import com.intellij.psi.PsiModifier;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -40,6 +36,8 @@ import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -68,9 +66,6 @@ public final class JavaNamespaceResolver {
 
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
     private VirtualFileFinder virtualFileFinder;
-
-    public JavaNamespaceResolver() {
-    }
 
     @Inject
     public void setVirtualFileFinder(VirtualFileFinder virtualFileFinder) {
@@ -187,18 +182,17 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        PsiClass psiClass = javaClass.getPsi();
-        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
+        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass.getPsi())) {
             return null;
         }
-        if (!hasStaticMembers(psiClass)) {
+        if (!hasStaticMembers(javaClass)) {
             return null;
         }
 
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
 
         if (record) {
-            trace.record(BindingContext.NAMESPACE, psiClass, namespaceDescriptor);
+            trace.record(BindingContext.NAMESPACE, javaClass.getPsi(), namespaceDescriptor);
         }
 
         return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, javaClass, javaDescriptorResolver);
@@ -230,18 +224,24 @@ public final class JavaNamespaceResolver {
         return createNamespaceScope(fqName, namespaceDescriptor, false);
     }
 
-    private static boolean hasStaticMembers(@NotNull PsiClass psiClass) {
-        for (PsiMember member : ContainerUtil.concat(psiClass.getMethods(), psiClass.getFields())) {
-            if (member.hasModifierProperty(PsiModifier.STATIC) && !DescriptorResolverUtils.shouldBeInEnumClassObject(member)) {
+    private static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
+        for (JavaMethod method : javaClass.getMethods()) {
+            if (method.isStatic() && !DescriptorResolverUtils.shouldBeInEnumClassObject(method)) {
                 return true;
             }
         }
 
-        for (PsiClass nestedClass : psiClass.getInnerClasses()) {
-            if (SingleAbstractMethodUtils.isSamInterface(new JavaClass(nestedClass))) {
+        for (JavaField field : javaClass.getFields()) {
+            if (field.isStatic() && !DescriptorResolverUtils.shouldBeInEnumClassObject(field)) {
                 return true;
             }
-            if (nestedClass.hasModifierProperty(PsiModifier.STATIC) && hasStaticMembers(nestedClass)) {
+        }
+
+        for (JavaClass nestedClass : javaClass.getInnerClasses()) {
+            if (SingleAbstractMethodUtils.isSamInterface(nestedClass)) {
+                return true;
+            }
+            if (nestedClass.isStatic() && hasStaticMembers(nestedClass)) {
                 return true;
             }
         }
