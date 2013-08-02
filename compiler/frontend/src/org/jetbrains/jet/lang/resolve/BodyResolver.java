@@ -133,9 +133,9 @@ public class BodyResolver {
         context = bodiesResolveContext;
 
         resolveDelegationSpecifierLists();
-        resolveClassAnnotations();
 
         resolvePropertyDeclarationBodies();
+        resolveClassAnnotations();
         resolveAnonymousInitializers();
         resolvePrimaryConstructorParameters();
 
@@ -626,6 +626,12 @@ public class BodyResolver {
                 scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, DataFlowInfo.EMPTY, trace);
+        if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
+            CompileTimeConstant<?> constant = annotationResolver.resolveExpressionToCompileTimeValue(initializer, expectedTypeForInitializer, trace);
+            if (constant != null) {
+                trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);
+            }
+        }
     }
 
     @NotNull

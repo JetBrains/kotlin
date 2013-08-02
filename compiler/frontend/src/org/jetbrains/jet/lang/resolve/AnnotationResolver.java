@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
+import static org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class AnnotationResolver {
@@ -273,6 +274,9 @@ public class AnnotationResolver {
                         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) callableDescriptor;
                         if (isEnumProperty(propertyDescriptor)) {
                             return new EnumValue(propertyDescriptor);
+                        }
+                        if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
+                            return trace.getBindingContext().get(COMPILE_TIME_INITIALIZER, propertyDescriptor);
                         }
                     }
                 }

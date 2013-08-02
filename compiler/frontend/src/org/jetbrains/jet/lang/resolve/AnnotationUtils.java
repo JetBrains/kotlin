@@ -17,8 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
@@ -33,8 +32,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VALUE_PARAMETER;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnnotationClass;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 
 public class AnnotationUtils {
 
@@ -112,6 +110,17 @@ public class AnnotationUtils {
                     return "kotlin.javaClass.function".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
                 }
             }
+        }
+        return false;
+    }
+
+    public static boolean isPropertyAcceptableAsAnnotationParameter(@NotNull PropertyDescriptor descriptor) {
+        if (descriptor.isVar()) {
+            return false;
+        }
+        if (isClassObject(descriptor.getContainingDeclaration()) || isTopLevelDeclaration(descriptor)) {
+            JetType type = descriptor.getType();
+            return KotlinBuiltIns.getInstance().isPrimitiveType(type) || KotlinBuiltIns.getInstance().getStringType().equals(type);
         }
         return false;
     }
