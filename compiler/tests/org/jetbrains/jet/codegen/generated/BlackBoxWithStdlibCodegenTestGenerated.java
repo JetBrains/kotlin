@@ -48,6 +48,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/defaultParameterValues.kt");
         }
         
+        @TestMetadata("parameterWithPrimitiveType.kt")
+        public void testParameterWithPrimitiveType() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/parameterWithPrimitiveType.kt");
+        }
+        
         @TestMetadata("varargInAnnotationParameter.kt")
         public void testVarargInAnnotationParameter() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/varargInAnnotationParameter.kt");
