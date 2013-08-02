@@ -31,7 +31,6 @@ class JavaMethodSignatureUtil {
     // This and following methods are originally from com.intellij.codeInsight.daemon.impl.analysis.HighlightMethodUtil
     static boolean isMethodReturnTypeCompatible(@NotNull JavaMethod method) {
         if (method.isStatic()) return true;
-        if (method.getContainingClass() == null) return false;
 
         HierarchicalMethodSignature methodSignature = method.getPsi().getHierarchicalMethodSignature();
         List<HierarchicalMethodSignature> superSignatures = methodSignature.getSuperSignatures();

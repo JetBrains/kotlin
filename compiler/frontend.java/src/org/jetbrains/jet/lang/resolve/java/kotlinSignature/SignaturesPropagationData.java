@@ -222,7 +222,6 @@ public class SignaturesPropagationData {
 
         for (JavaMethod superMethod : PropagationHeuristics.getSuperMethods(method)) {
             JavaClass javaClass = superMethod.getContainingClass();
-            assert javaClass != null : "Super method doesn't have a containing class: " + superMethod;
             FqName classFqName = javaClass.getFqName();
             assert classFqName != null : "Class FQ name should not be null: " + javaClass;
 

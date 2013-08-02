@@ -351,7 +351,6 @@ public final class JavaClassResolver {
             @NotNull ClassDescriptorFromJvmBytecode samInterface
     ) {
         JavaClass methodContainer = samInterfaceMethod.getContainingClass();
-        assert methodContainer != null : "method container is null for " + samInterfaceMethod;
         FqName containerFqName = methodContainer.getFqName();
         assert containerFqName != null : "qualified name is null for " + methodContainer;
 

@@ -99,8 +99,7 @@ public final class DescriptorResolverUtils {
      *         corresponding package). This applies to enum entries, values() and valueOf(String) methods
      */
     public static boolean shouldBeInEnumClassObject(@NotNull JavaMember member) {
-        JavaClass javaClass = member.getContainingClass();
-        if (javaClass == null || !javaClass.isEnum()) return false;
+        if (!member.getContainingClass().isEnum()) return false;
 
         if (member instanceof JavaField && ((JavaField) member).isEnumEntry()) return true;
 
@@ -117,13 +116,7 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isObjectMethodInInterface(@NotNull JavaMember member) {
-        if (!(member instanceof JavaMethod)) {
-            return false;
-        }
-        JavaClass containingClass = member.getContainingClass();
-        assert containingClass != null : "Containing class is null for member: " + member;
-
-        return containingClass.isInterface() && isObjectMethod((JavaMethod) member);
+        return member.getContainingClass().isInterface() && member instanceof JavaMethod && isObjectMethod((JavaMethod) member);
     }
 
     public static boolean isObjectMethod(@NotNull JavaMethod method) {

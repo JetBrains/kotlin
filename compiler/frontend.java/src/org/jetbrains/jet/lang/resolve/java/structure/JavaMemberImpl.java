@@ -45,12 +45,12 @@ public abstract class JavaMemberImpl extends JavaElementImpl implements JavaMemb
         return Name.identifier(name);
     }
 
-    // TODO: NotNull?
-    @Nullable
+    @NotNull
     @Override
     public JavaClass getContainingClass() {
         PsiClass psiClass = getPsi().getContainingClass();
-        return psiClass == null ? null : new JavaClass(psiClass);
+        assert psiClass != null : "Member must have a containing class: " + getPsi();
+        return new JavaClass(psiClass);
     }
 
     @Override

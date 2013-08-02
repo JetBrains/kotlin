@@ -25,7 +25,6 @@ public interface JavaMember extends JavaModifierListOwner, JavaAnnotationOwner, 
     @Override
     PsiMember getPsi();
 
-    // TODO: NotNull ?
-    @Nullable
+    @NotNull
     JavaClass getContainingClass();
 }

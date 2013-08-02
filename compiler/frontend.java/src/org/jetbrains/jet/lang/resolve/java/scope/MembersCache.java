@@ -219,9 +219,7 @@ import java.util.Map;
         }
 
         private boolean isInCurrentClass(@NotNull JavaMember member) {
-            JavaClass containingClass = member.getContainingClass();
-            if (containingClass == null) return false;
-            FqName fqName = containingClass.getFqName();
+            FqName fqName = member.getContainingClass().getFqName();
             return fqName != null && fqName.equals(javaClass.getFqName());
         }
 

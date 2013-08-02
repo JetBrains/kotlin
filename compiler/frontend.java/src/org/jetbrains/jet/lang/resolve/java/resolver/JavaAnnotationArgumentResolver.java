@@ -121,10 +121,7 @@ public final class JavaAnnotationArgumentResolver {
         JavaField field = (JavaField) element;
         if (!field.isEnumEntry()) return null;
 
-        JavaClass javaClass = field.getContainingClass();
-        if (javaClass == null) return null;
-
-        FqName fqName = javaClass.getFqName();
+        FqName fqName = field.getContainingClass().getFqName();
         if (fqName == null) return null;
 
         ClassDescriptor enumClass = classResolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES, taskList);

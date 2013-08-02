@@ -153,10 +153,7 @@ class PropagationHeuristics {
                 return Collections.emptyList();
             }
 
-            JavaClass containingClass = initialMethod.getContainingClass();
-            assert containingClass != null : " containing class is null for " + initialMethod;
-
-            for (JavaClassifierType supertype : containingClass.getSupertypes()) {
+            for (JavaClassifierType supertype : initialMethod.getContainingClass().getSupertypes()) {
                 collectFromSupertype(supertype);
             }
 
@@ -234,11 +231,10 @@ class PropagationHeuristics {
         }
 
         private static boolean canHaveSuperMethod(@NotNull JavaMethod method) {
-            if (method.isConstructor() || method.isStatic() || method.getVisibility() == Visibilities.PRIVATE) {
-                return false;
-            }
-            JavaClass containingClass = method.getContainingClass();
-            return containingClass != null && !JavaSupertypeResolver.OBJECT_FQ_NAME.equals(containingClass.getFqName());
+            return !method.isConstructor() &&
+                   !method.isStatic() &&
+                   method.getVisibility() != Visibilities.PRIVATE &&
+                   !JavaSupertypeResolver.OBJECT_FQ_NAME.equals(method.getContainingClass().getFqName());
         }
     }
 }
