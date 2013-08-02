@@ -241,6 +241,9 @@ public class ModifiersChecker {
         if (kind == ClassKind.ENUM_ENTRY) {
             return Visibilities.PRIVATE;
         }
+        if (kind == ClassKind.CLASS_OBJECT) {
+            return ((ClassDescriptor) descriptor.getContainingDeclaration()).getVisibility();
+        }
         return Visibilities.INTERNAL;
     }
 

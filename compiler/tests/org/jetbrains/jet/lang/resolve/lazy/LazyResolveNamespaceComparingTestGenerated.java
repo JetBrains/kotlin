@@ -417,6 +417,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/classObject/ClassObjectDeclaresVar.kt");
             }
             
+            @TestMetadata("ClassObjectDefaultVisibility.kt")
+            public void testClassObjectDefaultVisibility() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/classObject/ClassObjectDefaultVisibility.kt");
+            }
+            
+            @TestMetadata("ClassObjectExplicitVisibility.kt")
+            public void testClassObjectExplicitVisibility() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExplicitVisibility.kt");
+            }
+            
             @TestMetadata("ClassObjectExtendsTrait.kt")
             public void testClassObjectExtendsTrait() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/classObject/ClassObjectExtendsTrait.kt");
