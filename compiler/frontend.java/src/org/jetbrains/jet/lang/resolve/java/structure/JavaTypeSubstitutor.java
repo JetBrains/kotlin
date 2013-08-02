@@ -33,6 +33,21 @@ public class JavaTypeSubstitutor {
 
     @NotNull
     public JavaType substitute(@NotNull JavaType type) {
-        return JavaType.create(psiSubstitutor.substitute(type.getPsi()));
+        return JavaType.create(getPsi().substitute(type.getPsi()));
+    }
+
+    @Override
+    public int hashCode() {
+        return getPsi().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof JavaTypeSubstitutor && getPsi().equals(((JavaTypeSubstitutor) obj).getPsi());
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " + getPsi();
     }
 }

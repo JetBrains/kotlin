@@ -31,4 +31,19 @@ public abstract class JavaElementImpl implements JavaElement {
     public PsiElement getPsi() {
         return psiElement;
     }
+
+    @Override
+    public int hashCode() {
+        return getPsi().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof JavaElement && getPsi().equals(((JavaElement) obj).getPsi());
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " + getPsi();
+    }
 }

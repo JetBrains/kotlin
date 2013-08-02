@@ -68,7 +68,17 @@ public abstract class JavaType {
     }
 
     @Override
+    public int hashCode() {
+        return getPsi().hashCode();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         return obj instanceof JavaType && getPsi().equals(((JavaType) obj).getPsi());
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " + getPsi();
     }
 }
