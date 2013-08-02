@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Multimap;
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +68,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_R
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.UNKNOWN_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
 @SuppressWarnings("SuspiciousMethodCalls")
@@ -723,8 +723,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
-        return callExpressionResolver
-                .getQualifiedExpressionTypeInfo(expression, context);
+        return callExpressionResolver.getQualifiedExpressionTypeInfo(expression, context);
     }
 
     @Override
@@ -827,27 +826,25 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         assert operationSign.getReferencedNameElementType() == JetTokens.EXCLEXCL;
 
-        JetType expectedType;
-        if (!noExpectedType(context.expectedType)) {
-            expectedType = TypeUtils.makeNullable(context.expectedType);
+        Call call = createCallForSpecialConstruction(expression, Collections.singletonList(baseExpression));
+        ResolvedCall<FunctionDescriptor> resolvedCall = resolveSpecialConstructionAsCall(
+                call, "ExclExcl", Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);
+        resolvedCall.getResultingDescriptor();
+        JetTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
+        assert baseTypeInfo != null : "Base expression was not processed: " + expression;
+        JetType baseType = baseTypeInfo.getType();
+        if (baseType == null) {
+            return baseTypeInfo;
+        }
+        DataFlowInfo dataFlowInfo = baseTypeInfo.getDataFlowInfo();
+        if (isKnownToBeNotNull(baseExpression, context) && !ErrorUtils.isErrorType(baseType)) {
+            context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, baseType));
         }
         else {
-            expectedType = NO_EXPECTED_TYPE;
-        }
-        JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context.replaceExpectedType(expectedType));
-        JetType type = typeInfo.getType();
-        if (type == null) {
-            return typeInfo;
-        }
-        DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
-        if (isKnownToBeNotNull(baseExpression, context) && !ErrorUtils.isErrorType(type)) {
-            context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
-        }
-        else {
-            DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(baseExpression, type, context.trace.getBindingContext());
+            DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
-        return JetTypeInfo.create(TypeUtils.makeNotNullable(type), dataFlowInfo);
+        return JetTypeInfo.create(TypeUtils.makeNotNullable(baseType), dataFlowInfo);
     }
 
     private JetTypeInfo visitLabeledExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context,

@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -47,15 +48,13 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.UNKNOWN_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
@@ -119,8 +118,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo elseTypeInfo;
 
         if (contextWithExpectedType.expectedType == UNKNOWN_EXPECTED_TYPE) {
-            Call callForIf = ControlStructureTypingUtils.createCallForIf(ifExpression, thenBranch, elseBranch);
-            ControlStructureTypingUtils.resolveIfAsCall(callForIf, contextWithExpectedType, thenInfo, elseInfo);
+            Call callForIf = createCallForSpecialConstruction(ifExpression, Lists.newArrayList(thenBranch, elseBranch));
+            MutableDataFlowInfoForArguments dataFlowInfoForArguments =
+                    createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
+            resolveSpecialConstructionAsCall(
+                    callForIf, "If", Lists.newArrayList("thenBranch", "elseBranch"),
+                    Lists.newArrayList(false, false),
+                    contextWithExpectedType, dataFlowInfoForArguments);
 
             thenTypeInfo = BindingContextUtils.getRecordedTypeInfo(thenBranch, context.trace.getBindingContext());
             elseTypeInfo = BindingContextUtils.getRecordedTypeInfo(elseBranch, context.trace.getBindingContext());

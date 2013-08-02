@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
@@ -43,10 +45,12 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
@@ -55,52 +59,70 @@ public class ControlStructureTypingUtils {
     private ControlStructureTypingUtils() {
     }
 
-    /*package*/ static ResolvedCall<FunctionDescriptor> resolveIfAsCall(
-            @NotNull Call callForIf,
+    /*package*/ static ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
+            @NotNull Call call,
+            @NotNull String constructionName,
+            @NotNull List<String> argumentNames,
+            @NotNull List<Boolean> isArgumentNullable,
             @NotNull ExpressionTypingContext context,
-            @NotNull DataFlowInfo thenInfo,
-            @NotNull DataFlowInfo elseInfo
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        List<AnnotationDescriptor> noAnnotations = Collections.emptyList();
-        Name specialFunctionName = Name.identifierNoValidate("<SPECIAL-FUNCTION-FOR-IF-RESOLVE>");
+        SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
+                "<SPECIAL-FUNCTION-FOR-" + constructionName.toUpperCase() + "-RESOLVE>", argumentNames, isArgumentNullable);
+        JetReferenceExpression reference = JetPsiFactory.createSimpleName(
+                context.expressionTypingServices.getProject(), "fake" + constructionName + "Call");
+        TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName);
+        ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(function, null);
+        CallResolver callResolver = context.expressionTypingServices.getCallResolver();
+        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
+                call, tracing, reference, context, resolutionCandidate, dataFlowInfoForArguments);
+        assert results.isSingleResult() : "Not single result after resolving one known candidate";
+        return results.getResultingCall();
+    }
 
-        SimpleFunctionDescriptorImpl ifFunction = new SimpleFunctionDescriptorImpl(
+    private static SimpleFunctionDescriptorImpl createFunctionDescriptorForSpecialConstruction(
+            @NotNull String name,
+            @NotNull List<String> argumentNames,
+            @NotNull List<Boolean> isArgumentNullable
+    ) {
+        assert argumentNames.size() == isArgumentNullable.size();
+
+        List<AnnotationDescriptor> noAnnotations = Collections.emptyList();
+        Name specialFunctionName = Name.identifierNoValidate(name);
+
+        SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
                 ErrorUtils.getErrorModule(),//todo hack to avoid returning true in 'isError(DeclarationDescriptor)'
                 noAnnotations, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION);
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
-                ifFunction, noAnnotations, false, Variance.INVARIANT, Name.identifier("T"), 0);
+                function, noAnnotations, false, Variance.INVARIANT, Name.identifier("T"), 0);
 
         JetType type = new JetTypeImpl(typeParameter.getTypeConstructor(), JetScope.EMPTY);
+        JetType nullableType = new JetTypeImpl(
+                noAnnotations, typeParameter.getTypeConstructor(), true, Collections.<TypeProjection>emptyList(), JetScope.EMPTY);
 
-        ValueParameterDescriptorImpl thenValueParameter = new ValueParameterDescriptorImpl(
-                ifFunction, 0, noAnnotations, Name.identifier("thenBranch"), type, false, null);
-        ValueParameterDescriptorImpl elseValueParameter = new ValueParameterDescriptorImpl(
-                ifFunction, 1, noAnnotations, Name.identifier("elseBranch"), type, false, null);
-        ifFunction.initialize(
+        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+        for (int i = 0; i < argumentNames.size(); i++) {
+            JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
+            ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
+                    function, i, noAnnotations, Name.identifier(argumentNames.get(i)), argumentType, false, null);
+            valueParameters.add(valueParameter);
+        }
+        function.initialize(
                 null,
                 ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
                 Lists.newArrayList(typeParameter),
-                Lists.<ValueParameterDescriptor>newArrayList(thenValueParameter, elseValueParameter),
+                valueParameters,
                 type,
                 Modality.FINAL,
                 Visibilities.PUBLIC,
                 /*isInline = */ false
         );
-
-        JetReferenceExpression ifReference = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeIfCall");
-        TracingStrategy tracingForIf = createTracingForIf(callForIf);
-        MutableDataFlowInfoForArguments dataFlowInfoForArguments = createDataFlowInfoForArgumentsForCall(callForIf, thenInfo, elseInfo);
-        ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(ifFunction, null);
-        OverloadResolutionResults<FunctionDescriptor>
-                results = context.expressionTypingServices.getCallResolver().resolveCallWithKnownCandidate(
-                callForIf, tracingForIf, ifReference, context, resolutionCandidate, dataFlowInfoForArguments);
-        assert results.isSingleResult() : "Not single result after resolving one known candidate";
-        return results.getResultingCall();
+        return function;
     }
 
-    private static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsForCall(
-            final Call callForIf, final DataFlowInfo thenInfo, final DataFlowInfo elseInfo
+    /*package*/ static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsForCall(
+            final Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
     ) {
         return new MutableDataFlowInfoForArguments() {
             private DataFlowInfo initialDataFlowInfo;
@@ -117,13 +139,7 @@ public class ControlStructureTypingUtils {
             @NotNull
             @Override
             public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
-                if (valueArgument == callForIf.getValueArguments().get(0)) {
-                    return thenInfo;
-                }
-                if (valueArgument == callForIf.getValueArguments().get(1)) {
-                    return elseInfo;
-                }
-                throw new IllegalArgumentException();
+                return dataFlowInfoForArgumentsMap.get(valueArgument);
             }
 
             @NotNull
@@ -134,19 +150,30 @@ public class ControlStructureTypingUtils {
         };
     }
 
-    /*package*/ static Call createCallForIf(
-            final JetIfExpression ifExpression,
-            @NotNull JetExpression thenBranch,
-            @NotNull JetExpression elseBranch
+    public static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsForIfCall(
+            @NotNull Call callForIf,
+            @NotNull DataFlowInfo thenInfo,
+            @NotNull DataFlowInfo elseInfo
     ) {
-        final List<ValueArgument> valueArguments = Lists.newArrayList(
-                CallMaker.makeValueArgument(thenBranch, thenBranch),
-                CallMaker.makeValueArgument(elseBranch, elseBranch));
+        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
+        dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(0), thenInfo);
+        dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(1), elseInfo);
+        return createDataFlowInfoForArgumentsForCall(dataFlowInfoForArgumentsMap);
+    }
+
+    /*package*/ static Call createCallForSpecialConstruction(
+            @NotNull final JetExpression expression,
+            @NotNull List<JetExpression> arguments
+    ) {
+        final List<ValueArgument> valueArguments = Lists.newArrayList();
+        for (JetExpression argument : arguments) {
+            valueArguments.add(CallMaker.makeValueArgument(argument, argument));
+        }
         return new Call() {
             @Nullable
             @Override
             public ASTNode getCallOperationNode() {
-                return ifExpression.getNode();
+                return expression.getNode();
             }
 
             @NotNull
@@ -164,7 +191,7 @@ public class ControlStructureTypingUtils {
             @Nullable
             @Override
             public JetExpression getCalleeExpression() {
-                return ifExpression;
+                return expression;
             }
 
             @Nullable
@@ -200,7 +227,7 @@ public class ControlStructureTypingUtils {
             @NotNull
             @Override
             public PsiElement getCallElement() {
-                return ifExpression;
+                return expression;
             }
 
             @NotNull
@@ -211,7 +238,10 @@ public class ControlStructureTypingUtils {
         };
     }
 
-    /*package*/ static TracingStrategy createTracingForIf(final @NotNull Call callForIf) {
+    /*package*/ static TracingStrategy createTracingForSpecialConstruction(
+            final @NotNull Call call,
+            final @NotNull String constructionName
+    ) {
         class CheckTypeContext {
             public BindingTrace trace;
             public JetType expectedType;
@@ -248,6 +278,16 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
+            public Void visitPostfixExpression(JetPostfixExpression expression, CheckTypeContext c) {
+                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
+                    checkExpressionType(expression.getBaseExpression(),
+                                        new CheckTypeContext(c.trace, TypeUtils.makeNullable(c.expectedType)));
+                    return null;
+                }
+                return super.visitPostfixExpression(expression, c);
+            }
+
+            @Override
             public Void visitExpression(JetExpression expression, CheckTypeContext c) {
                 JetTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
                 if (typeInfo != null) {
@@ -257,7 +297,7 @@ public class ControlStructureTypingUtils {
             }
         };
 
-        return new ThrowingOnErrorTracingStrategy("resolve 'if' as a call") {
+        return new ThrowingOnErrorTracingStrategy("resolve " + constructionName + " as a call") {
             @Override
             public <D extends CallableDescriptor> void bindReference(
                     @NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall
@@ -269,8 +309,8 @@ public class ControlStructureTypingUtils {
             public <D extends CallableDescriptor> void bindResolvedCall(
                     @NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall
             ) {
-                trace.record(RESOLVED_CALL, callForIf.getCalleeExpression(), resolvedCall);
-                trace.record(CALL, callForIf.getCalleeExpression(), callForIf);
+                trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
+                trace.record(CALL, call.getCalleeExpression(), call);
 
             }
 
@@ -285,7 +325,7 @@ public class ControlStructureTypingUtils {
                     return;
                 }
                 if (constraintSystem.hasOnlyExpectedTypeMismatch()) {
-                    JetExpression expression = callForIf.getCalleeExpression();
+                    JetExpression expression = call.getCalleeExpression();
                     if (expression != null) {
                         expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     }
