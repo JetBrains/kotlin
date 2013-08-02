@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -104,7 +105,7 @@ class KotlinOverridingDialog extends DialogWrapper {
 
         assert element instanceof PsiMethod
                 : "Method accepts only kotlin functions/properties and java methods, but '" + element.getText() + "' was found";
-        return KotlinSafeDeleteProcessor.formatPsiMethod((PsiMethod) element, true, false);
+        return JetRefactoringUtil.formatPsiMethod((PsiMethod) element, true, false);
     }
 
     @Override

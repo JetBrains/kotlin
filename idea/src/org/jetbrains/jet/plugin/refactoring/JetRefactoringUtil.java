@@ -17,34 +17,46 @@
 package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.codeInsight.unwrap.ScopeHighlighter;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.*;
+import com.intellij.psi.util.PsiFormatUtil;
+import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 /**
  * User: Alefas
@@ -70,6 +82,196 @@ public class JetRefactoringUtil {
         }
 
         throw new IllegalArgumentException("Unexpected visibility '" + visibility + "'");
+    }
+
+    @NotNull
+    public static String wrapOrSkip(@NotNull String s, boolean inCode) {
+        return inCode ? "<code>" + s + "</code>" : s;
+    }
+
+    @NotNull
+    public static String formatClassDescriptor(@NotNull DeclarationDescriptor classDescriptor) {
+        return DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor);
+    }
+
+    @NotNull
+    public static String formatPsiClass(
+            @NotNull PsiClass psiClass,
+            boolean markAsJava,
+            boolean inCode
+    ) {
+        String description;
+
+        String kind = psiClass.isInterface() ? "interface " : "class ";
+        description = kind + PsiFormatUtil.formatClass(
+                psiClass,
+                PsiFormatUtilBase.SHOW_CONTAINING_CLASS
+                | PsiFormatUtilBase.SHOW_NAME
+                | PsiFormatUtilBase.SHOW_PARAMETERS
+                | PsiFormatUtilBase.SHOW_TYPE
+        );
+        description = wrapOrSkip(description, inCode);
+
+        return markAsJava ? "[Java] " + description : description;
+    }
+
+    @Nullable
+    public static Collection<? extends PsiElement> checkSuperMethods(
+            @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore
+    ) {
+        final BindingContext bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
+
+        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
+
+        CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) declarationDescriptor;
+        Set<? extends CallableMemberDescriptor> overridenDescriptors = callableDescriptor.getOverriddenDescriptors();
+
+        Collection<? extends PsiElement> superMethods = ContainerUtil.map(
+                overridenDescriptors,
+                new Function<CallableMemberDescriptor, PsiElement>() {
+                    @Override
+                    public PsiElement fun(CallableMemberDescriptor descriptor) {
+                        return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+                    }
+                }
+        );
+        if (ignore != null) {
+            superMethods.removeAll(ignore);
+        }
+
+        if (superMethods.isEmpty()) return Collections.singletonList(declaration);
+
+        java.util.List<String> superClasses = getClassDescriptions(bindingContext, superMethods);
+        return askUserForMethodsToSearch(declaration, callableDescriptor, superMethods, superClasses);
+    }
+
+    @NotNull
+    private static Collection<? extends PsiElement> askUserForMethodsToSearch(
+            @NotNull JetDeclaration declaration,
+            @NotNull CallableMemberDescriptor callableDescriptor,
+            @NotNull Collection<? extends PsiElement> superMethods,
+            @NotNull List<String> superClasses
+    ) {
+        String superClassesStr = "\n" + StringUtil.join(superClasses, "");
+        String message = JetBundle.message(
+                "x.overrides.y.in.class.list",
+                DescriptorRenderer.COMPACT.render(callableDescriptor),
+                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callableDescriptor.getContainingDeclaration()),
+                superClassesStr
+        );
+
+        int exitCode = Messages.showYesNoCancelDialog(
+                declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
+        );
+        switch (exitCode) {
+            case Messages.YES:
+                return superMethods;
+            case Messages.NO:
+                return Collections.singletonList(declaration);
+            default:
+                return Collections.emptyList();
+        }
+    }
+
+    @NotNull
+    private static List<String> getClassDescriptions(
+            @NotNull final BindingContext bindingContext, @NotNull Collection<? extends PsiElement> superMethods
+    ) {
+        return ContainerUtil.map(
+                superMethods,
+                new Function<PsiElement, String>() {
+                    @Override
+                    public String fun(PsiElement element) {
+                        String description;
+
+                        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
+                            DeclarationDescriptor descriptor =
+                                    bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+                            assert descriptor != null;
+
+                            DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
+                            assert containingDescriptor != null;
+
+                            description = formatClassDescriptor(containingDescriptor);
+                        }
+                        else {
+                            assert element instanceof PsiMethod;
+
+                            PsiClass psiClass = ((PsiMethod) element).getContainingClass();
+                            assert psiClass != null;
+
+                            description = formatPsiClass(psiClass, true, false);
+                        }
+
+                        return "    " + description + "\n";
+                    }
+                }
+        );
+    }
+
+    @NotNull
+    public static String formatClass(
+            @NotNull DeclarationDescriptor classDescriptor,
+            @NotNull BindingContext bindingContext,
+            boolean inCode
+    ) {
+        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, classDescriptor);
+        if (element instanceof PsiClass) {
+            return formatPsiClass((PsiClass) element, false, inCode);
+        }
+
+        return wrapOrSkip(formatClassDescriptor(classDescriptor), inCode);
+    }
+
+    @NotNull
+    public static String formatFunction(
+            @NotNull DeclarationDescriptor functionDescriptor,
+            @NotNull BindingContext bindingContext,
+            boolean inCode
+    ) {
+        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, functionDescriptor);
+        if (element instanceof PsiMethod) {
+            return formatPsiMethod((PsiMethod) element, false, inCode);
+        }
+
+        return wrapOrSkip(formatFunctionDescriptor(functionDescriptor), inCode);
+    }
+
+    @NotNull
+    private static String formatFunctionDescriptor(@NotNull DeclarationDescriptor functionDescriptor) {
+        return DescriptorRenderer.COMPACT.render(functionDescriptor);
+    }
+
+    @NotNull
+    public static String formatPsiMethod(
+            @NotNull PsiMethod psiMethod,
+            boolean showContainingClass,
+            boolean inCode) {
+        int options = PsiFormatUtilBase.SHOW_NAME | PsiFormatUtilBase.SHOW_PARAMETERS | PsiFormatUtilBase.SHOW_TYPE;
+        if (showContainingClass) {
+            //noinspection ConstantConditions
+            options |= PsiFormatUtilBase.SHOW_CONTAINING_CLASS;
+        }
+
+        String description = PsiFormatUtil.formatMethod(psiMethod, PsiSubstitutor.EMPTY, options, PsiFormatUtilBase.SHOW_TYPE);
+        description = wrapOrSkip(description, inCode);
+
+        return "[Java] " + description;
+    }
+
+    @NotNull
+    public static String formatJavaOrLightMethod(@NotNull PsiMethod method) {
+        if (method instanceof JetClsMethod) {
+            JetDeclaration declaration = ((JetClsMethod) method).getOrigin();
+            BindingContext bindingContext =
+                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
+            DeclarationDescriptor descriptor =
+                    bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+            if (descriptor != null) return JetRefactoringUtil.formatFunctionDescriptor(descriptor);
+        }
+        return JetRefactoringUtil.formatPsiMethod(method, false, false);
     }
 
     public interface SelectExpressionCallback {
