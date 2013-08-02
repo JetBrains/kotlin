@@ -31,6 +31,11 @@ public class JavaArrayType extends JavaType {
     }
 
     @NotNull
+    public static JavaArrayType create(@NotNull JavaType elementType) {
+        return new JavaArrayType(elementType.getPsi().createArrayType());
+    }
+
+    @NotNull
     public JavaType getComponentType() {
         return JavaType.create(getPsi().getComponentType());
     }

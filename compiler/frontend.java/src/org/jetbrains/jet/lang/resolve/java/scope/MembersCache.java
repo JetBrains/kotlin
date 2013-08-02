@@ -211,7 +211,7 @@ import java.util.Map;
                 return false;
             }
 
-            if (DescriptorResolverUtils.isObjectMethodInInterface(member.getPsi())) {
+            if (DescriptorResolverUtils.isObjectMethodInInterface(member)) {
                 return false;
             }
 

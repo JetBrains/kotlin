@@ -375,7 +375,7 @@ public class SingleAbstractMethodUtils {
                 return true;
             }
             for (JavaMethod method : javaClass.getMethods()) {
-                if (DescriptorResolverUtils.isObjectMethod(method.getPsi())) { // e.g., ignore toString() declared in interface
+                if (DescriptorResolverUtils.isObjectMethod(method)) { // e.g., ignore toString() declared in interface
                     continue;
                 }
                 if (!method.getTypeParameters().isEmpty()) {

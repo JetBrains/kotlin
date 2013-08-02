@@ -18,15 +18,18 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.util.Comparing;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiSubstitutorImpl;
+import com.intellij.psi.util.TypeConversionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
@@ -36,12 +39,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static com.intellij.psi.util.TypeConversionUtil.erasure;
+import java.util.*;
 
 // This class contains heuristics for processing corner cases in propagation
 class PropagationHeuristics {
@@ -123,7 +121,7 @@ class PropagationHeuristics {
     }
 
     @NotNull
-    static List<PsiMethod> getSuperMethods(@NotNull PsiMethod method) {
+    static List<JavaMethod> getSuperMethods(@NotNull JavaMethod method) {
         return new SuperMethodCollector(method).collect();
     }
 
@@ -131,79 +129,83 @@ class PropagationHeuristics {
     }
 
     private static class SuperMethodCollector {
-        private final PsiMethod initialMethod;
-        private final String initialMethodName;
-        private final List<PsiType> initialParametersErasure;
+        private final JavaMethod initialMethod;
+        private final Name initialMethodName;
+        private final List<JavaType> initialParametersErasure;
 
-        private final List<PsiClass> visitedSuperclasses = Lists.newArrayList();
-        private final List<PsiMethod> collectedMethods = Lists.newArrayList();
+        private final Set<JavaClass> visitedSuperclasses = Sets.newHashSet();
+        private final List<JavaMethod> collectedMethods = Lists.newArrayList();
 
-        private SuperMethodCollector(@NotNull PsiMethod initialMethod) {
+        private SuperMethodCollector(@NotNull JavaMethod initialMethod) {
             this.initialMethod = initialMethod;
             initialMethodName = initialMethod.getName();
 
-            PsiParameterList parameterList = initialMethod.getParameterList();
-            initialParametersErasure = Lists.newArrayListWithExpectedSize(parameterList.getParametersCount());
-            for (PsiParameter parameter : parameterList.getParameters()) {
-                initialParametersErasure.add(erasureNoEllipsis(parameter.getType()));
+            Collection<JavaValueParameter> valueParameters = initialMethod.getValueParameters();
+            initialParametersErasure = Lists.newArrayListWithExpectedSize(valueParameters.size());
+            for (Iterator<JavaValueParameter> iterator = valueParameters.iterator(); iterator.hasNext(); ) {
+                JavaType type = iterator.next().getType();
+                boolean isVararg = initialMethod.isVararg() && !iterator.hasNext();
+                initialParametersErasure.add(erasure(varargToArray(type, isVararg)));
             }
         }
 
-        public List<PsiMethod> collect() {
+        @NotNull
+        public List<JavaMethod> collect() {
             if (!canHaveSuperMethod(initialMethod)) {
                 return Collections.emptyList();
             }
 
-            PsiClass containingClass = initialMethod.getContainingClass();
+            JavaClass containingClass = initialMethod.getContainingClass();
             assert containingClass != null : " containing class is null for " + initialMethod;
 
-            for (PsiClassType superType : containingClass.getSuperTypes()) {
-                collectFromSupertype(superType);
+            for (JavaClassifierType supertype : containingClass.getSupertypes()) {
+                collectFromSupertype(supertype);
             }
 
             return collectedMethods;
         }
 
-        private void collectFromSupertype(PsiClassType type) {
-            PsiClass klass = type.resolve();
-            if (klass == null) {
-                return;
-            }
-            if (!visitedSuperclasses.add(klass)) {
-                return;
-            }
+        private void collectFromSupertype(@NotNull JavaClassifierType type) {
+            JavaClassifier classifier = type.getClassifier();
+            if (!(classifier instanceof JavaClass)) return;
 
-            PsiSubstitutor supertypeSubstitutor = getErasedSubstitutor(type);
-            for (PsiMethod methodFromSuper : klass.getMethods()) {
+            JavaClass klass = (JavaClass) classifier;
+            if (!visitedSuperclasses.add(klass)) return;
+
+            JavaTypeSubstitutor supertypeSubstitutor = getErasedSubstitutor(type);
+            for (JavaMethod methodFromSuper : klass.getMethods()) {
                 if (isSubMethodOf(methodFromSuper, supertypeSubstitutor)) {
                     collectedMethods.add(methodFromSuper);
                     return;
                 }
             }
 
-            for (PsiType superType : type.getSuperTypes()) {
-                assert superType instanceof PsiClassType : "supertype is not a PsiClassType for " + type + ": " + superType;
-                collectFromSupertype((PsiClassType) superType);
+            for (JavaClassifierType supertype : type.getSupertypes()) {
+                collectFromSupertype(supertype);
             }
         }
 
-        private boolean isSubMethodOf(@NotNull PsiMethod methodFromSuper, @NotNull PsiSubstitutor supertypeSubstitutor) {
+        private boolean isSubMethodOf(@NotNull JavaMethod methodFromSuper, @NotNull JavaTypeSubstitutor supertypeSubstitutor) {
             if (!methodFromSuper.getName().equals(initialMethodName)) {
                 return false;
             }
 
-            PsiParameterList fromSuperParameterList = methodFromSuper.getParameterList();
-
-            if (fromSuperParameterList.getParametersCount() != initialParametersErasure.size()) {
+            Collection<JavaValueParameter> fromSuperParameters = methodFromSuper.getValueParameters();
+            if (fromSuperParameters.size() != initialParametersErasure.size()) {
                 return false;
             }
 
-            for (int i = 0; i < initialParametersErasure.size(); i++) {
-                PsiType originalType = initialParametersErasure.get(i);
-                PsiType typeFromSuper = fromSuperParameterList.getParameters()[i].getType();
-                PsiType typeFromSuperErased = erasureNoEllipsis(supertypeSubstitutor.substitute(typeFromSuper));
+            Iterator<JavaType> originalIterator = initialParametersErasure.iterator();
+            Iterator<JavaValueParameter> superIterator = fromSuperParameters.iterator();
+            while (originalIterator.hasNext()) {
+                JavaType originalType = originalIterator.next();
+                JavaType typeFromSuper = superIterator.next().getType();
 
-                if (!Comparing.equal(originalType, typeFromSuperErased)) {
+                boolean isVarargType = methodFromSuper.isVararg() && !superIterator.hasNext();
+
+                JavaType typeFromSuperErased = erasure(varargToArray(supertypeSubstitutor.substitute(typeFromSuper), isVarargType));
+
+                if (!originalType.equals(typeFromSuperErased)) {
                     return false;
                 }
             }
@@ -211,28 +213,33 @@ class PropagationHeuristics {
             return true;
         }
 
-        private static PsiType erasureNoEllipsis(PsiType type) {
-            if (type instanceof PsiEllipsisType) {
-                return erasureNoEllipsis(((PsiEllipsisType) type).toArrayType());
-            }
-            return erasure(type);
+        @NotNull
+        private static JavaType varargToArray(@NotNull JavaType type, boolean isVararg) {
+            return isVararg ? JavaArrayType.create(((JavaArrayType) type).getComponentType()) : type;
         }
 
-        private static PsiSubstitutor getErasedSubstitutor(PsiClassType type) {
-            Map<PsiTypeParameter, PsiType> unerasedMap = type.resolveGenerics().getSubstitutor().getSubstitutionMap();
-            Map<PsiTypeParameter, PsiType> erasedMap = Maps.newHashMapWithExpectedSize(unerasedMap.size());
-            for (Map.Entry<PsiTypeParameter, PsiType> entry : unerasedMap.entrySet()) {
-                erasedMap.put(entry.getKey(), erasure(entry.getValue()));
-            }
-            return PsiSubstitutorImpl.createSubstitutor(erasedMap);
+        @NotNull
+        private static JavaType erasure(@NotNull JavaType type) {
+            return JavaType.create(TypeConversionUtil.erasure(type.getPsi()));
         }
 
-        private static boolean canHaveSuperMethod(PsiMethod method) {
-            if (method.isConstructor()) return false;
-            if (method.hasModifierProperty(PsiModifier.STATIC)) return false;
-            if (method.hasModifierProperty(PsiModifier.PRIVATE)) return false;
-            PsiClass containingClass = method.getContainingClass();
-            return containingClass != null && !CommonClassNames.JAVA_LANG_OBJECT.equals(containingClass.getQualifiedName());
+        @NotNull
+        private static JavaTypeSubstitutor getErasedSubstitutor(@NotNull JavaClassifierType type) {
+            Map<JavaTypeParameter, JavaType> unerasedMap = type.getSubstitutor().getSubstitutionMap();
+            Map<JavaTypeParameter, JavaType> erasedMap = Maps.newHashMapWithExpectedSize(unerasedMap.size());
+            for (Map.Entry<JavaTypeParameter, JavaType> entry : unerasedMap.entrySet()) {
+                JavaType value = entry.getValue();
+                erasedMap.put(entry.getKey(), value == null ? null : erasure(value));
+            }
+            return JavaTypeSubstitutor.create(erasedMap);
+        }
+
+        private static boolean canHaveSuperMethod(@NotNull JavaMethod method) {
+            if (method.isConstructor() || method.isStatic() || method.getVisibility() == Visibilities.PRIVATE) {
+                return false;
+            }
+            JavaClass containingClass = method.getContainingClass();
+            return containingClass != null && !JavaSupertypeResolver.OBJECT_FQ_NAME.equals(containingClass.getFqName());
         }
     }
 }

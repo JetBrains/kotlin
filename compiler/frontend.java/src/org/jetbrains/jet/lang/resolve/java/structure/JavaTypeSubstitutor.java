@@ -17,13 +17,25 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiSubstitutor;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.impl.PsiSubstitutorImpl;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class JavaTypeSubstitutor {
     private final PsiSubstitutor psiSubstitutor;
+    private Map<JavaTypeParameter, JavaType> substitutionMap;
 
     public JavaTypeSubstitutor(@NotNull PsiSubstitutor psiSubstitutor) {
         this.psiSubstitutor = psiSubstitutor;
+    }
+
+    public JavaTypeSubstitutor(@NotNull PsiSubstitutor psiSubstitutor, @NotNull Map<JavaTypeParameter, JavaType> substitutionMap) {
+        this(psiSubstitutor);
+        this.substitutionMap = substitutionMap;
     }
 
     @NotNull
@@ -32,8 +44,33 @@ public class JavaTypeSubstitutor {
     }
 
     @NotNull
+    public static JavaTypeSubstitutor create(@NotNull Map<JavaTypeParameter, JavaType> substitutionMap) {
+        Map<PsiTypeParameter, PsiType> psiMap = new HashMap<PsiTypeParameter, PsiType>();
+        for (Map.Entry<JavaTypeParameter, JavaType> entry : substitutionMap.entrySet()) {
+            JavaType value = entry.getValue();
+            psiMap.put(entry.getKey().getPsi(), value == null ? null : value.getPsi());
+        }
+        PsiSubstitutor psiSubstitutor = PsiSubstitutorImpl.createSubstitutor(psiMap);
+        return new JavaTypeSubstitutor(psiSubstitutor, substitutionMap);
+    }
+
+    @NotNull
     public JavaType substitute(@NotNull JavaType type) {
         return JavaType.create(getPsi().substitute(type.getPsi()));
+    }
+
+    @NotNull
+    public Map<JavaTypeParameter, JavaType> getSubstitutionMap() {
+        if (substitutionMap == null) {
+            Map<PsiTypeParameter, PsiType> psiMap = psiSubstitutor.getSubstitutionMap();
+            substitutionMap = new HashMap<JavaTypeParameter, JavaType>();
+            for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
+                PsiType value = entry.getValue();
+                substitutionMap.put(new JavaTypeParameter(entry.getKey()), value == null ? null : JavaType.create(value));
+            }
+        }
+
+        return substitutionMap;
     }
 
     @Override
