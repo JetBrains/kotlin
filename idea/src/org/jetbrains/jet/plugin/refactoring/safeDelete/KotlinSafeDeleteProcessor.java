@@ -790,7 +790,9 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
 
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-            return JetRefactoringUtil.checkSuperMethods((JetDeclaration) element, allElementsToDelete);
+            return JetRefactoringUtil.checkSuperMethods(
+                    (JetDeclaration) element, allElementsToDelete, "super.methods.delete.with.usage.search"
+            );
         }
 
         return super.getElementsToSearch(element, module, allElementsToDelete);

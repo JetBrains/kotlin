@@ -117,7 +117,7 @@ public class JetRefactoringUtil {
 
     @Nullable
     public static Collection<? extends PsiElement> checkSuperMethods(
-            @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore
+            @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore, @NotNull String actionStringKey
     ) {
         final BindingContext bindingContext =
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
@@ -144,7 +144,7 @@ public class JetRefactoringUtil {
         if (superMethods.isEmpty()) return Collections.singletonList(declaration);
 
         java.util.List<String> superClasses = getClassDescriptions(bindingContext, superMethods);
-        return askUserForMethodsToSearch(declaration, callableDescriptor, superMethods, superClasses);
+        return askUserForMethodsToSearch(declaration, callableDescriptor, superMethods, superClasses, actionStringKey);
     }
 
     @NotNull
@@ -152,14 +152,16 @@ public class JetRefactoringUtil {
             @NotNull JetDeclaration declaration,
             @NotNull CallableMemberDescriptor callableDescriptor,
             @NotNull Collection<? extends PsiElement> superMethods,
-            @NotNull List<String> superClasses
+            @NotNull List<String> superClasses,
+            @NotNull String actionStringKey
     ) {
         String superClassesStr = "\n" + StringUtil.join(superClasses, "");
         String message = JetBundle.message(
                 "x.overrides.y.in.class.list",
                 DescriptorRenderer.COMPACT.render(callableDescriptor),
                 DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callableDescriptor.getContainingDeclaration()),
-                superClassesStr
+                superClassesStr,
+                JetBundle.message(actionStringKey)
         );
 
         int exitCode = Messages.showYesNoCancelDialog(
