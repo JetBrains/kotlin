@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -1031,25 +1033,22 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression left = expression.getLeft();
         JetExpression right = expression.getRight();
 
-        JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
+        if (left == null || right == null) {
+            getTypeInfoOrNullType(left, context, facade);
+            return JetTypeInfo.create(null, context.dataFlowInfo);
+        }
+
+        Call call = createCallForSpecialConstruction(expression, Lists.newArrayList(left, right));
+        ResolvedCall<FunctionDescriptor> resolvedCall = resolveSpecialConstructionAsCall(
+                call, "Elvis", Lists.newArrayList("left", "right"), Lists.newArrayList(true, false), contextWithExpectedType, null);
+        JetTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
+        assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         JetType leftType = leftTypeInfo.getType();
-        DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
-
-        if (left == null || leftType == null) return JetTypeInfo.create(null, dataFlowInfo);
-
-        if (isKnownToBeNotNull(left, leftType, context)) {
+        if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(left, leftType));
         }
-
-        ExpressionTypingContext newContext = contextWithExpectedType.replaceDataFlowInfo(dataFlowInfo).replaceScope(context.scope);
-        JetType rightType = right == null ? null : facade.getTypeInfo(right, newContext).getType();
-
-        if (rightType != null) {
-            DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
-            return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(
-                    CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable()), dataFlowInfo);
-        }
-        return JetTypeInfo.create(null, dataFlowInfo);
+        return JetTypeInfo.create(resolvedCall.getResultingDescriptor().getReturnType(),
+                                  resolvedCall.getDataFlowInfoForArguments().getResultInfo());
     }
 
     @NotNull

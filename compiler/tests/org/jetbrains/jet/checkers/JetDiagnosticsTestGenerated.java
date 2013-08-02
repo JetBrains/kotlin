@@ -4793,6 +4793,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve/specialConstructions"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("elvisAsCall.kt")
+                public void testElvisAsCall() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/specialConstructions/elvisAsCall.kt");
+                }
+                
                 @TestMetadata("exclExclAsCall.kt")
                 public void testExclExclAsCall() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/resolve/specialConstructions/exclExclAsCall.kt");

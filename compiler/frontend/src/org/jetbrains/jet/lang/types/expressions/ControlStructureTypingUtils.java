@@ -250,6 +250,11 @@ public class ControlStructureTypingUtils {
                 this.trace = trace;
                 this.expectedType = expectedType;
             }
+
+            CheckTypeContext makeTypeNullable() {
+                if (TypeUtils.noExpectedType(expectedType)) return this;
+                return new CheckTypeContext(trace, TypeUtils.makeNullable(expectedType));
+            }
         }
 
         final JetVisitor<Void, CheckTypeContext> checkTypeVisitor = new JetVisitor<Void, CheckTypeContext>() {
@@ -280,11 +285,20 @@ public class ControlStructureTypingUtils {
             @Override
             public Void visitPostfixExpression(JetPostfixExpression expression, CheckTypeContext c) {
                 if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
-                    checkExpressionType(expression.getBaseExpression(),
-                                        new CheckTypeContext(c.trace, TypeUtils.makeNullable(c.expectedType)));
+                    checkExpressionType(expression.getBaseExpression(), c.makeTypeNullable());
                     return null;
                 }
                 return super.visitPostfixExpression(expression, c);
+            }
+
+            @Override
+            public Void visitBinaryExpression(JetBinaryExpression expression, CheckTypeContext c) {
+                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.ELVIS) {
+                    checkExpressionType(expression.getLeft(), c.makeTypeNullable());
+                    checkExpressionType(expression.getRight(), c);
+                    return null;
+                }
+                return super.visitBinaryExpression(expression, c);
             }
 
             @Override
