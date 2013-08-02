@@ -104,7 +104,7 @@
             <classpath refid="classpath"/>
         </javac>
         <copy todir="${output}/classes/generators">
-            <fileset dir="compiler/frontend/src" includes="**/*.jet"/>
+            <fileset dir="compiler/frontend/builtins" includes="**/*.jet"/>
         </copy>
     </target>
 
@@ -267,7 +267,7 @@
         <sequential>
           <jar jarfile="@{jarfile}" compress="@{compress}">
               <fileset dir="${output}/classes/compiler"/>
-              <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
+              <fileset dir="${basedir}/compiler/frontend/builtins" includes="jet/**"/>
   
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>

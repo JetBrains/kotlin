@@ -27,7 +27,7 @@ import java.io.PrintWriter;
 
 public class GenerateFunctions {
     public static final int MAX_PARAM_COUNT = 22;
-    public static final File JET_SRC_DIR = new File("compiler/frontend/src/jet/");
+    public static final File JET_SRC_DIR = new File("compiler/frontend/builtins/jet/");
     public static final File RUNTIME_SRC_DIR = new File("runtime/src/jet/");
 
     private final PrintWriter out;

@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.references;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.DumbService;
@@ -91,15 +89,15 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         jetNamespace.setMemberScope(scope);
 
-        List<JetFile> jetBuiltInsFiles = getJetFiles("jet", Predicates.<JetFile>alwaysTrue());
+        List<JetFile> jetBuiltInsFiles = getJetBuiltinsFiles();
         TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, jetBuiltInsFiles);
 
         builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
         bindingContext = context.getBindingContext();
     }
 
-    private List<JetFile> getJetFiles(String dir, final Predicate<JetFile> filter) {
-        URL url = BuiltInsReferenceResolver.class.getResource("/" + dir + "/");
+    private List<JetFile> getJetBuiltinsFiles() {
+        URL url = KotlinBuiltIns.getBuiltInsDirUrl();
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null : "Virtual file not found by URL: " + url;
 
@@ -116,11 +114,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         return ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
             @Override
             public JetFile fun(PsiFile file) {
-                if (file instanceof JetFile) {
-                    JetFile jetFile = (JetFile) file;
-                    return filter.apply(jetFile) ? jetFile : null;
-                }
-                return null;
+                return file instanceof JetFile ? (JetFile) file : null;
             }
         });
     }

@@ -43,56 +43,46 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.KotlinVfsUtil;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 public class LightClassUtil {
     private static final Logger LOG = Logger.getInstance(LightClassUtil.class);
-    private static final String DEFINITION_OF_ANY = "Any.jet";
 
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
-     * As of today, this is compiler/frontend/src/jet directory and files such as Any.jet, Nothing.jet etc.
+     * As of today, this is compiler/frontend/builtins/jet directory and files such as Any.jet, Nothing.jet etc.
      *
      * Used to skip JetLightClass creation for built-ins, because built-in classes have no Java counterparts
      */
     public static boolean belongsToKotlinBuiltIns(@NotNull JetFile file) {
-        try {
-            String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(getBuiltInsDirResourceUrl());
-            VirtualFile virtualFile = file.getVirtualFile();
-            if (virtualFile != null) {
-                VirtualFile parent = virtualFile.getParent();
-                if (parent != null) {
-                    String fileDirVfsUrl = parent.getUrl() + "/" + DEFINITION_OF_ANY;
+        VirtualFile virtualFile = file.getVirtualFile();
+        if (virtualFile != null) {
+            VirtualFile parent = virtualFile.getParent();
+            if (parent != null) {
+                try {
+                    String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(KotlinBuiltIns.getBuiltInsDirUrl());
+
+                    String fileDirVfsUrl = parent.getUrl();
                     if (jetVfsPathUrl.equals(fileDirVfsUrl)) {
                         return true;
                     }
                 }
+                catch (MalformedURLException e) {
+                    LOG.error(e);
+                }
             }
         }
-        catch (MalformedURLException e) {
-            LOG.error(e);
-        }
+
         // We deliberately return false on error: who knows what weird URLs we might come across out there
         // it would be a pity if no light classes would be created in such cases
         return false;
-    }
-
-    @NotNull
-    public static URL getBuiltInsDirResourceUrl() {
-        String pathToAny = "/" + KotlinBuiltIns.BUILT_INS_DIR + "/" + DEFINITION_OF_ANY;
-        URL url = KotlinBuiltIns.class.getResource(pathToAny);
-        if (url == null) {
-            throw new IllegalStateException("Built-ins not found in the classpath: " + pathToAny);
-        }
-        return url;
     }
 
     /*package*/ static void logErrorWithOSInfo(@Nullable Throwable cause, @NotNull FqName fqName, @Nullable VirtualFile virtualFile) {
         String path = virtualFile == null ? "<null>" : virtualFile.getPath();
         LOG.error(
                 "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
-                "built-ins dir URL is " + getBuiltInsDirResourceUrl() + "\n" +
+                "built-ins dir URL is " + KotlinBuiltIns.getBuiltInsDirUrl() + "\n" +
                 "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
                 cause);
     }

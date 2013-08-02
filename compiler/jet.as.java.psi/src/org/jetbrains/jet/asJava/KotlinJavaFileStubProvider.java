@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -234,7 +235,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
         String path = virtualFile == null ? "<null>" : virtualFile.getPath();
         LOG.error(
                 "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
-                "built-ins dir URL is " + LightClassUtil.getBuiltInsDirResourceUrl() + "\n" +
+                "built-ins dir URL is " + KotlinBuiltIns.getBuiltInsDirUrl() + "\n" +
                 "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
                 cause);
     }

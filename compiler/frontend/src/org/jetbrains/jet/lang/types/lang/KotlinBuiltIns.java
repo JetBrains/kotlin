@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,17 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -48,10 +51,14 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
@@ -247,16 +254,11 @@ public class KotlinBuiltIns {
     {
         List<JetFile> files = new LinkedList<JetFile>();
         for(String path : libraryFiles) {
-            InputStream stream = KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
+            String text = loadBuiltInFileText(path);
 
-            if (stream == null) {
-                throw new IllegalStateException("Resource not found in classpath: " + path);
-            }
+            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(
+                    path, JetFileType.INSTANCE, StringUtil.convertLineSeparators(text), LocalTimeCounter.currentTime(), true, false);
 
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            String text = FileUtil.loadTextAndClose(new InputStreamReader(stream));
-            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(path,
-                    JetFileType.INSTANCE, StringUtil.convertLineSeparators(text), LocalTimeCounter.currentTime(), true, false);
             files.add(file);
         }
         return files;
@@ -277,7 +279,57 @@ public class KotlinBuiltIns {
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
     }
 
+    private static String loadBuiltInFileText(String path) throws IOException {
+        InputStream stream = KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
+        if (stream == null) {
+            if (ApplicationManager.getApplication().isUnitTestMode()) {
+                //noinspection TestOnlyProblems
+                return FileUtil.loadFile(getInTestBuiltInPath(path));
+            }
+
+            throw new IllegalStateException("Resource not found in classpath: " + path);
+        }
+
+        //noinspection IOResourceOpenedButNotSafelyClosed
+        return FileUtil.loadTextAndClose(new InputStreamReader(stream));
+    }
+
+    @TestOnly
+    private static File getInTestBuiltInPath(String path) {
+        return new File("compiler/frontend/builtins", path);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @NotNull
+    public static URL getBuiltInsDirUrl() {
+        String builtInFilePath = "/" + LIBRARY_FILES.get(0);
+        String dirPath = "/" + BUILT_INS_DIR;
+
+        URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
+        URL dirUrl = KotlinBuiltIns.class.getResource(dirPath);
+
+        if (url == null || dirUrl == null) {
+            if (ApplicationManager.getApplication().isUnitTestMode()) {
+                // HACK: Temp code. Get built-in files from the sources when running from test.
+                try {
+                    @SuppressWarnings("TestOnlyProblems") File builtInDir = getInTestBuiltInPath(BUILT_INS_DIR);
+                    return new URL(StandardFileSystems.FILE_PROTOCOL, "", FileUtil.toSystemIndependentName(builtInDir.getAbsolutePath()));
+                }
+                catch (MalformedURLException e) {
+                    throw ExceptionUtils.rethrow(e);
+                }
+            }
+
+            if (url == null) {
+                throw new IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath);
+            }
+            else {
+                throw new IllegalStateException("Built-ins directory wasn't found at url: " + dirPath);
+            }
+        }
+
+        return dirUrl;
+    }
 
     @NotNull
     public ModuleDescriptorImpl getBuiltInsModule() {
