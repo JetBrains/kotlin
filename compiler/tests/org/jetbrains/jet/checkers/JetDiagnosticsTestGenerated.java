@@ -2866,6 +2866,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/kt3461checkTypes.kt");
                 }
                 
+                @TestMetadata("makeNullableIfSafeCall.kt")
+                public void testMakeNullableIfSafeCall() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/makeNullableIfSafeCall.kt");
+                }
+                
                 @TestMetadata("nontrivialCallExpression.kt")
                 public void testNontrivialCallExpression() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/nontrivialCallExpression.kt");

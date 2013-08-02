@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -367,8 +368,9 @@ public class CandidateResolver {
             type = completeNestedCallsInference(contextForArgument);
             checkValueArgumentTypes(contextForArgument);
         }
-        BindingContextUtils.updateRecordedType(type, expression, context.trace);
-        DataFlowUtils.checkType(type, expression, contextForArgument);
+        JetType result = BindingContextUtils.updateRecordedType(
+                type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
+        DataFlowUtils.checkType(result, expression, contextForArgument);
     }
 
     @NotNull
@@ -388,6 +390,19 @@ public class CandidateResolver {
         return expression.accept(selectorExpressionFinder, null);
     }
 
+    private boolean isFairSafeCallExpression(@NotNull JetExpression expression, @NotNull BindingTrace trace) {
+        // We are interested in type of the last call:
+        // 'a.b?.foo()' is safe call, but 'a?.b.foo()' is not.
+        // Since receiver is 'a.b' and selector is 'foo()',
+        // we can only check if an expression is safe call.
+        if (!(expression instanceof JetSafeQualifiedExpression)) return false;
+
+        JetSafeQualifiedExpression safeQualifiedExpression = (JetSafeQualifiedExpression) expression;
+        //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
+        JetType type = trace.get(BindingContext.EXPRESSION_TYPE, safeQualifiedExpression.getReceiverExpression());
+        return type != null && type.isNullable();
+    }
+
     @Nullable
     private <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
             @NotNull CallCandidateResolutionContext<D> context,
@@ -398,7 +413,7 @@ public class CandidateResolver {
             if (type.getConstructor() instanceof NumberValueTypeConstructor) {
                 NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
                 type = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                BindingContextUtils.updateRecordedType(type, expression, context.trace);
+                BindingContextUtils.updateRecordedType(type, expression, context.trace, false);
             }
         }
         return type;
@@ -537,8 +552,8 @@ public class CandidateResolver {
             constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         }
 
-        ConstraintSystem
-                constraintSystemWithRightTypeParameters = constraintSystem.replaceTypeVariables(new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
+        ConstraintSystem constraintSystemWithRightTypeParameters = constraintSystem.replaceTypeVariables(
+                new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
             @Override
             public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
                 assert typeParameterDescriptor != null;

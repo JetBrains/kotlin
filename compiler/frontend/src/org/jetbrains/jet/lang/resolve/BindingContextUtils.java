@@ -28,9 +28,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 
@@ -274,14 +274,20 @@ public class BindingContextUtils {
         trace.report(AMBIGUOUS_LABEL.on(targetLabel));
     }
 
-    public static void updateRecordedType(
+    @Nullable
+    public static JetType updateRecordedType(
             @Nullable JetType type,
             @NotNull JetExpression expression,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            boolean shouldBeMadeNullable
     ) {
-        if (type == null) return;
+        if (type == null) return null;
+        if (shouldBeMadeNullable) {
+            type = TypeUtils.makeNullable(type);
+        }
         trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
         trace.record(BindingContext.PROCESSED, expression);
+        return type;
     }
 
     @Nullable
