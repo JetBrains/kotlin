@@ -22,20 +22,23 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler;
+import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindFunctionUsagesHandler;
 
 public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     @Override
     public boolean canFindUsages(@NotNull PsiElement element) {
-        return element instanceof JetClass || element instanceof JetFunction;
+        return element instanceof JetClass || element instanceof JetNamedFunction;
     }
 
     @Override
     public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
         if (element instanceof JetClass) {
-            return new KotlinFindClassUsagesHandler(element);
+            return new KotlinFindClassUsagesHandler((JetClass) element, this);
         }
-        if (element instanceof JetFunction) {
-            return new KotlinFindFunctionUsagesHandler(element);
+        if (element instanceof JetNamedFunction) {
+            return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, this);
         }
         throw new IllegalArgumentException("unexpected element type: " + element);
     }

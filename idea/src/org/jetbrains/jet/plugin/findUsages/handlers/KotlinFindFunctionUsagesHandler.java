@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.findUsages;
+package org.jetbrains.jet.plugin.findUsages.handlers;
 
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 
-public class KotlinFindClassUsagesHandler extends FindUsagesHandler {
-    public KotlinFindClassUsagesHandler(@NotNull PsiElement psiElement) {
-        super(psiElement);
+public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<JetNamedFunction> {
+    public KotlinFindFunctionUsagesHandler(@NotNull JetNamedFunction function, @NotNull KotlinFindUsagesHandlerFactory factory) {
+        super(function, factory);
     }
 }
