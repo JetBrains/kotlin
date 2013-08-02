@@ -142,10 +142,8 @@ class PropagationHeuristics {
 
             Collection<JavaValueParameter> valueParameters = initialMethod.getValueParameters();
             initialParametersErasure = Lists.newArrayListWithExpectedSize(valueParameters.size());
-            for (Iterator<JavaValueParameter> iterator = valueParameters.iterator(); iterator.hasNext(); ) {
-                JavaType type = iterator.next().getType();
-                boolean isVararg = initialMethod.isVararg() && !iterator.hasNext();
-                initialParametersErasure.add(erasure(varargToArray(type, isVararg)));
+            for (JavaValueParameter parameter : valueParameters) {
+                initialParametersErasure.add(erasure(varargToArray(parameter.getType(), parameter.isVararg())));
             }
         }
 
@@ -199,13 +197,14 @@ class PropagationHeuristics {
             Iterator<JavaValueParameter> superIterator = fromSuperParameters.iterator();
             while (originalIterator.hasNext()) {
                 JavaType originalType = originalIterator.next();
-                JavaType typeFromSuper = superIterator.next().getType();
+                JavaValueParameter parameterFromSuper = superIterator.next();
 
-                boolean isVarargType = methodFromSuper.isVararg() && !superIterator.hasNext();
+                JavaType typeFromSuper = erasure(varargToArray(
+                        supertypeSubstitutor.substitute(parameterFromSuper.getType()),
+                        parameterFromSuper.isVararg()
+                ));
 
-                JavaType typeFromSuperErased = erasure(varargToArray(supertypeSubstitutor.substitute(typeFromSuper), isVarargType));
-
-                if (!originalType.equals(typeFromSuperErased)) {
+                if (!originalType.equals(typeFromSuper)) {
                     return false;
                 }
             }

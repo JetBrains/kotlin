@@ -33,7 +33,10 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public final class JavaValueParameterResolver {
     private JavaTypeTransformer typeTransformer;
@@ -43,8 +46,7 @@ public final class JavaValueParameterResolver {
             @NotNull DeclarationDescriptor containingDeclaration,
             int i,
             @NotNull JavaValueParameter parameter,
-            @NotNull TypeVariableResolver typeVariableResolver,
-            boolean isVararg
+            @NotNull TypeVariableResolver typeVariableResolver
     ) {
         TypeUsage typeUsage = JavaAnnotationResolver.hasMutableAnnotation(parameter)
                               ? TypeUsage.MEMBER_SIGNATURE_COVARIANT
@@ -54,7 +56,7 @@ public final class JavaValueParameterResolver {
 
         JetType varargElementType;
         JetType outType;
-        if (isVararg) {
+        if (parameter.isVararg()) {
             // TODO: test this code
             assert parameterType instanceof JavaArrayType : "Vararg parameter should be an array: " + parameterType;
             JetType arrayType = typeTransformer.transformVarargType(((JavaArrayType) parameterType), typeUsage, typeVariableResolver);
@@ -103,12 +105,8 @@ public final class JavaValueParameterResolver {
         Collection<JavaValueParameter> parameters = method.getValueParameters();
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(parameters.size());
         int index = 0;
-        for (Iterator<JavaValueParameter> iterator = parameters.iterator(); iterator.hasNext(); ) {
-            JavaValueParameter parameter = iterator.next();
-
-            boolean isVararg = method.isVararg() && !iterator.hasNext();
-            ValueParameterDescriptor descriptor = resolveValueParameter(container, index, parameter, typeVariableResolver, isVararg);
-            result.add(descriptor);
+        for (JavaValueParameter parameter : parameters) {
+            result.add(resolveValueParameter(container, index, parameter, typeVariableResolver));
             index++;
         }
         return new ValueParameters(null, result);

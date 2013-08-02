@@ -57,4 +57,8 @@ public class JavaValueParameter extends JavaElementImpl implements JavaAnnotatio
     public JavaType getType() {
         return JavaType.create(getPsi().getType());
     }
+
+    public boolean isVararg() {
+        return getPsi().isVarArgs();
+    }
 }
