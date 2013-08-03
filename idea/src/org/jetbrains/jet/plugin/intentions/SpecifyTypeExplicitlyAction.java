@@ -69,7 +69,6 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         }
         PsiElement parent = element.getParent();
         JetType type = getTypeForDeclaration((JetNamedDeclaration) parent);
-        assert !ErrorUtils.isErrorType(type) : "Unexpected error type: " + element.getText();
         if (parent instanceof JetProperty) {
             JetProperty property = (JetProperty) parent;
             if (property.getTypeRef() == null) {
@@ -109,6 +108,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             return false;
         }
         JetNamedDeclaration declaration = (JetNamedDeclaration) parent;
+
         if (declaration instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) declaration).getInitializer(), element, false)) {
             if (((JetProperty) declaration).getTypeRef() != null) {
                 setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
@@ -217,6 +217,8 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             @NotNull PsiElement anchor,
             @NotNull JetType exprType
     ) {
+        assert !ErrorUtils.isErrorType(exprType) : "Unexpected error type: " + namedDeclaration.getText();
+
         TypeConstructor constructor = exprType.getConstructor();
         boolean isAnonymous = DescriptorUtils.isAnonymous(constructor.getDeclarationDescriptor());
 

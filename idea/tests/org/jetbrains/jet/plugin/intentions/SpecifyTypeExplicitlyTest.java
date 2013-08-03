@@ -61,6 +61,10 @@ public class SpecifyTypeExplicitlyTest extends LightIntentionActionTestCase {
         doTest();
     }
 
+    public void testRemoveUnresolvedType() {
+        doTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/intentions/";
