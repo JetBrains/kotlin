@@ -27,12 +27,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class TrackingSlicedMap extends SlicedMapImpl {
-
-    // private final MutableSlicedMap delegate;
     private final Map<ReadOnlySlice<?, ?>, SliceWithStackTrace<?, ?>> sliceTranslationMap = Maps.newHashMap();
+    private final boolean trackWithStackTraces;
 
-    public TrackingSlicedMap() {
+    public TrackingSlicedMap(boolean trackWithStackTraces) {
         super(Maps.<SlicedMapKey<?, ?>, Object>newLinkedHashMap());
+        this.trackWithStackTraces = trackWithStackTraces;
     }
 
     private <K, V> SliceWithStackTrace<K, V> wrapSlice(ReadOnlySlice<K, V> slice) {
@@ -65,7 +65,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         //noinspection WhileLoopReplaceableByForEach
         while (iterator.hasNext()) {
             Map.Entry<SlicedMapKey<?, ?>, ?> entry = iterator.next();
-            map.put(entry.getKey(), ((WithStackTrace<?>) entry.getValue()).value);
+            map.put(entry.getKey(), ((TrackableValue<?>) entry.getValue()).value);
         }
 
         //noinspection unchecked
@@ -74,7 +74,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
 
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
-        super.put(wrapSlice(slice), key, new WithStackTrace<V>(value));
+        super.put(wrapSlice(slice), key, new TrackableValue<V>(value, trackWithStackTraces));
     }
 
     @Override
@@ -94,18 +94,23 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         return super.getSliceContents(slice);
     }
 
-    private static class WithStackTrace<V> {
+    private static class TrackableValue<V> {
+        private final static StackTraceElement[] EMPTY_STACK_TRACE = new StackTraceElement[0];
+
         private final V value;
         private final StackTraceElement[] stackTrace;
+        private final String threadName;
 
-        private WithStackTrace(V value) {
+        private TrackableValue(V value, boolean storeStack) {
             this.value = value;
-            this.stackTrace = Thread.currentThread().getStackTrace();
+            this.stackTrace = storeStack ? Thread.currentThread().getStackTrace() : EMPTY_STACK_TRACE;
+            this.threadName = Thread.currentThread().getName();
         }
 
         private Appendable printStackTrace(Appendable appendable) {
             Printer s = new Printer(appendable);
             s.println(value);
+            s.println("Thread: " + threadName);
             s.println("Written at ");
             StackTraceElement[] trace = stackTrace;
             for (StackTraceElement aTrace : trace) {
@@ -125,7 +130,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            WithStackTrace other = (WithStackTrace) o;
+            TrackableValue other = (TrackableValue) o;
 
             if (value != null ? !value.equals(other.value) : other.value != null) return false;
 
@@ -138,7 +143,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         }
     }
 
-    public class SliceWithStackTrace<K, V> implements RemovableSlice<K, WithStackTrace<V>> {
+    public class SliceWithStackTrace<K, V> implements RemovableSlice<K, TrackableValue<V>> {
 
         private final ReadOnlySlice<K, V> delegate;
 
@@ -149,18 +154,18 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         // Methods of ReadOnlySlice
 
         @Override
-        public SlicedMapKey<K, WithStackTrace<V>> makeKey(K key) {
+        public SlicedMapKey<K, TrackableValue<V>> makeKey(K key) {
             //noinspection unchecked
             return (SlicedMapKey) delegate.makeKey(key);
         }
 
         @Override
-        public WithStackTrace<V> computeValue(SlicedMap map, K key, WithStackTrace<V> value, boolean valueNotFound) {
-            return new WithStackTrace<V>(delegate.computeValue(map, key, value == null ? null : value.value, valueNotFound));
+        public TrackableValue<V> computeValue(SlicedMap map, K key, TrackableValue<V> value, boolean valueNotFound) {
+            return new TrackableValue<V>(delegate.computeValue(map, key, value == null ? null : value.value, valueNotFound), trackWithStackTraces);
         }
 
         @Override
-        public ReadOnlySlice<K, WithStackTrace<V>> makeRawValueVersion() {
+        public ReadOnlySlice<K, TrackableValue<V>> makeRawValueVersion() {
             return wrapSlice(delegate.makeRawValueVersion());
         }
 
@@ -181,12 +186,12 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         }
 
         @Override
-        public void afterPut(MutableSlicedMap map, K key, WithStackTrace<V> value) {
+        public void afterPut(MutableSlicedMap map, K key, TrackableValue<V> value) {
             getWritableDelegate().afterPut(map, key, value.value);
         }
 
         @Override
-        public boolean check(K key, WithStackTrace<V> value) {
+        public boolean check(K key, TrackableValue<V> value) {
             return getWritableDelegate().check(key, value.value);
         }
     }

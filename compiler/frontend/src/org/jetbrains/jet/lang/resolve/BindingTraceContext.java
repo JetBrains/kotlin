@@ -29,8 +29,9 @@ import java.util.List;
 public class BindingTraceContext implements BindingTrace {
     private final List<Diagnostic> diagnostics = Lists.newArrayList();
 
-    // This flag is used for debugging of "Rewrite at slice..." exceptions
+    // These flags are used for debugging of "Rewrite at slice..." exceptions
     private final static boolean TRACK_REWRITES = false;
+    private final static boolean TRACK_WITH_STACK_TRACES = true;
 
     private final MutableSlicedMap map;
 
@@ -62,7 +63,7 @@ public class BindingTraceContext implements BindingTrace {
 
     public BindingTraceContext() {
         //noinspection ConstantConditions
-        this(TRACK_REWRITES ? new TrackingSlicedMap() : SlicedMapImpl.create());
+        this.map = TRACK_REWRITES ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create();
     }
 
 
@@ -72,7 +73,7 @@ public class BindingTraceContext implements BindingTrace {
 
     @TestOnly
     public static BindingTraceContext createTraceableBindingTrace() {
-        return new BindingTraceContext(new TrackingSlicedMap());
+        return new BindingTraceContext(new TrackingSlicedMap(TRACK_WITH_STACK_TRACES));
     }
 
     @Override
