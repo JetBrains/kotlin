@@ -420,4 +420,32 @@ public class JetSourceNavigationHelper {
 
         return original;
     }
+
+    @NotNull
+    public static JetDeclaration replaceBySourceDeclarationIfPresent(@NotNull JetDeclaration original) {
+        JetDeclaration sourceElement = original.accept(new SourceForDecompiledExtractingVisitor(), null);
+        return sourceElement != null ? sourceElement : original;
+    }
+
+    private static class SourceForDecompiledExtractingVisitor extends JetVisitor<JetDeclaration, Void> {
+        @Override
+        public JetDeclaration visitNamedFunction(JetNamedFunction function, Void data) {
+            return getSourceFunction(function);
+        }
+
+        @Override
+        public JetDeclaration visitProperty(JetProperty property, Void data) {
+            return getSourceProperty(property);
+        }
+
+        @Override
+        public JetDeclaration visitObjectDeclaration(JetObjectDeclaration declaration, Void data) {
+            return getSourceClassOrObject(declaration);
+        }
+
+        @Override
+        public JetDeclaration visitClass(JetClass klass, Void data) {
+            return getSourceClassOrObject(klass);
+        }
+    }
 }
