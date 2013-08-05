@@ -16,9 +16,27 @@
 
 package org.jetbrains.jet.plugin.findUsages.handlers;
 
+import com.intellij.find.findUsages.AbstractFindUsagesDialog;
+import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadActionProcessor;
+import com.intellij.openapi.util.Computable;
+import com.intellij.psi.*;
+import com.intellij.psi.search.PsiElementProcessor;
+import com.intellij.psi.search.PsiElementProcessorAdapter;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.search.searches.MethodReferencesSearch;
+import com.intellij.psi.search.searches.OverridingMethodsSearch;
+import com.intellij.usageView.UsageInfo;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
+import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindMethodUsagesDialog;
+import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
 
 import java.util.Collection;
 
@@ -34,4 +52,90 @@ public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<Jet
     public KotlinFindFunctionUsagesHandler(@NotNull JetNamedFunction function, @NotNull KotlinFindUsagesHandlerFactory factory) {
         super(function, factory);
     }
+
+    @NotNull
+    @Override
+    public AbstractFindUsagesDialog getFindUsagesDialog(boolean isSingleFile, boolean toShowInNewTab, boolean mustOpenInNewTab) {
+        PsiMethod lightMethod = LightClassUtil.getLightClassMethod(getElement());
+        if (lightMethod != null) {
+            return new KotlinFindMethodUsagesDialog(
+                    lightMethod, getProject(), getFactory().getFindMethodOptions(), toShowInNewTab, mustOpenInNewTab, isSingleFile, this
+            );
+        }
+
+        return super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab);
+    }
+
+    @Override
+    public boolean searchReferences(
+            @NotNull PsiElement element,
+            @NotNull final Processor<UsageInfo> processor,
+            @NotNull FindUsagesOptions options
+    ) {
+        final KotlinMethodFindUsagesOptions kotlinOptions = (KotlinMethodFindUsagesOptions)options;
+        SearchScope searchScope = kotlinOptions.searchScope;
+
+        final PsiMethod lightMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
+            @Override
+            public PsiMethod compute() {
+                return LightClassUtil.getLightClassMethod(getElement());
+            }
+        });
+        if (lightMethod == null) return true;
+
+        if (kotlinOptions.isUsages) {
+            boolean strictSignatureSearch = !kotlinOptions.isIncludeOverloadUsages;
+            if (!MethodReferencesSearch
+                    .search(
+                            new MethodReferencesSearch.SearchParameters(
+                                    lightMethod, searchScope, strictSignatureSearch, kotlinOptions.fastTrack
+                            )
+                    )
+                    .forEach(
+                            new ReadActionProcessor<PsiReference>() {
+                                @Override
+                                public boolean processInReadAction(PsiReference ref) {
+                                    return processUsage(processor, ref, kotlinOptions);
+                                }
+                            }
+                    )) {
+                return false;
+            }
+        }
+
+        boolean isAbstract = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+            @Override
+            public Boolean compute() {
+                return lightMethod.hasModifierProperty(PsiModifier.ABSTRACT);
+            }
+        });
+
+        if (isAbstract && kotlinOptions.isImplementingMethods || kotlinOptions.isOverridingMethods) {
+            OverridingMethodsSearch.search(lightMethod, options.searchScope, kotlinOptions.isCheckDeepInheritance).forEach(
+                    new PsiElementProcessorAdapter<PsiMethod>(
+                        new PsiElementProcessor<PsiMethod>() {
+                            @Override
+                            public boolean execute(@NotNull PsiMethod element) {
+                                return processUsage(processor, element.getNavigationElement(), kotlinOptions);
+                            }
+                        }
+                    )
+            );
+        }
+
+        return true;
+    }
+
+    @Override
+    protected boolean isSearchForTextOccurencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile) {
+        return psiElement instanceof JetNamedFunction || psiElement instanceof PsiMethod;
+    }
+
+    @NotNull
+    @Override
+    public FindUsagesOptions getFindUsagesOptions(@Nullable DataContext dataContext) {
+        return getFactory().getFindMethodOptions();
+    }
+
+
 }

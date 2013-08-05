@@ -1,3 +1,4 @@
+// OPTIONS: usages
 package testing;
 
 public class Server() {

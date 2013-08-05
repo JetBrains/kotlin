@@ -461,6 +461,12 @@ public class GenerateTests {
                         "idea/testData/findUsages/findMethodUsages/kotlinMethodUsages", "Server.kt", "testFindMethodKotlinUsages"
                 ),
                 testModelWithFileName(
+                        "idea/testData/findUsages/findMethodUsages/javaAndKotlinOverrides", "Server.kt", "testFindMethodJavaUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findMethodUsages/kotlinOverloadUsages", "Server.kt", "testFindMethodKotlinUsages"
+                ),
+                testModelWithFileName(
                         "idea/testData/findUsages/findPropertyUsages/javaPropertyUsages", "Server.kt", "testFindPropertyJavaUsages"
                 ),
                 testModelWithFileName(

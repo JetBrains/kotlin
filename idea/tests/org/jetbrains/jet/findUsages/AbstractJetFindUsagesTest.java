@@ -22,7 +22,12 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.intellij.find.FindManager;
+import com.intellij.find.findUsages.FindUsagesHandler;
+import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
@@ -35,8 +40,11 @@ import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.intellij.usages.rules.UsageFilteringRule;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetObjectDeclarationName;
@@ -44,6 +52,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule;
+import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +61,37 @@ import java.util.Collection;
 import java.util.Collections;
 
 public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureTestCase {
+    private interface OptionsParser {
+        @NotNull
+        FindUsagesOptions parse(@NotNull String text, @NotNull Project project);
+    }
+
+    private static final OptionsParser METHOD_OPTIONS_PARSER = new OptionsParser() {
+        @Override
+        @NotNull
+        public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+            KotlinMethodFindUsagesOptions options = new KotlinMethodFindUsagesOptions(project);
+            options.isUsages = false;
+            for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
+                if (s.equals("usages")) {
+                    options.isUsages = true;
+                }
+
+                if (s.equals("overrides")) {
+                    options.isOverridingMethods = true;
+                    options.isImplementingMethods = true;
+                }
+
+                if (s.equals("overloadUsages")) {
+                    options.isIncludeOverloadUsages = true;
+                    options.isUsages = true;
+                }
+            }
+
+            return options;
+        }
+    };
+
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
@@ -65,58 +105,60 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
     }
 
     public void testFindClassJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetClass.class);
+        doTestWithoutFiltering(path, true, JetClass.class, null);
     }
 
     public void testFindClassKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetClass.class);
+        doTestWithoutFiltering(path, false, JetClass.class, null);
     }
 
     public void testFindUsagesUnresolvedAnnotation(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetClass.class);
+        doTestWithoutFiltering(path, true, JetClass.class, null);
     }
 
     public void testFindMethodJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetFunction.class);
+        doTestWithoutFiltering(path, true, JetFunction.class, METHOD_OPTIONS_PARSER);
     }
 
     public void testFindMethodKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetFunction.class);
+        doTestWithoutFiltering(path, false, JetFunction.class, METHOD_OPTIONS_PARSER);
     }
 
     public void testFindPropertyJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetProperty.class);
+        doTestWithoutFiltering(path, true, JetProperty.class, null);
     }
 
     public void testFindPropertyKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetProperty.class);
+        doTestWithoutFiltering(path, false, JetProperty.class, null);
     }
 
     public void testFindObjectJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetObjectDeclarationName.class);
+        doTestWithoutFiltering(path, true, JetObjectDeclarationName.class, null);
     }
 
     public void testFindObjectKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetObjectDeclarationName.class);
+        doTestWithoutFiltering(path, false, JetObjectDeclarationName.class, null);
     }
 
     public void testFindWithFilteringImports(@NotNull String path) throws Exception {
-        doTest(path, false, JetClass.class, Lists.newArrayList(new JetImportFilteringRule()));
+        doTest(path, false, JetClass.class, Lists.newArrayList(new JetImportFilteringRule()), null);
     }
 
     private <T extends PsiElement> void doTestWithoutFiltering(
-            String path,
+            @NotNull String path,
             boolean searchInJava,
-            Class<T> caretElementClass
+            @NotNull Class<T> caretElementClass,
+            @Nullable OptionsParser parser
     ) throws Exception {
-        doTest(path, searchInJava, caretElementClass, Collections.<UsageFilteringRule>emptyList());
+        doTest(path, searchInJava, caretElementClass, Collections.<UsageFilteringRule>emptyList(), parser);
     }
 
     private <T extends PsiElement> void doTest(
-            String path,
+            @NotNull String path,
             boolean searchInJava,
-            Class<T> caretElementClass,
-            Collection<? extends UsageFilteringRule> filters
+            @NotNull Class<T> caretElementClass,
+            @NotNull Collection<? extends UsageFilteringRule> filters,
+            @Nullable OptionsParser parser
     ) throws IOException {
         String rootPath = path.substring(0, path.lastIndexOf("/") + 1);
 
@@ -124,7 +166,8 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         T caretElement = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), caretElementClass, false);
         assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
 
-        Collection<UsageInfo> usageInfos = myFixture.findUsages(caretElement);
+        FindUsagesOptions options = parser != null ? parser.parse(FileUtil.loadFile(new File(path)), getProject()) : null;
+        Collection<UsageInfo> usageInfos = findUsages(caretElement, options);
 
         Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(filters, usageInfos);
 
@@ -138,8 +181,28 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         };
 
         Collection<String> finalUsages = Ordering.natural().sortedCopy(Collections2.transform(filteredUsages, convertToString));
-        String expectedText = FileUtil.loadFile(new File(rootPath + "results.txt"));
+        String expectedText = FileUtil.loadFile(new File(rootPath + "results.txt"), true);
         assertOrderedEquals(finalUsages, Ordering.natural().sortedCopy(StringUtil.split(expectedText, "\n")));
+    }
+
+    private Collection<UsageInfo> findUsages(@NotNull PsiElement targetElement, @Nullable FindUsagesOptions options) {
+        Project project = getProject();
+        FindUsagesHandler handler =
+                ((FindManagerImpl) FindManager.getInstance(project)).getFindUsagesManager().getFindUsagesHandler(targetElement, false);
+        assert handler != null : "Cannot find handler for: " + targetElement;
+
+        if (options == null) {
+            options = handler.getFindUsagesOptions(null);
+        }
+
+        CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<UsageInfo>();
+        PsiElement[] psiElements = ArrayUtil.mergeArrays(handler.getPrimaryElements(), handler.getSecondaryElements());
+
+        for (PsiElement psiElement : psiElements) {
+            handler.processElementUsages(psiElement, processor, options);
+        }
+
+        return processor.getResults();
     }
 
     private static Collection<UsageInfo2UsageAdapter> getUsageAdapters(
