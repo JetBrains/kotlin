@@ -23,12 +23,11 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.highlighter.JetHighlighter;
 
-public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProcessor {
+public final class JetContentBasedFileSubstitutor implements ContentBasedClassFileProcessor {
 
     @Override
     public boolean isApplicable(@Nullable Project project, @NotNull final VirtualFile file) {
@@ -48,16 +47,14 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
             return false;
         }
 
-        return JetDecompiledData.isKotlinFile(project, file);
+        return DecompiledUtils.isKotlinCompiledFile(file);
     }
 
     @NotNull
     @Override
     public String obtainFileText(Project project, VirtualFile file) {
-        if (JetDecompiledData.isKotlinFile(project, file)) {
-            ClsFileImpl clsFile = JetDecompiledData.getClsFile(project, file);
-            assert clsFile != null;
-            return JetDecompiledData.getDecompiledData(clsFile).getJetFile().getText();
+        if (DecompiledUtils.isKotlinCompiledFile(file)) {
+            return JetDecompiledData.getDecompiledData(file, project).getFileText();
         }
         return "";
     }
