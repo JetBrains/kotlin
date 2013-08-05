@@ -352,6 +352,7 @@
 
                     -outjars '${kotlin-home}/lib/kotlin-compiler.jar'
 
+                    -dontnote **
                     -dontwarn com.intellij.util.ui.IsRetina*
                     -dontwarn com.intellij.util.RetinaImage*
                     -dontwarn apple.awt.*
