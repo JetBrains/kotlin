@@ -56,18 +56,14 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
             return null;
         }
 
-        SimpleFunctionDescriptor fun = declarationOrSynthesized.first;
-        if (fun.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
+        SimpleFunctionDescriptorImpl fun = (SimpleFunctionDescriptorImpl) declarationOrSynthesized.first.getOriginal();
+        if (!(fun instanceof SamAdapterFunctionDescriptor)) {
             return null;
         }
 
-        SimpleFunctionDescriptor originalOfSynthesized = ((SimpleFunctionDescriptorImpl) fun.getOriginal())
-                .getOriginalOfSynthesized();
-        if (originalOfSynthesized == null) {
-            return null;
-        }
+        SimpleFunctionDescriptor originalDeclarationOfSam = ((SamAdapterFunctionDescriptor) fun).getDeclaration();
 
-        return ((SimpleFunctionDescriptor) originalOfSynthesized.substitute(TypeSubstitutor.create(declarationOrSynthesized.second)));
+        return ((SimpleFunctionDescriptor) originalDeclarationOfSam.substitute(TypeSubstitutor.create(declarationOrSynthesized.second)));
     }
 
     @Nullable

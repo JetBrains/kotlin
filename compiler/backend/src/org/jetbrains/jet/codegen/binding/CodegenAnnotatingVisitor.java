@@ -365,7 +365,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (!(descriptor instanceof FunctionDescriptor)) {
             return;
         }
-        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, descriptor);
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
 
         if (original == null) {
             return;
@@ -396,7 +396,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         if (operationDescriptor == null) return;
 
-        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, operationDescriptor);
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(operationDescriptor);
         if (original == null) return;
 
         ClassDescriptorFromJvmBytecode samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
@@ -421,7 +421,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
 
         boolean isSetter = operationDescriptor.getName().asString().equals("set");
-        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(bindingContext, operationDescriptor);
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(operationDescriptor);
         if (original == null) {
             return;
         }

@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
@@ -321,7 +322,7 @@ public final class JavaFunctionResolver {
     @Nullable
     private SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
         return isSamAdapterNecessary(original)
-               ? recordSamAdapter(original, createSamAdapterFunction(original), trace)
+               ? (SimpleFunctionDescriptor) recordSamAdapter(original, createSamAdapterFunction(original), trace)
                : null;
     }
 
@@ -388,9 +389,13 @@ public final class JavaFunctionResolver {
         return constructorFunction;
     }
 
-    static <F extends FunctionDescriptor> F recordSamAdapter(F original, F adapterFunction, BindingTrace trace) {
-        trace.record(JavaBindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, adapterFunction, original);
-        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapterFunction, original);
-        return adapterFunction;
+    @NotNull
+    /* package */ static <F extends FunctionDescriptor> SamAdapterDescriptor<F> recordSamAdapter(
+            @NotNull F original,
+            @NotNull SamAdapterDescriptor<F> adapter,
+            @NotNull BindingTrace trace
+    ) {
+        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapter, original);
+        return adapter;
     }
 }

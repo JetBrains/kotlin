@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
@@ -188,15 +188,9 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SimpleFunctionDescriptor createSamAdapterFunction(@NotNull final SimpleFunctionDescriptor original) {
-        final SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
-                original.getContainingDeclaration(),
-                original.getAnnotations(),
-                original.getName(),
-                CallableMemberDescriptor.Kind.SYNTHESIZED,
-                original
-        );
-        FunctionInitializer initializer = new FunctionInitializer() {
+    public static SamAdapterDescriptor<SimpleFunctionDescriptor> createSamAdapterFunction(@NotNull final SimpleFunctionDescriptor original) {
+        final SamAdapterFunctionDescriptor result = new SamAdapterFunctionDescriptor(original);
+        return initSamAdapter(original, result, new FunctionInitializer() {
             @Override
             public void initialize(
                     @NotNull List<TypeParameterDescriptor> typeParameters,
@@ -214,19 +208,13 @@ public class SingleAbstractMethodUtils {
                         false
                 );
             }
-        };
-        return initSamAdapter(original, result, initializer);
+        });
     }
 
     @NotNull
-    public static ConstructorDescriptor createSamAdapterConstructor(@NotNull final ConstructorDescriptor original) {
-        final ConstructorDescriptorImpl result = new ConstructorDescriptorImpl(
-                original.getContainingDeclaration(),
-                original.getAnnotations(),
-                original.isPrimary(),
-                CallableMemberDescriptor.Kind.SYNTHESIZED
-        );
-        FunctionInitializer initializer = new FunctionInitializer() {
+    public static SamAdapterDescriptor<ConstructorDescriptor> createSamAdapterConstructor(@NotNull final ConstructorDescriptor original) {
+        final SamAdapterConstructorDescriptor result = new SamAdapterConstructorDescriptor(original);
+        return initSamAdapter(original, result, new FunctionInitializer() {
             @Override
             public void initialize(
                     @NotNull List<TypeParameterDescriptor> typeParameters,
@@ -240,13 +228,13 @@ public class SingleAbstractMethodUtils {
                         original.getExpectedThisObject() == ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
                 );
             }
-        };
-        return initSamAdapter(original, result, initializer);
+        });
     }
 
-    private static <F extends FunctionDescriptor> F initSamAdapter(
+    @NotNull
+    private static <F extends FunctionDescriptor> SamAdapterDescriptor<F> initSamAdapter(
             @NotNull F original,
-            @NotNull F adapter,
+            @NotNull SamAdapterDescriptor<F> adapter,
             @NotNull FunctionInitializer initializer
     ) {
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
@@ -276,6 +264,7 @@ public class SingleAbstractMethodUtils {
         }
 
         initializer.initialize(typeParameters.descriptors, valueParameters, returnType);
+
         return adapter;
     }
 

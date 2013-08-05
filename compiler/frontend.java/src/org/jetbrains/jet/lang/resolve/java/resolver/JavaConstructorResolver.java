@@ -226,7 +226,7 @@ public final class JavaConstructorResolver {
     @Nullable
     private ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
         return isSamAdapterNecessary(original)
-               ? recordSamAdapter(original, createSamAdapterConstructor(original), trace)
+               ? (ConstructorDescriptor) recordSamAdapter(original, createSamAdapterConstructor(original), trace)
                : null;
     }
 }

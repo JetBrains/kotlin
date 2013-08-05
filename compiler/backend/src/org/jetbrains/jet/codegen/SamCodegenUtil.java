@@ -18,30 +18,27 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
 public class SamCodegenUtil {
     @Nullable
-    public static FunctionDescriptor getOriginalIfSamAdapter(@NotNull BindingContext bindingContext, @NotNull CallableDescriptor fun) {
-        if (!(fun instanceof FunctionDescriptor)) {
-            return null;
+    public static FunctionDescriptor getOriginalIfSamAdapter(@NotNull FunctionDescriptor fun) {
+        FunctionDescriptor original = fun.getOriginal();
+        if (original instanceof SamAdapterDescriptor<?>) {
+            return ((SamAdapterDescriptor) original).getDeclaration();
         }
-        FunctionDescriptor original = ((FunctionDescriptor) fun).getOriginal();
-        if (original.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            return bindingContext.get(JavaBindingContext.SAM_ADAPTER_FUNCTION_TO_ORIGINAL, original);
-        }
+
         if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             for (FunctionDescriptor overridden : original.getOverriddenDescriptors()) {
-                FunctionDescriptor originalIfSamAdapter = getOriginalIfSamAdapter(bindingContext, overridden);
+                FunctionDescriptor originalIfSamAdapter = getOriginalIfSamAdapter(overridden);
                 if (originalIfSamAdapter != null) {
                     return originalIfSamAdapter;
                 }
             }
         }
+
         return null;
     }
 
