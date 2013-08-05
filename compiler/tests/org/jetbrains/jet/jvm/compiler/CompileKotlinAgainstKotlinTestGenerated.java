@@ -56,6 +56,26 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/ImportObject.A.kt");
     }
     
+    @TestMetadata("InnerClass.A.kt")
+    public void testInnerClass() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerClass.A.kt");
+    }
+    
+    @TestMetadata("InnerEnum.A.kt")
+    public void testInnerEnum() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerEnum.A.kt");
+    }
+    
+    @TestMetadata("InnerInnerClass.A.kt")
+    public void testInnerInnerClass() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerInnerClass.A.kt");
+    }
+    
+    @TestMetadata("InnerObject.A.kt")
+    public void testInnerObject() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/InnerObject.A.kt");
+    }
+    
     @TestMetadata("Simple.A.kt")
     public void testSimple() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");

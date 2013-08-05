@@ -362,15 +362,13 @@ public class CodegenBinding {
                     if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {
                         return getJvmInternalName(bindingTrace, containingKlass).getInternalName();
                     }
+                    else if (klass.getKind() == ClassKind.OBJECT) {
+                        return getJvmInternalName(bindingTrace, containingKlass).getInternalName() + "$" + klass.getName();
+                    }
                     else {
                         return getJvmInternalName(bindingTrace, containingKlass).getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX;
                     }
                 }
-            }
-
-            JvmClassName name = bindingTrace.getBindingContext().get(FQN, descriptor);
-            if (name != null) {
-                return name.getInternalName();
             }
         }
 
