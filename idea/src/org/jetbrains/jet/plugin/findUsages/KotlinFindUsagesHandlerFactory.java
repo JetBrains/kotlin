@@ -21,10 +21,13 @@ import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler;
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindFunctionUsagesHandler;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+
+import java.util.Collection;
 
 public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     @Override
@@ -38,6 +41,16 @@ public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
             return new KotlinFindClassUsagesHandler((JetClass) element, this);
         }
         if (element instanceof JetNamedFunction) {
+            if (!forHighlightUsages) {
+                Collection<? extends PsiElement> methods =
+                        JetRefactoringUtil.checkSuperMethods((JetDeclaration) element, null, "super.methods.action.key.find.usages");
+
+                if (methods == null || methods.isEmpty()) return FindUsagesHandler.NULL_HANDLER;
+                if (methods.size() > 1) {
+                    return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, methods, this);
+                }
+            }
+            
             return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, this);
         }
         throw new IllegalArgumentException("unexpected element type: " + element);

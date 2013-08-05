@@ -20,7 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 
+import java.util.Collection;
+
 public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<JetNamedFunction> {
+    public KotlinFindFunctionUsagesHandler(
+            @NotNull JetNamedFunction function,
+            @NotNull Collection<? extends PsiElement> elementsToSearch,
+            @NotNull KotlinFindUsagesHandlerFactory factory
+    ) {
+        super(function, elementsToSearch, factory);
+    }
+
     public KotlinFindFunctionUsagesHandler(@NotNull JetNamedFunction function, @NotNull KotlinFindUsagesHandlerFactory factory) {
         super(function, factory);
     }
