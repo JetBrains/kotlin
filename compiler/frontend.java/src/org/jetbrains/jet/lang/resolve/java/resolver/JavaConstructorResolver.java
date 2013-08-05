@@ -27,8 +27,10 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -42,7 +44,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver.recordSamAdapter;
 import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.createSamAdapterConstructor;
 import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.isSamAdapterNecessary;
 
@@ -225,8 +226,10 @@ public final class JavaConstructorResolver {
 
     @Nullable
     private ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
-        return isSamAdapterNecessary(original)
-               ? (ConstructorDescriptor) recordSamAdapter(original, createSamAdapterConstructor(original), trace)
-               : null;
+        if (!isSamAdapterNecessary(original)) return null;
+
+        SamAdapterDescriptor<ConstructorDescriptor> adapter = createSamAdapterConstructor(original);
+        DescriptorResolverUtils.recordSourceDescriptorForSynthesized(adapter, original, trace);
+        return (ConstructorDescriptor) adapter;
     }
 }

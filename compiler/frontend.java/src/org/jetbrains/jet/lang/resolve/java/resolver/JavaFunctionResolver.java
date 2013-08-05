@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
@@ -309,11 +310,13 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    private SimpleFunctionDescriptor resolveSamConstructor(@NotNull NamespaceDescriptor owner, @NotNull NamedMembers namedMembers) {
+    private SamConstructorDescriptor resolveSamConstructor(@NotNull NamespaceDescriptor owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
             ClassDescriptorFromJvmBytecode klass = findClassInNamespace(owner, namedMembers.getName());
             if (klass != null) {
-                return recordSamConstructor(klass, createSamConstructorFunction(owner, klass), trace);
+                SamConstructorDescriptor constructor = createSamConstructorFunction(owner, klass);
+                DescriptorResolverUtils.recordSourceDescriptorForSynthesized(constructor, klass, trace);
+                return constructor;
             }
         }
         return null;
@@ -321,14 +324,16 @@ public final class JavaFunctionResolver {
 
     @Nullable
     private SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
-        return isSamAdapterNecessary(original)
-               ? (SimpleFunctionDescriptor) recordSamAdapter(original, createSamAdapterFunction(original), trace)
-               : null;
+        if (!isSamAdapterNecessary(original)) return null;
+
+        SamAdapterDescriptor<SimpleFunctionDescriptor> adapter = createSamAdapterFunction(original);
+        DescriptorResolverUtils.recordSourceDescriptorForSynthesized(adapter, original, trace);
+        return (SimpleFunctionDescriptor) adapter;
     }
 
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
-        SimpleFunctionDescriptor samConstructor = resolveSamConstructor(owner, members);
+        SamConstructorDescriptor samConstructor = resolveSamConstructor(owner, members);
         if (samConstructor != null) {
             return Collections.<FunctionDescriptor>singleton(samConstructor);
         }
@@ -377,25 +382,5 @@ public final class JavaFunctionResolver {
         }
 
         return false;
-    }
-
-    private static SimpleFunctionDescriptor recordSamConstructor(
-            ClassDescriptorFromJvmBytecode klass,
-            SimpleFunctionDescriptor constructorFunction,
-            BindingTrace trace
-    ) {
-        trace.record(JavaBindingContext.SAM_CONSTRUCTOR_TO_INTERFACE, constructorFunction, klass);
-        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, constructorFunction, klass);
-        return constructorFunction;
-    }
-
-    @NotNull
-    /* package */ static <F extends FunctionDescriptor> SamAdapterDescriptor<F> recordSamAdapter(
-            @NotNull F original,
-            @NotNull SamAdapterDescriptor<F> adapter,
-            @NotNull BindingTrace trace
-    ) {
-        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, adapter, original);
-        return adapter;
     }
 }

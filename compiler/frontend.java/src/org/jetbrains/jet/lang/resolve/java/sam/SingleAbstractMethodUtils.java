@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
@@ -133,18 +133,13 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static SimpleFunctionDescriptor createSamConstructorFunction(
+    public static SamConstructorDescriptor createSamConstructorFunction(
             @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull ClassDescriptor samInterface
+            @NotNull ClassDescriptorFromJvmBytecode samInterface
     ) {
         assert isSamInterface(samInterface) : samInterface;
 
-        SimpleFunctionDescriptorImpl result = new SimpleFunctionDescriptorImpl(
-                owner,
-                samInterface.getAnnotations(),
-                samInterface.getName(),
-                CallableMemberDescriptor.Kind.SYNTHESIZED
-        );
+        SamConstructorDescriptor result = new SamConstructorDescriptor(owner, samInterface);
 
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 
