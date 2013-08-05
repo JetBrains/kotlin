@@ -26,7 +26,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
@@ -43,13 +46,11 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.*;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.resolveOverrides;
 import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.*;
 
 public final class JavaFunctionResolver {
@@ -236,11 +237,6 @@ public final class JavaFunctionResolver {
     public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
         Name methodName = members.getName();
 
-        Set<SimpleFunctionDescriptor> functionsFromSupertypes = null;
-        if (owner instanceof ClassDescriptor) {
-            functionsFromSupertypes = getFunctionsFromSupertypes(methodName, owner);
-        }
-
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (JavaMethod method : members.getMethods()) {
             SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(method, owner, true);
@@ -254,31 +250,15 @@ public final class JavaFunctionResolver {
             ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamConstructor((NamespaceDescriptor) owner, members));
         }
 
-
-        final Set<FunctionDescriptor> fakeOverrides = new HashSet<FunctionDescriptor>();
+        Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
-            OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
-                                                              new OverrideResolver.DescriptorSink() {
-                                                                  @Override
-                                                                  public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                                                                      fakeOverrides.add((FunctionDescriptor) fakeOverride);
-                                                                  }
+            Collection<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(methodName, classDescriptor);
 
-                                                                  @Override
-                                                                  public void conflict(
-                                                                          @NotNull CallableMemberDescriptor fromSuper,
-                                                                          @NotNull CallableMemberDescriptor fromCurrent
-                                                                  ) {
-                                                                      // nop
-                                                                  }
-                                                              });
+            functions.addAll(resolveOverrides(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor, trace));
         }
 
-        OverrideResolver.resolveUnknownVisibilities(fakeOverrides, trace);
-
-        Set<FunctionDescriptor> functions = Sets.newHashSet(fakeOverrides);
         if (isEnumClassObject(owner)) {
             for (FunctionDescriptor functionDescriptor : functionsFromCurrent) {
                 if (!(isEnumValueOfMethod(functionDescriptor) || isEnumValuesMethod(functionDescriptor))) {
@@ -378,16 +358,14 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
-            @NotNull Name methodName, @NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor
-    ) {
-        Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(classOrNamespaceDescriptor)) {
-            for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
-                r.add((SimpleFunctionDescriptor) function);
+    private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
+        Set<SimpleFunctionDescriptor> result = Sets.newLinkedHashSet();
+        for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
+            for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(name)) {
+                result.add((SimpleFunctionDescriptor) function);
             }
         }
-        return r;
+        return result;
     }
 
     private static boolean containsErrorType(@NotNull List<FunctionDescriptor> superFunctions, @NotNull FunctionDescriptor function) {

@@ -23,17 +23,15 @@ import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
 
@@ -73,11 +71,34 @@ public final class DescriptorResolverUtils {
     }
 
     @NotNull
-    public static Collection<JetType> getSupertypes(@NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor) {
-        if (classOrNamespaceDescriptor instanceof ClassDescriptor) {
-            return ((ClassDescriptor) classOrNamespaceDescriptor).getTypeConstructor().getSupertypes();
-        }
-        return Collections.emptyList();
+    public static <D extends CallableMemberDescriptor> Collection<D> resolveOverrides(
+            @NotNull Name name,
+            @NotNull Collection<D> membersFromSupertypes,
+            @NotNull Collection<D> membersFromCurrent,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull BindingTrace trace
+    ) {
+        final Set<D> result = new HashSet<D>();
+
+        OverrideResolver.generateOverridesInFunctionGroup(
+                name, membersFromSupertypes, membersFromCurrent, classDescriptor,
+                new OverrideResolver.DescriptorSink() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                        result.add((D) fakeOverride);
+                    }
+
+                    @Override
+                    public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
+                        // nop
+                    }
+                }
+        );
+
+        OverrideResolver.resolveUnknownVisibilities(result, trace);
+
+        return result;
     }
 
     @Nullable

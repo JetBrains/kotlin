@@ -25,7 +25,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorForObjectImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnnotationUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
@@ -38,10 +41,9 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.resolveOverrides;
 
 public final class JavaPropertyResolver {
     private JavaTypeTransformer typeTransformer;
@@ -67,7 +69,7 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
         Name propertyName = members.getName();
 
         List<JavaField> fields = members.getFields();
@@ -76,50 +78,23 @@ public final class JavaPropertyResolver {
         assert fields.size() <= 1;
         if (fields.size() == 1) {
             JavaField field = fields.iterator().next();
-            if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, field)) {
-                propertiesFromCurrent.add(resolveProperty(ownerDescriptor, propertyName, field));
+            if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(owner, field)) {
+                propertiesFromCurrent.add(resolveProperty(owner, propertyName, field));
             }
         }
 
-        Set<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(propertyName, ownerDescriptor);
         Set<PropertyDescriptor> properties = Sets.newHashSet();
+        if (owner instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
-        generateOverrides(ownerDescriptor, propertyName, propertiesFromCurrent, propertiesFromSupertypes, properties);
-        OverrideResolver.resolveUnknownVisibilities(properties, trace);
+            Collection<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(propertyName, classDescriptor);
+
+            properties.addAll(resolveOverrides(propertyName, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor, trace));
+        }
 
         properties.addAll(propertiesFromCurrent);
 
         return Sets.<VariableDescriptor>newHashSet(properties);
-    }
-
-    private static void generateOverrides(
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull Name propertyName,
-            @NotNull Set<PropertyDescriptor> propertiesFromCurrent,
-            @NotNull Set<PropertyDescriptor> propertiesFromSupertypes,
-            @NotNull final Set<PropertyDescriptor> properties
-    ) {
-        if (!(owner instanceof ClassDescriptor)) {
-            return;
-        }
-        ClassDescriptor classDescriptor = (ClassDescriptor) owner;
-
-        OverrideResolver.generateOverridesInFunctionGroup(
-                propertyName, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor,
-                new OverrideResolver.DescriptorSink() {
-                    @Override
-                    public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                        properties.add((PropertyDescriptor) fakeOverride);
-                    }
-
-                    @Override
-                    public void conflict(
-                            @NotNull CallableMemberDescriptor fromSuper,
-                            @NotNull CallableMemberDescriptor fromCurrent
-                    ) {
-                        // nop
-                    }
-                });
     }
 
     @NotNull
@@ -230,16 +205,15 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private static Set<PropertyDescriptor> getPropertiesFromSupertypes(
-            @NotNull Name propertyName, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
-    ) {
-        Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(ownerDescriptor)) {
-            for (VariableDescriptor property : supertype.getMemberScope().getProperties(propertyName)) {
-                r.add((PropertyDescriptor) property);
+    private static Set<PropertyDescriptor> getPropertiesFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
+        Set<PropertyDescriptor> result = new HashSet<PropertyDescriptor>();
+        for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
+            for (VariableDescriptor property : supertype.getMemberScope().getProperties(name)) {
+                result.add((PropertyDescriptor) property);
             }
         }
-        return r;
+
+        return result;
     }
 
     private static boolean isStaticFinalField(@NotNull JavaField field) {
