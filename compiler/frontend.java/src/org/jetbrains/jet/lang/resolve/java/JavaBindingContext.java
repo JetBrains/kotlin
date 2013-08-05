@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
@@ -38,8 +41,6 @@ public class JavaBindingContext {
 
     public static final WritableSlice<DeclarationDescriptor, List<String>> LOAD_FROM_JAVA_SIGNATURE_ERRORS =
             new BasicWritableSlice<DeclarationDescriptor, List<String>>(Slices.ONLY_REWRITE_TO_EQUAL, true);
-
-    public static final WritableSlice<CallableDescriptor, Boolean> IS_DECLARED_IN_JAVA = Slices.createSimpleSlice();
 
     public static final WritableSlice<SimpleFunctionDescriptor, ClassDescriptorFromJvmBytecode> SAM_CONSTRUCTOR_TO_INTERFACE = Slices.createSimpleSlice();
     public static final WritableSlice<FunctionDescriptor, FunctionDescriptor> SAM_ADAPTER_FUNCTION_TO_ORIGINAL = Slices.createSimpleSlice();

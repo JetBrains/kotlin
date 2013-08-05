@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorForObjectImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.AnnotationUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -32,6 +31,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
@@ -120,8 +121,6 @@ public final class JavaPropertyResolver {
 
         trace.record(BindingContext.VARIABLE, field.getPsi(), propertyDescriptor);
 
-        trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
-
         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
             PsiExpression initializer = field.getPsi().getInitializer();
             if (initializer instanceof PsiLiteralExpression) {
@@ -158,21 +157,10 @@ public final class JavaPropertyResolver {
                     Collections.<JetType>emptyList(), JetScope.EMPTY,
                     Collections.<ConstructorDescriptor>emptySet(), null,
                     false);
-            return new PropertyDescriptorForObjectImpl(
-                    owner,
-                    annotations,
-                    visibility,
-                    propertyName,
-                    dummyClassDescriptorForEnumEntryObject);
+            return new JavaPropertyDescriptorForObject(owner, annotations, visibility, propertyName, dummyClassDescriptorForEnumEntryObject);
         }
-        return new PropertyDescriptorImpl(
-                owner,
-                annotations,
-                Modality.FINAL,
-                visibility,
-                isVar,
-                propertyName,
-                CallableMemberDescriptor.Kind.DECLARATION);
+
+        return new JavaPropertyDescriptor(owner, annotations, visibility, isVar, propertyName);
     }
 
     @NotNull

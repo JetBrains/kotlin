@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
@@ -113,11 +114,10 @@ public final class JavaFunctionResolver {
             return alreadyResolved;
         }
 
-        SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl functionDescriptorImpl = new JavaMethodDescriptor(
                 ownerDescriptor,
                 annotationResolver.resolveAnnotations(method),
-                method.getName(),
-                CallableMemberDescriptor.Kind.DECLARATION
+                method.getName()
         );
 
         JavaTypeParameterResolver.Initializer typeParameterInitializer = typeParameterResolver.resolveTypeParameters(functionDescriptorImpl, method);
@@ -173,10 +173,6 @@ public final class JavaFunctionResolver {
 
         if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION && record) {
             BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, method.getPsi(), functionDescriptorImpl);
-        }
-
-        if (record) {
-            trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
         }
 
         if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(method)
