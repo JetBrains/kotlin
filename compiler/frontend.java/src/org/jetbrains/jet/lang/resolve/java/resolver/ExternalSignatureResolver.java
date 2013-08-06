@@ -18,14 +18,16 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -41,12 +43,24 @@ public class ExternalSignatureResolver {
         this.trace = trace;
     }
 
-    public static class AlternativeMethodSignature {
+    private abstract static class MemberSignature {
+        private final String signatureError;
+
+        protected MemberSignature(@Nullable String signatureError) {
+            this.signatureError = signatureError;
+        }
+
+        @NotNull
+        public List<String> getErrors() {
+            return signatureError == null ? Collections.<String>emptyList() : Collections.singletonList(signatureError);
+        }
+    }
+
+    public static class AlternativeMethodSignature extends MemberSignature {
         private final JetType returnType;
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> valueParameters;
         private final List<TypeParameterDescriptor> typeParameters;
-        private final String signatureError;
 
         public AlternativeMethodSignature(
                 @Nullable JetType returnType,
@@ -55,11 +69,11 @@ public class ExternalSignatureResolver {
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @Nullable String signatureError
         ) {
+            super(signatureError);
             this.returnType = returnType;
             this.receiverType = receiverType;
             this.valueParameters = valueParameters;
             this.typeParameters = typeParameters;
-            this.signatureError = signatureError;
         }
 
         @Nullable
@@ -81,10 +95,19 @@ public class ExternalSignatureResolver {
         public List<TypeParameterDescriptor> getTypeParameters() {
             return typeParameters;
         }
+    }
+
+    public static class AlternativeFieldSignature extends MemberSignature {
+        private final JetType returnType;
+
+        public AlternativeFieldSignature(@NotNull JetType returnType, @Nullable String signatureError) {
+            super(signatureError);
+            this.returnType = returnType;
+        }
 
         @NotNull
-        public List<String> getErrors() {
-            return signatureError == null ? Collections.<String>emptyList() : Collections.singletonList(signatureError);
+        public JetType getReturnType() {
+            return returnType;
         }
     }
 
@@ -122,7 +145,24 @@ public class ExternalSignatureResolver {
         return new AlternativeMethodSignature(returnType, receiverType, valueParameters, typeParameters, error);
     }
 
-    public void reportSignatureErrors(@NotNull FunctionDescriptor descriptor, @NotNull List<String> signatureErrors) {
+    @SuppressWarnings("MethodMayBeStatic")
+    @NotNull
+    public AlternativeFieldSignature resolveAlternativeFieldSignature(
+            @NotNull JavaField field,
+            @NotNull JetType returnType,
+            boolean isVar
+    ) {
+        AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(field, returnType, isVar);
+
+        if (data.isAnnotated() && !data.hasErrors()) {
+            return new AlternativeFieldSignature(data.getReturnType(), null);
+        }
+
+        String error = data.hasErrors() ? data.getError() : null;
+        return new AlternativeFieldSignature(returnType, error);
+    }
+
+    public void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors) {
         trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor, signatureErrors);
     }
 }

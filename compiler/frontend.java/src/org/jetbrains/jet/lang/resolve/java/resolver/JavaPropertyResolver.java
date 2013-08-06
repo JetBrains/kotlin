@@ -30,10 +30,8 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -50,6 +48,7 @@ public final class JavaPropertyResolver {
     private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
     private JavaAnnotationResolver annotationResolver;
+    private ExternalSignatureResolver externalSignatureResolver;
 
     public JavaPropertyResolver() {
     }
@@ -67,6 +66,11 @@ public final class JavaPropertyResolver {
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setExternalSignatureResolver(ExternalSignatureResolver externalSignatureResolver) {
+        this.externalSignatureResolver = externalSignatureResolver;
     }
 
     @NotNull
@@ -110,10 +114,15 @@ public final class JavaPropertyResolver {
 
         JetType propertyType = getPropertyType(field, typeVariableResolver);
 
-        propertyType = getAlternativeSignatureData(isVar, field, propertyDescriptor, propertyType);
+        ExternalSignatureResolver.AlternativeFieldSignature effectiveSignature =
+                externalSignatureResolver.resolveAlternativeFieldSignature(field, propertyType, isVar);
+        List<String> signatureErrors = effectiveSignature.getErrors();
+        if (!signatureErrors.isEmpty()) {
+            externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors);
+        }
 
         propertyDescriptor.setType(
-                propertyType,
+                effectiveSignature.getReturnType(),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
                 (JetType) null
@@ -161,24 +170,6 @@ public final class JavaPropertyResolver {
         }
 
         return new JavaPropertyDescriptor(owner, annotations, visibility, isVar, propertyName);
-    }
-
-    @NotNull
-    private JetType getAlternativeSignatureData(
-            boolean isVar,
-            @NotNull JavaField field,
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetType propertyType
-    ) {
-        AlternativeFieldSignatureData signatureData = new AlternativeFieldSignatureData(field, propertyType, isVar);
-        if (signatureData.hasErrors()) {
-            trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, propertyDescriptor,
-                         Collections.singletonList(signatureData.getError()));
-        }
-        else if (signatureData.isAnnotated()) {
-            return signatureData.getReturnType();
-        }
-        return propertyType;
     }
 
     @NotNull
