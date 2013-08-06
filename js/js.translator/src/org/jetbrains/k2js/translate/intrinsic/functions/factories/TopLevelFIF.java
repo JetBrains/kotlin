@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionInt
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
 
 import java.util.List;
 
@@ -56,5 +58,15 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("arrayOfNulls"), new CallStandardMethodIntrinsic(new JsNameRef("nullArray", "Kotlin"), false, 1));
         add(pattern("iterator"), RETURN_RECEIVER_INTRINSIC);
+
+        add(PatternBuilder.create("java", "util", "set").receiverParameterExists(true), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                return new JsInvocation(new JsNameRef("put", receiver), arguments);
+            }
+        });
     }
 }
