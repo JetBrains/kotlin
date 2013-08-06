@@ -56,13 +56,9 @@ public class JavaMethod extends JavaMemberImpl implements JavaTypeParameterListO
         return valueParameters(getPsi().getParameterList().getParameters());
     }
 
-    @Nullable
-    public Object getAnnotationParameterDefaultValue() {
+    public boolean hasAnnotationParameterDefaultValue() {
         PsiMethod psiMethod = getPsi();
-        if (psiMethod instanceof PsiAnnotationMethod) {
-            return ((PsiAnnotationMethod) psiMethod).getDefaultValue();
-        }
-        return null;
+        return psiMethod instanceof PsiAnnotationMethod && ((PsiAnnotationMethod) psiMethod).getDefaultValue() != null;
     }
 
     @Nullable
