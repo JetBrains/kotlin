@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -97,7 +96,7 @@ public final class JavaValueParameterResolver {
     }
 
     @NotNull
-    public ValueParameters resolveValueParameters(
+    public List<ValueParameterDescriptor> resolveValueParameters(
             @NotNull DeclarationDescriptor container,
             @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
@@ -109,26 +108,6 @@ public final class JavaValueParameterResolver {
             result.add(resolveValueParameter(container, index, parameter, typeVariableResolver));
             index++;
         }
-        return new ValueParameters(null, result);
-    }
-
-    public static class ValueParameters {
-        private final JetType receiverType;
-        private final List<ValueParameterDescriptor> descriptors;
-
-        public ValueParameters(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
-            this.receiverType = receiverType;
-            this.descriptors = descriptors;
-        }
-
-        @Nullable
-        public JetType getReceiverType() {
-            return receiverType;
-        }
-
-        @NotNull
-        public List<ValueParameterDescriptor> getDescriptors() {
-            return descriptors;
-        }
+        return result;
     }
 }

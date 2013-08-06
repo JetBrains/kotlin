@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -58,7 +57,7 @@ public class SignaturesPropagationData {
     private static final Logger LOG = Logger.getInstance(SignaturesPropagationData.class);
 
     private final List<TypeParameterDescriptor> modifiedTypeParameters;
-    private final JavaValueParameterResolver.ValueParameters modifiedValueParameters;
+    private final ValueParameters modifiedValueParameters;
     private final JetType modifiedReturnType;
 
     private final List<String> signatureErrors = Lists.newArrayList();
@@ -69,7 +68,8 @@ public class SignaturesPropagationData {
     public SignaturesPropagationData(
             @NotNull ClassDescriptor containingClass,
             @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
-            @NotNull JavaValueParameterResolver.ValueParameters autoValueParameters, // descriptors built by parameters resolver
+            @Nullable JetType receiverType,
+            @NotNull List<ValueParameterDescriptor> autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
             @NotNull JavaMethod method,
             @NotNull BindingTrace trace
@@ -81,15 +81,19 @@ public class SignaturesPropagationData {
 
         modifiedTypeParameters = modifyTypeParametersAccordingToSuperMethods(autoTypeParameters);
         modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType);
-        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters);
+        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(receiverType, autoValueParameters);
     }
 
     public List<TypeParameterDescriptor> getModifiedTypeParameters() {
         return modifiedTypeParameters;
     }
 
-    public JavaValueParameterResolver.ValueParameters getModifiedValueParameters() {
-        return modifiedValueParameters;
+    public JetType getModifiedReceiverType() {
+        return modifiedValueParameters.receiverType;
+    }
+
+    public List<ValueParameterDescriptor> getModifiedValueParameters() {
+        return modifiedValueParameters.descriptors;
     }
 
     public JetType getModifiedReturnType() {
@@ -157,19 +161,20 @@ public class SignaturesPropagationData {
         return result;
     }
 
-    private JavaValueParameterResolver.ValueParameters modifyValueParametersAccordingToSuperMethods(
-            @NotNull JavaValueParameterResolver.ValueParameters parameters // descriptors built by parameters resolver
+    private ValueParameters modifyValueParametersAccordingToSuperMethods(
+            @Nullable JetType receiverType,
+            @NotNull List<ValueParameterDescriptor> parameters // descriptors built by parameters resolver
     ) {
-        assert parameters.getReceiverType() == null : "Parameters before propagation have receiver type," +
-                                                      " but propagation should be disabled for functions compiled from Kotlin in class: " +
-                                                      DescriptorUtils.getFQName(containingClass);
+        assert receiverType == null : "Parameters before propagation have receiver type," +
+                                      " but propagation should be disabled for functions compiled from Kotlin in class: " +
+                                      DescriptorUtils.getFQName(containingClass);
 
-        JetType receiverType = null;
+        JetType resultReceiverType = null;
         List<ValueParameterDescriptor> resultParameters = Lists.newArrayList();
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
 
-        for (ValueParameterDescriptor originalParam : parameters.getDescriptors()) {
+        for (ValueParameterDescriptor originalParam : parameters) {
             final int originalIndex = originalParam.getIndex();
             List<TypeAndVariance> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                     new Function<FunctionDescriptor, TypeAndVariance>() {
@@ -190,7 +195,7 @@ public class SignaturesPropagationData {
             JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, MEMBER_SIGNATURE_CONTRAVARIANT);
 
             if (shouldBeExtension && originalIndex == 0) {
-                receiverType = altType;
+                resultReceiverType = altType;
             }
             else {
                 resultParameters.add(new ValueParameterDescriptorImpl(
@@ -205,7 +210,7 @@ public class SignaturesPropagationData {
             }
         }
 
-        return new JavaValueParameterResolver.ValueParameters(receiverType, resultParameters);
+        return new ValueParameters(resultReceiverType, resultParameters);
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
@@ -736,6 +741,16 @@ public class SignaturesPropagationData {
 
         public String toString() {
             return type.toString();
+        }
+    }
+
+    private static class ValueParameters {
+        private final JetType receiverType;
+        private final List<ValueParameterDescriptor> descriptors;
+
+        public ValueParameters(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
+            this.receiverType = receiverType;
+            this.descriptors = descriptors;
         }
     }
 }

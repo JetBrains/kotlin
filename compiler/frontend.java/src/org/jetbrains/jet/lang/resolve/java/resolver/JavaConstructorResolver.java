@@ -28,10 +28,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
@@ -51,6 +49,7 @@ public final class JavaConstructorResolver {
     private BindingTrace trace;
     private JavaTypeTransformer typeTransformer;
     private JavaValueParameterResolver valueParameterResolver;
+    private ExternalSignatureResolver externalSignatureResolver;
 
     public JavaConstructorResolver() {
     }
@@ -68,6 +67,11 @@ public final class JavaConstructorResolver {
     @Inject
     public void setValueParameterResolver(JavaValueParameterResolver valueParameterResolver) {
         this.valueParameterResolver = valueParameterResolver;
+    }
+
+    @Inject
+    public void setExternalSignatureResolver(ExternalSignatureResolver externalSignatureResolver) {
+        this.externalSignatureResolver = externalSignatureResolver;
     }
 
     @NotNull
@@ -198,27 +202,22 @@ public final class JavaConstructorResolver {
 
         List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
 
-        JavaValueParameterResolver.ValueParameters valueParameters = valueParameterResolver.resolveValueParameters(
+        List<ValueParameterDescriptor> valueParameters = valueParameterResolver.resolveValueParameters(
                 constructorDescriptor, constructor,
                 new TypeVariableResolver(typeParameters, classDescriptor)
         );
 
-        if (valueParameters.getReceiverType() != null) {
-            throw new IllegalStateException();
-        }
+        ExternalSignatureResolver.AlternativeMethodSignature effectiveSignature = externalSignatureResolver
+                .resolveAlternativeMethodSignature(constructor, false, null, null, valueParameters,
+                                                   Collections.<TypeParameterDescriptor>emptyList());
 
-        AlternativeMethodSignatureData alternativeMethodSignatureData =
-                new AlternativeMethodSignatureData(constructor, valueParameters, null,
-                                                   Collections.<TypeParameterDescriptor>emptyList(), false);
-        if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
-            valueParameters = alternativeMethodSignatureData.getValueParameters();
-        }
-        else if (alternativeMethodSignatureData.hasErrors()) {
-            trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, constructorDescriptor,
-                         Collections.singletonList(alternativeMethodSignatureData.getError()));
-        }
+        constructorDescriptor
+                .initialize(typeParameters, effectiveSignature.getValueParameters(), constructor.getVisibility(), isStaticClass);
 
-        constructorDescriptor.initialize(typeParameters, valueParameters.getDescriptors(), constructor.getVisibility(), isStaticClass);
+        List<String> signatureErrors = effectiveSignature.getErrors();
+        if (!signatureErrors.isEmpty()) {
+            externalSignatureResolver.reportSignatureErrors(constructorDescriptor, signatureErrors);
+        }
 
         trace.record(BindingContext.CONSTRUCTOR, constructor.getPsi(), constructorDescriptor);
         return constructorDescriptor;

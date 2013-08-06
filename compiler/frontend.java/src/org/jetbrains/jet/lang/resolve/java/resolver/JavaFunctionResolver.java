@@ -31,13 +31,11 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
@@ -64,6 +62,7 @@ public final class JavaFunctionResolver {
     private JavaTypeParameterResolver typeParameterResolver;
     private JavaValueParameterResolver valueParameterResolver;
     private JavaAnnotationResolver annotationResolver;
+    private ExternalSignatureResolver externalSignatureResolver;
 
     @Inject
     public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
@@ -88,6 +87,11 @@ public final class JavaFunctionResolver {
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setExternalSignatureResolver(ExternalSignatureResolver externalSignatureResolver) {
+        this.externalSignatureResolver = externalSignatureResolver;
     }
 
     @Nullable
@@ -128,46 +132,46 @@ public final class JavaFunctionResolver {
 
         TypeVariableResolver typeVariableResolver = new TypeVariableResolver(methodTypeParameters, functionDescriptorImpl);
 
-        JavaValueParameterResolver.ValueParameters valueParameters = valueParameterResolver
-                .resolveValueParameters(functionDescriptorImpl, method, typeVariableResolver);
+        List<ValueParameterDescriptor> valueParameters =
+                valueParameterResolver.resolveValueParameters(functionDescriptorImpl, method, typeVariableResolver);
         JetType returnType = makeReturnType(returnJavaType, method, typeVariableResolver);
 
-        List<String> signatureErrors = Lists.newArrayList();
 
+        List<String> signatureErrors;
         List<FunctionDescriptor> superFunctions;
-        if (ownerDescriptor instanceof ClassDescriptor) {
-            SignaturesPropagationData signaturesPropagationData = new SignaturesPropagationData(
-                    (ClassDescriptor) ownerDescriptor, returnType, valueParameters, methodTypeParameters, method, trace);
-            superFunctions = signaturesPropagationData.getSuperFunctions();
+        ExternalSignatureResolver.AlternativeMethodSignature effectiveSignature;
 
-            returnType = signaturesPropagationData.getModifiedReturnType();
-            valueParameters = signaturesPropagationData.getModifiedValueParameters();
-            methodTypeParameters = signaturesPropagationData.getModifiedTypeParameters();
+        if (ownerDescriptor instanceof NamespaceDescriptor) {
+            superFunctions = Collections.emptyList();
+            effectiveSignature = externalSignatureResolver
+                    .resolveAlternativeMethodSignature(method, false, returnType, null, valueParameters, methodTypeParameters);
+            signatureErrors = effectiveSignature.getErrors();
+        }
+        else if (ownerDescriptor instanceof ClassDescriptor) {
+            SignaturesPropagationData propagated = externalSignatureResolver
+                    .resolvePropagatedSignature(method, (ClassDescriptor) ownerDescriptor, returnType, null, valueParameters,
+                                                methodTypeParameters);
 
-            signatureErrors.addAll(signaturesPropagationData.getSignatureErrors());
+            superFunctions = propagated.getSuperFunctions();
+
+            effectiveSignature = externalSignatureResolver
+                    .resolveAlternativeMethodSignature(method, !superFunctions.isEmpty(), propagated.getModifiedReturnType(),
+                                                       propagated.getModifiedReceiverType(), propagated.getModifiedValueParameters(),
+                                                       propagated.getModifiedTypeParameters());
+
+            signatureErrors = new ArrayList<String>(propagated.getSignatureErrors());
+            signatureErrors.addAll(effectiveSignature.getErrors());
         }
         else {
-            superFunctions = Collections.emptyList();
-        }
-
-        AlternativeMethodSignatureData alternativeMethodSignatureData =
-                new AlternativeMethodSignatureData(method, valueParameters, returnType, methodTypeParameters,
-                                                   !superFunctions.isEmpty());
-        if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
-            valueParameters = alternativeMethodSignatureData.getValueParameters();
-            returnType = alternativeMethodSignatureData.getReturnType();
-            methodTypeParameters = alternativeMethodSignatureData.getTypeParameters();
-        }
-        else if (alternativeMethodSignatureData.hasErrors()) {
-            signatureErrors.add(alternativeMethodSignatureData.getError());
+            throw new IllegalStateException("Unknown class or namespace descriptor: " + ownerDescriptor);
         }
 
         functionDescriptorImpl.initialize(
-                valueParameters.getReceiverType(),
+                effectiveSignature.getReceiverType(),
                 DescriptorUtils.getExpectedThisObjectIfNeeded(ownerDescriptor),
-                methodTypeParameters,
-                valueParameters.getDescriptors(),
-                returnType,
+                effectiveSignature.getTypeParameters(),
+                effectiveSignature.getValueParameters(),
+                effectiveSignature.getReturnType(),
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
                 method.getVisibility(),
                 /*isInline = */ false
@@ -183,10 +187,8 @@ public final class JavaFunctionResolver {
             if (signatureErrors.isEmpty()) {
                 checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
             }
-            else {
-                if (record) {
-                    trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
-                }
+            else if (record) {
+                externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors);
             }
         }
 

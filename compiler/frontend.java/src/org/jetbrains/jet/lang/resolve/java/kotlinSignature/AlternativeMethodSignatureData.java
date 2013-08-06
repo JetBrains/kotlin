@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -46,7 +45,7 @@ import static org.jetbrains.jet.lang.resolve.java.TypeUsage.UPPER_BOUND;
 public class AlternativeMethodSignatureData extends ElementAlternativeSignatureData {
     private final JetNamedFunction altFunDeclaration;
 
-    private JavaValueParameterResolver.ValueParameters altValueParameters;
+    private List<ValueParameterDescriptor> altValueParameters;
     private JetType altReturnType;
     private List<TypeParameterDescriptor> altTypeParameters;
 
@@ -54,7 +53,8 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
     public AlternativeMethodSignatureData(
             @NotNull JavaMethod method,
-            @NotNull JavaValueParameterResolver.ValueParameters valueParameters,
+            @Nullable JetType receiverType,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
             @Nullable JetType originalReturnType,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             boolean hasSuperMethods
@@ -65,6 +65,10 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             setAnnotated(false);
             altFunDeclaration = null;
             return;
+        }
+
+        if (receiverType != null) {
+            throw new UnsupportedOperationException("Alternative annotations for extension functions are not supported yet");
         }
 
         setAnnotated(true);
@@ -94,15 +98,15 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     }
 
     private void checkParameterAndReturnTypesForOverridingMethods(
-            @NotNull JavaValueParameterResolver.ValueParameters valueParameters,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             @Nullable JetType returnType
     ) {
         TypeSubstitutor substitutor = SignaturesUtil.createSubstitutorForTypeParameters(originalToAltTypeParameters);
 
-        for (ValueParameterDescriptor parameter : valueParameters.getDescriptors()) {
+        for (ValueParameterDescriptor parameter : valueParameters) {
             int index = parameter.getIndex();
-            ValueParameterDescriptor altParameter = altValueParameters.getDescriptors().get(index);
+            ValueParameterDescriptor altParameter = altValueParameters.get(index);
 
             JetType substituted = substitutor.substitute(parameter.getType(), Variance.INVARIANT);
             assert substituted != null;
@@ -141,12 +145,12 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     }
 
     @NotNull
-    public JavaValueParameterResolver.ValueParameters getValueParameters() {
+    public List<ValueParameterDescriptor> getValueParameters() {
         checkForErrors();
         return altValueParameters;
     }
 
-    @NotNull
+    @Nullable
     public JetType getReturnType() {
         checkForErrors();
         return altReturnType;
@@ -158,9 +162,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         return altTypeParameters;
     }
 
-    private void computeValueParameters(JavaValueParameterResolver.ValueParameters valueParameters) {
-        List<ValueParameterDescriptor> parameterDescriptors = valueParameters.getDescriptors();
-
+    private void computeValueParameters(@NotNull List<ValueParameterDescriptor> parameterDescriptors) {
         if (parameterDescriptors.size() != altFunDeclaration.getValueParameters().size()) {
             throw new AlternativeSignatureMismatchException("Method signature has %d value parameters, but alternative signature has %d",
                                                             parameterDescriptors.size(), altFunDeclaration.getValueParameters().size());
@@ -207,11 +209,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                     alternativeVarargElementType));
         }
 
-        if (valueParameters.getReceiverType() != null) {
-            throw new UnsupportedOperationException("Alternative annotations for extension functions are not supported yet");
-        }
-
-        altValueParameters = new JavaValueParameterResolver.ValueParameters(null, altParamDescriptors);
+        altValueParameters = altParamDescriptors;
     }
 
     private void computeTypeParameters(List<TypeParameterDescriptor> typeParameters) {
