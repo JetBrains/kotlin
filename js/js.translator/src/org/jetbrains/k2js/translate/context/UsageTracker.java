@@ -83,29 +83,28 @@ public final class UsageTracker {
             }
         }
         else if (descriptor instanceof SimpleFunctionDescriptor) {
-            checkOuterClass(descriptor);
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            // local named function
             CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
-            if (!JsDescriptorUtils.isExtension(callableDescriptor) &&
-                !(containingDeclaration instanceof ClassOrNamespaceDescriptor) &&
+            if (JsDescriptorUtils.isExtension(callableDescriptor)) {
+                return;
+            }
+
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof ClassDescriptor) {
+                // skip methods defined in class, for example Int::plus
+                if (outerClassDescriptor == null && (callableDescriptor.getExpectedThisObject() == null || isAncestor(containingDeclaration, memberDescriptor))) {
+                    outerClassDescriptor = (ClassDescriptor) containingDeclaration;
+                }
+                return;
+            }
+
+            // local named function
+            if (!(containingDeclaration instanceof ClassOrNamespaceDescriptor) &&
                 !isAncestor(memberDescriptor, descriptor)) {
                 addCapturedMember(callableDescriptor);
             }
         }
-        else if (descriptor instanceof ClassDescriptor) {
-            if (trackedClassDescriptor == descriptor) {
-                used = true;
-            }
-            else if (parent != null) {
-                UsageTracker p = parent;
-                do {
-                    if (p.trackedClassDescriptor == descriptor) {
-                        break;
-                    }
-                }
-                while ((p = p.parent) != null);
-            }
+        else if (descriptor instanceof ClassDescriptor && trackedClassDescriptor == descriptor) {
+            used = true;
         }
     }
 
