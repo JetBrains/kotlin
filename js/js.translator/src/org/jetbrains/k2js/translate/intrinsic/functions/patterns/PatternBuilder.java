@@ -121,7 +121,7 @@ public final class PatternBuilder {
     }
 
     @NotNull
-    public static DescriptorPredicateImpl create(@NotNull String... names) {
+    public static DescriptorPredicateImpl pattern(@NotNull String... names) {
         return new DescriptorPredicateImpl(names);
     }
 
@@ -138,7 +138,7 @@ public final class PatternBuilder {
             this.names = names;
         }
 
-        public DescriptorPredicateImpl receiverParameterExists(boolean receiverParameterExists) {
+        public DescriptorPredicateImpl receiverExists(boolean receiverParameterExists) {
             this.receiverParameterExists = receiverParameterExists;
             return this;
         }
