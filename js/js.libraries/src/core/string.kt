@@ -40,6 +40,8 @@ public val String.size: Int
 
 public fun String.length(): Int = js.noImpl
 
+public fun String.isEmpty(): Boolean = js.noImpl
+
 /*
 
 native public fun String.equalsIgnoreCase(anotherString: String) : Boolean = (this as java.lang.String).equalsIgnoreCase(anotherString)
@@ -118,7 +120,7 @@ native public fun String.getBytes(charset : java.nio.charset.Charset) : ByteArra
 
 native public fun String.getBytes(charsetName : String) : ByteArray = (this as java.lang.String).getBytes(charsetName)!!
 
-native public fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)!!
+native public fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Tuple0 = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)!!
 
 native public fun String.intern() : String = (this as java.lang.String).intern()!!
 

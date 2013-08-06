@@ -16,9 +16,17 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
+
+import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
@@ -34,5 +42,15 @@ public final class StringOperationFIF extends CompositeFIF {
         add(pattern("js", "<get-size>").receiverExists(true), lengthIntrinsic);
         add(pattern("js", "length").receiverExists(true), lengthIntrinsic);
         add(pattern("jet", "CharSequence", "<get-length>"), lengthIntrinsic);
+        add(pattern("js", "isEmpty").receiverExists(true), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                assert receiver != null;
+                return JsAstUtils.equality(new JsNameRef("length", receiver), context.program().getNumberLiteral(0));
+            }
+        });
     }
 }
