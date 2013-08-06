@@ -23,6 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
@@ -31,6 +38,8 @@ import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
 
@@ -54,6 +63,100 @@ public final class TopLevelFIF extends CompositeFIF {
             return receiver;
         }
     };
+
+    private static final FunctionIntrinsic NATIVE_MAP_GET = new NativeMapGetSet() {
+        @NotNull
+        @Override
+        protected String operation() {
+            return "get";
+        }
+
+        @Nullable
+        @Override
+        protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+            ReceiverValue result = resolvedCall.getThisObject();
+            return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
+        }
+
+        @Override
+        protected JsExpression asArrayAccess(
+                @NotNull JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            return ArrayFIF.GET_INTRINSIC.apply(receiver, arguments, context);
+        }
+    };
+
+    private static final FunctionIntrinsic NATIVE_MAP_SET = new NativeMapGetSet() {
+        @NotNull
+        @Override
+        protected String operation() {
+            return "put";
+        }
+
+        @Nullable
+        @Override
+        protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+            ReceiverValue result = resolvedCall.getReceiverArgument();
+            return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
+        }
+
+        @Override
+        protected JsExpression asArrayAccess(
+                @NotNull JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            return ArrayFIF.SET_INTRINSIC.apply(receiver, arguments, context);
+        }
+    };
+
+    private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
+        @NotNull
+        protected abstract String operation();
+
+        @Nullable
+        protected abstract ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall);
+
+        protected abstract JsExpression asArrayAccess(
+                @NotNull JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        );
+
+        @NotNull
+        @Override
+        public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
+            ExpressionReceiver expressionReceiver = getExpressionReceiver(callTranslator.getResolvedCall());
+            JsExpression thisOrReceiver = callTranslator.getCallParameters().getThisOrReceiverOrNull();
+            assert thisOrReceiver != null;
+            if (expressionReceiver != null) {
+                JetExpression expression = expressionReceiver.getExpression();
+                JetReferenceExpression referenceExpression = null;
+                if (expression instanceof JetReferenceExpression) {
+                    referenceExpression = (JetReferenceExpression) expression;
+                }
+                else if (expression instanceof JetQualifiedExpression) {
+                    JetExpression candidate = ((JetQualifiedExpression) expression).getReceiverExpression();
+                    if (candidate instanceof JetReferenceExpression) {
+                        referenceExpression = (JetReferenceExpression) candidate;
+                    }
+                }
+
+                if (referenceExpression != null) {
+                    DeclarationDescriptor candidate = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(),
+                                                                                                       referenceExpression);
+                    if (candidate instanceof PropertyDescriptor && AnnotationsUtils.isNativeObject(candidate)) {
+                        return asArrayAccess(thisOrReceiver, arguments, context);
+                    }
+                }
+            }
+
+            return new JsInvocation(new JsNameRef(operation(), thisOrReceiver), arguments);
+        }
+    }
+
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
@@ -95,14 +198,8 @@ public final class TopLevelFIF extends CompositeFIF {
             }
         );
 
-        add(pattern("java", "util", "set").receiverExists(true), new FunctionIntrinsic() {
-            @NotNull
-            @Override
-            public JsExpression apply(
-                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
-            ) {
-                return new JsInvocation(new JsNameRef("put", receiver), arguments);
-            }
-        });
+        add(pattern("java", "util", "set").receiverExists(true), NATIVE_MAP_SET);
+        add(pattern("jet", "Map", "get"), NATIVE_MAP_GET);
+        add(pattern("java", "util", "HashMap", "get"), NATIVE_MAP_GET);
     }
 }

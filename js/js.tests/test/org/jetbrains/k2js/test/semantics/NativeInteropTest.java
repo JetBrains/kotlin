@@ -80,4 +80,8 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     public void testKt_2388() throws Exception {
         fooBoxTest();
     }
+
+    public void testKt2323() throws Exception {
+        fooBoxTest();
+    }
 }
