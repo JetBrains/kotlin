@@ -29,11 +29,6 @@ String.prototype.contains = function (s) {
   return this.indexOf(s) !== -1;
 };
 
-// todo org.jetbrains.k2js.test.semantics.WebDemoExamples2Test#testBuilder
-var kotlin = {set:function (receiver, key, value) {
-    return receiver.put(key, value);
-}};
-
 (function () {
     Kotlin.equals = function (obj1, obj2) {
         if (obj1 == null) {
@@ -528,10 +523,6 @@ var kotlin = {set:function (receiver, key, value) {
         return Kotlin.$new(ArrayIterator)(array);
     };
 
-    Kotlin.toString = function (obj) {
-        return obj.toString();
-    };
-
     Kotlin.jsonFromTuples = function (pairArr) {
         var i = pairArr.length;
         var res = {};
@@ -559,11 +550,6 @@ var kotlin = {set:function (receiver, key, value) {
             }
         }
         return obj1;
-    };
-
-    //TODO: use intrinsic
-    Kotlin.sure = function (obj) {
-        return obj;
     };
 })();
 
