@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -85,8 +84,7 @@ public final class PatternBuilder {
 
         return new DescriptorPredicate() {
             @Override
-            public boolean apply(@Nullable FunctionDescriptor descriptor) {
-                assert descriptor != null;
+            public boolean apply(@NotNull FunctionDescriptor descriptor) {
                 //TODO: no need to wrap if we check beforehand
                 try {
                     return doApply(descriptor);
@@ -146,8 +144,8 @@ public final class PatternBuilder {
         }
 
         @Override
-        public boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
-            if (functionDescriptor == null || (functionDescriptor.getReceiverParameter() == null) == receiverParameterExists) {
+        public boolean apply(@NotNull FunctionDescriptor functionDescriptor) {
+            if ((functionDescriptor.getReceiverParameter() == null) == receiverParameterExists) {
                 return false;
             }
 
