@@ -3,12 +3,6 @@ package java.lang
 import java.io.IOException
 import js.library
 
-library("splitString")
-public fun String.split(regex : String) : Array<String> = js.noImpl
-
-library("splitString")
-public fun String.split(regex : String, limit: Int) : Array<String> = js.noImpl
-
 library
 open public class Exception(message: String? = null) : Throwable() {}
 

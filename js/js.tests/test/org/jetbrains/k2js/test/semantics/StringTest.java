@@ -84,4 +84,8 @@ public final class StringTest extends AbstractExpressionTest {
     public void testStringSplit() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testExtensionMethods() throws Exception {
+        fooBoxTest();
+    }
 }

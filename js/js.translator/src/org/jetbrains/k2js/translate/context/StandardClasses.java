@@ -62,12 +62,6 @@ public final class StandardClasses {
         }
 
         @NotNull
-        public Builder kotlinFunction(@NotNull String kotlinName) {
-            kotlinTopLevelObject(kotlinName);
-            return this;
-        }
-
-        @NotNull
         private Builder constructor() {
             assert currentFQName != null;
             assert currentObjectName != null;
@@ -105,8 +99,6 @@ public final class StandardClasses {
 
         standardClasses.declare().forFQ("jet.IntProgression").kotlinClass("NumberProgression")
                 .methods("iterator", "contains").properties("start", "end", "increment");
-
-        standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
     }
 
 
