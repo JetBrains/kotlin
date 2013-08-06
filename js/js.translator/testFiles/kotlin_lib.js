@@ -482,8 +482,8 @@ String.prototype.contains = function (s) {
             }
     );
 
-    Kotlin.splitString = function (str, regex) {
-        return str.split(regex);
+    Kotlin.splitString = function (str, regex, limit) {
+        return str.split(new RegExp(regex), limit);
     };
 
     Kotlin.nullArray = function (size) {

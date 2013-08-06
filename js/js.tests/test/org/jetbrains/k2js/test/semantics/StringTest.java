@@ -80,4 +80,8 @@ public final class StringTest extends AbstractExpressionTest {
             assertFalse(filePath + " should not contain toString calls", text.contains("toString"));
         }
     }
+
+    public void testStringSplit() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
