@@ -116,51 +116,6 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
-    private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
-        @NotNull
-        protected abstract String operation();
-
-        @Nullable
-        protected abstract ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall);
-
-        protected abstract JsExpression asArrayAccess(
-                @NotNull JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context
-        );
-
-        @NotNull
-        @Override
-        public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
-            ExpressionReceiver expressionReceiver = getExpressionReceiver(callTranslator.getResolvedCall());
-            JsExpression thisOrReceiver = callTranslator.getCallParameters().getThisOrReceiverOrNull();
-            assert thisOrReceiver != null;
-            if (expressionReceiver != null) {
-                JetExpression expression = expressionReceiver.getExpression();
-                JetReferenceExpression referenceExpression = null;
-                if (expression instanceof JetReferenceExpression) {
-                    referenceExpression = (JetReferenceExpression) expression;
-                }
-                else if (expression instanceof JetQualifiedExpression) {
-                    JetExpression candidate = ((JetQualifiedExpression) expression).getReceiverExpression();
-                    if (candidate instanceof JetReferenceExpression) {
-                        referenceExpression = (JetReferenceExpression) candidate;
-                    }
-                }
-
-                if (referenceExpression != null) {
-                    DeclarationDescriptor candidate = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(),
-                                                                                                       referenceExpression);
-                    if (candidate instanceof PropertyDescriptor && AnnotationsUtils.isNativeObject(candidate)) {
-                        return asArrayAccess(thisOrReceiver, arguments, context);
-                    }
-                }
-            }
-
-            return new JsInvocation(new JsNameRef(operation(), thisOrReceiver), arguments);
-        }
-    }
-
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
@@ -214,6 +169,50 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("java", "util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
     }
 
+    private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
+        @NotNull
+        protected abstract String operation();
+
+        @Nullable
+        protected abstract ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall);
+
+        protected abstract JsExpression asArrayAccess(
+                @NotNull JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        );
+
+        @NotNull
+        @Override
+        public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
+            ExpressionReceiver expressionReceiver = getExpressionReceiver(callTranslator.getResolvedCall());
+            JsExpression thisOrReceiver = callTranslator.getCallParameters().getThisOrReceiverOrNull();
+            assert thisOrReceiver != null;
+            if (expressionReceiver != null) {
+                JetExpression expression = expressionReceiver.getExpression();
+                JetReferenceExpression referenceExpression = null;
+                if (expression instanceof JetReferenceExpression) {
+                    referenceExpression = (JetReferenceExpression) expression;
+                }
+                else if (expression instanceof JetQualifiedExpression) {
+                    JetExpression candidate = ((JetQualifiedExpression) expression).getReceiverExpression();
+                    if (candidate instanceof JetReferenceExpression) {
+                        referenceExpression = (JetReferenceExpression) candidate;
+                    }
+                }
+
+                if (referenceExpression != null) {
+                    DeclarationDescriptor candidate = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(),
+                                                                                                       referenceExpression);
+                    if (candidate instanceof PropertyDescriptor && AnnotationsUtils.isNativeObject(candidate)) {
+                        return asArrayAccess(thisOrReceiver, arguments, context);
+                    }
+                }
+            }
+
+            return new JsInvocation(new JsNameRef(operation(), thisOrReceiver), arguments);
+        }
+    }
 
     private static class MapSelectImplementationIntrinsic extends CallParametersAwareFunctionIntrinsic {
         private final boolean isSet;
