@@ -28,9 +28,12 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
@@ -40,6 +43,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.List;
 
@@ -182,7 +186,11 @@ public final class TopLevelFIF extends CompositeFIF {
             }, new CallParametersAwareFunctionIntrinsic() {
                 @NotNull
                 @Override
-                public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
+                public JsExpression apply(
+                        @NotNull CallTranslator callTranslator,
+                        @NotNull List<JsExpression> arguments,
+                        @NotNull TranslationContext context
+                ) {
                     JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
                     if (thisExpression == null) {
                         return new JsInvocation(callTranslator.getCallParameters().getFunctionReference(), arguments);
@@ -201,5 +209,40 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("java", "util", "set").receiverExists(true), NATIVE_MAP_SET);
         add(pattern("jet", "Map", "get"), NATIVE_MAP_GET);
         add(pattern("java", "util", "HashMap", "get"), NATIVE_MAP_GET);
+
+        add(pattern("java", "util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
+        add(pattern("java", "util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
+    }
+
+
+    private static class MapSelectImplementationIntrinsic extends CallParametersAwareFunctionIntrinsic {
+        private final boolean isSet;
+
+        private MapSelectImplementationIntrinsic(boolean isSet) {
+            this.isSet = isSet;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallTranslator callTranslator,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            JetType keyType = callTranslator.getResolvedCall().getTypeArguments().values().iterator().next();
+            Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
+            String collectionClassName;
+            if (keyTypeName != null &&
+                (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName) ||
+                 keyTypeName.asString().equals("String") ||
+                 PrimitiveType.BOOLEAN.getTypeName().equals(keyTypeName))) {
+                collectionClassName = isSet ? "PrimitiveHashSet" : "PrimitiveHashMap";
+            }
+            else {
+                collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
+            }
+
+            return callTranslator.createConstructorCallExpression(context.namer().kotlin(collectionClassName));
+        }
     }
 }
