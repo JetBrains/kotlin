@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -52,7 +51,7 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
         return computableWithProcessingCancel(new Computable<BindingContext>() {
             @Override
             public BindingContext compute() {
-                return ResolveSessionUtils.resolveToElement(resolveSession, element);
+                return resolveSession.resolveElement(element);
             }
         });
     }

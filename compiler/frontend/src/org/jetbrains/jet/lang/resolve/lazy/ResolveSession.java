@@ -71,6 +71,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     private final InjectorForLazyResolve injector;
 
     private final Function<FqName, Name> classifierAliases;
+    private final ResolveElementCache resolveElementCache;
 
     public ResolveSession(
             @NotNull Project project,
@@ -121,6 +122,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         rootDescriptor.setRootNamespace(rootPackage);
 
         this.declarationProviderFactory = declarationProviderFactory;
+        this.resolveElementCache = new ResolveElementCache(this);
     }
 
     @NotNull
@@ -348,6 +350,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             throw new IllegalStateException("No descriptor resolved for " + declaration + " " + declaration.getText());
         }
         return result;
+    }
+
+    @NotNull
+    public BindingContext resolveElement(@NotNull JetElement jetElement) {
+        return resolveElementCache.resolveElement(jetElement);
     }
 
     @NotNull
