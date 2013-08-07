@@ -47,6 +47,7 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.resolv
 public final class JavaPropertyResolver {
     private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
+    private JavaResolverCache cache;
     private JavaAnnotationResolver annotationResolver;
     private ExternalSignatureResolver externalSignatureResolver;
 
@@ -61,6 +62,11 @@ public final class JavaPropertyResolver {
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
+    }
+
+    @Inject
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
@@ -128,18 +134,8 @@ public final class JavaPropertyResolver {
                 (JetType) null
         );
 
-        trace.record(BindingContext.VARIABLE, field.getPsi(), propertyDescriptor);
+        cache.recordField(field, propertyDescriptor);
 
-        if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
-            PsiExpression initializer = field.getPsi().getInitializer();
-            if (initializer instanceof PsiLiteralExpression) {
-                CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver
-                        .resolveCompileTimeConstantValue(((PsiLiteralExpression) initializer).getValue(), propertyType);
-                if (constant != null) {
-                    trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);
-                }
-            }
-        }
         return propertyDescriptor;
     }
 

@@ -24,10 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
@@ -46,7 +43,7 @@ import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.
 import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.isSamAdapterNecessary;
 
 public final class JavaConstructorResolver {
-    private BindingTrace trace;
+    private JavaResolverCache cache;
     private JavaTypeTransformer typeTransformer;
     private JavaValueParameterResolver valueParameterResolver;
     private ExternalSignatureResolver externalSignatureResolver;
@@ -55,8 +52,8 @@ public final class JavaConstructorResolver {
     }
 
     @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
@@ -103,7 +100,7 @@ public final class JavaConstructorResolver {
 
     @Nullable
     private ConstructorDescriptor resolveDefaultConstructor(@NotNull JavaClass javaClass, @NotNull ClassDescriptor containingClass) {
-        ConstructorDescriptor alreadyResolved = trace.get(BindingContext.CONSTRUCTOR, javaClass.getPsi());
+        ConstructorDescriptor alreadyResolved = cache.getConstructor(javaClass);
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
@@ -130,7 +127,7 @@ public final class JavaConstructorResolver {
 
         constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(containingClass), javaClass.isStatic());
 
-        trace.record(BindingContext.CONSTRUCTOR, javaClass.getPsi(), constructorDescriptor);
+        cache.recordConstructor(javaClass, constructorDescriptor);
 
         return constructorDescriptor;
     }
@@ -190,7 +187,7 @@ public final class JavaConstructorResolver {
             @NotNull ClassDescriptor classDescriptor,
             boolean isStaticClass
     ) {
-        ConstructorDescriptor alreadyResolved = trace.get(BindingContext.CONSTRUCTOR, constructor.getPsi());
+        ConstructorDescriptor alreadyResolved = cache.getConstructor(constructor);
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
@@ -219,7 +216,7 @@ public final class JavaConstructorResolver {
             externalSignatureResolver.reportSignatureErrors(constructorDescriptor, signatureErrors);
         }
 
-        trace.record(BindingContext.CONSTRUCTOR, constructor.getPsi(), constructorDescriptor);
+        cache.recordConstructor(constructor, constructorDescriptor);
         return constructorDescriptor;
     }
 
@@ -228,7 +225,7 @@ public final class JavaConstructorResolver {
         if (!isSamAdapterNecessary(original)) return null;
 
         SamAdapterDescriptor<ConstructorDescriptor> adapter = createSamAdapterConstructor(original);
-        DescriptorResolverUtils.recordSourceDescriptorForSynthesized(adapter, original, trace);
+        cache.recordSourceDescriptorForSynthesized(adapter, original);
         return (ConstructorDescriptor) adapter;
     }
 }

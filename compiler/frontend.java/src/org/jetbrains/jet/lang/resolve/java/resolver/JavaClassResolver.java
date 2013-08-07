@@ -86,6 +86,7 @@ public final class JavaClassResolver {
     private final Set<FqNameBase> unresolvedCache = Sets.newHashSet();
 
     private BindingTrace trace;
+    private JavaResolverCache cache;
     private JavaTypeParameterResolver typeParameterResolver;
     private JavaDescriptorResolver javaDescriptorResolver;
     private JavaAnnotationResolver annotationResolver;
@@ -107,6 +108,11 @@ public final class JavaClassResolver {
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
+    }
+
+    @Inject
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
@@ -252,7 +258,7 @@ public final class JavaClassResolver {
         }
 
         // Class may have been resolved previously by different Java resolver instance, and we are reusing its trace
-        ClassDescriptor alreadyResolved = trace.get(BindingContext.CLASS, javaClass.getPsi());
+        ClassDescriptor alreadyResolved = cache.getClass(javaClass);
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
@@ -327,7 +333,7 @@ public final class JavaClassResolver {
 
         classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(javaClass, taskList));
 
-        trace.record(BindingContext.CLASS, javaClass.getPsi(), classDescriptor);
+        cache.recordClass(javaClass, classDescriptor);
 
         JavaMethod samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(javaClass);
         if (samInterfaceMethod != null) {

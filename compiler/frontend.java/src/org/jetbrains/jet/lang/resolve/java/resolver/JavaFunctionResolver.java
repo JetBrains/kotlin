@@ -26,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
@@ -58,6 +56,7 @@ public final class JavaFunctionResolver {
 
     private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
+    private JavaResolverCache cache;
     private JavaTypeParameterResolver typeParameterResolver;
     private JavaValueParameterResolver valueParameterResolver;
     private JavaAnnotationResolver annotationResolver;
@@ -71,6 +70,11 @@ public final class JavaFunctionResolver {
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
+    }
+
+    @Inject
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
@@ -114,7 +118,7 @@ public final class JavaFunctionResolver {
             return null;
         }
 
-        SimpleFunctionDescriptor alreadyResolved = trace.get(BindingContext.FUNCTION, method.getPsi());
+        SimpleFunctionDescriptor alreadyResolved = cache.getMethod(method);
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
@@ -176,8 +180,8 @@ public final class JavaFunctionResolver {
                 /*isInline = */ false
         );
 
-        if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION && record) {
-            BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, method.getPsi(), functionDescriptorImpl);
+        if (record) {
+            cache.recordMethod(method, functionDescriptorImpl);
         }
 
         if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(method)
@@ -316,7 +320,7 @@ public final class JavaFunctionResolver {
             ClassDescriptorFromJvmBytecode klass = findClassInNamespace(owner, namedMembers.getName());
             if (klass != null) {
                 SamConstructorDescriptor constructor = createSamConstructorFunction(owner, klass);
-                DescriptorResolverUtils.recordSourceDescriptorForSynthesized(constructor, klass, trace);
+                cache.recordSourceDescriptorForSynthesized(constructor, klass);
                 return constructor;
             }
         }
@@ -328,7 +332,7 @@ public final class JavaFunctionResolver {
         if (!isSamAdapterNecessary(original)) return null;
 
         SamAdapterDescriptor<SimpleFunctionDescriptor> adapter = createSamAdapterFunction(original);
-        DescriptorResolverUtils.recordSourceDescriptorForSynthesized(adapter, original, trace);
+        cache.recordSourceDescriptorForSynthesized(adapter, original);
         return (SimpleFunctionDescriptor) adapter;
     }
 

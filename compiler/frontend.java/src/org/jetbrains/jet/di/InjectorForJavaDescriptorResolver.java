@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
@@ -46,6 +47,7 @@ public class InjectorForJavaDescriptorResolver {
     private final BindingTrace bindingTrace;
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
+    private final TraceBasedJavaResolverCache traceBasedJavaResolverCache;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final PsiClassFinderImpl psiClassFinder;
     private final VirtualFileFinder virtualFileFinder;
@@ -71,6 +73,7 @@ public class InjectorForJavaDescriptorResolver {
         this.bindingTrace = bindingTrace;
         this.javaClassFinder = new JavaClassFinderImpl();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
+        this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
@@ -92,6 +95,8 @@ public class InjectorForJavaDescriptorResolver {
 
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
+        traceBasedJavaResolverCache.setTrace(bindingTrace);
+
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
         this.javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
@@ -101,6 +106,7 @@ public class InjectorForJavaDescriptorResolver {
         this.psiClassFinder.setProject(project);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaClassResolver.setCache(traceBasedJavaResolverCache);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
@@ -118,6 +124,7 @@ public class InjectorForJavaDescriptorResolver {
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaFunctionResolver.setCache(traceBasedJavaResolverCache);
         javaFunctionResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
         javaFunctionResolver.setTrace(bindingTrace);
         javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
@@ -138,6 +145,7 @@ public class InjectorForJavaDescriptorResolver {
         annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
         annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
 
+        javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
@@ -148,12 +156,13 @@ public class InjectorForJavaDescriptorResolver {
         javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
+        javaConstructorResolver.setCache(traceBasedJavaResolverCache);
         javaConstructorResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaConstructorResolver.setTrace(bindingTrace);
         javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
         javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
 
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaPropertyResolver.setCache(traceBasedJavaResolverCache);
         javaPropertyResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
         javaPropertyResolver.setTrace(bindingTrace);
         javaPropertyResolver.setTypeTransformer(javaTypeTransformer);

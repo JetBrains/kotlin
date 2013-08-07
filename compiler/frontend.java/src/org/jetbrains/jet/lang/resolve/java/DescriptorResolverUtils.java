@@ -24,7 +24,6 @@ import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -160,13 +159,5 @@ public final class DescriptorResolverUtils {
         }
 
         return result;
-    }
-
-    public static void recordSourceDescriptorForSynthesized(
-            @NotNull FunctionDescriptor synthesized,
-            @NotNull DeclarationDescriptor original,
-            @NotNull BindingTrace trace
-    ) {
-        trace.record(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, synthesized, original);
     }
 }

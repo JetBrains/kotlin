@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
@@ -85,6 +86,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final PsiClassFinderImpl psiClassFinder;
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
+    private final TraceBasedJavaResolverCache traceBasedJavaResolverCache;
     private final NamespaceFactoryImpl namespaceFactory;
     private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
@@ -139,6 +141,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.psiClassFinder = new PsiClassFinderImpl();
         this.javaClassFinder = new JavaClassFinderImpl();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
+        this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.declarationResolver = new DeclarationResolver();
@@ -218,6 +221,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
+        traceBasedJavaResolverCache.setTrace(bindingTrace);
+
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
         this.namespaceFactory.setTrace(bindingTrace);
 
@@ -288,6 +293,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         scriptBodyResolver.setTrace(bindingTrace);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaClassResolver.setCache(traceBasedJavaResolverCache);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
@@ -305,6 +311,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaFunctionResolver.setCache(traceBasedJavaResolverCache);
         javaFunctionResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
         javaFunctionResolver.setTrace(bindingTrace);
         javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
@@ -325,6 +332,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
         annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
 
+        javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
@@ -335,12 +343,13 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
+        javaConstructorResolver.setCache(traceBasedJavaResolverCache);
         javaConstructorResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaConstructorResolver.setTrace(bindingTrace);
         javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
         javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
 
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaPropertyResolver.setCache(traceBasedJavaResolverCache);
         javaPropertyResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
         javaPropertyResolver.setTrace(bindingTrace);
         javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
