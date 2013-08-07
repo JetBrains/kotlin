@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -106,12 +105,6 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
         return null;
     }
 
-    @NotNull
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.FUNCTION;
-    }
-    
     @Override
     public ItemPresentation getPresentation() {
         return ItemPresentationProviders.getItemPresentation(this);

@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -50,12 +49,6 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitProperty(this, data);
-    }
-
-    @NotNull
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.PROPERTY;
     }
 
     @Override

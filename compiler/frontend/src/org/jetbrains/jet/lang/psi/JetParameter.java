@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
@@ -44,12 +43,6 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
 
     public JetParameter(@NotNull PsiJetParameterStub stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
-    }
-
-    @NotNull
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.VALUE_PARAMETER;
     }
 
     @Override

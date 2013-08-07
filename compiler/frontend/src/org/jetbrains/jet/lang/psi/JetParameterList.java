@@ -34,12 +34,6 @@ public class JetParameterList extends JetElementImplStub<PsiJetParameterListStub
         super(stub, nodeType);
     }
 
-    @NotNull
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.VALUE_PARAMETER_LIST;
-    }
-
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitParameterList(this, data);

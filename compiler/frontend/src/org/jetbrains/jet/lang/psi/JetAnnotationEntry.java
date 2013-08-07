@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -30,12 +29,6 @@ import java.util.List;
 public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationStub> implements JetCallElement {
     public JetAnnotationEntry(@NotNull ASTNode node) {
         super(node);
-    }
-
-    @NotNull
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.ANNOTATION_ENTRY;
     }
 
     public JetAnnotationEntry(@NotNull PsiJetAnnotationStub stub) {

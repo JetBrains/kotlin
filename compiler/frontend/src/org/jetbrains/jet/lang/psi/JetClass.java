@@ -22,7 +22,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -163,12 +162,6 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
         }
 
         return hasModifier(JetTokens.INNER_KEYWORD);
-    }
-
-    @NotNull
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.CLASS;
     }
 
     @Override

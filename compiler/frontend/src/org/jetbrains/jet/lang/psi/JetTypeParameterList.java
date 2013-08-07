@@ -39,12 +39,6 @@ public class JetTypeParameterList extends JetElementImplStub<PsiJetTypeParameter
         return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.TYPE_PARAMETER, JetTypeParameter.ARRAY_FACTORY));
     }
 
-    @NotNull
-    @Override
-    public IStubElementType getElementType() {
-        return JetStubElementTypes.TYPE_PARAMETER_LIST;
-    }
-
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterList(this, data);
