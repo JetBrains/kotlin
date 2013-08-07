@@ -45,7 +45,7 @@ public class StubIndexServiceImpl implements StubIndexService {
     public void indexClass(PsiJetClassStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
-            sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
+            sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
         }
 
         FqName fqn = stub.getFqName();
@@ -75,10 +75,10 @@ public class StubIndexServiceImpl implements StubIndexService {
         }
 
         if (name != null) {
-            sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
+            sink.occurrence(JetClassShortNameIndex.getInstance().getKey(), name);
 
             if (stub.isTopLevel()) {
-                sink.occurrence(JetTopLevelShortObjectNameIndex.getInstance().getKey(), name);
+                sink.occurrence(JetTopLevelObjectShortNameIndex.getInstance().getKey(), name);
             }
         }
 
@@ -114,10 +114,10 @@ public class StubIndexServiceImpl implements StubIndexService {
             if (stub.isTopLevel()) {
                 // Collection only top level functions as only they are expected in completion without explicit import
                 if (!stub.isExtension()) {
-                    sink.occurrence(JetShortFunctionNameIndex.getInstance().getKey(), name);
+                    sink.occurrence(JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getKey(), name);
                 }
                 else {
-                    sink.occurrence(JetExtensionFunctionNameIndex.getInstance().getKey(), name);
+                    sink.occurrence(JetTopLevelExtensionFunctionShortNameIndex.getInstance().getKey(), name);
                 }
 
                 FqName topFQName = stub.getTopFQName();
@@ -126,7 +126,7 @@ public class StubIndexServiceImpl implements StubIndexService {
                 }
             }
 
-            sink.occurrence(JetAllShortFunctionNameIndex.getInstance().getKey(), name);
+            sink.occurrence(JetFunctionShortNameIndex.getInstance().getKey(), name);
         }
     }
 
@@ -141,7 +141,7 @@ public class StubIndexServiceImpl implements StubIndexService {
                 }
             }
 
-            sink.occurrence(JetShortPropertiesNameIndex.getInstance().getKey(), propertyName);
+            sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), propertyName);
         }
     }
 

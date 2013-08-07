@@ -21,29 +21,29 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 
 import java.util.Collection;
 
-public class JetShortPropertiesNameIndex extends StringStubIndexExtension<JetProperty> {
-    private static final StubIndexKey<String, JetProperty> KEY = KotlinIndexUtil.createIndexKey(JetShortPropertiesNameIndex.class);
+public class JetClassShortNameIndex extends StringStubIndexExtension<JetClassOrObject> {
+    private static final StubIndexKey<String, JetClassOrObject> KEY = KotlinIndexUtil.createIndexKey(JetClassShortNameIndex.class);
 
-    private static final JetShortPropertiesNameIndex ourInstance = new JetShortPropertiesNameIndex();
+    private static final JetClassShortNameIndex ourInstance = new JetClassShortNameIndex();
 
-    public static JetShortPropertiesNameIndex getInstance() {
+    public static JetClassShortNameIndex getInstance() {
         return ourInstance;
     }
 
-    private JetShortPropertiesNameIndex() {}
+    private JetClassShortNameIndex() {}
 
     @NotNull
     @Override
-    public StubIndexKey<String, JetProperty> getKey() {
+    public StubIndexKey<String, JetClassOrObject> getKey() {
         return KEY;
     }
 
     @Override
-    public Collection<JetProperty> get(String s, Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<JetClassOrObject> get(String s, Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));
     }
 }

@@ -25,8 +25,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.stubindex.JetAllShortFunctionNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetShortPropertiesNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetFunctionShortNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetPropertyShortNameIndex;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +36,8 @@ public class JetGotoSymbolContributor implements ChooseByNameContributor {
     @NotNull
     @Override
     public String[] getNames(Project project, boolean includeNonProjectItems) {
-        Collection<String> items = StubIndex.getInstance().getAllKeys(JetAllShortFunctionNameIndex.getInstance().getKey(), project);
-        items.addAll(StubIndex.getInstance().getAllKeys(JetShortPropertiesNameIndex.getInstance().getKey(), project));
+        Collection<String> items = StubIndex.getInstance().getAllKeys(JetFunctionShortNameIndex.getInstance().getKey(), project);
+        items.addAll(StubIndex.getInstance().getAllKeys(JetPropertyShortNameIndex.getInstance().getKey(), project));
 
         return ArrayUtil.toStringArray(items);
     }
@@ -48,10 +48,10 @@ public class JetGotoSymbolContributor implements ChooseByNameContributor {
         GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
 
         Collection<? extends NavigationItem> functions = StubIndex.getInstance().get(
-                JetAllShortFunctionNameIndex.getInstance().getKey(), name, project, scope);
+                JetFunctionShortNameIndex.getInstance().getKey(), name, project, scope);
 
         Collection<? extends NavigationItem> properties = StubIndex.getInstance().get(
-                JetShortPropertiesNameIndex.getInstance().getKey(), name, project, scope);
+                JetPropertyShortNameIndex.getInstance().getKey(), name, project, scope);
 
         List<NavigationItem> items = new ArrayList<NavigationItem>(Collections2.filter(functions, Predicates.notNull()));
         items.addAll(properties);

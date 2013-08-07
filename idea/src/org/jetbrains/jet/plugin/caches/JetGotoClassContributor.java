@@ -24,7 +24,7 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetClassShortNameIndex;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,14 +52,14 @@ public class JetGotoClassContributor implements GotoClassContributor {
     @NotNull
     @Override
     public String[] getNames(Project project, boolean includeNonProjectItems) {
-        return ArrayUtil.toObjectArray(JetShortClassNameIndex.getInstance().getAllKeys(project), String.class);
+        return ArrayUtil.toObjectArray(JetClassShortNameIndex.getInstance().getAllKeys(project), String.class);
     }
 
     @NotNull
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
         GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
-        Collection<JetClassOrObject> classesOrObjects = JetShortClassNameIndex.getInstance().get(name, project, scope);
+        Collection<JetClassOrObject> classesOrObjects = JetClassShortNameIndex.getInstance().get(name, project, scope);
 
         if (classesOrObjects.isEmpty()) {
             return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;

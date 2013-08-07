@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
-import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetClassShortNameIndex;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collection;
@@ -78,7 +78,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
                         String returnTypeText = DescriptorRenderer.TEXT.renderType(type);
                         if (returnTypeText.equals(functionName)) {
                             Collection<JetClassOrObject> classOrObjects =
-                                    JetShortClassNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project));
+                                    JetClassShortNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project));
                             if (classOrObjects.size() == 1) {
                                 JetClassOrObject classOrObject = classOrObjects.iterator().next();
                                 return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);

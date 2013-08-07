@@ -85,7 +85,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     @Override
     public String[] getAllClassNames() {
-        Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
+        Collection<String> classNames = JetClassShortNameIndex.getInstance().getAllKeys(project);
 
         // package classes can not be indexed, since they have no explicit declarations
         IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
@@ -119,7 +119,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         // Quick check for classes from getAllClassNames()
-        Collection<JetClassOrObject> classOrObjects = JetShortClassNameIndex.getInstance().get(name, project, scope);
+        Collection<JetClassOrObject> classOrObjects = JetClassShortNameIndex.getInstance().get(name, project, scope);
         if (classOrObjects.isEmpty()) {
             return result.toArray(new PsiClass[result.size()]);
         }
@@ -154,7 +154,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     public Collection<String> getAllTopLevelFunctionNames() {
         Set<String> functionNames = new HashSet<String>();
-        functionNames.addAll(JetShortFunctionNameIndex.getInstance().getAllKeys(project));
+        functionNames.addAll(JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getAllKeys(project));
         functionNames.addAll(JetFromJavaDescriptorHelper.getPossiblePackageDeclarationsNames(project, GlobalSearchScope.allScope(project)));
         return functionNames;
     }
@@ -162,7 +162,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     public Collection<String> getAllTopLevelObjectNames() {
         Set<String> topObjectNames = new HashSet<String>();
-        topObjectNames.addAll(JetTopLevelShortObjectNameIndex.getInstance().getAllKeys(project));
+        topObjectNames.addAll(JetTopLevelObjectShortNameIndex.getInstance().getAllKeys(project));
 
         Collection<PsiClass> classObjects =
                 JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, GlobalSearchScope.allScope(project));
@@ -193,7 +193,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         Set<ClassDescriptor> result = Sets.newHashSet();
 
-        Collection<JetObjectDeclaration> topObjects = JetTopLevelShortObjectNameIndex.getInstance().get(name, project, scope);
+        Collection<JetObjectDeclaration> topObjects = JetTopLevelObjectShortNameIndex.getInstance().get(name, project, scope);
         for (JetObjectDeclaration objectDeclaration : topObjects) {
             FqName fqName = JetPsiUtil.getFQName(objectDeclaration);
             assert fqName != null : "Local object declaration in JetTopLevelShortObjectNameIndex:" + objectDeclaration.getText();
@@ -254,7 +254,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         Set<FqName> affectedPackages = Sets.newHashSet();
         Collection<JetNamedFunction> jetNamedFunctions =
-                JetShortFunctionNameIndex.getInstance().get(referenceName.asString(), project, scope);
+                JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().get(referenceName.asString(), project, scope);
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
             PsiFile containingFile = jetNamedFunction.getContainingFile();
             if (containingFile instanceof JetFile) {
@@ -278,7 +278,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     private Collection<PsiElement> getJetExtensionFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
         HashSet<PsiElement> functions = new HashSet<PsiElement>();
-        functions.addAll(JetExtensionFunctionNameIndex.getInstance().get(name, project, scope));
+        functions.addAll(JetTopLevelExtensionFunctionShortNameIndex.getInstance().get(name, project, scope));
 
         return functions;
     }
@@ -329,7 +329,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull Condition<String> acceptedNameCondition,
             @NotNull GlobalSearchScope searchScope
     ) {
-        Set<String> extensionFunctionNames = new HashSet<String>(JetExtensionFunctionNameIndex.getInstance().getAllKeys(project));
+        Set<String> extensionFunctionNames = new HashSet<String>(JetTopLevelExtensionFunctionShortNameIndex.getInstance().getAllKeys(project));
 
         Set<FqName> functionFQNs = new java.util.HashSet<FqName>();
 
@@ -421,7 +421,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     @Override
     public void getAllMethodNames(@NotNull HashSet<String> set) {
-        set.addAll(JetShortFunctionNameIndex.getInstance().getAllKeys(project));
+        set.addAll(JetTopLevelNonExtensionFunctionShortNameIndex.getInstance().getAllKeys(project));
     }
 
     @NotNull

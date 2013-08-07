@@ -330,17 +330,17 @@
     <stubElementTypeHolder class="org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetClassShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortPropertiesNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAllShortFunctionNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelNonExtensionFunctionShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetPropertyShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelExtensionFunctionShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex"/>
-    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelShortObjectNameIndex"/>
+    <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelObjectShortNameIndex"/>
 
     <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.libraries.JetClassFileDecompiler"/>
     <psi.classFileDecompiler implementation="org.jetbrains.jet.plugin.libraries.JetDecompilerForWrongAbiVersion"/>
