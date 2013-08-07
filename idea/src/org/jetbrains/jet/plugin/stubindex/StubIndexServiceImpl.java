@@ -63,12 +63,13 @@ public class StubIndexServiceImpl implements StubIndexService {
         FqName fqName = stub.getFqName();
 
         if (stub.isClassObject()) {
-            StubElement parentStub = stub.getParentStub();
-            assert parentStub instanceof PsiJetStubWithFqName<?> : "Something but a class/object is a parent to class object stub: " + parentStub;
+            StubElement parentClassStub = stub.getParentStub().getParentStub();
+            assert parentClassStub instanceof PsiJetStubWithFqName<?>
+                    : "Something but a class/object is a parent to class object stub: " + parentClassStub;
 
             name = JvmAbi.CLASS_OBJECT_CLASS_NAME;
 
-            FqName parentFqName = ((PsiJetStubWithFqName<?>) parentStub).getFqName();
+            FqName parentFqName = ((PsiJetStubWithFqName<?>) parentClassStub).getFqName();
             if (parentFqName != null) {
                 fqName = parentFqName.child(Name.identifier(name));
             }
