@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
@@ -193,7 +194,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     /*package*/ LazyClassDescriptor getClassObjectDescriptor(JetClassObject classObject) {
         JetClass aClass = PsiTreeUtil.getParentOfType(classObject, JetClass.class);
 
-        LazyClassDescriptor parentClassDescriptor;
+        final LazyClassDescriptor parentClassDescriptor;
 
         if (aClass != null) {
             parentClassDescriptor = (LazyClassDescriptor) getClassDescriptor(aClass);
@@ -212,10 +213,16 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         if (declaration == null) {
             // It's possible that there are several class objects and another class object is taking part in lazy resolve. We still want to
             // build descriptors for such class objects.
-            JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
+            final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
             if (classObjectInfo != null) {
-                Name name = DescriptorUtils.getClassObjectName(parentClassDescriptor.getName().asString());
-                return new LazyClassDescriptor(this, parentClassDescriptor, name, classObjectInfo);
+                final Name name = DescriptorUtils.getClassObjectName(parentClassDescriptor.getName().asString());
+                return storageManager.compute(new Computable<LazyClassDescriptor>() {
+                    @Override
+                    public LazyClassDescriptor compute() {
+                        // Create under lock to avoid premature access to published 'this'
+                        return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
+                    }
+                });
             }
         }
 
