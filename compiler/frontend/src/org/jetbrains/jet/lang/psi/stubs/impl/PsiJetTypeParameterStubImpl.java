@@ -22,7 +22,7 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetTypeParameterElementType;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> implements PsiJetTypeParameterStub {
@@ -31,9 +31,10 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
     private final boolean isInVariance;
     private final boolean isOutVariance;
 
-    public PsiJetTypeParameterStubImpl(JetTypeParameterElementType type, StubElement parent,
-            StringRef name, StringRef extendBoundTypeText, boolean isInVariance, boolean isOutVariance) {
-        super(parent, type);
+    public PsiJetTypeParameterStubImpl(
+            StubElement parent, StringRef name, StringRef extendBoundTypeText, boolean isInVariance, boolean isOutVariance
+    ) {
+        super(parent, JetStubElementTypes.TYPE_PARAMETER);
 
         this.name = name;
         this.extendBoundTypeText = extendBoundTypeText;
@@ -41,9 +42,10 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
         this.isOutVariance = isOutVariance;
     }
 
-    public PsiJetTypeParameterStubImpl(JetTypeParameterElementType type, StubElement parent,
-            String name, String extendBoundTypeText, boolean isInVariance, boolean isOutVariance) {
-        this(type, parent, StringRef.fromString(name), StringRef.fromString(extendBoundTypeText), isInVariance, isOutVariance);
+    public PsiJetTypeParameterStubImpl(
+            StubElement parent, String name, String extendBoundTypeText, boolean isInVariance, boolean isOutVariance
+    ) {
+        this(parent, StringRef.fromString(name), StringRef.fromString(extendBoundTypeText), isInVariance, isOutVariance);
     }
 
     @Override

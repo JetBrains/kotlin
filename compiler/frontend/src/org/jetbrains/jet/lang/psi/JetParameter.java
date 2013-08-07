@@ -19,12 +19,12 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
@@ -41,8 +41,8 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
         super(node);
     }
 
-    public JetParameter(@NotNull PsiJetParameterStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
+    public JetParameter(@NotNull PsiJetParameterStub stub) {
+        super(stub, JetStubElementTypes.VALUE_PARAMETER);
     }
 
     @Override

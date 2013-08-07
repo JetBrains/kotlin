@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassBodyStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class PsiJetClassBodyStubImpl extends StubBase<JetClassBody> implements PsiJetClassBodyStub {
-    public PsiJetClassBodyStubImpl(StubElement parent, IStubElementType elementType) {
-        super(parent, elementType);
+    public PsiJetClassBodyStubImpl(StubElement parent) {
+        super(parent, JetStubElementTypes.CLASS_BODY);
     }
 }

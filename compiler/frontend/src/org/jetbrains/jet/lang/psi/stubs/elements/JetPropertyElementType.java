@@ -46,7 +46,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
 
     @Override
     public JetProperty createPsi(@NotNull PsiJetPropertyStub stub) {
-        return new JetProperty(stub, JetStubElementTypes.PROPERTY);
+        return new JetProperty(stub);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
-        return new PsiJetPropertyStubImpl(JetStubElementTypes.PROPERTY, parentStub,
+        return new PsiJetPropertyStubImpl(parentStub,
             psi.getName(), psi.isVar(), psi.isTopLevel(), psi.getFqName(),
             typeRef != null ? typeRef.getText() : null,
             expression != null ? expression.getText() : null);
@@ -103,7 +103,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         StringRef typeText = dataStream.readName();
         StringRef inferenceBodyText = dataStream.readName();
 
-        return new PsiJetPropertyStubImpl(JetStubElementTypes.PROPERTY, parentStub,
+        return new PsiJetPropertyStubImpl(parentStub,
                                           name, isVar, isTopLevel, fqName, typeText, inferenceBodyText);
     }
 

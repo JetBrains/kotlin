@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implements PsiJetFunctionStub {
@@ -35,23 +35,23 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     private final FqName fqName;
 
     public PsiJetFunctionStubImpl(
-            @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
             @Nullable String name,
             boolean isTopLevel,
             @Nullable FqName fqName,
-            boolean isExtension) {
-        this(elementType, parent, StringRef.fromString(name), isTopLevel, fqName, isExtension);
+            boolean isExtension
+    ) {
+        this(parent, StringRef.fromString(name), isTopLevel, fqName, isExtension);
     }
 
     public PsiJetFunctionStubImpl(
-            @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
             @Nullable StringRef nameRef,
             boolean isTopLevel,
             @Nullable FqName fqName,
-            boolean isExtension) {
-        super(parent, elementType);
+            boolean isExtension
+    ) {
+        super(parent, JetStubElementTypes.FUNCTION);
 
         if (isTopLevel && fqName == null) {
             throw new IllegalArgumentException("fqName shouldn't be null for top level functions");

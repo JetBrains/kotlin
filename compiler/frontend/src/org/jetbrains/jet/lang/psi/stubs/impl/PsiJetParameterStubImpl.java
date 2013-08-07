@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements PsiJetParameterStub {
@@ -34,13 +34,13 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     private final FqName fqName;
 
     public PsiJetParameterStubImpl(
-            IStubElementType elementType, StubElement parent,
+            StubElement parent,
             FqName fqName, StringRef name,
             boolean isMutable,
             boolean isVarArg,
             StringRef typeText, StringRef defaultValueText
     ) {
-        super(parent, elementType);
+        super(parent, JetStubElementTypes.VALUE_PARAMETER);
         this.name = name;
         this.isMutable = isMutable;
         this.isVarArg = isVarArg;
@@ -50,14 +50,14 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     }
 
     public PsiJetParameterStubImpl(
-            IStubElementType elementType, StubElement parent,
+            StubElement parent,
             FqName fqName, String name,
             boolean isMutable,
             boolean isVarArg,
             String typeText,
             String defaultValueText
     ) {
-        this(elementType, parent, fqName, StringRef.fromString(name), isMutable, isVarArg,
+        this(parent, fqName, StringRef.fromString(name), isMutable, isVarArg,
              StringRef.fromString(typeText), StringRef.fromString(defaultValueText));
     }
 

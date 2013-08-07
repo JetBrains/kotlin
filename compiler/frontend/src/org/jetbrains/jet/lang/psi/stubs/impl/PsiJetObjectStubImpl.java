@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.ArrayList;
@@ -40,8 +40,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     private final boolean isLocal;
 
     public PsiJetObjectStubImpl(
-            @NotNull IStubElementType elementType,
-            StubElement parent,
+            @NotNull StubElement parent,
             @Nullable String name,
             @Nullable FqName fqName,
             @NotNull List<String> superNames,
@@ -49,20 +48,19 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
             boolean isClassObject,
             boolean isLocal
     ) {
-        this(elementType, parent, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames), isTopLevel, isClassObject, isLocal);
+        this(parent, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames), isTopLevel, isClassObject, isLocal);
     }
 
     public PsiJetObjectStubImpl(
-            @NotNull IStubElementType elementType,
-            StubElement parent,
+            @NotNull StubElement parent,
             @Nullable StringRef name,
             @Nullable FqName fqName,
             @NotNull StringRef[] superNames,
             boolean isTopLevel,
             boolean isClassObject,
-            boolean isLocal) {
-        super(parent, elementType);
-
+            boolean isLocal
+    ) {
+        super(parent, JetStubElementTypes.OBJECT_DECLARATION);
         this.name = name;
         this.fqName = fqName;
         this.superNames = superNames;

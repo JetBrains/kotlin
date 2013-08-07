@@ -17,12 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -40,8 +40,8 @@ public class JetTypeParameter extends JetNamedDeclarationStub<PsiJetTypeParamete
         super(node);
     }
 
-    public JetTypeParameter(@NotNull PsiJetTypeParameterStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
+    public JetTypeParameter(@NotNull PsiJetTypeParameterStub stub) {
+        super(stub, JetStubElementTypes.TYPE_PARAMETER);
     }
 
     @Override

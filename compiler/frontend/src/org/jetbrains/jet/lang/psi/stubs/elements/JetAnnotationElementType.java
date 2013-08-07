@@ -24,7 +24,8 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetAnnotationStubImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -51,7 +52,7 @@ public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotatio
     public PsiJetAnnotationStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
         Name shortName = JetPsiUtil.getShortName(psi);
         String resultName = shortName != null ? shortName.asString() : psi.getText();
-        return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, resultName);
+        return new PsiJetAnnotationStubImpl(parentStub, resultName);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotatio
     @Override
     public PsiJetAnnotationStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
-        return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, text);
+        return new PsiJetAnnotationStubImpl(parentStub, text);
     }
 
     @Override

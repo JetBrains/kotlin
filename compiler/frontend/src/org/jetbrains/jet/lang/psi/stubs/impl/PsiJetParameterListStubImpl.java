@@ -16,15 +16,15 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetParameterList;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterListStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class PsiJetParameterListStubImpl extends StubBase<JetParameterList> implements PsiJetParameterListStub {
-    public PsiJetParameterListStubImpl(IStubElementType elementType, StubElement parent) {
-        super(parent, elementType);
+    public PsiJetParameterListStubImpl(StubElement parent) {
+        super(parent, JetStubElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @Override

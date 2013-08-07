@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterListStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
@@ -30,8 +29,8 @@ public class JetParameterList extends JetElementImplStub<PsiJetParameterListStub
         super(node);
     }
 
-    public JetParameterList(@NotNull PsiJetParameterListStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
+    public JetParameterList(@NotNull PsiJetParameterListStub stub) {
+        super(stub, JetStubElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -28,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -42,8 +42,8 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         super(node);
     }
 
-    public JetProperty(@NotNull PsiJetPropertyStub stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
+    public JetProperty(@NotNull PsiJetPropertyStub stub) {
+        super(stub, JetStubElementTypes.PROPERTY);
     }
 
     @Override

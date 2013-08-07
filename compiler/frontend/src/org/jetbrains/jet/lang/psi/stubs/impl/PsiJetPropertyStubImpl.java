@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements PsiJetPropertyStub {
@@ -33,9 +33,11 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     private final StringRef typeText;
     private final StringRef inferenceBodyText;
 
-    public PsiJetPropertyStubImpl(IStubElementType elementType, StubElement parent, StringRef name,
-            boolean isVar, boolean isTopLevel, @Nullable FqName fqName, StringRef typeText, StringRef inferenceBodyText) {
-        super(parent, elementType);
+    public PsiJetPropertyStubImpl(
+            StubElement parent, StringRef name,
+            boolean isVar, boolean isTopLevel, @Nullable FqName fqName, StringRef typeText, StringRef inferenceBodyText
+    ) {
+        super(parent, JetStubElementTypes.PROPERTY);
 
         if (isTopLevel && fqName == null) {
             throw new IllegalArgumentException("fqName shouldn't be null for top level properties");
@@ -49,11 +51,11 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
         this.inferenceBodyText = inferenceBodyText;
     }
 
-    public PsiJetPropertyStubImpl(IStubElementType elementType, StubElement parent, String name,
+    public PsiJetPropertyStubImpl(StubElement parent, String name,
             boolean isVar, boolean isTopLevel, @Nullable FqName topFQName,
             String typeText, String inferenceBodyText
     ) {
-        this(elementType, parent, StringRef.fromString(name),
+        this(parent, StringRef.fromString(name),
              isVar, isTopLevel, topFQName, StringRef.fromString(typeText), StringRef.fromString(inferenceBodyText));
     }
 

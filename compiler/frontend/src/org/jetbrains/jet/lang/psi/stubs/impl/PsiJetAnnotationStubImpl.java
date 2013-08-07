@@ -16,23 +16,23 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class PsiJetAnnotationStubImpl extends StubBase<JetAnnotationEntry> implements PsiJetAnnotationStub  {
     private final StringRef shortName;
 
-    public PsiJetAnnotationStubImpl(StubElement parent, IStubElementType elementType, @NotNull String shortName) {
-        this(parent, elementType, StringRef.fromString(shortName));
+    public PsiJetAnnotationStubImpl(StubElement parent, @NotNull String shortName) {
+        this(parent, StringRef.fromString(shortName));
     }
 
-    public PsiJetAnnotationStubImpl(StubElement parent, IStubElementType elementType, StringRef shortName) {
-        super(parent, elementType);
+    public PsiJetAnnotationStubImpl(StubElement parent, StringRef shortName) {
+        super(parent, JetStubElementTypes.ANNOTATION_ENTRY);
         this.shortName = shortName;
     }
 

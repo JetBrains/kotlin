@@ -61,7 +61,6 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         FqName fqName = psi.getFqName();
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new PsiJetObjectStubImpl(
-                JetStubElementTypes.OBJECT_DECLARATION,
                 parentStub,
                 name,
                 fqName,
@@ -107,9 +106,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
             superNames[i] = dataStream.readName();
         }
 
-        return new PsiJetObjectStubImpl(
-                JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, superNames, isTopLevel, isClassObject, isLocal
-        );
+        return new PsiJetObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isClassObject, isLocal);
     }
 
     @Override
