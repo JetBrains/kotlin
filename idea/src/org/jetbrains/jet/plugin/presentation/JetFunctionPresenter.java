@@ -23,7 +23,6 @@ import com.intellij.navigation.ItemPresentationProvider;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -60,7 +59,7 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
 
             @Override
             public String getLocationString() {
-                FqName name = JetPsiUtil.getFQName(function);
+                FqName name = function.getFqName();
                 if (name != null) {
                     JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
                     String extensionLocation = receiverTypeRef != null ? "for " + receiverTypeRef.getText() + " " : "";

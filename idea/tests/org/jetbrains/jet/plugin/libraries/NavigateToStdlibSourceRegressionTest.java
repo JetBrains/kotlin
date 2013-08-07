@@ -27,7 +27,6 @@ import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
 
@@ -95,7 +94,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
             assertEquals(expectedName, ((PsiClass) element).getQualifiedName());
         }
         else if (element instanceof JetClass) {
-            FqName name = JetPsiUtil.getFQName((JetClass) element);
+            FqName name = ((JetClass) element).getFqName();
             assert name != null;
             assertEquals(expectedName, name.asString());
         }

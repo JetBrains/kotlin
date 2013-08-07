@@ -125,7 +125,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         for (JetClassOrObject classOrObject : classOrObjects) {
-            FqName fqName = JetPsiUtil.getFQName(classOrObject);
+            FqName fqName = classOrObject.getFqName();
             if (fqName != null) {
                 assert fqName.shortName().asString().equals(name) : "A declaration obtained from index has non-matching name:\n" +
                                                                     "in index: " + name + "\n" +
@@ -195,7 +195,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         Collection<JetObjectDeclaration> topObjects = JetTopLevelObjectShortNameIndex.getInstance().get(name, project, scope);
         for (JetObjectDeclaration objectDeclaration : topObjects) {
-            FqName fqName = JetPsiUtil.getFQName(objectDeclaration);
+            FqName fqName = objectDeclaration.getFqName();
             assert fqName != null : "Local object declaration in JetTopLevelShortObjectNameIndex:" + objectDeclaration.getText();
             result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, ResolveSessionUtils.SINGLETON_FILTER));
         }
@@ -340,7 +340,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
                 for (PsiElement extensionFunction : extensionFunctions) {
                     if (extensionFunction instanceof JetNamedFunction) {
-                        functionFQNs.add(JetPsiUtil.getFQName((JetNamedFunction) extensionFunction));
+                        functionFQNs.add(((JetNamedFunction) extensionFunction).getFqName());
                     }
                     else if (extensionFunction instanceof PsiMethod) {
                         FqName functionFQN =

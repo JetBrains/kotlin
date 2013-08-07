@@ -77,7 +77,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         }
 
         String functionName = element.getName();
-        FqName fqName = JetPsiUtil.getFQName(element);
+        FqName fqName = element.getFqName();
         if (fqName != null) functionName = fqName.asString();
 
         if (KotlinBuiltIns.getInstance().isUnit(type) && element.hasBlockBody()) {

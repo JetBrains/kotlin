@@ -107,7 +107,7 @@ public fun PsiElement.getKotlinFqName(): FqName? {
             val prefix = element.getContainingClass()?.getQualifiedName()
             FqName(if (prefix != null) "$prefix.$name" else name)
         }
-        is JetNamedDeclaration -> JetPsiUtil.getFQName(element)
+        is JetNamedDeclaration -> element.getFqName()
         else -> null
     }
 }

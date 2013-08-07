@@ -38,7 +38,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
         renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
         JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
         isPrimaryConstructorParameter = declaration instanceof JetClass;
-        FqName declarationFQName = declaration == null ? null : JetPsiUtil.getFQName(declaration);
+        FqName declarationFQName = declaration == null ? null : declaration.getFqName();
         containingDeclarationName = declarationFQName == null ? null : declarationFQName.asString();
     }
 

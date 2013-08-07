@@ -48,7 +48,7 @@ public class JetDefaultNamedDeclarationPresentation implements ColoredItemPresen
 
     @Override
     public String getLocationString() {
-        FqName name = JetPsiUtil.getFQName(declaration);
+        FqName name = declaration.getFqName();
         if (name != null) {
             return "(" + name.parent().toString() + ")";
         }

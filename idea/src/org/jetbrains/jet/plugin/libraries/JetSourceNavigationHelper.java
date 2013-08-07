@@ -248,7 +248,7 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     private static JetClassOrObject getSourceForNamedClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
-        FqName classFqName = JetPsiUtil.getFQName(decompiledClassOrObject);
+        FqName classFqName = decompiledClassOrObject.getFqName();
         assert classFqName != null;
 
         GlobalSearchScope librarySourcesScope = createLibrarySourcesScope(decompiledClassOrObject);
@@ -265,7 +265,7 @@ public class JetSourceNavigationHelper {
 
     @NotNull
     private static Collection<JetNamedDeclaration> getInitialTopLevelCandidates(@NotNull JetNamedDeclaration decompiledDeclaration) {
-        FqName memberFqName = JetPsiUtil.getFQName(decompiledDeclaration);
+        FqName memberFqName = decompiledDeclaration.getFqName();
         assert memberFqName != null;
 
         GlobalSearchScope librarySourcesScope = createLibrarySourcesScope(decompiledDeclaration);
