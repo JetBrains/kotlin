@@ -271,6 +271,7 @@
 
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.KotlinLibrariesNotificationProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.AbsentJdkAnnotationsNotifications"/>
+    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.IncorrectSourceRootNameNotification"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
 
