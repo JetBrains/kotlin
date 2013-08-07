@@ -19,9 +19,11 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetTypeParameterElementType;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> implements PsiJetTypeParameterStub {
     private final StringRef name;
@@ -83,5 +85,12 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
         builder.append("]");
 
         return builder.toString();
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        // type parameters doesn't have FqNames
+        return null;
     }
 }

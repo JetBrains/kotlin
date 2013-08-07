@@ -32,16 +32,16 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     private final StringRef nameRef;
     private final boolean isTopLevel;
     private final boolean isExtension;
-    private final FqName topFQName;
+    private final FqName fqName;
 
     public PsiJetFunctionStubImpl(
             @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
             @Nullable String name,
             boolean isTopLevel,
-            @Nullable FqName topFQName,
+            @Nullable FqName fqName,
             boolean isExtension) {
-        this(elementType, parent, StringRef.fromString(name), isTopLevel, topFQName, isExtension);
+        this(elementType, parent, StringRef.fromString(name), isTopLevel, fqName, isExtension);
     }
 
     public PsiJetFunctionStubImpl(
@@ -49,16 +49,16 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
             @NotNull StubElement parent,
             @Nullable StringRef nameRef,
             boolean isTopLevel,
-            @Nullable FqName topFQName,
+            @Nullable FqName fqName,
             boolean isExtension) {
         super(parent, elementType);
 
-        if (isTopLevel && topFQName == null) {
-            throw new IllegalArgumentException("topFQName shouldn't be null for top level functions");
+        if (isTopLevel && fqName == null) {
+            throw new IllegalArgumentException("fqName shouldn't be null for top level functions");
         }
 
         this.nameRef = nameRef;
-        this.topFQName = topFQName;
+        this.fqName = fqName;
         this.isTopLevel = isTopLevel;
         this.isExtension = isExtension;
     }
@@ -66,12 +66,6 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     @Override
     public String getName() {
         return StringRef.toString(nameRef);
-    }
-
-    @Nullable
-    @Override
-    public FqName getTopFQName() {
-        return topFQName;
     }
 
     @Override
@@ -97,8 +91,8 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
         builder.append("PsiJetFunctionStubImpl[");
 
         if (isTopLevel()) {
-            assert topFQName != null;
-            builder.append("top ").append("topFQName=").append(topFQName.toString()).append(" ");
+            assert fqName != null;
+            builder.append("top ").append("fqName=").append(fqName.toString()).append(" ");
         }
 
         if (isExtension()) {
@@ -110,5 +104,11 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
         builder.append("]");
 
         return builder.toString();
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        return fqName;
     }
 }

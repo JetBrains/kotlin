@@ -120,7 +120,7 @@ public class StubIndexServiceImpl implements StubIndexService {
                     sink.occurrence(JetTopLevelExtensionFunctionShortNameIndex.getInstance().getKey(), name);
                 }
 
-                FqName topFQName = stub.getTopFQName();
+                FqName topFQName = stub.getFqName();
                 if (topFQName != null) {
                     sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), topFQName.asString());
                 }
@@ -135,7 +135,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         String propertyName = stub.getName();
         if (propertyName != null) {
             if (stub.isTopLevel()) {
-                FqName topFQName = stub.getTopFQName();
+                FqName topFQName = stub.getFqName();
                 if (topFQName != null) {
                     sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), topFQName.asString());
                 }

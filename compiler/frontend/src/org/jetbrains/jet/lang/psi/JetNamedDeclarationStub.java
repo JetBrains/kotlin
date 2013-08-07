@@ -21,14 +21,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.NamedStub;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetStubWithFqName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
-abstract class JetNamedDeclarationStub<T extends NamedStub> extends JetDeclarationStub<T> implements JetNamedDeclaration {
+abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends JetDeclarationStub<T> implements JetNamedDeclaration {
     public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
@@ -91,5 +93,15 @@ abstract class JetNamedDeclarationStub<T extends NamedStub> extends JetDeclarati
         }
 
         return super.getUseScope();
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        T stub = getStub();
+        if (stub != null) {
+            return stub.getFqName();
+        }
+        return JetPsiUtil.getFQName(this);
     }
 }

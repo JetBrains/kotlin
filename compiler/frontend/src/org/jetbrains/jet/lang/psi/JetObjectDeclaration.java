@@ -54,19 +54,6 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
         return nameAsDeclaration == null ? null : nameAsDeclaration.getName();
     }
 
-    /**
-     * Could be null for anonymous objects and object declared inside functions
-     * @return
-     */
-    public FqName getFqName() {
-        PsiJetObjectStub stub = getStub();
-        if (stub != null) {
-            return stub.getFqName();
-        }
-
-        return JetPsiUtil.getFQName(this);
-    }
-
     public boolean isTopLevel() {
         PsiJetObjectStub stub = getStub();
         if (stub != null) {

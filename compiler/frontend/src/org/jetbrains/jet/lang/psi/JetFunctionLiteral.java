@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetFunctionLiteral extends JetFunctionNotStubbed {
@@ -65,5 +66,11 @@ public class JetFunctionLiteral extends JetFunctionNotStubbed {
     @Nullable
     public ASTNode getArrowNode() {
         return getNode().findChildByType(JetTokens.ARROW);
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        return null;
     }
 }

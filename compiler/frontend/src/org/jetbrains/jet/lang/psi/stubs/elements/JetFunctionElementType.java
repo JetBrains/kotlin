@@ -77,8 +77,8 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isTopLevel());
 
-        FqName topFQName = stub.getTopFQName();
-        dataStream.writeName(topFQName != null ? topFQName.toString() : null);
+        FqName fqName = stub.getFqName();
+        dataStream.writeName(fqName != null ? fqName.asString() : null);
 
         dataStream.writeBoolean(stub.isExtension());
     }
@@ -89,8 +89,8 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
         StringRef name = dataStream.readName();
         boolean isTopLevel = dataStream.readBoolean();
 
-        StringRef topFQNameStr = dataStream.readName();
-        FqName fqName = topFQNameStr != null ? new FqName(topFQNameStr.toString()) : null;
+        StringRef fqNameAsString = dataStream.readName();
+        FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
         boolean isExtension = dataStream.readBoolean();
 

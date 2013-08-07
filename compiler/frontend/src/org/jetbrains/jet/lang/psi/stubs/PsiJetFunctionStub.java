@@ -16,16 +16,10 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public interface PsiJetFunctionStub extends NamedStub<JetNamedFunction> {
-    @Nullable
-    FqName getTopFQName();
-
+public interface PsiJetFunctionStub extends PsiJetStubWithFqName<JetNamedFunction> {
     /**
      * Is function defined in directly in package.
      * @return

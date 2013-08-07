@@ -23,6 +23,7 @@ import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements PsiJetParameterStub {
     private final StringRef name;
@@ -30,26 +31,33 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     private final boolean isVarArg;
     private final StringRef typeText;
     private final StringRef defaultValueText;
+    private final FqName fqName;
 
-    public PsiJetParameterStubImpl(IStubElementType elementType, StubElement parent,
-            StringRef name,
+    public PsiJetParameterStubImpl(
+            IStubElementType elementType, StubElement parent,
+            FqName fqName, StringRef name,
             boolean isMutable,
             boolean isVarArg,
-            StringRef typeText, StringRef defaultValueText) {
+            StringRef typeText, StringRef defaultValueText
+    ) {
         super(parent, elementType);
         this.name = name;
         this.isMutable = isMutable;
         this.isVarArg = isVarArg;
         this.typeText = typeText;
         this.defaultValueText = defaultValueText;
+        this.fqName = fqName;
     }
 
-    public PsiJetParameterStubImpl(IStubElementType elementType, StubElement parent,
-            String name,
+    public PsiJetParameterStubImpl(
+            IStubElementType elementType, StubElement parent,
+            FqName fqName, String name,
             boolean isMutable,
             boolean isVarArg,
-            String typeText, String defaultValueText) {
-        this(elementType, parent, StringRef.fromString(name), isMutable, isVarArg,
+            String typeText,
+            String defaultValueText
+    ) {
+        this(elementType, parent, fqName, StringRef.fromString(name), isMutable, isVarArg,
              StringRef.fromString(typeText), StringRef.fromString(defaultValueText));
     }
 
@@ -91,11 +99,20 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
         }
 
         builder.append("name=").append(getName());
+        if (fqName != null) {
+            builder.append(" fqName=").append(fqName.toString()).append(" ");
+        }
         builder.append(" typeText=").append(getTypeText());
         builder.append(" defaultValue=").append(getDefaultValueText());
 
         builder.append("]");
 
         return builder.toString();
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        return fqName;
     }
 }

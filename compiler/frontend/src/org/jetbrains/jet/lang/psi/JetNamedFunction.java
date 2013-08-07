@@ -27,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -74,35 +72,6 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     @Nullable
     public JetExpression getInitializer() {
         return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), JetExpression.class);
-    }
-
-    /**
-    * Returns full qualified name for function "package_fqn.function_name"
-    * Not null for top level functions unless syntax errors are present.
-    * @return
-    */
-    @Nullable
-    public FqName getFqName() {
-        PsiJetFunctionStub stub = getStub();
-        if (stub != null) {
-            return stub.getTopFQName();
-        }
-
-        PsiElement parent = getParent();
-        if (parent instanceof JetFile) {
-            // fqname is different in scripts
-            if (((JetFile) parent).getPackageDirective() == null) {
-                return null;
-            }
-            JetFile jetFile = (JetFile) parent;
-            FqName fileFQN = JetPsiUtil.getFQName(jetFile);
-            Name nameAsName = getNameAsName();
-            if (nameAsName != null) {
-                return fileFQN.child(nameAsName);
-            }
-        }
-
-        return null;
     }
 
     @Override

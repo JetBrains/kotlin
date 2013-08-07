@@ -92,7 +92,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testFunctionParameters() {
         doBuildTest("fun some(t: Int, other: String = \"hello\") { }",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=some name=some]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=some name=some]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
                     "      VALUE_PARAMETER:PsiJetParameterStubImpl[val name=t typeText=Int defaultValue=null]\n" +
                     "      VALUE_PARAMETER:PsiJetParameterStubImpl[val name=other typeText=String defaultValue=\"hello\"]\n");
@@ -102,7 +102,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         doBuildTest("package test.testing\n" +
                     "val some = 12",
                     "PsiJetFileStubImpl[package=test.testing]\n" +
-                    "  PROPERTY:PsiJetPropertyStubImpl[val top topFQName=test.testing.some name=some typeText=null bodyText=12]\n");
+                    "  PROPERTY:PsiJetPropertyStubImpl[val top fqName=test.testing.some name=some typeText=null bodyText=12]\n");
     }
 
     public void testClassProperty() {
@@ -117,14 +117,14 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testNotStorePropertyFromInitializer() {
         doBuildTest("fun DoubleArray.some() = for (element in this) println(element)",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=some ext name=some]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=some ext name=some]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 
     public void testNotStorePropertyFromDelegate() {
         doBuildTest("val a by kotlin.\n val b = 1",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  PROPERTY:PsiJetPropertyStubImpl[val top topFQName=a name=a typeText=null bodyText=null]\n");
+                    "  PROPERTY:PsiJetPropertyStubImpl[val top fqName=a name=a typeText=null bodyText=null]\n");
     }
 
     public void testNotStorePropertiesFrom() {
@@ -172,7 +172,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
                     "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
                     "    CLASS:PsiJetClassStubImpl[local name=Test fqn=null superNames=[AT]]\n");
     }
@@ -182,7 +182,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
                     "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
                     "    CLASS:PsiJetClassStubImpl[local name=Test fqn=null superNames=[AT]]\n");
     }
@@ -200,7 +200,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
                     "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
                     "    OBJECT_DECLARATION:PsiJetObjectStubImpl[local name=O fqName=null superNames=[AT]]\n");
     }
@@ -210,7 +210,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
                     "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
-                    "  PROPERTY:PsiJetPropertyStubImpl[val top topFQName=obj name=obj typeText=null bodyText=object : A(), T]\n" +
+                    "  PROPERTY:PsiJetPropertyStubImpl[val top fqName=obj name=obj typeText=null bodyText=object : A(), T]\n" +
                     "    OBJECT_DECLARATION:PsiJetObjectStubImpl[local name=null fqName=null superNames=[AT]]\n");
     }
 
@@ -224,7 +224,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testAnnotationOnFunction() {
         doBuildTest("Deprecated fun foo() {}",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]\n" +
                     "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
@@ -232,7 +232,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testQualifiedAnnotationOnFunction() {
         doBuildTest("java.lang.Deprecated fun foo() {}",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]\n" +
                     "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
@@ -240,7 +240,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testManyAnnotationsOnFunction() {
         doBuildTest("[Deprecated Override] fun foo() {}",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]\n" +
                     "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
                     "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Override]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
@@ -249,7 +249,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testAnnotationOnLocalFunction() {
         doBuildTest("fun foo() { [Deprecated] fun innerFoo() {} }",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 

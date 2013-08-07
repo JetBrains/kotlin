@@ -18,15 +18,15 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetStubWithFqName;
 
 import java.util.Collections;
 import java.util.List;
 
-abstract class JetTypeParameterListOwnerStub<T extends NamedStub> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
+abstract class JetTypeParameterListOwnerStub<T extends PsiJetStubWithFqName> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
     public JetTypeParameterListOwnerStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }

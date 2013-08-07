@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class JetTypedef extends JetTypeParameterListOwnerNotStubbed {
     public JetTypedef(@NotNull ASTNode node) {
@@ -34,5 +35,12 @@ public class JetTypedef extends JetTypeParameterListOwnerNotStubbed {
     @Nullable @IfNotParsed
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        //TODO: typedefs are unsupported
+        return null;
     }
 }

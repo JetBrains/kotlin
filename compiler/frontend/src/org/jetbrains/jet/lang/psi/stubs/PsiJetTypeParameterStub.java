@@ -16,10 +16,9 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.jet.lang.psi.JetTypeParameter;
 
-public interface PsiJetTypeParameterStub extends NamedStub<JetTypeParameter> {
+public interface PsiJetTypeParameterStub extends PsiJetStubWithFqName<JetTypeParameter> {
     String getExtendBoundTypeText();
     boolean isInVariance();
     boolean isOutVariance();

@@ -21,6 +21,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
@@ -62,5 +63,11 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
     @Override
     public ASTNode getValOrVarNode() {
         return getParentNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        return null;
     }
 }
