@@ -108,4 +108,8 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
     public ItemPresentation getPresentation() {
         return ItemPresentationProviders.getItemPresentation(this);
     }
+
+    public boolean isLoopParameter() {
+        return getParent() instanceof JetForExpression;
+    }
 }

@@ -108,7 +108,6 @@ public interface JetNodeTypes {
     JetNodeType FOR                       = new JetNodeType("FOR", JetForExpression.class);
     JetNodeType WHILE                     = new JetNodeType("WHILE", JetWhileExpression.class);
     JetNodeType DO_WHILE                  = new JetNodeType("DO_WHILE", JetDoWhileExpression.class);
-    JetNodeType LOOP_PARAMETER            = new JetNodeType("LOOP_PARAMETER", JetParameter.class); // TODO: Do we need separate type?
     JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE", JetContainerNode.class);
     JetNodeType BODY                      = new JetNodeType("BODY", JetContainerNode.class);
     JetNodeType BLOCK                     = new JetNodeType("BLOCK", JetBlockExpression.class);

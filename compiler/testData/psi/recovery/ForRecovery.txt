@@ -16,7 +16,7 @@ JetFile: ForRecovery.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('v')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')

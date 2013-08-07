@@ -1374,7 +1374,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 advance(); // COLON
                 myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
             }
-            parameter.done(LOOP_PARAMETER);
+            parameter.done(VALUE_PARAMETER);
         }
 
         expect(IN_KEYWORD, "Expecting 'in'", TokenSet.create(LPAR, LBRACE));

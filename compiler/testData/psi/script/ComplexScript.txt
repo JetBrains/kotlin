@@ -99,7 +99,7 @@ JetFile: ComplexScript.ktscript
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('arg')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')

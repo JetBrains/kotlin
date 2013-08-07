@@ -81,8 +81,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             afterInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
             beforeInside(COLON, MULTI_VARIABLE_DECLARATION_ENTRY).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
             afterInside(COLON, MULTI_VARIABLE_DECLARATION_ENTRY).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
-            beforeInside(COLON, LOOP_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
-            afterInside(COLON, LOOP_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
             beforeInside(COLON, FUNCTION_LITERAL).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
             afterInside(COLON, FUNCTION_LITERAL).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
 

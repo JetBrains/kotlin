@@ -167,7 +167,7 @@ JetFile: IOSamples.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('item')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')

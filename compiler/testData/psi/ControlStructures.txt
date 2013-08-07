@@ -453,7 +453,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('x')
@@ -473,7 +473,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
@@ -491,7 +491,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('x')
@@ -518,7 +518,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -588,7 +588,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
@@ -606,7 +606,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
@@ -625,7 +625,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
@@ -648,7 +648,7 @@ JetFile: ControlStructures.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        LOOP_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')

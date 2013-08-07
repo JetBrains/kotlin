@@ -356,7 +356,7 @@ JetFile: PolymorphicClassObjects.kt
             PsiElement(for)('for')
             PsiWhiteSpace(' ')
             PsiElement(LPAR)('(')
-            LOOP_PARAMETER
+            VALUE_PARAMETER
               PsiElement(IDENTIFIER)('e')
             PsiWhiteSpace(' ')
             PsiElement(in)('in')

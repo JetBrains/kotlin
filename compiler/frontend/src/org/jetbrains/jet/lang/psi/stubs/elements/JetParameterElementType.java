@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -60,7 +61,11 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
 
     @Override
     public boolean shouldCreateStub(ASTNode node) {
-        return node.getElementType() == JetStubElementTypes.VALUE_PARAMETER;
+        if (!super.shouldCreateStub(node)) {
+            return false;
+        }
+        PsiElement psi = node.getPsi();
+        return psi instanceof JetParameter && !((JetParameter) psi).isLoopParameter();
     }
 
     @Override
