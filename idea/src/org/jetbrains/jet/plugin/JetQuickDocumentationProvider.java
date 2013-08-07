@@ -21,10 +21,10 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.lang.java.JavaDocumentationProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
-import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
+import org.jetbrains.jet.plugin.libraries.DecompiledUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -117,7 +117,8 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         if (JetLanguage.INSTANCE == declaration.getLanguage()) return true;
         ClsClassImpl clsClass = PsiTreeUtil.getParentOfType(declaration, ClsClassImpl.class);
         if (clsClass == null) return false;
-        return JetDecompiledData.isKotlinFile((ClsFileImpl) clsClass.getContainingFile());
+        VirtualFile file = clsClass.getContainingFile().getVirtualFile();
+        return file != null && DecompiledUtils.isKotlinCompiledFile(file);
     }
 
     @Override
