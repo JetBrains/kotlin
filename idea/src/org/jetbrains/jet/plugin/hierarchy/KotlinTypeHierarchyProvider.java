@@ -57,6 +57,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             if (!(file instanceof JetFile)) return null;
 
             if (!JetPluginUtil.isInSourceContent(file)) return null;
+            if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file)) return null;
 
             PsiElement target = TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
 
