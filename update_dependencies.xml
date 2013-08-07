@@ -19,6 +19,13 @@
         />
     </target>
 
+    <target name="jb_update_continuous" depends="fetch-third-party">
+        <execute_update
+            base.url="file://${basedir}/idea_artifacts"
+            build.zip="${idea.archive.name}"
+        />
+    </target>
+
     <macrodef name="get-maven-library">
         <attribute name="prefix"/>
         <attribute name="lib"/>
