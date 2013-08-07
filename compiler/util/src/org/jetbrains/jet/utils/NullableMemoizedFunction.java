@@ -50,11 +50,11 @@ public abstract class NullableMemoizedFunction<K, V> implements NullableFunction
     @Nullable
     public V fun(@NotNull K input) {
         Object value = cache.get(input);
-        if (value != null) return Nulls.unescape(value);
+        if (value != null) return WrappedValues.unescapeNull(value);
 
         V typedValue = compute(input);
 
-        Object oldValue = cache.put(input, Nulls.escape(typedValue));
+        Object oldValue = cache.put(input, WrappedValues.escapeNull(typedValue));
         assert oldValue == null : "Race condition detected";
 
         return typedValue;

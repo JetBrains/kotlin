@@ -20,6 +20,9 @@ import java.io.Closeable;
 
 public class ExceptionUtils {
 
+    private ExceptionUtils() {
+    }
+
     /**
      * Translate exception to unchecked exception.
      *
@@ -43,7 +46,7 @@ public class ExceptionUtils {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
         }
     }

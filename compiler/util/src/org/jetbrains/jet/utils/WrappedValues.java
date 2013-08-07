@@ -19,19 +19,49 @@ package org.jetbrains.jet.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Nulls {
+public class WrappedValues {
     private static final Object NULL_VALUE = new Object();
+
+    private final static class ThrowableWrapper {
+        private final Throwable throwable;
+
+        private ThrowableWrapper(@NotNull Throwable throwable) {
+            this.throwable = throwable;
+        }
+
+        @NotNull
+        public Throwable getThrowable() {
+            return throwable;
+        }
+    }
+
+    private WrappedValues() {
+    }
 
     @Nullable
     @SuppressWarnings("unchecked")
-    public static <V> V unescape(@NotNull Object value) {
+    public static <V> V unescapeNull(@NotNull Object value) {
         if (value == NULL_VALUE) return null;
         return (V) value;
     }
 
     @NotNull
-    public static <V> Object escape(@Nullable V value) {
+    public static <V> Object escapeNull(@Nullable V value) {
         if (value == null) return NULL_VALUE;
         return value;
+    }
+
+    @NotNull
+    public static Object escapeThrowable(@NotNull Throwable throwable) {
+        return new ThrowableWrapper(throwable);
+    }
+
+    @Nullable
+    public static <V> V unescapeExceptionOrNull(@NotNull Object value) {
+        if (value instanceof ThrowableWrapper) {
+            throw ExceptionUtils.rethrow(((ThrowableWrapper) value).getThrowable());
+        }
+
+        return unescapeNull(value);
     }
 }

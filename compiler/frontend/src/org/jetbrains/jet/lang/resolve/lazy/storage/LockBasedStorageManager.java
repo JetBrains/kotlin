@@ -29,7 +29,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
-import org.jetbrains.jet.utils.Nulls;
+import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -132,18 +133,22 @@ public class LockBasedStorageManager implements StorageManager {
         @Override
         public T compute() {
             Object _value = value;
-            if (_value != null) return Nulls.unescape(_value);
+            if (_value != null) return WrappedValues.unescapeExceptionOrNull(_value);
 
             synchronized (lock) {
                 _value = value;
-                if (_value != null) return Nulls.unescape(_value);
+                if (_value != null) return WrappedValues.unescapeExceptionOrNull(_value);
 
-                T typedValue = computable.compute();
-                value = Nulls.escape(typedValue);
-
-                postCompute(typedValue);
-
-                return typedValue;
+                try {
+                    T typedValue = computable.compute();
+                    value = WrappedValues.escapeNull(typedValue);
+                    postCompute(typedValue);
+                    return typedValue;
+                }
+                catch (Throwable throwable) {
+                    value = WrappedValues.escapeThrowable(throwable);
+                    throw ExceptionUtils.rethrow(throwable);
+                }
             }
         }
 
@@ -182,18 +187,25 @@ public class LockBasedStorageManager implements StorageManager {
         @Nullable
         public V fun(@NotNull K input) {
             Object value = cache.get(input);
-            if (value != null) return Nulls.unescape(value);
+            if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
             synchronized (lock) {
                 value = cache.get(input);
-                if (value != null) return Nulls.unescape(value);
+                if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
-                V typedValue = compute.fun(input);
+                try {
+                    V typedValue = compute.fun(input);
+                    Object oldValue = cache.put(input, WrappedValues.escapeNull(typedValue));
+                    assert oldValue == null : "Race condition detected";
 
-                Object oldValue = cache.put(input, Nulls.escape(typedValue));
-                assert oldValue == null : "Race condition detected";
+                    return typedValue;
+                }
+                catch (Throwable throwable) {
+                    Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
+                    assert oldValue == null : "Race condition detected";
 
-                return typedValue;
+                    throw ExceptionUtils.rethrow(throwable);
+                }
             }
         }
     }
