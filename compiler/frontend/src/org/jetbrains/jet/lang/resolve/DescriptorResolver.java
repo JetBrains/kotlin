@@ -1423,47 +1423,59 @@ public class DescriptorResolver {
         }
     }
 
+    @NotNull
     public static SimpleFunctionDescriptor createEnumClassObjectValuesMethod(
-            @NotNull ClassDescriptor classObjectDescriptor,
-            BindingTrace trace
+            @NotNull ClassDescriptor classObject,
+            @NotNull BindingTrace trace
     ) {
-        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObjectDescriptor.getContainingDeclaration();
-        assert enumClassDescriptor.getKind() == ClassKind.ENUM_CLASS;
-        List<AnnotationDescriptor> annotations = Collections.<AnnotationDescriptor>emptyList();
-        SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
-                                                 VALUES_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.DECLARATION);
-        JetType type = DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
+        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
+        assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "values should be created in enum class: " + enumClassDescriptor;
+        return createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
             @Override
             protected JetType compute() {
                 return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
             }
-        });
-        values.initialize(null, classObjectDescriptor.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
-                          Collections.<ValueParameterDescriptor>emptyList(),
-                          type, Modality.FINAL,
-                          Visibilities.PUBLIC, false);
-        return values;
+        }));
     }
 
-    public static SimpleFunctionDescriptor createEnumClassObjectValueOfMethod(
-            @NotNull ClassDescriptor classObjectDescriptor,
-            BindingTrace trace
+    @NotNull
+    public static SimpleFunctionDescriptor createEnumClassObjectValuesMethod(
+            @NotNull ClassDescriptor classObject,
+            @NotNull JetType returnType
     ) {
-        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObjectDescriptor.getContainingDeclaration();
-        assert enumClassDescriptor.getKind() == ClassKind.ENUM_CLASS;
-        List<AnnotationDescriptor> annotations = Collections.<AnnotationDescriptor>emptyList();
         SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
-                                                 VALUE_OF_METHOD_NAME,
+                new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUES_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
-        JetType type = DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
+        return values.initialize(null, classObject.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
+                                 Collections.<ValueParameterDescriptor>emptyList(),
+                                 returnType, Modality.FINAL,
+                                 Visibilities.PUBLIC, false);
+    }
+
+
+    @NotNull
+    public static SimpleFunctionDescriptor createEnumClassObjectValueOfMethod(
+            @NotNull ClassDescriptor classObject,
+            @NotNull BindingTrace trace
+    ) {
+        final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
+        assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "valueOf should be created in enum class: " + enumClassDescriptor;
+        return createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
             @Override
             protected JetType compute() {
                 return enumClassDescriptor.getDefaultType();
             }
-        });
+        }));
+    }
+
+    @NotNull
+    public static SimpleFunctionDescriptor createEnumClassObjectValueOfMethod(
+            @NotNull ClassDescriptor classObject,
+            @NotNull JetType returnType
+    ) {
+        SimpleFunctionDescriptorImpl values =
+                new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUE_OF_METHOD_NAME,
+                                                 CallableMemberDescriptor.Kind.DECLARATION);
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 values,
                 0,
@@ -1472,12 +1484,11 @@ public class DescriptorResolver {
                 KotlinBuiltIns.getInstance().getStringType(),
                 false,
                 null);
-        values.initialize(null, classObjectDescriptor.getThisAsReceiverParameter(),
-                          Collections.<TypeParameterDescriptor>emptyList(),
-                          Collections.singletonList(parameterDescriptor),
-                          type, Modality.FINAL,
-                          Visibilities.PUBLIC, false);
-        return values;
+        return values.initialize(null, classObject.getThisAsReceiverParameter(),
+                                 Collections.<TypeParameterDescriptor>emptyList(),
+                                 Collections.singletonList(parameterDescriptor),
+                                 returnType, Modality.FINAL,
+                                 Visibilities.PUBLIC, false);
     }
 
     public static ReceiverParameterDescriptor createLazyReceiverParameterDescriptor(@NotNull final ClassDescriptor classDescriptor) {
