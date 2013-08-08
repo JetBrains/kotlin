@@ -146,8 +146,8 @@ public final class PatternBuilder {
             this.names = names;
         }
 
-        public DescriptorPredicateImpl receiverExists(boolean receiverParameterExists) {
-            this.receiverParameterExists = receiverParameterExists;
+        public DescriptorPredicateImpl receiverExists() {
+            this.receiverParameterExists = true;
             return this;
         }
 
