@@ -1032,8 +1032,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
             context.trace.report(USELESS_ELVIS.on(left, leftType));
         }
-        return JetTypeInfo.create(resolvedCall.getResultingDescriptor().getReturnType(),
-                                  resolvedCall.getDataFlowInfoForArguments().getResultInfo());
+        JetTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
+        assert rightTypeInfo != null : "Right expression was not processed: " + expression;
+        JetType rightType = rightTypeInfo.getType();
+
+        DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
+        JetType type = resolvedCall.getResultingDescriptor().getReturnType();
+        if (type == null || rightType == null) return JetTypeInfo.create(null, dataFlowInfo);
+
+        return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(type, rightType.isNullable()), dataFlowInfo);
     }
 
     @NotNull
