@@ -204,16 +204,16 @@ public class CallExpressionResolver {
     private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull boolean[] result
     ) {
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve as local variable or property", nameExpression);
+        TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
+                context, "trace to resolve as local variable or property", nameExpression);
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
         BasicCallResolutionContext contextForVariable = BasicCallResolutionContext.create(
-                context.replaceBindingTrace(traceForVariable).replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).
-                        replaceResolutionResultsCache(), call, CheckValueArgumentsMode.ENABLED);
+                context.replaceTraceAndCache(temporaryForVariable),
+                call, CheckValueArgumentsMode.ENABLED);
         OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
         if (!resolutionResult.isNothing()) {
-            traceForVariable.commit();
+            temporaryForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);
             result[0] = true;
             return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
@@ -222,11 +222,11 @@ public class CallExpressionResolver {
         ResolutionContext newContext = receiver.exists()
                                              ? context.replaceScope(receiver.getType().getMemberScope())
                                              : context;
-        TemporaryBindingTrace traceForNamespaceOrClassObject = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve as namespace or class object", nameExpression);
-        JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceBindingTrace(traceForNamespaceOrClassObject));
+        TemporaryTraceAndCache temporaryForNamespaceOrClassObject = TemporaryTraceAndCache.create(
+                context, "trace to resolve as namespace or class object", nameExpression);
+        JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceTraceAndCache(temporaryForNamespaceOrClassObject));
         if (jetType != null) {
-            traceForNamespaceOrClassObject.commit();
+            temporaryForNamespaceOrClassObject.commit();
 
             // Uncommitted changes in temp context
             context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);
@@ -236,6 +236,7 @@ public class CallExpressionResolver {
             result[0] = true;
             return jetType;
         }
+        temporaryForVariable.commit();
         result[0] = false;
         return null;
     }
@@ -246,10 +247,11 @@ public class CallExpressionResolver {
     ) {
         boolean[] result = new boolean[1];
 
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace, "trace to resolve as variable", nameExpression);
-        JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceBindingTrace(traceForVariable), result);
+        TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
+                context, "trace to resolve as variable", nameExpression);
+        JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
         if (result[0]) {
-            traceForVariable.commit();
+            temporaryForVariable.commit();
             if (type instanceof NamespaceType && context.expressionPosition == ExpressionPosition.FREE) {
                 type = null;
             }
@@ -257,20 +259,21 @@ public class CallExpressionResolver {
         }
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", nameExpression);
-        ResolutionContext newContext = context.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceResolutionResultsCache();
+        TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
+                context, "trace to resolve as function", nameExpression);
+        ResolutionContext newContext = context.replaceTraceAndCache(temporaryForFunction);
         ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
                 call, nameExpression, newContext, CheckValueArgumentsMode.ENABLED, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            traceForFunction.commit();
+            temporaryForFunction.commit();
             boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
             context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
             type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
 
-        traceForVariable.commit();
+        temporaryForVariable.commit();
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
@@ -295,12 +298,14 @@ public class CallExpressionResolver {
         boolean[] result = new boolean[1];
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
 
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call", callExpression);
+        TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
+                context, "trace to resolve as function call", callExpression);
         ResolvedCallWithTrace<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
-                call, callExpression, context.replaceBindingTrace(traceForFunction), CheckValueArgumentsMode.ENABLED, result);
+                call, callExpression, context.replaceTraceAndCache(temporaryForFunction),
+                CheckValueArgumentsMode.ENABLED, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            traceForFunction.commit();
+            temporaryForFunction.commit();
             if (callExpression.getValueArgumentList() == null && callExpression.getFunctionLiteralArguments().isEmpty()) {
                 // there are only type arguments
                 boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
@@ -316,18 +321,18 @@ public class CallExpressionResolver {
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression instanceof JetSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
-            TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
-                    context.trace, "trace to resolve as variable with 'invoke' call", callExpression);
+            TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
+                    context, "trace to resolve as variable with 'invoke' call", callExpression);
             JetType type = getVariableType((JetSimpleNameExpression) calleeExpression, receiver, callOperationNode,
-                                           context.replaceBindingTrace(traceForVariable), result);
+                                           context.replaceTraceAndCache(temporaryForVariable), result);
             if (result[0]) {
-                traceForVariable.commit();
+                temporaryForVariable.commit();
                 context.trace.report(FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
                 return JetTypeInfo.create(null, context.dataFlowInfo);
             }
         }
-        traceForFunction.commit();
+        temporaryForFunction.commit();
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 

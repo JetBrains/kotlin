@@ -143,7 +143,7 @@ public class CallResolver {
     ) {
         return resolveFunctionCall(BasicCallResolutionContext.create(
                 trace, scope, call, expectedType, dataFlowInfo, ResolveMode.TOP_LEVEL_CALL, CheckValueArgumentsMode.ENABLED,
-                ExpressionPosition.FREE, ResolutionResultsCache.create()));
+                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create()));
     }
 
     @NotNull

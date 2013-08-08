@@ -34,8 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
-import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
+import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -672,23 +671,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         ReceiverValue receiver = new TransientReceiver(lhsType);
-        TemporaryBindingTrace traceWithReceiver = TemporaryBindingTrace.create(context.trace,
+        TemporaryTraceAndCache temporaryWithReceiver = TemporaryTraceAndCache.create(context,
                 "trace to resolve callable reference with receiver", reference);
         FunctionDescriptor descriptor =
                 resolveCallableNotCheckingArguments(
-                        reference, receiver, context.replaceBindingTrace(traceWithReceiver).replaceResolutionResultsCache(), result);
+                        reference, receiver, context.replaceTraceAndCache(temporaryWithReceiver), result);
         if (result[0]) {
-            traceWithReceiver.commit();
+            temporaryWithReceiver.commit();
             return descriptor;
         }
 
         JetScope staticScope = getStaticNestedClassesScope((ClassDescriptor) classifier);
-        TemporaryBindingTrace traceForStatic = TemporaryBindingTrace.create(context.trace,
-                "trace to resolve callable reference in static scope", reference);
+        TemporaryTraceAndCache temporaryForStatic = TemporaryTraceAndCache.create(
+                context, "trace to resolve callable reference in static scope", reference);
         FunctionDescriptor possibleStaticNestedClassConstructor = resolveCallableNotCheckingArguments(reference, NO_RECEIVER,
-                context.replaceBindingTrace(traceForStatic).replaceScope(staticScope).replaceResolutionResultsCache(), result);
+                context.replaceTraceAndCache(temporaryForStatic).replaceScope(staticScope), result);
         if (result[0]) {
-            traceForStatic.commit();
+            temporaryForStatic.commit();
             return possibleStaticNestedClassConstructor;
         }
 

@@ -67,7 +67,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (this.trace == trace) return self();
         return create(trace, scope, dataFlowInfo, expectedType, expressionPosition, resolveMode, resolutionResultsCache);
     }
-    
+
     @NotNull
     public Context replaceExpressionPosition(@NotNull ExpressionPosition expressionPosition) {
         if (expressionPosition == this.expressionPosition) return self();
@@ -105,8 +105,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         return create(trace, scope, dataFlowInfo, expectedType, expressionPosition, resolveMode, newResolutionResultsCache);
     }
 
-    @NotNull
-    public Context replaceResolutionResultsCache() {
-        return replaceResolutionResultsCache(ResolutionResultsCache.create());
+    public Context replaceTraceAndCache(@NotNull TemporaryTraceAndCache traceAndCache) {
+        return replaceBindingTrace(traceAndCache.trace).replaceResolutionResultsCache(traceAndCache.cache);
     }
 }
