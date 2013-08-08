@@ -35,16 +35,8 @@ String.prototype.contains = function (s) {
             return obj2 == null;
         }
 
-        if (obj1 instanceof Array) {
-            if (!(obj2 instanceof Array) || obj1.length != obj2.length) {
-                return false;
-            }
-            for (var i = 0; i < obj1.length; i++) {
-                if (!Kotlin.equals(obj1[i], obj2[i])) {
-                    return false;
-                }
-            }
-            return true;
+        if (Array.isArray(obj1)) {
+            return Kotlin.arrayEquals(obj1, obj2);
         }
 
         if (typeof obj1 == "object" && obj1.equals !== undefined) {
@@ -52,6 +44,22 @@ String.prototype.contains = function (s) {
         }
 
         return obj1 === obj2;
+    };
+    
+    Kotlin.toString = function (o) {
+        if (o == null) {
+            return "null";
+        }
+        else if (Array.isArray(o)) {
+            return Kotlin.arrayToString(o);
+        }
+        else {
+            return o.toString();
+        }
+    };
+    
+    Kotlin.arrayToString = function(a) {
+        return "[" + a.join(", ") + "]";
     };
 
     Kotlin.intUpto = function (from, to) {
@@ -298,6 +306,22 @@ String.prototype.contains = function (s) {
         return isNaN(r) ? null : r;
     };
 
+    Kotlin.arrayEquals = function (a, b) {
+        if (a === b) {
+            return true;
+        }
+        if (!Array.isArray(b) || a.length !== b.length) {
+            return false;
+        }
+
+        for (var i = 0, n = a.length; i < n; i++) {
+            if (!Kotlin.equals(a[i], b[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     Kotlin.System = function () {
         var output = "";
 
@@ -427,12 +451,12 @@ String.prototype.contains = function (s) {
         return Kotlin.$new(ComparatorImpl)(f);
     };
 
-    Kotlin.collectionsMax = function (col, comp) {
-        var it = col.iterator();
-        if (col.isEmpty()) {
+    Kotlin.collectionsMax = function (c, comp) {
+        if (c.isEmpty()) {
             //TODO: which exception?
-            throw Kotlin.Exception();
+            throw new Error();
         }
+        var it = c.iterator();
         var max = it.next();
         while (it.hasNext()) {
             var el = it.next();

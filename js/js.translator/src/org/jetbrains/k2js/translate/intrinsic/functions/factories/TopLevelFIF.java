@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
@@ -119,7 +118,7 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
-        add(pattern("jet", "toString").receiverExists(true), new BuiltInFunctionIntrinsic("toString"));
+        add(pattern("jet", "toString").receiverExists(true), new KotlinFunctionIntrinsic("toString"));
         add(pattern("jet", "equals").receiverExists(true), EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
