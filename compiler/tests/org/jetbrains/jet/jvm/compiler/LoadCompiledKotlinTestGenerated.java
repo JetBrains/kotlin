@@ -138,6 +138,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/class/InheritSubstitutedMethod.kt");
         }
         
+        @TestMetadata("InheritTraitWithFunctionParam.kt")
+        public void testInheritTraitWithFunctionParam() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/class/InheritTraitWithFunctionParam.kt");
+        }
+        
         @TestMetadata("InheritTraitWithParam.kt")
         public void testInheritTraitWithParam() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/class/InheritTraitWithParam.kt");

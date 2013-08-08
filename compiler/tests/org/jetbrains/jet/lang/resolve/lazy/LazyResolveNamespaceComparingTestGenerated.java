@@ -140,6 +140,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/class/InheritSubstitutedMethod.kt");
             }
             
+            @TestMetadata("InheritTraitWithFunctionParam.kt")
+            public void testInheritTraitWithFunctionParam() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/class/InheritTraitWithFunctionParam.kt");
+            }
+            
             @TestMetadata("InheritTraitWithParam.kt")
             public void testInheritTraitWithParam() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/class/InheritTraitWithParam.kt");

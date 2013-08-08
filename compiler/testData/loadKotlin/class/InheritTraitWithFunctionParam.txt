@@ -1,0 +1,10 @@
+package test
+
+internal open class Class : test.Trait {
+    /*primary*/ public constructor Class()
+    internal open override /*1*/ /*fake_override*/ fun f(/*0*/ a: jet.String): jet.Unit
+}
+
+internal trait Trait {
+    internal open fun f(/*0*/ a: jet.String): jet.Unit
+}
