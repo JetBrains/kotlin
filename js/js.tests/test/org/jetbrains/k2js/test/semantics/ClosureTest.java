@@ -47,4 +47,8 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testClosureInNestedFunctionsInMethod() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testWrappedVariableInExtensionFun() throws Exception {
+        fooBoxTest();
+    }
 }

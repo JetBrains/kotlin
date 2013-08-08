@@ -76,15 +76,16 @@ public class LiteralFunctionTranslator {
         TranslationContext funContext;
         boolean asInner;
         ClassDescriptor outerClass;
-        AliasingContext aliasingContext = rootContext.aliasingContext();
+        AliasingContext aliasingContext;
         DeclarationDescriptor receiverDescriptor = getExpectedReceiverDescriptor(descriptor);
         JsName receiverName;
         if (receiverDescriptor == null) {
             receiverName = null;
+            aliasingContext = null;
         }
         else {
             receiverName = fun.getScope().declareName(Namer.getReceiverParameterName());
-            aliasingContext = aliasingContext.inner(receiverDescriptor, receiverName.makeRef());
+            aliasingContext = outerContext.aliasingContext().inner(receiverDescriptor, receiverName.makeRef());
         }
 
         if (descriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
@@ -95,7 +96,7 @@ public class LiteralFunctionTranslator {
             assert outerClass != null;
 
             if (receiverDescriptor == null) {
-                aliasingContext = aliasingContext.inner(outerClass, new JsNameRef("o", fun.getName().makeRef()));
+                aliasingContext = outerContext.aliasingContext().notShareableThisAliased(outerClass, new JsNameRef("o", fun.getName().makeRef()));
             }
         }
         else {
@@ -103,8 +104,8 @@ public class LiteralFunctionTranslator {
             asInner = DescriptorUtils.isTopLevelDeclaration(descriptor);
         }
 
-        funContext = rootContext.contextWithScope(fun, aliasingContext,
-                                                  new UsageTracker(descriptor, outerContext.usageTracker(), outerClass));
+        funContext = outerContext.newFunctionBody(fun, aliasingContext,
+                                                 new UsageTracker(descriptor, outerContext.usageTracker(), outerClass));
 
         fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration, funContext).getStatements());
 
@@ -160,10 +161,10 @@ public class LiteralFunctionTranslator {
             @NotNull ClassDescriptor descriptor,
             @NotNull ClassTranslator classTranslator) {
         JsFunction fun = createFunction();
-        JsNameRef outerClassRef = fun.getScope().declareName("$this").makeRef();
+        JsNameRef outerClassRef = fun.getScope().declareName(Namer.OUTER_CLASS_NAME).makeRef();
         UsageTracker usageTracker = new UsageTracker(descriptor, null, outerClass);
-        TranslationContext funContext = rootContext.contextWithScope(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef),
-                                                                     usageTracker);
+        TranslationContext funContext = rootContext.newFunctionBody(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef),
+                                                                    usageTracker);
 
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translate(funContext)));
         JetClassBody body = declaration.getBody();

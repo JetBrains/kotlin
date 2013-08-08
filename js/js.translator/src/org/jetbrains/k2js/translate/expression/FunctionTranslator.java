@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsFunction;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsParameter;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -29,14 +30,15 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
+import org.jetbrains.k2js.translate.context.AliasingContext;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
@@ -76,24 +78,18 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private TranslationContext getFunctionBodyContext() {
+        AliasingContext aliasingContext;
         if (isExtensionFunction()) {
-            return getFunctionBodyContextForExtensionFunction();
+            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+            assert expectedReceiverDescriptor != null;
+            extensionFunctionReceiverName = functionObject.getScope().declareName(Namer.getReceiverParameterName());
+            //noinspection ConstantConditions
+            aliasingContext = context().aliasingContext().inner(expectedReceiverDescriptor, extensionFunctionReceiverName.makeRef());
         }
-        return getContextWithFunctionBodyBlock();
-    }
-
-    @NotNull
-    private TranslationContext getFunctionBodyContextForExtensionFunction() {
-        TranslationContext contextWithFunctionBodyBlock = getContextWithFunctionBodyBlock();
-        extensionFunctionReceiverName = contextWithFunctionBodyBlock.scope().declareName(Namer.getReceiverParameterName());
-        DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
-        assert expectedReceiverDescriptor != null;
-        return contextWithFunctionBodyBlock.innerContextWithThisAliased(expectedReceiverDescriptor, extensionFunctionReceiverName);
-    }
-
-    @NotNull
-    private TranslationContext getContextWithFunctionBodyBlock() {
-        return context().contextWithScope(functionObject);
+        else {
+            aliasingContext = null;
+        }
+        return context().newFunctionBody(functionObject, aliasingContext, null);
     }
 
     @NotNull
@@ -125,7 +121,11 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsParameter> translateParameters() {
-        List<JsParameter> jsParameters = new ArrayList<JsParameter>();
+        if (extensionFunctionReceiverName == null && descriptor.getValueParameters().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<JsParameter> jsParameters = new SmartList<JsParameter>();
         mayBeAddThisParameterForExtensionFunction(jsParameters);
         addParameters(jsParameters, descriptor, context());
         return jsParameters;
@@ -145,6 +145,6 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunction() {
-        return JsDescriptorUtils.isExtension(descriptor) && !(functionDeclaration instanceof JetFunctionLiteral);
+        return JsDescriptorUtils.isExtension(descriptor) && !(functionDeclaration instanceof JetFunctionLiteralExpression);
     }
 }
