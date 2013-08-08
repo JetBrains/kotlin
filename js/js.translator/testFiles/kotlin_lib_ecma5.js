@@ -72,7 +72,7 @@ var Kotlin = Object.create(null);
 
     function computeProto2(bases, properties) {
         if (bases === null) {
-            return null;
+            return Object.prototype;
         }
         return Array.isArray(bases) ? computeProto(bases, properties) : bases.proto;
     }
