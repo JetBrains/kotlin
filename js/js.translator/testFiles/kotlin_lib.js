@@ -555,16 +555,6 @@ String.prototype.contains = function (s) {
         return res;
     };
 
-    //TODO: use intrinsic
-    Kotlin.jsonSet = function (obj, attrName, value) {
-        obj[attrName] = value;
-    };
-
-    Kotlin.jsonGet = function (obj, attrName) {
-        return obj[attrName];
-    };
-
-
     Kotlin.jsonAddProperties = function (obj1, obj2) {
         for (var p in obj2) {
             if (obj2.hasOwnProperty(p)) {

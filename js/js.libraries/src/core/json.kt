@@ -2,12 +2,9 @@ package js
 
 import js.library
 
-native
-public class Json() {
-    library("jsonGet")
-    fun get(parameterName: String): Any?
-    library("jsonSet")
-    fun set(parameterName: String, value: Any?): Unit
+native public class Json() {
+    fun get(propertyName: String): Any? = js.noImpl
+    fun set(propertyName: String, value: Any?): Unit = js.noImpl
 }
 
 library("jsonFromTuples")

@@ -165,6 +165,9 @@ public final class TopLevelFIF extends CompositeFIF {
         String[] javaUtil = {"java", "util"};
         add(pattern(javaUtil, "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern(javaUtil, "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
+
+        add(pattern("js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
+        add(pattern("js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
     }
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
