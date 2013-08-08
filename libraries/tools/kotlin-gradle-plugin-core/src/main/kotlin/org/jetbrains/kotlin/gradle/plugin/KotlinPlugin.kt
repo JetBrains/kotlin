@@ -33,6 +33,10 @@ import com.android.builder.model.BuildType
 import com.android.builder.BuilderConstants
 import com.android.build.gradle.api.TestVariant
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.Dependency
+import java.util.HashSet
 
 open class KotlinPlugin: Plugin<Project> {
 
@@ -44,6 +48,9 @@ open class KotlinPlugin: Plugin<Project> {
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
         configureKDoc(project, javaPluginConvention)
+
+        val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
+        project.getExtensions().add(KotlinCompile.DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
     }
 
 
@@ -159,6 +166,9 @@ open class KotlinAndroidPlugin: Plugin<Project> {
             }
 
         })
+        val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
+        project.getExtensions().add(KotlinCompile.DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version",
+                                                                                                                "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
     }
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
@@ -258,3 +268,22 @@ open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {
         return p0 != null && predicate(p0)
     }
 }
+
+open class GradleUtils() {
+    class object {
+        public fun resolveDependencies(project: Project, vararg coordinates: String): Collection<File> {
+            val dependencyHandler : DependencyHandler = project.getBuildscript().getDependencies()
+            val configurationsContainer : ConfigurationContainer = project.getBuildscript().getConfigurations()
+
+            val deps = HashSet<Dependency>()
+            for (coordinate in coordinates) {
+                deps.add(dependencyHandler.create(coordinate))
+            }
+            val array :  Array<Dependency?> = deps.toArray(Array<Dependency?>(deps.size(),{null}))
+            val configuration = configurationsContainer.detachedConfiguration(*array)
+
+            return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
+        }
+    }
+}
+

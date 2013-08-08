@@ -4,4 +4,7 @@
             <val name="value" val="&quot;fun getConfigurations() : ConfigurationContainer&quot;"/>
         </annotation>
     </item>
+    <item name='org.gradle.api.initialization.dsl.ScriptHandler org.gradle.api.artifacts.dsl.DependencyHandler getDependencies()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

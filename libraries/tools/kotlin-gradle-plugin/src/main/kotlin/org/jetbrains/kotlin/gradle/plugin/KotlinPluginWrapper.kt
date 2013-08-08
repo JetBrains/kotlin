@@ -12,7 +12,7 @@ import org.gradle.api.logging.Logging
 import java.util.Properties
 import java.io.FileNotFoundException
 
-open abstract class KotlinBasePluginWrapper: Plugin<Project> {
+abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
     val log = Logging.getLogger(getClass())!!
 
@@ -31,8 +31,9 @@ open abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
         props.load(inputStream);
 
-        val projectVersion = props.get("project.version")
-        log.debug("Found project version [" + projectVersion + "]")
+        val projectVersion = props.get("project.version") as String
+        log.debug("Found project version [$projectVersion]")
+        project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", projectVersion)
 
         log.debug("Creating configuration and dependency")
         val kotlinPluginCoreCoordinates = "org.jetbrains.kotlin:kotlin-gradle-plugin-core:" + projectVersion
