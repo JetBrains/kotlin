@@ -28,6 +28,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public final class PatternBuilder {
 
@@ -141,6 +142,7 @@ public final class PatternBuilder {
         private boolean receiverParameterExists;
 
         private String[] root;
+        private boolean checkOverridden;
 
         public DescriptorPredicateImpl(String... names) {
             this.names = names;
@@ -154,6 +156,41 @@ public final class PatternBuilder {
         public DescriptorPredicateImpl root(String... root) {
             this.root = root;
             return this;
+        }
+
+        public DescriptorPredicateImpl checkOverridden() {
+            this.checkOverridden = true;
+            return this;
+        }
+
+        private boolean check(FunctionDescriptor functionDescriptor) {
+            DeclarationDescriptor descriptor = functionDescriptor.getContainingDeclaration();
+            String[] list;
+            int nameIndex;
+            if (root == null) {
+                list = names;
+                nameIndex = list.length - 2;
+            }
+            else {
+                assert names.length == 1;
+                list = root;
+                nameIndex = list.length - 1;
+            }
+
+            do {
+                if (nameIndex == -1) {
+                    return isRootNamespace(descriptor);
+                }
+                else if (isRootNamespace(descriptor)) {
+                    return false;
+                }
+
+                if (!descriptor.getName().asString().equals(list[nameIndex--])) {
+                    return false;
+                }
+            }
+            while ((descriptor = descriptor.getContainingDeclaration()) != null);
+            return false;
         }
 
         @Override
@@ -196,7 +233,30 @@ public final class PatternBuilder {
                 }
 
                 if (!descriptor.getName().asString().equals(list[nameIndex--])) {
-                    return false;
+                    // we check overridden on any mismatch - we can have classes with equal name from different packages
+                    return checkOverridden && checkOverridden(functionDescriptor);
+
+                }
+            }
+            return false;
+        }
+
+        private boolean checkOverridden(FunctionDescriptor functionDescriptor) {
+            Set<? extends FunctionDescriptor> overriddenDescriptors = functionDescriptor.getOverriddenDescriptors();
+            if (overriddenDescriptors.isEmpty()) {
+                return false;
+            }
+
+            for (FunctionDescriptor overridden : overriddenDescriptors) {
+                if (overridden.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                    for (FunctionDescriptor realOverridden : overridden.getOverriddenDescriptors()) {
+                        if (check(realOverridden) || checkOverridden(realOverridden)) {
+                            return true;
+                        }
+                    }
+                }
+                else if (check(overridden) || checkOverridden(overridden)) {
+                    return true;
                 }
             }
             return false;

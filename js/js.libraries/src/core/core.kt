@@ -5,9 +5,11 @@ import js.native
 import java.util.*;
 import java.lang.*;
 
-
 native
-public val noImpl : Nothing = throw Exception();
+public val noImpl : Nothing = throw Exception()
+
+/** Provides [] access to maps */
+native public fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit = noImpl
 
 library("println")
 public fun println() {}
