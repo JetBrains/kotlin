@@ -156,7 +156,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> generateCallArgumentList(@NotNull JsExpression receiver) {
-        return TranslationUtils.generateCallArgumentList(receiver, arguments);
+        return TranslationUtils.generateInvocationArguments(receiver, arguments);
     }
 
     @NotNull

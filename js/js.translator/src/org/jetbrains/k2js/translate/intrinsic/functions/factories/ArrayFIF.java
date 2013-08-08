@@ -19,7 +19,6 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -27,7 +26,6 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
@@ -138,12 +136,12 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "get"), GET_INTRINSIC);
         add(pattern(ARRAYS, "set"), SET_INTRINSIC);
         add(pattern(ARRAYS, "<get-size>"), ARRAY_LENGTH_INTRINSIC);
-        add(pattern(ARRAYS, "<get-indices>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIndices", "Kotlin"), true, 0));
-        add(pattern(ARRAYS, "iterator"), new CallStandardMethodIntrinsic(new JsNameRef("arrayIterator", "Kotlin"), true, 0));
-        add(pattern(ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("arrayFromFun", "Kotlin"), false, 2));
-        add(pattern(NUMBER_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("numberArrayOfSize", "Kotlin"), false, 1));
-        add(pattern(CHAR_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("charArrayOfSize", "Kotlin"), false, 1));
-        add(pattern(BOOLEAN_ARRAY, "<init>"), new CallStandardMethodIntrinsic(new JsNameRef("booleanArrayOfSize", "Kotlin"), false, 1));
+        add(pattern(ARRAYS, "<get-indices>"), new KotlinFunctionIntrinsic("arrayIndices"));
+        add(pattern(ARRAYS, "iterator"), new KotlinFunctionIntrinsic("arrayIterator"));
+        add(pattern(ARRAY, "<init>"), new KotlinFunctionIntrinsic("arrayFromFun"));
+        add(pattern(NUMBER_ARRAY, "<init>"),new KotlinFunctionIntrinsic("numberArrayOfSize"));
+        add(pattern(CHAR_ARRAY, "<init>"), new KotlinFunctionIntrinsic("charArrayOfSize"));
+        add(pattern(BOOLEAN_ARRAY, "<init>"), new KotlinFunctionIntrinsic("booleanArrayOfSize"));
         add(ARRAY_FACTORY_METHODS, ARRAY_INTRINSIC);
     }
 }

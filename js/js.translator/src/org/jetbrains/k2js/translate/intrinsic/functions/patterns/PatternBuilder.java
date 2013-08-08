@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -125,6 +126,11 @@ public final class PatternBuilder {
         return new DescriptorPredicateImpl(names);
     }
 
+    @NotNull
+    public static DescriptorPredicateImpl pattern(@NotNull String[] root, @NotNull  String... names) {
+        return new DescriptorPredicateImpl(names).root(root);
+    }
+
     private static boolean isRootNamespace(DeclarationDescriptor declarationDescriptor) {
         return declarationDescriptor instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) declarationDescriptor);
     }
@@ -133,6 +139,8 @@ public final class PatternBuilder {
         private final String[] names;
 
         private boolean receiverParameterExists;
+
+        private String[] root;
 
         public DescriptorPredicateImpl(String... names) {
             this.names = names;
@@ -143,24 +151,54 @@ public final class PatternBuilder {
             return this;
         }
 
+        public DescriptorPredicateImpl root(String... root) {
+            this.root = root;
+            return this;
+        }
+
         @Override
         public boolean apply(@NotNull FunctionDescriptor functionDescriptor) {
             if ((functionDescriptor.getReceiverParameter() == null) == receiverParameterExists) {
                 return false;
             }
 
-            DeclarationDescriptor descriptor = functionDescriptor;
+            // avoid unwrap FAKE_OVERRIDE
             int nameIndex = names.length - 1;
-            do {
-                if (!descriptor.getName().asString().equals(names[nameIndex--])) {
+            if (!functionDescriptor.getName().asString().equals(names[nameIndex--])) {
+                return false;
+            }
+
+            DeclarationDescriptor descriptor;
+            if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                assert functionDescriptor.getOverriddenDescriptors().size() > 0;
+                descriptor = functionDescriptor.getOverriddenDescriptors().iterator().next();
+            }
+            else {
+                descriptor = functionDescriptor;
+            }
+
+            String[] list = names;
+            while ((descriptor = descriptor.getContainingDeclaration()) != null) {
+                if (nameIndex == -1) {
+                    if (isRootNamespace(descriptor)) {
+                        return list == root || root == null;
+                    }
+                    else if (root == null) {
+                        return false;
+                    }
+                    else {
+                        nameIndex = root.length - 1;
+                        list = root;
+                    }
+                }
+                else if (isRootNamespace(descriptor)) {
                     return false;
                 }
-                descriptor = descriptor.getContainingDeclaration();
-                if (nameIndex == -1) {
-                    return isRootNamespace(descriptor);
+
+                if (!descriptor.getName().asString().equals(list[nameIndex--])) {
+                    return false;
                 }
             }
-            while (descriptor != null && !isRootNamespace(descriptor));
             return false;
         }
     }
