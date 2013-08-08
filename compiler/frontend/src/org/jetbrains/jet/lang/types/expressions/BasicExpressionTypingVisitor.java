@@ -150,71 +150,57 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
+        ExpressionTypingContext contextWithNoExpectedType =
+                context.replaceExpectedType(NO_EXPECTED_TYPE).replaceResolveMode(ResolveMode.TOP_LEVEL_CALL);
         JetExpression left = expression.getLeft();
         JetTypeReference right = expression.getRight();
-        JetType result = null;
+        if (right == null) {
+            JetTypeInfo leftTypeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
+            return JetTypeInfo.create(null, leftTypeInfo.getDataFlowInfo());
+        }
+
+        JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
+        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+
+        if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
+
+            JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType.replaceExpectedType(targetType));
+            checkBinaryWithTypeRHS(expression, context, targetType, typeInfo.getType());
+            return DataFlowUtils.checkType(targetType, expression, context, typeInfo.getDataFlowInfo());
+        }
+
+        JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
+
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
-        if (right != null) {
-            JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
-            IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-
-            boolean tryWithNoExpectedType = true;
-            if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
-                TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(
-                        context.trace, "trace for resolve RHSExpression", expression);
-                ExpressionTypingContext contextWithTemporaryTrace = context.replaceBindingTrace(temporaryTraceWithExpectedType).replaceExpectedType(targetType);
-                JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithTemporaryTrace);
-                if (typeInfo.getType() != null && checkBinaryWithTypeRHS(expression, contextWithTemporaryTrace, targetType, typeInfo.getType())) {
-                    temporaryTraceWithExpectedType.commit();
-                    dataFlowInfo = typeInfo.getDataFlowInfo();
-                    tryWithNoExpectedType = false;
-                }
+        if (typeInfo.getType() != null) {
+            checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, typeInfo.getType());
+            dataFlowInfo = typeInfo.getDataFlowInfo();
+            if (operationType == JetTokens.AS_KEYWORD) {
+                DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(left, typeInfo.getType(), context.trace.getBindingContext());
+                dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
             }
-
-            if (tryWithNoExpectedType) {
-                ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
-                JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
-                if (typeInfo.getType() != null) {
-                    checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, typeInfo.getType());
-                    dataFlowInfo = typeInfo.getDataFlowInfo();
-                    if (operationType == JetTokens.AS_KEYWORD) {
-                        DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(left, typeInfo.getType(), context.trace.getBindingContext());
-                        dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
-                    }
-                }
-            }
-
-            result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         }
-        else {
-            dataFlowInfo = facade.getTypeInfo(left, context.replaceExpectedType(NO_EXPECTED_TYPE)).getDataFlowInfo();
-        }
+        JetType result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
 
-    private static boolean checkBinaryWithTypeRHS(
-            JetBinaryExpressionWithTypeRHS expression,
-            ExpressionTypingContext context,
+    private static void checkBinaryWithTypeRHS(
+            @NotNull JetBinaryExpressionWithTypeRHS expression,
+            @NotNull ExpressionTypingContext context,
             @NotNull JetType targetType,
-            JetType actualType
+            @Nullable JetType actualType
     ) {
+        if (actualType == null) return;
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.COLON) {
-            if (!noExpectedType(targetType) && !JetTypeChecker.INSTANCE.isSubtypeOf(actualType, targetType)) {
-                context.trace.report(TYPE_MISMATCH.on(expression.getLeft(), targetType, actualType));
-                return false;
-            }
-            return true;
+            return;
         }
-        else if (operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
-            checkForCastImpossibility(expression, actualType, targetType, context);
-            return true;
-        }
-        else {
+        if (operationType != JetTokens.AS_KEYWORD && operationType != JetTokens.AS_SAFE) {
             context.trace.report(UNSUPPORTED.on(operationSign, "binary operation with type RHS"));
-            return false;
+            return;
         }
+        checkForCastImpossibility(expression, actualType, targetType, context);
     }
 
     private static void checkForCastImpossibility(
