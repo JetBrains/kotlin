@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
@@ -49,6 +50,7 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARN
 public class KotlinBuilder extends ModuleLevelBuilder {
 
     private static final String KOTLIN_BUILDER_NAME = "Kotlin Builder";
+    private static final List<String> COMPILABLE_FILE_EXTENSIONS = Collections.singletonList("kt");
 
     private static final Function<JpsModule,String> MODULE_NAME = new Function<JpsModule, String>() {
         @Override
@@ -201,5 +203,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
         }
 
+    }
+
+    @Override
+    public List<String> getCompilableFileExtensions() {
+        return COMPILABLE_FILE_EXTENSIONS;
     }
 }
