@@ -148,16 +148,17 @@ String.prototype.contains = function (s) {
             return Kotlin.$new(ArrayIterator)(this.toArray());
         },
         equals: function (o) {
-            if (this.size() === o.size()) {
-                var iterator1 = this.iterator();
-                var iterator2 = o.iterator();
-                var i = this.size();
-                while (i-- > 0) {
-                    if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
-                        return false;
-                    }
+            if (this.size() !== o.size()) return false;
+
+            var iterator1 = this.iterator();
+            var iterator2 = o.iterator();
+            var i = this.size();
+            while (i-- > 0) {
+                if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
+                    return false;
                 }
             }
+
             return true;
         },
         toString: function () {

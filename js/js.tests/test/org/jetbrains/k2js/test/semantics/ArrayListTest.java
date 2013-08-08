@@ -64,4 +64,8 @@ public final class ArrayListTest extends JavaClassesTest {
 
         }
     }
+
+    public void testMisc() throws Exception {
+        fooBoxTest();
+    }
 }
