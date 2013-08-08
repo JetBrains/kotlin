@@ -1,5 +1,16 @@
 // OPTIONS: overloadUsages
-open class A<T> {
+trait X<T> {
+}
+
+fun <T> X<T>.foo(a: Number, b: Number) {
+    println("$a$b")
+}
+
+fun bar(x: X<String>) {
+    x.foo(1, 2)
+}
+
+open class A<T>: X<T> {
     open fun <caret>foo(t: T) {
         println(t)
     }
@@ -14,7 +25,11 @@ fun <T> A<T>.foo(t: T, x: String) {
     println(x)
 }
 
-fun A<String>.foo(s: String, n: Number) {
+fun bar(a: A<Number>) {
+    a.foo(1, "")
+}
+
+fun B.foo(s: String, n: Number) {
     fun <T> A<T>.foo(t: T, x: String) {
         foo(t)
         println(x)
@@ -22,4 +37,8 @@ fun A<String>.foo(s: String, n: Number) {
 
     foo(s)
     println(n)
+}
+
+fun bar(b: B) {
+    b.foo("", 0)
 }

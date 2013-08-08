@@ -4,7 +4,7 @@ open class B: A<String>() {
     }
 
     open fun baz(a: A<String>) {
-        a.foo("", 0)
+        foo("", 0)
     }
 
     open fun baz(a: A<Number>) {

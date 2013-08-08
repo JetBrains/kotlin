@@ -1,4 +1,0 @@
-Function call (13: 5) foo(t)
-Function call (19: 9) foo(t)
-Function call (23: 5) foo(s)
-Function call (3: 18) super<A>.foo(t)

@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindMethodUsagesDialog;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
+import org.jetbrains.jet.plugin.search.KotlinExtensionSearch;
 
 import java.util.Collection;
 
@@ -123,12 +124,22 @@ public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<Jet
             );
         }
 
+        if (kotlinOptions.isIncludeOverloadUsages) {
+            String name = ((PsiNamedElement)element).getName();
+            if (name == null) return true;
+
+            for (PsiReference ref : KotlinExtensionSearch.search(lightMethod, searchScope).findAll()) {
+                processUsage(processor, ref, kotlinOptions);
+            }
+        }
+
         return true;
     }
 
     @Override
     protected boolean isSearchForTextOccurencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile) {
-        return psiElement instanceof JetNamedFunction || psiElement instanceof PsiMethod;
+        if (isSingleFile) return false;
+        return psiElement instanceof JetNamedFunction;
     }
 
     @NotNull
