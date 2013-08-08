@@ -349,7 +349,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
-        javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaConstructorResolver.setCache(traceBasedJavaResolverCache);

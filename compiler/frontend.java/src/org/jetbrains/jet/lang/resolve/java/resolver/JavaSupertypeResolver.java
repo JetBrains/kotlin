@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -44,14 +42,8 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KO
 public final class JavaSupertypeResolver {
     public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
-    private BindingTrace trace;
     private JavaTypeTransformer typeTransformer;
     private JavaClassResolver classResolver;
-
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
-    }
 
     @Inject
     public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
@@ -73,13 +65,7 @@ public final class JavaSupertypeResolver {
 
         List<JetType> result = transformSupertypeList(javaClass.getSupertypes(), typeVariableResolver);
 
-        reportIncompleteHierarchyForErrorTypes(classDescriptor, result);
-
-        if (result.isEmpty()) {
-            return Collections.singletonList(getDefaultSupertype(javaClass));
-        }
-
-        return result;
+        return result.isEmpty() ? Collections.singletonList(getDefaultSupertype(javaClass)) : result;
     }
 
     @NotNull
@@ -96,14 +82,6 @@ public final class JavaSupertypeResolver {
                 //TODO: hack here
                 return KotlinBuiltIns.getInstance().getAnyType();
                 // throw new IllegalStateException("Could not resolve java.lang.Object");
-            }
-        }
-    }
-
-    private void reportIncompleteHierarchyForErrorTypes(@NotNull ClassDescriptor classDescriptor, @NotNull List<JetType> result) {
-        for (JetType supertype : result) {
-            if (ErrorUtils.isErrorType(supertype)) {
-                trace.record(BindingContext.INCOMPLETE_HIERARCHY, classDescriptor);
             }
         }
     }
@@ -126,7 +104,10 @@ public final class JavaSupertypeResolver {
             }
 
             JetType transformed = typeTransformer.transformToType(type, TypeUsage.SUPERTYPE, typeVariableResolver);
-            if (!ErrorUtils.isErrorType(transformed)) {
+            if (ErrorUtils.isErrorType(transformed)) {
+                // TODO: report INCOMPLETE_HIERARCHY
+            }
+            else {
                 result.add(TypeUtils.makeNotNullable(transformed));
             }
         }
