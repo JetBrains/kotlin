@@ -18,10 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
@@ -44,15 +41,15 @@ public class ExternalSignatureResolver {
     }
 
     private abstract static class MemberSignature {
-        private final String signatureError;
+        private final List<String> signatureErrors;
 
-        protected MemberSignature(@Nullable String signatureError) {
-            this.signatureError = signatureError;
+        protected MemberSignature(@NotNull List<String> signatureErrors) {
+            this.signatureErrors = signatureErrors;
         }
 
         @NotNull
         public List<String> getErrors() {
-            return signatureError == null ? Collections.<String>emptyList() : Collections.singletonList(signatureError);
+            return signatureErrors;
         }
     }
 
@@ -67,9 +64,9 @@ public class ExternalSignatureResolver {
                 @Nullable JetType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
-                @Nullable String signatureError
+                @NotNull List<String> signatureErrors
         ) {
-            super(signatureError);
+            super(signatureErrors);
             this.returnType = returnType;
             this.receiverType = receiverType;
             this.valueParameters = valueParameters;
@@ -101,7 +98,7 @@ public class ExternalSignatureResolver {
         private final JetType returnType;
 
         public AlternativeFieldSignature(@NotNull JetType returnType, @Nullable String signatureError) {
-            super(signatureError);
+            super(signatureError == null ? Collections.<String>emptyList() : Collections.singletonList(signatureError));
             this.returnType = returnType;
         }
 
@@ -111,8 +108,29 @@ public class ExternalSignatureResolver {
         }
     }
 
+    public static class PropagatedMethodSignature extends AlternativeMethodSignature {
+        private final List<FunctionDescriptor> superMethods;
+
+        public PropagatedMethodSignature(
+                @Nullable JetType returnType,
+                @Nullable JetType receiverType,
+                @NotNull List<ValueParameterDescriptor> valueParameters,
+                @NotNull List<TypeParameterDescriptor> typeParameters,
+                @NotNull List<String> signatureErrors,
+                @NotNull List<FunctionDescriptor> superMethods
+        ) {
+            super(returnType, receiverType, valueParameters, typeParameters, signatureErrors);
+            this.superMethods = superMethods;
+        }
+
+        @NotNull
+        public List<FunctionDescriptor> getSuperMethods() {
+            return superMethods;
+        }
+    }
+
     @NotNull
-    public SignaturesPropagationData resolvePropagatedSignature(
+    public PropagatedMethodSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
             @NotNull JetType returnType,
@@ -120,7 +138,11 @@ public class ExternalSignatureResolver {
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
-        return new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, method, trace);
+        SignaturesPropagationData data =
+                new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, method, trace);
+        return new PropagatedMethodSignature(data.getModifiedReturnType(), data.getModifiedReceiverType(),
+                                             data.getModifiedValueParameters(), data.getModifiedTypeParameters(), data.getSignatureErrors(),
+                                             data.getSuperFunctions());
     }
 
     @SuppressWarnings("MethodMayBeStatic")
@@ -138,10 +160,10 @@ public class ExternalSignatureResolver {
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
-                                                  null);
+                                                  Collections.<String>emptyList());
         }
 
-        String error = data.hasErrors() ? data.getError() : null;
+        List<String> error = data.hasErrors() ? Collections.singletonList(data.getError()) : Collections.<String>emptyList();
         return new AlternativeMethodSignature(returnType, receiverType, valueParameters, typeParameters, error);
     }
 

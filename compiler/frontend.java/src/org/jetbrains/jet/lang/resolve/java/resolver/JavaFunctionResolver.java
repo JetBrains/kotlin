@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
@@ -148,18 +147,18 @@ public final class JavaFunctionResolver {
             signatureErrors = effectiveSignature.getErrors();
         }
         else if (ownerDescriptor instanceof ClassDescriptor) {
-            SignaturesPropagationData propagated = externalSignatureResolver
+            ExternalSignatureResolver.PropagatedMethodSignature propagated = externalSignatureResolver
                     .resolvePropagatedSignature(method, (ClassDescriptor) ownerDescriptor, returnType, null, valueParameters,
                                                 methodTypeParameters);
 
-            superFunctions = propagated.getSuperFunctions();
+            superFunctions = propagated.getSuperMethods();
 
             effectiveSignature = externalSignatureResolver
-                    .resolveAlternativeMethodSignature(method, !superFunctions.isEmpty(), propagated.getModifiedReturnType(),
-                                                       propagated.getModifiedReceiverType(), propagated.getModifiedValueParameters(),
-                                                       propagated.getModifiedTypeParameters());
+                    .resolveAlternativeMethodSignature(method, !superFunctions.isEmpty(), propagated.getReturnType(),
+                                                       propagated.getReceiverType(), propagated.getValueParameters(),
+                                                       propagated.getTypeParameters());
 
-            signatureErrors = new ArrayList<String>(propagated.getSignatureErrors());
+            signatureErrors = new ArrayList<String>(propagated.getErrors());
             signatureErrors.addAll(effectiveSignature.getErrors());
         }
         else {
