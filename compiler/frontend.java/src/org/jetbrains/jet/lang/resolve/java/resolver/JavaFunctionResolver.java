@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,27 +30,22 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaSignatureFormatter;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.OverridingUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.resolveOverrides;
 import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.*;
 
 public final class JavaFunctionResolver {
-    private static final Logger LOG = Logger.getInstance(JavaFunctionResolver.class);
-
     private JavaTypeTransformer typeTransformer;
     private JavaResolverCache cache;
     private JavaTypeParameterResolver typeParameterResolver;
@@ -60,6 +53,7 @@ public final class JavaFunctionResolver {
     private JavaAnnotationResolver annotationResolver;
     private ExternalSignatureResolver externalSignatureResolver;
     private FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver;
+    private MethodSignatureChecker signatureChecker;
 
     @Inject
     public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
@@ -94,6 +88,11 @@ public final class JavaFunctionResolver {
     @Inject
     public void setFakeOverrideVisibilityResolver(FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver) {
         this.fakeOverrideVisibilityResolver = fakeOverrideVisibilityResolver;
+    }
+
+    @Inject
+    public void setSignatureChecker(MethodSignatureChecker signatureChecker) {
+        this.signatureChecker = signatureChecker;
     }
 
     @Nullable
@@ -183,56 +182,9 @@ public final class JavaFunctionResolver {
             cache.recordMethod(method, functionDescriptorImpl);
         }
 
-        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(method)
-            && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(method)
-            && !containsErrorType(superFunctions, functionDescriptorImpl)) {
-            if (signatureErrors.isEmpty()) {
-                checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
-            }
-            else if (record) {
-                externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors);
-            }
-        }
+        signatureChecker.checkSignature(method, record, functionDescriptorImpl, signatureErrors, superFunctions);
 
         return functionDescriptorImpl;
-    }
-
-    private static void checkFunctionsOverrideCorrectly(
-            @NotNull JavaMethod method,
-            @NotNull List<FunctionDescriptor> superFunctions,
-            @NotNull FunctionDescriptor functionDescriptor
-    ) {
-        for (FunctionDescriptor superFunction : superFunctions) {
-            ClassDescriptor klass = (ClassDescriptor) functionDescriptor.getContainingDeclaration();
-            List<TypeSubstitution> substitutions = Lists.newArrayList();
-            while (true) {
-                substitutions.add(SubstitutionUtils.buildDeepSubstitutor(klass.getDefaultType()).getSubstitution());
-                if (!klass.isInner()) {
-                    break;
-                }
-                klass = (ClassDescriptor) klass.getContainingDeclaration();
-            }
-            TypeSubstitutor substitutor = TypeSubstitutor.create(substitutions.toArray(new TypeSubstitution[substitutions.size()]));
-            FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
-
-            assert superFunctionSubstituted != null :
-                    "Couldn't substitute super function: " + superFunction + ", substitutor = " + substitutor;
-
-            OverrideCompatibilityInfo.Result overridableResult =
-                    isOverridableBy(superFunctionSubstituted, functionDescriptor).getResult();
-            boolean paramsOk = overridableResult == OverrideCompatibilityInfo.Result.OVERRIDABLE;
-            boolean returnTypeOk =
-                    isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptor);
-            if (!paramsOk || !returnTypeOk) {
-                LOG.error("Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
-                          + "super function = " + superFunction + "\n"
-                          + "super class = " + superFunction.getContainingDeclaration() + "\n"
-                          + "sub function = " + functionDescriptor + "\n"
-                          + "sub class = " + functionDescriptor.getContainingDeclaration() + "\n"
-                          + "sub method = " + JavaSignatureFormatter.getExternalName(method) + "\n"
-                          + "@KotlinSignature = " + SignaturesUtil.getKotlinSignature(method));
-            }
-        }
     }
 
     @NotNull
@@ -373,19 +325,5 @@ public final class JavaFunctionResolver {
             }
         }
         return result;
-    }
-
-    private static boolean containsErrorType(@NotNull List<FunctionDescriptor> superFunctions, @NotNull FunctionDescriptor function) {
-        if (ErrorUtils.containsErrorType(function)) {
-            return true;
-        }
-
-        for (FunctionDescriptor superFunction : superFunctions) {
-            if (ErrorUtils.containsErrorType(superFunction)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
