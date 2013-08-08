@@ -72,16 +72,13 @@ String.prototype.contains = function (s) {
 
     Kotlin.modules = {};
 
-    Kotlin.Exception = Kotlin.$createClass();
-    Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IOException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.RuntimeException = Kotlin.$createClass();
+    Kotlin.NullPointerException = Kotlin.$createClass();
+    Kotlin.NoSuchElementException = Kotlin.$createClass();
+    Kotlin.IllegalArgumentException = Kotlin.$createClass();
+    Kotlin.IllegalStateException = Kotlin.$createClass();
+    Kotlin.UnsupportedOperationException = Kotlin.$createClass();
+    Kotlin.IOException = Kotlin.$createClass();
 
     Kotlin.throwNPE = function () {
         throw Kotlin.$new(Kotlin.NullPointerException)();
@@ -263,7 +260,7 @@ String.prototype.contains = function (s) {
         },
         checkRange: function(index) {
             if (index < 0 || index >= this.$size) {
-                throw new Kotlin.IndexOutOfBoundsException();
+                throw new RangeError();
             }
         }
     });
