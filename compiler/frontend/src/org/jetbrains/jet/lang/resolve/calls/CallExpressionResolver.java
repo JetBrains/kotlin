@@ -363,21 +363,6 @@ public class CallExpressionResolver {
         else if (selectorExpression instanceof JetSimpleNameExpression) {
             return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
         }
-        else if (selectorExpression instanceof JetQualifiedExpression) {
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;
-            JetExpression newReceiverExpression = qualifiedExpression.getReceiverExpression();
-            JetTypeInfo newReceiverTypeInfo = getSelectorReturnTypeInfo(
-                    receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
-            JetType newReceiverType = newReceiverTypeInfo.getType();
-            DataFlowInfo newReceiverDataFlowInfo = newReceiverTypeInfo.getDataFlowInfo();
-            JetExpression newSelectorExpression = qualifiedExpression.getSelectorExpression();
-            if (newReceiverType != null && newSelectorExpression != null) {
-                ExpressionReceiver expressionReceiver = new ExpressionReceiver(newReceiverExpression, newReceiverType);
-                return getSelectorReturnTypeInfo(
-                        expressionReceiver, qualifiedExpression.getOperationTokenNode(),
-                        newSelectorExpression, context.replaceDataFlowInfo(newReceiverDataFlowInfo));
-            }
-        }
         else {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
