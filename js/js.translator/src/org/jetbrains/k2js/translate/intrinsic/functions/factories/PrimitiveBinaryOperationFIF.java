@@ -20,7 +20,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -52,7 +51,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             assert arguments.size() == 1 : "RangeTo must have one argument.";
             assert rangeStart != null;
             JsExpression rangeEnd = arguments.get(0);
-            JsNameRef expr = AstUtil.newQualifiedNameRef("Kotlin.NumberRange");
+            JsNameRef expr = new JsNameRef("NumberRange", "Kotlin");
             HasArguments numberRangeConstructorInvocation = context.isEcma5() ? new JsInvocation(expr) : new JsNew(expr);
             //TODO: add tests and correct expression for reversed ranges.
             setArguments(numberRangeConstructorInvocation, rangeStart, rangeEnd);

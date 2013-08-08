@@ -22,10 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
@@ -176,19 +173,5 @@ public final class JsDescriptorUtils {
         }
 
         return null;
-    }
-
-    @NotNull
-    public static DeclarationDescriptor getDeclarationDescriptorForExtensionCallReceiver(
-            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall
-    ) {
-        ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
-        if (receiverArgument instanceof ExtensionReceiver) {
-            return ((ExtensionReceiver) receiverArgument).getDeclarationDescriptor();
-        }
-        if (receiverArgument instanceof ClassReceiver) {
-            return ((ClassReceiver) receiverArgument).getDeclarationDescriptor();
-        }
-        throw new IllegalStateException("Unexpected receiver of type " + receiverArgument.getClass());
     }
 }
