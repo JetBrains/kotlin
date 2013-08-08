@@ -25,7 +25,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
@@ -33,7 +33,7 @@ import java.util.*;
 
 public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
-    protected final JavaDescriptorResolver javaDescriptorResolver;
+    protected final JavaMemberResolver memberResolver;
     @NotNull
     protected final MembersProvider membersProvider;
     @NotNull
@@ -52,10 +52,10 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     protected JavaBaseScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull JavaMemberResolver memberResolver,
             @NotNull MembersProvider membersProvider
     ) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+        this.memberResolver = memberResolver;
         this.membersProvider = membersProvider;
         this.descriptor = descriptor;
     }
@@ -87,7 +87,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         if (members == null) {
             return Collections.emptySet();
         }
-        return javaDescriptorResolver.resolveFieldGroup(members, descriptor);
+        return memberResolver.resolveFieldGroup(members, descriptor);
     }
 
     @NotNull

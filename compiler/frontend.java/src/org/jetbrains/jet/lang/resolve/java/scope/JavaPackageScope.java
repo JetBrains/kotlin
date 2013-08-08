@@ -18,12 +18,11 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -46,16 +45,16 @@ public final class JavaPackageScope extends JavaBaseScope {
             @NotNull NamespaceDescriptor descriptor,
             @NotNull JavaPackage javaPackage,
             @NotNull FqName packageFQN,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver
+            @NotNull JavaMemberResolver memberResolver
     ) {
-        super(descriptor, javaDescriptorResolver, MembersProvider.forPackage(javaPackage));
+        super(descriptor, memberResolver, MembersProvider.forPackage(javaPackage));
         this.javaPackage = javaPackage;
         this.packageFQN = packageFQN;
     }
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
+        ClassDescriptor classDescriptor = memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
         if (classDescriptor == null || classDescriptor.getKind().isObject()) {
             return null;
         }
@@ -64,7 +63,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
+        ClassDescriptor classDescriptor = memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
         if (classDescriptor != null && classDescriptor.getKind().isObject()) {
             return classDescriptor;
         }
@@ -73,7 +72,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), INCLUDE_KOTLIN_SOURCES);
+        return memberResolver.resolveNamespace(packageFQN.child(name), INCLUDE_KOTLIN_SOURCES);
     }
 
     @NotNull
@@ -89,7 +88,7 @@ public final class JavaPackageScope extends JavaBaseScope {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
 
         for (JavaPackage subPackage : javaPackage.getSubPackages()) {
-            NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(subPackage.getFqName(), IGNORE_KOTLIN_SOURCES);
+            NamespaceDescriptor childNs = memberResolver.resolveNamespace(subPackage.getFqName(), IGNORE_KOTLIN_SOURCES);
             if (childNs != null) {
                 result.add(childNs);
             }
@@ -98,31 +97,27 @@ public final class JavaPackageScope extends JavaBaseScope {
         for (JavaClass javaClass : DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses())) {
             if (DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass.getPsi())) continue;
 
-            if (isKotlinLightClass(javaClass)) continue;
+            if (javaClass.getPsi() instanceof JetJavaMirrorMarker) continue;
 
-            if (!javaClass.getPsi().hasModifierProperty(PsiModifier.PUBLIC)) continue;
+            if (javaClass.getVisibility() != Visibilities.PUBLIC) continue;
 
             ProgressIndicatorProvider.checkCanceled();
 
             FqName fqName = javaClass.getFqName();
             if (fqName == null) continue;
 
-            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
+            ClassDescriptor classDescriptor = memberResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
             if (classDescriptor != null) {
                 result.add(classDescriptor);
             }
 
-            NamespaceDescriptor namespace = javaDescriptorResolver.resolveNamespace(fqName, IGNORE_KOTLIN_SOURCES);
+            NamespaceDescriptor namespace = memberResolver.resolveNamespace(fqName, IGNORE_KOTLIN_SOURCES);
             if (namespace != null) {
                 result.add(namespace);
             }
         }
 
         return result;
-    }
-
-    private static boolean isKotlinLightClass(@NotNull JavaClass javaClass) {
-        return javaClass.getPsi() instanceof JetJavaMirrorMarker;
     }
 
     @Override
@@ -132,7 +127,7 @@ public final class JavaPackageScope extends JavaBaseScope {
         if (members == null) {
             return Collections.emptySet();
         }
-        return javaDescriptorResolver.resolveFunctionGroupForPackage(members, (NamespaceDescriptor) descriptor);
+        return memberResolver.resolveFunctionGroupForPackage(members, (NamespaceDescriptor) descriptor);
     }
 
     @NotNull

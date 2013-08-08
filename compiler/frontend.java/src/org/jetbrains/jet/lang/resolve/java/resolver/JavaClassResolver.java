@@ -30,7 +30,10 @@ import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
@@ -84,7 +87,7 @@ public final class JavaClassResolver {
 
     private JavaResolverCache cache;
     private JavaTypeParameterResolver typeParameterResolver;
-    private JavaDescriptorResolver javaDescriptorResolver;
+    private JavaMemberResolver memberResolver;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassFinder javaClassFinder;
     private JavaNamespaceResolver namespaceResolver;
@@ -117,8 +120,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setJavaDescriptorResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public void setMemberResolver(JavaMemberResolver memberResolver) {
+        this.memberResolver = memberResolver;
     }
 
     @Inject
@@ -303,7 +306,7 @@ public final class JavaClassResolver {
         classDescriptor.setModality(javaClass.getModality());
         classDescriptor.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, javaClass, false, javaDescriptorResolver);
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, javaClass, false, memberResolver);
         classDescriptor.setScopeForMemberLookup(scope);
         classDescriptor.setScopeForConstructorResolve(scope);
 
@@ -478,8 +481,7 @@ public final class JavaClassResolver {
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, javaClass, true,
-                                                                                  javaDescriptorResolver);
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, javaClass, true, memberResolver);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(scope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);

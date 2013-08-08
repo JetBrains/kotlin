@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -30,9 +30,9 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull MembersProvider membersProvider,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver
+            @NotNull JavaMemberResolver memberResolver
     ) {
-        super(descriptor, javaDescriptorResolver, membersProvider);
+        super(descriptor, memberResolver, membersProvider);
     }
 
     @NotNull
@@ -49,7 +49,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
         if (members == null) {
             return Collections.emptySet();
         }
-        return javaDescriptorResolver.resolveFunctionGroupForClass(members, descriptor);
+        return memberResolver.resolveFunctionGroupForClass(members, descriptor);
     }
 
     @NotNull
