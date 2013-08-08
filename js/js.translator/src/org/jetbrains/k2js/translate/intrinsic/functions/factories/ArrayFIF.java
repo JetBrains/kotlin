@@ -25,16 +25,15 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.decapitalize;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 
 public final class ArrayFIF extends CompositeFIF {
 
@@ -122,12 +121,9 @@ public final class ArrayFIF extends CompositeFIF {
             JsExpression indexExpression = arguments.get(0);
             JsExpression value = arguments.get(1);
             JsArrayAccess arrayAccess = new JsArrayAccess(receiver, indexExpression);
-            return JsAstUtils.assignment(arrayAccess, value);
+            return assignment(arrayAccess, value);
         }
     };
-
-    @NotNull
-    public static final BuiltInPropertyIntrinsic ARRAY_LENGTH_INTRINSIC = new BuiltInPropertyIntrinsic("length");
 
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new ArrayFIF();
@@ -135,7 +131,7 @@ public final class ArrayFIF extends CompositeFIF {
     private ArrayFIF() {
         add(pattern(ARRAYS, "get"), GET_INTRINSIC);
         add(pattern(ARRAYS, "set"), SET_INTRINSIC);
-        add(pattern(ARRAYS, "<get-size>"), ARRAY_LENGTH_INTRINSIC);
+        add(pattern(ARRAYS, "<get-size>"), LENGTH_PROPERTY_INTRINSIC);
         add(pattern(ARRAYS, "<get-indices>"), new KotlinFunctionIntrinsic("arrayIndices"));
         add(pattern(ARRAYS, "iterator"), new KotlinFunctionIntrinsic("arrayIterator"));
         add(pattern(ARRAY, "<init>"), new KotlinFunctionIntrinsic("arrayFromFun"));
