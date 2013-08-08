@@ -23,9 +23,16 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface JavaResolverCache {
     void recordSourceDescriptorForSynthesized(@NotNull FunctionDescriptor synthesized, @NotNull DeclarationDescriptor source);
+
+    @Nullable
+    ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName);
+
+    @Nullable
+    NamespaceDescriptor getPackageResolvedFromSource(@NotNull FqName fqName);
 
     @Nullable
     SimpleFunctionDescriptor getMethod(@NotNull JavaMethod method);

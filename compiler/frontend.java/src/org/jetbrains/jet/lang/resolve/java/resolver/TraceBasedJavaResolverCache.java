@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
 
@@ -47,6 +48,18 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     @Override
     public void recordSourceDescriptorForSynthesized(@NotNull FunctionDescriptor synthesized, @NotNull DeclarationDescriptor source) {
         trace.record(SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, synthesized, source);
+    }
+
+    @Nullable
+    @Override
+    public ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName) {
+        return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName);
+    }
+
+    @Nullable
+    @Override
+    public NamespaceDescriptor getPackageResolvedFromSource(@NotNull FqName fqName) {
+        return trace.get(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
     }
 
     @Nullable

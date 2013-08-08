@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -177,13 +176,11 @@ public final class JavaClassResolver {
             return builtinClassDescriptor;
         }
 
-        // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
-        ClassDescriptor kotlinClassDescriptor = trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
+        ClassDescriptor kotlinClassDescriptor = cache.getClassResolvedFromSource(qualifiedName);
         if (kotlinClassDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinClassDescriptor);
         }
 
-        // Not let's take a descriptor of a Java class
         FqNameUnsafe fqName = javaClassToKotlinFqName(qualifiedName);
         ClassDescriptor cachedDescriptor = classDescriptorCache.get(fqName);
         if (cachedDescriptor != null) {

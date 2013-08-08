@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -101,7 +100,7 @@ public final class JavaNamespaceResolver {
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         // First, let's check that there is no Kotlin package:
-        NamespaceDescriptor kotlinNamespaceDescriptor = trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
+        NamespaceDescriptor kotlinNamespaceDescriptor = cache.getPackageResolvedFromSource(qualifiedName);
         if (kotlinNamespaceDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
         }
