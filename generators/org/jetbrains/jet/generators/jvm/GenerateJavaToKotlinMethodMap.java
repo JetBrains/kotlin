@@ -23,8 +23,10 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
@@ -47,9 +49,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.intellij.psi.util.PsiFormatUtilBase.*;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 import static org.jetbrains.jet.lang.resolve.java.kotlinSignature.JavaToKotlinMethodMap.serializeFunction;
-import static org.jetbrains.jet.lang.resolve.java.kotlinSignature.JavaToKotlinMethodMap.serializePsiMethod;
 
 public class GenerateJavaToKotlinMethodMap {
 
@@ -187,6 +189,12 @@ public class GenerateJavaToKotlinMethodMap {
                 return true;
             }
             return false;
+        }
+
+        @NotNull
+        private static String serializePsiMethod(@NotNull PsiMethod psiMethod) {
+            return PsiFormatUtil.formatMethod(psiMethod, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS,
+                                              SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
         }
 
         @Nullable

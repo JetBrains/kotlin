@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaSignatureFormatter;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -229,7 +229,7 @@ public final class JavaFunctionResolver {
                           + "super class = " + superFunction.getContainingDeclaration() + "\n"
                           + "sub function = " + functionDescriptor + "\n"
                           + "sub class = " + functionDescriptor.getContainingDeclaration() + "\n"
-                          + "sub method = " + PsiFormatUtil.getExternalName(method.getPsi()) + "\n"
+                          + "sub method = " + JavaSignatureFormatter.getExternalName(method) + "\n"
                           + "@KotlinSignature = " + SignaturesUtil.getKotlinSignature(method));
             }
         }

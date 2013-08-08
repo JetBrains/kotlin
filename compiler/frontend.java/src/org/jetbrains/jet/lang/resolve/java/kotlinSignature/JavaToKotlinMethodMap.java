@@ -21,14 +21,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiSubstitutor;
-import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaSignatureFormatter;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -38,8 +36,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.intellij.psi.util.PsiFormatUtilBase.*;
 
 public class JavaToKotlinMethodMap {
     public static final JavaToKotlinMethodMap INSTANCE = new JavaToKotlinMethodMap();
@@ -61,7 +57,7 @@ public class JavaToKotlinMethodMap {
 
         Set<ClassDescriptor> allSuperClasses = DescriptorUtils.getAllSuperClasses(containingClass);
 
-        String serializedMethod = serializePsiMethod(javaMethod.getPsi());
+        String serializedMethod = JavaSignatureFormatter.formatMethod(javaMethod);
         for (ClassData classData : classDatas) {
             String expectedSerializedFunction = classData.method2Function.get(serializedMethod);
             if (expectedSerializedFunction == null) continue;
@@ -79,12 +75,6 @@ public class JavaToKotlinMethodMap {
         }
 
         return result;
-    }
-
-    @NotNull
-    public static String serializePsiMethod(@NotNull PsiMethod psiMethod) {
-        return PsiFormatUtil.formatMethod(
-                psiMethod, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
     }
 
     @NotNull

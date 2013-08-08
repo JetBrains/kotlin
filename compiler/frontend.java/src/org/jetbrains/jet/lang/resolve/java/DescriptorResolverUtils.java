@@ -18,24 +18,18 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.ImmutableSet;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
-import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.FakeOverrideVisibilityResolver;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
 
-import static com.intellij.psi.util.PsiFormatUtilBase.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
@@ -124,8 +118,7 @@ public final class DescriptorResolverUtils {
         if (member instanceof JavaField && ((JavaField) member).isEnumEntry()) return true;
 
         if (!(member instanceof JavaMethod)) return false;
-        String signature = PsiFormatUtil.formatMethod(((JavaMethod) member).getPsi(), PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS,
-                                                      SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+        String signature = JavaSignatureFormatter.formatMethod((JavaMethod) member);
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);
@@ -140,9 +133,8 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isObjectMethod(@NotNull JavaMethod method) {
-        String formattedMethod = PsiFormatUtil.formatMethod(
-                method.getPsi(), PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
-        return OBJECT_METHODS.contains(formattedMethod);
+        String signature = JavaSignatureFormatter.formatMethod(method);
+        return OBJECT_METHODS.contains(signature);
     }
 
     @NotNull
