@@ -37,6 +37,8 @@ import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
@@ -73,7 +75,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             OutputConsumer outputConsumer
     ) throws ProjectBuildException, IOException {
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
-        if (!JavaBuilder.IS_ENABLED.get(context, Boolean.TRUE)) {
+        if (!isJavaPluginEnabled(context)) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION);
             return ExitCode.NOTHING_DONE;
         }
@@ -133,6 +135,16 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         return ExitCode.OK;
+    }
+
+    private static boolean isJavaPluginEnabled(@NotNull CompileContext context) {
+        try {
+            Field javaPluginIsEnabledField = JavaBuilder.class.getDeclaredField("IS_ENABLED");
+            return Modifier.isPublic(javaPluginIsEnabledField.getModifiers()) ? JavaBuilder.IS_ENABLED.get(context, Boolean.TRUE) : true;
+        }
+        catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException("Cannot check if Java Jps Plugin is enabled", e);
+        }
     }
 
     private static Collection<String> paths(Collection<File> files) {
