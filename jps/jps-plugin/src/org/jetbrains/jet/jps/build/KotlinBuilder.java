@@ -30,6 +30,7 @@ import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
+import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.model.module.JpsModule;
@@ -72,6 +73,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             OutputConsumer outputConsumer
     ) throws ProjectBuildException, IOException {
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
+        if (!JavaBuilder.IS_ENABLED.get(context, Boolean.TRUE)) {
+            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION);
+            return ExitCode.NOTHING_DONE;
+        }
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION);
 
