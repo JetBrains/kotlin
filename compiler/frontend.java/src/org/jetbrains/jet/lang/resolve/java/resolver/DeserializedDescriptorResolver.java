@@ -39,7 +39,6 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_K
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
 public final class DeserializedDescriptorResolver {
-
     private AnnotationDescriptorDeserializer annotationDeserializer;
 
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
@@ -47,6 +46,8 @@ public final class DeserializedDescriptorResolver {
     private JavaNamespaceResolver javaNamespaceResolver;
 
     private JavaClassResolver javaClassResolver;
+
+    private ErrorReporter errorReporter;
 
     @NotNull
     private final DescriptorFinder javaDescriptorFinder = new DescriptorFinder() {
@@ -84,26 +85,30 @@ public final class DeserializedDescriptorResolver {
         this.javaClassResolver = javaClassResolver;
     }
 
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull ClassId id, @NotNull VirtualFile file, @NotNull ErrorReporter reporter) {
-        ClassData classData = readClassDataFromClassFile(file, reporter);
-        if (classData == null) {
-            return null;
-        }
-        return createDeserializedClass(classData, id);
+    @Inject
+    public void setErrorReporter(ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
     }
 
     @Nullable
-    public JetScope createKotlinPackageScope(
-            @NotNull NamespaceDescriptor descriptor,
-            @NotNull VirtualFile file,
-            @NotNull ErrorReporter reporter
-    ) {
-        PackageData packageData = readPackageDataFromClassFile(file, reporter);
-        if (packageData == null) {
-            return null;
+    public ClassDescriptor resolveClass(@NotNull ClassId id, @NotNull VirtualFile file) {
+        String[] data = readData(file);
+        if (data != null) {
+            ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
+            return createDeserializedClass(classData, id);
         }
-        return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder, packageData);
+        return null;
+    }
+
+    @Nullable
+    public JetScope createKotlinPackageScope(@NotNull NamespaceDescriptor descriptor, @NotNull VirtualFile file) {
+        String[] data = readData(file);
+        if (data != null) {
+            PackageData packageData = JavaProtoBufUtil.readPackageDataFrom(data);
+            return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder,
+                                                      packageData);
+        }
+        return null;
     }
 
     @Nullable
@@ -119,23 +124,11 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    private static ClassData readClassDataFromClassFile(@NotNull VirtualFile file, @NotNull ErrorReporter reporter) {
-        String[] data = readData(file, reporter);
-        return data == null ? null : JavaProtoBufUtil.readClassDataFrom(data);
-    }
-
-    @Nullable
-    private static PackageData readPackageDataFromClassFile(@NotNull VirtualFile file, @NotNull ErrorReporter reporter) {
-        String[] data = readData(file, reporter);
-        return data == null ? null : JavaProtoBufUtil.readPackageDataFrom(data);
-    }
-
-    @Nullable
-    private static String[] readData(@NotNull VirtualFile virtualFile, @NotNull ErrorReporter reporter) {
+    private String[] readData(@NotNull VirtualFile virtualFile) {
         KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
         int version = header.getVersion();
         if (!isAbiVersionCompatible(version) && header.getType() != KotlinClassFileHeader.HeaderType.NONE) {
-            reporter.reportIncompatibleAbiVersion(version);
+            errorReporter.reportIncompatibleAbiVersion(header.getFqName(), virtualFile, version);
             return null;
         }
         return header.getAnnotationData();

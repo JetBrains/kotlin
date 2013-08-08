@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
@@ -60,7 +59,6 @@ public final class JavaNamespaceResolver {
     private final Set<FqName> unresolvedCache = Sets.newHashSet();
 
     private JavaClassFinder javaClassFinder;
-    private BindingTrace trace;
     private JavaResolverCache cache;
     private JavaDescriptorResolver javaDescriptorResolver;
 
@@ -75,11 +73,6 @@ public final class JavaNamespaceResolver {
     @Inject
     public void setJavaClassFinder(JavaClassFinder javaClassFinder) {
         this.javaClassFinder = javaClassFinder;
-    }
-
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
     }
 
     @Inject
@@ -165,9 +158,7 @@ public final class JavaNamespaceResolver {
             cache.recordProperNamespace(namespaceDescriptor);
 
             if (virtualFile != null) {
-                ErrorReporter errorReporter = AbiVersionUtil.abiVersionErrorReporter(virtualFile, packageClassFqName, trace);
-                JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(namespaceDescriptor,
-                                                                                                      virtualFile, errorReporter);
+                JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(namespaceDescriptor, virtualFile);
                 if (kotlinPackageScope != null) {
                     return kotlinPackageScope;
                 }

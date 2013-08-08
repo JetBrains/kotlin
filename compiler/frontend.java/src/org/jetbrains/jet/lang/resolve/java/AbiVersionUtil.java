@@ -34,20 +34,6 @@ public final class AbiVersionUtil {
         return abiVersion == JvmAbi.VERSION;
     }
 
-    @NotNull
-    public static ErrorReporter abiVersionErrorReporter(
-            @NotNull final VirtualFile file,
-            @NotNull final FqName classFqName,
-            @NotNull final BindingTrace trace
-    ) {
-        return new ErrorReporter() {
-            @Override
-            public void reportIncompatibleAbiVersion(int actualVersion) {
-                trace.record(ABI_VERSION_ERRORS, new AbiVersionErrorLocation(classFqName, file), actualVersion);
-            }
-        };
-    }
-
     public static final class AbiVersionErrorLocation {
         @NotNull
         private final FqName classFqName;

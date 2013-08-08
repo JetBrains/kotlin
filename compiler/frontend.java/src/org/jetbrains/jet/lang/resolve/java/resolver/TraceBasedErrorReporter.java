@@ -18,8 +18,22 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public interface ErrorReporter {
-    void reportIncompatibleAbiVersion(@NotNull FqName fqName, @NotNull VirtualFile file, int actualVersion);
+import javax.inject.Inject;
+
+public class TraceBasedErrorReporter implements ErrorReporter {
+    private BindingTrace trace;
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
+    }
+
+    @Override
+    public void reportIncompatibleAbiVersion(@NotNull FqName fqName, @NotNull VirtualFile file, int actualVersion) {
+        trace.record(AbiVersionUtil.ABI_VERSION_ERRORS, new AbiVersionUtil.AbiVersionErrorLocation(fqName, file), actualVersion);
+    }
 }

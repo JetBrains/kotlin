@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -83,7 +82,6 @@ public final class JavaClassResolver {
     @NotNull
     private final Set<FqNameBase> unresolvedCache = Sets.newHashSet();
 
-    private BindingTrace trace;
     private JavaResolverCache cache;
     private JavaTypeParameterResolver typeParameterResolver;
     private JavaDescriptorResolver javaDescriptorResolver;
@@ -92,7 +90,7 @@ public final class JavaClassResolver {
     private JavaNamespaceResolver namespaceResolver;
     private JavaSupertypeResolver supertypesResolver;
     private JavaFunctionResolver functionResolver;
-    private DeserializedDescriptorResolver kotlinDescriptorResolver;
+    private DeserializedDescriptorResolver deserializedDescriptorResolver;
     private VirtualFileFinder virtualFileFinder;
 
     public JavaClassResolver() {
@@ -104,18 +102,13 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    @Inject
     public void setCache(JavaResolverCache cache) {
         this.cache = cache;
     }
 
     @Inject
-    public void setKotlinDescriptorResolver(DeserializedDescriptorResolver kotlinDescriptorResolver) {
-        this.kotlinDescriptorResolver = kotlinDescriptorResolver;
+    public void setDeserializedDescriptorResolver(DeserializedDescriptorResolver deserializedDescriptorResolver) {
+        this.deserializedDescriptorResolver = deserializedDescriptorResolver;
     }
 
     @Inject
@@ -229,8 +222,7 @@ public final class JavaClassResolver {
                     : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
             ClassId id = ClassId.fromFqNameAndContainingDeclaration(qualifiedName, containingDeclaration);
-            ErrorReporter errorReporter = AbiVersionUtil.abiVersionErrorReporter(file, qualifiedName, trace);
-            ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(id, file, errorReporter);
+            ClassDescriptor deserializedDescriptor = deserializedDescriptorResolver.resolveClass(id, file);
             if (deserializedDescriptor != null) {
                 cache(javaClassToKotlinFqName(qualifiedName), deserializedDescriptor);
                 return deserializedDescriptor;

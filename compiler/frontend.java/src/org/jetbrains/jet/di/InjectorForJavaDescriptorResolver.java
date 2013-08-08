@@ -22,19 +22,20 @@ import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.FakeOverrideVisibilityResolverImpl;
+import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
@@ -50,19 +51,20 @@ public class InjectorForJavaDescriptorResolver {
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private final TraceBasedJavaResolverCache traceBasedJavaResolverCache;
     private final FakeOverrideVisibilityResolverImpl fakeOverrideVisibilityResolver;
+    private final TraceBasedErrorReporter traceBasedErrorReporter;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final PsiClassFinderImpl psiClassFinder;
     private final VirtualFileFinder virtualFileFinder;
     private final JavaClassResolver javaClassResolver;
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
+    private final DeserializedDescriptorResolver deserializedDescriptorResolver;
+    private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
+    private final JavaNamespaceResolver javaNamespaceResolver;
     private final JavaFunctionResolver javaFunctionResolver;
     private final JavaTypeParameterResolver javaTypeParameterResolver;
     private final JavaTypeTransformer javaTypeTransformer;
     private final JavaValueParameterResolver javaValueParameterResolver;
-    private final DeserializedDescriptorResolver deserializedDescriptorResolver;
-    private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
-    private final JavaNamespaceResolver javaNamespaceResolver;
     private final JavaSupertypeResolver javaSupertypeResolver;
     private final JavaConstructorResolver javaConstructorResolver;
     private final JavaPropertyResolver javaPropertyResolver;
@@ -77,19 +79,20 @@ public class InjectorForJavaDescriptorResolver {
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
         this.fakeOverrideVisibilityResolver = new FakeOverrideVisibilityResolverImpl();
+        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
+        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
+        this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaFunctionResolver = new JavaFunctionResolver();
         this.javaTypeParameterResolver = new JavaTypeParameterResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
-        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
-        this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
-        this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaSupertypeResolver = new JavaSupertypeResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaPropertyResolver = new JavaPropertyResolver();
@@ -102,6 +105,8 @@ public class InjectorForJavaDescriptorResolver {
 
         fakeOverrideVisibilityResolver.setTrace(bindingTrace);
 
+        traceBasedErrorReporter.setTrace(bindingTrace);
+
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
         this.javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
@@ -112,13 +117,12 @@ public class InjectorForJavaDescriptorResolver {
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setCache(traceBasedJavaResolverCache);
+        javaClassResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassResolver.setTrace(bindingTrace);
         javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
         javaClassResolver.setVirtualFileFinder(virtualFileFinder);
 
@@ -127,6 +131,21 @@ public class InjectorForJavaDescriptorResolver {
 
         javaAnnotationArgumentResolver.setAnnotationResolver(javaAnnotationResolver);
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
+
+        deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
+        deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
+        deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
+        deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
+
+        annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
+        annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
+        annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
+
+        javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
+        javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
+        javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
+        javaNamespaceResolver.setVirtualFileFinder(virtualFileFinder);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setCache(traceBasedJavaResolverCache);
@@ -141,21 +160,6 @@ public class InjectorForJavaDescriptorResolver {
         javaTypeTransformer.setClassResolver(javaClassResolver);
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
-
-        deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
-        deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
-        deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
-
-        annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
-        annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
-        annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
-
-        javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
-        javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
-        javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaNamespaceResolver.setTrace(bindingTrace);
-        javaNamespaceResolver.setVirtualFileFinder(virtualFileFinder);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setTrace(bindingTrace);
