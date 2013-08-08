@@ -19,28 +19,15 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.types.JetType;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
-public class ExternalSignatureResolver {
-    private BindingTrace trace;
-
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    private abstract static class MemberSignature {
+public interface ExternalSignatureResolver {
+    abstract class MemberSignature {
         private final List<String> signatureErrors;
 
         protected MemberSignature(@NotNull List<String> signatureErrors) {
@@ -53,7 +40,7 @@ public class ExternalSignatureResolver {
         }
     }
 
-    public static class AlternativeMethodSignature extends MemberSignature {
+    class AlternativeMethodSignature extends MemberSignature {
         private final JetType returnType;
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> valueParameters;
@@ -94,7 +81,7 @@ public class ExternalSignatureResolver {
         }
     }
 
-    public static class AlternativeFieldSignature extends MemberSignature {
+    class AlternativeFieldSignature extends MemberSignature {
         private final JetType returnType;
 
         public AlternativeFieldSignature(@NotNull JetType returnType, @Nullable String signatureError) {
@@ -108,7 +95,7 @@ public class ExternalSignatureResolver {
         }
     }
 
-    public static class PropagatedMethodSignature extends AlternativeMethodSignature {
+    class PropagatedMethodSignature extends AlternativeMethodSignature {
         private final List<FunctionDescriptor> superMethods;
 
         public PropagatedMethodSignature(
@@ -130,61 +117,31 @@ public class ExternalSignatureResolver {
     }
 
     @NotNull
-    public PropagatedMethodSignature resolvePropagatedSignature(
+    PropagatedMethodSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
             @NotNull JetType returnType,
             @Nullable JetType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters
-    ) {
-        SignaturesPropagationData data =
-                new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, method, trace);
-        return new PropagatedMethodSignature(data.getModifiedReturnType(), data.getModifiedReceiverType(),
-                                             data.getModifiedValueParameters(), data.getModifiedTypeParameters(), data.getSignatureErrors(),
-                                             data.getSuperFunctions());
-    }
+    );
 
-    @SuppressWarnings("MethodMayBeStatic")
     @NotNull
-    public AlternativeMethodSignature resolveAlternativeMethodSignature(
+    AlternativeMethodSignature resolveAlternativeMethodSignature(
             @NotNull JavaMethod method,
             boolean hasSuperMethods,
             @Nullable JetType returnType,
             @Nullable JetType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters
-    ) {
-        AlternativeMethodSignatureData data =
-                new AlternativeMethodSignatureData(method, receiverType, valueParameters, returnType, typeParameters, hasSuperMethods);
+    );
 
-        if (data.isAnnotated() && !data.hasErrors()) {
-            return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
-                                                  Collections.<String>emptyList());
-        }
-
-        List<String> error = data.hasErrors() ? Collections.singletonList(data.getError()) : Collections.<String>emptyList();
-        return new AlternativeMethodSignature(returnType, receiverType, valueParameters, typeParameters, error);
-    }
-
-    @SuppressWarnings("MethodMayBeStatic")
     @NotNull
-    public AlternativeFieldSignature resolveAlternativeFieldSignature(
+    AlternativeFieldSignature resolveAlternativeFieldSignature(
             @NotNull JavaField field,
             @NotNull JetType returnType,
             boolean isVar
-    ) {
-        AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(field, returnType, isVar);
+    );
 
-        if (data.isAnnotated() && !data.hasErrors()) {
-            return new AlternativeFieldSignature(data.getReturnType(), null);
-        }
-
-        String error = data.hasErrors() ? data.getError() : null;
-        return new AlternativeFieldSignature(returnType, error);
-    }
-
-    public void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors) {
-        trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor, signatureErrors);
-    }
+    void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors);
 }
