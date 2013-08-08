@@ -116,7 +116,9 @@ public class LiteralFunctionTranslator {
         if (asInner) {
             addRegularParameters(descriptor, fun, funContext, receiverName);
             if (outerClass != null) {
-                if (funContext.usageTracker().isUsed()) {
+                UsageTracker usageTracker = funContext.usageTracker();
+                assert usageTracker != null;
+                if (usageTracker.isUsed()) {
                     return new JsInvocation(rootContext.namer().kotlin("assignOwner"), fun, JsLiteral.THIS);
                 }
                 else {
@@ -159,15 +161,15 @@ public class LiteralFunctionTranslator {
             @NotNull ClassTranslator classTranslator) {
         JsFunction fun = createFunction();
         JsNameRef outerClassRef = fun.getScope().declareName("$this").makeRef();
-        TranslationContext funContext = rootContext
-                .contextWithScope(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef), new UsageTracker(descriptor, null,
-                                                                                                                        outerClass));
+        UsageTracker usageTracker = new UsageTracker(descriptor, null, outerClass);
+        TranslationContext funContext = rootContext.contextWithScope(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef),
+                                                                     usageTracker);
 
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translate(funContext)));
         JetClassBody body = declaration.getBody();
         assert body != null;
         InnerObjectTranslator translator = new InnerObjectTranslator(funContext, fun);
-        return translator.translate(createReference(fun), funContext.usageTracker().isUsed() ? outerClassRef : null);
+        return translator.translate(createReference(fun), usageTracker.isUsed() ? outerClassRef : null);
     }
 }
 

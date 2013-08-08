@@ -35,8 +35,6 @@ public final class UsageTracker {
     private final MemberDescriptor memberDescriptor;
 
     @Nullable
-    private final UsageTracker parent;
-    @Nullable
     private List<UsageTracker> children;
 
     private boolean used;
@@ -47,7 +45,6 @@ public final class UsageTracker {
     public UsageTracker(@NotNull MemberDescriptor memberDescriptor, @Nullable UsageTracker parent, @Nullable ClassDescriptor trackedClassDescriptor) {
         this.memberDescriptor = memberDescriptor;
         this.trackedClassDescriptor = trackedClassDescriptor;
-        this.parent = parent;
         if (parent != null) {
             parent.addChild(this);
         }
@@ -119,16 +116,18 @@ public final class UsageTracker {
 
     @Nullable
     public ClassDescriptor getOuterClassDescriptor() {
-        if (outerClassDescriptor == null && parent != null) {
-            UsageTracker p = parent;
-            do {
-                if (p.outerClassDescriptor != null) {
-                    return p.outerClassDescriptor;
-                }
-            }
-            while ((p = p.parent) != null);
+        if (outerClassDescriptor != null || children == null) {
+            return outerClassDescriptor;
         }
-        return outerClassDescriptor;
+
+        for (UsageTracker child : children) {
+            ClassDescriptor childOuterClassDescriptor = child.getOuterClassDescriptor();
+            if (childOuterClassDescriptor != null) {
+                return childOuterClassDescriptor;
+            }
+        }
+
+        return null;
     }
 
     public void forEachCaptured(Consumer<CallableDescriptor> consumer) {
