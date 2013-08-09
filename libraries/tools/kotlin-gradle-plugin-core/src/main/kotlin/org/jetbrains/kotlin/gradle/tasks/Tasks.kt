@@ -27,6 +27,10 @@ import org.apache.commons.io.FileUtils
 
 public open class KotlinCompile(): AbstractCompile() {
 
+    class object {
+        val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
+    }
+
     val srcDirsRoots = HashSet<File>()
     val compiler = K2JVMCompiler()
     val logger = Logging.getLogger(getClass())
@@ -105,7 +109,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         val embeddedAnnotations = getAnnotations()
         val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
-        val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.getPath())
+        val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map {it.getPath()})
         args.annotations = allAnnotations.makeString(File.pathSeparator)
 
         args.noStdlib = true
@@ -124,19 +128,14 @@ public open class KotlinCompile(): AbstractCompile() {
         FileUtils.copyDirectory(kotlinDestinationDir, getDestinationDir())
     }
 
-    fun getAnnotations(): File {
-        val configuration = getProject()
-                .getBuildscript()
-                .getConfigurations()
-                .getByName(ScriptHandler.CLASSPATH_CONFIGURATION)!!
+    fun getAnnotations(): Collection<File> {
+        val annotations = getProject().getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
 
-        val jdkAnnotationsFromClasspath = configuration.find { it.name.startsWith("kotlin-jdk-annotations") }
-
-        if (jdkAnnotationsFromClasspath != null) {
-            logger.info("using jdk annontations from [${jdkAnnotationsFromClasspath.getAbsolutePath()}]")
-            return jdkAnnotationsFromClasspath
+        if (!annotations.isEmpty()) {
+            logger.info("using default annontations from [${annotations.map {it.getPath()}}]")
+            return annotations
         } else {
-            throw GradleException("kotlin-jdk-annotations not found in Kotlin gradle plugin classpath")
+            throw GradleException("Default annotations not found in Kotlin gradle plugin classpath")
         }
     }
 }
