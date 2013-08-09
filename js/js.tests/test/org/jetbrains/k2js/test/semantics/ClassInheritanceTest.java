@@ -32,6 +32,10 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testValOverride() throws Exception {
+        fooBoxTest();
+    }
+
     public void testInitializationOrder() throws Exception {
         fooBoxTest();
     }
