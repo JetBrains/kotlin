@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.codeInsight.FileModificationService;
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -79,7 +79,7 @@ public class ExclExclCallFix implements IntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
+        if (!CodeInsightUtilBase.prepareFileForWrite(file)) {
             return;
         }
 
