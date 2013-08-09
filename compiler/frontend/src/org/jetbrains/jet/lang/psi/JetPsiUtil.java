@@ -66,16 +66,25 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetExpression deparenthesizeWithNoTypeResolution(@NotNull JetExpression expression) {
-        return deparenthesizeWithResolutionStrategy(expression, null);
+        return deparenthesizeWithNoTypeResolution(expression, true);
+    }
+
+    @Nullable
+    public static JetExpression deparenthesizeWithNoTypeResolution(
+            @NotNull JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS
+    ) {
+        return deparenthesizeWithResolutionStrategy(expression, deparenthesizeBinaryExpressionWithTypeRHS, null);
     }
 
     @Nullable
     @Deprecated //Use JetPsiUtil.deparenthesizeWithNoTypeResolution() or ExpressionTypingServices.deparenthesize()
     public static JetExpression deparenthesizeWithResolutionStrategy(
             @NotNull JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS,
             @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
     ) {
-        if (expression instanceof JetBinaryExpressionWithTypeRHS) {
+        if (deparenthesizeBinaryExpressionWithTypeRHS && expression instanceof JetBinaryExpressionWithTypeRHS) {
             JetBinaryExpressionWithTypeRHS binaryExpression = (JetBinaryExpressionWithTypeRHS) expression;
             JetSimpleNameExpression operationSign = binaryExpression.getOperationReference();
             if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
@@ -87,18 +96,25 @@ public class JetPsiUtil {
             }
         }
         else if (expression instanceof JetPrefixExpression) {
-            if (JetTokens.LABELS.contains(((JetPrefixExpression) expression).getOperationReference().getReferencedNameElementType())) {
-                JetExpression baseExpression = ((JetPrefixExpression) expression).getBaseExpression();
-                if (baseExpression != null) {
-                    expression = baseExpression;
-                }
+            JetExpression baseExpression = getBaseExpressionIfLabeledExpression((JetPrefixExpression) expression);
+            if (baseExpression != null) {
+                expression = baseExpression;
             }
         }
         if (expression instanceof JetParenthesizedExpression) {
             JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
-            return innerExpression != null ? deparenthesizeWithResolutionStrategy(innerExpression, typeResolutionStrategy) : null;
+            return innerExpression != null ? deparenthesizeWithResolutionStrategy(
+                    innerExpression, deparenthesizeBinaryExpressionWithTypeRHS, typeResolutionStrategy) : null;
         }
         return expression;
+    }
+
+    @Nullable
+    public static JetExpression getBaseExpressionIfLabeledExpression(@NotNull JetPrefixExpression expression) {
+        if (JetTokens.LABELS.contains(expression.getOperationReference().getReferencedNameElementType())) {
+            return expression.getBaseExpression();
+        }
+        return null;
     }
 
     @NotNull
