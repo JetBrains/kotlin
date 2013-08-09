@@ -33,13 +33,13 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments,
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               expressionPosition, resolutionResultsCache, dataFlowInfoForArguments);
     }
 
@@ -50,12 +50,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache, null);
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache, null);
     }
 
     @NotNull
@@ -63,7 +63,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckValueArgumentsMode checkArguments,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.resolveMode,
+        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency,
                       checkArguments, context.expressionPosition, context.resolutionResultsCache, dataFlowInfoForArguments);
     }
 
@@ -76,11 +76,11 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
 
     private BasicCallResolutionContext(
             BindingTrace trace, JetScope scope, Call call, JetType expectedType,
-            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, CheckValueArgumentsMode checkArguments,
+            DataFlowInfo dataFlowInfo, ContextDependency contextDependency, CheckValueArgumentsMode checkArguments,
             ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache,
             MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache,
+        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
               dataFlowInfoForArguments);
     }
 
@@ -91,10 +91,10 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition,
+        return create(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
                       resolutionResultsCache);
     }
 

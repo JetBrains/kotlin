@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.types.JetType;
@@ -40,18 +40,18 @@ public class OverloadResolutionResultsUtil {
     @Nullable
     public static <D extends CallableDescriptor> JetType getResultingType(
             @NotNull OverloadResolutionResults<D> results,
-            @NotNull ResolveMode resolveMode
+            @NotNull ContextDependency contextDependency
     ) {
-        ResolvedCall<D> resultingCall = getResultingCall((OverloadResolutionResultsImpl<D>) results, resolveMode);
+        ResolvedCall<D> resultingCall = getResultingCall((OverloadResolutionResultsImpl<D>) results, contextDependency);
         return resultingCall != null ? resultingCall.getResultingDescriptor().getReturnType() : null;
     }
 
     @Nullable
     public static <D extends CallableDescriptor> ResolvedCallWithTrace<D> getResultingCall(
             @NotNull OverloadResolutionResultsImpl<D> results,
-            @NotNull ResolveMode resolveMode
+            @NotNull ContextDependency contextDependency
     ) {
-        if (results.isSingleResult() && resolveMode == ResolveMode.TOP_LEVEL_CALL) {
+        if (results.isSingleResult() && contextDependency == ContextDependency.INDEPENDENT) {
             if (!CallResolverUtil.hasInferredReturnType(results.getResultingCall())) {
                 return null;
             }

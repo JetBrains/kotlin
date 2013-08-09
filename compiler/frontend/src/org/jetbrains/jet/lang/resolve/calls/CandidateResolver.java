@@ -363,7 +363,7 @@ public class CandidateResolver {
         }
 
         CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = storedContextForArgument
-                .replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
+                .replaceContextDependency(ContextDependency.INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
         JetType type;
         if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
             type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);

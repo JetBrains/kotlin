@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
@@ -194,7 +193,7 @@ public class CallExpressionResolver {
         if (!results.isNothing()) {
             checkSuper(call.getExplicitReceiver(), results, context.trace, callExpression);
             result[0] = true;
-            return OverloadResolutionResultsUtil.getResultingCall(results, context.resolveMode);
+            return OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency);
         }
         result[0] = false;
         return null;
@@ -284,7 +283,7 @@ public class CallExpressionResolver {
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
                 callExpression, receiver, callOperationNode, context);
-        if (context.resolveMode == ResolveMode.TOP_LEVEL_CALL) {
+        if (context.contextDependency == ContextDependency.INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo.getType(), callExpression, context, typeInfo.getDataFlowInfo());
         }
         return typeInfo;
@@ -407,7 +406,7 @@ public class CallExpressionResolver {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
-        if (context.resolveMode == ResolveMode.TOP_LEVEL_CALL) {
+        if (context.contextDependency == ContextDependency.INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
         }
         return typeInfo;

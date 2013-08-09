@@ -40,12 +40,12 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache, null);
+        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache, null);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
@@ -56,7 +56,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         candidateCall.setInitialDataFlowInfo(context.dataFlowInfo);
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
-                context.dataFlowInfo, context.resolveMode, context.checkArguments,
+                context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.expressionPosition, context.resolutionResultsCache);
     }
 
@@ -69,18 +69,18 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {
-        return createForCallBeingAnalyzed(candidateCall, context, context.call, context.resolveMode,
+        return createForCallBeingAnalyzed(candidateCall, context, context.call, context.contextDependency,
                                           context.checkArguments, tracing, context.resolutionResultsCache);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionContext context, @NotNull Call call,
-            @NotNull ResolveMode resolveMode, @NotNull CheckValueArgumentsMode checkArguments, @NotNull TracingStrategy tracing,
+            @NotNull ContextDependency contextDependency, @NotNull CheckValueArgumentsMode checkArguments, @NotNull TracingStrategy tracing,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, call, context.expectedType,
-                context.dataFlowInfo, resolveMode, checkArguments, context.expressionPosition, resolutionResultsCache);
+                context.dataFlowInfo, contextDependency, checkArguments, context.expressionPosition, resolutionResultsCache);
     }
 
     @Override
@@ -90,11 +90,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
         return new CallCandidateResolutionContext<D>(
-                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode,
+                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency,
                 checkArguments, expressionPosition, resolutionResultsCache);
     }
 

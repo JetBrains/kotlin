@@ -37,13 +37,13 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, resolveMode, resolutionResultsCache);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {

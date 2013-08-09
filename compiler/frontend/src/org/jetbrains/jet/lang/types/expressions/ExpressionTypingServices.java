@@ -332,7 +332,7 @@ public class ExpressionTypingServices {
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
         return ExpressionTypingContext.newContext(this, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType,
-                                                  oldContext.expressionPosition, oldContext.resolveMode, oldContext.resolutionResultsCache);
+                                                  oldContext.expressionPosition, oldContext.contextDependency, oldContext.resolutionResultsCache);
     }
 
     @Nullable

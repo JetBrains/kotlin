@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls.context;
 
-public enum ResolveMode {
-    TOP_LEVEL_CALL,
-    NESTED_CALL
+public enum ContextDependency {
+    INDEPENDENT,
+    DEPENDENT
 }

@@ -152,7 +152,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
         ExpressionTypingContext contextWithNoExpectedType =
-                context.replaceExpectedType(NO_EXPECTED_TYPE).replaceResolveMode(ResolveMode.TOP_LEVEL_CALL);
+                context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT);
         JetExpression left = expression.getLeft();
         JetTypeReference right = expression.getRight();
         if (right == null) {
@@ -914,7 +914,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
             //we don't complete 'compareTo' call, because we change its result type from 'Int' to 'Boolean'
             JetTypeInfo typeInfo = getTypeInfoForBinaryCall(
-                    context.scope, OperatorConventions.COMPARE_TO, context.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL), expression);
+                    context.scope, OperatorConventions.COMPARE_TO, context.replaceContextDependency(ContextDependency.INDEPENDENT), expression);
             dataFlowInfo = typeInfo.getDataFlowInfo();
             JetType compareToReturnType = typeInfo.getType();
             if (compareToReturnType != null && !ErrorUtils.isErrorType(compareToReturnType)) {
@@ -1064,7 +1064,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 CallMaker.makeCallWithExpressions(callElement, receiver, null, operationSign, Collections.singletonList(left)),
                 operationSign,
                 OperatorConventions.CONTAINS);
-        JetType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.resolveMode);
+        JetType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.contextDependency);
         ensureBooleanResult(operationSign, OperatorConventions.CONTAINS, containsType, context);
 
         if (left != null) {
@@ -1174,7 +1174,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
         }
 
-        return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.resolveMode), dataFlowInfo);
+        return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.contextDependency), dataFlowInfo);
     }
 
     @NotNull

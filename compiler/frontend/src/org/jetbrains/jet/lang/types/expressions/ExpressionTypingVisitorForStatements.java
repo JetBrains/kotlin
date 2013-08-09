@@ -244,7 +244,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
                 scope, name, context.replaceTraceAndCache(temporaryForAssignmentOperation), expression, receiver);
         JetType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors,
-                                                                                         context.resolveMode);
+                                                                                         context.contextDependency);
 
         // Check for '+'
         Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
@@ -252,7 +252,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 context, "trace to check binary operation like '+' for", expression);
         OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
                 scope, counterpartName, context.replaceTraceAndCache(temporaryForBinaryOperation), expression, receiver);
-        JetType binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.resolveMode);
+        JetType binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.contextDependency);
 
         JetType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
         if (assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess()) {

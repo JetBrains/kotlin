@@ -46,11 +46,11 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public ResolutionTask(
             @NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference,
             @NotNull TracingStrategy tracing, BindingTrace trace, JetScope scope, Call call, JetType expectedType,
-            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, CheckValueArgumentsMode checkArguments,
+            DataFlowInfo dataFlowInfo, ContextDependency contextDependency, CheckValueArgumentsMode checkArguments,
             ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache,
+        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
               dataFlowInfoForArguments);
         this.candidates = candidates;
         this.reference = reference;
@@ -65,7 +65,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     ) {
         this(candidates, reference, tracing != null ? tracing : TracingStrategyImpl.create(reference, context.call),
              context.trace, context.scope, context.call,
-             context.expectedType, context.dataFlowInfo, context.resolveMode, context.checkArguments,
+             context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
              context.expressionPosition, context.resolutionResultsCache, context.dataFlowInfoForArguments);
     }
 
@@ -105,11 +105,11 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(
-                candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments,
+                candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 expressionPosition, resolutionResultsCache, dataFlowInfoForArguments);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
@@ -122,7 +122,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
 
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
-                candidates, reference, tracing, trace, scope, newCall, expectedType, dataFlowInfo, resolveMode, checkArguments,
+                candidates, reference, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 expressionPosition, resolutionResultsCache, dataFlowInfoForArguments);
     }
 

@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext;
@@ -216,7 +216,7 @@ public class BodyResolver {
                     JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, context.getOuterDataFlowInfo(), trace);
                     if (type != null && supertype != null) {
                         SimpleResolutionContext simpleResolutionContext = new SimpleResolutionContext(
-                                trace, scope, supertype, context.getOuterDataFlowInfo(), ExpressionPosition.FREE, ResolveMode.NORMAL,
+                                trace, scope, supertype, context.getOuterDataFlowInfo(), ExpressionPosition.FREE, ContextDependency.INDEPENDENT,
                                 ResolutionResultsCacheImpl.create());
                         DataFlowUtils.checkType(type, delegateExpression, simpleResolutionContext);
                     }

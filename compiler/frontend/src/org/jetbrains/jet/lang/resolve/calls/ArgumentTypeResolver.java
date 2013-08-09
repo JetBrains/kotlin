@@ -28,11 +28,9 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -175,7 +173,8 @@ public class ArgumentTypeResolver {
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
-        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.UNKNOWN_EXPECTED_TYPE).replaceResolveMode(ResolveMode.NESTED_CALL);
+        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.UNKNOWN_EXPECTED_TYPE).replaceContextDependency(
+                ContextDependency.DEPENDENT);
         JetTypeInfo result = expressionTypingServices.getTypeInfo(expression, newContext);
 
         if (traceToCommitForCall != null) {
