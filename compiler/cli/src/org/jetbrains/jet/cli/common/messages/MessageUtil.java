@@ -17,10 +17,15 @@
 package org.jetbrains.jet.cli.common.messages;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.impl.jar.CoreJarVirtualFile;
+import com.intellij.openapi.vfs.local.CoreLocalVirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+
+import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
 
 public class MessageUtil {
     private MessageUtil() {}
@@ -29,8 +34,23 @@ public class MessageUtil {
     public static CompilerMessageLocation psiElementToMessageLocation(@NotNull PsiElement element) {
         PsiFile file = element.getContainingFile();
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(file, element.getTextRange());
+        return psiFileToMessageLocation(file, "<no path>", lineAndColumn.getLine(), lineAndColumn.getColumn());
+    }
+
+    @NotNull
+    public static CompilerMessageLocation psiFileToMessageLocation(@NotNull PsiFile file, @Nullable String defaultValue, int line, int column) {
+        String path;
         VirtualFile virtualFile = file.getVirtualFile();
-        String path = virtualFile == null ? "<no path>" : virtualFile.getPath();
-        return CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn());
+        if (virtualFile == null) {
+            path = defaultValue;
+        }
+        else {
+            path = virtualFile.getPath();
+            // Convert path to platform-dependent format when virtualFile is local file.
+            if (virtualFile instanceof CoreLocalVirtualFile || virtualFile instanceof CoreJarVirtualFile) {
+                path = toSystemDependentName(path);
+            }
+        }
+        return CompilerMessageLocation.create(path, line, column);
     }
 }
