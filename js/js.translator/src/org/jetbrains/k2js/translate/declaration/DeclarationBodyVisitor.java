@@ -16,14 +16,12 @@
 
 package org.jetbrains.k2js.translate.declaration;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
@@ -32,18 +30,20 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
+import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createPropertyInitializer;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     protected final List<JsPropertyInitializer> result;
+    protected final List<JsPropertyInitializer> staticResult;
 
     public DeclarationBodyVisitor() {
-        this(new SmartList<JsPropertyInitializer>());
+        this(new SmartList<JsPropertyInitializer>(), new SmartList<JsPropertyInitializer>());
     }
 
-    public DeclarationBodyVisitor(List<JsPropertyInitializer> result) {
+    public DeclarationBodyVisitor(@NotNull List<JsPropertyInitializer> result, @NotNull List<JsPropertyInitializer> staticResult) {
         this.result = result;
+        this.staticResult = staticResult;
     }
 
     @NotNull
@@ -53,6 +53,21 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
+        return null;
+    }
+
+    @Override
+    public Void visitClassObject(
+            JetClassObject classObject, TranslationContext context
+    ) {
+        JetObjectDeclaration declaration = classObject.getObjectDeclaration();
+        assert declaration != null : "Declaration for class object must be not null";
+        ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
+        JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
+
+        JsFunction fun = new JsFunction(context.getScopeForDescriptor(descriptor.getContainingDeclaration()));
+        fun.setBody(new JsBlock(new JsReturn(value)));
+        staticResult.add(createPropertyInitializer(Namer.getNamedForClassObjectInitializer(), fun, context));
         return null;
     }
 

@@ -78,6 +78,9 @@ public final class ReferenceTranslator {
         if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
             return PropertyAccessTranslator.newInstance(referenceExpression, receiver, CallType.NORMAL, context);
         }
+        if (ClassObjectAccessTranslator.isClassObjectReference(referenceExpression, context)) {
+            return ClassObjectAccessTranslator.newInstance(referenceExpression, context);
+        }
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }
 }

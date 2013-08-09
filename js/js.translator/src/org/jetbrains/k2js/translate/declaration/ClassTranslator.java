@@ -133,15 +133,13 @@ public final class ClassTranslator extends AbstractTranslator {
     private void addClassOwnDeclarations(@NotNull List<JsExpression> invocationArguments, @NotNull TranslationContext declarationContext) {
         final List<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
 
-        final List<JsPropertyInitializer> staticProperties;
+        final List<JsPropertyInitializer> staticProperties = new SmartList<JsPropertyInitializer>();
         boolean isTopLevelDeclaration = context() == declarationContext;
         final JsNameRef qualifiedReference;
         if (!isTopLevelDeclaration) {
-            staticProperties = null;
             qualifiedReference = null;
         }
         else if (descriptor.getKind().isObject()) {
-            staticProperties = null;
             qualifiedReference = null;
             declarationContext.literalFunctionTranslator().setDefinitionPlace(
                     new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
@@ -154,7 +152,6 @@ public final class ClassTranslator extends AbstractTranslator {
         }
         else {
             qualifiedReference = getQualifiedReference(declarationContext, descriptor);
-            staticProperties = new SmartList<JsPropertyInitializer>();
             declarationContext.literalFunctionTranslator().setDefinitionPlace(
                     new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
                         @Override
@@ -176,13 +173,13 @@ public final class ClassTranslator extends AbstractTranslator {
         }
 
         translatePropertiesAsConstructorParameters(declarationContext, properties);
-        new DeclarationBodyVisitor(properties).traverseContainer(classDeclaration, declarationContext);
+        new DeclarationBodyVisitor(properties, staticProperties).traverseContainer(classDeclaration, declarationContext);
 
         if (isTopLevelDeclaration) {
             declarationContext.literalFunctionTranslator().setDefinitionPlace(null);
         }
 
-        boolean hasStaticProperties = staticProperties != null && !staticProperties.isEmpty();
+        boolean hasStaticProperties = !staticProperties.isEmpty();
         if (!properties.isEmpty() || hasStaticProperties) {
             if (properties.isEmpty()) {
                 invocationArguments.add(JsLiteral.NULL);

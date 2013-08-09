@@ -111,6 +111,7 @@ var Kotlin = {};
             klass.addMethods = addMethods;
             klass.superclass = parent || null;
             klass.subclasses = [];
+            klass.object$ = object$;
 
             if (parent) {
                 if (typeof (parent) == "function") {
@@ -158,6 +159,14 @@ var Kotlin = {};
         function addMethods(source) {
             copyProperties(this.prototype, source);
             return this;
+        }
+
+        function object$() {
+            if (typeof this.$object$ === "undefined") {
+                this.$object$ = this.object_initializer$();
+            }
+
+            return this.$object$;
         }
 
         return create;

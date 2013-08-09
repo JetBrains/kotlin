@@ -20,9 +20,11 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * Encapuslates different types of constants and naming conventions.
@@ -46,6 +48,16 @@ public final class Namer {
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
+    private static final String CLASS_OBJECT_GETTER = "object$";
+    private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
+
+    private static final Named CLASS_OBJECT_INITIALIZER_NAMED = new Named() {
+        @NotNull
+        @Override
+        public Name getName() {
+            return Name.identifier(CLASS_OBJECT_INITIALIZER);
+        }
+    };
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -99,6 +111,14 @@ public final class Namer {
     @NotNull
     private static String getNameForSetter(@NotNull String propertyName) {
         return getNameWithPrefix(propertyName, SETTER_PREFIX);
+    }
+
+    public static JsExpression getClassObjectAccessor(@NotNull JsExpression referenceToClass) {
+        return new JsInvocation(new JsNameRef(CLASS_OBJECT_GETTER, referenceToClass));
+    }
+
+    public static Named getNamedForClassObjectInitializer() {
+        return CLASS_OBJECT_INITIALIZER_NAMED;
     }
 
     @NotNull
@@ -205,6 +225,8 @@ public final class Namer {
             case TRAIT:
                 return new JsInvocation(traitCreationMethodReference());
             case OBJECT:
+                return new JsInvocation(objectCreationMethodReference());
+            case CLASS_OBJECT:
                 return new JsInvocation(objectCreationMethodReference());
 
             default:
