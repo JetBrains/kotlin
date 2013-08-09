@@ -30,22 +30,17 @@ import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
-import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
 
@@ -77,10 +72,6 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             OutputConsumer outputConsumer
     ) throws ProjectBuildException, IOException {
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
-        if (!isJavaPluginEnabled(context)) {
-            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION);
-            return ExitCode.NOTHING_DONE;
-        }
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION);
 
@@ -137,16 +128,6 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         return ExitCode.OK;
-    }
-
-    private static boolean isJavaPluginEnabled(@NotNull CompileContext context) {
-        try {
-            Field javaPluginIsEnabledField = JavaBuilder.class.getDeclaredField("IS_ENABLED");
-            return Modifier.isPublic(javaPluginIsEnabledField.getModifiers()) ? JavaBuilder.IS_ENABLED.get(context, Boolean.TRUE) : true;
-        }
-        catch (NoSuchFieldException e) {
-            throw new IllegalArgumentException("Cannot check if Java Jps Plugin is enabled", e);
-        }
     }
 
     private static Collection<String> paths(Collection<File> files) {
