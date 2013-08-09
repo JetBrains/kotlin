@@ -21,11 +21,14 @@ import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiTypeParameter;
 import com.intellij.psi.impl.PsiSubstitutorImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class JavaTypeSubstitutor {
+    public static final JavaTypeSubstitutor EMPTY = new JavaTypeSubstitutor(PsiSubstitutor.EMPTY);
+
     private final PsiSubstitutor psiSubstitutor;
     private Map<JavaTypeParameter, JavaType> substitutionMap;
 
@@ -57,6 +60,12 @@ public class JavaTypeSubstitutor {
     @NotNull
     public JavaType substitute(@NotNull JavaType type) {
         return JavaType.create(getPsi().substitute(type.getPsi()));
+    }
+
+    @Nullable
+    public JavaType substitute(@NotNull JavaTypeParameter typeParameter) {
+        PsiType psiType = getPsi().substitute(typeParameter.getPsi());
+        return psiType == null ? null : JavaType.create(psiType);
     }
 
     @NotNull

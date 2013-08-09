@@ -19,8 +19,8 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.util.TypeConversionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +40,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.erasure;
 
 // This class contains heuristics for processing corner cases in propagation
 class PropagationHeuristics {
@@ -201,7 +203,7 @@ class PropagationHeuristics {
                         parameterFromSuper.isVararg()
                 ));
 
-                if (!originalType.equals(typeFromSuper)) {
+                if (!Comparing.equal(originalType, typeFromSuper)) {
                     return false;
                 }
             }
@@ -212,11 +214,6 @@ class PropagationHeuristics {
         @NotNull
         private static JavaType varargToArray(@NotNull JavaType type, boolean isVararg) {
             return isVararg ? JavaArrayType.create(((JavaArrayType) type).getComponentType()) : type;
-        }
-
-        @NotNull
-        private static JavaType erasure(@NotNull JavaType type) {
-            return JavaType.create(TypeConversionUtil.erasure(type.getPsi()));
         }
 
         @NotNull

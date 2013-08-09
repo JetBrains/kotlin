@@ -16,34 +16,20 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiWildcardType;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class JavaWildcardType extends JavaType {
-    public JavaWildcardType(@NotNull PsiWildcardType psiWildcardType) {
-        super(psiWildcardType);
+public class JavaTypeProvider {
+    private final PsiManager manager;
+
+    public JavaTypeProvider(@NotNull PsiManager manager) {
+        this.manager = manager;
     }
 
     @NotNull
-    @Override
-    public PsiWildcardType getPsi() {
-        return (PsiWildcardType) super.getPsi();
-    }
-
-    @Nullable
-    public JavaType getBound() {
-        PsiType bound = getPsi().getBound();
-        return bound == null ? null : JavaType.create(bound);
-    }
-
-    public boolean isExtends() {
-        return getPsi().isExtends();
-    }
-
-    @NotNull
-    public JavaTypeProvider getTypeProvider() {
-        return new JavaTypeProvider(getPsi().getManager());
+    public JavaType createJavaLangObjectType() {
+        return JavaType.create(PsiType.getJavaLangObject(manager, GlobalSearchScope.allScope(manager.getProject())));
     }
 }

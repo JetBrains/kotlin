@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -38,6 +37,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.erasure;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class SingleAbstractMethodUtils {
@@ -407,15 +407,10 @@ public class SingleAbstractMethodUtils {
             for (Iterator<JavaValueParameter> it1 = parameters1.iterator(), it2 = parameters2.iterator(); it1.hasNext(); ) {
                 JavaType type1 = erasure(substitutor1.substitute(it1.next().getType()), substitutor1);
                 JavaType type2 = erasure(substitutor2.substitute(it2.next().getType()), substitutor2);
-                if (!type1.equals(type2)) return false;
+                if (!(type1 == null ? type2 == null : type1.equals(type2))) return false;
             }
 
             return true;
-        }
-
-        @NotNull
-        private static JavaType erasure(@NotNull JavaType type, @NotNull JavaTypeSubstitutor substitutor) {
-            return JavaType.create(TypeConversionUtil.erasure(type.getPsi(), substitutor.getPsi()));
         }
 
         @Nullable

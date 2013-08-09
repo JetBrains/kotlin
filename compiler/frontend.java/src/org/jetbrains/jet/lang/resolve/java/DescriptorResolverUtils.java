@@ -151,4 +151,78 @@ public final class DescriptorResolverUtils {
 
         return result;
     }
+
+    /**
+     * @see com.intellij.psi.util.TypeConversionUtil#erasure(com.intellij.psi.PsiType)
+     */
+    @Nullable
+    public static JavaType erasure(@NotNull JavaType type) {
+        return erasure(type, JavaTypeSubstitutor.EMPTY);
+    }
+
+    /**
+     * @see com.intellij.psi.util.TypeConversionUtil#erasure(com.intellij.psi.PsiType, com.intellij.psi.PsiSubstitutor)
+     */
+    @Nullable
+    public static JavaType erasure(@NotNull JavaType type, @NotNull JavaTypeSubstitutor substitutor) {
+        if (type instanceof JavaClassifierType) {
+            JavaClassifier classifier = ((JavaClassifierType) type).getClassifier();
+            if (classifier instanceof JavaClass) {
+                return ((JavaClass) classifier).getDefaultType();
+            }
+            else if (classifier instanceof JavaTypeParameter) {
+                JavaTypeParameter typeParameter = (JavaTypeParameter) classifier;
+                return typeParameterErasure(typeParameter, new HashSet<JavaTypeParameter>(), substitutor);
+            }
+            else {
+                return null;
+            }
+        }
+        else if (type instanceof JavaPrimitiveType) {
+            return type;
+        }
+        else if (type instanceof JavaArrayType) {
+            JavaType erasure = erasure(((JavaArrayType) type).getComponentType(), substitutor);
+            return erasure == null ? null : JavaArrayType.create(erasure);
+        }
+        else if (type instanceof JavaWildcardType) {
+            JavaWildcardType wildcardType = (JavaWildcardType) type;
+            JavaType bound = wildcardType.getBound();
+            if (bound != null && wildcardType.isExtends()) {
+                return erasure(bound, substitutor);
+            }
+            return wildcardType.getTypeProvider().createJavaLangObjectType();
+        }
+        else {
+            throw new IllegalStateException("Unsupported type: " + type);
+        }
+    }
+
+    /**
+     * @see com.intellij.psi.util.TypeConversionUtil#typeParameterErasure(com.intellij.psi.PsiTypeParameter)
+     */
+    @Nullable
+    private static JavaType typeParameterErasure(
+            @NotNull JavaTypeParameter typeParameter,
+            @NotNull HashSet<JavaTypeParameter> visited,
+            @NotNull JavaTypeSubstitutor substitutor
+    ) {
+        Collection<JavaClassifierType> upperBounds = typeParameter.getUpperBounds();
+        if (!upperBounds.isEmpty()) {
+            JavaClassifier classifier = upperBounds.iterator().next().getClassifier();
+            if (classifier instanceof JavaTypeParameter && !visited.contains(classifier)) {
+                JavaTypeParameter typeParameterBound = (JavaTypeParameter) classifier;
+                visited.add(typeParameterBound);
+                JavaType substitutedType = substitutor.substitute(typeParameterBound);
+                if (substitutedType != null) {
+                    return erasure(substitutedType);
+                }
+                return typeParameterErasure(typeParameterBound, visited, substitutor);
+            }
+            else if (classifier instanceof JavaClass) {
+                return ((JavaClass) classifier).getDefaultType();
+            }
+        }
+        return typeParameter.getTypeProvider().createJavaLangObjectType();
+    }
 }

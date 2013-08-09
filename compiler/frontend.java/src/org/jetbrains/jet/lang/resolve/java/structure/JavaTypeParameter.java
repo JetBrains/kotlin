@@ -70,4 +70,9 @@ public class JavaTypeParameter extends JavaClassifier implements JavaNamedElemen
 
         return null;
     }
+
+    @NotNull
+    public JavaTypeProvider getTypeProvider() {
+        return new JavaTypeProvider(getPsi().getManager());
+    }
 }
