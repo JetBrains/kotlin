@@ -167,7 +167,7 @@ public final class JavaPropertyResolver {
     private JetType getPropertyType(@NotNull JavaField field, @NotNull TypeVariableResolver typeVariableResolver) {
         JetType propertyType = typeTransformer.transformToType(field.getType(), typeVariableResolver);
 
-        if (JavaAnnotationResolver.hasNotNullAnnotation(field) || isStaticFinalField(field) /* TODO: WTF? */) {
+        if (annotationResolver.hasNotNullAnnotation(field) || isStaticFinalField(field) /* TODO: WTF? */) {
             return TypeUtils.makeNotNullable(propertyType);
         }
 

@@ -45,14 +45,20 @@ import static org.jetbrains.jet.lang.resolve.OverridingUtil.isReturnTypeOkForOve
 public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
     private static final Logger LOG = Logger.getInstance(PsiBasedMethodSignatureChecker.class);
 
+    private JavaAnnotationResolver annotationResolver;
     private ExternalSignatureResolver externalSignatureResolver;
+
+    @Inject
+    public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
+    }
 
     @Inject
     public void setExternalSignatureResolver(ExternalSignatureResolver externalSignatureResolver) {
         this.externalSignatureResolver = externalSignatureResolver;
     }
 
-    private static void checkFunctionOverridesCorrectly(
+    private void checkFunctionOverridesCorrectly(
             @NotNull JavaMethod method,
             @NotNull FunctionDescriptor function,
             @NotNull FunctionDescriptor superFunction
@@ -81,7 +87,7 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
                       + "sub function = " + function + "\n"
                       + "sub class = " + function.getContainingDeclaration() + "\n"
                       + "sub method = " + JavaSignatureFormatter.getExternalName(method) + "\n"
-                      + "@KotlinSignature = " + SignaturesUtil.getKotlinSignature(method));
+                      + "@KotlinSignature = " + SignaturesUtil.getKotlinSignature(annotationResolver, method));
         }
     }
 

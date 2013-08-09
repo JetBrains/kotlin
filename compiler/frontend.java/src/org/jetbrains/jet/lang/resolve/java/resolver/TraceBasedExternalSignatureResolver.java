@@ -18,7 +18,10 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
@@ -34,10 +37,16 @@ import java.util.List;
 
 public class TraceBasedExternalSignatureResolver implements ExternalSignatureResolver {
     private BindingTrace trace;
+    private JavaAnnotationResolver annotationResolver;
 
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
+    }
+
+    @Inject
+    public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
     }
 
     @Override
@@ -68,7 +77,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
         AlternativeMethodSignatureData data =
-                new AlternativeMethodSignatureData(method, receiverType, valueParameters, returnType, typeParameters, hasSuperMethods);
+                new AlternativeMethodSignatureData(annotationResolver, method, receiverType, valueParameters, returnType, typeParameters,
+                                                   hasSuperMethods);
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
@@ -86,7 +96,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull JetType returnType,
             boolean isVar
     ) {
-        AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(field, returnType, isVar);
+        AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(annotationResolver, field, returnType, isVar);
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeFieldSignature(data.getReturnType(), null);

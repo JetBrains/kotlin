@@ -26,7 +26,7 @@ import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.impl.source.SourceTreeToPsiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
 
@@ -81,9 +81,10 @@ class KotlinSignatureUtil {
     static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
         if (!(element instanceof PsiModifierListOwner)) return null;
         PsiModifierListOwner annotationOwner = getAnnotationOwner(element);
-        PsiAnnotation ownAnnotation = JavaAnnotationResolver.findOwnAnnotation(annotationOwner, KOTLIN_SIGNATURE);
-        PsiAnnotation annotation = ownAnnotation != null ? ownAnnotation
-                                                         : JavaAnnotationResolver.findExternalAnnotation(annotationOwner, KOTLIN_SIGNATURE);
+        PsiAnnotation ownAnnotation = PsiBasedExternalAnnotationResolver.findOwnAnnotation(annotationOwner, KOTLIN_SIGNATURE);
+        PsiAnnotation annotation = ownAnnotation != null
+                                 ? ownAnnotation
+                                 : PsiBasedExternalAnnotationResolver.findExternalAnnotation(annotationOwner, KOTLIN_SIGNATURE.getFqName());
         if (annotation == null) return null;
         if (annotation.getParameterList().getAttributes().length == 0) return null;
         return annotation;

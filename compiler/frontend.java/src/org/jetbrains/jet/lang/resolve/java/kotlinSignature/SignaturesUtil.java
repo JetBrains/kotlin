@@ -71,8 +71,8 @@ public class SignaturesUtil {
     }
 
     @Nullable
-    public static String getKotlinSignature(@NotNull JavaMember member) {
-        JavaAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(member, JvmAnnotationNames.KOTLIN_SIGNATURE);
+    public static String getKotlinSignature(@NotNull JavaAnnotationResolver annotationResolver, @NotNull JavaMember member) {
+        JavaAnnotation annotation = annotationResolver.findAnnotationWithExternal(member, JvmAnnotationNames.KOTLIN_SIGNATURE);
 
         if (annotation != null) {
             JavaAnnotationArgument argument = annotation.findArgument(JvmAnnotationNames.KOTLIN_SIGNATURE_VALUE_FIELD_NAME);

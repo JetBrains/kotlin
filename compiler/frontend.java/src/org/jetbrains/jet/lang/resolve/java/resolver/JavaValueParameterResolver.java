@@ -38,7 +38,18 @@ import java.util.Collections;
 import java.util.List;
 
 public final class JavaValueParameterResolver {
+    private JavaAnnotationResolver annotationResolver;
     private JavaTypeTransformer typeTransformer;
+
+    @Inject
+    public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
+    }
 
     @NotNull
     private ValueParameterDescriptor resolveValueParameter(
@@ -47,7 +58,7 @@ public final class JavaValueParameterResolver {
             @NotNull JavaValueParameter parameter,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        TypeUsage typeUsage = JavaAnnotationResolver.hasMutableAnnotation(parameter)
+        TypeUsage typeUsage = annotationResolver.hasMutableAnnotation(parameter)
                               ? TypeUsage.MEMBER_SIGNATURE_COVARIANT
                               : TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 
@@ -65,7 +76,7 @@ public final class JavaValueParameterResolver {
         }
         else {
             JetType transformedType = typeTransformer.transformToType(parameterType, typeUsage, typeVariableResolver);
-            if (transformedType.isNullable() && JavaAnnotationResolver.hasNotNullAnnotation(parameter)) {
+            if (transformedType.isNullable() && annotationResolver.hasNotNullAnnotation(parameter)) {
                 transformedType = TypeUtils.makeNotNullable(transformedType);
             }
 
@@ -82,11 +93,6 @@ public final class JavaValueParameterResolver {
                 false,
                 varargElementType
         );
-    }
-
-    @Inject
-    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
-        this.typeTransformer = typeTransformer;
     }
 
     @NotNull

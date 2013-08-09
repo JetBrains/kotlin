@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/* package */ class JavaElementCollectionFromPsiArrayUtil {
+public class JavaElementCollectionFromPsiArrayUtil {
     private JavaElementCollectionFromPsiArrayUtil() {
     }
 

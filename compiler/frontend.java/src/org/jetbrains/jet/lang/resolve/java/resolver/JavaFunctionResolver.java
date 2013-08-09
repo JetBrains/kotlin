@@ -303,12 +303,12 @@ public final class JavaFunctionResolver {
             @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        TypeUsage typeUsage = JavaAnnotationResolver.hasReadonlyAnnotation(method) && !JavaAnnotationResolver.hasMutableAnnotation(method)
+        TypeUsage typeUsage = annotationResolver.hasReadonlyAnnotation(method) && !annotationResolver.hasMutableAnnotation(method)
                               ? TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
                               : TypeUsage.MEMBER_SIGNATURE_COVARIANT;
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
-        if (JavaAnnotationResolver.hasNotNullAnnotation(method)) {
+        if (annotationResolver.hasNotNullAnnotation(method)) {
             return TypeUtils.makeNotNullable(transformedType);
         }
         else {

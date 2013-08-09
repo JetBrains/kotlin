@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.codeInsight.ExternalAnnotationsManager;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -38,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
@@ -48,6 +44,7 @@ public final class JavaAnnotationResolver {
 
     private JavaClassResolver classResolver;
     private JavaAnnotationArgumentResolver argumentResolver;
+    private ExternalAnnotationResolver externalAnnotationResolver;
 
     public JavaAnnotationResolver() {
     }
@@ -62,16 +59,23 @@ public final class JavaAnnotationResolver {
         this.argumentResolver = argumentResolver;
     }
 
+    @Inject
+    public void setExternalAnnotationResolver(ExternalAnnotationResolver externalAnnotationResolver) {
+        this.externalAnnotationResolver = externalAnnotationResolver;
+    }
+
     @NotNull
     public List<AnnotationDescriptor> resolveAnnotations(@NotNull JavaAnnotationOwner owner, @NotNull PostponedTasks tasks) {
-        Collection<JavaAnnotation> annotations = getAnnotationsWithExternal(owner);
-        List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(annotations.size());
-        for (JavaAnnotation javaAnnotation : annotations) {
-            AnnotationDescriptor annotation = resolveAnnotation(javaAnnotation, tasks);
-            if (annotation != null) {
-                result.add(annotation);
-            }
+        List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
+
+        for (JavaAnnotation annotation : owner.getAnnotations()) {
+            ContainerUtil.addIfNotNull(result, resolveAnnotation(annotation, tasks));
         }
+
+        for (JavaAnnotation annotation : externalAnnotationResolver.findExternalAnnotations(owner)) {
+            ContainerUtil.addIfNotNull(result, resolveAnnotation(annotation, tasks));
+        }
+
         return result;
     }
 
@@ -133,55 +137,25 @@ public final class JavaAnnotationResolver {
         return annotation;
     }
 
-    @NotNull
-    private static Collection<JavaAnnotation> getAnnotationsWithExternal(@NotNull JavaAnnotationOwner owner) {
-        List<JavaAnnotation> result = new ArrayList<JavaAnnotation>();
-
-        result.addAll(owner.getAnnotations());
-
-        PsiAnnotation[] externalAnnotations =
-                ExternalAnnotationsManager.getInstance(owner.getPsi().getProject()).findExternalAnnotations(owner.getPsi());
-        if (externalAnnotations != null) {
-            for (PsiAnnotation annotation : externalAnnotations) {
-                result.add(new JavaAnnotation(annotation));
-            }
-        }
-
-        return result;
-    }
-
     @Nullable
-    public static JavaAnnotation findAnnotationWithExternal(@NotNull JavaAnnotationOwner owner, @NotNull JvmClassName name) {
+    public JavaAnnotation findAnnotationWithExternal(@NotNull JavaAnnotationOwner owner, @NotNull JvmClassName name) {
         JavaAnnotation annotation = owner.findAnnotation(name.getFqName());
         if (annotation != null) {
             return annotation;
         }
 
-        PsiAnnotation externalAnnotation = findExternalAnnotation(owner.getPsi(), name);
-        return externalAnnotation == null ? null : new JavaAnnotation(externalAnnotation);
+        return externalAnnotationResolver.findExternalAnnotation(owner, name.getFqName());
     }
 
-    public static boolean hasNotNullAnnotation(@NotNull JavaAnnotationOwner owner) {
+    public boolean hasNotNullAnnotation(@NotNull JavaAnnotationOwner owner) {
         return findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null;
     }
 
-    public static boolean hasMutableAnnotation(@NotNull JavaAnnotationOwner owner) {
+    public boolean hasMutableAnnotation(@NotNull JavaAnnotationOwner owner) {
         return findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION) != null;
     }
 
-    public static boolean hasReadonlyAnnotation(@NotNull JavaAnnotationOwner owner) {
+    public boolean hasReadonlyAnnotation(@NotNull JavaAnnotationOwner owner) {
         return findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null;
-    }
-
-
-    @Nullable
-    public static PsiAnnotation findOwnAnnotation(@NotNull PsiModifierListOwner owner, @NotNull JvmClassName name) {
-        PsiModifierList list = owner.getModifierList();
-        return list == null ? null : list.findAnnotation(name.getFqName().asString());
-    }
-
-    @Nullable
-    public static PsiAnnotation findExternalAnnotation(@NotNull PsiModifierListOwner owner, @NotNull JvmClassName name) {
-        return ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotation(owner, name.getFqName().asString());
     }
 }

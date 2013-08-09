@@ -111,6 +111,7 @@ public class GenerateInjectors {
         generator.addField(FakeOverrideVisibilityResolverImpl.class);
         generator.addField(TraceBasedErrorReporter.class);
         generator.addField(PsiBasedMethodSignatureChecker.class);
+        generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(NamespaceFactoryImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(
@@ -133,6 +134,7 @@ public class GenerateInjectors {
         generator.addField(FakeOverrideVisibilityResolverImpl.class);
         generator.addField(TraceBasedErrorReporter.class);
         generator.addField(PsiBasedMethodSignatureChecker.class);
+        generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",

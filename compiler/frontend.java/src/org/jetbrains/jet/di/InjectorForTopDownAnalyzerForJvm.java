@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.FakeOverrideVisibilityResolverImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
+import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
@@ -94,6 +95,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final FakeOverrideVisibilityResolverImpl fakeOverrideVisibilityResolver;
     private final TraceBasedErrorReporter traceBasedErrorReporter;
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
+    private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final NamespaceFactoryImpl namespaceFactory;
     private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
@@ -153,6 +155,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.fakeOverrideVisibilityResolver = new FakeOverrideVisibilityResolverImpl();
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
+        this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.declarationResolver = new DeclarationResolver();
@@ -228,6 +231,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaClassFinder.setPsiClassFinder(psiClassFinder);
 
+        traceBasedExternalSignatureResolver.setAnnotationResolver(javaAnnotationResolver);
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
         traceBasedJavaResolverCache.setTrace(bindingTrace);
@@ -236,6 +240,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         traceBasedErrorReporter.setTrace(bindingTrace);
 
+        psiBasedMethodSignatureChecker.setAnnotationResolver(javaAnnotationResolver);
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
@@ -320,6 +325,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
         javaAnnotationResolver.setClassResolver(javaClassResolver);
+        javaAnnotationResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
 
         javaAnnotationArgumentResolver.setAnnotationResolver(javaAnnotationResolver);
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
@@ -352,6 +358,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaTypeTransformer.setClassResolver(javaClassResolver);
 
+        javaValueParameterResolver.setAnnotationResolver(javaAnnotationResolver);
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
