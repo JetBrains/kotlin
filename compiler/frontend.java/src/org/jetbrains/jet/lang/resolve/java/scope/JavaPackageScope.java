@@ -21,7 +21,6 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
@@ -97,7 +96,7 @@ public final class JavaPackageScope extends JavaBaseScope {
         for (JavaClass javaClass : DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses())) {
             if (DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass)) continue;
 
-            if (javaClass.getPsi() instanceof JetJavaMirrorMarker) continue;
+            if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) continue;
 
             if (javaClass.getVisibility() != Visibilities.PUBLIC) continue;
 

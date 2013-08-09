@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -110,7 +109,7 @@ import java.util.Map;
 
         private void process() {
             for (JavaClass javaClass : javaClasses) {
-                if (!(javaClass.getPsi() instanceof JetJavaMirrorMarker)) { // to filter out JetLightClasses
+                if (javaClass.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
                     if (SingleAbstractMethodUtils.isSamInterface(javaClass)) {
                         processSamInterface(javaClass);
                     }

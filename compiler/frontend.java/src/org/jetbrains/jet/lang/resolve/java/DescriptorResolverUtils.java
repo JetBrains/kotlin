@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.ImmutableSet;
-import com.intellij.psi.impl.compiled.ClsClassImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -38,7 +37,7 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getPsi() instanceof ClsClassImpl) {
+        if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
             FqName fqName = javaClass.getFqName();
             if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
                 return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName().asString()) != null;
@@ -48,7 +47,7 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getPsi() instanceof ClsClassImpl) {
+        if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
             return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getFqName().asString()) != null;
         }
         return false;

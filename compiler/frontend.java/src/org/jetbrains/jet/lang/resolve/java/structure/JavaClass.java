@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -32,6 +33,12 @@ import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectio
 
 public class JavaClass extends JavaClassifier
         implements JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
+    public enum OriginKind {
+        COMPILED,
+        SOURCE,
+        KOTLIN_LIGHT_CLASS
+    }
+
     public JavaClass(@NotNull PsiClass psiClass) {
         super(psiClass);
         assert !(psiClass instanceof PsiTypeParameter)
@@ -174,5 +181,19 @@ public class JavaClass extends JavaClassifier
     @NotNull
     public JavaClassifierType getDefaultType() {
         return new JavaClassifierType(JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi()));
+    }
+
+    @NotNull
+    public OriginKind getOriginKind() {
+        PsiClass psiClass = getPsi();
+        if (psiClass instanceof JetJavaMirrorMarker) {
+            return OriginKind.KOTLIN_LIGHT_CLASS;
+        }
+        else if (psiClass instanceof PsiCompiledElement) {
+            return OriginKind.COMPILED;
+        }
+        else {
+            return OriginKind.SOURCE;
+        }
     }
 }
