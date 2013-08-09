@@ -363,7 +363,8 @@ public class CandidateResolver {
         }
 
         CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = storedContextForArgument
-                .replaceContextDependency(ContextDependency.INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
+                .replaceContextDependency(ContextDependency.INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(
+                        expectedType);
         JetType type;
         if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
             type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
@@ -403,13 +404,26 @@ public class CandidateResolver {
             }
 
             @Override
+            public JetExpression visitBlockExpression(JetBlockExpression expression, Void data) {
+                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
+                if (lastStatement != null) {
+                    return lastStatement.accept(this, data);
+                }
+                return expression;
+            }
+
+            @SuppressWarnings("SuspiciousMethodCalls")
+            @Override
             public JetExpression visitBinaryExpression(JetBinaryExpression expression, Void data) {
                 IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-                //noinspection SuspiciousMethodCalls
                 if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
                     //Result type of comparison doesn't depend on expected type:
                     //it's 'Boolean', but 'compareTo' should return 'Int'.
                     //So we shouldn't check result type of such a call('Int') at completion phase.
+                    return null;
+                }
+                if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
+                    //the same, result type is always 'Unit'
                     return null;
                 }
                 return super.visitBinaryExpression(expression, data);

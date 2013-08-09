@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.ModifiersChecker;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -48,6 +49,8 @@ import java.util.Collection;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE_REASSIGNMENT;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 @SuppressWarnings("SuspiciousMethodCalls")
@@ -86,7 +89,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitObjectDeclaration(JetObjectDeclaration declaration, ExpressionTypingContext context) {
-        TopDownAnalyzer.processClassOrObject(context.replaceScope(scope), scope.getContainingDeclaration(), declaration);
+        TopDownAnalyzer.processClassOrObject(
+                context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
             VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver()
@@ -97,7 +101,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
-    public JetTypeInfo visitProperty(JetProperty property, ExpressionTypingContext context) {
+    public JetTypeInfo visitProperty(JetProperty property, ExpressionTypingContext typingContext) {
+        ExpressionTypingContext context = typingContext.replaceContextDependency(INDEPENDENT).replaceScope(scope);
         JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
         if (receiverTypeRef != null) {
             context.trace.report(LOCAL_EXTENSION_PROPERTY.on(receiverTypeRef));
@@ -115,7 +120,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         JetExpression delegateExpression = property.getDelegateExpression();
         if (delegateExpression != null) {
-            context.expressionTypingServices.getType(scope, delegateExpression, TypeUtils.NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+            context.expressionTypingServices.getTypeInfo(delegateExpression, context);
             context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.getDelegate()));
         }
 
@@ -125,10 +130,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (initializer != null) {
             JetType outType = propertyDescriptor.getType();
-            JetTypeInfo typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType).replaceScope(scope));
+            JetTypeInfo typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType));
             dataFlowInfo = typeInfo.getDataFlowInfo();
         }
-        
+
         {
             VariableDescriptor olderVariable = scope.getLocalVariable(propertyDescriptor.getName());
             ExpressionTypingUtils.checkVariableShadowing(context, propertyDescriptor, olderVariable);
@@ -146,8 +151,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.report(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION.on(multiDeclaration));
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        ExpressionReceiver expressionReceiver =
-                ExpressionTypingUtils.getExpressionReceiver(facade, initializer, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
+        ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(
+                facade, initializer, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         DataFlowInfo dataFlowInfo = facade.getTypeInfo(initializer, context).getDataFlowInfo();
         if (expressionReceiver == null) {
             return JetTypeInfo.create(null, dataFlowInfo);
@@ -171,7 +176,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitClass(JetClass klass, ExpressionTypingContext context) {
-        TopDownAnalyzer.processClassOrObject(context.replaceScope(scope), scope.getContainingDeclaration(), klass);
+        TopDownAnalyzer.processClassOrObject(
+                context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, klass);
         if (classDescriptor != null) {
             scope.addClassifierDescriptor(classDescriptor);
@@ -211,8 +217,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         //There is a temporary binding trace for an opportunity to resolve set method for array if needed (the initial trace should be used there)
         TemporaryTraceAndCache temporary = TemporaryTraceAndCache.create(
                 contextWithExpectedType, "trace to resolve array set method for binary expression", expression);
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
-                .replaceTraceAndCache(temporary);
+        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE)
+                .replaceTraceAndCache(temporary).replaceContextDependency(INDEPENDENT);
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
@@ -291,7 +297,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @NotNull
     protected JetTypeInfo visitAssignment(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope);
+        ExpressionTypingContext context =
+                contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(scope).replaceContextDependency(INDEPENDENT);
         JetExpression leftOperand = expression.getLeft();
         JetExpression left = leftOperand == null ? null : context.expressionTypingServices.deparenthesize(leftOperand, context);
         JetExpression right = expression.getRight();

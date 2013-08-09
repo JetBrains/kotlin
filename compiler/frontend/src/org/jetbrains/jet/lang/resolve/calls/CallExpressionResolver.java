@@ -375,8 +375,10 @@ public class CallExpressionResolver {
         // TODO : functions as values
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
-        JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfoWithNamespaces(
-                receiverExpression, context.scope, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+        ResolutionContext contextForReceiver = context
+                .replaceExpectedType(NO_EXPECTED_TYPE).replaceExpressionPosition(ExpressionPosition.LHS_OF_DOT)
+                .replaceContextDependency(ContextDependency.INDEPENDENT);
+        JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
         JetType receiverType = receiverTypeInfo.getType();
         if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());

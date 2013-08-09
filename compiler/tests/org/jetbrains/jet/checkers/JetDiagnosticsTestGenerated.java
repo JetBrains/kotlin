@@ -2831,6 +2831,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/arrayAccess.kt");
                 }
                 
+                @TestMetadata("binaryExpressions.kt")
+                public void testBinaryExpressions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/binaryExpressions.kt");
+                }
+                
                 @TestMetadata("checkTypesForQualifiedProperties.kt")
                 public void testCheckTypesForQualifiedProperties() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/checkTypesForQualifiedProperties.kt");
