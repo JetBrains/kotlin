@@ -580,9 +580,12 @@ public class TypeUtils {
         return upperBounds;
     }
 
-    @Nullable
+    @NotNull
     public static JetType getDefaultPrimitiveNumberType(@NotNull NumberValueTypeConstructor numberValueTypeConstructor) {
-        return getDefaultPrimitiveNumberType(numberValueTypeConstructor.getSupertypes());
+        JetType type = getDefaultPrimitiveNumberType(numberValueTypeConstructor.getSupertypes());
+        assert type != null : "Strange number value type constructor: " + numberValueTypeConstructor + ". " +
+                              "Super types doesn't contain double, int or long: " + numberValueTypeConstructor.getSupertypes();
+        return type;
     }
 
     @Nullable
@@ -602,7 +605,7 @@ public class TypeUtils {
         return null;
     }
 
-    @Nullable
+    @NotNull
     public static JetType getPrimitiveNumberType(
             @NotNull NumberValueTypeConstructor numberValueTypeConstructor,
             @NotNull JetType expectedType

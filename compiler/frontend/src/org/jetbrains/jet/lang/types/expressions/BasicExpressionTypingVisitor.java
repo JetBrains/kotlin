@@ -139,6 +139,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         CompileTimeConstant<?> value = compileTimeConstantResolver.getCompileTimeConstant(expression, context.expectedType);
         if (value instanceof ErrorValue) {
+            // 'checkType' for 'UNKNOWN_EXPECTED_TYPE' will take place in 'completeInferenceForArgument'
             if (context.expectedType != UNKNOWN_EXPECTED_TYPE) {
                 context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
             }
@@ -911,7 +912,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = visitAssignmentOperation(expression, contextWithExpectedType);
         }
         else if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
-            JetTypeInfo typeInfo = getTypeInfoForBinaryCall(context.scope, OperatorConventions.COMPARE_TO, context, expression);
+            //we don't complete 'compareTo' call, because we change its result type from 'Int' to 'Boolean'
+            JetTypeInfo typeInfo = getTypeInfoForBinaryCall(
+                    context.scope, OperatorConventions.COMPARE_TO, context.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL), expression);
             dataFlowInfo = typeInfo.getDataFlowInfo();
             JetType compareToReturnType = typeInfo.getType();
             if (compareToReturnType != null && !ErrorUtils.isErrorType(compareToReturnType)) {

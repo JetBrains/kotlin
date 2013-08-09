@@ -31,9 +31,12 @@ public class IntegerValueTypeConstructor extends NumberValueTypeConstructor {
     }
 
     private IntegerValueTypeConstructor(long value) {
+        // order of types matters
+        // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
+        // for expected type 'Any' result type 'Int' should be returned
+        checkBoundsAndAddSuperType(value, (long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE, KotlinBuiltIns.getInstance().getIntType());
         checkBoundsAndAddSuperType(value, (long) Byte.MIN_VALUE, (long) Byte.MAX_VALUE, KotlinBuiltIns.getInstance().getByteType());
         checkBoundsAndAddSuperType(value, (long) Short.MIN_VALUE, (long) Short.MAX_VALUE, KotlinBuiltIns.getInstance().getShortType());
-        checkBoundsAndAddSuperType(value, (long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE, KotlinBuiltIns.getInstance().getIntType());
         supertypes.add(KotlinBuiltIns.getInstance().getLongType());
     }
 

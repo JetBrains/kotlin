@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -40,15 +41,18 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -373,7 +377,7 @@ public class CandidateResolver {
         DataFlowUtils.checkType(result, expression, contextForArgument);
     }
 
-    @NotNull
+    @Nullable
     private JetExpression getDeferredComputationKeyExpression(@NotNull JetExpression expression) {
         JetVisitor<JetExpression, Void> selectorExpressionFinder = new JetVisitor<JetExpression, Void>() {
             @Override
@@ -385,6 +389,30 @@ public class CandidateResolver {
             @Override
             public JetExpression visitExpression(JetExpression expression, Void data) {
                 return expression;
+            }
+
+            @Override
+            public JetExpression visitParenthesizedExpression(JetParenthesizedExpression expression, Void data) {
+                return expression.getExpression();
+            }
+
+            @Override
+            public JetExpression visitPrefixExpression(JetPrefixExpression expression, Void data) {
+                JetExpression baseExpression = JetPsiUtil.getBaseExpressionIfLabeledExpression(expression);
+                return baseExpression != null ? baseExpression : expression;
+            }
+
+            @Override
+            public JetExpression visitBinaryExpression(JetBinaryExpression expression, Void data) {
+                IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+                //noinspection SuspiciousMethodCalls
+                if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
+                    //Result type of comparison doesn't depend on expected type:
+                    //it's 'Boolean', but 'compareTo' should return 'Int'.
+                    //So we shouldn't check result type of such a call('Int') at completion phase.
+                    return null;
+                }
+                return super.visitBinaryExpression(expression, data);
             }
         };
         return expression.accept(selectorExpressionFinder, null);
@@ -412,11 +440,32 @@ public class CandidateResolver {
         if (type != null && !type.getConstructor().isDenotable()) {
             if (type.getConstructor() instanceof NumberValueTypeConstructor) {
                 NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
-                type = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                BindingContextUtils.updateRecordedType(type, expression, context.trace, false);
+                JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
+                updateNumberType(primitiveType, expression, context);
+                return primitiveType;
             }
         }
         return type;
+    }
+
+    private <D extends CallableDescriptor> void updateNumberType(
+            @NotNull JetType numberType,
+            @Nullable JetExpression expression,
+            @NotNull CallCandidateResolutionContext<D> context
+    ) {
+        if (expression == null) return;
+        BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
+
+        if (!(expression instanceof JetConstantExpression)) {
+            updateNumberType(numberType, JetPsiUtil.deparenthesizeWithNoTypeResolution(expression, false), context);
+            return;
+        }
+        CompileTimeConstant<?> constant =
+                new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, numberType);
+
+        if (!(constant instanceof ErrorValue)) {
+            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, constant);
+        }
     }
 
     private <D extends CallableDescriptor> void checkResultArgumentType(
@@ -478,8 +527,8 @@ public class CandidateResolver {
                     traceToResolveFunctionLiteral, statementExpression, mismatch);
             CallCandidateResolutionContext<D> newContext =
                     context.replaceBindingTrace(errorInterceptingTrace).replaceExpectedType(expectedType);
-            JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) argumentExpression, newContext,
-                                                                           RESOLVE_FUNCTION_ARGUMENTS).getType();
+            JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(
+                    (JetFunctionLiteralExpression) argumentExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
             if (!mismatch[0]) {
                 constraintSystem.addSubtypeConstraint(
                         type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
