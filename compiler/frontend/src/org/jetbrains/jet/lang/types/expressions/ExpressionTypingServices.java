@@ -144,12 +144,6 @@ public class ExpressionTypingServices {
         return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace).getType();
     }
 
-    public JetTypeInfo getTypeInfoWithNamespaces(@NotNull JetExpression expression, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                this, trace, scope, dataFlowInfo, expectedType, ExpressionPosition.LHS_OF_DOT);
-        return expressionTypingFacade.getTypeInfo(expression, context);
-    }
-
     /////////////////////////////////////////////////////////
 
     public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedReturnType, BindingTrace trace) {
