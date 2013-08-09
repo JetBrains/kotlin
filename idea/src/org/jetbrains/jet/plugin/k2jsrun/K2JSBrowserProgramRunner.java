@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.k2jsrun;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -24,20 +25,18 @@ import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.copyJSFileFromOutputToDestination;
 import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.openBrowser;
 
 public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
-    @Nullable
     @Override
     protected RunContentDescriptor doExecute(
             Project project,
+            Executor executor,
             RunProfileState state,
             RunContentDescriptor contentToReuse,
-            ExecutionEnvironment env
-    ) throws ExecutionException {
+            ExecutionEnvironment env) throws ExecutionException {
         if (project == null) {
             return null;
         }
