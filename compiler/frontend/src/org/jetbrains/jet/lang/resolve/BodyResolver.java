@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -132,9 +133,9 @@ public class BodyResolver {
         context = bodiesResolveContext;
 
         resolveDelegationSpecifierLists();
-        resolveClassAnnotations();
 
         resolvePropertyDeclarationBodies();
+        resolveClassAnnotations();
         resolveAnonymousInitializers();
         resolvePrimaryConstructorParameters();
 
@@ -625,6 +626,12 @@ public class BodyResolver {
                 scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, DataFlowInfo.EMPTY, trace);
+        if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
+            CompileTimeConstant<?> constant = annotationResolver.resolveExpressionToCompileTimeValue(initializer, expectedTypeForInitializer, trace);
+            if (constant != null) {
+                trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);
+            }
+        }
     }
 
     @NotNull
@@ -696,6 +703,13 @@ public class BodyResolver {
             JetExpression defaultValue = jetParameter.getDefaultValue();
             if (defaultValue != null) {
                 expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), DataFlowInfo.EMPTY, trace);
+                if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
+                    CompileTimeConstant<?> constant =
+                            annotationResolver.resolveExpressionToCompileTimeValue(defaultValue, valueParameterDescriptor.getType(), trace);
+                    if (constant != null) {
+                        trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
+                    }
+                }
             }
         }
     }

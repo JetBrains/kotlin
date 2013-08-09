@@ -17,22 +17,20 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiEnumConstant;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
-import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -242,6 +240,17 @@ public final class JavaPropertyResolver {
 
         if (scopeData.getDeclarationOrigin() == JAVA) {
             trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
+        }
+
+        if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor) && psiData.getCharacteristicPsi() instanceof PsiField) {
+            PsiExpression initializer = ((PsiField) psiData.getCharacteristicPsi()).getInitializer();
+            if (initializer instanceof PsiLiteralExpression) {
+                CompileTimeConstant<?> constant = JavaCompileTimeConstResolver.getCompileTimeConstFromLiteralExpressionWithExpectedType(
+                        (PsiLiteralExpression) initializer, propertyType);
+                if (constant != null) {
+                    trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);
+                }
+            }
         }
         return propertyDescriptor;
     }

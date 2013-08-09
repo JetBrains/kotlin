@@ -30,7 +30,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
@@ -93,16 +92,6 @@ public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConf
                     return null;
                 }
             };
-        }
-
-        @Override
-        public RunnerSettings getRunnerSettings() {
-            return new RunnerSettings<JDOMExternalizable>(null, K2JSRunConfiguration.this);
-        }
-
-        @Override
-        public ConfigurationPerRunnerSettings getConfigurationSettings() {
-            return null;
         }
     }
 

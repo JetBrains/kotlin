@@ -16,18 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.storage;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
-import org.jetbrains.jet.utils.Nulls;
+import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -108,6 +111,13 @@ public class LockBasedStorageManager implements StorageManager {
         return new LockProtectedTrace(lock, originalTrace);
     }
 
+    @Override
+    public <T> T compute(@NotNull Computable<T> computable) {
+        synchronized (lock) {
+            return computable.compute();
+        }
+    }
+
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
         private final Object lock;
         private final Computable<T> computable;
@@ -123,18 +133,22 @@ public class LockBasedStorageManager implements StorageManager {
         @Override
         public T compute() {
             Object _value = value;
-            if (_value != null) return Nulls.unescape(_value);
+            if (_value != null) return WrappedValues.unescapeExceptionOrNull(_value);
 
             synchronized (lock) {
                 _value = value;
-                if (_value != null) return Nulls.unescape(_value);
+                if (_value != null) return WrappedValues.unescapeExceptionOrNull(_value);
 
-                T typedValue = computable.compute();
-                value = Nulls.escape(typedValue);
-
-                postCompute(typedValue);
-
-                return typedValue;
+                try {
+                    T typedValue = computable.compute();
+                    value = WrappedValues.escapeNull(typedValue);
+                    postCompute(typedValue);
+                    return typedValue;
+                }
+                catch (Throwable throwable) {
+                    value = WrappedValues.escapeThrowable(throwable);
+                    throw ExceptionUtils.rethrow(throwable);
+                }
             }
         }
 
@@ -173,18 +187,25 @@ public class LockBasedStorageManager implements StorageManager {
         @Nullable
         public V fun(@NotNull K input) {
             Object value = cache.get(input);
-            if (value != null) return Nulls.unescape(value);
+            if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
             synchronized (lock) {
                 value = cache.get(input);
-                if (value != null) return Nulls.unescape(value);
+                if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
-                V typedValue = compute.fun(input);
+                try {
+                    V typedValue = compute.fun(input);
+                    Object oldValue = cache.put(input, WrappedValues.escapeNull(typedValue));
+                    assert oldValue == null : "Race condition detected";
 
-                Object oldValue = cache.put(input, Nulls.escape(typedValue));
-                assert oldValue == null : "Race condition detected";
+                    return typedValue;
+                }
+                catch (Throwable throwable) {
+                    Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
+                    assert oldValue == null : "Race condition detected";
 
-                return typedValue;
+                    throw ExceptionUtils.rethrow(throwable);
+                }
             }
         }
     }
@@ -208,20 +229,62 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
+    private static class LockProtectedContext implements BindingContext {
+        private final Object lock;
+        private final BindingContext context;
+
+        private LockProtectedContext(Object lock, BindingContext context) {
+            this.lock = lock;
+            this.context = context;
+        }
+
+        @Override
+        public Collection<Diagnostic> getDiagnostics() {
+            synchronized (lock) {
+                return context.getDiagnostics();
+            }
+        }
+
+        @Nullable
+        @Override
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            synchronized (lock) {
+                return context.get(slice, key);
+            }
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            synchronized (lock) {
+                return context.getKeys(slice);
+            }
+        }
+
+        @NotNull
+        @Override
+        @TestOnly
+        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+            synchronized (lock) {
+                return context.getSliceContents(slice);
+            }
+        }
+    }
+
     private static class LockProtectedTrace implements BindingTrace {
         private final Object lock;
         private final BindingTrace trace;
+        private final BindingContext context;
 
         public LockProtectedTrace(@NotNull Object lock, @NotNull BindingTrace trace) {
             this.lock = lock;
             this.trace = trace;
+            this.context = new LockProtectedContext(lock, trace.getBindingContext());
         }
 
         @Override
         public BindingContext getBindingContext() {
-            synchronized (lock) {
-                return trace.getBindingContext();
-            }
+            return context;
         }
 
         @Override

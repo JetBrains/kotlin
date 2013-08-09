@@ -65,7 +65,6 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
                 throw new IllegalArgumentException("Unknown declaration: " + declaration);
             }
         }
-
     }
 
     private final NotNullLazyValue<Index> index;

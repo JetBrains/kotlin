@@ -59,6 +59,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher;
@@ -236,9 +237,9 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if (!(element instanceof JetNamedFunction || element instanceof JetProperty)) return null;
 
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
-
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement((JetElement) element);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+
         if (!(descriptor instanceof CallableMemberDescriptor)) {
             return null;
         }
@@ -279,7 +280,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = (JetFile)elt.getContainingFile();
         assert file != null;
 
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement((JetElement) elt);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
         if (!(descriptor instanceof CallableMemberDescriptor)) {
             return;
@@ -360,7 +361,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-        if (elements.isEmpty() || DumbService.getInstance(elements.get(0).getProject()).isDumb()) {
+        if (elements.isEmpty() ||
+            DumbService.getInstance(elements.get(0).getProject()).isDumb() ||
+            !JetPluginUtil.isInSourceContent(elements.get(0)) ||
+            JetPluginUtil.isKtFileInGradleProjectInWrongFolder(elements.get(0))) {
             return;
         }
 

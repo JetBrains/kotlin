@@ -17,29 +17,35 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.*;
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 class ImportsProvider {
     private final List<JetImportDirective> importDirectives;
+    private final NotNullLazyValue<NameToImportsCache> importsCacheValue;
 
-    private ListMultimap<Name, JetImportDirective> nameToDirectives = null;
-    private List<JetImportDirective> allUnderImports = null;
-    private boolean indexed;
-
-    public ImportsProvider(List<JetImportDirective> importDirectives) {
+    public ImportsProvider(StorageManager storageManager, final List<JetImportDirective> importDirectives) {
         this.importDirectives = importDirectives;
+        this.importsCacheValue = storageManager.createLazyValue(new Computable<NameToImportsCache>() {
+            @Override
+            public NameToImportsCache compute() {
+                return NameToImportsCache.createIndex(importDirectives);
+            }
+        });
     }
 
     @NotNull
     public List<JetImportDirective> getImports(@NotNull Name name) {
-        createIndex();
-        return nameToDirectives.containsKey(name) ? nameToDirectives.get(name) : allUnderImports;
+        return importsCacheValue.compute().getImports(name);
     }
 
     @NotNull
@@ -47,49 +53,56 @@ class ImportsProvider {
         return importDirectives;
     }
 
-    private void createIndex() {
-        if (indexed) {
-            return;
+    private static class NameToImportsCache {
+        private final ListMultimap<Name, JetImportDirective> nameToDirectives;
+        private final List<JetImportDirective> allUnderImports;
+
+        private NameToImportsCache(ListMultimap<Name, JetImportDirective> directives, List<JetImportDirective> imports) {
+            nameToDirectives = directives;
+            allUnderImports = imports;
         }
 
-        ImmutableListMultimap.Builder<Name, JetImportDirective> namesToRelativeImportsBuilder = ImmutableListMultimap.builder();
+        private List<JetImportDirective> getImports(@NotNull Name name) {
+            return nameToDirectives.containsKey(name) ? nameToDirectives.get(name) : allUnderImports;
+        }
 
-        Set<Name> processedAliases = Sets.newHashSet();
-        List<JetImportDirective> processedAllUnderImports = Lists.newArrayList();
+        private static NameToImportsCache createIndex(List<JetImportDirective> importDirectives) {
+            ImmutableListMultimap.Builder<Name, JetImportDirective> namesToRelativeImportsBuilder = ImmutableListMultimap.builder();
 
-        for (JetImportDirective anImport : importDirectives) {
-            ImportPath path = JetPsiUtil.getImportPath(anImport);
-            if (path == null) {
-                // Could be some parse errors
-                continue;
-            }
+            Set<Name> processedAliases = Sets.newHashSet();
+            List<JetImportDirective> processedAllUnderImports = Lists.newArrayList();
 
-            if (path.isAllUnder()) {
-                processedAllUnderImports.add(anImport);
+            for (JetImportDirective anImport : importDirectives) {
+                ImportPath path = JetPsiUtil.getImportPath(anImport);
+                if (path == null) {
+                    // Could be some parse errors
+                    continue;
+                }
 
-                // All-Under import is relevant to all names found so far
-                for (Name aliasName : processedAliases) {
+                if (path.isAllUnder()) {
+                    processedAllUnderImports.add(anImport);
+
+                    // All-Under import is relevant to all names found so far
+                    for (Name aliasName : processedAliases) {
+                        namesToRelativeImportsBuilder.put(aliasName, anImport);
+                    }
+                }
+                else {
+                    Name aliasName = path.getImportedName();
+                    assert aliasName != null;
+
+                    if (!processedAliases.contains(aliasName)) {
+                        processedAliases.add(aliasName);
+
+                        // Add to relevant imports all all-under imports found by this moment
+                        namesToRelativeImportsBuilder.putAll(aliasName, processedAllUnderImports);
+                    }
+
                     namesToRelativeImportsBuilder.put(aliasName, anImport);
                 }
             }
-            else {
-                Name aliasName = path.getImportedName();
-                assert aliasName != null;
 
-                if (!processedAliases.contains(aliasName)) {
-                    processedAliases.add(aliasName);
-
-                    // Add to relevant imports all all-under imports found by this moment
-                    namesToRelativeImportsBuilder.putAll(aliasName, processedAllUnderImports);
-                }
-
-                namesToRelativeImportsBuilder.put(aliasName, anImport);
-            }
+            return new NameToImportsCache(namesToRelativeImportsBuilder.build(), ImmutableList.copyOf(processedAllUnderImports));
         }
-
-        allUnderImports = ImmutableList.copyOf(processedAllUnderImports);
-        nameToDirectives = namesToRelativeImportsBuilder.build();
-
-        indexed = true;
     }
 }

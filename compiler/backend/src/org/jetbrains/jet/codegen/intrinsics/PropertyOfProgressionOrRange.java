@@ -56,7 +56,7 @@ public class PropertyOfProgressionOrRange implements IntrinsicMethod {
         JvmClassName wrapperClass = JvmPrimitiveType.getByAsmType(expectedType).getWrapper();
         String getterName = PropertyCodegen.getterName(propertyName);
 
-        receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
+        receiver.put(receiver.type, v);
         v.invokevirtual(ownerInternalName, getterName, "()" + wrapperClass.getDescriptor());
         StackValue.coerce(wrapperClass.getAsmType(), expectedType, v);
         return StackValue.onStack(expectedType);

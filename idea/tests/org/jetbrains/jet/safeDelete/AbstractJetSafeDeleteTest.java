@@ -23,15 +23,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetObjectDeclarationName;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -72,6 +71,34 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
 
     public void doJavaMethodTest(@NotNull String path) throws Exception {
         doTest(path, PsiMethod.class, true);
+    }
+
+    public void doPropertyTest(@NotNull String path) throws Exception {
+        doTest(path, JetProperty.class, false);
+    }
+
+    public void doPropertyTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetProperty.class, true);
+    }
+
+    public void doJavaPropertyTest(@NotNull String path) throws Exception {
+        doTest(path, PsiMethod.class, true);
+    }
+
+    public void doTypeParameterTest(@NotNull String path) throws Exception {
+        doTest(path, JetTypeParameter.class, false);
+    }
+
+    public void doTypeParameterTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetTypeParameter.class, true);
+    }
+
+    public void doValueParameterTest(@NotNull String path) throws Exception {
+        doTest(path, JetParameter.class, false);
+    }
+
+    public void doValueParameterTestWithJava(@NotNull String path) throws Exception {
+        doTest(path, JetParameter.class, true);
     }
 
     private <T extends PsiElement> void doTest(

@@ -1,0 +1,1 @@
+class A<out <caret>X: Comparable<X>, in Y: Number, Z>

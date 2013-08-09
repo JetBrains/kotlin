@@ -29,9 +29,9 @@ public class JetElementDescriptionProvider implements ElementDescriptionProvider
     @Override
     public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
         if (location instanceof UsageViewLongNameLocation) {
-          if (element instanceof PsiNamedElement && element instanceof JetElement) {
-            return ((PsiNamedElement)element).getName();
-          }
+            if (element instanceof PsiNamedElement && element instanceof JetElement) {
+                return ((PsiNamedElement) element).getName();
+            }
         }
         else if (location instanceof RefactoringDescriptionLocation) {
             if (element instanceof JetClass) {
@@ -39,13 +39,16 @@ public class JetElementDescriptionProvider implements ElementDescriptionProvider
                 return (jetClass.isTrait() ? "Trait " : "Class ") + jetClass.getName();
             }
             if (element instanceof JetObjectDeclaration || element instanceof JetObjectDeclarationName) {
-                return "Object " + ((PsiNamedElement)element).getName();
+                return "Object " + ((PsiNamedElement) element).getName();
             }
             if (element instanceof JetNamedFunction) {
-                return "Function " + ((PsiNamedElement)element).getName();
+                return "Function " + ((PsiNamedElement) element).getName();
             }
             if (element instanceof JetProperty) {
-                return "Property " + ((PsiNamedElement)element).getName();
+                return "Property " + ((PsiNamedElement) element).getName();
+            }
+            if (element instanceof JetTypeParameter) {
+                return "Type parameter " + ((PsiNamedElement) element).getName();
             }
         }
         return null;

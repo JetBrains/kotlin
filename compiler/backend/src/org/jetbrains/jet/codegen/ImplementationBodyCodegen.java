@@ -1362,6 +1362,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             writeAnnotationForDelegateToTraitImpl(fun, inheritedFun, mv);
+            functionCodegen.generateMethodParametersAnnotations(mv, fun, typeMapper.mapSignature(fun));
 
             Type returnType = methodToGenerate.getReturnType();
 

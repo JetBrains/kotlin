@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -30,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -164,6 +166,14 @@ public final class JavaCompileTimeConstResolver {
 
     @Nullable
     private static CompileTimeConstant<?> getCompileTimeConstFromLiteralExpression(PsiLiteralExpression value) {
+        return getCompileTimeConstFromLiteralExpressionWithExpectedType(value, null);
+    }
+
+    @Nullable
+    public static CompileTimeConstant<?> getCompileTimeConstFromLiteralExpressionWithExpectedType(
+            @NotNull PsiLiteralExpression value,
+            @Nullable JetType expectedType
+    ) {
         Object literalValue = value.getValue();
         if (literalValue instanceof String) {
             return new StringValue((String) literalValue);
@@ -178,6 +188,16 @@ public final class JavaCompileTimeConstResolver {
             return new CharValue((Character) literalValue);
         }
         else if (literalValue instanceof Integer) {
+            KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+            if (builtIns.getShortType().equals(expectedType)) {
+                return new ShortValue(((Integer) literalValue).shortValue());
+            }
+            else if (builtIns.getByteType().equals(expectedType)) {
+                return new ByteValue(((Integer) literalValue).byteValue());
+            }
+            else if (builtIns.getCharType().equals(expectedType)) {
+                return new CharValue((char) ((Integer)literalValue).intValue());
+            }
             return new IntValue((Integer) literalValue);
         }
         else if (literalValue instanceof Long) {
@@ -188,6 +208,9 @@ public final class JavaCompileTimeConstResolver {
         }
         else if (literalValue instanceof Double) {
             return new DoubleValue((Double) literalValue);
+        }
+        else if (literalValue instanceof Boolean) {
+            return ((Boolean) literalValue) ? BooleanValue.TRUE : BooleanValue.FALSE;
         }
         else if (literalValue == null) {
             return NullValue.NULL;

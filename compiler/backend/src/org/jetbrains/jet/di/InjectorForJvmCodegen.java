@@ -36,12 +36,12 @@ public class InjectorForJvmCodegen {
     private final GenerationState generationState;
     private final ClassBuilderFactory classBuilderFactory;
     private final Project project;
-    private BindingTrace bindingTrace;
-    private BindingContext bindingContext;
-    private ClassBuilderMode classBuilderMode;
-    private ScriptCodegen scriptCodegen;
-    private IntrinsicMethods intrinsics;
-    private ClassFileFactory classFileFactory;
+    private final BindingTrace bindingTrace;
+    private final BindingContext bindingContext;
+    private final ClassBuilderMode classBuilderMode;
+    private final ScriptCodegen scriptCodegen;
+    private final IntrinsicMethods intrinsics;
+    private final ClassFileFactory classFileFactory;
     
     public InjectorForJvmCodegen(
         @NotNull JetTypeMapper jetTypeMapper,

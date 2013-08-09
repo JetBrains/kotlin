@@ -150,7 +150,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
         caretModel.moveToOffset(file.getNode().getStartOffset());
 
         TemplateBuilderImpl builder = new TemplateBuilderImpl(file);
-        Expression expression = new MyLookupExpression(primaryReplacedExpression.getText(), options, null, false,
+        Expression expression = new MyLookupExpression(primaryReplacedExpression.getText(), options, null, null, false,
                                                        JetBundle.message("map.platform.class.to.kotlin.advertisement"));
 
         builder.replaceElement(primaryReplacedExpression, PRIMARY_USAGE, expression, true);

@@ -22,9 +22,9 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetValueArgumentList;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 
 /**
  * User: Alexander Podkhalyuzin
@@ -117,7 +117,7 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
 
         for (Object item : mockCreateParameterInfoContext.getItemsToShow()) {
             //noinspection unchecked
-            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, ResolveSession>)item, parameterInfoUIContext);
+            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, CancelableResolveSession>)item, parameterInfoUIContext);
         }
         assertEquals(expectedResultText, parameterInfoUIContext.getResultText());
     }

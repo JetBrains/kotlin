@@ -30,8 +30,8 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
         overriddenMembers.clear();
         containingDeclarationsNames.clear();
 
-        ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) file);
+        CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile((JetFile) file);
         DeclarationDescriptor descriptor = resolveSession.resolveToDescriptor(element);
         if (!(descriptor instanceof CallableMemberDescriptor)) return false;
         CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;

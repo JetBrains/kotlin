@@ -1080,6 +1080,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithEnumInParam.java");
             }
             
+            @TestMetadata("AnnotationWithPrimitiveValueInParam.java")
+            public void testAnnotationWithPrimitiveValueInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithPrimitiveValueInParam.java");
+            }
+            
             @TestMetadata("CustomAnnotation.java")
             public void testCustomAnnotation() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotation.java");

@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
 
-  <idea-version since-build="129.1" until-build="129.9999"/>
+  <idea-version since-build="130.1364" until-build="131.0"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
@@ -131,7 +131,7 @@
     <refactoring.moveHandler implementation="org.jetbrains.jet.plugin.refactoring.move.JetMoveFilesOrDirectoriesHandler"/>
     <refactoring.copyHandler implementation="org.jetbrains.jet.plugin.refactoring.copy.JetCopyClassHandler"/>
     <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
-    <inlineActionHandler implementation="org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineLocalHandler"/>
+    <inlineActionHandler implementation="org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler"/>
     <treeStructureProvider implementation="org.jetbrains.jet.plugin.projectView.JetProjectViewProvider"/>
 
     <colorSettingsPage implementation="org.jetbrains.jet.plugin.highlighter.JetColorSettingsPage"/>
@@ -271,6 +271,7 @@
 
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.KotlinLibrariesNotificationProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.AbsentJdkAnnotationsNotifications"/>
+    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.IncorrectSourceRootNameNotification"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
 

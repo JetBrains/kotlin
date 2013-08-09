@@ -352,11 +352,17 @@
 
                     -outjars '${kotlin-home}/lib/kotlin-compiler.jar'
 
+                    -dontnote **
                     -dontwarn com.intellij.util.ui.IsRetina*
                     -dontwarn com.intellij.util.RetinaImage*
                     -dontwarn apple.awt.*
                     -dontwarn dk.brics.automaton.*
                     -dontwarn org.fusesource.**
+                    -dontwarn org.xerial.snappy.SnappyBundleActivator
+                    -dontwarn com.intellij.util.CompressionUtil
+                    -dontwarn com.intellij.util.SnappyInitializer
+                    -dontwarn net.sf.cglib.**
+                    -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 
                     -libraryjars '${rtjar}'
 

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
@@ -31,6 +32,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
@@ -68,6 +71,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     private final InjectorForLazyResolve injector;
 
     private final Function<FqName, Name> classifierAliases;
+    private final ResolveElementCache resolveElementCache;
 
     public ResolveSession(
             @NotNull Project project,
@@ -118,6 +122,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         rootDescriptor.setRootNamespace(rootPackage);
 
         this.declarationProviderFactory = declarationProviderFactory;
+        this.resolveElementCache = new ResolveElementCache(this);
     }
 
     @NotNull
@@ -189,10 +194,41 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     /*package*/ LazyClassDescriptor getClassObjectDescriptor(JetClassObject classObject) {
-        LazyClassDescriptor classDescriptor = (LazyClassDescriptor) getClassDescriptor(PsiTreeUtil.getParentOfType(classObject, JetClass.class));
-        LazyClassDescriptor classObjectDescriptor = (LazyClassDescriptor) classDescriptor.getClassObjectDescriptor();
-        assert classObjectDescriptor != null : "Class object is declared, but is null for " + classDescriptor;
-        return classObjectDescriptor;
+        JetClass aClass = PsiTreeUtil.getParentOfType(classObject, JetClass.class);
+
+        final LazyClassDescriptor parentClassDescriptor;
+
+        if (aClass != null) {
+            parentClassDescriptor = (LazyClassDescriptor) getClassDescriptor(aClass);
+        }
+        else {
+            // Class object in object is an error but we want to find descriptors even for this case
+            JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(classObject, JetObjectDeclaration.class);
+            assert objectDeclaration != null : String.format("Class object %s can be in class or object in file %s", classObject, classObject.getContainingFile().getText());
+            parentClassDescriptor = (LazyClassDescriptor) getClassDescriptor(objectDeclaration);
+        }
+
+        // Activate resolution and writing to trace
+        parentClassDescriptor.getClassObjectDescriptor();
+        DeclarationDescriptor declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classObject.getObjectDeclaration());
+
+        if (declaration == null) {
+            // It's possible that there are several class objects and another class object is taking part in lazy resolve. We still want to
+            // build descriptors for such class objects.
+            final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
+            if (classObjectInfo != null) {
+                final Name name = DescriptorUtils.getClassObjectName(parentClassDescriptor.getName().asString());
+                return storageManager.compute(new Computable<LazyClassDescriptor>() {
+                    @Override
+                    public LazyClassDescriptor compute() {
+                        // Create under lock to avoid premature access to published 'this'
+                        return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
+                    }
+                });
+            }
+        }
+
+        return (LazyClassDescriptor) declaration;
     }
 
     @Override
@@ -232,9 +268,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
             @Override
             public DeclarationDescriptor visitClassObject(JetClassObject classObject, Void data) {
-                DeclarationDescriptor containingDeclaration =
-                        getInjector().getScopeProvider().getResolutionScopeForDeclaration(classObject).getContainingDeclaration();
-                return ((ClassDescriptor) containingDeclaration).getClassObjectDescriptor();
+                return getClassObjectDescriptor(classObject);
             }
 
             @Override
@@ -243,7 +277,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 DeclarationDescriptor ownerDescriptor = resolveToDescriptor(ownerElement);
 
                 List<TypeParameterDescriptor> typeParameters;
-                Name name = parameter.getNameAsName();
                 if (ownerDescriptor instanceof CallableDescriptor) {
                     CallableDescriptor callableDescriptor = (CallableDescriptor) ownerDescriptor;
                     typeParameters = callableDescriptor.getTypeParameters();
@@ -256,6 +289,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                     throw new IllegalStateException("Unknown owner kind for a type parameter: " + ownerDescriptor);
                 }
 
+                Name name = ResolveSessionUtils.safeNameForLazyResolve(parameter.getNameAsName());
                 for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
                     if (typeParameterDescriptor.getName().equals(name)) {
                         return typeParameterDescriptor;
@@ -278,9 +312,16 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 if (grandFather instanceof JetClass) {
                     JetClass jetClass = (JetClass) grandFather;
                     // This is a primary constructor parameter
+                    ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
                     if (parameter.getValOrVarNode() != null) {
-                        getClassDescriptor(jetClass).getDefaultType().getMemberScope().getProperties(safeNameForLazyResolve(parameter));
+                        classDescriptor.getDefaultType().getMemberScope().getProperties(safeNameForLazyResolve(parameter));
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+                    }
+                    else {
+                        ConstructorDescriptor constructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+                        assert constructor != null: "There are constructor parameters found, so a constructor should also exist";
+                        constructor.getValueParameters();
+                        return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
                     }
                 }
                 return super.visitParameter(parameter, data);
@@ -309,6 +350,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             throw new IllegalStateException("No descriptor resolved for " + declaration + " " + declaration.getText());
         }
         return result;
+    }
+
+    @NotNull
+    public BindingContext resolveElement(@NotNull JetElement jetElement) {
+        return resolveElementCache.resolveElement(jetElement);
     }
 
     @NotNull

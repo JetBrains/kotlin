@@ -90,14 +90,17 @@ public class DeclarationsChecker {
 
     }
 
-    private void reportErrorIfHasEnumModifier(JetModifierListOwner declaration) {
+    private void reportErrorIfHasIllegalModifier(JetModifierListOwner declaration) {
         if (declaration.hasModifier(JetTokens.ENUM_KEYWORD)) {
             trace.report(ILLEGAL_ENUM_ANNOTATION.on(declaration));
+        }
+        if (declaration.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
+            trace.report(ILLEGAL_ANNOTATION_KEYWORD.on(declaration));
         }
     }
     
     private void checkObject(JetObjectDeclaration declaration) {
-        reportErrorIfHasEnumModifier(declaration);
+        reportErrorIfHasIllegalModifier(declaration);
     }
 
     private void checkClass(JetClass aClass, MutableClassDescriptor classDescriptor) {
@@ -114,7 +117,7 @@ public class DeclarationsChecker {
     }
 
     private void checkTraitModifiers(JetClass aClass) {
-        reportErrorIfHasEnumModifier(aClass);
+        reportErrorIfHasIllegalModifier(aClass);
         JetModifierList modifierList = aClass.getModifierList();
         if (modifierList == null) return;
         if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
@@ -140,7 +143,7 @@ public class DeclarationsChecker {
     }
 
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
-        reportErrorIfHasEnumModifier(property);
+        reportErrorIfHasIllegalModifier(property);
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
@@ -270,7 +273,7 @@ public class DeclarationsChecker {
     }
 
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
-        reportErrorIfHasEnumModifier(function);
+        reportErrorIfHasIllegalModifier(function);
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         checkDeclaredTypeInPublicMember(function, functionDescriptor);

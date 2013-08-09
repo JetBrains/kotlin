@@ -64,7 +64,7 @@ public fun <T> Iterable<T>.containsItem(item : T) : Boolean {
 }
 
 
-public inline fun <T: Comparable<T>> MutableIterable<T>.sort() : List<T> {
+public inline fun <T: Comparable<T>> Iterable<T>.sort() : List<T> {
     val list = toCollection(ArrayList<T>())
     java.util.Collections.sort(list)
     return list

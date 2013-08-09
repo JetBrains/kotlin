@@ -74,6 +74,8 @@ public interface BindingContext {
             Slices.<JetAnnotationEntry, AnnotationDescriptor>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
 
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
+    WritableSlice<PropertyDescriptor, CompileTimeConstant<?>> COMPILE_TIME_INITIALIZER = Slices.createSimpleSlice();
+
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
     WritableSlice<JetExpression, JetType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);

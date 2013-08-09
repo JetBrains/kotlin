@@ -40,7 +40,7 @@ public class StringGetChar implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (receiver != null) {
-            receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
+            receiver.put(receiver.type, v);
         }
         if (arguments != null) {
             codegen.gen(arguments.get(0)).put(Type.INT_TYPE, v);

@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import com.intellij.openapi.util.Computable;
+import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -30,7 +32,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
 
     private final FqName fqName;
     private final FileBasedDeclarationProviderFactory factory;
-    private final Collection<JetFile> allFiles;
+    private final Collection<JetFile> packageFiles;
     private final NotNullLazyValue<Collection<FqName>> allDeclaredPackages;
 
 
@@ -38,12 +40,12 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
             @NotNull StorageManager storageManager,
             @NotNull FqName _fqName,
             @NotNull FileBasedDeclarationProviderFactory _factory,
-            @NotNull Collection<JetFile> allFiles
+            @NotNull Collection<JetFile> packageFiles
     ) {
         super(storageManager);
         this.fqName = _fqName;
         this.factory = _factory;
-        this.allFiles = allFiles;
+        this.packageFiles = packageFiles;
         this.allDeclaredPackages = storageManager.createLazyValue(new Computable<Collection<FqName>>() {
             @Override
             public Collection<FqName> compute() {
@@ -54,8 +56,9 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
 
     @Override
     protected void doCreateIndex(@NotNull Index index) {
-        for (JetFile file : allFiles) {
+        for (JetFile file : packageFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
+                assert fqName.asString().equals(file.getPackageName()) : "Files declaration utils contains file with invalid namespace";
                 index.putToIndex(declaration);
             }
         }
@@ -69,6 +72,12 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
     @Override
     public Collection<FqName> getAllDeclaredPackages() {
         return allDeclaredPackages.compute();
+    }
+
+    @NotNull
+    @Override
+    public Collection<NavigatablePsiElement> getPackageDeclarations(FqName fqName) {
+        return factory.getPackageDeclarations(fqName);
     }
 
     @Override

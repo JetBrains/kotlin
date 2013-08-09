@@ -29,6 +29,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,6 +39,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.JSFrameworkSupportProvider;
 import org.jetbrains.jet.plugin.framework.JavaFrameworkSupportProvider;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
@@ -83,6 +85,8 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         try {
             if (file.getFileType() != JetFileType.INSTANCE) return null;
 
+            if (!ProjectFileIndex.SERVICE.getInstance(myProject).isInSourceContent(file)) return null;
+            if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, myProject)) return null;
             if (CompilerManager.getInstance(myProject).isExcludedFromCompilation(file)) return null;
 
             Module module = ModuleUtilCore.findModuleForFile(file, myProject);
@@ -105,7 +109,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
     }
 
     public static boolean isModuleAlreadyConfigured(Module module) {
-        return isMavenModule(module) || KotlinFrameworkDetector.isJsKotlinModule(module) || KotlinFrameworkDetector.isJavaKotlinModule(module);
+        return isMavenModule(module) || JetPluginUtil.isAndroidGradleModule(module) || KotlinFrameworkDetector.isJsKotlinModule(module) || KotlinFrameworkDetector.isJavaKotlinModule(module);
     }
 
     private static boolean isMavenModule(@NotNull Module module) {

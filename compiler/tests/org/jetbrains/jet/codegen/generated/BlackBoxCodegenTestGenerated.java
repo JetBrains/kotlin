@@ -2455,6 +2455,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/intrinsics/longRangeWithExplicitDot.kt");
         }
         
+        @TestMetadata("rangeFromCollection.kt")
+        public void testRangeFromCollection() throws Exception {
+            doTest("compiler/testData/codegen/box/intrinsics/rangeFromCollection.kt");
+        }
+        
+        @TestMetadata("stringFromCollection.kt")
+        public void testStringFromCollection() throws Exception {
+            doTest("compiler/testData/codegen/box/intrinsics/stringFromCollection.kt");
+        }
+        
         @TestMetadata("tostring.kt")
         public void testTostring() throws Exception {
             doTest("compiler/testData/codegen/box/intrinsics/tostring.kt");

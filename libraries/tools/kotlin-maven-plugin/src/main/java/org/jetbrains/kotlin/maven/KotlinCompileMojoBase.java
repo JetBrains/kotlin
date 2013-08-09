@@ -27,8 +27,8 @@ import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CompilerArguments;
-import org.jetbrains.jet.cli.common.CompilerVersion;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -152,7 +152,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        getLog().info("Kotlin Compiler version " + CompilerVersion.VERSION);
+        getLog().info("Kotlin Compiler version " + KotlinVersion.VERSION);
 
         // Check sources
         List<String> sources = getSources();

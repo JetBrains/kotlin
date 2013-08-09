@@ -1,0 +1,3 @@
+class B {
+    A<Int, String> a = new A<Int, String>()
+}

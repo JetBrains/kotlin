@@ -29,13 +29,13 @@ import java.util.Collections;
  * Date: 24.01.12
  */
 public class MockParameterInfoUIContext implements ParameterInfoUIContext {
-    private PsiElement myParaeterOwner;
-    private int myCurrentParameterIndex;
+    private final PsiElement myParameterOwner;
+    private final int myCurrentParameterIndex;
 
-    private ArrayList<String> result = new ArrayList<String>();
+    private final ArrayList<String> result = new ArrayList<String>();
 
     MockParameterInfoUIContext(PsiElement parameterOwner, int currentParameterIndex) {
-        myParaeterOwner = parameterOwner;
+        myParameterOwner = parameterOwner;
         myCurrentParameterIndex = currentParameterIndex;
     }
     
@@ -66,7 +66,7 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
 
     @Override
     public PsiElement getParameterOwner() {
-        return myParaeterOwner;
+        return myParameterOwner;
     }
 
     @Override

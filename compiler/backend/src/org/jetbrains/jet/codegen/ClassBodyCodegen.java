@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
@@ -134,8 +135,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
                         propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
                     }
                     else {
-                        Type type = state.getTypeMapper().mapType(propertyDescriptor);
-                        v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
+                        propertyCodegen.generateConstructorPropertyAsMethodForAnnotationClass(p, propertyDescriptor);
                     }
                 }
             }

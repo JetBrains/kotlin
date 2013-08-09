@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.stubindex.resolve;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -25,14 +26,17 @@ import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class StubPackageMemberDeclarationProvider extends AbstractStubDeclarationProvider implements PackageMemberDeclarationProvider {
     private final FqName fqName;
@@ -73,6 +77,22 @@ public class StubPackageMemberDeclarationProvider extends AbstractStubDeclaratio
                 Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(packageFqName, project, searchScope);
                 if (files.isEmpty()) return null;
                 return new FqName(packageFqName);
+            }
+        });
+    }
+
+    @NotNull
+    @Override
+    public Collection<NavigatablePsiElement> getPackageDeclarations(final FqName fqName) {
+        if (fqName.isRoot()) {
+            return Collections.emptyList();
+        }
+
+        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqName.asString(), project, searchScope);
+        return ContainerUtil.map(files, new Function<JetFile, NavigatablePsiElement>() {
+            @Override
+            public NavigatablePsiElement fun(JetFile file) {
+                return JetPsiUtil.getPackageReference(file, QualifiedNamesUtil.numberOfSegments(fqName) - 1);
             }
         });
     }

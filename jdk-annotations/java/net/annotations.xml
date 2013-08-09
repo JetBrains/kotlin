@@ -318,6 +318,9 @@
     <item name="java.net.URI java.net.URI create(java.lang.String)">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.net.URI java.net.URI create(java.lang.String) 0">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
     <item name="java.net.URI java.net.URI normalize()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -331,6 +334,9 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.net.URI java.net.URI resolve(java.lang.String)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.net.URI java.net.URI resolve(java.lang.String) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.net.URI java.net.URI resolve(java.net.URI)">

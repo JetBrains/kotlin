@@ -1,0 +1,2 @@
+var foo: jet.String in final class B : A, Z implements var foo: jet.String in trait A.
+var foo: jet.String in final class B : A, Z implements var foo: jet.String in trait Z.

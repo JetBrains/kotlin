@@ -369,6 +369,14 @@ public class FunctionCodegen extends GenerationStateAware {
             throw new IllegalStateException();
         }
 
+        generateMethodParametersAnnotations(mv, functionDescriptor, jvmSignature);
+    }
+
+    void generateMethodParametersAnnotations(
+            MethodVisitor mv,
+            FunctionDescriptor functionDescriptor,
+            JvmMethodSignature jvmSignature
+    ) {
         Iterator<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters().iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
 

@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -29,21 +30,27 @@ import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
+import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
 
     private static final String KOTLIN_BUILDER_NAME = "Kotlin Builder";
+    private static final List<String> COMPILABLE_FILE_EXTENSIONS = Collections.singletonList("kt");
 
     private static final Function<JpsModule,String> MODULE_NAME = new Function<JpsModule, String>() {
         @Override
@@ -69,8 +76,13 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
             OutputConsumer outputConsumer
     ) throws ProjectBuildException, IOException {
-
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
+        if (!isJavaPluginEnabled(context)) {
+            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION);
+            return ExitCode.NOTHING_DONE;
+        }
+
+        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION);
 
         if (chunk.getModules().size() > 1) {
             // We do not support circular dependencies, but if they are present, we should not break the build,
@@ -127,6 +139,16 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         return ExitCode.OK;
     }
 
+    private static boolean isJavaPluginEnabled(@NotNull CompileContext context) {
+        try {
+            Field javaPluginIsEnabledField = JavaBuilder.class.getDeclaredField("IS_ENABLED");
+            return Modifier.isPublic(javaPluginIsEnabledField.getModifiers()) ? JavaBuilder.IS_ENABLED.get(context, Boolean.TRUE) : true;
+        }
+        catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException("Cannot check if Java Jps Plugin is enabled", e);
+        }
+    }
+
     private static Collection<String> paths(Collection<File> files) {
         Collection<String> result = ContainerUtil.newArrayList();
         for (File file : files) {
@@ -181,5 +203,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
         }
 
+    }
+
+    @Override
+    public List<String> getCompilableFileExtensions() {
+        return COMPILABLE_FILE_EXTENSIONS;
     }
 }

@@ -104,6 +104,18 @@ public class PropertyCodegen extends GenerationStateAware {
         }
     }
 
+    public void generateConstructorPropertyAsMethodForAnnotationClass(JetParameter p, PropertyDescriptor descriptor) {
+        Type type = state.getTypeMapper().mapType(descriptor);
+        MethodVisitor visitor = v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
+        JetExpression defaultValue = p.getDefaultValue();
+        if (defaultValue != null) {
+            CompileTimeConstant<?> constant = state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, defaultValue);
+            assert constant != null : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
+            AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(visitor, typeMapper);
+            annotationCodegen.generateAnnotationDefaultValue(constant);
+        }
+    }
+
     private void generateBackingField(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
         //noinspection ConstantConditions
         boolean hasBackingField = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);

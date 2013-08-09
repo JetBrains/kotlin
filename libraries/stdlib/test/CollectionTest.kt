@@ -402,6 +402,18 @@ class CollectionTest {
         //    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
     }
 
+    test fun sortForMutableIterable() {
+        val list : MutableIterable<Int> = arrayList<Int>(2, 3, 1)
+        expect(arrayList(1, 2, 3)) { list.sort() }
+        expect(arrayList(2, 3, 1)) { list }
+    }
+
+    test fun sortForIterable() {
+        val list : Iterable<Int> = listOf(2, 3, 1)
+        expect(arrayList(1, 2, 3)) { list.sort() }
+        expect(arrayList(2, 3, 1)) { list }
+    }
+
     class IterableWrapper<T>(collection : Iterable<T>) : Iterable<T> {
         private val collection = collection
 

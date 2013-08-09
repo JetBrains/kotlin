@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -69,6 +70,7 @@ public class PluginJetFilesProvider extends JetFilesProvider {
                         public boolean processFile(VirtualFile file) {
                             if (file.isDirectory()) return true;
                             if (!index.isInSourceContent(file) && !index.isInTestSourceContent(file)) return true;
+                            if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, project)) return true;
 
                             FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
                             if (fileType != JetFileType.INSTANCE) return true;
@@ -102,7 +104,9 @@ public class PluginJetFilesProvider extends JetFilesProvider {
                new com.google.common.base.Function<VirtualFile, JetFile>() {
                    @Override
                    public JetFile apply(@Nullable VirtualFile file) {
-                       if (file == null || !ProjectFileIndex.SERVICE.getInstance(project).isInSourceContent(file)) {
+                       if (file == null ||
+                           !ProjectFileIndex.SERVICE.getInstance(project).isInSourceContent(file) ||
+                           JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, project)) {
                            return null;
                        }
 

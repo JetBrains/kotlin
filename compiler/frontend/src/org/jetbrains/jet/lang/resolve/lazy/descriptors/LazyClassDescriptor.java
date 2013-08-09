@@ -292,7 +292,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     @Nullable
-    private JetClassLikeInfo getClassObjectInfo(JetClassObject classObject) {
+    public JetClassLikeInfo getClassObjectInfo(JetClassObject classObject) {
         if (classObject != null) {
             if (!DescriptorUtils.inStaticContext(this)) {
                 return null;
@@ -352,7 +352,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         if (modifierList != null) {
             AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
             JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
-            return annotationResolver.resolveAnnotations(scopeForDeclaration, modifierList, resolveSession.getTrace());
+            return annotationResolver.resolveAnnotationsWithArguments(scopeForDeclaration, modifierList, resolveSession.getTrace());
         }
         else {
             return Collections.emptyList();

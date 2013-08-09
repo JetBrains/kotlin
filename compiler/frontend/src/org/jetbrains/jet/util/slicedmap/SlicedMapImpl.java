@@ -45,7 +45,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
     private final Map<SlicedMapKey<?, ?>, Object> map;
     private final Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = Multimaps.newListMultimap(new HashMap<WritableSlice<?, ?>, Collection<Object>>(), CommonSuppliers.getArrayListSupplier());
 
-    private SlicedMapImpl(Map<SlicedMapKey<?, ?>, Object> map) {
+    protected SlicedMapImpl(Map<SlicedMapKey<?, ?>, Object> map) {
         this.map = map;
     }
 
@@ -100,6 +100,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
         return (V) map.remove(slice.makeKey(key));
     }
 
+    @NotNull
     @Override
     public Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator() {
         //noinspection unchecked

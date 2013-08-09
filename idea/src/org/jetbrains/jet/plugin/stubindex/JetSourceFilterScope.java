@@ -24,6 +24,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     public static JetSourceFilterScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate) {
@@ -51,6 +52,10 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
 
         if (includeLibraries && StdFileTypes.CLASS == file.getFileType()) {
             return index.isInLibraryClasses(file);
+        }
+
+        if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, getProject())) {
+            return false;
         }
 
         return file.getFileType().equals(JetFileType.INSTANCE) &&

@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.stubs.resolve;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -79,5 +80,17 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
 
         assertSize(1, testProperties);
         assertEquals("val test = 12", testProperties.get(0).getText());
+    }
+
+    public void testGetPackageByIntermediatePartition() {
+        myFixture.configureByText(JetFileType.INSTANCE, "package first.second.third");
+
+        StubPackageMemberDeclarationProvider provider = new StubPackageMemberDeclarationProvider(
+                new FqName("first.second"), getProject(), GlobalSearchScope.projectScope(getProject()));
+
+        Collection<NavigatablePsiElement> packageDeclarations = provider.getPackageDeclarations(new FqName("first.second"));
+
+        assertSize(1, packageDeclarations);
+        assertEquals("second", packageDeclarations.iterator().next().getText());
     }
 }

@@ -838,7 +838,7 @@ public class JetTypeMapper extends BindingTraceAware {
         signatureWriter.writeParametersStart();
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        ClassDescriptor captureThis = closure != null ? closure.getCaptureThis() : null;
+        ClassDescriptor captureThis = getExpectedThisObjectForConstructorCall(descriptor, closure);
         if (captureThis != null) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.OUTER);
             mapType(captureThis.getDefaultType(), signatureWriter, JetTypeMapperMode.VALUE);

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
+import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -41,6 +42,12 @@ public class EmptyPackageMemberDeclarationProvider implements PackageMemberDecla
 
     @Override
     public Collection<FqName> getAllDeclaredPackages() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Collection<NavigatablePsiElement> getPackageDeclarations(FqName fqName) {
         return Collections.emptyList();
     }
 

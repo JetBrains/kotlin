@@ -26,7 +26,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
@@ -42,6 +41,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
@@ -100,18 +100,22 @@ public class JetPsiChecker implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+        if (!JetPluginUtil.isInSourceContent(element) ||
+                JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
+            return;
+        }
+
         for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
             element.accept(visitor);
         }
 
         if (element instanceof JetFile) {
-            JetFile file = (JetFile)element;
+            JetFile file = (JetFile) element;
 
             try {
                 BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
 
-                boolean isInContent = ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInContent(file.getVirtualFile());
-                if (errorReportingEnabled && isInContent) {
+                if (errorReportingEnabled) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {

@@ -17,8 +17,8 @@
 package org.jetbrains.jet.plugin.k2jsrun;
 
 import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.ide.browsers.UrlOpener;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -80,12 +80,13 @@ public final class K2JSRunnerUtils {
         }
         String filePath = configurationSettings.getPageToOpenFilePath();
         String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, filePath);
-        BrowsersConfiguration.launchBrowser(configurationSettings.getBrowserFamily(), url);
+
+        UrlOpener.launchBrowser(configurationSettings.getBrowserFamily(), url);
     }
 
     @NotNull
-    public static K2JSConfigurationSettings getSettings(@NotNull RunProfileState state) {
-        RunProfile profile = state.getRunnerSettings().getRunProfile();
+    public static K2JSConfigurationSettings getSettings(@NotNull ExecutionEnvironment env) {
+        RunProfile profile = env.getRunProfile();
         assert profile instanceof K2JSRunConfiguration;
         return ((K2JSRunConfiguration) profile).settings();
     }

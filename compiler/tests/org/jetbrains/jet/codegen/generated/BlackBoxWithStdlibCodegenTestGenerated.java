@@ -43,6 +43,36 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("defaultParameterValues.kt")
+        public void testDefaultParameterValues() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/defaultParameterValues.kt");
+        }
+        
+        @TestMetadata("kotlinPropertyFromClassObjectAsParameter.kt")
+        public void testKotlinPropertyFromClassObjectAsParameter() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/kotlinPropertyFromClassObjectAsParameter.kt");
+        }
+        
+        @TestMetadata("kotlinTopLevelPropertyAsParameter.kt")
+        public void testKotlinTopLevelPropertyAsParameter() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/kotlinTopLevelPropertyAsParameter.kt");
+        }
+        
+        @TestMetadata("nestedClassPropertyAsParameter.kt")
+        public void testNestedClassPropertyAsParameter() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/nestedClassPropertyAsParameter.kt");
+        }
+        
+        @TestMetadata("parameterWithPrimitiveType.kt")
+        public void testParameterWithPrimitiveType() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/parameterWithPrimitiveType.kt");
+        }
+        
+        @TestMetadata("propertyWithPropertyInInitializerAsParameter.kt")
+        public void testPropertyWithPropertyInInitializerAsParameter() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/propertyWithPropertyInInitializerAsParameter.kt");
+        }
+        
         @TestMetadata("varargInAnnotationParameter.kt")
         public void testVarargInAnnotationParameter() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/varargInAnnotationParameter.kt");

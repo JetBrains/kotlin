@@ -191,7 +191,7 @@ public class ClassPreloadingUtils {
 
         public URL getURL() {
             try {
-                String path = "file:" + jarFile + "!" + resourceName;
+                String path = "file:" + jarFile + "!/" + resourceName;
                 return new URL("jar", null, 0, path, new URLStreamHandler() {
                     @Override
                     protected URLConnection openConnection(URL u) throws IOException {

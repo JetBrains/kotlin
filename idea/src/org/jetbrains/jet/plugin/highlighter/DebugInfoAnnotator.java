@@ -20,13 +20,13 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.DebugInfoUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
@@ -40,13 +40,12 @@ public class DebugInfoAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (!isDebugInfoEnabled() || !JetPsiChecker.isErrorReportingEnabled()) {
+        if (!isDebugInfoEnabled() || !JetPsiChecker.isErrorReportingEnabled() ||
+                !JetPluginUtil.isInSourceContent(element) ||
+                JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
             return;
         }
-        if (!ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInContent(element.getContainingFile().getVirtualFile())) {
-            return;
-        }
-        
+
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
             try {

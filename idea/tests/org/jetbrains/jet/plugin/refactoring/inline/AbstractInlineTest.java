@@ -28,7 +28,7 @@ public abstract class AbstractInlineTest extends LightCodeInsightFixtureTestCase
 
         final PsiElement targetElement =
                 TargetElementUtilBase.findTargetElement(myFixture.getEditor(), ELEMENT_NAME_ACCEPTED | REFERENCED_ELEMENT_ACCEPTED);
-        final KotlinInlineLocalHandler handler = new KotlinInlineLocalHandler();
+        final KotlinInlineValHandler handler = new KotlinInlineValHandler();
 
         List<String> expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "// ERROR: ");
         if (handler.canInlineElement(targetElement)) {
