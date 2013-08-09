@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -138,7 +138,7 @@ public class JetFromJavaDescriptorHelper {
 
             FqName classFQN = new FqName(qualifiedName);
 
-            if (DescriptorResolverUtils.isCompiledKotlinPackageClass(containingClass)) {
+            if (JavaResolverPsiUtils.isCompiledKotlinPackageClass(containingClass)) {
                 FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
                 return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
             }

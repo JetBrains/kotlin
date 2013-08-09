@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.ImmutableSet;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,30 +37,25 @@ public final class DescriptorResolverUtils {
     private DescriptorResolverUtils() {
     }
 
-    public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
-        if (psiClass instanceof ClsClassImpl) {
-            JavaClass javaClass = new JavaClass(psiClass);
+    public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
+        if (javaClass.getPsi() instanceof ClsClassImpl) {
             FqName fqName = javaClass.getFqName();
             if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
-                return hasAnnotation(javaClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
+                return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName().asString()) != null;
             }
         }
         return false;
     }
 
-    public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
-        if (psiClass instanceof ClsClassImpl) {
-            return hasAnnotation(new JavaClass(psiClass), JvmAnnotationNames.KOTLIN_CLASS.getFqName());
+    public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
+        if (javaClass.getPsi() instanceof ClsClassImpl) {
+            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getFqName().asString()) != null;
         }
         return false;
     }
 
-    public static boolean hasAnnotation(@NotNull JavaClass javaClass, @NotNull FqName annotationFqName) {
-        return javaClass.findAnnotation(annotationFqName.asString()) != null;
-    }
-
-    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull PsiClass psiClass) {
-        return isCompiledKotlinClass(psiClass) || isCompiledKotlinPackageClass(psiClass);
+    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
+        return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
     }
 
     @NotNull

@@ -178,7 +178,7 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass.getPsi())) {
+        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass)) {
             return null;
         }
         if (!hasStaticMembers(javaClass)) {
@@ -253,7 +253,7 @@ public final class JavaNamespaceResolver {
         Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
         List<Name> result = new ArrayList<Name>(classes.size());
         for (JavaClass javaClass : classes) {
-            if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass.getPsi())) {
+            if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass)) {
                 result.add(javaClass.getName());
             }
         }

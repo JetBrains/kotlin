@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -129,14 +129,14 @@ public final class DescriptorLookupConverter {
     private static LookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
         if (declaration instanceof PsiClass) {
             PsiClass psiClass = (PsiClass) declaration;
-            if (!DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
+            if (!JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
                 return setCustomInsertHandler(new JavaPsiClassReferenceElement(psiClass));
             }
         }
 
         if (declaration instanceof PsiMember) {
             PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
-            if (containingClass != null && !DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(containingClass)) {
+            if (containingClass != null && !JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(containingClass)) {
                 if (declaration instanceof PsiMethod) {
                     InsertHandler<LookupElement> handler = getInsertHandler(descriptor);
                     assert handler != null: "Special kotlin handler is expected for function: " + declaration.getText() + " and descriptor" + DescriptorRenderer.TEXT.render(descriptor);
