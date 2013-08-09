@@ -32,7 +32,6 @@ import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor;
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo;
-import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverrideAnnotation;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverridingMethodUsageInfo;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceJavaDeleteUsageInfo;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo;
@@ -210,12 +209,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 SafeDeleteOverridingMethodUsageInfo overrideUsageInfo = (SafeDeleteOverridingMethodUsageInfo) usageInfo;
                 usageInfo = new KotlinSafeDeleteOverridingUsageInfo(
                         overrideUsageInfo.getSmartPointer().getElement(), overrideUsageInfo.getReferencedElement()
-                );
-            }
-            else if (usageInfo instanceof SafeDeleteOverrideAnnotation) {
-                SafeDeleteOverrideAnnotation overrideAnnotationUsageInfo = (SafeDeleteOverrideAnnotation) usageInfo;
-                usageInfo = new KotlinSafeDeleteOverrideAnnotation(
-                        overrideAnnotationUsageInfo.getSmartPointer().getElement(), overrideAnnotationUsageInfo.getReferencedElement()
                 );
             }
             result.add(usageInfo);
