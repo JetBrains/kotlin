@@ -1,0 +1,2 @@
+Class static member access (7: 28) println("foo = " + O.instance$.getFoo())
+Usage in import (3: 15) import server.O

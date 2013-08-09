@@ -32,6 +32,7 @@ import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
+import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -430,6 +431,48 @@ public class GenerateTests {
                 AbstractResolveBaseTest.class,
                 testModel("idea/testData/resolve/references", "doTest")
         );
+
+        generateTest(
+                "idea/tests/",
+                "JetFindUsagesTest",
+                AbstractJetFindUsagesTest.class,
+                testModelWithFileName(
+                        "idea/testData/findUsages/findClassUsages/javaClassUsages", "Server.kt", "testFindClassJavaUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findClassUsages/kotlinClassUsages1", "Server.kt", "testFindClassKotlinUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findClassUsages/kotlinClassUsages2", "Server.kt", "testFindClassKotlinUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findClassUsages/kotlinClassUsages3", "Server.kt", "testFindClassKotlinUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findObjectUsages/javaObjectUsages", "Server.kt", "testFindObjectJavaUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findObjectUsages/kotlinObjectUsages", "Server.kt", "testFindObjectKotlinUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findMethodUsages/javaMethodUsages", "Server.kt", "testFindMethodJavaUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findMethodUsages/kotlinMethodUsages", "Server.kt", "testFindMethodKotlinUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findPropertyUsages/javaPropertyUsages", "Server.kt", "testFindPropertyJavaUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findPropertyUsages/kotlinPropertyUsages", "Server.kt", "testFindPropertyKotlinUsages"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/findWithFilteringImports", "Server.kt", "testFindWithFilteringImports"
+                ),
+                testModelWithFileName(
+                        "idea/testData/findUsages/unresolvedAnnotation", "Server.kt", "testFindUsagesUnresolvedAnnotation"
+                )
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
@@ -446,6 +489,10 @@ public class GenerateTests {
 
     private static SimpleTestClassModel testModelWithDirectories(@NotNull String rootPath, @NotNull String methodName) {
         return new SimpleTestClassModel(new File(rootPath), false,  Pattern.compile("^(.+)$"), methodName);
+    }
+
+    private static SimpleTestClassModel testModelWithFileName(@NotNull String rootPath, @NotNull String fileName, @NotNull String methodName) {
+        return new SimpleTestClassModel(new File(rootPath), true,  Pattern.compile("^(.*)" + fileName + "$"), methodName);
     }
 
     private static SimpleTestClassModel testModel(
