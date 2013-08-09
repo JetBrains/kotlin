@@ -50,7 +50,8 @@ import java.util.Map;
     }
 
     @NotNull
-    private NamedMembers getOrCreateEmpty(@NotNull Name name) {
+    private NamedMembers getOrCreateEmpty(@NotNull JavaNamedElement element) {
+        Name name = element.getName();
         NamedMembers r = namedMembersMap.get(name);
         if (r == null) {
             r = new NamedMembers(name);
@@ -60,14 +61,7 @@ import java.util.Map;
     }
 
     private void addTask(@NotNull JavaNamedElement member, @NotNull RunOnce task) {
-        addTask(member.getName().asString(), task);
-    }
-
-    private void addTask(@Nullable String name, @NotNull RunOnce task) {
-        if (name == null) {
-            return;
-        }
-        memberProcessingTasks.put(Name.identifier(name), task);
+        memberProcessingTasks.put(member.getName(), task);
     }
 
     private void runTasksByName(Name name) {
@@ -87,22 +81,21 @@ import java.util.Map;
     }
 
     @NotNull
-    public static MembersCache buildMembersByNameCache(
-            @Nullable JavaClass javaClass,
-            @Nullable JavaPackage javaPackage,
-            boolean staticMembers
-    ) {
+    public static MembersCache buildForClass(@NotNull JavaClass javaClass, boolean staticMembers) {
         MembersCache membersCache = new MembersCache();
 
-        if (javaClass != null) {
-            membersCache.new ClassMemberProcessor(javaClass, staticMembers).process();
-            Collection<JavaClass> innerClasses = javaClass.getInnerClasses();
-            membersCache.new ExtraPackageMembersProcessor(innerClasses).process();
-        }
-        else if (javaPackage != null) {
-            Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
-            membersCache.new ExtraPackageMembersProcessor(classes).process();
-        }
+        membersCache.new ClassMemberProcessor(javaClass, staticMembers).process();
+        membersCache.new ExtraPackageMembersProcessor(javaClass.getInnerClasses()).process();
+
+        return membersCache;
+    }
+
+    @NotNull
+    public static MembersCache buildForPackage(@NotNull JavaPackage javaPackage) {
+        MembersCache membersCache = new MembersCache();
+
+        Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
+        membersCache.new ExtraPackageMembersProcessor(classes).process();
 
         return membersCache;
     }
@@ -126,8 +119,7 @@ import java.util.Map;
         }
 
         private void processSamInterface(@NotNull JavaClass javaClass) {
-            NamedMembers namedMembers = getOrCreateEmpty(javaClass.getName());
-            namedMembers.setSamInterface(javaClass);
+            getOrCreateEmpty(javaClass).setSamInterface(javaClass);
         }
     }
 
@@ -165,7 +157,7 @@ import java.util.Map;
 
         private void createEntriesForAllMethods() {
             for (JavaMethod method : javaClass.getAllMethods()) {
-                getOrCreateEmpty(method.getName());
+                getOrCreateEmpty(method);
             }
         }
 
@@ -225,7 +217,7 @@ import java.util.Map;
 
         private void processField(@NotNull JavaField field) {
             // group must be created even for excluded field
-            NamedMembers namedMembers = getOrCreateEmpty(field.getName());
+            NamedMembers namedMembers = getOrCreateEmpty(field);
 
             if (includeMember(field)) {
                 namedMembers.addField(field);
@@ -234,15 +226,13 @@ import java.util.Map;
 
         private void processOwnMethod(@NotNull JavaMethod ownMethod) {
             if (includeMember(ownMethod)) {
-                NamedMembers namedMembers = getOrCreateEmpty(ownMethod.getName());
-                namedMembers.addMethod(ownMethod);
+                getOrCreateEmpty(ownMethod).addMethod(ownMethod);
             }
         }
 
         private void processNestedClass(@NotNull JavaClass nested) {
             if (SingleAbstractMethodUtils.isSamInterface(nested)) {
-                NamedMembers namedMembers = getOrCreateEmpty(nested.getName());
-                namedMembers.setSamInterface(nested);
+                getOrCreateEmpty(nested).setSamInterface(nested);
             }
         }
     }

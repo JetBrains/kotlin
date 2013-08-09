@@ -31,6 +31,8 @@ import java.util.Collection;
     private final JavaPackage javaPackage;
     private final boolean staticMembers;
 
+    private MembersCache membersCache;
+
     private MembersProvider(@Nullable JavaClass javaClass, @Nullable JavaPackage javaPackage, boolean staticMembers) {
         this.javaClass = javaClass;
         this.javaPackage = javaPackage;
@@ -57,11 +59,18 @@ import java.util.Collection;
         return getMembersCache().allMembers();
     }
 
-    private MembersCache membersCache;
     @NotNull
     private MembersCache getMembersCache() {
         if (membersCache == null) {
-            membersCache = MembersCache.buildMembersByNameCache(javaClass, javaPackage, staticMembers);
+            if (javaClass != null) {
+                membersCache = MembersCache.buildForClass(javaClass, staticMembers);
+            }
+            else if (javaPackage != null) {
+                membersCache = MembersCache.buildForPackage(javaPackage);
+            }
+            else {
+                throw new IllegalStateException("MembersProvider should be created either for a class or for a package");
+            }
         }
         return membersCache;
     }
