@@ -231,15 +231,22 @@ public open class KDoc(): SourceTask() {
 class GradleMessageCollector(val logger : Logger): MessageCollector {
     public override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
         val path = location.getPath()
-        val position = if (path != null) (path + ": (" + location.getLine() + ", " + location.getColumn() + ") ") else ""
-
-        val text = position + message
-
+        val hasLocation = path != null && location.getLine() > 0 && location.getColumn() > 0
+        val text: String
+        if (hasLocation) {
+            val warningPrefix = if (severity == CompilerMessageSeverity.WARNING) "warning:" else ""
+            val errorMarkerLine = "${" ".repeat(location.getColumn() - 1)}^"
+            text = "$path:${location.getLine()}:$warningPrefix$message\n${errorMarkerLine}"
+        }
+        else {
+            text = "${severity.name().toLowerCase()}:$message"
+        }
         when (severity) {
             in CompilerMessageSeverity.VERBOSE -> logger.debug(text)
             in CompilerMessageSeverity.ERRORS -> logger.error(text)
             CompilerMessageSeverity.INFO -> logger.info(text)
-            else -> logger.warn(text)
+            CompilerMessageSeverity.WARNING -> logger.error(text)
+            else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
         }
     }
 }
