@@ -124,8 +124,8 @@
         <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.9"/>
         -->
 
-        <!-- Guava 12 sources-->
-        <get-maven-library prefix="com/google/guava" lib="guava" version="14.0" bin="false"/>
+        <!-- Guava 14 sources-->
+        <get-maven-library prefix="com/google/guava" lib="guava" version="14.0.1" bin="false"/>
 
         <!-- ASM 4 -->
         <get-asm4-and-rename-packages/>
