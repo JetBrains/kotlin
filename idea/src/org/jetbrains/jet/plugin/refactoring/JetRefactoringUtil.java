@@ -32,10 +32,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.Visibilities;
-import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -271,9 +268,20 @@ public class JetRefactoringUtil {
                     AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
             DeclarationDescriptor descriptor =
                     bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-            if (descriptor != null) return JetRefactoringUtil.formatFunctionDescriptor(descriptor);
+            if (descriptor != null) return formatFunctionDescriptor(descriptor);
         }
-        return JetRefactoringUtil.formatPsiMethod(method, false, false);
+        return formatPsiMethod(method, false, false);
+    }
+
+    @NotNull
+    public static String formatClass(@NotNull JetClassOrObject classOrObject) {
+        BindingContext bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) classOrObject.getContainingFile()).getBindingContext();
+        DeclarationDescriptor descriptor =
+                bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+
+        if (descriptor instanceof ClassDescriptor) return formatClassDescriptor(descriptor);
+        return "class " + classOrObject.getName();
     }
 
     public interface SelectExpressionCallback {
