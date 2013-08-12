@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="2014983"/>
+    <property name="jb.buildserver.build.id" value="2018628"/>
     <property name="public.buildserver.build.id" value="87890"/>
     <property name="idea.archive.name" value="ideaIC-129.SNAPSHOT.win.zip"/>
 
@@ -208,7 +208,7 @@
 
                     <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
-                    <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
+                    <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip"/>
                 </then>
             </if>
 
