@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.List;
@@ -101,7 +100,10 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @Override
     protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
         if (kind != Kind.DECLARATION) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
+                                            "copy from: " + this + "\n" +
+                                            "newOwner: " + newOwner + "\n" +
+                                            "kind: " + kind);
         }
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
