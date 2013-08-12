@@ -209,6 +209,7 @@
 
                     <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
+                    <delete file="dependencies/download/idea-sdk-sources.zip" failonerror="false"/>
                     <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
                 </then>
             </if>
