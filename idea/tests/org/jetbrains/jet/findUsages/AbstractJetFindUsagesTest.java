@@ -20,7 +20,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.find.FindManager;
 import com.intellij.find.findUsages.FindUsagesHandler;
@@ -45,52 +44,58 @@ import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetObjectDeclarationName;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureTestCase {
-    private interface OptionsParser {
+    protected static enum OptionsParser {
+        METHOD {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                KotlinMethodFindUsagesOptions options = new KotlinMethodFindUsagesOptions(project);
+                options.isUsages = false;
+                for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
+                    if (s.equals("usages")) {
+                        options.isUsages = true;
+                    }
+
+                    if (s.equals("overrides")) {
+                        options.isOverridingMethods = true;
+                        options.isImplementingMethods = true;
+                    }
+
+                    if (s.equals("overloadUsages")) {
+                        options.isIncludeOverloadUsages = true;
+                        options.isUsages = true;
+                    }
+                }
+
+                return options;
+            }
+        };
+
         @NotNull
-        FindUsagesOptions parse(@NotNull String text, @NotNull Project project);
-    }
+        public abstract FindUsagesOptions parse(@NotNull String text, @NotNull Project project);
 
-    private static final OptionsParser METHOD_OPTIONS_PARSER = new OptionsParser() {
-        @Override
-        @NotNull
-        public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
-            KotlinMethodFindUsagesOptions options = new KotlinMethodFindUsagesOptions(project);
-            options.isUsages = false;
-            for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                if (s.equals("usages")) {
-                    options.isUsages = true;
-                }
-
-                if (s.equals("overrides")) {
-                    options.isOverridingMethods = true;
-                    options.isImplementingMethods = true;
-                }
-
-                if (s.equals("overloadUsages")) {
-                    options.isIncludeOverloadUsages = true;
-                    options.isUsages = true;
-                }
+        @Nullable
+        public static OptionsParser getParserByPsiElementClass(@NotNull Class<? extends PsiElement> klass) {
+            if (klass == JetNamedFunction.class) {
+                return METHOD;
             }
 
-            return options;
+            return null;
         }
-    };
+    }
 
     @NotNull
     @Override
@@ -104,69 +109,51 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/findUsages");
     }
 
-    public void testFindClassJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetClass.class, null);
-    }
+    protected <T extends PsiElement> void doTest(@NotNull String path) throws Exception {
+        File mainFile = new File(path);
+        final String mainFileName = mainFile.getName();
+        String mainFileText = FileUtil.loadFile(mainFile);
+        final String prefix = mainFileName.substring(0, mainFileName.indexOf('.') + 1);
 
-    public void testFindClassKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetClass.class, null);
-    }
+        List<String> caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ");
+        assert caretElementClassNames.size() == 1;
+        //noinspection unchecked
+        Class<T> caretElementClass = (Class<T>)Class.forName(caretElementClassNames.get(0));
 
-    public void testFindUsagesUnresolvedAnnotation(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetClass.class, null);
-    }
+        List<String> filteringRuleClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// FILTERING_RULES: ");
+        Collection<UsageFilteringRule> filters = new ArrayList<UsageFilteringRule>();
+        for (String filteringRuleClassName : filteringRuleClassNames) {
+            //noinspection unchecked
+            Class<UsageFilteringRule> klass = (Class<UsageFilteringRule>) Class.forName(filteringRuleClassName);
+            filters.add(klass.newInstance());
+        }
 
-    public void testFindMethodJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetFunction.class, METHOD_OPTIONS_PARSER);
-    }
+        OptionsParser parser = OptionsParser.getParserByPsiElementClass(caretElementClass);
 
-    public void testFindMethodKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetFunction.class, METHOD_OPTIONS_PARSER);
-    }
-
-    public void testFindPropertyJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetProperty.class, null);
-    }
-
-    public void testFindPropertyKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetProperty.class, null);
-    }
-
-    public void testFindObjectJavaUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, true, JetObjectDeclarationName.class, null);
-    }
-
-    public void testFindObjectKotlinUsages(@NotNull String path) throws Exception {
-        doTestWithoutFiltering(path, false, JetObjectDeclarationName.class, null);
-    }
-
-    public void testFindWithFilteringImports(@NotNull String path) throws Exception {
-        doTest(path, false, JetClass.class, Lists.newArrayList(new JetImportFilteringRule()), null);
-    }
-
-    private <T extends PsiElement> void doTestWithoutFiltering(
-            @NotNull String path,
-            boolean searchInJava,
-            @NotNull Class<T> caretElementClass,
-            @Nullable OptionsParser parser
-    ) throws Exception {
-        doTest(path, searchInJava, caretElementClass, Collections.<UsageFilteringRule>emptyList(), parser);
-    }
-
-    private <T extends PsiElement> void doTest(
-            @NotNull String path,
-            boolean searchInJava,
-            @NotNull Class<T> caretElementClass,
-            @NotNull Collection<? extends UsageFilteringRule> filters,
-            @Nullable OptionsParser parser
-    ) throws IOException {
         String rootPath = path.substring(0, path.lastIndexOf("/") + 1);
 
-        myFixture.configureByFiles(path, rootPath + "Client." + (searchInJava ? "java" : "kt"));
+        File rootDir = new File(rootPath);
+        File[] extraFiles = rootDir.listFiles(
+                new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        if (!name.startsWith(prefix) || name.equals(mainFileName)) return false;
+
+                        String ext = name.substring(name.lastIndexOf('.') + 1);
+                        return ext.equals("kt") || ext.equals("java");
+                    }
+                }
+        );
+        assert extraFiles != null;
+        for (File file : extraFiles) {
+            myFixture.configureByFile(rootPath + file.getName());
+        }
+        myFixture.configureByFile(path);
+
         T caretElement = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), caretElementClass, false);
         assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
 
-        FindUsagesOptions options = parser != null ? parser.parse(FileUtil.loadFile(new File(path)), getProject()) : null;
+        FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;
         Collection<UsageInfo> usageInfos = findUsages(caretElement, options);
 
         Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(filters, usageInfos);
@@ -181,7 +168,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         };
 
         Collection<String> finalUsages = Ordering.natural().sortedCopy(Collections2.transform(filteredUsages, convertToString));
-        String expectedText = FileUtil.loadFile(new File(rootPath + "results.txt"), true);
+        String expectedText = FileUtil.loadFile(new File(rootPath + prefix + "results.txt"), true);
         assertOrderedEquals(finalUsages, Ordering.natural().sortedCopy(StringUtil.split(expectedText, "\n")));
     }
 

@@ -1,3 +1,4 @@
+// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetNamedFunction
 // OPTIONS: overrides
 open class A<T> {
     open fun <caret>foo(t: T) {

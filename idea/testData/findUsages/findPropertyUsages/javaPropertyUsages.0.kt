@@ -1,3 +1,4 @@
+// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetProperty
 package server;
 
 object O {

@@ -1,0 +1,6 @@
+Function call (11: 11) a.foo(0, "")
+Function call (11: 7) x.foo(1, 2)
+Function call (25: 5) foo(t)
+Function call (30: 7) a.foo(1, "")
+Function call (35: 9) foo(t)
+Function call (3: 18) super<A>.foo(t)

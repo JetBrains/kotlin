@@ -1,3 +1,4 @@
+// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetClass
 package server
 
 open class <caret>Server {
