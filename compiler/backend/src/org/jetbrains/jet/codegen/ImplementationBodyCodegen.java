@@ -936,8 +936,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateFieldForSingleton() {
         boolean hasClassObject = descriptor.getClassObjectDescriptor() != null;
         boolean isEnumClass = DescriptorUtils.isEnumClass(descriptor);
+        boolean isObjectDeclaration = descriptor.getKind() == ClassKind.OBJECT && isNonLiteralObject(myClass) ;
 
-        if (!(isNonLiteralObject(myClass) || hasClassObject) || isEnumClass) return;
+        if (!isObjectDeclaration && !hasClassObject || isEnumClass) return;
 
         ClassDescriptor fieldTypeDescriptor = hasClassObject ? descriptor.getClassObjectDescriptor() : descriptor;
         assert fieldTypeDescriptor != null;
