@@ -99,6 +99,8 @@ public final class StandardClasses {
 
         standardClasses.declare().forFQ("jet.IntProgression").kotlinClass("NumberProgression")
                 .methods("iterator", "contains").properties("start", "end", "increment");
+
+        standardClasses.declare().forFQ("jet.Enum").kotlinClass("Enum");
     }
 
 

@@ -21,13 +21,18 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
+import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createPropertyInitializer;
@@ -36,6 +41,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     protected final List<JsPropertyInitializer> result;
     protected final List<JsPropertyInitializer> staticResult;
+    protected final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();
 
     public DeclarationBodyVisitor() {
         this(new SmartList<JsPropertyInitializer>(), new SmartList<JsPropertyInitializer>());
@@ -51,8 +57,38 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         return result;
     }
 
+    public List<JsPropertyInitializer> getEnumEntryList() {
+        return enumEntryList;
+    }
+
     @Override
     public Void visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
+        return null;
+    }
+
+    @Override
+    public Void visitEnumEntry(
+            final JetEnumEntry enumEntry, TranslationContext data
+    ) {
+        JsExpression jsEnumEntryCreation;
+        ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
+        Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        if (enumEntry.getBody() != null || supertypes.size() > 1) {
+            jsEnumEntryCreation = ClassTranslator.generateClassCreation(enumEntry, descriptor, data);
+        } else {
+            assert supertypes.size() == 1 : "Simple Enum entry must have one supertype";
+            jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.iterator().next());
+        }
+        Named named = new Named() {
+            @NotNull
+            @Override
+            public Name getName() {
+                String name = enumEntry.getName();
+                assert name != null : "Enum entry name must be not null";
+                return Name.identifier(name);
+            }
+        };
+        enumEntryList.add(new JsPropertyInitializer(data.nameToLiteral(named), jsEnumEntryCreation));
         return null;
     }
 
@@ -65,8 +101,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
 
-        JsFunction fun = new JsFunction(context.getScopeForDescriptor(descriptor.getContainingDeclaration()));
-        fun.setBody(new JsBlock(new JsReturn(value)));
+        JsFunction fun = TranslationUtils.simpleReturnFunction(context.getScopeForDescriptor(descriptor), value);
         staticResult.add(createPropertyInitializer(Namer.getNamedForClassObjectInitializer(), fun, context));
         return null;
     }

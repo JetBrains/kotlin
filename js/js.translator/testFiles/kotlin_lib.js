@@ -45,7 +45,7 @@ String.prototype.contains = function (s) {
 
         return obj1 === obj2;
     };
-    
+
     Kotlin.toString = function (o) {
         if (o == null) {
             return "null";
@@ -129,6 +129,48 @@ String.prototype.contains = function (s) {
     });
 
     Kotlin.Collection = Kotlin.$createClass();
+
+    Kotlin.Enum = Kotlin.$createClass(null, {
+        initialize: function () {
+            this.name$ = undefined;
+            this.ordinal$ = undefined;
+        },
+        name: function () {
+            return this.name$;
+        },
+        ordinal: function () {
+            return this.ordinal$;
+        },
+        toString: function () {
+            return this.name();
+        }
+    });
+    (function (){
+        function valueOf(name) {
+            return this[name];
+        }
+        function getValues() {
+            return this.values$;
+        }
+
+        Kotlin.createEnumEntries = function(enumEntryList) {
+            var i = 0;
+            var values = [];
+            for (var entryName in enumEntryList) {
+                if (enumEntryList.hasOwnProperty(entryName)) {
+                    var entryObject = enumEntryList[entryName];
+                    values[i] = entryObject;
+                    entryObject.ordinal$ = i;
+                    entryObject.name$ = entryName;
+                    i++;
+                }
+            }
+            enumEntryList.values$ = values;
+            enumEntryList.valueOf = valueOf;
+            enumEntryList.values = getValues;
+            return enumEntryList;
+        };
+    })();
 
     Kotlin.AbstractCollection = Kotlin.$createClass(Kotlin.Collection, {
         size: function () {

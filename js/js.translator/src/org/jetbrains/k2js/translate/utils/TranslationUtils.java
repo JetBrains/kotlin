@@ -57,6 +57,11 @@ public final class TranslationUtils {
     }
 
     @NotNull
+    public static JsFunction simpleReturnFunction(@NotNull JsScope functionScope, @NotNull JsExpression returnExpression) {
+        return new JsFunction(functionScope, new JsBlock(new JsReturn(returnExpression)));
+    }
+
+    @NotNull
     private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         JsObjectLiteral meta = createDataDescriptor(function, descriptor.getModality().isOverridable());

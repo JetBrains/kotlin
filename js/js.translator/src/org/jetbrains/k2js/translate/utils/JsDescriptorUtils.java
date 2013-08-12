@@ -59,7 +59,7 @@ public final class JsDescriptorUtils {
     @Nullable
     public static ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
         for (ClassDescriptor descriptor : superclassDescriptors) {
-            if (descriptor.getKind() == ClassKind.CLASS) {
+            if (descriptor.getKind() == ClassKind.CLASS || descriptor.getKind() == ClassKind.ENUM_CLASS) {
                 return descriptor;
             }
         }

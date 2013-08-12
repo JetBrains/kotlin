@@ -40,6 +40,7 @@ public final class Namer {
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
+    private static final String ENUM_ENTRIES_NAME = "createEnumEntries";
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
@@ -142,6 +143,8 @@ public final class Namer {
     private final JsExpression definePackage;
     @NotNull
     private final JsName objectName;
+    @NotNull
+    private final JsName enumEntriesName;
 
     @NotNull
     private final JsName isTypeName;
@@ -154,6 +157,7 @@ public final class Namer {
         definePackage = kotlin("definePackage");
 
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
+        enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
 
         isTypeName = kotlinScope.declareName("isType");
@@ -162,6 +166,11 @@ public final class Namer {
     @NotNull
     public JsExpression classCreationMethodReference() {
         return kotlin(className);
+    }
+
+    @NotNull
+    public JsExpression enumEntriesCreationMethodReference() {
+        return kotlin(enumEntriesName);
     }
 
     @NotNull
@@ -224,13 +233,19 @@ public final class Namer {
         switch (descriptor.getKind()) {
             case TRAIT:
                 return new JsInvocation(traitCreationMethodReference());
+
             case OBJECT:
-                return new JsInvocation(objectCreationMethodReference());
             case CLASS_OBJECT:
+            case ENUM_ENTRY:
                 return new JsInvocation(objectCreationMethodReference());
 
             default:
                 return new JsInvocation(classCreationMethodReference());
         }
+    }
+
+    @NotNull
+    public JsInvocation enumEntriesObjectCreateInvocation() {
+        return new JsInvocation(enumEntriesCreationMethodReference());
     }
 }
