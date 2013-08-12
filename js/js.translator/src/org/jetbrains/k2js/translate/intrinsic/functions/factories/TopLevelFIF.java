@@ -16,9 +16,7 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -52,6 +50,17 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.generateInvoca
 public final class TopLevelFIF extends CompositeFIF {
     @NotNull
     public static final KotlinFunctionIntrinsic EQUALS = new KotlinFunctionIntrinsic("equals");
+    @NotNull
+    public static final FunctionIntrinsic IDENTITY_EQUALS = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            assert arguments.size() == 1 : "Unexpected argument size for jet.identityEquals: " + arguments.size();
+            return new JsBinaryOperation(JsBinaryOperator.REF_EQ, receiver, arguments.get(0));
+        }
+    };
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
@@ -120,6 +129,7 @@ public final class TopLevelFIF extends CompositeFIF {
     private TopLevelFIF() {
         add(pattern("jet", "toString").receiverExists(), new KotlinFunctionIntrinsic("toString"));
         add(pattern("jet", "equals").receiverExists(), EQUALS);
+        add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));

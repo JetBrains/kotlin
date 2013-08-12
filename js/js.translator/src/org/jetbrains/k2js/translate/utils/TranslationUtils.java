@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.createDataDescriptor;
@@ -60,6 +61,31 @@ public final class TranslationUtils {
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         JsObjectLiteral meta = createDataDescriptor(function, descriptor.getModality().isOverridable());
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
+    }
+
+    @NotNull
+    public static JsExpression translateExclForBinaryEqualLikeExpr(@NotNull JsBinaryOperation baseBinaryExpression) {
+        return new JsBinaryOperation(notOperator(baseBinaryExpression.getOperator()), baseBinaryExpression.getArg1(), baseBinaryExpression.getArg2());
+    }
+
+    public static boolean isEqualLikeOperator(@NotNull JsBinaryOperator operator) {
+        return notOperator(operator) != null;
+    }
+
+    @Nullable
+    private static JsBinaryOperator notOperator(@NotNull JsBinaryOperator operator) {
+        switch (operator) {
+            case REF_EQ:
+                return REF_NEQ;
+            case REF_NEQ:
+                return REF_EQ;
+            case EQ:
+                return NEQ;
+            case NEQ:
+                return EQ;
+            default:
+                return null;
+        }
     }
 
     @NotNull
