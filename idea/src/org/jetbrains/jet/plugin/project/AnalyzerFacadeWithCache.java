@@ -28,10 +28,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.util.*;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCacheImpl;
@@ -167,38 +165,39 @@ public final class AnalyzerFacadeWithCache {
         LOG.error(e);
     }
 
-    private static final SLRUCache<JetFile, CachedValue<CancelableResolveSession>> RESOLVE_SESSION_CACHE = new SLRUCache<JetFile, CachedValue<CancelableResolveSession>>(2, 4) {
-        @NotNull
-        @Override
-        public CachedValue<CancelableResolveSession> createValue(final JetFile file) {
-            final Project fileProject = file.getProject();
-            return CachedValuesManager.getManager(fileProject).createCachedValue(
-                    new CachedValueProvider<CancelableResolveSession>() {
-                        @Nullable
-                        @Override
-                        public Result<CancelableResolveSession> compute() {
-                            Project project = file.getProject();
-                            Collection<JetFile> files =
-                                    JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
+    private final static Key<ParameterizedCachedValue<CancelableResolveSession, JetFile>> PER_FILE_LAZY_RESOLVE_SESSION = Key.create("PER_FILE_LAZY_RESOLVE_SESSION");
 
-                            // Given file can differ from the original because it can be a virtual copy with some modifications
-                            JetFile originalFile = (JetFile) file.getOriginalFile();
-                            files.remove(originalFile);
-                            files.add(file);
-
-                            ResolveSession resolveSession =
-                                    AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(fileProject, files);
-                            return Result.create(new CancelableResolveSession(file, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
-                        }
-                    },
-                    true);
+    public static CancelableResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
+        Project project = file.getProject();
+        if (file.getOriginalFile() != file) {
+            // Completion creates special non-physical file. Create a separate session for them.
+            return CachedValuesManager.getManager(project).getParameterizedCachedValue(
+                    project, PER_FILE_LAZY_RESOLVE_SESSION, PerFileLazyResolveSessionProvider.INSTANCE, true, file);
         }
-    };
 
-    @NotNull
-    public static CancelableResolveSession getLazyResolveSession(@NotNull JetFile file) {
-        synchronized (RESOLVE_SESSION_CACHE) {
-            return RESOLVE_SESSION_CACHE.get(file).getValue();
+        return KotlinCacheManager.getInstance(project).getLazyResolveSession(TargetPlatformDetector.getPlatform(file));
+    }
+
+    private static class PerFileLazyResolveSessionProvider implements ParameterizedCachedValueProvider<CancelableResolveSession, JetFile> {
+        private static final PerFileLazyResolveSessionProvider INSTANCE = new PerFileLazyResolveSessionProvider();
+
+        @Override
+        public CachedValueProvider.Result<CancelableResolveSession> compute(@NotNull JetFile file) {
+            Project project = file.getProject();
+            Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
+
+            JetFile originalFile = (JetFile) file.getOriginalFile();
+            assert originalFile != file: "Should be used only for non-physical files";
+
+            // Virtual file can differ from the original and there can be requests to psi elements from this file
+            files.remove(originalFile);
+            files.add(file);
+
+            ResolveSession resolveSession =
+                    AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(project, files);
+
+            return CachedValueProvider.Result.create(new CancelableResolveSession(file, resolveSession),
+                                                     PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
         }
     }
 }

@@ -260,7 +260,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
-        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
+        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
@@ -320,7 +320,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
-        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSession(containingFile);
+        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetCallExpression callExpression = getCallExpression(inlinedExpression);
             assert callExpression != null : "can't find call expression for " + inlinedExpression.getText();

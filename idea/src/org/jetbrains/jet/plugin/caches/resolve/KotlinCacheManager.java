@@ -21,6 +21,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.util.Map;
@@ -68,6 +69,11 @@ public class KotlinCacheManager {
          *  Our workaround is to return partially complete results when we generate light classes
          */
         return getRegisteredProvider(TargetPlatform.JVM).getDeclarations(true);
+    }
+
+    @NotNull
+    public CancelableResolveSession getLazyResolveSession(@NotNull TargetPlatform platform) {
+        return cacheProviders.get(platform).getLazyResolveSession();
     }
 
     @NotNull

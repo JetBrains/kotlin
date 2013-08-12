@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.project;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.ModificationTracker;
 import org.jetbrains.annotations.NotNull;
@@ -38,15 +39,23 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class CancelableResolveSession implements KotlinCodeAnalyzer, ModificationTracker {
-    private final JetFile file;
+    private final Object createdForObject;
     private final ResolveSession resolveSession;
     private final ResolveElementCache resolveElementCache;
     private final AtomicLong canceledTracker = new AtomicLong();
 
     public CancelableResolveSession(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
-        this.file = file;
+        this(file, file.getProject(), resolveSession);
+    }
+
+    public CancelableResolveSession(@NotNull Project project, @NotNull ResolveSession resolveSession) {
+        this(project, project, resolveSession);
+    }
+
+    private CancelableResolveSession(Object createdForObject, Project project, ResolveSession resolveSession) {
+        this.createdForObject = createdForObject;
         this.resolveSession = resolveSession;
-        this.resolveElementCache = new ResolveElementCache(resolveSession, file.getProject());
+        this.resolveElementCache = new ResolveElementCache(resolveSession, project);
     }
 
     public BindingContext resolveToElement(final JetElement element) {
@@ -151,6 +160,6 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
 
     @Override
     public String toString() {
-        return "SessionResult: " + file + " " + file.hashCode();
+        return "CancelableResolveSession: " + getModificationCount() + " " + createdForObject + " " + createdForObject.hashCode();
     }
 }
