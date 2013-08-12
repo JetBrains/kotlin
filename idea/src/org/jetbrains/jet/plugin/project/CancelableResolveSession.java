@@ -40,18 +40,20 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CancelableResolveSession implements KotlinCodeAnalyzer, ModificationTracker {
     private final JetFile file;
     private final ResolveSession resolveSession;
+    private final ResolveElementCache resolveElementCache;
     private final AtomicLong canceledTracker = new AtomicLong();
 
-    public CancelableResolveSession(JetFile file, ResolveSession resolveSession) {
+    public CancelableResolveSession(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
         this.file = file;
         this.resolveSession = resolveSession;
+        this.resolveElementCache = new ResolveElementCache(resolveSession, file.getProject());
     }
 
     public BindingContext resolveToElement(final JetElement element) {
         return computableWithProcessingCancel(new Computable<BindingContext>() {
             @Override
             public BindingContext compute() {
-                return resolveSession.resolveElement(element);
+                return resolveElementCache.resolveElement(element);
             }
         });
     }

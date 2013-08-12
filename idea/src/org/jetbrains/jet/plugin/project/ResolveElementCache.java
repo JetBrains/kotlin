@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.plugin.project;
 
+import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
+import com.intellij.psi.util.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
@@ -44,32 +50,39 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-class ResolveElementCache {
-    @SuppressWarnings("unchecked")
-    private static final BodyResolveContextForLazy EMPTY_CONTEXT = new BodyResolveContextForLazy((com.google.common.base.Function) Functions.constant(null));
+public class ResolveElementCache {
+    private static final BodyResolveContextForLazy EMPTY_CONTEXT = new BodyResolveContextForLazy(Functions.<JetScope>constant(null));
 
+    private final CachedValue<MemoizedFunctionToNotNull<JetElement, BindingContext>> additionalResolveCache;
     private final ResolveSession resolveSession;
-    private final MemoizedFunctionToNotNull<JetElement, BindingContext> resolveElementCache;
 
-    ResolveElementCache(ResolveSession resolveSession) {
+    public ResolveElementCache(ResolveSession resolveSession, Project project) {
         this.resolveSession = resolveSession;
 
-        this.resolveElementCache = resolveSession.getStorageManager().createMemoizedFunction(new Function<JetElement, BindingContext>() {
-            @Override
-            public BindingContext fun(JetElement namedFunction) {
-                return computeResolveElement(namedFunction);
-            }
-        }, StorageManager.ReferenceKind.WEAK);
+        // Recreate internal cache after change of modification count
+        this.additionalResolveCache =
+                CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<MemoizedFunctionToNotNull<JetElement, BindingContext>>() {
+                            @Nullable
+                            @Override
+                            public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
+                                StorageManager manager = ResolveElementCache.this.resolveSession.getStorageManager();
+                                MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
+                                        manager.createMemoizedFunction(new com.intellij.util.Function<JetElement, BindingContext>() {
+                                            @Override
+                                            public BindingContext fun(JetElement jetElement) {
+                                                return elementAdditionalResolve(jetElement);
+                                            }
+                                        }, StorageManager.ReferenceKind.WEAK);
+
+                                return Result.create(elementsCacheFunction, PsiModificationTracker.MODIFICATION_COUNT);
+                            }
+                        },
+                        false);
     }
 
     @NotNull
-    BindingContext resolveElement(@NotNull JetElement jetElement) {
-        return resolveElementCache.fun(jetElement);
-    }
-
-    @NotNull
-    private BindingContext computeResolveElement(@NotNull JetElement jetElement) {
-        @SuppressWarnings("unchecked") PsiElement resolveElement = JetPsiUtil.getTopmostParentOfTypes(
+    public BindingContext resolveElement(@NotNull JetElement jetElement) {
+        @SuppressWarnings("unchecked") JetElement elementOfAdditionalResolve = (JetElement) JetPsiUtil.getTopmostParentOfTypes(
                 jetElement,
                 JetNamedFunction.class,
                 JetClassInitializer.class,
@@ -81,49 +94,12 @@ class ResolveElementCache {
                 JetTypeConstraint.class,
                 JetNamespaceHeader.class);
 
-        if (resolveElement != null) {
-            // All additional resolve should be done to separate trace
-            BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(
-                    new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", jetElement));
-
-            JetFile file = (JetFile) jetElement.getContainingFile();
-
-            if (resolveElement instanceof JetNamedFunction) {
-                functionAdditionalResolve(resolveSession, (JetNamedFunction) resolveElement, trace, file);
-            }
-            else if (resolveElement instanceof JetClassInitializer) {
-                initializerAdditionalResolve(resolveSession, (JetClassInitializer) resolveElement, trace, file);
-            }
-            else if (resolveElement instanceof JetProperty) {
-                propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file);
-            }
-            else if (resolveElement instanceof JetDelegationSpecifierList) {
-                delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) resolveElement, trace, file);
-            }
-            else if (resolveElement instanceof JetImportDirective) {
-                JetImportDirective importDirective = (JetImportDirective) resolveElement;
-                JetScope scope = resolveSession.getInjector().getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
-
-                // Get all descriptors to force resolving all imports
-                scope.getAllDescriptors();
-            }
-            else if (resolveElement instanceof JetAnnotationEntry) {
-                annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
-            }
-            else if (resolveElement instanceof JetTypeParameter) {
-                typeParameterAdditionalResolve(resolveSession, (JetTypeParameter) resolveElement);
-            }
-            else if (resolveElement instanceof JetTypeConstraint) {
-                typeConstraintAdditionalResolve(resolveSession, jetElement);
-            }
-            else if (resolveElement instanceof JetNamespaceHeader) {
-                namespaceRefAdditionalResolve(resolveSession, (JetNamespaceHeader) resolveElement, trace, jetElement);
-            }
-            else {
-                assert false : "Invalid type of the topmost parent";
+        if (elementOfAdditionalResolve != null) {
+            if (elementOfAdditionalResolve instanceof JetNamespaceHeader) {
+                elementOfAdditionalResolve = jetElement;
             }
 
-            return trace.getBindingContext();
+            return additionalResolveCache.getValue().fun(elementOfAdditionalResolve);
         }
 
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetElement, JetDeclaration.class, false);
@@ -135,11 +111,57 @@ class ResolveElementCache {
         return resolveSession.getBindingContext();
     }
 
-    private static void namespaceRefAdditionalResolve(
-            ResolveSession resolveSession,
-            JetNamespaceHeader header, BindingTrace trace, JetElement jetElement
-    ) {
+    @NotNull
+    private BindingContext elementAdditionalResolve(@NotNull JetElement resolveElement) {
+        // All additional resolve should be done to separate trace
+        BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(
+                new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", resolveElement));
+
+        JetFile file = (JetFile) resolveElement.getContainingFile();
+
+        if (resolveElement instanceof JetNamedFunction) {
+            functionAdditionalResolve(resolveSession, (JetNamedFunction) resolveElement, trace, file);
+        }
+        else if (resolveElement instanceof JetClassInitializer) {
+            initializerAdditionalResolve(resolveSession, (JetClassInitializer) resolveElement, trace, file);
+        }
+        else if (resolveElement instanceof JetProperty) {
+            propertyAdditionalResolve(resolveSession, (JetProperty) resolveElement, trace, file);
+        }
+        else if (resolveElement instanceof JetDelegationSpecifierList) {
+            delegationSpecifierAdditionalResolve(resolveSession, (JetDelegationSpecifierList) resolveElement, trace, file);
+        }
+        else if (resolveElement instanceof JetImportDirective) {
+            JetImportDirective importDirective = (JetImportDirective) resolveElement;
+            JetScope scope = resolveSession.getInjector().getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
+
+            // Get all descriptors to force resolving all imports
+            scope.getAllDescriptors();
+        }
+        else if (resolveElement instanceof JetAnnotationEntry) {
+            annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
+        }
+        else if (resolveElement instanceof JetTypeParameter) {
+            typeParameterAdditionalResolve(resolveSession, (JetTypeParameter) resolveElement);
+        }
+        else if (resolveElement instanceof JetTypeConstraint) {
+            typeConstraintAdditionalResolve(resolveSession, (JetTypeConstraint) resolveElement);
+        }
+        else if (PsiTreeUtil.getParentOfType(resolveElement, JetNamespaceHeader.class) != null) {
+            namespaceRefAdditionalResolve(resolveSession, trace, resolveElement);
+        }
+        else {
+            assert false : "Invalid type of the topmost parent";
+        }
+
+        return trace.getBindingContext();
+    }
+
+    private static void namespaceRefAdditionalResolve(ResolveSession resolveSession, BindingTrace trace, JetElement jetElement) {
         if (jetElement instanceof JetSimpleNameExpression) {
+            JetNamespaceHeader header = PsiTreeUtil.getParentOfType(jetElement, JetNamespaceHeader.class);
+            assert header != null;
+
             JetSimpleNameExpression packageNameExpression = (JetSimpleNameExpression) jetElement;
             if (trace.getBindingContext().get(BindingContext.RESOLUTION_SCOPE, packageNameExpression) == null) {
                 JetScope scope = getExpressionMemberScope(resolveSession, packageNameExpression);
@@ -160,8 +182,8 @@ class ResolveElementCache {
         }
     }
 
-    private static void typeConstraintAdditionalResolve(KotlinCodeAnalyzer analyzer, JetElement jetElement) {
-        JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetElement, JetDeclaration.class);
+    private static void typeConstraintAdditionalResolve(KotlinCodeAnalyzer analyzer, JetTypeConstraint jetTypeConstraint) {
+        JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetTypeConstraint, JetDeclaration.class);
         DeclarationDescriptor descriptor = analyzer.resolveToDescriptor(declaration);
 
         assert (descriptor instanceof ClassDescriptor);
@@ -212,7 +234,7 @@ class ResolveElementCache {
         final JetScope propertyResolutionScope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(
                 jetProperty);
 
-        BodyResolveContextForLazy bodyResolveContext = new BodyResolveContextForLazy(new com.google.common.base.Function<JetDeclaration, JetScope>() {
+        BodyResolveContextForLazy bodyResolveContext = new BodyResolveContextForLazy(new Function<JetDeclaration, JetScope>() {
             @Override
             public JetScope apply(JetDeclaration declaration) {
                 assert declaration.getParent() == jetProperty : "Must be called only for property accessors, but called for " + declaration;
@@ -287,7 +309,7 @@ class ResolveElementCache {
         return provider.getResolutionScopeForDeclaration(parentDeclaration);
     }
 
-    public static JetScope getExpressionMemberScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
+    private static JetScope getExpressionMemberScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
         BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(new DelegatingBindingTrace(
                 resolveSession.getBindingContext(), "trace to resolve a member scope of expression", expression));
 
@@ -363,9 +385,9 @@ class ResolveElementCache {
 
     private static class BodyResolveContextForLazy implements BodiesResolveContext {
 
-        private final com.google.common.base.Function<JetDeclaration, JetScope> declaringScopes;
+        private final Function<? super JetDeclaration, JetScope> declaringScopes;
 
-        private BodyResolveContextForLazy(@NotNull com.google.common.base.Function<JetDeclaration, JetScope> declaringScopes) {
+        private BodyResolveContextForLazy(@NotNull Function<? super JetDeclaration, JetScope> declaringScopes) {
             this.declaringScopes = declaringScopes;
         }
 
@@ -395,8 +417,9 @@ class ResolveElementCache {
         }
 
         @Override
-        public com.google.common.base.Function<JetDeclaration, JetScope> getDeclaringScopes() {
-            return declaringScopes;
+        public Function<JetDeclaration, JetScope> getDeclaringScopes() {
+            //noinspection unchecked
+            return (Function<JetDeclaration, JetScope>) declaringScopes;
         }
 
         @Override

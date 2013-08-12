@@ -188,7 +188,7 @@ public final class AnalyzerFacadeWithCache {
 
                             ResolveSession resolveSession =
                                     AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(fileProject, files);
-                            return Result.create(new CancelableResolveSession(file, resolveSession), PsiModificationTracker.MODIFICATION_COUNT);
+                            return Result.create(new CancelableResolveSession(file, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                         }
                     },
                     true);
