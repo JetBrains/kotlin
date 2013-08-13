@@ -38,6 +38,8 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import java.util.HashSet
 
+val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
+
 open class KotlinPlugin: Plugin<Project> {
 
     public override fun apply(project: Project) {
@@ -50,7 +52,7 @@ open class KotlinPlugin: Plugin<Project> {
         configureKDoc(project, javaPluginConvention)
 
         val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(KotlinCompile.DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
     }
 
 
@@ -167,7 +169,7 @@ open class KotlinAndroidPlugin: Plugin<Project> {
 
         })
         val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(KotlinCompile.DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version",
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version",
                                                                                                                 "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
     }
 
@@ -275,12 +277,8 @@ open class GradleUtils() {
             val dependencyHandler : DependencyHandler = project.getBuildscript().getDependencies()
             val configurationsContainer : ConfigurationContainer = project.getBuildscript().getConfigurations()
 
-            val deps = HashSet<Dependency>()
-            for (coordinate in coordinates) {
-                deps.add(dependencyHandler.create(coordinate))
-            }
-            val array :  Array<Dependency?> = deps.toArray(Array<Dependency?>(deps.size(),{null}))
-            val configuration = configurationsContainer.detachedConfiguration(*array)
+            val deps = coordinates.map { dependencyHandler.create(it) }
+            val configuration = configurationsContainer.detachedConfiguration(*deps.toArray(array<Dependency>()))
 
             return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
         }
