@@ -2755,6 +2755,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/dependantOnVarianceNullable.kt");
             }
             
+            @TestMetadata("functionPlaceholderError.kt")
+            public void testFunctionPlaceholderError() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/functionPlaceholderError.kt");
+            }
+            
             @TestMetadata("hasErrorInConstrainingTypes.kt")
             public void testHasErrorInConstrainingTypes() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/hasErrorInConstrainingTypes.kt");

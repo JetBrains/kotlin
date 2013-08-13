@@ -202,10 +202,10 @@ public class ArgumentTypeResolver {
             @NotNull JetScope scope,
             @NotNull BindingTrace trace
     ) {
-        List<JetParameter> valueParameters = expression.getValueParameters();
-        if (valueParameters.isEmpty()) {
+        if (expression.getFunctionLiteral().getValueParameterList() == null) {
             return PLACEHOLDER_FUNCTION_TYPE;
         }
+        List<JetParameter> valueParameters = expression.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
         List<JetType> parameterTypes = Lists.newArrayList();
