@@ -44,9 +44,11 @@ import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
 
 import java.io.File;
@@ -58,6 +60,26 @@ import java.util.List;
 
 public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureTestCase {
     protected static enum OptionsParser {
+        CLASS {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                KotlinClassFindUsagesOptions options = new KotlinClassFindUsagesOptions(project);
+                options.isUsages = false;
+                options.searchConstructorUsages = false;
+                for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
+                    if (s.equals("usages")) {
+                        options.isUsages = true;
+                    }
+                    else if (s.equals("constructorUsages")) {
+                        options.searchConstructorUsages = true;
+                    }
+                    else fail("Invalid option: " + s);
+                }
+
+                return options;
+            }
+        },
         METHOD {
             @NotNull
             @Override
@@ -68,16 +90,15 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                     if (s.equals("usages")) {
                         options.isUsages = true;
                     }
-
-                    if (s.equals("overrides")) {
+                    else if (s.equals("overrides")) {
                         options.isOverridingMethods = true;
                         options.isImplementingMethods = true;
                     }
-
-                    if (s.equals("overloadUsages")) {
+                    else if (s.equals("overloadUsages")) {
                         options.isIncludeOverloadUsages = true;
                         options.isUsages = true;
                     }
+                    else fail("Invalid option: " + s);
                 }
 
                 return options;
@@ -91,6 +112,9 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         public static OptionsParser getParserByPsiElementClass(@NotNull Class<? extends PsiElement> klass) {
             if (klass == JetNamedFunction.class) {
                 return METHOD;
+            }
+            if (klass == JetClass.class) {
+                return CLASS;
             }
 
             return null;

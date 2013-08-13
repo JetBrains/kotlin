@@ -4,12 +4,13 @@ import com.intellij.find.FindBundle;
 import com.intellij.find.findUsages.FindClassUsagesDialog;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.find.findUsages.JavaClassFindUsagesOptions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
@@ -17,6 +18,8 @@ import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import javax.swing.*;
 
 public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
+    private StateRestoringCheckBox constructorUsages;
+
     public KotlinFindClassUsagesDialog(
             PsiClass klass,
             Project project,
@@ -60,6 +63,13 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                 JetBundle.message("find.what.derived.classes.checkbox")
         );
 
+        constructorUsages = addCheckboxToPanel(
+                JetBundle.message("find.what.constructor.usages.checkbox"),
+                getFindUsagesOptions().searchConstructorUsages,
+                findWhatPanel,
+                true
+        );
+
         return findWhatPanel;
     }
 
@@ -74,5 +84,21 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         if (klass instanceof KotlinLightClassForExplicitDeclaration) {
             coloredComponent.append(JetRefactoringUtil.formatClass(((KotlinLightClassForExplicitDeclaration) klass).getJetClassOrObject()));
         }
+    }
+
+    @Override
+    protected void update() {
+        super.update();
+        if (!isOKActionEnabled() && constructorUsages.isSelected()) {
+            setOKActionEnabled(true);
+        }
+    }
+
+    @Override
+    public void calcFindUsagesOptions(JavaClassFindUsagesOptions options) {
+        assert options instanceof KotlinClassFindUsagesOptions;
+
+        super.calcFindUsagesOptions(options);
+        ((KotlinClassFindUsagesOptions) options).searchConstructorUsages = constructorUsages.isSelected();
     }
 }

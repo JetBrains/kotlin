@@ -2,8 +2,8 @@ package client
 
 import server.Server
 
-class Client: Server {
-    var nextServer: Server? = null
+class Client: Server() {
+    var nextServer: Server? = new Server()
     val name = Server.NAME
 
     fun foo(s: Server) {
@@ -19,6 +19,10 @@ class Client: Server {
         super<Server>.work()
         println("Client")
     }
+}
+
+object ClientObject: Server() {
+
 }
 
 fun Client.bar(s: Server) {
