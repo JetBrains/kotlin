@@ -13,7 +13,6 @@ import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class KotlinFindMethodUsagesDialog extends FindMethodUsagesDialog {
     public KotlinFindMethodUsagesDialog(
@@ -38,30 +37,16 @@ public class KotlinFindMethodUsagesDialog extends FindMethodUsagesDialog {
         coloredComponent.append(JetRefactoringUtil.formatJavaOrLightMethod((PsiMethod) myPsiElement));
     }
 
-    private static boolean renameCheckbox(@NotNull JPanel panel, @NotNull String srcText, @NotNull String destText) {
-        for (Component component : panel.getComponents()) {
-            if (component instanceof JCheckBox) {
-                JCheckBox checkBox = (JCheckBox) component;
-                if (checkBox.getText().equals(srcText)) {
-                    checkBox.setText(destText);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     @Override
     protected JPanel createFindWhatPanel() {
         JPanel findWhatPanel = super.createFindWhatPanel();
         if (findWhatPanel != null) {
-            renameCheckbox(
+            Utils.renameCheckbox(
                     findWhatPanel,
                     FindBundle.message("find.what.implementing.methods.checkbox"),
                     JetBundle.message("find.what.implementing.methods.checkbox")
             );
-            renameCheckbox(
+            Utils.renameCheckbox(
                     findWhatPanel,
                     FindBundle.message("find.what.overriding.methods.checkbox"),
                     JetBundle.message("find.what.overriding.methods.checkbox")
@@ -75,7 +60,7 @@ public class KotlinFindMethodUsagesDialog extends FindMethodUsagesDialog {
     protected void addUsagesOptions(JPanel optionsPanel) {
         super.addUsagesOptions(optionsPanel);
 
-        if (!renameCheckbox(
+        if (!Utils.renameCheckbox(
                 optionsPanel,
                 FindBundle.message("find.options.include.overloaded.methods.checkbox"),
                 JetBundle.message("find.options.include.overloaded.methods.checkbox")
