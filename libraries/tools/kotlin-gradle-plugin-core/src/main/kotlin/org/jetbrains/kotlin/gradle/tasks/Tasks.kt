@@ -24,12 +24,9 @@ import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.apache.commons.io.FileUtils
+import org.jetbrains.kotlin.gradle.plugin.*
 
 public open class KotlinCompile(): AbstractCompile() {
-
-    class object {
-        val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
-    }
 
     val srcDirsRoots = HashSet<File>()
     val compiler = K2JVMCompiler()
