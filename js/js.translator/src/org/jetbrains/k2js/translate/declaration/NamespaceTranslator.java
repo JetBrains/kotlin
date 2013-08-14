@@ -34,7 +34,6 @@ import org.jetbrains.k2js.translate.initializer.InitializerVisitor;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +44,7 @@ import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 
 final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
@@ -74,7 +74,7 @@ final class NamespaceTranslator extends AbstractTranslator {
                     defineInvocation = createDefinitionPlace(null, descriptorToDefineInvocation);
                 }
 
-                return createPlace(getListFromPlace(defineInvocation), TranslationUtils.getQualifiedReference(context(), descriptor));
+                return createPlace(getListFromPlace(defineInvocation), getQualifiedReference(context(), descriptor));
             }
         };
     }
@@ -107,7 +107,7 @@ final class NamespaceTranslator extends AbstractTranslator {
             initializer = visitor.initializer;
             if (!context().isEcma5()) {
                 initializers.add(new JsInvocation(new JsNameRef("call", initializer),
-                                                  TranslationUtils.getQualifiedReference(context(), descriptor)).makeStmt());
+                                                  getQualifiedReference(context(), descriptor)).makeStmt());
             }
         }
 
@@ -135,7 +135,9 @@ final class NamespaceTranslator extends AbstractTranslator {
 
     private List<JsExpression> createDefineInvocation(@Nullable JsExpression initializer, @NotNull JsObjectLiteral members) {
         if (context().isEcma5()) {
-            return Arrays.asList(initializer == null ? JsLiteral.NULL : initializer, members);
+            return Arrays.asList(initializer == null ? JsLiteral.NULL : initializer,
+                                 new JsDocComment("lends", getQualifiedReference(context(), descriptor)),
+                                 members);
         }
         else {
             return Collections.<JsExpression>singletonList(members);
