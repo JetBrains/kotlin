@@ -173,7 +173,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     }
 
     public boolean isObjectLiteral() {
-        return getNameAsDeclaration() == null;
+        return getParent() instanceof JetObjectLiteralExpression;
     }
 
     @NotNull

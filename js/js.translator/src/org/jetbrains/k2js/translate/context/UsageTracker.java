@@ -35,8 +35,6 @@ public final class UsageTracker {
     private final MemberDescriptor memberDescriptor;
 
     @Nullable
-    private final UsageTracker parent;
-    @Nullable
     private List<UsageTracker> children;
 
     private boolean used;
@@ -47,7 +45,6 @@ public final class UsageTracker {
     public UsageTracker(@NotNull MemberDescriptor memberDescriptor, @Nullable UsageTracker parent, @Nullable ClassDescriptor trackedClassDescriptor) {
         this.memberDescriptor = memberDescriptor;
         this.trackedClassDescriptor = trackedClassDescriptor;
-        this.parent = parent;
         if (parent != null) {
             parent.addChild(this);
         }
@@ -83,29 +80,28 @@ public final class UsageTracker {
             }
         }
         else if (descriptor instanceof SimpleFunctionDescriptor) {
-            checkOuterClass(descriptor);
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            // local named function
             CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
-            if (!JsDescriptorUtils.isExtension(callableDescriptor) &&
-                !(containingDeclaration instanceof ClassOrNamespaceDescriptor) &&
+            if (JsDescriptorUtils.isExtension(callableDescriptor)) {
+                return;
+            }
+
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof ClassDescriptor) {
+                // skip methods defined in class, for example Int::plus
+                if (outerClassDescriptor == null && (callableDescriptor.getExpectedThisObject() == null || isAncestor(containingDeclaration, memberDescriptor))) {
+                    outerClassDescriptor = (ClassDescriptor) containingDeclaration;
+                }
+                return;
+            }
+
+            // local named function
+            if (!(containingDeclaration instanceof ClassOrNamespaceDescriptor) &&
                 !isAncestor(memberDescriptor, descriptor)) {
                 addCapturedMember(callableDescriptor);
             }
         }
-        else if (descriptor instanceof ClassDescriptor) {
-            if (trackedClassDescriptor == descriptor) {
-                used = true;
-            }
-            else if (parent != null) {
-                UsageTracker p = parent;
-                do {
-                    if (p.trackedClassDescriptor == descriptor) {
-                        break;
-                    }
-                }
-                while ((p = p.parent) != null);
-            }
+        else if (descriptor instanceof ClassDescriptor && trackedClassDescriptor == descriptor) {
+            used = true;
         }
     }
 
@@ -120,16 +116,18 @@ public final class UsageTracker {
 
     @Nullable
     public ClassDescriptor getOuterClassDescriptor() {
-        if (outerClassDescriptor == null && parent != null) {
-            UsageTracker p = parent;
-            do {
-                if (p.outerClassDescriptor != null) {
-                    return p.outerClassDescriptor;
-                }
-            }
-            while ((p = p.parent) != null);
+        if (outerClassDescriptor != null || children == null) {
+            return outerClassDescriptor;
         }
-        return outerClassDescriptor;
+
+        for (UsageTracker child : children) {
+            ClassDescriptor childOuterClassDescriptor = child.getOuterClassDescriptor();
+            if (childOuterClassDescriptor != null) {
+                return childOuterClassDescriptor;
+            }
+        }
+
+        return null;
     }
 
     public void forEachCaptured(Consumer<CallableDescriptor> consumer) {

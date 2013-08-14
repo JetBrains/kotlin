@@ -187,16 +187,11 @@ public class CodegenBinding {
     }
 
     public static boolean isSingleton(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        ClassKind kind = classDescriptor.getKind();
-        if (kind == ClassKind.CLASS_OBJECT) {
+        if (isObjectDeclaration(bindingContext, classDescriptor)) {
             return true;
         }
 
-        if (kind == ClassKind.OBJECT && isObjectDeclaration(bindingContext, classDescriptor)) {
-            return true;
-        }
-
-        if (kind == ClassKind.ENUM_ENTRY) {
+        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
             return true;
         }
 

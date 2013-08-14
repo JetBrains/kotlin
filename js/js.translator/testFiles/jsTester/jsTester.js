@@ -33,7 +33,7 @@ var JsTests = (function () {
         }
         catch (fail) {
             if (fail != failedTest) {
-                reporter.reportError("Unexpected exception " + Kotlin.toString(fail));
+                reporter.reportError("Unexpected exception " + fail);
             }
             reporter.testFail(testName);
             return;

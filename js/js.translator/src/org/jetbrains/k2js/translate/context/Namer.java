@@ -20,28 +20,45 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * Encapuslates different types of constants and naming conventions.
  */
 public final class Namer {
+    public static final String KOTLIN_NAME = JetLanguage.NAME;
+    public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
+
     public static final String CALLEE_NAME = "$fun";
+    public static final String OUTER_CLASS_NAME = "$outer";
 
     private static final String INITIALIZE_METHOD_NAME = "initialize";
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
+    private static final String ENUM_ENTRIES_NAME = "createEnumEntries";
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
     private static final String SUPER_METHOD_NAME = "super_init";
-    private static final String KOTLIN_OBJECT_NAME = "Kotlin";
     private static final String ROOT_NAMESPACE = "_";
-    private static final String RECEIVER_PARAMETER_NAME = "receiver";
+    private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
+    private static final String CLASS_OBJECT_GETTER = "object$";
+    private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
+
+    private static final Named CLASS_OBJECT_INITIALIZER_NAMED = new Named() {
+        @NotNull
+        @Override
+        public Name getName() {
+            return Name.identifier(CLASS_OBJECT_INITIALIZER);
+        }
+    };
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -97,6 +114,14 @@ public final class Namer {
         return getNameWithPrefix(propertyName, SETTER_PREFIX);
     }
 
+    public static JsExpression getClassObjectAccessor(@NotNull JsExpression referenceToClass) {
+        return new JsInvocation(new JsNameRef(CLASS_OBJECT_GETTER, referenceToClass));
+    }
+
+    public static Named getNamedForClassObjectInitializer() {
+        return CLASS_OBJECT_INITIALIZER_NAMED;
+    }
+
     @NotNull
     private static String getNameWithPrefix(@NotNull String name, @NotNull String prefix) {
         return prefix + name;
@@ -118,18 +143,21 @@ public final class Namer {
     private final JsExpression definePackage;
     @NotNull
     private final JsName objectName;
+    @NotNull
+    private final JsName enumEntriesName;
 
     @NotNull
     private final JsName isTypeName;
 
     private Namer(@NotNull JsScope rootScope) {
-        kotlinName = rootScope.declareName(KOTLIN_OBJECT_NAME);
+        kotlinName = rootScope.declareName(KOTLIN_NAME);
         kotlinScope = new JsScope(rootScope, "Kotlin standard object");
         traitName = kotlinScope.declareName(TRAIT_OBJECT_NAME);
 
         definePackage = kotlin("definePackage");
 
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
+        enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
 
         isTypeName = kotlinScope.declareName("isType");
@@ -138,6 +166,11 @@ public final class Namer {
     @NotNull
     public JsExpression classCreationMethodReference() {
         return kotlin(className);
+    }
+
+    @NotNull
+    public JsExpression enumEntriesCreationMethodReference() {
+        return kotlin(enumEntriesName);
     }
 
     @NotNull
@@ -200,11 +233,19 @@ public final class Namer {
         switch (descriptor.getKind()) {
             case TRAIT:
                 return new JsInvocation(traitCreationMethodReference());
+
             case OBJECT:
+            case CLASS_OBJECT:
+            case ENUM_ENTRY:
                 return new JsInvocation(objectCreationMethodReference());
 
             default:
                 return new JsInvocation(classCreationMethodReference());
         }
+    }
+
+    @NotNull
+    public JsInvocation enumEntriesObjectCreateInvocation() {
+        return new JsInvocation(enumEntriesCreationMethodReference());
     }
 }

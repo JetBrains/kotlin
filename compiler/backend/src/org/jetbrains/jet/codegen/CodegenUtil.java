@@ -90,10 +90,8 @@ public class CodegenUtil {
     }
 
     public static boolean isNonLiteralObject(JetClassOrObject myClass) {
-        return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral() &&
-               !(myClass.getParent() instanceof JetClassObject);
+        return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral();
     }
-
 
     public static String createTmpVariableName(Collection<String> existingNames) {
         String prefix = "tmp";

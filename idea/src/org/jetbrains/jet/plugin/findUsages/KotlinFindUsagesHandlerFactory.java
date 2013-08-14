@@ -18,24 +18,52 @@ package org.jetbrains.jet.plugin.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesHandlerFactory;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler;
+import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindFunctionUsagesHandler;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+
+import java.util.Collection;
 
 public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
+    private final KotlinMethodFindUsagesOptions findMethodOptions;
+
+    public KotlinFindUsagesHandlerFactory(@NotNull Project project) {
+        findMethodOptions = new KotlinMethodFindUsagesOptions(project);
+    }
+
+    public final KotlinMethodFindUsagesOptions getFindMethodOptions() {
+        return findMethodOptions;
+    }
+
     @Override
     public boolean canFindUsages(@NotNull PsiElement element) {
-        return element instanceof JetClass || element instanceof JetFunction;
+        return element instanceof JetClass || element instanceof JetNamedFunction;
     }
 
     @Override
     public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
         if (element instanceof JetClass) {
-            return new KotlinFindClassUsagesHandler(element);
+            return new KotlinFindClassUsagesHandler((JetClass) element, this);
         }
-        if (element instanceof JetFunction) {
-            return new KotlinFindFunctionUsagesHandler(element);
+        if (element instanceof JetNamedFunction) {
+            if (!forHighlightUsages) {
+                Collection<? extends PsiElement> methods =
+                        JetRefactoringUtil.checkSuperMethods((JetDeclaration) element, null, "super.methods.action.key.find.usages");
+
+                if (methods == null || methods.isEmpty()) return FindUsagesHandler.NULL_HANDLER;
+                if (methods.size() > 1) {
+                    return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, methods, this);
+                }
+            }
+            
+            return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, this);
         }
         throw new IllegalArgumentException("unexpected element type: " + element);
     }

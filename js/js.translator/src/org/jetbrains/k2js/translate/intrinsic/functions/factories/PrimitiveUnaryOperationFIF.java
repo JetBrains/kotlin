@@ -53,26 +53,23 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final DescriptorPredicate NO_PARAMETERS = new DescriptorPredicate() {
         @Override
-        public boolean apply(@Nullable FunctionDescriptor descriptor) {
-            assert descriptor != null;
+        public boolean apply(@NotNull FunctionDescriptor descriptor) {
             return !JsDescriptorUtils.hasParameters(descriptor);
         }
     };
     @NotNull
     private static final Predicate<FunctionDescriptor> PATTERN = Predicates.and(PRIMITIVE_UNARY_OPERATION_NAMES, NO_PARAMETERS);
 
-    @NotNull
-    @Override
-    public Predicate<FunctionDescriptor> getPredicate() {
-        return PATTERN;
-    }
-
-    @NotNull
+    @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        if (!PATTERN.apply(descriptor)) {
+            return null;
+        }
+
         Name name = descriptor.getName();
 
-        JsUnaryOperator jsOperator = null;
+        JsUnaryOperator jsOperator;
         if ("inv".equals(name.asString())) {
             jsOperator = JsUnaryOperator.BIT_NOT;
         }

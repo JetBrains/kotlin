@@ -30,11 +30,12 @@ class BasicKotlinGradleIT {
     Test fun testSimpleCompile() {
         val projectDir = File(workingDir, "alfa")
 
-        val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
+        val pathToKotlinPlugin = "-PpathToKotlinPlugin=${File("local-repo").getAbsolutePath()}"
+        val version = "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT"
         val cmd = if (SystemInfo.isWindows)
-            listOf("cmd", "/C", "gradlew.bat", "compileDeployKotlin", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
+            listOf("cmd", "/C", "gradlew.bat", "compileDeployKotlin", "build", pathToKotlinPlugin, version, "--no-daemon", "--debug")
         else
-            listOf("/bin/bash", "./gradlew", "compileDeployKotlin", "build", pathToKotlinPlugin, "--no-daemon", "--debug")
+            listOf("/bin/bash", "./gradlew", "compileDeployKotlin", "build", pathToKotlinPlugin, version,  "--no-daemon", "--debug")
 
         val builder = ProcessBuilder(cmd)
         builder.directory(projectDir)

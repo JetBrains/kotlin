@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli.common.messages;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -90,8 +89,6 @@ public final class AnalyzerWithCompilerReport {
     private static boolean reportDiagnostic(@NotNull Diagnostic diagnostic, @NotNull MessageCollector messageCollector) {
         if (!diagnostic.isValid()) return false;
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
-        VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
-        String path = virtualFile == null ? null : virtualFile.getPath();
         String render;
         if (diagnostic instanceof MyDiagnostic) {
             render = ((MyDiagnostic)diagnostic).message;
@@ -100,7 +97,7 @@ public final class AnalyzerWithCompilerReport {
             render = DefaultErrorMessages.RENDERER.render(diagnostic);
         }
         messageCollector.report(convertSeverity(diagnostic.getSeverity()), render,
-                CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
+                MessageUtil.psiFileToMessageLocation(diagnostic.getPsiFile(), null, lineAndColumn.getLine(), lineAndColumn.getColumn()));
         return diagnostic.getSeverity() == Severity.ERROR;
     }
 

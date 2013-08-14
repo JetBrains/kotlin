@@ -3,14 +3,11 @@ package java.lang
 import java.io.IOException
 import js.library
 
-library
-open public class Exception(message: String? = null) : Throwable() {}
+native("Error")
+open public class Exception(message: String? = null): Throwable() {}
 
 library
 open public class RuntimeException(message: String? = null) : Exception(message) {}
-
-library("splitString")
-public fun String.split(regex : String) : Array<String> = js.noImpl
 
 library
 public class IllegalArgumentException(message: String? = null) : Exception() {}
@@ -18,8 +15,11 @@ public class IllegalArgumentException(message: String? = null) : Exception() {}
 library
 public class IllegalStateException(message: String? = null) : Exception() {}
 
-library
-public class IndexOutOfBoundsException(message: String? = null) : Exception() {}
+native("RangeError")
+public class IndexOutOfBounds(message: String? = null) : Exception(message) {}
+
+native("RangeError")
+public class IndexOutOfBoundsException(message: String? = null) : Exception(message) {}
 
 library
 public class UnsupportedOperationException(message: String? = null) : Exception() {}

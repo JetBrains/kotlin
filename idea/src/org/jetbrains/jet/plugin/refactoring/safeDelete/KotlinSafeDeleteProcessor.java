@@ -22,13 +22,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.MethodSignatureUtil;
-import com.intellij.psi.util.PsiFormatUtil;
-import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor;
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo;
@@ -37,7 +34,6 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceJavaDele
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -54,7 +50,7 @@ import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import java.util.*;
 
@@ -591,87 +587,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return false;
     }
 
-    @NotNull
-    private static String wrapOrSkip(@NotNull String s, boolean inCode) {
-        return inCode ? "<code>" + s + "</code>" : s;
-    }
-
-    @NotNull
-    private static String formatClass(
-            @NotNull DeclarationDescriptor classDescriptor,
-            @NotNull BindingContext bindingContext,
-            boolean inCode
-    ) {
-        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, classDescriptor);
-        if (element instanceof PsiClass) {
-            return formatPsiClass((PsiClass) element, false, inCode);
-        }
-
-        return wrapOrSkip(formatClassDescriptor(classDescriptor), inCode);
-    }
-
-    @NotNull
-    private static String formatFunction(
-            @NotNull DeclarationDescriptor functionDescriptor,
-            @NotNull BindingContext bindingContext,
-            boolean inCode
-    ) {
-        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, functionDescriptor);
-        if (element instanceof PsiMethod) {
-            return formatPsiMethod((PsiMethod) element, false, inCode);
-        }
-
-        return wrapOrSkip(formatFunctionDescriptor(functionDescriptor), inCode);
-    }
-
-    @NotNull
-    private static String formatClassDescriptor(@NotNull DeclarationDescriptor classDescriptor) {
-        return DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor);
-    }
-
-    @NotNull
-    private static String formatFunctionDescriptor(@NotNull DeclarationDescriptor functionDescriptor) {
-        return DescriptorRenderer.COMPACT.render(functionDescriptor);
-    }
-
-    @NotNull
-    public static String formatPsiClass(
-            @NotNull PsiClass psiClass,
-            boolean markAsJava,
-            boolean inCode
-    ) {
-        String description;
-
-        String kind = psiClass.isInterface() ? "interface " : "class ";
-        description = kind + PsiFormatUtil.formatClass(
-                psiClass,
-                PsiFormatUtilBase.SHOW_CONTAINING_CLASS
-                | PsiFormatUtilBase.SHOW_NAME
-                | PsiFormatUtilBase.SHOW_PARAMETERS
-                | PsiFormatUtilBase.SHOW_TYPE
-        );
-        description = wrapOrSkip(description, inCode);
-
-        return markAsJava ? "[Java] " + description : description;
-    }
-
-    @NotNull
-    public static String formatPsiMethod(
-            @NotNull PsiMethod psiMethod,
-            boolean showContainingClass,
-            boolean inCode) {
-        int options = PsiFormatUtilBase.SHOW_NAME | PsiFormatUtilBase.SHOW_PARAMETERS | PsiFormatUtilBase.SHOW_TYPE;
-        if (showContainingClass) {
-            //noinspection ConstantConditions
-            options |= PsiFormatUtilBase.SHOW_CONTAINING_CLASS;
-        }
-
-        String description = PsiFormatUtil.formatMethod(psiMethod, PsiSubstitutor.EMPTY, options, PsiFormatUtilBase.SHOW_TYPE);
-        description = wrapOrSkip(description, inCode);
-
-        return "[Java] " + description;
-    }
-
     @Override
     @Nullable
     public Collection<String> findConflicts(@NotNull PsiElement element, @NotNull PsiElement[] allElementsToDelete) {
@@ -694,10 +609,10 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 if (overridenDescriptor.getModality() == Modality.ABSTRACT) {
                     String message = JetBundle.message(
                             "x.implements.y",
-                            formatFunction(callableDescriptor, bindingContext, true),
-                            formatClass(callableDescriptor.getContainingDeclaration(), bindingContext, true),
-                            formatFunction(overridenDescriptor, bindingContext, true),
-                            formatClass(overridenDescriptor.getContainingDeclaration(), bindingContext, true)
+                            JetRefactoringUtil.formatFunction(callableDescriptor, bindingContext, true),
+                            JetRefactoringUtil.formatClass(callableDescriptor.getContainingDeclaration(), bindingContext, true),
+                            JetRefactoringUtil.formatFunction(overridenDescriptor, bindingContext, true),
+                            JetRefactoringUtil.formatClass(overridenDescriptor.getContainingDeclaration(), bindingContext, true)
                     );
                     messages.add(message);
                 }
@@ -850,102 +765,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     }
 
     @Nullable
-    private static Collection<? extends PsiElement> checkSuperMethods(
-            @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore
-    ) {
-        final BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
-
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-        if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
-
-        CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) declarationDescriptor;
-        Set<? extends CallableMemberDescriptor> overridenDescriptors = callableDescriptor.getOverriddenDescriptors();
-
-        Collection<? extends PsiElement> superMethods = ContainerUtil.map(
-                overridenDescriptors,
-                new Function<CallableMemberDescriptor, PsiElement>() {
-                    @Override
-                    public PsiElement fun(CallableMemberDescriptor descriptor) {
-                        return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-                    }
-                }
-        );
-        if (ignore != null) {
-            superMethods.removeAll(ignore);
-        }
-
-        if (superMethods.isEmpty()) return Collections.singletonList(declaration);
-
-        List<String> superClasses = getClassDescriptions(bindingContext, superMethods);
-        return askUserForMethodsToSearch(declaration, callableDescriptor, superMethods, superClasses);
-    }
-
-    @NotNull
-    private static Collection<? extends PsiElement> askUserForMethodsToSearch(
-            @NotNull JetDeclaration declaration,
-            @NotNull CallableMemberDescriptor callableDescriptor,
-            @NotNull Collection<? extends PsiElement> superMethods,
-            @NotNull List<String> superClasses
-    ) {
-        String superClassesStr = "\n" + StringUtil.join(superClasses, "");
-        String message = JetBundle.message(
-                "x.overrides.y.in.class.list",
-                DescriptorRenderer.COMPACT.render(callableDescriptor),
-                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callableDescriptor.getContainingDeclaration()),
-                superClassesStr
-        );
-
-        int exitCode = Messages.showYesNoCancelDialog(
-                declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
-        );
-        switch (exitCode) {
-            case Messages.YES:
-                return superMethods;
-            case Messages.NO:
-                return Collections.singletonList(declaration);
-            default:
-                return Collections.emptyList();
-        }
-    }
-
-    @NotNull
-    private static List<String> getClassDescriptions(
-            @NotNull final BindingContext bindingContext, @NotNull Collection<? extends PsiElement> superMethods
-    ) {
-        return ContainerUtil.map(
-                superMethods,
-                new Function<PsiElement, String>() {
-                    @Override
-                    public String fun(PsiElement element) {
-                        String description;
-
-                        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-                            DeclarationDescriptor descriptor =
-                                    bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-                            assert descriptor != null;
-
-                            DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
-                            assert containingDescriptor != null;
-
-                            description = formatClassDescriptor(containingDescriptor);
-                        }
-                        else {
-                            assert element instanceof PsiMethod;
-
-                            PsiClass psiClass = ((PsiMethod) element).getContainingClass();
-                            assert psiClass != null;
-
-                            description = formatPsiClass(psiClass, true, false);
-                        }
-
-                        return "    " + description + "\n";
-                    }
-                }
-        );
-    }
-
-    @Nullable
     @Override
     public Collection<? extends PsiElement> getElementsToSearch(
             @NotNull PsiElement element, @Nullable Module module, @NotNull Collection<PsiElement> allElementsToDelete
@@ -964,7 +783,9 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
 
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-            return checkSuperMethods((JetDeclaration) element, allElementsToDelete);
+            return JetRefactoringUtil.checkSuperMethods(
+                    (JetDeclaration) element, allElementsToDelete, "super.methods.delete.with.usage.search"
+            );
         }
 
         return super.getElementsToSearch(element, module, allElementsToDelete);
@@ -982,7 +803,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             }
 
             String message =
-                    JetBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method));
+                    JetBundle.message("delete.param.in.method.hierarchy", JetRefactoringUtil.formatJavaOrLightMethod(method));
             int exitCode = Messages.showOkCancelDialog(
                     parameter.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
             );
@@ -1023,19 +844,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             }
         }
         return parametersToDelete;
-    }
-
-    @NotNull
-    private static String formatJavaOrLightMethod(@NotNull PsiMethod method) {
-        if (method instanceof JetClsMethod) {
-            JetDeclaration declaration = ((JetClsMethod) method).getOrigin();
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
-            DeclarationDescriptor descriptor =
-                    bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
-            if (descriptor != null) return formatFunctionDescriptor(descriptor);
-        }
-        return formatPsiMethod(method, false, false);
     }
 
     private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, int parameterIndex) {

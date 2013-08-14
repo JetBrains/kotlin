@@ -17,7 +17,7 @@
 package org.jetbrains.k2js.translate.intrinsic.functions;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -30,7 +30,7 @@ import java.util.Map;
 public final class FunctionIntrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, FunctionIntrinsic> intrinsicCache = Maps.newHashMap();
+    private final Map<FunctionDescriptor, FunctionIntrinsic> intrinsicCache = new THashMap<FunctionDescriptor, FunctionIntrinsic>();
 
     @NotNull
     private final List<FunctionIntrinsicFactory> factories = Lists.newArrayList();
@@ -77,8 +77,9 @@ public final class FunctionIntrinsics {
     @NotNull
     private FunctionIntrinsic computeIntrinsic(@NotNull FunctionDescriptor descriptor) {
         for (FunctionIntrinsicFactory factory : factories) {
-            if (factory.getPredicate().apply(descriptor)) {
-                return factory.getIntrinsic(descriptor);
+            FunctionIntrinsic intrinsic = factory.getIntrinsic(descriptor);
+            if (intrinsic != null) {
+                return intrinsic;
             }
         }
         return FunctionIntrinsic.NO_INTRINSIC;

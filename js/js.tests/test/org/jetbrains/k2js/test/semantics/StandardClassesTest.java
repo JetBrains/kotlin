@@ -60,4 +60,8 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
     public void testArraysIterator() throws Exception {
         fooBoxTest(failOnEcma5());
     }
+
+    public void testArrayFactoryMethods() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

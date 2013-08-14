@@ -17,49 +17,52 @@
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 public abstract class CompositeFIF implements FunctionIntrinsicFactory {
+    @NotNull
+    public static final FunctionIntrinsic LENGTH_PROPERTY_INTRINSIC = new BuiltInPropertyIntrinsic("length");
+    public static final FunctionIntrinsic IS_EMPTY_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            return JsAstUtils.equality(new JsNameRef("length", receiver), context.program().getNumberLiteral(0));
+        }
+    };
 
-    @NotNull final Map<DescriptorPredicate, FunctionIntrinsic> patternToIntrinsic = Maps.newHashMap();
+    @NotNull
+    private final List<Pair<Predicate<FunctionDescriptor>, FunctionIntrinsic>> patternsAndIntrinsics = Lists.newArrayList();
 
     protected CompositeFIF() {
     }
 
-    @NotNull
-    @Override
-    public Predicate<FunctionDescriptor> getPredicate() {
-        Collection<DescriptorPredicate> patterns = patternToIntrinsic.keySet();
-        final DescriptorPredicate[] patterns1 = patterns.toArray(new DescriptorPredicate[patterns.size()]);
-        return new DescriptorPredicate() {
-            @Override
-            public boolean apply(@Nullable FunctionDescriptor descriptor) {
-                return Predicates.or(patterns1).apply(descriptor);
-            }
-        };
-    }
-
-    @NotNull
+    @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        for (DescriptorPredicate pattern : patternToIntrinsic.keySet()) {
-            if (pattern.apply(descriptor)) {
-                return patternToIntrinsic.get(pattern);
+        for (Pair<Predicate<FunctionDescriptor>, FunctionIntrinsic> entry : patternsAndIntrinsics) {
+            if (entry.first.apply(descriptor)) {
+                return entry.second;
             }
         }
-        throw new IllegalStateException("Must have intrinsic for pattern.");
+        return null;
     }
 
-    protected void add(@NotNull DescriptorPredicate pattern, @NotNull FunctionIntrinsic intrinsic) {
-        patternToIntrinsic.put(pattern, intrinsic);
+    protected void add(@NotNull Predicate<FunctionDescriptor> pattern, @NotNull FunctionIntrinsic intrinsic) {
+        patternsAndIntrinsics.add(Pair.create(pattern, intrinsic));
     }
-}
+ }

@@ -24,6 +24,7 @@ import org.gradle.api.logging.Logging
 import org.apache.commons.lang.StringUtils
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.apache.commons.io.FileUtils
+import org.jetbrains.kotlin.gradle.plugin.*
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -105,7 +106,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         val embeddedAnnotations = getAnnotations()
         val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
-        val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.getPath())
+        val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map {it.getPath()})
         args.annotations = allAnnotations.makeString(File.pathSeparator)
 
         args.noStdlib = true
@@ -124,19 +125,14 @@ public open class KotlinCompile(): AbstractCompile() {
         FileUtils.copyDirectory(kotlinDestinationDir, getDestinationDir())
     }
 
-    fun getAnnotations(): File {
-        val configuration = getProject()
-                .getBuildscript()
-                .getConfigurations()
-                .getByName(ScriptHandler.CLASSPATH_CONFIGURATION)!!
+    fun getAnnotations(): Collection<File> {
+        val annotations = getProject().getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
 
-        val jdkAnnotationsFromClasspath = configuration.find { it.name.startsWith("kotlin-jdk-annotations") }
-
-        if (jdkAnnotationsFromClasspath != null) {
-            logger.info("using jdk annontations from [${jdkAnnotationsFromClasspath.getAbsolutePath()}]")
-            return jdkAnnotationsFromClasspath
+        if (!annotations.isEmpty()) {
+            logger.info("using default annontations from [${annotations.map {it.getPath()}}]")
+            return annotations
         } else {
-            throw GradleException("kotlin-jdk-annotations not found in Kotlin gradle plugin classpath")
+            throw GradleException("Default annotations not found in Kotlin gradle plugin classpath")
         }
     }
 }
@@ -231,15 +227,22 @@ public open class KDoc(): SourceTask() {
 class GradleMessageCollector(val logger : Logger): MessageCollector {
     public override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
         val path = location.getPath()
-        val position = if (path != null) (path + ": (" + location.getLine() + ", " + location.getColumn() + ") ") else ""
-
-        val text = position + message
-
+        val hasLocation = path != null && location.getLine() > 0 && location.getColumn() > 0
+        val text: String
+        if (hasLocation) {
+            val warningPrefix = if (severity == CompilerMessageSeverity.WARNING) "warning:" else ""
+            val errorMarkerLine = "${" ".repeat(location.getColumn() - 1)}^"
+            text = "$path:${location.getLine()}:$warningPrefix$message\n${errorMarkerLine}"
+        }
+        else {
+            text = "${severity.name().toLowerCase()}:$message"
+        }
         when (severity) {
             in CompilerMessageSeverity.VERBOSE -> logger.debug(text)
             in CompilerMessageSeverity.ERRORS -> logger.error(text)
             CompilerMessageSeverity.INFO -> logger.info(text)
-            else -> logger.warn(text)
+            CompilerMessageSeverity.WARNING -> logger.error(text)
+            else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
         }
     }
 }

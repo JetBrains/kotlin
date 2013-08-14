@@ -32,6 +32,7 @@ import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
+import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -430,6 +431,13 @@ public class GenerateTests {
                 AbstractResolveBaseTest.class,
                 testModel("idea/testData/resolve/references", "doTest")
         );
+
+        generateTest(
+                "idea/tests/",
+                "JetFindUsagesTest",
+                AbstractJetFindUsagesTest.class,
+                testModelWithPattern("idea/testData/findUsages", "^(.+).0.kt$", "doTest")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
@@ -446,6 +454,10 @@ public class GenerateTests {
 
     private static SimpleTestClassModel testModelWithDirectories(@NotNull String rootPath, @NotNull String methodName) {
         return new SimpleTestClassModel(new File(rootPath), false,  Pattern.compile("^(.+)$"), methodName);
+    }
+
+    private static SimpleTestClassModel testModelWithPattern(@NotNull String rootPath, @NotNull String pattern, @NotNull String methodName) {
+        return new SimpleTestClassModel(new File(rootPath), true,  Pattern.compile(pattern), methodName);
     }
 
     private static SimpleTestClassModel testModel(

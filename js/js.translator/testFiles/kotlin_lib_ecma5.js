@@ -72,7 +72,7 @@ var Kotlin = Object.create(null);
 
     function computeProto2(bases, properties) {
         if (bases === null) {
-            return null;
+            return Object.prototype;
         }
         return Array.isArray(bases) ? computeProto(bases, properties) : bases.proto;
     }
@@ -88,6 +88,14 @@ var Kotlin = Object.create(null);
         Object.seal(o);
         return o;
     };
+
+    function class_object$() {
+        if (typeof this.$object$ === "undefined") {
+            this.$object$ = this.object_initializer$();
+        }
+
+        return this.$object$;
+    }
 
     function createClass(bases, initializer, properties, staticProperties, isClass) {
         var proto;
@@ -111,6 +119,9 @@ var Kotlin = Object.create(null);
         }
 
         var constructor = createConstructor();
+        Object.defineProperty(constructor, "object$", {value: class_object$});
+        Object.defineProperty(constructor, "$object$", {value: undefined, writable: true});
+
         Object.defineProperty(constructor, "proto", {value: proto});
         Object.defineProperty(constructor, "properties", {value: properties || null});
         if (isClass) {
@@ -124,7 +135,7 @@ var Kotlin = Object.create(null);
             Object.defineProperties(constructor, staticProperties);
         }
 
-        Object.freeze(constructor);
+        Object.seal(constructor);
         return constructor;
     }
 

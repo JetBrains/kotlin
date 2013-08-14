@@ -129,11 +129,10 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     @NotNull
     private TranslationContext contextWithAlias(@NotNull TranslationContext contextWithAliasForThisExpression,
                                                 @NotNull JsExpression aliasExpression, @Nullable DeclarationDescriptor descriptorToAlias) {
-        TranslationContext newContext = contextWithAliasForThisExpression;
         TemporaryVariable aliasForReceiver = context().declareTemporary(aliasExpression);
         assert descriptorToAlias != null;
-        newContext =
-            newContext.innerContextWithThisAliased(descriptorToAlias, aliasForReceiver.name());
+        TranslationContext newContext =
+                contextWithAliasForThisExpression.innerContextWithThisAliased(descriptorToAlias, aliasForReceiver.reference());
         newContext.addStatementToCurrentBlock(aliasForReceiver.assignmentExpression().makeStmt());
         return newContext;
     }

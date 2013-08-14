@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -38,10 +39,10 @@ import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.*;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
@@ -58,6 +59,18 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression,
             @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+
+        // TODO: workaround for default parameters translation. Will be fixed later.
+        // public fun parseInt(s: String, radix:Int = 10): Int = js.noImpl
+        if (compileTimeValue == null) {
+            if (expression.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
+                return JsLiteral.getBoolean(Boolean.valueOf(expression.getText()));
+            }
+            else if (expression.getNode().getElementType() == JetNodeTypes.INTEGER_CONSTANT) {
+                return context.program().getNumberLiteral(Integer.parseInt(expression.getText()));
+            }
+        }
+
         assert compileTimeValue != null;
 
         if (compileTimeValue instanceof NullValue) {
@@ -136,15 +149,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     // assume it is a local variable declaration
     public JsNode visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        VariableDescriptor descriptor = context.bindingContext().get(BindingContext.VARIABLE, expression);
-        assert descriptor != null;
+        VariableDescriptor descriptor = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.VARIABLE, expression);
         JsExpression initializer = translateInitializerForProperty(expression, context);
         JsName name = context.getNameForDescriptor(descriptor);
         if (descriptor.isVar() && context.bindingContext().get(BindingContext.CAPTURED_IN_CLOSURE, descriptor) != null) {
             // well, wrap it
             JsNameRef alias = new JsNameRef("v", new JsNameRef(name));
-            initializer = new JsObjectLiteral(
-                    Collections.singletonList(new JsPropertyInitializer(alias, initializer == null ? JsLiteral.NULL : initializer)));
+            initializer = JsAstUtils.wrapValue(alias, initializer == null ? JsLiteral.NULL : initializer);
             context.aliasingContext().registerAlias(descriptor, alias);
         }
 

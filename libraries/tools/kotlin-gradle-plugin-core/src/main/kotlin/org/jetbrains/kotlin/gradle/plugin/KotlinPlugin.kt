@@ -33,6 +33,12 @@ import com.android.builder.model.BuildType
 import com.android.builder.BuilderConstants
 import com.android.build.gradle.api.TestVariant
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.Dependency
+import java.util.HashSet
+
+val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
 open class KotlinPlugin: Plugin<Project> {
 
@@ -44,6 +50,9 @@ open class KotlinPlugin: Plugin<Project> {
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
         configureKDoc(project, javaPluginConvention)
+
+        val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
     }
 
 
@@ -159,6 +168,9 @@ open class KotlinAndroidPlugin: Plugin<Project> {
             }
 
         })
+        val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version",
+                                                                                                                "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
     }
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
@@ -236,7 +248,7 @@ open class KotlinAndroidPlugin: Plugin<Project> {
                     val basePlugin : BasePlugin = plugin as BasePlugin
                     val javaSources = project.files(javaSourceList)
                     val androidRT = project.files(basePlugin.getRuntimeJarList())
-                    val fullClasspath = javaTask.getClasspath() + (javaSources + androidRT)
+                    val fullClasspath = (javaTask.getClasspath() + (javaSources + androidRT)) - project.files(kotlinTask.kotlinDestinationDir)
                     (task as AbstractCompile).setClasspath(fullClasspath)
                 })
 
@@ -258,3 +270,18 @@ open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {
         return p0 != null && predicate(p0)
     }
 }
+
+open class GradleUtils() {
+    class object {
+        public fun resolveDependencies(project: Project, vararg coordinates: String): Collection<File> {
+            val dependencyHandler : DependencyHandler = project.getBuildscript().getDependencies()
+            val configurationsContainer : ConfigurationContainer = project.getBuildscript().getConfigurations()
+
+            val deps = coordinates.map { dependencyHandler.create(it) }
+            val configuration = configurationsContainer.detachedConfiguration(*deps.toArray(array<Dependency>()))
+
+            return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
+        }
+    }
+}
+

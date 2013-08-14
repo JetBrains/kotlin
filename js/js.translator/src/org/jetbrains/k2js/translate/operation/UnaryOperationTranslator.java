@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.operation;
 
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
@@ -31,7 +32,9 @@ import static org.jetbrains.k2js.translate.general.Translation.translateAsExpres
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.isEqualLikeOperator;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.sure;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateExclForBinaryEqualLikeExpr;
 
 public final class UnaryOperationTranslator {
     private UnaryOperationTranslator() {
@@ -46,7 +49,12 @@ public final class UnaryOperationTranslator {
         if (IncrementTranslator.isIncrement(expression)) {
             return IncrementTranslator.translate(expression, context);
         }
-        return translateAsCall(expression, context);
+
+        JsExpression baseExpression = TranslationUtils.translateBaseExpression(context, expression);
+        if (isExclForBinaryEqualLikeExpr(expression, baseExpression)) {
+            return translateExclForBinaryEqualLikeExpr((JsBinaryOperation) baseExpression);
+        }
+        return translateAsCall(expression, context, baseExpression);
     }
 
     private static boolean isExclExcl(@NotNull JetUnaryExpression expression) {
@@ -58,11 +66,21 @@ public final class UnaryOperationTranslator {
         return sure(translateAsExpression(getBaseExpression(expression), context), context);
     }
 
+    private static boolean isExclForBinaryEqualLikeExpr(@NotNull JetUnaryExpression expression, @NotNull JsExpression baseExpression) {
+        if (getOperationToken(expression).equals(JetTokens.EXCL)) {
+            if (baseExpression instanceof JsBinaryOperation) {
+                return isEqualLikeOperator(((JsBinaryOperation) baseExpression).getOperator());
+            }
+        }
+        return false;
+    }
+
     @NotNull
     private static JsExpression translateAsCall(@NotNull JetUnaryExpression expression,
-                                                @NotNull TranslationContext context) {
+                                                @NotNull TranslationContext context,
+                                                @NotNull JsExpression baseExpression) {
         return CallBuilder.build(context)
-                .receiver(TranslationUtils.translateBaseExpression(context, expression))
+                .receiver(baseExpression)
                 .args(Collections.<JsExpression>emptyList())
                 .resolvedCall(getResolvedCall(context.bindingContext(), expression.getOperationReference()))
                 .type(CallType.NORMAL).translate();

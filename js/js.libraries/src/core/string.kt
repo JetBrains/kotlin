@@ -1,5 +1,13 @@
 package js
 
+native public fun String.startsWith(s: String): Boolean = noImpl
+native public fun String.endsWith(s: String): Boolean = noImpl
+native public fun String.contains(s: String): Boolean = noImpl
+
+native public fun String.startsWith(char: Char): Boolean = noImpl
+native public fun String.endsWith(char: Char): Boolean = noImpl
+native public fun String.contains(char: Char): Boolean = noImpl
+
 native public fun String.toUpperCase() : String = js.noImpl
 
 native public fun String.toLowerCase() : String = js.noImpl
@@ -10,8 +18,11 @@ native public fun String.indexOf(str : String, fromIndex : Int) : Int = js.noImp
 native public fun String.lastIndexOf(str: String) : Int = js.noImpl
 native public fun String.lastIndexOf(str : String, fromIndex : Int) : Int = js.noImpl
 
-// Defined in javalang.kt
-//native public fun String.split(regex : String) : Array<String> = js.noImpl
+library("splitString")
+public fun String.split(regex: String): Array<String> = js.noImpl
+
+library("splitString")
+public fun String.split(regex: String, limit: Int): Array<String> = js.noImpl
 
 native public fun String.substring(beginIndex : Int) : String = js.noImpl
 native public fun String.substring(beginIndex : Int, endIndex : Int) : String = js.noImpl
@@ -24,9 +35,12 @@ native public fun String.match(regex : String) : Array<String> = js.noImpl
 
 native public fun String.trim() : String = js.noImpl
 
-native public val String.length : Int
+public val String.size: Int
     get() = js.noImpl
 
+public fun String.length(): Int = js.noImpl
+
+public fun String.isEmpty(): Boolean = js.noImpl
 
 /*
 
@@ -106,7 +120,7 @@ native public fun String.getBytes(charset : java.nio.charset.Charset) : ByteArra
 
 native public fun String.getBytes(charsetName : String) : ByteArray = (this as java.lang.String).getBytes(charsetName)!!
 
-native public fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)!!
+native public fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Tuple0 = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)!!
 
 native public fun String.intern() : String = (this as java.lang.String).intern()!!
 

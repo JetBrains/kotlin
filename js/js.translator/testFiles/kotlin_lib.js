@@ -29,27 +29,14 @@ String.prototype.contains = function (s) {
   return this.indexOf(s) !== -1;
 };
 
-// todo org.jetbrains.k2js.test.semantics.WebDemoExamples2Test#testBuilder
-var kotlin = {set:function (receiver, key, value) {
-    return receiver.put(key, value);
-}};
-
 (function () {
     Kotlin.equals = function (obj1, obj2) {
         if (obj1 == null) {
             return obj2 == null;
         }
 
-        if (obj1 instanceof Array) {
-            if (!(obj2 instanceof Array) || obj1.length != obj2.length) {
-                return false;
-            }
-            for (var i = 0; i < obj1.length; i++) {
-                if (!Kotlin.equals(obj1[i], obj2[i])) {
-                    return false;
-                }
-            }
-            return true;
+        if (Array.isArray(obj1)) {
+            return Kotlin.arrayEquals(obj1, obj2);
         }
 
         if (typeof obj1 == "object" && obj1.equals !== undefined) {
@@ -59,8 +46,20 @@ var kotlin = {set:function (receiver, key, value) {
         return obj1 === obj2;
     };
 
-    Kotlin.array = function (args) {
-        return args === null || args === undefined ? [] : args.slice();
+    Kotlin.toString = function (o) {
+        if (o == null) {
+            return "null";
+        }
+        else if (Array.isArray(o)) {
+            return Kotlin.arrayToString(o);
+        }
+        else {
+            return o.toString();
+        }
+    };
+    
+    Kotlin.arrayToString = function(a) {
+        return "[" + a.join(", ") + "]";
     };
 
     Kotlin.intUpto = function (from, to) {
@@ -73,16 +72,13 @@ var kotlin = {set:function (receiver, key, value) {
 
     Kotlin.modules = {};
 
-    Kotlin.Exception = Kotlin.$createClass();
-    Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IOException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.RuntimeException = Kotlin.$createClass();
+    Kotlin.NullPointerException = Kotlin.$createClass();
+    Kotlin.NoSuchElementException = Kotlin.$createClass();
+    Kotlin.IllegalArgumentException = Kotlin.$createClass();
+    Kotlin.IllegalStateException = Kotlin.$createClass();
+    Kotlin.UnsupportedOperationException = Kotlin.$createClass();
+    Kotlin.IOException = Kotlin.$createClass();
 
     Kotlin.throwNPE = function () {
         throw Kotlin.$new(Kotlin.NullPointerException)();
@@ -134,6 +130,48 @@ var kotlin = {set:function (receiver, key, value) {
 
     Kotlin.Collection = Kotlin.$createClass();
 
+    Kotlin.Enum = Kotlin.$createClass(null, {
+        initialize: function () {
+            this.name$ = undefined;
+            this.ordinal$ = undefined;
+        },
+        name: function () {
+            return this.name$;
+        },
+        ordinal: function () {
+            return this.ordinal$;
+        },
+        toString: function () {
+            return this.name();
+        }
+    });
+    (function (){
+        function valueOf(name) {
+            return this[name];
+        }
+        function getValues() {
+            return this.values$;
+        }
+
+        Kotlin.createEnumEntries = function(enumEntryList) {
+            var i = 0;
+            var values = [];
+            for (var entryName in enumEntryList) {
+                if (enumEntryList.hasOwnProperty(entryName)) {
+                    var entryObject = enumEntryList[entryName];
+                    values[i] = entryObject;
+                    entryObject.ordinal$ = i;
+                    entryObject.name$ = entryName;
+                    i++;
+                }
+            }
+            enumEntryList.values$ = values;
+            enumEntryList.valueOf = valueOf;
+            enumEntryList.values = getValues;
+            return enumEntryList;
+        };
+    })();
+
     Kotlin.AbstractCollection = Kotlin.$createClass(Kotlin.Collection, {
         size: function () {
             return this.$size;
@@ -152,16 +190,17 @@ var kotlin = {set:function (receiver, key, value) {
             return Kotlin.$new(ArrayIterator)(this.toArray());
         },
         equals: function (o) {
-            if (this.size() === o.size()) {
-                var iterator1 = this.iterator();
-                var iterator2 = o.iterator();
-                var i = this.size();
-                while (i-- > 0) {
-                    if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
-                        return false;
-                    }
+            if (this.size() !== o.size()) return false;
+
+            var iterator1 = this.iterator();
+            var iterator2 = o.iterator();
+            var i = this.size();
+            while (i-- > 0) {
+                if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
+                    return false;
                 }
             }
+
             return true;
         },
         toString: function () {
@@ -264,7 +303,7 @@ var kotlin = {set:function (receiver, key, value) {
         },
         checkRange: function(index) {
             if (index < 0 || index >= this.$size) {
-                throw new Kotlin.IndexOutOfBoundsException();
+                throw new RangeError();
             }
         }
     });
@@ -293,10 +332,6 @@ var kotlin = {set:function (receiver, key, value) {
         close: throwAbstractFunctionInvocationError("Closeable#close")
     });
 
-    Kotlin.parseInt = function (str) {
-        return parseInt(str, 10);
-    };
-
     Kotlin.safeParseInt = function(str) {
         var r = parseInt(str, 10);
         return isNaN(r) ? null : r;
@@ -305,6 +340,22 @@ var kotlin = {set:function (receiver, key, value) {
     Kotlin.safeParseDouble = function(str) {
         var r = parseFloat(str);
         return isNaN(r) ? null : r;
+    };
+
+    Kotlin.arrayEquals = function (a, b) {
+        if (a === b) {
+            return true;
+        }
+        if (!Array.isArray(b) || a.length !== b.length) {
+            return false;
+        }
+
+        for (var i = 0, n = a.length; i < n; i++) {
+            if (!Kotlin.equals(a[i], b[i])) {
+                return false;
+            }
+        }
+        return true;
     };
 
     Kotlin.System = function () {
@@ -436,12 +487,12 @@ var kotlin = {set:function (receiver, key, value) {
         return Kotlin.$new(ComparatorImpl)(f);
     };
 
-    Kotlin.collectionsMax = function (col, comp) {
-        var it = col.iterator();
-        if (col.isEmpty()) {
+    Kotlin.collectionsMax = function (c, comp) {
+        if (c.isEmpty()) {
             //TODO: which exception?
-            throw Kotlin.Exception();
+            throw new Error();
         }
+        var it = c.iterator();
         var max = it.next();
         while (it.hasNext()) {
             var el = it.next();
@@ -491,8 +542,8 @@ var kotlin = {set:function (receiver, key, value) {
             }
     );
 
-    Kotlin.splitString = function (str, regex) {
-        return str.split(regex);
+    Kotlin.splitString = function (str, regex, limit) {
+        return str.split(new RegExp(regex), limit);
     };
 
     Kotlin.nullArray = function (size) {
@@ -532,11 +583,7 @@ var kotlin = {set:function (receiver, key, value) {
         return Kotlin.$new(ArrayIterator)(array);
     };
 
-    Kotlin.toString = function (obj) {
-        return obj.toString();
-    };
-
-    Kotlin.jsonFromPairs = function (pairArr) {
+    Kotlin.jsonFromTuples = function (pairArr) {
         var i = pairArr.length;
         var res = {};
         while (i > 0) {
@@ -546,16 +593,6 @@ var kotlin = {set:function (receiver, key, value) {
         return res;
     };
 
-    //TODO: use intrinsic
-    Kotlin.jsonSet = function (obj, attrName, value) {
-        obj[attrName] = value;
-    };
-
-    Kotlin.jsonGet = function (obj, attrName) {
-        return obj[attrName];
-    };
-
-
     Kotlin.jsonAddProperties = function (obj1, obj2) {
         for (var p in obj2) {
             if (obj2.hasOwnProperty(p)) {
@@ -563,11 +600,6 @@ var kotlin = {set:function (receiver, key, value) {
             }
         }
         return obj1;
-    };
-
-    //TODO: use intrinsic
-    Kotlin.sure = function (obj) {
-        return obj;
     };
 })();
 

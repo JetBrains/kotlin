@@ -27,16 +27,21 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgumentList;
 
 public final class ClassInitializerTranslator extends AbstractTranslator {
@@ -75,18 +80,38 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         return result;
     }
 
+    @NotNull
+    public JsExpression generateEnumEntryInstanceCreation(@NotNull JetType enumClassType) {
+        JetDelegatorToSuperCall superCall = getSuperCall();
+        List<JsExpression> arguments;
+        if (superCall != null) {
+            arguments = translateArguments(superCall);
+        } else {
+            arguments = Collections.emptyList();
+        }
+        JsNameRef reference = getQualifiedReference(context(), getClassDescriptorForType(enumClassType));
+        if(context().isEcma5()) {
+            return new JsInvocation(reference, arguments);
+        } else {
+            return new JsNew(reference, arguments);
+        }
+    }
+
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {
+        if (classDeclaration.hasModifier(JetTokens.ENUM_KEYWORD)) {
+            addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
+            return;
+        }
         if (hasAncestorClass(bindingContext(), classDeclaration)) {
             JetDelegatorToSuperCall superCall = getSuperCall();
             if (superCall == null) {
                 return;
             }
-            addCallToSuperMethod(superCall, initializer);
+            addCallToSuperMethod(translateArguments(superCall), initializer);
         }
     }
 
-    private void addCallToSuperMethod(@NotNull JetDelegatorToSuperCall superCall, JsFunction initializer) {
-        List<JsExpression> arguments = translateArguments(superCall);
+    private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, JsFunction initializer) {
         if (context().isEcma5()) {
             JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
             initializer.setName(ref);
