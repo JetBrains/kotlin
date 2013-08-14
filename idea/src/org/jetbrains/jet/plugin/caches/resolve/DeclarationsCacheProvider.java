@@ -54,6 +54,10 @@ public abstract class DeclarationsCacheProvider {
         return lazyResolveCache.getValue();
     }
 
+    public boolean areDeclarationsAvailable(@NotNull JetFile jetFile) {
+        return JetFilesProvider.getInstance(project).isFileInScope(jetFile, GlobalSearchScope.allScope(project));
+    }
+
     private static class CancelableResolveSessionValueProvider implements CachedValueProvider<CancelableResolveSession> {
         private final Project project;
         private final TargetPlatform platform;
