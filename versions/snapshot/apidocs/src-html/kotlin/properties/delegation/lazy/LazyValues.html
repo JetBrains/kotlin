@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html><head><title>LazyValues.kt xref</title><link rel='stylesheet' type='text/css' href='highlight.css'></link></head><body><table style='white-space: pre; font-size: 10pt; font-family: Monaco, monospace'><tr><td style='margin-right: 1.5em; text-align: right'><a href='#1' name='1'>1</a>
+<a href='#2' name='2'>2</a>
+<a href='#3' name='3'>3</a>
+<a href='#4' name='4'>4</a>
+<a href='#5' name='5'>5</a>
+<a href='#6' name='6'>6</a>
+<a href='#7' name='7'>7</a>
+<a href='#8' name='8'>8</a>
+<a href='#9' name='9'>9</a>
+<a href='#10' name='10'>10</a>
+<a href='#11' name='11'>11</a>
+<a href='#12' name='12'>12</a>
+<a href='#13' name='13'>13</a>
+<a href='#14' name='14'>14</a>
+<a href='#15' name='15'>15</a>
+<a href='#16' name='16'>16</a>
+<a href='#17' name='17'>17</a>
+<a href='#18' name='18'>18</a>
+<a href='#19' name='19'>19</a>
+<a href='#20' name='20'>20</a>
+<a href='#21' name='21'>21</a>
+<a href='#22' name='22'>22</a>
+<a href='#23' name='23'>23</a>
+<a href='#24' name='24'>24</a>
+<a href='#25' name='25'>25</a>
+<a href='#26' name='26'>26</a>
+<a href='#27' name='27'>27</a>
+<a href='#28' name='28'>28</a>
+<a href='#29' name='29'>29</a>
+<a href='#30' name='30'>30</a>
+<a href='#31' name='31'>31</a>
+<a href='#32' name='32'>32</a>
+<a href='#33' name='33'>33</a>
+<a href='#34' name='34'>34</a>
+<a href='#35' name='35'>35</a>
+<a href='#36' name='36'>36</a>
+<a href='#37' name='37'>37</a>
+<a href='#38' name='38'>38</a>
+<a href='#39' name='39'>39</a>
+<a href='#40' name='40'>40</a>
+<a href='#41' name='41'>41</a>
+<a href='#42' name='42'>42</a>
+<a href='#43' name='43'>43</a>
+<a href='#44' name='44'>44</a>
+<a href='#45' name='45'>45</a>
+<a href='#46' name='46'>46</a>
+<a href='#47' name='47'>47</a>
+<a href='#48' name='48'>48</a>
+<a href='#49' name='49'>49</a>
+<a href='#50' name='50'>50</a>
+<a href='#51' name='51'>51</a>
+<a href='#52' name='52'>52</a>
+<a href='#53' name='53'>53</a>
+<a href='#54' name='54'>54</a>
+<a href='#55' name='55'>55</a>
+<a href='#56' name='56'>56</a>
+<a href='#57' name='57'>57</a>
+<a href='#58' name='58'>58</a>
+<a href='#59' name='59'>59</a>
+<a href='#60' name='60'>60</a>
+<a href='#61' name='61'>61</a>
+<a href='#62' name='62'>62</a>
+<a href='#63' name='63'>63</a>
+<a href='#64' name='64'>64</a>
+<a href='#65' name='65'>65</a>
+<a href='#66' name='66'>66</a>
+<a href='#67' name='67'>67</a>
+<a href='#68' name='68'>68</a>
+<a href='#69' name='69'>69</a>
+<a href='#70' name='70'>70</a>
+<a href='#71' name='71'>71</a>
+<a href='#72' name='72'>72</a>
+<a href='#73' name='73'>73</a>
+<a href='#74' name='74'>74</a>
+<a href='#75' name='75'>75</a>
+</td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>properties</span><span class='DOT'>.</span><span class='IDENTIFIER'>delegation</span><span class='DOT'>.</span><span class='IDENTIFIER'>lazy</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>NULL_VALUE</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Any</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>escape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>NULL_VALUE</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>value</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='private'>private</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='IDENTIFIER'>NULL_VALUE</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>null</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>value</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>T</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>LazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>NullableLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>super</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>NullableLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>escape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='EXCLEXCL'>!!</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>VolatileLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>VolatileNullableLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>super</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>VolatileNullableLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='private'>private</span><span> </span><span class='IDENTIFIER'>volatile</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>escape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>initializer</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='EXCLEXCL'>!!</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>AtomicLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>AtomicNullableLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>super</span><span class='DOT'>.</span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='RPAR'>)</span><span class='EXCLEXCL'>!!</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>AtomicNullableLazyVal</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span class='COMMA'>,</span><span> </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='private'>private</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>lock</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>lock</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='hl-keyword'>this</span><span>
+    </span><span class='private'>private</span><span> </span><span class='IDENTIFIER'>volatile</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>value</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='open'>open</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>get</span><span class='LPAR'>(</span><span class='IDENTIFIER'>thisRef</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Any</span><span class='QUEST'>?</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>desc</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>PropertyMetadata</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='QUEST'>?</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>_v1</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v1</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>unescape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v1</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
+
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>synchronized</span><span class='LPAR'>(</span><span class='IDENTIFIER'>lock</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>_v2</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>value</span><span>
+            </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v2</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+                </span><span class='IDENTIFIER'>unescape</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>_v2</span><span class='RPAR'>)</span><span>
+            </span><span class='RBRACE'>}</span><span>
+            </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
+                </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>typedValue</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>initializer</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+                </span><span class='IDENTIFIER'>value</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>escape</span><span class='LPAR'>(</span><span class='IDENTIFIER'>typedValue</span><span class='RPAR'>)</span><span>
+                </span><span class='IDENTIFIER'>typedValue</span><span>
+            </span><span class='RBRACE'>}</span><span>
+        </span><span class='RBRACE'>}</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span></td></tr></table></body></html>
