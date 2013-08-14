@@ -122,7 +122,10 @@ public open class KotlinCompile(): AbstractCompile() {
         }
 
         // Copy kotlin classes to all classes directory
-        FileUtils.copyDirectory(kotlinDestinationDir, getDestinationDir())
+        val outputDirFile = File(args.outputDir!!)
+        if (outputDirFile.exists()) {
+            FileUtils.copyDirectory(outputDirFile, getDestinationDir())
+        }
     }
 
     fun getAnnotations(): Collection<File> {
