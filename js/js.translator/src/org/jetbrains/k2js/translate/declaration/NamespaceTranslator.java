@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
+import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 
@@ -213,6 +214,10 @@ final class NamespaceTranslator extends AbstractTranslator {
                     initializerStatements.add(generateInitializerForProperty(context, propertyDescriptor, value));
                 }
             }
+
+            JsStatement delegate = generateInitializerForDelegate(context, property);
+            if (delegate != null) initializerStatements.add(delegate);
+
             return null;
         }
 

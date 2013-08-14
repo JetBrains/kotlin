@@ -26,6 +26,7 @@ import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsStatement;
+import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 
@@ -43,6 +44,9 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
             result.add(generateInitializerForProperty(context, getPropertyDescriptor(context.bindingContext(), property),
                                                       Translation.translateAsExpression(initializer, context)));
         }
+
+        JsStatement delegate = generateInitializerForDelegate(context, property);
+        if (delegate != null) result.add(delegate);
 
         return null;
     }
