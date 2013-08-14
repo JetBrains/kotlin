@@ -35,8 +35,6 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -130,18 +128,11 @@ final class NamespaceTranslator extends AbstractTranslator {
     }
 
     private List<JsPropertyInitializer> getListFromPlace(List<JsExpression> defineInvocation) {
-        return ((JsObjectLiteral) defineInvocation.get(context().isEcma5() ? 1 : 0)).getPropertyInitializers();
+        return ((JsObjectLiteral) defineInvocation.get(context().isEcma5() ? 2 : 0)).getPropertyInitializers();
     }
 
     private List<JsExpression> createDefineInvocation(@Nullable JsExpression initializer, @NotNull JsObjectLiteral members) {
-        if (context().isEcma5()) {
-            return Arrays.asList(initializer == null ? JsLiteral.NULL : initializer,
-                                 new JsDocComment("lends", getQualifiedReference(context(), descriptor)),
-                                 members);
-        }
-        else {
-            return Collections.<JsExpression>singletonList(members);
-        }
+        return NamespaceDeclarationTranslator.createDefineInvocation(descriptor, initializer, members, context());
     }
 
     private JsPropertyInitializer getEntry(@NotNull NamespaceDescriptor descriptor, List<JsExpression> defineInvocation) {
@@ -154,7 +145,7 @@ final class NamespaceTranslator extends AbstractTranslator {
             Map<NamespaceDescriptor, List<JsExpression>> descriptorToDeclarationPlace) {
         List<JsExpression> parentDefineInvocation = descriptorToDeclarationPlace.get(parentDescriptor);
         if (parentDefineInvocation != null) {
-            ((JsObjectLiteral) parentDefineInvocation.get(context().isEcma5() ? 1 : 0)).getPropertyInitializers().add(entry);
+            getListFromPlace(parentDefineInvocation).add(entry);
             return true;
         }
         return false;

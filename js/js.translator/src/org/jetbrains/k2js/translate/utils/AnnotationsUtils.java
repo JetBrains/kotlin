@@ -101,8 +101,8 @@ public final class AnnotationsUtils {
         }
         ClassDescriptor containingClass = getContainingClass(descriptor);
         return containingClass != null &&
-               (getAnnotationByName(containingClass, ENUMERABLE) != null ||
-                (containingClass.getKind().equals(ClassKind.OBJECT) && containingClass.getName().isSpecial()));
+               ((containingClass.getKind().equals(ClassKind.OBJECT) && containingClass.getName().isSpecial()) ||
+                getAnnotationByName(containingClass, ENUMERABLE) != null);
     }
 
     public static boolean isLibraryObject(@NotNull DeclarationDescriptor descriptor) {

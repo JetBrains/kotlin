@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -31,6 +32,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.*;
 
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 
 public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private final Iterable<JetFile> files;
@@ -99,23 +101,33 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
             rootNamespace = (NamespaceDescriptor) rootNamespace.getContainingDeclaration();
         }
 
-        List<JsExpression> args;
         JsObjectLiteral rootNamespaceDefinition = new JsObjectLiteral(true);
-        if (context().isEcma5()) {
-            args = Arrays.<JsExpression>asList(JsLiteral.NULL, rootNamespaceDefinition);
+        descriptorToDefineInvocation.put(rootNamespace, createDefineInvocation(rootNamespace, null, rootNamespaceDefinition, context()));
+        return rootNamespaceDefinition;
+    }
+
+    static List<JsExpression> createDefineInvocation(
+            @NotNull NamespaceDescriptor descriptor,
+            @Nullable JsExpression initializer,
+            @NotNull JsObjectLiteral members,
+            @NotNull TranslationContext context
+    ) {
+        if (context.isEcma5()) {
+            return Arrays.asList(initializer == null ? JsLiteral.NULL : initializer,
+                                 new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, getQualifiedReference(context, descriptor)),
+                                 members);
         }
         else {
-            args = Collections.<JsExpression>singletonList(rootNamespaceDefinition);
+            return Collections.<JsExpression>singletonList(members);
         }
-
-        descriptorToDefineInvocation.put(rootNamespace, args);
-        return rootNamespaceDefinition;
     }
 
     private JsVar getDeclaration(@NotNull JsObjectLiteral rootNamespaceDefinition) {
         JsExpression packageMapValue;
         if (context().isEcma5()) {
-            packageMapValue = new JsInvocation(JsAstUtils.CREATE_OBJECT, JsLiteral.NULL, rootNamespaceDefinition);
+            packageMapValue = new JsInvocation(JsAstUtils.CREATE_OBJECT, JsLiteral.NULL,
+                                               new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, Namer.getRootNamespaceName()),
+                                               rootNamespaceDefinition);
         }
         else {
             packageMapValue = rootNamespaceDefinition;
