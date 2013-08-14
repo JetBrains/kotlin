@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetValueArgumentList;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -54,15 +54,16 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
 
     @Override
     protected PsiElement doResolve() {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                (JetFile) getElement().getContainingFile()).getBindingContext();
-        ResolvedCall<? extends CallableDescriptor> invokeFunction =
-                bindingContext.get(RESOLVED_CALL, ((JetCallExpression) myExpression).getCalleeExpression());
+        JetExpression calleeExpression = ((JetCallExpression) myExpression).getCalleeExpression();
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement(myExpression);
+
+        ResolvedCall<? extends CallableDescriptor> invokeFunction = bindingContext.get(RESOLVED_CALL, calleeExpression);
+
         if (invokeFunction != null && invokeFunction instanceof VariableAsFunctionResolvedCall) {
             FunctionDescriptor resultingDescriptor = ((VariableAsFunctionResolvedCall) invokeFunction).getResultingDescriptor();
-            PsiElement invokeFunctionElement = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, resultingDescriptor);
-            return invokeFunctionElement;
+            return BindingContextUtils.callableDescriptorToDeclaration(bindingContext, resultingDescriptor);
         }
+
         return null;
     }
 

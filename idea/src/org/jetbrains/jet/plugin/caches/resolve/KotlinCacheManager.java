@@ -71,7 +71,7 @@ public class KotlinCacheManager {
     }
 
     @NotNull
-    private DeclarationsCacheProvider getRegisteredProvider(TargetPlatform platform) {
+    public DeclarationsCacheProvider getRegisteredProvider(@NotNull TargetPlatform platform) {
         DeclarationsCacheProvider provider = cacheProviders.get(platform);
         if (provider == null) {
             throw new IllegalStateException("Provider isn't registered for platform: " + platform);

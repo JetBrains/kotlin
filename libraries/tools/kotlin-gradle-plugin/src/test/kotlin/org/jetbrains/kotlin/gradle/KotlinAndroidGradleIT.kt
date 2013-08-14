@@ -104,6 +104,42 @@ class KotlinAndroidGradleIT {
             assertTrue(up2dateBuildOutput.contains(":compileFlavor2Jnidebug UP-TO-DATE"), "Should contain ':compileFlavor2Jnidebug UP-TO-DATE'")
             assertTrue(up2dateBuildOutput.contains(":compileFlavor1Release UP-TO-DATE"), "Should contain ':compileFlavor1Release UP-TO-DATE'")
             assertTrue(up2dateBuildOutput.contains(":compileFlavor2Release UP-TO-DATE"), "Should contain ':compileFlavor2Release UP-TO-DATE'")
+
+            // Run the build third time, re-run tasks
+
+            val rebuilder = ProcessBuilder(cmd + "--rerun-tasks")
+            rebuilder.directory(projectDir)
+            rebuilder.redirectErrorStream(true)
+            val reprocess = rebuilder.start()
+
+            val rescanner = Scanner(reprocess.getInputStream()!!)
+            val retext = StringBuilder()
+            while (rescanner.hasNextLine()) {
+                retext append rescanner.nextLine()
+                retext append "\n"
+            }
+            rescanner.close()
+
+            val reresult = reprocess.waitFor()
+            val rebuildOutput = retext.toString()
+
+            println(rebuildOutput)
+
+            assertEquals(reresult, 0)
+            assertTrue(rebuildOutput.contains(":compileFlavor1DebugKotlin"), "Should contain ':compileFlavor1DebugKotlin'")
+            assertTrue(rebuildOutput.contains(":compileFlavor2DebugKotlin"), "Should contain ':compileFlavor2DebugKotlin'")
+            assertTrue(rebuildOutput.contains(":compileFlavor1JnidebugKotlin"), "Should contain ':compileFlavor1JnidebugKotlin'")
+            assertTrue(rebuildOutput.contains(":compileFlavor1ReleaseKotlin"), "Should contain ':compileFlavor1ReleaseKotlin'")
+            assertTrue(rebuildOutput.contains(":compileFlavor2JnidebugKotlin"), "Should contain ':compileFlavor2JnidebugKotlin'")
+            assertTrue(rebuildOutput.contains(":compileFlavor2ReleaseKotlin"), "Should contain ':compileFlavor2ReleaseKotlin'")
+            assertTrue(rebuildOutput.contains(":compileFlavor1Debug"), "Should contain ':compileFlavor1Debug'")
+            assertTrue(rebuildOutput.contains(":compileFlavor2Debug"), "Should contain ':compileFlavor2Debug'")
+            assertTrue(rebuildOutput.contains(":compileFlavor1Jnidebug"), "Should contain ':compileFlavor1Jnidebug'")
+            assertTrue(rebuildOutput.contains(":compileFlavor2Jnidebug"), "Should contain ':compileFlavor2Jnidebug'")
+            assertTrue(rebuildOutput.contains(":compileFlavor1Release"), "Should contain ':compileFlavor1Release'")
+            assertTrue(rebuildOutput.contains(":compileFlavor2Release"), "Should contain ':compileFlavor2Release'")
+
+
         }
 
 

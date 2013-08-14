@@ -34,7 +34,7 @@ public final class WholeProjectAnalyzerFacade {
 
     @NotNull
     public static CancelableResolveSession getLazyResolveResultForFile(@NotNull JetFile file) {
-        return AnalyzerFacadeWithCache.getLazyResolveSession(file);
+        return AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file);
     }
 
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {

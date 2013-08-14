@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
@@ -66,21 +67,26 @@ public class JetPackagesContributor extends CompletionContributor {
                                return;
                            }
 
-                           int prefixLength = parameters.getOffset() - simpleNameReference.getExpression().getTextOffset();
-                           result = result.withPrefixMatcher(new PlainPrefixMatcher(name.substring(0, prefixLength)));
+                           try {
+                               int prefixLength = parameters.getOffset() - simpleNameReference.getExpression().getTextOffset();
+                               result = result.withPrefixMatcher(new PlainPrefixMatcher(name.substring(0, prefixLength)));
 
-                           CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile(
-                                   (JetFile) simpleNameReference.getExpression().getContainingFile());
-                           BindingContext bindingContext = resolveSession.resolveToElement(simpleNameReference.getExpression());
+                               CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile(
+                                       (JetFile) simpleNameReference.getExpression().getContainingFile());
+                               BindingContext bindingContext = resolveSession.resolveToElement(simpleNameReference.getExpression());
 
-                           for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(
-                                   resolveSession, bindingContext, TipsManager.getPackageReferenceVariants(simpleNameReference.getExpression(), bindingContext))) {
-                               if (!variant.getLookupString().contains(DUMMY_IDENTIFIER)) {
-                                   result.addElement(variant);
+                               for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(
+                                       resolveSession, bindingContext, TipsManager.getPackageReferenceVariants(simpleNameReference.getExpression(), bindingContext))) {
+                                   if (!variant.getLookupString().contains(DUMMY_IDENTIFIER)) {
+                                       result.addElement(variant);
+                                   }
                                }
-                           }
 
-                           result.stopHere();
+                               result.stopHere();
+                           }
+                           catch (ProcessCanceledException e) {
+                               throw CompletionProgressIndicatorUtil.rethrowWithCancelIndicator(e);
+                           }
                        }
                    }
                });

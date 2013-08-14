@@ -29,4 +29,9 @@ public final class AnalyzerFacadeProvider {
     public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
         return TargetPlatformDetector.getPlatform(file) == TargetPlatform.JVM ? AnalyzerFacadeForJVM.INSTANCE : JSAnalyzerFacadeForIDEA.INSTANCE;
     }
+
+    @NotNull
+    public static AnalyzerFacade getAnalyzerFacade(@NotNull TargetPlatform targetPlatform) {
+        return targetPlatform == TargetPlatform.JVM ? AnalyzerFacadeForJVM.INSTANCE : JSAnalyzerFacadeForIDEA.INSTANCE;
+    }
 }

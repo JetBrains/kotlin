@@ -31,3 +31,11 @@ open class MainActivity2: Activity() {
     }
     
 }
+
+fun foo() {
+    bar()
+}
+
+fun bar() {
+
+}
