@@ -111,7 +111,9 @@ final class NamespaceTranslator extends AbstractTranslator {
 
         List<JsExpression> defineInvocation = descriptorToDefineInvocation.get(descriptor);
         if (defineInvocation == null) {
-            createDefinitionPlace(initializer, descriptorToDefineInvocation);
+            if (initializer != null || !visitor.getResult().isEmpty()) {
+                createDefinitionPlace(initializer, descriptorToDefineInvocation);
+            }
         }
         else {
             if (context().isEcma5() && initializer != null) {
