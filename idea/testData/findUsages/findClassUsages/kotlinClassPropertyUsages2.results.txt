@@ -1,0 +1,3 @@
+Selector (4: 22) println("${a.a} ${a.b}")
+Selector (4: 29) println("${a.a} ${a.b}")
+Selector (5: 11) a.b = 12

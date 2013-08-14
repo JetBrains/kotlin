@@ -1,0 +1,1 @@
+Function call (3: 11) a.foo("")

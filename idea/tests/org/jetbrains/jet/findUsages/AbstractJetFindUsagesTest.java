@@ -74,6 +74,12 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                     else if (s.equals("constructorUsages")) {
                         options.searchConstructorUsages = true;
                     }
+                    else if (s.equals("functionUsages")) {
+                        options.isMethodsUsages = true;
+                    }
+                    else if (s.equals("propertyUsages")) {
+                        options.isFieldsUsages = true;
+                    }
                     else fail("Invalid option: " + s);
                 }
 
