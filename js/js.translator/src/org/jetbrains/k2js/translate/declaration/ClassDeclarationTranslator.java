@@ -107,6 +107,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         private final ClassDescriptor descriptor;
         private final JetClass declaration;
         private final JsNameRef label;
+        private boolean referencedFromOpenClass = false;
 
         private OpenClassInfo(JetClass declaration, ClassDescriptor descriptor, JsNameRef label) {
             this.descriptor = descriptor;
@@ -129,7 +130,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
 
         if (vars.isEmpty()) {
             if (!propertyInitializers.isEmpty()) {
-                classesVar.setInitExpression(new JsObjectLiteral(propertyInitializers));
+                classesVar.setInitExpression(new JsObjectLiteral(propertyInitializers, true));
             }
             return;
         }
@@ -156,6 +157,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
                                 continue;
                             }
 
+                            item.referencedFromOpenClass = true;
                             parents.add(item);
                         }
 
@@ -171,8 +173,17 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             OpenClassInfo item = it.next();
             JsExpression translatedDeclaration =
                     new ClassTranslator(item.declaration, item.descriptor, classDescriptorToLabel, context()).translate();
-            vars.add(new JsVar(item.label.getName(), translatedDeclaration));
-            propertyInitializers.add(new JsPropertyInitializer(item.label, item.label));
+
+            JsExpression value;
+            if (item.referencedFromOpenClass) {
+                vars.add(new JsVar(item.label.getName(), translatedDeclaration));
+                value = item.label;
+            }
+            else {
+                value = translatedDeclaration;
+            }
+
+            propertyInitializers.add(new JsPropertyInitializer(item.label, value));
         }
     }
 
