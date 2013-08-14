@@ -14,6 +14,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/jps-builders/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/jps-builders/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/standalone-builder/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/util/src" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/jps" recursive="false" />
   </library>
