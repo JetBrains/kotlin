@@ -1,0 +1,3 @@
+Unclassified usage (11: 12) open class C: Y {
+Unclassified usage (1: 7) class B extends A {
+Unclassified usage (7: 12) open class A: X {

@@ -22,4 +22,18 @@ class Utils {
 
         return false;
     }
+
+    static boolean removeCheckbox(@NotNull JPanel panel, @NotNull String srcText) {
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JCheckBox) {
+                JCheckBox checkBox = (JCheckBox) component;
+                if (checkBox.getText().equals(srcText)) {
+                    panel.remove(checkBox);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

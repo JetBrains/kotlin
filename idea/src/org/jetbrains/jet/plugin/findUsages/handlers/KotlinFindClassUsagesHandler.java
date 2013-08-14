@@ -23,8 +23,12 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.search.PsiElementProcessor;
+import com.intellij.psi.search.PsiElementProcessorAdapter;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usageView.UsageInfo;
@@ -92,7 +96,63 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
             }
         }
 
-        return processDeclarationsUsages(jetClass, processor, kotlinOptions);
+        if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
+        if (!processDeclarationsUsages(jetClass, processor, kotlinOptions)) return false;
+
+        return true;
+    }
+
+    private static boolean processDeclarationsUsages(
+            @NotNull JetClass klass,
+            @NotNull final Processor<UsageInfo> processor,
+            @NotNull final JavaClassFindUsagesOptions options
+    ) {
+        for (JetDeclaration declaration : klass.getDeclarations()) {
+            if (declaration instanceof JetNamedFunction && options.isMethodsUsages
+                    || declaration instanceof JetProperty && options.isFieldsUsages) {
+                if (!ReferencesSearch.search(new ReferencesSearch.SearchParameters(declaration, options.searchScope, false)).forEach(
+                        new ReadActionProcessor<PsiReference>() {
+                            @Override
+                            public boolean processInReadAction(PsiReference ref) {
+                                return processUsage(processor, ref, options);
+                            }
+                        }
+                )) return false;
+            }
+        }
+        return true;
+    }
+
+    private static ClassInheritorsSearch.InheritanceChecker INHERITANCE_CHECKER = new ClassInheritorsSearch.InheritanceChecker() {
+        @Override
+        public boolean checkInheritance(@NotNull PsiClass subClass, @NotNull PsiClass parentClass) {
+            return true;
+        }
+    };
+
+    private static boolean processInheritors(
+            @NotNull PsiClass klass,
+            @NotNull final Processor<UsageInfo> processor,
+            @NotNull final KotlinClassFindUsagesOptions options
+    ) {
+        //noinspection unchecked
+        ClassInheritorsSearch.SearchParameters searchParameters = new ClassInheritorsSearch.SearchParameters(
+                klass, options.searchScope, options.isCheckDeepInheritance, true, true, Condition.TRUE, INHERITANCE_CHECKER
+        );
+        return ClassInheritorsSearch.search(searchParameters).forEach(
+                new PsiElementProcessorAdapter<PsiClass>(
+                        new PsiElementProcessor<PsiClass>() {
+                            @Override
+                            public boolean execute(@NotNull PsiClass element) {
+                                if ((element.isInterface() && options.isDerivedInterfaces)
+                                    || (!element.isInterface() && options.isDerivedClasses)) {
+                                    return processUsage(processor, element, options);
+                                }
+                                return true;
+                            }
+                        }
+                )
+        );
     }
 
     private static DeclarationDescriptor getCallDescriptor(PsiElement element, BindingContext bindingContext) {
@@ -112,27 +172,6 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
         }
 
         return null;
-    }
-
-    private static boolean processDeclarationsUsages(
-            @NotNull JetClass klass,
-            @NotNull final Processor<UsageInfo> processor,
-            @NotNull final JavaClassFindUsagesOptions options
-    ) {
-        for (JetDeclaration declaration : klass.getDeclarations()) {
-            if (declaration instanceof JetNamedFunction && options.isMethodsUsages
-                || declaration instanceof JetProperty && options.isFieldsUsages) {
-                if (!ReferencesSearch.search(new ReferencesSearch.SearchParameters(declaration, options.searchScope, false)).forEach(
-                        new ReadActionProcessor<PsiReference>() {
-                            @Override
-                            public boolean processInReadAction(PsiReference ref) {
-                                return processUsage(processor, ref, options);
-                            }
-                        }
-                )) return false;
-            }
-        }
-        return true;
     }
 
     private static boolean isConstructorUsage(PsiElement element, JetClass jetClass) {
