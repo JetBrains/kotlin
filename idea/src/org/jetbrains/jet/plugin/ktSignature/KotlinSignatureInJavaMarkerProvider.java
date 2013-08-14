@@ -188,7 +188,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         Name name = Name.identifier(memberNameAsString);
         if (member instanceof PsiMethod) {
             if (((PsiMethod) member).isConstructor()) {
-                assert memberScope instanceof JavaClassNonStaticMembersScope;
+                assert memberScope instanceof JavaClassNonStaticMembersScope : memberScope + ": " + memberScope.getClass().getName();
                 ((JavaClassNonStaticMembersScope) memberScope).getConstructors();
             }
             else {
