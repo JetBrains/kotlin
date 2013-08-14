@@ -256,7 +256,14 @@ public class CandidateResolver {
         if (constraintSystem.hasContradiction()) {
             return reportInferenceError(context);
         }
-
+        if (!constraintSystem.isSuccessful() && context.expectedType == TypeUtils.UNIT_EXPECTED_TYPE) {
+            ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
+            copy.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), descriptor.getReturnType(), ConstraintPosition.EXPECTED_TYPE_POSITION);
+            if (copy.isSuccessful()) {
+                constraintSystem = copy;
+                resolvedCall.setConstraintSystem(constraintSystem);
+            }
+        }
         boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true);
         if (!boundsAreSatisfied || constraintSystem.hasUnknownParameters()) {
             ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();

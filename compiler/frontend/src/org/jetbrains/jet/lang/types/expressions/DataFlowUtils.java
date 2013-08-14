@@ -38,6 +38,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class DataFlowUtils {
@@ -193,7 +194,7 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, boolean isStatement) {
-        if (expressionType != null && noExpectedType(context.expectedType) && !isStatement &&
+        if (expressionType != null && context.expectedType == NO_EXPECTED_TYPE && !isStatement &&
             (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isAny(expressionType))) {
             context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
 
