@@ -18,6 +18,7 @@ package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 
@@ -27,7 +28,7 @@ import java.util.List;
 
 public class CliJetFilesProvider extends JetFilesProvider {
     private final JetCoreEnvironment environment;
-    private Function<JetFile,Collection<JetFile>> all_files = new Function<JetFile, Collection<JetFile>>() {
+    private final Function<JetFile,Collection<JetFile>> allFiles = new Function<JetFile, Collection<JetFile>>() {
         @Override
         public Collection<JetFile> fun(JetFile file) {
             return environment.getSourceFiles();
@@ -41,11 +42,11 @@ public class CliJetFilesProvider extends JetFilesProvider {
 
     @Override
     public Function<JetFile, Collection<JetFile>> sampleToAllFilesInModule() {
-        return all_files;
+        return allFiles;
     }
 
     @Override
-    public List<JetFile> allInScope(GlobalSearchScope scope) {
+    public List<JetFile> allInScope(@NotNull GlobalSearchScope scope) {
         List<JetFile> answer = new ArrayList<JetFile>();
         for (JetFile file : environment.getSourceFiles()) {
             if (scope.contains(file.getVirtualFile())) {
@@ -53,5 +54,10 @@ public class CliJetFilesProvider extends JetFilesProvider {
             }
         }
         return answer;
+    }
+
+    @Override
+    public boolean isFileInScope(@NotNull JetFile file, @NotNull GlobalSearchScope scope) {
+        return scope.contains(file.getVirtualFile()) && environment.getSourceFiles().contains(file);
     }
 }
