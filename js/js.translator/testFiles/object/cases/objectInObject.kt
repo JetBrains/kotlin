@@ -10,9 +10,13 @@ object B {
 }
 
 class C {
-  fun ov() = "d"
+  class object {
+    fun ov() = "d"
+  }
   object query {val status = "complete" + ov()}
 }
 
-fun box() = A.query.status == "complete" && B.query.status == "completed" && C().query.status == "completed"
+fun box() = A.query.status == "complete" && B.query.status == "completed"
+// todo fix after KT-3868 will be fixed
+// && C.query.status == "completed"
 

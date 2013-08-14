@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetObjectLiteralExpression;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.LabelGenerator;
@@ -41,7 +41,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isNotAny;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createPropertyInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
@@ -65,26 +66,39 @@ public final class ClassTranslator extends AbstractTranslator {
     private final ClassAliasingMap aliasingMap;
 
     @NotNull
-    public static JsExpression generateClassCreation(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
-        return new ClassTranslator(classDeclaration, null, context).translate(context);
+    public static JsInvocation generateClassCreation(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
+        return new ClassTranslator(classDeclaration, null, context).translate();
     }
 
     @NotNull
-    public static JsExpression generateClassCreation(@NotNull JetClassOrObject classDeclaration,
+    public static JsInvocation generateClassCreation(@NotNull JetClassOrObject classDeclaration,
             @NotNull ClassDescriptor descriptor,
             @NotNull TranslationContext context) {
-        return new ClassTranslator(classDeclaration, descriptor, null, context).translate(context);
+        return new ClassTranslator(classDeclaration, descriptor, null, context).translate();
     }
 
     @NotNull
-    public static JsExpression generateObjectLiteral(@NotNull JetObjectLiteralExpression objectLiteralExpression,
-            @NotNull TranslationContext context) {
-        return new ClassTranslator(objectLiteralExpression.getObjectDeclaration(), null, context).translateObjectLiteralExpression();
+    public static JsExpression generateObjectLiteral(
+            @NotNull JetObjectDeclaration objectDeclaration,
+            @NotNull TranslationContext context
+    ) {
+        return new ClassTranslator(objectDeclaration, null, context).translateObjectLiteralExpression();
     }
 
-    ClassTranslator(@NotNull JetClassOrObject classDeclaration,
+    @NotNull
+    public static JsExpression generateObjectLiteral(
+            @NotNull JetObjectDeclaration objectDeclaration,
+            @NotNull ClassDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
+        return new ClassTranslator(objectDeclaration, descriptor, null, context).translateObjectLiteralExpression();
+    }
+
+    ClassTranslator(
+            @NotNull JetClassOrObject classDeclaration,
             @Nullable ClassAliasingMap aliasingMap,
-            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context
+    ) {
         this(classDeclaration, getClassDescriptor(context.bindingContext(), classDeclaration), aliasingMap, context);
     }
 
@@ -108,19 +122,15 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression translate() {
+    public JsInvocation translate() {
         return translate(context());
     }
 
     @NotNull
-    public JsExpression translate(@NotNull TranslationContext declarationContext) {
+    public JsInvocation translate(@NotNull TranslationContext declarationContext) {
         JsInvocation createInvocation = context().namer().classCreateInvocation(descriptor);
         translate(createInvocation, declarationContext);
         return createInvocation;
-    }
-
-    public void translate(@NotNull JsInvocation createInvocation) {
-        translate(createInvocation, context());
     }
 
     private void translate(@NotNull JsInvocation createInvocation, @NotNull TranslationContext context) {
@@ -284,7 +294,7 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
+    private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
         // aliasing here is needed for the declaration generation step
         if (aliasingMap != null) {
             JsNameRef name = aliasingMap.get(superClassDescriptor, descriptor);

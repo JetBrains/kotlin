@@ -65,18 +65,14 @@ public final class InitializerUtils {
         return null;
     }
 
-    public static void generate(@NotNull JetObjectDeclaration declaration,
+    public static void generate(
+            @NotNull JetObjectDeclaration declaration,
             @NotNull List<JsStatement> initializers,
-            @Nullable List<JsPropertyInitializer> definitions,
-            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context
+    ) {
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
-        JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
-        if (definitions != null && value instanceof JsLiteral) {
-            definitions.add(createPropertyInitializer(descriptor, value, context));
-        }
-        else {
-            initializers.add(create(descriptor, value, context));
-        }
+        JsExpression value = ClassTranslator.generateObjectLiteral(declaration, descriptor, context);
+        initializers.add(create(descriptor, value, context));
     }
 
     public static JsStatement create(Named named, JsExpression value, TranslationContext context) {
