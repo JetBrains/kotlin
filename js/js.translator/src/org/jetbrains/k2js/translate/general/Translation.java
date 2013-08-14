@@ -68,11 +68,6 @@ public final class Translation {
     }
 
     @NotNull
-    private static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
-        return NamespaceDeclarationTranslator.translateFiles(files, context);
-    }
-
-    @NotNull
     public static PatternTranslator patternTranslator(@NotNull TranslationContext context) {
         return PatternTranslator.newInstance(context);
     }
@@ -134,7 +129,6 @@ public final class Translation {
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Config config) throws MainFunctionNotFoundException {
-        //TODO: move some of the code somewhere
         StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget());
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
@@ -145,8 +139,8 @@ public final class Translation {
         statements.add(program.getStringLiteral("use strict").makeStmt());
 
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
-        staticContext.getLiteralFunctionTranslator().setRootContext(context);
-        statements.addAll(translateFiles(files, context));
+        staticContext.initTranslators(context);
+        statements.addAll(NamespaceDeclarationTranslator.translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());
 
         if (mainCallParameters.shouldBeGenerated()) {

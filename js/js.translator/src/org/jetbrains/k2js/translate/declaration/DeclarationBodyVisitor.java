@@ -130,17 +130,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitObjectDeclarationName(@NotNull JetObjectDeclarationName expression,
-            @NotNull TranslationContext context) {
-        if (!context.isEcma5()) {
-            PropertyTranslator
-                    .translateAccessors(getPropertyDescriptorForObjectDeclaration(context.bindingContext(), expression), result, context);
-        }
-
-        return null;
-    }
-
-    @Override
     public Void visitAnonymousInitializer(@NotNull JetClassInitializer expression, @NotNull TranslationContext context) {
         // parsed it in initializer visitor => no additional actions are needed
         return null;

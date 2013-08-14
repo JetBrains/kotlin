@@ -30,6 +30,7 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
+import org.jetbrains.k2js.translate.declaration.ClassDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
@@ -89,7 +90,9 @@ public final class StaticContext {
     private final EcmaVersion ecmaVersion;
 
     @NotNull
-    private final LiteralFunctionTranslator literalFunctionTranslator = new LiteralFunctionTranslator();
+    private LiteralFunctionTranslator literalFunctionTranslator;
+    @NotNull
+    private ClassDeclarationTranslator classDeclarationTranslator;
 
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
@@ -104,9 +107,19 @@ public final class StaticContext {
         this.ecmaVersion = ecmaVersion;
     }
 
+    public void initTranslators(TranslationContext programContext) {
+        literalFunctionTranslator = new LiteralFunctionTranslator(programContext);
+        classDeclarationTranslator = new ClassDeclarationTranslator(programContext);
+    }
+
     @NotNull
     public LiteralFunctionTranslator getLiteralFunctionTranslator() {
         return literalFunctionTranslator;
+    }
+
+    @NotNull
+    public ClassDeclarationTranslator getClassDeclarationTranslator() {
+        return classDeclarationTranslator;
     }
 
     public boolean isEcma5() {

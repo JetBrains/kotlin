@@ -17,9 +17,9 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
+import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -34,7 +34,10 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
@@ -50,10 +53,26 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     private final THashMap<ClassDescriptor, OpenClassInfo> openClassDescriptorToItem = new THashMap<ClassDescriptor, OpenClassInfo>();
 
     private final LinkedList<OpenClassInfo> openList = new LinkedList<OpenClassInfo>();
-    private final List<Pair<JetClassOrObject, JsInvocation>> finalList = new ArrayList<Pair<JetClassOrObject, JsInvocation>>();
-
     @NotNull
     private final ClassDescriptorToLabel classDescriptorToLabel = new ClassDescriptorToLabel();
+
+    private final THashMap<ClassDescriptor, JsNameRef> openClassDescriptorToQualifiedLabel = new THashMap<ClassDescriptor, JsNameRef>();
+
+    private final ClassAliasingMap classDescriptorToQualifiedLabel = new ClassAliasingMap() {
+        @NotNull
+        @Override
+        public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
+            JsNameRef ref = openClassDescriptorToQualifiedLabel.get(descriptor);
+            if (ref != null) {
+                return ref;
+            }
+
+            // will be resolved later
+            ref = new JsNameRef("<unresolved class>");
+            openClassDescriptorToQualifiedLabel.put(descriptor, ref);
+            return ref;
+        }
+    };
 
     @NotNull
     private final JsFunction dummyFunction;
@@ -71,8 +90,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     private final class ClassDescriptorToLabel implements ClassAliasingMap {
-        @Override
         @Nullable
+        @Override
         public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
             OpenClassInfo item = openClassDescriptorToItem.get(descriptor);
             // class declared in library
@@ -88,13 +107,11 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         private final ClassDescriptor descriptor;
         private final JetClass declaration;
         private final JsNameRef label;
-        private final JsNameRef qualifiedLabel;
 
-        private OpenClassInfo(JetClass declaration, ClassDescriptor descriptor, JsNameRef label, JsNameRef qualifiedLabel) {
+        private OpenClassInfo(JetClass declaration, ClassDescriptor descriptor, JsNameRef label) {
             this.descriptor = descriptor;
             this.declaration = declaration;
             this.label = label;
-            this.qualifiedLabel = qualifiedLabel;
         }
     }
 
@@ -108,7 +125,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         List<JsPropertyInitializer> propertyInitializers = new SmartList<JsPropertyInitializer>();
 
         generateOpenClassDeclarations(vars, propertyInitializers);
-        generateFinalClassDeclarations();
+        fixUnresolvedClassReferences();
 
         if (vars.isEmpty()) {
             if (!propertyInitializers.isEmpty()) {
@@ -154,59 +171,51 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             OpenClassInfo item = it.next();
             JsExpression translatedDeclaration =
                     new ClassTranslator(item.declaration, item.descriptor, classDescriptorToLabel, context()).translate();
-            generate(item, propertyInitializers, translatedDeclaration, vars);
+            vars.add(new JsVar(item.label.getName(), translatedDeclaration));
+            propertyInitializers.add(new JsPropertyInitializer(item.label, item.label));
         }
     }
 
-    private void generateFinalClassDeclarations() {
-        ClassAliasingMap aliasingMap = new ClassAliasingMap() {
+    private void fixUnresolvedClassReferences() {
+        openClassDescriptorToQualifiedLabel.forEachEntry(new TObjectObjectProcedure<ClassDescriptor, JsNameRef>() {
             @Override
-            public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
-                OpenClassInfo item = openClassDescriptorToItem.get(descriptor);
-                return item == null ? null : item.qualifiedLabel;
+            public boolean execute(ClassDescriptor descriptor, JsNameRef ref) {
+                if (ref.getName() == null) {
+                    // from library
+                    ref.resolve(context().getNameForDescriptor(descriptor));
+                    ref.setQualifier(context().getQualifierForDescriptor(descriptor));
+                }
+                return true;
             }
-        };
-
-        for (Pair<JetClassOrObject, JsInvocation> item : finalList) {
-            new ClassTranslator(item.first, aliasingMap, context()).translate(item.second);
-        }
-    }
-
-    private static void generate(@NotNull OpenClassInfo item,
-            @NotNull List<JsPropertyInitializer> propertyInitializers,
-            @NotNull JsExpression definition,
-            @NotNull List<JsVar> vars) {
-        JsExpression value;
-        if (item.label.getName() == null) {
-            value = definition;
-        }
-        else {
-            assert item.label.getName() != null;
-            vars.add(new JsVar(item.label.getName(), definition));
-            value = item.label;
-        }
-
-        propertyInitializers.add(new JsPropertyInitializer(item.label, value));
+        });
     }
 
     @NotNull
-    public JsPropertyInitializer translate(@NotNull JetClassOrObject declaration) {
+    public JsPropertyInitializer translate(@NotNull JetClassOrObject declaration, TranslationContext context) {
         ClassDescriptor descriptor = getClassDescriptor(context().bindingContext(), declaration);
         JsExpression value;
         if (descriptor.getModality() == Modality.FINAL) {
-            JsInvocation invocation = context().namer().classCreateInvocation(descriptor);
-            finalList.add(new Pair<JetClassOrObject, JsInvocation>(declaration, invocation));
-            value = invocation;
+            value = new ClassTranslator(declaration, classDescriptorToQualifiedLabel, context).translate();
         }
         else {
             String label = localLabelGenerator.generate();
-            JsNameRef labelRef = dummyFunction.getScope().declareName(label).makeRef();
-            OpenClassInfo item = new OpenClassInfo((JetClass) declaration, descriptor, labelRef,
-                                                   new JsNameRef(labelRef.getIdent(), declarationsObjectRef));
+            JsName name = dummyFunction.getScope().declareName(label);
+            JsNameRef qualifiedLabel = openClassDescriptorToQualifiedLabel.get(descriptor);
+            if (qualifiedLabel == null) {
+                qualifiedLabel = new JsNameRef(name);
+                openClassDescriptorToQualifiedLabel.put(descriptor, qualifiedLabel);
+            }
+            else {
+                qualifiedLabel.resolve(name);
+            }
+            qualifiedLabel.setQualifier(declarationsObjectRef);
+
+            OpenClassInfo item = new OpenClassInfo((JetClass) declaration, descriptor, name.makeRef());
+
             openList.add(item);
             openClassDescriptorToItem.put(descriptor, item);
 
-            value = item.qualifiedLabel;
+            value = qualifiedLabel;
         }
 
         return InitializerUtils.createPropertyInitializer(descriptor, value, context());

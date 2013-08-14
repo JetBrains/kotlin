@@ -36,6 +36,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.context.UsageTracker;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 
 import java.util.List;
@@ -43,16 +44,13 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
-public class LiteralFunctionTranslator {
-    private TranslationContext rootContext;
-
+public class LiteralFunctionTranslator extends AbstractTranslator {
     private final Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>> definitionPlaces =
             new Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>>();
     private NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> definitionPlace;
 
-    public void setRootContext(@NotNull TranslationContext rootContext) {
-        assert this.rootContext == null;
-        this.rootContext = rootContext;
+    public LiteralFunctionTranslator(@NotNull TranslationContext context) {
+        super(context);
     }
 
     public static Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> createPlace(@NotNull List<JsPropertyInitializer> list,
@@ -120,7 +118,7 @@ public class LiteralFunctionTranslator {
                 UsageTracker usageTracker = funContext.usageTracker();
                 assert usageTracker != null;
                 if (usageTracker.isUsed()) {
-                    return new JsInvocation(rootContext.namer().kotlin("assignOwner"), fun, JsLiteral.THIS);
+                    return new JsInvocation(context().namer().kotlin("assignOwner"), fun, JsLiteral.THIS);
                 }
                 else {
                     fun.setName(null);
@@ -138,7 +136,7 @@ public class LiteralFunctionTranslator {
     private JsNameRef createReference(JsFunction fun) {
         Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> place = definitionPlace.getValue();
         JsNameRef nameRef = new JsNameRef(place.second.generate(), place.third);
-        place.first.add(new JsPropertyInitializer(nameRef, InitializerUtils.toDataDescriptor(fun, rootContext)));
+        place.first.add(new JsPropertyInitializer(nameRef, InitializerUtils.toDataDescriptor(fun, context())));
         return nameRef;
     }
 
@@ -153,18 +151,20 @@ public class LiteralFunctionTranslator {
     }
 
     private JsFunction createFunction() {
-        return new JsFunction(rootContext.scope(), new JsBlock());
+        return new JsFunction(context().scope(), new JsBlock());
     }
 
-    public JsExpression translate(@NotNull ClassDescriptor outerClass,
+    public JsExpression translate(
+            @NotNull ClassDescriptor outerClass,
             @NotNull JetClassOrObject declaration,
             @NotNull ClassDescriptor descriptor,
-            @NotNull ClassTranslator classTranslator) {
+            @NotNull ClassTranslator classTranslator
+    ) {
         JsFunction fun = createFunction();
         JsNameRef outerClassRef = fun.getScope().declareName(Namer.OUTER_CLASS_NAME).makeRef();
         UsageTracker usageTracker = new UsageTracker(descriptor, null, outerClass);
-        TranslationContext funContext = rootContext.newFunctionBody(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef),
-                                                                    usageTracker);
+        TranslationContext funContext = context().newFunctionBody(fun, context().aliasingContext().inner(outerClass, outerClassRef),
+                                                                  usageTracker);
 
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translate(funContext)));
         JetClassBody body = declaration.getBody();

@@ -53,7 +53,6 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation = new THashMap<NamespaceDescriptor, List<JsExpression>>();
         JsObjectLiteral rootNamespaceDefinition = null;
 
-        ClassDeclarationTranslator classDeclarationTranslator = new ClassDeclarationTranslator(context());
         for (JetFile file : files) {
             NamespaceDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
             assert descriptor != null;
@@ -62,7 +61,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
                 if (rootNamespaceDefinition == null) {
                     rootNamespaceDefinition = getRootPackage(descriptorToDefineInvocation, descriptor);
                 }
-                translator = new NamespaceTranslator(descriptor, classDeclarationTranslator, descriptorToDefineInvocation, context());
+                translator = new NamespaceTranslator(descriptor, descriptorToDefineInvocation, context());
                 descriptorToTranslator.put(descriptor, translator);
             }
 
@@ -83,12 +82,12 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
             result.add(vars);
         }
 
-        classDeclarationTranslator.generateDeclarations();
+        context().classDeclarationTranslator().generateDeclarations();
         for (NamespaceTranslator translator : descriptorToTranslator.values()) {
             translator.add(descriptorToDefineInvocation, result);
         }
 
-        vars.addIfHasInitializer(classDeclarationTranslator.getDeclaration());
+        vars.addIfHasInitializer(context().classDeclarationTranslator().getDeclaration());
         vars.addIfHasInitializer(getDeclaration(rootNamespaceDefinition));
         return result;
     }
