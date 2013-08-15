@@ -102,6 +102,12 @@ public class ResolveElementCache {
             return additionalResolveCache.getValue().fun(elementOfAdditionalResolve);
         }
 
+        JetParameter parameter = PsiTreeUtil.getTopmostParentOfType(jetElement, JetParameter.class);
+        if (parameter != null) {
+            // Parameters for function literal could be met inside other parameters. We can't make resolveToDescriptors for internal elements.
+            jetElement = parameter;
+        }
+
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetElement, JetDeclaration.class, false);
         if (declaration != null) {
             // Activate descriptor resolution

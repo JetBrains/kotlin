@@ -166,4 +166,9 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
         doTest("idea/testData/resolve/references/SeveralOverrides.kt");
     }
     
+    @TestMetadata("TypeParameterInFunctionLiteral.kt")
+    public void testTypeParameterInFunctionLiteral() throws Exception {
+        doTest("idea/testData/resolve/references/TypeParameterInFunctionLiteral.kt");
+    }
+    
 }
