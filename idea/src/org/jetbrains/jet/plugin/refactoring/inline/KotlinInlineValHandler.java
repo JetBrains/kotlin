@@ -62,7 +62,6 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Arrays;
@@ -230,7 +229,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return null;
         }
 
-        BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(initializer);
+        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
         SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
         if (fun == null || ErrorUtils.containsErrorType(fun)) {
             return null;
@@ -345,7 +344,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         }
 
         JetExpression callee = callExpression.getCalleeExpression();
-        BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(initializer);
+        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
         ResolvedCall<? extends CallableDescriptor> call = context.get(BindingContext.RESOLVED_CALL, callee);
         if (call == null) {
             return null;

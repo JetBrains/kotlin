@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -219,8 +219,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade
-                .analyzeProjectWithCacheOnAFile(jetFile)
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile)
                 .getBindingContext();
         Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
@@ -262,8 +261,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade
-                .analyzeProjectWithCacheOnAFile(jetFile)
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile)
                 .getBindingContext();
         Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 

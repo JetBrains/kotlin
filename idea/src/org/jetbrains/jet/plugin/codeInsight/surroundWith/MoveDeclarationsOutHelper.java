@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -117,7 +117,7 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static JetType getPropertyType(@NotNull JetProperty property) {
-        BindingContext expressionBindingContext = WholeProjectAnalyzerFacade.getContextForElement(property);
+        BindingContext expressionBindingContext = AnalyzerFacadeWithCache.getContextForElement(property);
 
         VariableDescriptor propertyDescriptor = expressionBindingContext.get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null : "Couldn't resolve property to property descriptor " + property.getText();

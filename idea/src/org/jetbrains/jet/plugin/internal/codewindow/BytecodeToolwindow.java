@@ -36,7 +36,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.internal.Location;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 
 import javax.swing.*;
@@ -87,7 +87,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
 
             GenerationState state;
             try {
-                AnalyzeExhaust exhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+                AnalyzeExhaust exhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile);
                 if (exhaust.isError()) {
                     return printStackTraceToString(exhaust.getError());
                 }

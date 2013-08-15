@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
     @Override
     protected PsiElement doResolve() {
         JetExpression calleeExpression = ((JetCallExpression) myExpression).getCalleeExpression();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement(myExpression);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(myExpression);
 
         ResolvedCall<? extends CallableDescriptor> invokeFunction = bindingContext.get(RESOLVED_CALL, calleeExpression);
 

@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 public class JetSimpleNameReference extends JetPsiReference {
 
@@ -57,7 +57,7 @@ public class JetSimpleNameReference extends JetPsiReference {
     @Override
     public Object[] getVariants() {
         CancelableResolveSession resolveSession =
-                WholeProjectAnalyzerFacade.getLazyResolveResultForFile((JetFile) getExpression().getContainingFile());
+                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) getExpression().getContainingFile());
         BindingContext bindingContext = resolveSession.resolveToElement(getExpression());
 
         return DescriptorLookupConverter.collectLookupElements(

@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class ReferenceToClassesShortening {
         PsiDocumentManager.getInstance(elementsToCompact.get(0).getProject()).commitAllDocuments();
 
         final JetFile file = (JetFile) elementsToCompact.get(0).getContainingFile();
-        final BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        final BindingContext bc = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
         for (JetElement element : elementsToCompact) {
             element.accept(new JetVisitorVoid() {
                 @Override

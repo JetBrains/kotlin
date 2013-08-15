@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +62,7 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
         if (name != null && name.getParent() instanceof JetReferenceExpression) {
             JetReferenceExpression ref = (JetReferenceExpression) name.getParent();
 
-            BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
+            BindingContext bc = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) psiFile)
                     .getBindingContext();
             DeclarationDescriptor descriptor = bc.get(BindingContext.REFERENCE_TARGET, ref);
             if (descriptor instanceof ClassDescriptor) {

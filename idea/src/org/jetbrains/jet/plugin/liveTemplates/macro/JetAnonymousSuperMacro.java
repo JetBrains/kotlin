@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -87,7 +87,7 @@ public class JetAnonymousSuperMacro extends Macro {
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
         if (!(psiFile instanceof JetFile)) return null;
 
-        BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
+        BindingContext bc = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) psiFile)
                 .getBindingContext();
         JetExpression expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.getStartOffset()), JetExpression.class);
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, expression);

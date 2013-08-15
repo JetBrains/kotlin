@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -66,7 +66,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         JetExpression callee = callElement.getCalleeExpression();
         if (!(callee instanceof JetReferenceExpression)) return Collections.emptyList();
 
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) argument.getContainingFile()).getBindingContext();
+        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) argument.getContainingFile()).getBindingContext();
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, (JetReferenceExpression) callee);
         if (resolvedCall == null) return Collections.emptyList();
 

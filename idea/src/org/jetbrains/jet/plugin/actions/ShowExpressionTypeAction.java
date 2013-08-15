@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class ShowExpressionTypeAction extends AnAction {
@@ -40,8 +40,7 @@ public class ShowExpressionTypeAction extends AnAction {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         assert editor != null && psiFile != null;
         JetExpression expression;
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
-                .getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) psiFile).getBindingContext();
         if (editor.getSelectionModel().hasSelection()) {
             int startOffset = editor.getSelectionModel().getSelectionStart();
             int endOffset = editor.getSelectionModel().getSelectionEnd();

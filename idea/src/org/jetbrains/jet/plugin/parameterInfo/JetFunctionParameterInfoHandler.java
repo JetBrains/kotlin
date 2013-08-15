@@ -43,8 +43,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.awt.*;
@@ -381,8 +381,8 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile(
-                (JetFile) callNameExpression.getContainingFile());
+        CancelableResolveSession resolveSession =
+                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) callNameExpression.getContainingFile());
         BindingContext bindingContext = resolveSession.resolveToElement(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);

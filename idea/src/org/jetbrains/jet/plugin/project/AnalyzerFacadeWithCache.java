@@ -39,6 +39,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -163,6 +164,11 @@ public final class AnalyzerFacadeWithCache {
     private static void handleError(@NotNull Throwable e) {
         DiagnosticUtils.throwIfRunningOnServer(e);
         LOG.error(e);
+    }
+
+    public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
+        CancelableResolveSession cancelableResolveSession = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
+        return cancelableResolveSession.resolveToElement(jetElement);
     }
 
     public static CancelableResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
