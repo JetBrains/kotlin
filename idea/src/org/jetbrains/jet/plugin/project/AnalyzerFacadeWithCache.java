@@ -45,7 +45,6 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.plugin.caches.resolve.*;
 import org.jetbrains.jet.plugin.util.ApplicationUtils;
 
@@ -162,13 +161,12 @@ public final class AnalyzerFacadeWithCache {
                 public AnalyzeExhaust createValue(JetFile file) {
                     try {
                         if (DumbService.isDumb(file.getProject())) {
-                            return emptyExhaust();
+                            return AnalyzeExhaust.EMPTY;
                         }
 
                         ApplicationUtils.warnTimeConsuming(LOG);
 
                         AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file);
-
                         return analyzeBodies(analyzeExhaustHeaders, file);
                     }
                     catch (ProcessCanceledException e) {
@@ -181,10 +179,6 @@ public final class AnalyzerFacadeWithCache {
                 }
             };
             return Result.create(cache, PsiModificationTracker.MODIFICATION_COUNT);
-        }
-
-        private static AnalyzeExhaust emptyExhaust() {
-            return AnalyzeExhaust.success(BindingContext.EMPTY, ErrorUtils.getErrorModule());
         }
 
         private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull JetFile fileToCache) {
