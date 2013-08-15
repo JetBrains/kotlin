@@ -145,13 +145,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     static class FinallyBlockStackElement extends BlockStackElement {
+        List<Label> gaps = new ArrayList();
+
         final JetTryExpression expression;
 
         FinallyBlockStackElement(JetTryExpression expression) {
             this.expression = expression;
         }
-    }
 
+        private void addGapLabel(Label label){
+            gaps.add(label);
+        }
+    }
 
     public ExpressionCodegen(
             @NotNull MethodVisitor v,
@@ -1139,45 +1144,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitBreakExpression(JetBreakExpression expression, StackValue receiver) {
-        JetSimpleNameExpression labelElement = expression.getTargetLabel();
-
-        for (int i = blockStackElements.size() - 1; i >= 0; --i) {
-            BlockStackElement stackElement = blockStackElements.get(i);
-            if (stackElement instanceof FinallyBlockStackElement) {
-                FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
-                JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
-                //noinspection ConstantConditions
-                gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
-            }
-            else if (stackElement instanceof LoopBlockStackElement) {
-                LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
-                //noinspection ConstantConditions
-                if (labelElement == null ||
-                    loopBlockStackElement.targetLabel != null &&
-                    labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
-                    v.goTo(loopBlockStackElement.breakLabel);
-                    return StackValue.none();
-                }
-            }
-            else {
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        throw new UnsupportedOperationException();
+        return visitBreakOrContinueExpression(expression, receiver, true);
     }
 
     @Override
     public StackValue visitContinueExpression(JetContinueExpression expression, StackValue receiver) {
+        return visitBreakOrContinueExpression(expression, receiver, false);
+    }
+
+    @NotNull
+    private StackValue visitBreakOrContinueExpression(@NotNull JetLabelQualifiedExpression expression, StackValue receiver, boolean isBreak) {
+        assert expression instanceof JetContinueExpression || expression instanceof JetBreakExpression;
+
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
 
         for (int i = blockStackElements.size() - 1; i >= 0; --i) {
             BlockStackElement stackElement = blockStackElements.get(i);
             if (stackElement instanceof FinallyBlockStackElement) {
                 FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
-                JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
                 //noinspection ConstantConditions
-                gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+                genFinallyBlockOrGoto(finallyBlockStackElement, false, null);
             }
             else if (stackElement instanceof LoopBlockStackElement) {
                 LoopBlockStackElement loopBlockStackElement = (LoopBlockStackElement) stackElement;
@@ -1185,7 +1171,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (labelElement == null ||
                     loopBlockStackElement.targetLabel != null &&
                     labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
-                    v.goTo(loopBlockStackElement.continueLabel);
+                    v.goTo(isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel);
                     return StackValue.none();
                 }
             }
@@ -1528,14 +1514,47 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             BlockStackElement stackElement = blockStackElements.get(i);
             if (stackElement instanceof FinallyBlockStackElement) {
                 FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
-                JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
-                blockStackElements.pop();
-                //noinspection ConstantConditions
-                gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
-                blockStackElements.push(finallyBlockStackElement);
+                genFinallyBlockOrGoto(finallyBlockStackElement, true, null);
             }
-            else {
+            else if (stackElement instanceof LoopBlockStackElement) {
                 break;
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+
+    private void genFinallyBlockOrGoto(
+            @Nullable FinallyBlockStackElement finallyBlockStackElement,
+            boolean doPop,
+            @Nullable Label tryCatchBlockEnd
+    ) {
+        if (finallyBlockStackElement != null) {
+            assert finallyBlockStackElement.gaps.size() % 2 == 0;
+            JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
+            if (doPop) {
+                blockStackElements.pop();
+            }
+
+            Label finallyStart = new Label();
+            v.mark(finallyStart);
+            finallyBlockStackElement.addGapLabel(finallyStart);
+
+            //noinspection ConstantConditions
+            gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+        }
+
+        if (tryCatchBlockEnd != null) {
+            v.goTo(tryCatchBlockEnd);
+        }
+
+        if (finallyBlockStackElement != null) {
+            Label finallyEnd = new Label();
+            v.mark(finallyEnd);
+            finallyBlockStackElement.addGapLabel(finallyEnd);
+
+            if (doPop) {
+                blockStackElements.push(finallyBlockStackElement);
             }
         }
     }
@@ -3452,13 +3471,13 @@ The "returned" value of try expression with no finally is either the last expres
 
         Label tryEnd = new Label();
         v.mark(tryEnd);
-        if (finallyBlock != null) {
-            blockStackElements.pop();
-            gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
-            blockStackElements.push(finallyBlockStackElement);
-        }
+
+        //do it before finally block generation
+        List<Label> tryBlockRegions = getCatchIntervals(finallyBlockStackElement, tryStart, tryEnd);
+
         Label end = new Label();
-        v.goTo(end);
+
+        genFinallyBlockOrGoto(finallyBlockStackElement, true, end);
 
         List<JetCatchClause> clauses = expression.getCatchClauses();
         for (int i = 0, size = clauses.size(); i < size; i++) {
@@ -3482,36 +3501,34 @@ The "returned" value of try expression with no finally is either the last expres
 
             myFrameMap.leave(descriptor);
 
-            if (finallyBlock != null) {
-                blockStackElements.pop();
-                gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
-                blockStackElements.push(finallyBlockStackElement);
-            }
+            genFinallyBlockOrGoto(finallyBlockStackElement, true, i != size - 1 || finallyBlock != null ? end : null);
 
-            if (i != size - 1 || finallyBlock != null) {
-                v.goTo(end);
-            }
-
-            v.visitTryCatchBlock(tryStart, tryEnd, clauseStart, descriptorType.getInternalName());
+            generateExceptionTable(clauseStart, tryBlockRegions, descriptorType.getInternalName());
         }
 
-        if (finallyBlock != null) {
-            Label finallyStart = new Label();
-            v.mark(finallyStart);
 
+        //for default catch clause
+        if (finallyBlock != null) {
+            Label defaultCatchStart = new Label();
+            v.mark(defaultCatchStart);
             int savedException = myFrameMap.enterTemp(JAVA_THROWABLE_TYPE);
             v.store(savedException, JAVA_THROWABLE_TYPE);
+            Label defaultCatchEnd = new Label();
+            v.mark(defaultCatchEnd);
 
-            blockStackElements.pop();
-            gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
-            blockStackElements.push(finallyBlockStackElement);
+            //do it before finally block generation
+            //javac generates such info for default catch clause too!!!! so defaultCatchEnd as end parameter
+            List<Label> defaultCatchRegions = getCatchIntervals(finallyBlockStackElement, tryStart, defaultCatchEnd);
+
+
+            genFinallyBlockOrGoto(finallyBlockStackElement, true, null);
 
             v.load(savedException, JAVA_THROWABLE_TYPE);
             myFrameMap.leaveTemp(JAVA_THROWABLE_TYPE);
 
             v.athrow();
 
-            v.visitTryCatchBlock(tryStart, tryEnd, finallyStart, null);
+            generateExceptionTable(defaultCatchStart, defaultCatchRegions, null);
         }
 
         markLineNumber(expression);
@@ -3527,6 +3544,25 @@ The "returned" value of try expression with no finally is either the last expres
         }
 
         return StackValue.onStack(expectedAsmType);
+    }
+
+    private void generateExceptionTable(Label catchStart, List<Label> catchedRegions, String exception) {
+        for (int i = 0; i < catchedRegions.size(); i += 2) {
+            Label startRegion = catchedRegions.get(i);
+            Label endRegion = catchedRegions.get(i+1);
+            v.visitTryCatchBlock(startRegion, endRegion, catchStart, exception);
+        }
+    }
+
+
+    private List<Label> getCatchIntervals(FinallyBlockStackElement finallyBlockStackElement, Label blockStart, Label blockEnd) {
+        List<Label> gapsInBlock = finallyBlockStackElement != null ? new ArrayList<Label>(finallyBlockStackElement.gaps) : Collections.<Label>emptyList();
+        assert gapsInBlock.size() % 2 == 0;
+        List<Label> blockRegions = new ArrayList<Label>(gapsInBlock.size() + 2);
+        blockRegions.add(blockStart);
+        blockRegions.addAll(gapsInBlock);
+        blockRegions.add(blockEnd);
+        return blockRegions;
     }
 
     @Override
