@@ -161,8 +161,7 @@ public class ArgumentTypeResolver {
     public JetTypeInfo getArgumentTypeInfo(
             @Nullable JetExpression expression,
             @NotNull CallResolutionContext<?> context,
-            @NotNull ResolveArgumentsMode resolveArgumentsMode,
-            @Nullable TemporaryBindingTrace traceToCommitForCall
+            @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (expression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
@@ -176,12 +175,8 @@ public class ArgumentTypeResolver {
         }
         ResolutionContext newContext = context.replaceExpectedType(TypeUtils.UNKNOWN_EXPECTED_TYPE).replaceContextDependency(
                 ContextDependency.DEPENDENT);
-        JetTypeInfo result = expressionTypingServices.getTypeInfo(expression, newContext);
 
-        if (traceToCommitForCall != null) {
-            traceToCommitForCall.commit();
-        }
-        return result;
+        return expressionTypingServices.getTypeInfo(expression, newContext);
     }
 
     @NotNull

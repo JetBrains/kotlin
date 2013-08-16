@@ -657,15 +657,12 @@ public class CandidateResolver {
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
 
-        TemporaryBindingTrace traceToResolveArgument = TemporaryBindingTrace.create(
-                context.trace, "transient trace to resolve argument", argumentExpression);
         JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
         DataFlowInfo dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument);
-        CallResolutionContext<?> newContext = context.replaceBindingTrace(traceToResolveArgument)
-                .replaceExpectedType(expectedType).replaceDataFlowInfo(dataFlowInfoForArgument);
+        CallResolutionContext<?> newContext = context.replaceExpectedType(expectedType).replaceDataFlowInfo(dataFlowInfoForArgument);
 
         JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
-                argumentExpression, newContext, resolveFunctionArgumentBodies, traceToResolveArgument);
+                argumentExpression, newContext, resolveFunctionArgumentBodies);
         context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.getDataFlowInfo());
 
         JetType type = updateResultTypeForSmartCasts(typeInfoForCall.getType(), argumentExpression, dataFlowInfoForArgument, context.trace);
@@ -771,7 +768,7 @@ public class CandidateResolver {
                 CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument))
                         .replaceBindingTrace(trace).replaceExpectedType(expectedType);
                 JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
-                        expression, newContext, resolveFunctionArgumentBodies, null);
+                        expression, newContext, resolveFunctionArgumentBodies);
                 JetType type = typeInfoForCall.getType();
                 infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
 
