@@ -259,40 +259,9 @@ public class ExpressionTypingServices {
             trace.record(STATEMENT, statement);
             JetExpression statementExpression = (JetExpression) statement;
             if (!iterator.hasNext()) {
-                if (noExpectedType(context.expectedType) && context.expectedType != UNIT_EXPECTED_TYPE) {
-                    result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
-                    if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
-                        boolean mightBeUnit = false;
-                        if (statementExpression instanceof JetDeclaration) {
-                            mightBeUnit = true;
-                        }
-                        if (statementExpression instanceof JetBinaryExpression) {
-                            JetBinaryExpression binaryExpression = (JetBinaryExpression) statementExpression;
-                            IElementType operationType = binaryExpression.getOperationToken();
-                            //noinspection SuspiciousMethodCalls
-                            if (operationType == JetTokens.EQ || OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
-                                mightBeUnit = true;
-                            }
-                        }
-                        if (mightBeUnit) {
-                            // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
-                            assert result.getType() == null || KotlinBuiltIns.getInstance().isUnit(result.getType());
-                            result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), newContext.dataFlowInfo);
-                        }
-                    }
-                }
-                else {
-                    JetType expectedType;
-                    if (context.expectedType == UNIT_EXPECTED_TYPE || (coercionStrategyForLastExpression == COERCION_TO_UNIT
-                                                                       && KotlinBuiltIns.getInstance().isUnit(context.expectedType))) {
-                        expectedType = UNIT_EXPECTED_TYPE;
-                    }
-                    else {
-                        expectedType = context.expectedType;
-                    }
-
-                    result = blockLevelVisitor.getTypeInfo(statementExpression, newContext.replaceExpectedType(expectedType), true);
-                }
+                result = getTypeOfLastExpressionInBlock(
+                        statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
+                        blockLevelVisitor);
             }
             else {
                 result = blockLevelVisitor.getTypeInfo(statementExpression, newContext.replaceContextDependency(ContextDependency.INDEPENDENT), true);
@@ -303,6 +272,47 @@ public class ExpressionTypingServices {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
             }
             blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(scope);
+        }
+        return result;
+    }
+
+    private JetTypeInfo getTypeOfLastExpressionInBlock(
+            @NotNull JetExpression statementExpression,
+            @NotNull ExpressionTypingContext context,
+            @NotNull CoercionStrategy coercionStrategyForLastExpression,
+            @NotNull ExpressionTypingInternals blockLevelVisitor
+    ) {
+        if (!noExpectedType(context.expectedType) || context.expectedType == UNIT_EXPECTED_TYPE) {
+            JetType expectedType;
+            if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
+                (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType))) {
+                expectedType = UNIT_EXPECTED_TYPE;
+            }
+            else {
+                expectedType = context.expectedType;
+            }
+
+            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
+        }
+        JetTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
+        if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
+            boolean mightBeUnit = false;
+            if (statementExpression instanceof JetDeclaration) {
+                mightBeUnit = true;
+            }
+            if (statementExpression instanceof JetBinaryExpression) {
+                JetBinaryExpression binaryExpression = (JetBinaryExpression) statementExpression;
+                IElementType operationType = binaryExpression.getOperationToken();
+                //noinspection SuspiciousMethodCalls
+                if (operationType == JetTokens.EQ || OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
+                    mightBeUnit = true;
+                }
+            }
+            if (mightBeUnit) {
+                // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
+                assert result.getType() == null || KotlinBuiltIns.getInstance().isUnit(result.getType());
+                result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
+            }
         }
         return result;
     }
