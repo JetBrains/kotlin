@@ -293,17 +293,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
             boolean functionTypeExpected
     ) {
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve function literal expression",
-                                                                            expression);
         JetType expectedReturnType = functionTypeExpected ? KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(context.expectedType) : null;
-        JetType returnType = computeUnsafeReturnType(expression, context, functionDescriptor, temporaryTrace, expectedReturnType);
-
-        temporaryTrace.commit(new TraceEntryFilter() {
-            @Override
-            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
-                return (slice != BindingContext.TRACE_DELTAS_CACHE);
-            }
-        }, true);
+        JetType returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
         if (!expression.getFunctionLiteral().hasDeclaredReturnType() && functionTypeExpected) {
             if (KotlinBuiltIns.getInstance().isUnit(expectedReturnType)) {
@@ -318,7 +309,6 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
-            @NotNull TemporaryBindingTrace temporaryTrace,
             @Nullable JetType expectedReturnType
     ) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
@@ -334,13 +324,13 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             functionDescriptor.setReturnType(declaredReturnType);
             if (expectedReturnType != null) {
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(declaredReturnType, expectedReturnType)) {
-                    temporaryTrace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(returnTypeRef, expectedReturnType));
+                    context.trace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(returnTypeRef, expectedReturnType));
                 }
             }
         }
 
         // Type-check the body
-        ExpressionTypingContext newContext = context.replaceBindingTrace(temporaryTrace).replaceScope(functionInnerScope)
+        ExpressionTypingContext newContext = context.replaceScope(functionInnerScope)
                 .replaceExpectedType(declaredReturnType != null
                                      ? declaredReturnType
                                      : (expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE));
@@ -348,7 +338,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType typeOfBodyExpression = context.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
 
         List<JetType> returnedExpressionTypes = Lists.newArrayList(getTypesOfLocallyReturnedExpressions(
-                functionLiteral, temporaryTrace, collectReturns(bodyExpression)));
+                functionLiteral, context.trace, collectReturns(bodyExpression)));
         ContainerUtil.addIfNotNull(returnedExpressionTypes, typeOfBodyExpression);
 
         if (declaredReturnType != null) return declaredReturnType;
@@ -358,7 +348,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
     private static List<JetType> getTypesOfLocallyReturnedExpressions(
             final JetFunctionLiteral functionLiteral,
-            final TemporaryBindingTrace temporaryTrace,
+            final BindingTrace trace,
             Collection<JetReturnExpression> returnExpressions
     ) {
         return ContainerUtil.mapNotNull(returnExpressions, new Function<JetReturnExpression, JetType>() {
@@ -370,7 +360,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                     return null;
                 }
 
-                PsiElement labelTarget = temporaryTrace.get(BindingContext.LABEL_TARGET, label);
+                PsiElement labelTarget = trace.get(BindingContext.LABEL_TARGET, label);
                 if (labelTarget != functionLiteral) {
                     // Either a local return of inner lambda/function or a non-local return
                     return null;
@@ -380,7 +370,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 if (returnedExpression == null) {
                     return KotlinBuiltIns.getInstance().getUnitType();
                 }
-                JetType returnedType = temporaryTrace.get(EXPRESSION_TYPE, returnedExpression);
+                JetType returnedType = trace.get(EXPRESSION_TYPE, returnedExpression);
                 assert returnedType != null : "No type for returned expression: " + returnedExpression + ",\n" +
                                               "the type should have been computed by getBlockReturnedType() above";
                 return returnedType;
