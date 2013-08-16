@@ -482,6 +482,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression returnedExpression = expression.getReturnedExpression();
 
         JetType expectedType = TypeUtils.NO_EXPECTED_TYPE;
+        JetType resultType = KotlinBuiltIns.getInstance().getNothingType();
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
 
         if (parentDeclaration instanceof JetParameter) {
@@ -503,6 +504,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     } while (containingFunction instanceof JetFunctionLiteral);
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                    resultType = ErrorUtils.createErrorType("Return not allowed");
                 }
                 if (containingFunctionDescriptor != null) {
                     expectedType = DescriptorUtils.getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunction);
@@ -511,6 +513,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 // Outside a function
                 context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                resultType = ErrorUtils.createErrorType("Return not allowed");
             }
         }
         else if (element != null) {
@@ -520,6 +523,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (functionDescriptor != containingFunctionDescriptor) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                    resultType = ErrorUtils.createErrorType("Return not allowed");
                 }
             }
             else {
@@ -534,7 +538,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
+        return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
     }
 
     @Override
