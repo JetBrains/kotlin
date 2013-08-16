@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.ProgressChecker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
@@ -144,9 +144,9 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         Collection<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
         for (NamedMembers members : membersProvider.allMembers()) {
             Name name = members.getName();
-            ProgressIndicatorProvider.checkCanceled();
+            ProgressChecker.getInstance().checkCanceled();
             result.addAll(getFunctions(name));
-            ProgressIndicatorProvider.checkCanceled();
+            ProgressChecker.getInstance().checkCanceled();
             result.addAll(getProperties(name));
         }
         return result;

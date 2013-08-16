@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.ProgressChecker;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -100,7 +100,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
             if (javaClass.getVisibility() != Visibilities.PUBLIC) continue;
 
-            ProgressIndicatorProvider.checkCanceled();
+            ProgressChecker.getInstance().checkCanceled();
 
             FqName fqName = javaClass.getFqName();
             if (fqName == null) continue;
