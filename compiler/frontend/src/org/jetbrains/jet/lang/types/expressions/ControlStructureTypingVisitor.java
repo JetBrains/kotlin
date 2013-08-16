@@ -114,7 +114,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
                     elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression, isStatement);
         }
-        Call callForIf = createCallForSpecialConstruction(ifExpression, Lists.newArrayList(thenBranch, elseBranch));
+        JetBlockExpression thenBlock = JetPsiFactory.wrapInABlock(thenBranch);
+        JetBlockExpression elseBlock = JetPsiFactory.wrapInABlock(elseBranch);
+        Call callForIf = createCallForSpecialConstruction(ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
                     createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
         ResolvedCall<FunctionDescriptor> resolvedCall = resolveSpecialConstructionAsCall(

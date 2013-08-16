@@ -478,7 +478,16 @@ public class CandidateResolver {
         BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
 
         if (!(expression instanceof JetConstantExpression)) {
-            updateNumberType(numberType, JetPsiUtil.deparenthesizeWithNoTypeResolution(expression, false), context);
+            JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression, false);
+            if (deparenthesized != expression) {
+                updateNumberType(numberType, deparenthesized, context);
+            }
+            if (deparenthesized instanceof JetBlockExpression) {
+                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesized);
+                if (lastStatement instanceof JetExpression) {
+                    updateNumberType(numberType, (JetExpression) lastStatement, context);
+                }
+            }
             return;
         }
         CompileTimeConstant<?> constant =

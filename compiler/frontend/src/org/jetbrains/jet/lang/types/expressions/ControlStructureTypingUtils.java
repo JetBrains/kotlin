@@ -95,7 +95,8 @@ public class ControlStructureTypingUtils {
                 noAnnotations, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION);
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
-                function, noAnnotations, false, Variance.INVARIANT, Name.identifierNoValidate("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
+                function, noAnnotations, false, Variance.INVARIANT,
+                Name.identifierNoValidate("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
 
         JetType type = new JetTypeImpl(typeParameter.getTypeConstructor(), JetScope.EMPTY);
         JetType nullableType = new JetTypeImpl(
@@ -163,7 +164,7 @@ public class ControlStructureTypingUtils {
 
     /*package*/ static Call createCallForSpecialConstruction(
             @NotNull final JetExpression expression,
-            @NotNull List<JetExpression> arguments
+            @NotNull List<? extends JetExpression> arguments
     ) {
         final List<ValueArgument> valueArguments = Lists.newArrayList();
         for (JetExpression argument : arguments) {
@@ -272,12 +273,13 @@ public class ControlStructureTypingUtils {
 
             @Override
             public Void visitBlockExpression(JetBlockExpression expression, CheckTypeContext c) {
-                List<JetElement> statements = expression.getStatements();
-                if (!statements.isEmpty()) {
-                    JetElement lastElement = statements.get(statements.size() - 1);
-                    if (lastElement instanceof JetExpression) {
-                        checkExpressionType((JetExpression) lastElement, c);
-                    }
+                if (expression.getStatements().isEmpty()) {
+                    visitExpression(expression, c);
+                    return null;
+                }
+                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
+                if (lastStatement instanceof JetExpression) {
+                    checkExpressionType((JetExpression) lastStatement, c);
                 }
                 return null;
             }
