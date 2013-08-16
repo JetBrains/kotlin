@@ -79,7 +79,7 @@ public final class RangeForTranslator extends ForTranslator {
     @NotNull
     private JsFor generateForExpression() {
         JsFor result = new JsFor(initExpression(), getCondition(), getIncrExpression());
-        result.setBody(translateOriginalBodyExpression());
+        result.setBody(translateBody(null));
         return result;
     }
 

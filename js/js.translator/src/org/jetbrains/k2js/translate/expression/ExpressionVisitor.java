@@ -116,6 +116,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @Override
+    public JsNode visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration, @NotNull  TranslationContext context) {
+        JetExpression jetInitializer = multiDeclaration.getInitializer();
+        assert jetInitializer != null : "Initializer for multi declaration must be not null";
+        JsExpression initializer = Translation.translateAsExpression(jetInitializer, context);
+        return MultiDeclarationTranslator.translate(multiDeclaration, context.scope().declareTemporary(), initializer, context);
+    }
+
+    @Override
     @NotNull
     public JsNode visitReturnExpression(@NotNull JetReturnExpression jetReturnExpression,
             @NotNull TranslationContext context) {

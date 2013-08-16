@@ -82,7 +82,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
         blockStatements.add(generateForExpression(initExpression(),
                                                   getCondition(),
                                                   getIncrExpression(),
-                                                  translateOriginalBodyExpression()));
+                                                  translateBody(null)));
         return new JsBlock(blockStatements);
     }
 

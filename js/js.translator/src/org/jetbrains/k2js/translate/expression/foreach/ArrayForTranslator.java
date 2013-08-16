@@ -86,9 +86,7 @@ public final class ArrayForTranslator extends ForTranslator {
     @NotNull
     private JsStatement getBody() {
         JsArrayAccess arrayAccess = new JsArrayAccess(loopRange.reference(), index.reference());
-        JsStatement currentVar = newVar(parameterName, arrayAccess);
-        JsStatement realBody = translateOriginalBodyExpression();
-        return new JsBlock(currentVar, realBody);
+        return translateBody(arrayAccess);
     }
 
     @NotNull
