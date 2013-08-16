@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -230,5 +231,21 @@ public class ArgumentTypeResolver {
             return expressionTypingServices.getTypeResolver().resolveType(scope, returnTypeRef, trace, true);
         }
         return defaultValue;
+    }
+
+    public <D extends CallableDescriptor> void analyzeArgumentsAndRecordTypes(
+            @NotNull CallResolutionContext<?> context
+    ) {
+        MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
+        infoForArguments.setInitialDataFlowInfo(context.dataFlowInfo);
+
+        for (ValueArgument argument : context.call.getValueArguments()) {
+            JetExpression expression = argument.getArgumentExpression();
+            if (expression == null) continue;
+
+            CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
+            JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SKIP_FUNCTION_ARGUMENTS);
+            infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
+        }
     }
 }

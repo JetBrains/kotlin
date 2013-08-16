@@ -426,6 +426,10 @@ public class CallResolver {
 
         debugInfo.set(ResolutionDebugInfo.TASKS, prioritizedTasks);
 
+        if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
+            argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
+        }
+
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
         OverloadResolutionResultsImpl<F> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D, F> task : prioritizedTasks) {
