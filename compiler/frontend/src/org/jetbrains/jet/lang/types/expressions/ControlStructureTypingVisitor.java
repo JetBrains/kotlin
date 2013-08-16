@@ -485,6 +485,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
 
         if (parentDeclaration instanceof JetParameter) {
+            // In a default value for parameter
             context.trace.report(RETURN_NOT_ALLOWED.on(expression));
         }
         assert parentDeclaration != null;
@@ -500,6 +501,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                         containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
                         containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
                     } while (containingFunction instanceof JetFunctionLiteral);
+                    // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }
                 if (containingFunctionDescriptor != null) {
@@ -507,6 +509,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
             else {
+                // Outside a function
                 context.trace.report(RETURN_NOT_ALLOWED.on(expression));
             }
         }
@@ -515,6 +518,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (functionDescriptor != null) {
                 expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, element);
                 if (functionDescriptor != containingFunctionDescriptor) {
+                    // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }
             }
