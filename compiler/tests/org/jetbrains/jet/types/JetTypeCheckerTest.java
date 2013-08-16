@@ -148,8 +148,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     public void testIf() throws Exception {
         assertType("if (true) 1", "Unit");
         assertType("if (true) 1 else 1", "Int");
-        assertType("if (true) 1 else return", "Int");
-        assertType("if (true) return else 1", "Int");
+        assertType("if (true) 1 else throw Exception()", "Int");
+        assertType("if (true) throw Exception() else 1", "Int");
         assertType("if (true) throw Exception() else throw Exception()", "Nothing");
 
         assertType("if (true) 1 else null", "Int?");

@@ -215,15 +215,6 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                     setStatus(ERROR);
                 }
                 else {
-                    JetFunctionLiteralExpression functionLiteral;
-                    if (possiblyLabeledFunctionLiteral instanceof JetLabelQualifiedExpression) {
-                        JetLabelQualifiedExpression labeledFunctionLiteral = (JetLabelQualifiedExpression) possiblyLabeledFunctionLiteral;
-                        functionLiteral = (JetFunctionLiteralExpression) labeledFunctionLiteral.getLabeledExpression();
-                    }
-                    else {
-                        functionLiteral = (JetFunctionLiteralExpression) possiblyLabeledFunctionLiteral;
-                    }
-
                     ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
                     if (valueParameterDescriptor.getVarargElementType() != null) {
                         report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
@@ -235,7 +226,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                             setStatus(WEAK_ERROR);
                         }
                         else {
-                            putVararg(valueParameterDescriptor, CallMaker.makeValueArgument(functionLiteral));
+                            putVararg(valueParameterDescriptor, CallMaker.makeValueArgument(possiblyLabeledFunctionLiteral));
                         }
                     }
                 }

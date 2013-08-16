@@ -2436,6 +2436,17 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 public void testForbiddenNonLocalReturnNoType() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/ForbiddenNonLocalReturnNoType.kt");
                 }
+                
+                @TestMetadata("LocalReturnExplicitLabelNoParens.kt")
+                public void testLocalReturnExplicitLabelNoParens() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnExplicitLabelNoParens.kt");
+                }
+                
+                @TestMetadata("LocalReturnExplicitLabelParens.kt")
+                public void testLocalReturnExplicitLabelParens() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnExplicitLabelParens.kt");
+                }
+                
             }
             
             public static Test innerSuite() {

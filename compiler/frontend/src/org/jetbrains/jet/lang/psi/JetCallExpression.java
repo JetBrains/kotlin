@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +97,7 @@ public class JetCallExpression extends JetReferenceExpression implements JetCall
                 if (JetTokens.LABELS.contains(prefixExpression.getOperationReference().getReferencedNameElementType())) {
                     JetExpression labeledExpression = prefixExpression.getBaseExpression();
                     if (labeledExpression instanceof JetFunctionLiteralExpression) {
-                        result.add(labeledExpression);
+                        result.add(prefixExpression);
                     }
                 }
             }
