@@ -2102,6 +2102,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/finally"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("finallyAndFinally.kt")
+        public void testFinallyAndFinally() throws Exception {
+            doTest("compiler/testData/codegen/box/finally/finallyAndFinally.kt");
+        }
+        
         @TestMetadata("kt3549.kt")
         public void testKt3549() throws Exception {
             doTest("compiler/testData/codegen/box/finally/kt3549.kt");
@@ -2112,6 +2117,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/finally/kt3867.kt");
         }
         
+        @TestMetadata("kt3874.kt")
+        public void testKt3874() throws Exception {
+            doTest("compiler/testData/codegen/box/finally/kt3874.kt");
+        }
+        
+        @TestMetadata("kt3894.kt")
+        public void testKt3894() throws Exception {
+            doTest("compiler/testData/codegen/box/finally/kt3894.kt");
+        }
+        
+        @TestMetadata("loopAndFinally.kt")
+        public void testLoopAndFinally() throws Exception {
+            doTest("compiler/testData/codegen/box/finally/loopAndFinally.kt");
+        }
+        
         @TestMetadata("notChainCatch.kt")
         public void testNotChainCatch() throws Exception {
             doTest("compiler/testData/codegen/box/finally/notChainCatch.kt");
@@ -2120,6 +2140,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("tryFinally.kt")
         public void testTryFinally() throws Exception {
             doTest("compiler/testData/codegen/box/finally/tryFinally.kt");
+        }
+        
+        @TestMetadata("tryLoopTry.kt")
+        public void testTryLoopTry() throws Exception {
+            doTest("compiler/testData/codegen/box/finally/tryLoopTry.kt");
         }
         
     }
