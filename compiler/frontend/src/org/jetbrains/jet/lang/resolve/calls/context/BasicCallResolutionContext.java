@@ -95,7 +95,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
         return create(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
-                      resolutionResultsCache);
+                      resolutionResultsCache, dataFlowInfoForArguments);
     }
 
     @Override

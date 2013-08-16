@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.types.JetType;
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     public final Call call;
     public final CheckValueArgumentsMode checkArguments;
+    @NotNull
     public final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
 
     protected CallResolutionContext(
@@ -41,6 +42,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache,
+            @SuppressWarnings("NullableProblems")
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache);

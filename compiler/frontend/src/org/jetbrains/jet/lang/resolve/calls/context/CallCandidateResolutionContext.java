@@ -17,10 +17,12 @@
 package org.jetbrains.jet.lang.resolve.calls.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -43,9 +45,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache, null);
+        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
+              dataFlowInfoForArguments);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
@@ -57,7 +61,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
-                context.expressionPosition, context.resolutionResultsCache);
+                context.expressionPosition, context.resolutionResultsCache, context.dataFlowInfoForArguments);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
@@ -69,18 +73,10 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {
-        return createForCallBeingAnalyzed(candidateCall, context, context.call, context.contextDependency,
-                                          context.checkArguments, tracing, context.resolutionResultsCache);
-    }
-
-    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
-            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionContext context, @NotNull Call call,
-            @NotNull ContextDependency contextDependency, @NotNull CheckValueArgumentsMode checkArguments, @NotNull TracingStrategy tracing,
-            @NotNull ResolutionResultsCache resolutionResultsCache
-    ) {
         return new CallCandidateResolutionContext<D>(
-                candidateCall, tracing, context.trace, context.scope, call, context.expectedType,
-                context.dataFlowInfo, contextDependency, checkArguments, context.expressionPosition, resolutionResultsCache);
+                candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
+                context.dataFlowInfo, context.contextDependency, context.checkArguments, context.expressionPosition,
+                context.resolutionResultsCache, context.dataFlowInfoForArguments);
     }
 
     @Override
@@ -95,7 +91,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency,
-                checkArguments, expressionPosition, resolutionResultsCache);
+                checkArguments, expressionPosition, resolutionResultsCache, dataFlowInfoForArguments);
     }
 
     @Override
