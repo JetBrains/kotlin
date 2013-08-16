@@ -16,11 +16,12 @@
 
 package org.jetbrains.jet.plugin.intentions;
 
-import com.intellij.codeInsight.daemon.LightIntentionActionTestCase;
 import com.intellij.openapi.projectRoots.Sdk;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
 
-public class SpecifyTypeExplicitlyTest extends LightIntentionActionTestCase {
+public class SpecifyTypeExplicitlyTest extends AbstractQuickFixTest {
     public void testBadCaretPosition() {
         doTest();
     }
@@ -65,6 +66,7 @@ public class SpecifyTypeExplicitlyTest extends LightIntentionActionTestCase {
         doTest();
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/intentions/";
