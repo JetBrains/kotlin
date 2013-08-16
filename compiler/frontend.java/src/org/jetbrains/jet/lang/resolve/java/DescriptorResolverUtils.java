@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,7 +30,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
-    private static final ImmutableSet<String> OBJECT_METHODS = ImmutableSet.of("hashCode()", "equals(java.lang.Object)", "toString()");
 
     private DescriptorResolverUtils() {
     }
@@ -127,7 +125,9 @@ public final class DescriptorResolverUtils {
 
     public static boolean isObjectMethod(@NotNull JavaMethod method) {
         String signature = JavaSignatureFormatter.formatMethod(method);
-        return OBJECT_METHODS.contains(signature);
+        return "hashCode()".equals(signature) ||
+               "equals(java.lang.Object)".equals(signature) ||
+               "toString()".equals(signature);
     }
 
     @NotNull

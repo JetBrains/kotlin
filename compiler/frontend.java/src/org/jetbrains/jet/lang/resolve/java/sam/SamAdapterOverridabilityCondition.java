@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.resolve.java.sam;
 
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -49,31 +48,32 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return null;
         }
-        Pair<SimpleFunctionDescriptor, JetType> declarationOrSynthesized =
+        SamAdapterInfo declarationOrSynthesized =
                 getNearestDeclarationOrSynthesized(callable, ((ClassDescriptor) containingDeclaration).getDefaultType());
 
         if (declarationOrSynthesized == null) {
             return null;
         }
 
-        SimpleFunctionDescriptorImpl fun = (SimpleFunctionDescriptorImpl) declarationOrSynthesized.first.getOriginal();
+        SimpleFunctionDescriptorImpl fun = (SimpleFunctionDescriptorImpl) declarationOrSynthesized.samAdapter.getOriginal();
         if (!(fun instanceof SamAdapterFunctionDescriptor)) {
             return null;
         }
 
         SimpleFunctionDescriptor originalDeclarationOfSam = ((SamAdapterFunctionDescriptor) fun).getDeclaration();
 
-        return ((SimpleFunctionDescriptor) originalDeclarationOfSam.substitute(TypeSubstitutor.create(declarationOrSynthesized.second)));
+        return ((SimpleFunctionDescriptor) originalDeclarationOfSam.substitute(TypeSubstitutor.create(declarationOrSynthesized.ownerType)));
     }
 
     @Nullable
-    private static Pair<SimpleFunctionDescriptor, JetType> getNearestDeclarationOrSynthesized(
+    private static SamAdapterInfo getNearestDeclarationOrSynthesized(
             @NotNull SimpleFunctionDescriptor samAdapter,
             @NotNull JetType ownerType
     ) {
         if (samAdapter.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            return Pair.create(samAdapter, ownerType);
+            return new SamAdapterInfo(samAdapter, ownerType);
         }
+
         for (CallableMemberDescriptor overridden : samAdapter.getOverriddenDescriptors()) {
             ClassDescriptor containingClass = (ClassDescriptor) overridden.getContainingDeclaration();
 
@@ -82,15 +82,23 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
                     continue;
                 }
 
-                Pair<SimpleFunctionDescriptor, JetType> found =
-                        getNearestDeclarationOrSynthesized((SimpleFunctionDescriptor) overridden, immediateSupertype);
+                SamAdapterInfo found = getNearestDeclarationOrSynthesized((SimpleFunctionDescriptor) overridden, immediateSupertype);
                 if (found != null) {
                     return found;
                 }
             }
-
         }
+
         return null;
     }
 
+    private static class SamAdapterInfo {
+        private final SimpleFunctionDescriptor samAdapter;
+        private final JetType ownerType;
+
+        private SamAdapterInfo(@NotNull SimpleFunctionDescriptor samAdapter, @NotNull JetType ownerType) {
+            this.samAdapter = samAdapter;
+            this.ownerType = ownerType;
+        }
+    }
 }

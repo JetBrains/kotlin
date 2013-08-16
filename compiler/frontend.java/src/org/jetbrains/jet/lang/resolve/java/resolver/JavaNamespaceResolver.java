@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,9 +52,9 @@ public final class JavaNamespaceResolver {
                                                                                      JavaBridgeConfiguration.ALL_JAVA_IMPORTS,
                                                                                      JavaToKotlinClassMap.getInstance());
     @NotNull
-    private final Map<FqName, JetScope> resolvedNamespaceCache = Maps.newHashMap();
+    private final Map<FqName, JetScope> resolvedNamespaceCache = new HashMap<FqName, JetScope>();
     @NotNull
-    private final Set<FqName> unresolvedCache = Sets.newHashSet();
+    private final Set<FqName> unresolvedCache = new HashSet<FqName>();
 
     private JavaClassFinder javaClassFinder;
     private JavaResolverCache cache;

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -24,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class NamedMembers {
@@ -36,10 +36,10 @@ public final class NamedMembers {
     private final Name name;
 
     @NotNull
-    private final List<JavaMethod> methods = Lists.newArrayList();
+    private final List<JavaMethod> methods = new ArrayList<JavaMethod>();
 
     @NotNull
-    private final List<JavaField> fields = Lists.newArrayList();
+    private final List<JavaField> fields = new ArrayList<JavaField>();
 
     @Nullable
     private JavaClass samInterface;

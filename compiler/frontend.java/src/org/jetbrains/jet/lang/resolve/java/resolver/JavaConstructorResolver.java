@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Lists;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -34,10 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.createSamAdapterConstructor;
 import static org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils.isSamAdapterNecessary;
@@ -73,7 +68,7 @@ public final class JavaConstructorResolver {
 
     @NotNull
     public Collection<ConstructorDescriptor> resolveConstructors(@NotNull JavaClass javaClass, @NotNull ClassDescriptor containingClass) {
-        Collection<ConstructorDescriptor> result = Lists.newArrayList();
+        Collection<ConstructorDescriptor> result = new ArrayList<ConstructorDescriptor>();
 
         Collection<JavaMethod> constructors = javaClass.getConstructors();
 
@@ -81,13 +76,19 @@ public final class JavaConstructorResolver {
             result.add(DescriptorResolver.createPrimaryConstructorForObject(containingClass));
         }
         else if (constructors.isEmpty()) {
-            ContainerUtil.addIfNotNull(result, resolveDefaultConstructor(javaClass, containingClass));
+            ConstructorDescriptor defaultConstructor = resolveDefaultConstructor(javaClass, containingClass);
+            if (defaultConstructor != null) {
+                result.add(defaultConstructor);
+            }
         }
         else {
             for (JavaMethod constructor : constructors) {
                 ConstructorDescriptor descriptor = resolveConstructor(constructor, containingClass, javaClass.isStatic());
                 result.add(descriptor);
-                ContainerUtil.addIfNotNull(result, resolveSamAdapter(descriptor));
+                ConstructorDescriptor samAdapter = resolveSamAdapter(descriptor);
+                if (samAdapter != null) {
+                    result.add(samAdapter);
+                }
             }
         }
 
@@ -139,10 +140,11 @@ public final class JavaConstructorResolver {
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
         // A constructor for an annotation type takes all the "methods" in the @interface as parameters
-        List<ValueParameterDescriptor> result = Lists.newArrayList();
+        Collection<JavaMethod> methods = javaClass.getMethods();
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(methods.size());
 
         int index = 0;
-        for (Iterator<JavaMethod> iterator = javaClass.getMethods().iterator(); iterator.hasNext(); ) {
+        for (Iterator<JavaMethod> iterator = methods.iterator(); iterator.hasNext(); ) {
             JavaMethod method = iterator.next();
             assert method.getValueParameters().isEmpty() : "Annotation method can't have parameters: " + method;
 

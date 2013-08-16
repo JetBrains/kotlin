@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.mapping;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
@@ -30,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
@@ -43,8 +43,8 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
         return instance;
     }
 
-    private final Map<FqName, Type> asmTypes = Maps.newHashMap();
-    private final Map<FqName, Type> asmNullableTypes = Maps.newHashMap();
+    private final Map<FqName, Type> asmTypes = new HashMap<FqName, Type>();
+    private final Map<FqName, Type> asmNullableTypes = new HashMap<FqName, Type>();
 
     private KotlinToJavaTypesMap() {
         init();

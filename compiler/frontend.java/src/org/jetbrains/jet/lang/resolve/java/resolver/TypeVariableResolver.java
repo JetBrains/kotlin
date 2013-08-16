@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.util.Condition;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -32,19 +30,20 @@ import java.util.List;
     @NotNull
     private final DeclarationDescriptor owner;
 
-    public TypeVariableResolver(
-            @NotNull List<TypeParameterDescriptor> typeParameters,
-            @NotNull DeclarationDescriptor owner
-    ) {
+    public TypeVariableResolver(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull DeclarationDescriptor owner) {
         this.typeParameters = typeParameters;
         this.owner = owner;
 
-        assert ContainerUtil.and(typeParameters, new Condition<TypeParameterDescriptor>() {
-            @Override
-            public boolean value(TypeParameterDescriptor descriptor) {
-                return descriptor.getContainingDeclaration() == TypeVariableResolver.this.owner;
+        assert parametersBelongToOwner() : "Type parameters should belong to owner: " + owner + "; " + typeParameters;
+    }
+
+    private boolean parametersBelongToOwner() {
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            if (typeParameter.getContainingDeclaration() != owner) {
+                return false;
             }
-        }) : "Type parameters should be parameters of owner: " + owner + "; " + typeParameters;
+        }
+        return true;
     }
 
     @NotNull

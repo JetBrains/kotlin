@@ -16,12 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.openapi.util.Condition;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -37,9 +32,9 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     protected final MembersProvider membersProvider;
     @NotNull
-    private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
+    private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = new HashMap<Name, Set<FunctionDescriptor>>();
     @NotNull
-    private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
+    private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = new HashMap<Name, Set<VariableDescriptor>>();
     @Nullable
     private Collection<DeclarationDescriptor> allDescriptors = null;
     @Nullable
@@ -126,7 +121,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
-        Collection<DeclarationDescriptor> result = Sets.newHashSet();
+        Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
         result.addAll(computeFieldAndFunctionDescriptors());
         result.addAll(filterObjects(getInnerClasses(), false));
         return result;
@@ -146,7 +141,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Collection<DeclarationDescriptor> computeFieldAndFunctionDescriptors() {
-        Collection<DeclarationDescriptor> result = Lists.newArrayList();
+        Collection<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
         for (NamedMembers members : membersProvider.allMembers()) {
             Name name = members.getName();
             ProgressIndicatorProvider.checkCanceled();
@@ -165,12 +160,14 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         return innerClasses;
     }
 
-    private static <T extends ClassDescriptor> Collection<T> filterObjects(Collection<T> classes, final boolean objects) {
-        return ContainerUtil.filter(classes, new Condition<T>() {
-            @Override
-            public boolean value(T classDescriptor) {
-                return classDescriptor.getKind().isObject() == objects;
+    @NotNull
+    private static Collection<ClassDescriptor> filterObjects(@NotNull Collection<ClassDescriptor> classes, boolean objects) {
+        List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
+        for (ClassDescriptor descriptor : classes) {
+            if (descriptor.getKind().isObject() == objects) {
+                result.add(descriptor);
             }
-        });
+        }
+        return result;
     }
 }

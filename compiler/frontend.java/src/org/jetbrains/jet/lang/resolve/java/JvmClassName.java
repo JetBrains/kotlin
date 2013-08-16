@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
@@ -26,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JvmClassName {
@@ -94,7 +94,7 @@ public class JvmClassName {
     public static JvmClassName byClassDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
         DeclarationDescriptor descriptor = classDescriptor;
 
-        List<String> innerClassNames = Lists.newArrayList();
+        List<String> innerClassNames = new ArrayList<String>();
         while (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
             innerClassNames.add(descriptor.getName().asString());
             descriptor = descriptor.getContainingDeclaration();
@@ -199,7 +199,7 @@ public class JvmClassName {
 
     @NotNull
     public List<String> getInnerClassNameList() {
-        List<String> innerClassList = Lists.newArrayList();
+        List<String> innerClassList = new ArrayList<String>();
         String signatureName = getSignatureName();
         int index = signatureName.indexOf('.');
         while (index != -1) {

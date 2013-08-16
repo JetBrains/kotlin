@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
@@ -84,7 +84,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
     @NotNull
     private Collection<DeclarationDescriptor> computeAllPackageDeclarations() {
-        Collection<DeclarationDescriptor> result = Sets.newHashSet();
+        Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
 
         for (JavaPackage subPackage : javaPackage.getSubPackages()) {
             NamespaceDescriptor childNs = memberResolver.resolveNamespace(subPackage.getFqName(), IGNORE_KOTLIN_SOURCES);

@@ -49,8 +49,4 @@ public abstract class FqNameBase {
     public final boolean equalsTo(@NotNull FqNameUnsafe that) {
         return toFqNameUnsafe().equals(that);
     }
-
-    public final boolean equalsTo(@NotNull String that) {
-        return asString().equals(that);
-    }
 }

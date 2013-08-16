@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -35,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
@@ -64,18 +64,24 @@ public final class JavaAnnotationResolver {
         this.externalAnnotationResolver = externalAnnotationResolver;
     }
 
+    private void resolveAnnotations(
+            @NotNull Collection<JavaAnnotation> annotations,
+            @NotNull PostponedTasks tasks,
+            @NotNull List<AnnotationDescriptor> result
+    ) {
+        for (JavaAnnotation javaAnnotation : annotations) {
+            AnnotationDescriptor annotation = resolveAnnotation(javaAnnotation, tasks);
+            if (annotation != null) {
+                result.add(annotation);
+            }
+        }
+    }
+
     @NotNull
     public List<AnnotationDescriptor> resolveAnnotations(@NotNull JavaAnnotationOwner owner, @NotNull PostponedTasks tasks) {
         List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
-
-        for (JavaAnnotation annotation : owner.getAnnotations()) {
-            ContainerUtil.addIfNotNull(result, resolveAnnotation(annotation, tasks));
-        }
-
-        for (JavaAnnotation annotation : externalAnnotationResolver.findExternalAnnotations(owner)) {
-            ContainerUtil.addIfNotNull(result, resolveAnnotation(annotation, tasks));
-        }
-
+        resolveAnnotations(owner.getAnnotations(), tasks, result);
+        resolveAnnotations(externalAnnotationResolver.findExternalAnnotations(owner), tasks, result);
         return result;
     }
 

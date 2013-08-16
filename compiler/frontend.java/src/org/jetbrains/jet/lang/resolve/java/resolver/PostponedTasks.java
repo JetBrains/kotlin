@@ -16,15 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class PostponedTasks {
 
     @NotNull
-    private final List<Runnable> tasks = Lists.newArrayList();
+    private final List<Runnable> tasks = new ArrayList<Runnable>();
 
     public void addTask(@NotNull Runnable runnable) {
         tasks.add(runnable);

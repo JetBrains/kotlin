@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,7 +134,7 @@ public class JavaTypeTransformer {
     ) {
         JavaTypeParameterListOwner owner = typeParameter.getOwner();
         if (owner instanceof JavaMethod && ((JavaMethod) owner).isConstructor()) {
-            Set<JetType> supertypesJet = Sets.newHashSet();
+            Set<JetType> supertypesJet = new HashSet<JetType>();
             for (JavaClassifierType supertype : typeParameter.getUpperBounds()) {
                 supertypesJet.add(transformToType(supertype, UPPER_BOUND, typeVariableResolver));
             }
@@ -172,7 +170,7 @@ public class JavaTypeTransformer {
             return null;
         }
 
-        List<TypeProjection> arguments = Lists.newArrayList();
+        List<TypeProjection> arguments = new ArrayList<TypeProjection>();
         List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
         if (isRaw(classifierType, !parameters.isEmpty())) {
             for (TypeParameterDescriptor parameter : parameters) {

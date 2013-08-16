@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class AsmTypeConstants {
-    private static final Map<Class<?>, Type> TYPES_MAP = Maps.newHashMap();
+    private static final Map<Class<?>, Type> TYPES_MAP = new HashMap<Class<?>, Type>();
 
     public static final Type OBJECT_TYPE = getType(Object.class);
     public static final Type JAVA_STRING_TYPE = getType(String.class);

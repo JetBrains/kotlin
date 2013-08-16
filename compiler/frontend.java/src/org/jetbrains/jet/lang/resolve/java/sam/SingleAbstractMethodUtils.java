@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.sam;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -46,7 +45,7 @@ public class SingleAbstractMethodUtils {
 
     @NotNull
     public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
-        List<CallableMemberDescriptor> abstractMembers = Lists.newArrayList();
+        List<CallableMemberDescriptor> abstractMembers = new ArrayList<CallableMemberDescriptor>();
         for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
                 abstractMembers.add((CallableMemberDescriptor) member);
@@ -58,8 +57,9 @@ public class SingleAbstractMethodUtils {
     private static JetType fixProjections(@NotNull JetType functionType) {
         //removes redundant projection kinds and detects conflicts
 
-        List<TypeProjection> arguments = Lists.newArrayList();
-        for (TypeParameterDescriptor typeParameter : functionType.getConstructor().getParameters()) {
+        List<TypeParameterDescriptor> typeParameters = functionType.getConstructor().getParameters();
+        List<TypeProjection> arguments = new ArrayList<TypeProjection>(typeParameters.size());
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
             Variance variance = typeParameter.getVariance();
             TypeProjection argument = functionType.getArguments().get(typeParameter.getIndex());
             Variance kind = argument.getProjectionKind();
@@ -109,8 +109,9 @@ public class SingleAbstractMethodUtils {
     public static JetType getFunctionTypeForAbstractMethod(@NotNull FunctionDescriptor function) {
         JetType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
-        List<JetType> parameterTypes = Lists.newArrayList();
-        for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+        List<ValueParameterDescriptor> valueParameters = function.getValueParameters();
+        List<JetType> parameterTypes = new ArrayList<JetType>(valueParameters.size());
+        for (ValueParameterDescriptor parameter : valueParameters) {
             parameterTypes.add(parameter.getType());
         }
         return KotlinBuiltIns.getInstance().getFunctionType(
@@ -245,8 +246,9 @@ public class SingleAbstractMethodUtils {
                                         ", substitutor = " + typeParameters.substitutor;
         }
 
-        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
-        for (ValueParameterDescriptor originalParam : original.getValueParameters()) {
+        List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
+        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
+        for (ValueParameterDescriptor originalParam : originalValueParameters) {
             JetType originalType = originalParam.getType();
             JetType functionType = getFunctionTypeForSamType(originalType);
             JetType newTypeUnsubstituted = functionType != null ? functionType : originalType;
@@ -284,7 +286,7 @@ public class SingleAbstractMethodUtils {
             funTypeParameter.setInitialized();
         }
 
-        List<TypeParameterDescriptor> typeParameters = Lists.<TypeParameterDescriptor>newArrayList(traitToFunTypeParameters.values());
+        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(traitToFunTypeParameters.values());
         return new TypeParameters(typeParameters, typeParametersSubstitutor);
     }
 

@@ -17,10 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.mapping;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.intellij.psi.CommonClassNames;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -40,12 +37,11 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
+    private static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
+
     private static JavaToKotlinClassMap instance = null;
 
     @NotNull
@@ -56,9 +52,9 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         return instance;
     }
 
-    private final Map<FqName, ClassDescriptor> classDescriptorMap = Maps.newHashMap();
-    private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = Maps.newHashMap();
-    private final Map<String, JetType> primitiveTypesMap = Maps.newHashMap();
+    private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
+    private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();
+    private final Map<String, JetType> primitiveTypesMap = new HashMap<String, JetType>();
     private final Multimap<FqName, ClassDescriptor> packagesWithMappedClasses = HashMultimap.create();
 
     private JavaToKotlinClassMap() {
@@ -103,7 +99,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     @Nullable
     public AnnotationDescriptor mapToAnnotationClass(@NotNull FqName fqName) {
         ClassDescriptor classDescriptor = classDescriptorMap.get(fqName);
-        if (classDescriptor != null && fqName.asString().equals(CommonClassNames.JAVA_LANG_DEPRECATED)) {
+        if (classDescriptor != null && fqName.equals(JAVA_LANG_DEPRECATED)) {
             return getAnnotationDescriptorForJavaLangDeprecated(classDescriptor);
         }
         return null;
@@ -163,7 +159,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     public Collection<ClassDescriptor> mapPlatformClass(@NotNull FqName fqName) {
         ClassDescriptor kotlinAnalog = classDescriptorMap.get(fqName);
         ClassDescriptor kotlinCovariantAnalog = classDescriptorMapForCovariantPositions.get(fqName);
-        List<ClassDescriptor> descriptors = Lists.newArrayList();
+        List<ClassDescriptor> descriptors = new ArrayList<ClassDescriptor>(2);
         if (kotlinAnalog != null) {
             descriptors.add(kotlinAnalog);
         }

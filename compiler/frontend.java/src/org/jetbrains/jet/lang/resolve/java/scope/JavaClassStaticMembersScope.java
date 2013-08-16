@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -58,7 +57,10 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
         for (JavaClass nested : javaClass.getInnerClasses()) {
-            ContainerUtil.addIfNotNull(result, getNamespace(nested.getName()));
+            NamespaceDescriptor namespace = getNamespace(nested.getName());
+            if (namespace != null) {
+                result.add(namespace);
+            }
         }
         return result;
     }

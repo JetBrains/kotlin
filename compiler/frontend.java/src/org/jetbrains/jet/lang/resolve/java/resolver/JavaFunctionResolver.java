@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Sets;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -191,17 +189,23 @@ public final class JavaFunctionResolver {
     public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
         Name methodName = members.getName();
 
-        Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
+        Set<SimpleFunctionDescriptor> functionsFromCurrent = new HashSet<SimpleFunctionDescriptor>();
         for (JavaMethod method : members.getMethods()) {
             SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(method, owner, true);
             if (function != null) {
                 functionsFromCurrent.add(function);
-                ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
+                SimpleFunctionDescriptor samAdapter = resolveSamAdapter(function);
+                if (samAdapter != null) {
+                    functionsFromCurrent.add(samAdapter);
+                }
             }
         }
 
         if (owner instanceof NamespaceDescriptor) {
-            ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamConstructor((NamespaceDescriptor) owner, members));
+            SamConstructorDescriptor samConstructor = resolveSamConstructor((NamespaceDescriptor) owner, members);
+            if (samConstructor != null) {
+                functionsFromCurrent.add(samConstructor);
+            }
         }
 
         Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
@@ -318,7 +322,7 @@ public final class JavaFunctionResolver {
 
     @NotNull
     private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
-        Set<SimpleFunctionDescriptor> result = Sets.newLinkedHashSet();
+        Set<SimpleFunctionDescriptor> result = new LinkedHashSet<SimpleFunctionDescriptor>();
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(name)) {
                 result.add((SimpleFunctionDescriptor) function);
