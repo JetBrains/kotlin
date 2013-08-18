@@ -298,7 +298,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             val scope = descriptor.getMemberScope()
             addFunctions(pkg, scope)
             pkg.local = isLocal(descriptor)
-            pkg.useExternalLink = pkg.model.config.resolveLink(pkg.name, false).notEmpty()
+            pkg.useExternalLink = pkg.model.config.resolveLink(pkg.name, false).isNotEmpty()
 
             if (pkg.wikiDescription.isEmpty()) {
                 // lets try find a custom doc

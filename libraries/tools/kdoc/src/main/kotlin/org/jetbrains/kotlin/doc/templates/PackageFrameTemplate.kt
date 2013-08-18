@@ -103,7 +103,7 @@ ${stylesheets()}
     }
     protected fun printPackageProperties(): Unit {
         val list = pkg.packageProperties()
-        if (list.notEmpty()) {
+        if (list.isNotEmpty()) {
             println("""<TABLE BORDER="0" WIDTH="100%" SUMMARY="">
 <TR>
 <TD NOWRAP><FONT size="+1" CLASS="FrameHeadingFont">Properties</FONT>&nbsp;

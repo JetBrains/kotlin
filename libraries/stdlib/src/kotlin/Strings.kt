@@ -30,7 +30,7 @@ public inline fun String.trimTrailing(postfix: String): String {
 }
 
 /** Returns true if the string is not null and not empty */
-public inline fun String?.notEmpty() : Boolean = this != null && this.length() > 0
+public inline fun String?.isNotEmpty() : Boolean = this != null && this.length() > 0
 
 /**
 Iterator for characters of given CharSequence
