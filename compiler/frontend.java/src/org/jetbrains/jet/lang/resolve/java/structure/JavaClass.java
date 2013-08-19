@@ -31,7 +31,7 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.*;
 
-public class JavaClass extends JavaClassifier
+public class JavaClass extends JavaClassifierImpl
         implements JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
     public enum OriginKind {
         COMPILED,

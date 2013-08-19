@@ -28,7 +28,7 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.classifierTypes;
 
-public class JavaTypeParameter extends JavaClassifier implements JavaNamedElement {
+public class JavaTypeParameter extends JavaClassifierImpl implements JavaNamedElement {
     public JavaTypeParameter(@NotNull PsiTypeParameter psiTypeParameter) {
         super(psiTypeParameter);
     }

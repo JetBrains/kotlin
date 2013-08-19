@@ -17,10 +17,27 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
 
-public interface JavaClassifier extends JavaElement {
+public abstract class JavaClassifierImpl extends JavaElementImpl implements JavaClassifier {
+    protected JavaClassifierImpl(@NotNull PsiClass psiClass) {
+        super(psiClass);
+    }
+
     @NotNull
     @Override
-    PsiClass getPsi();
+    public PsiClass getPsi() {
+        return (PsiClass) super.getPsi();
+    }
+
+    @NotNull
+    /* package */ static JavaClassifier create(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof PsiTypeParameter) {
+            return new JavaTypeParameter((PsiTypeParameter) psiClass);
+        }
+        else {
+            return new JavaClass(psiClass);
+        }
+    }
 }

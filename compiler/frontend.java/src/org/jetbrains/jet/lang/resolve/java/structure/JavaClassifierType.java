@@ -69,7 +69,7 @@ public class JavaClassifierType extends JavaType {
             PsiClassType.ClassResolveResult result = getPsi().resolveGenerics();
             PsiClass psiClass = result.getElement();
             resolutionResult = new ResolutionResult(
-                    psiClass == null ? null : JavaClassifier.create(psiClass),
+                    psiClass == null ? null : JavaClassifierImpl.create(psiClass),
                     new JavaTypeSubstitutor(result.getSubstitutor())
             );
         }
