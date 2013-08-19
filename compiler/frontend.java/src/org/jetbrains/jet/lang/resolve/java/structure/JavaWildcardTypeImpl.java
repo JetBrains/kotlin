@@ -47,6 +47,6 @@ public class JavaWildcardTypeImpl extends JavaTypeImpl implements JavaWildcardTy
     @Override
     @NotNull
     public JavaTypeProvider getTypeProvider() {
-        return new JavaTypeProvider(getPsi().getManager());
+        return new JavaTypeProviderImpl(getPsi().getManager());
     }
 }

@@ -77,6 +77,6 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl implements JavaTyp
     @Override
     @NotNull
     public JavaTypeProvider getTypeProvider() {
-        return new JavaTypeProvider(getPsi().getManager());
+        return new JavaTypeProviderImpl(getPsi().getManager());
     }
 }

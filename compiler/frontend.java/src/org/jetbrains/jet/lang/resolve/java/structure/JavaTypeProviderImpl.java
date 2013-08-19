@@ -16,9 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
-public interface JavaTypeProvider {
+public class JavaTypeProviderImpl implements JavaTypeProvider {
+    private final PsiManager manager;
+
+    public JavaTypeProviderImpl(@NotNull PsiManager manager) {
+        this.manager = manager;
+    }
+
+    @Override
     @NotNull
-    JavaType createJavaLangObjectType();
+    public JavaType createJavaLangObjectType() {
+        return JavaTypeImpl.create(PsiType.getJavaLangObject(manager, GlobalSearchScope.allScope(manager.getProject())));
+    }
 }
