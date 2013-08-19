@@ -16,63 +16,26 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiAnnotationMethod;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.typeParameters;
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.valueParameters;
-
-public class JavaMethod extends JavaMemberImpl implements JavaTypeParameterListOwner {
-    public JavaMethod(@NotNull PsiMethod psiMethod) {
-        super(psiMethod);
-    }
-
+public interface JavaMethod extends JavaMember, JavaTypeParameterListOwner {
     @NotNull
     @Override
-    public PsiMethod getPsi() {
-        return (PsiMethod) super.getPsi();
-    }
+    PsiMethod getPsi();
 
     @NotNull
-    @Override
-    public Name getName() {
-        return Name.identifier(getPsi().getName());
-    }
+    Collection<JavaValueParameter> getValueParameters();
 
-    @NotNull
-    @Override
-    public Collection<JavaTypeParameter> getTypeParameters() {
-        return typeParameters(getPsi().getTypeParameters());
-    }
-
-    @NotNull
-    public Collection<JavaValueParameter> getValueParameters() {
-        return valueParameters(getPsi().getParameterList().getParameters());
-    }
-
-    public boolean hasAnnotationParameterDefaultValue() {
-        PsiMethod psiMethod = getPsi();
-        return psiMethod instanceof PsiAnnotationMethod && ((PsiAnnotationMethod) psiMethod).getDefaultValue() != null;
-    }
+    boolean hasAnnotationParameterDefaultValue();
 
     @Nullable
-    public JavaType getReturnType() {
-        PsiType psiType = getPsi().getReturnType();
-        return psiType == null ? null : JavaType.create(psiType);
-    }
+    JavaType getReturnType();
 
-    public boolean isVararg() {
-        return getPsi().isVarArgs();
-    }
+    boolean isVararg();
 
-    public boolean isConstructor() {
-        // TODO: class JavaConstructor extends JavaMethod
-        return getPsi().isConstructor();
-    }
+    boolean isConstructor();
 }

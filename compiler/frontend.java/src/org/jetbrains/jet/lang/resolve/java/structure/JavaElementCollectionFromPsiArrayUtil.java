@@ -54,7 +54,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (methods.length == 0) return Collections.emptyList();
         List<JavaMethod> result = new ArrayList<JavaMethod>(methods.length);
         for (PsiMethod psiMethod : methods) {
-            result.add(new JavaMethod(psiMethod));
+            result.add(new JavaMethodImpl(psiMethod));
         }
         return result;
     }

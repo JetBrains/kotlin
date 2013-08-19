@@ -59,7 +59,7 @@ public class JavaTypeParameter extends JavaClassifier implements JavaNamedElemen
         PsiTypeParameterListOwner owner = getPsi().getOwner();
         // TODO: a separate factory for such things
         if (owner instanceof PsiMethod) {
-            return new JavaMethod((PsiMethod) owner);
+            return new JavaMethodImpl((PsiMethod) owner);
         }
         else if (owner instanceof PsiClass) {
             return new JavaClass((PsiClass) owner);

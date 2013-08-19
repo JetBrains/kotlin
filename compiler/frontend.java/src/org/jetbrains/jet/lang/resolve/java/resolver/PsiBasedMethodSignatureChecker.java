@@ -245,7 +245,7 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
             }
 
             for (HierarchicalMethodSignature superSignature : method.getPsi().getHierarchicalMethodSignature().getSuperSignatures()) {
-                JavaMethod superMethod = new JavaMethod(superSignature.getMethod());
+                JavaMethod superMethod = new JavaMethodImpl(superSignature.getMethod());
                 if (superSignature.isRaw() || typeParameterIsErased(method, superMethod) || hasRawTypesInSignature(superMethod)) {
                     return true;
                 }
