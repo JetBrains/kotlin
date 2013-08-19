@@ -1471,9 +1471,44 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/dataFlow/local/kt2835.kt");
                 }
                 
-                @TestMetadata("LocalClass.kt")
-                public void testLocalClass() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClass.kt");
+                @TestMetadata("LocalClassBase.kt")
+                public void testLocalClassBase() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassBase.kt");
+                }
+                
+                @TestMetadata("LocalClassDefaultParameters.kt")
+                public void testLocalClassDefaultParameters() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassDefaultParameters.kt");
+                }
+                
+                @TestMetadata("LocalClassDelegatedProperties.kt")
+                public void testLocalClassDelegatedProperties() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassDelegatedProperties.kt");
+                }
+                
+                @TestMetadata("LocalClassDelegation.kt")
+                public void testLocalClassDelegation() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassDelegation.kt");
+                }
+                
+                @TestMetadata("LocalClassFunctions.kt")
+                public void testLocalClassFunctions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassFunctions.kt");
+                }
+                
+                @TestMetadata("LocalClassInMemberOfLocalClass.kt")
+                public void testLocalClassInMemberOfLocalClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassInMemberOfLocalClass.kt");
+                }
+                
+                @TestMetadata("LocalClassInitializer.kt")
+                public void testLocalClassInitializer() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassInitializer.kt");
+                }
+                
+                @TestMetadata("LocalClassProperty.kt")
+                public void testLocalClassProperty() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassProperty.kt");
                 }
                 
                 @TestMetadata("LocalObject.kt")
@@ -1486,9 +1521,9 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalObjectDelegation.kt");
                 }
                 
-                @TestMetadata("PropertyInLocalClass.kt")
-                public void testPropertyInLocalClass() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/PropertyInLocalClass.kt");
+                @TestMetadata("NestedLocalClass.kt")
+                public void testNestedLocalClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/NestedLocalClass.kt");
                 }
                 
             }
