@@ -109,7 +109,7 @@ public final class DescriptorResolverUtils {
         if (member instanceof JavaField && ((JavaField) member).isEnumEntry()) return true;
 
         if (!(member instanceof JavaMethod)) return false;
-        String signature = JavaSignatureFormatter.formatMethod((JavaMethod) member);
+        String signature = JavaSignatureFormatter.getInstance().formatMethod((JavaMethod) member);
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);
@@ -124,7 +124,7 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isObjectMethod(@NotNull JavaMethod method) {
-        String signature = JavaSignatureFormatter.formatMethod(method);
+        String signature = JavaSignatureFormatter.getInstance().formatMethod(method);
         return "hashCode()".equals(signature) ||
                "equals(java.lang.Object)".equals(signature) ||
                "toString()".equals(signature);

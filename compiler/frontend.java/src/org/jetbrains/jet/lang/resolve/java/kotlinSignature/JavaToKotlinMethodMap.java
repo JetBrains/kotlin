@@ -57,7 +57,7 @@ public class JavaToKotlinMethodMap {
 
         Set<ClassDescriptor> allSuperClasses = DescriptorUtils.getAllSuperClasses(containingClass);
 
-        String serializedMethod = JavaSignatureFormatter.formatMethod(javaMethod);
+        String serializedMethod = JavaSignatureFormatter.getInstance().formatMethod(javaMethod);
         for (ClassData classData : classDatas) {
             String expectedSerializedFunction = classData.method2Function.get(serializedMethod);
             if (expectedSerializedFunction == null) continue;

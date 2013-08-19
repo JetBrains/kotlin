@@ -86,7 +86,7 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
                       + "super class = " + superFunction.getContainingDeclaration() + "\n"
                       + "sub function = " + function + "\n"
                       + "sub class = " + function.getContainingDeclaration() + "\n"
-                      + "sub method = " + JavaSignatureFormatter.getExternalName(method) + "\n"
+                      + "sub method = " + JavaSignatureFormatter.getInstance().getExternalName(method) + "\n"
                       + "@KotlinSignature = " + SignaturesUtil.getKotlinSignature(annotationResolver, method));
         }
     }
