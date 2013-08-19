@@ -941,7 +941,8 @@ public class DescriptorResolver {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetScope scope,
             @NotNull JetProperty property,
-            BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
 
         JetModifierList modifierList = property.getModifierList();
@@ -994,7 +995,7 @@ public class DescriptorResolver {
         JetScope propertyScope = getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
                                                                   NO_RECEIVER_PARAMETER, trace);
 
-        JetType type = getVariableType(propertyDescriptor, propertyScope, property, DataFlowInfo.EMPTY, true, trace);
+        JetType type = getVariableType(propertyDescriptor, propertyScope, property, dataFlowInfo, true, trace);
 
         propertyDescriptor.setType(type, typeParameterDescriptors, getExpectedThisObjectIfNeeded(containingDeclaration),
                                    receiverDescriptor);
@@ -1031,7 +1032,7 @@ public class DescriptorResolver {
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
             boolean notLocal,
-            final BindingTrace trace
+            @NotNull final BindingTrace trace
     ) {
         JetTypeReference propertyTypeRef = variable.getTypeRef();
 

@@ -1486,6 +1486,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalObjectDelegation.kt");
                 }
                 
+                @TestMetadata("PropertyInLocalClass.kt")
+                public void testPropertyInLocalClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/PropertyInLocalClass.kt");
+                }
+                
             }
             
             public static Test innerSuite() {

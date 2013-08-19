@@ -204,7 +204,12 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitProperty(JetProperty property) {
-                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(namespaceLike.getOwnerForChildren(), scopeForPropertyInitializers, property, trace);
+                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
+                            namespaceLike.getOwnerForChildren(),
+                            scopeForPropertyInitializers,
+                            property,
+                            trace,
+                            context.getOuterDataFlowInfo());
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
                     context.registerDeclaringScope(property, scopeForPropertyInitializers);

@@ -186,9 +186,13 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         for (JetProperty propertyDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration);
             PropertyDescriptor propertyDescriptor =
-                    resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(thisDescriptor, resolutionScope,
-                                                                                                   propertyDeclaration,
-                                                                                                   resolveSession.getTrace());
+                    resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(
+                           thisDescriptor, resolutionScope,
+                           propertyDeclaration,
+                           resolveSession.getTrace(),
+                           // this relies on the assumption that a lazily resolved declaration is not a local one,
+                           // thus doesn't have a surrounding data flow
+                           DataFlowInfo.EMPTY);
             result.add(propertyDescriptor);
             resolveSession.getInjector().getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, resolveSession.getTrace(), resolutionScope);
         }
