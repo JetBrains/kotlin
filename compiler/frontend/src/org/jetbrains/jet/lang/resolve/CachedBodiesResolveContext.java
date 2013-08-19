@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -43,6 +44,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Function<JetDeclaration, JetScope> declaringScopes;
     private final Map<JetScript, ScriptDescriptor> scripts;
     private final Map<JetScript, WritableScope> scriptScopes;
+    private final DataFlowInfo outerDataFlowInfo;
 
     private @NotNull TopDownAnalysisParameters topDownAnalysisParameters;
 
@@ -55,6 +57,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
         declaringScopes = context.getDeclaringScopes();
         scripts = Collections.unmodifiableMap(context.getScripts());
         scriptScopes = Collections.unmodifiableMap(context.getScriptScopes());
+        outerDataFlowInfo = context.getOuterDataFlowInfo();
 
         topDownAnalysisParameters = context.getTopDownAnalysisParameters();
     }
@@ -97,6 +100,11 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     @Override
     public Map<JetScript, WritableScope> getScriptScopes() {
         return scriptScopes;
+    }
+
+    @Override
+    public DataFlowInfo getOuterDataFlowInfo() {
+        return outerDataFlowInfo;
     }
 
     @Override

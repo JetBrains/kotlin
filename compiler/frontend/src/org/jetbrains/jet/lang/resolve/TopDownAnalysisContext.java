@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TopDownAnalysisContext implements BodiesResolveContext {
+
+    private DataFlowInfo outerDataFlowInfo = DataFlowInfo.EMPTY;
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
@@ -178,5 +181,14 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     public void setClassesTopologicalOrder(@NotNull List<MutableClassDescriptorLite> classesTopologicalOrder) {
         this.classesTopologicalOrder = classesTopologicalOrder;
+    }
+
+    @NotNull
+    public DataFlowInfo getOuterDataFlowInfo() {
+        return outerDataFlowInfo;
+    }
+
+    public void setOuterDataFlowInfo(@NotNull DataFlowInfo outerDataFlowInfo) {
+        this.outerDataFlowInfo = outerDataFlowInfo;
     }
 }

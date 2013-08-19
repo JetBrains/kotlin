@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
@@ -181,9 +182,7 @@ public class TopDownAnalyzer {
     }
 
     public static void processClassOrObject(
-            @NotNull Project project,
-            @NotNull BindingTrace trace,
-            @NotNull JetScope outerScope,
+            @NotNull ExpressionTypingContext context,
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
     ) {
@@ -197,9 +196,11 @@ public class TopDownAnalyzer {
                 false, true, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(trace), moduleDescriptor);
+                object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace), moduleDescriptor);
 
-        injector.getTopDownAnalyzer().doProcess(outerScope, new NamespaceLikeBuilder() {
+        injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
+
+        injector.getTopDownAnalyzer().doProcess(context.scope, new NamespaceLikeBuilder() {
 
             @NotNull
             @Override

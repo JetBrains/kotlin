@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -37,6 +38,7 @@ public interface BodiesResolveContext {
     Function<JetDeclaration, JetScope> getDeclaringScopes();
     Map<JetScript, ScriptDescriptor> getScripts();
     Map<JetScript, WritableScope> getScriptScopes();
+    DataFlowInfo getOuterDataFlowInfo();
 
     void setTopDownAnalysisParameters(TopDownAnalysisParameters parameters);
 

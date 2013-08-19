@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -436,6 +437,11 @@ public class ResolveElementCache {
         @Override
         public Map<JetScript, WritableScope> getScriptScopes() {
             return Collections.emptyMap();
+        }
+
+        @Override
+        public DataFlowInfo getOuterDataFlowInfo() {
+            return DataFlowInfo.EMPTY;
         }
 
         @Override
