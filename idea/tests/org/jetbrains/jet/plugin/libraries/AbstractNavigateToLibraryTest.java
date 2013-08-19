@@ -117,26 +117,4 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
             }
         });
     }
-
-    @NotNull
-    protected VirtualFile copyFileToSrcDir(@NotNull String path) {
-        VirtualFile originalFile = LocalFileSystem.getInstance().findFileByPath(path);
-        assertNotNull(originalFile);
-
-        VirtualFile srcDir = getProject().getBaseDir().findChild(SRC_DIR_NAME);
-        assertNotNull(srcDir);
-        try {
-            VfsUtilCore.copyFile(null, originalFile, srcDir);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        ((NewVirtualFile)srcDir).markDirtyRecursively();
-        srcDir.refresh(false, true);
-
-        VirtualFile result = srcDir.findChild(originalFile.getName());
-        assertNotNull(result);
-        return result;
-    }
 }

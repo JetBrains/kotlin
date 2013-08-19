@@ -21,15 +21,20 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -195,5 +200,28 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     @Override
     protected boolean isWithSources() {
         return true;
+    }
+
+
+    @NotNull
+    private VirtualFile copyFileToSrcDir(@NotNull String path) {
+        VirtualFile originalFile = LocalFileSystem.getInstance().findFileByPath(path);
+        assertNotNull(originalFile);
+
+        VirtualFile srcDir = getProject().getBaseDir().findChild(SRC_DIR_NAME);
+        assertNotNull(srcDir);
+        try {
+            VfsUtilCore.copyFile(null, originalFile, srcDir);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        ((NewVirtualFile)srcDir).markDirtyRecursively();
+        srcDir.refresh(false, true);
+
+        VirtualFile result = srcDir.findChild(originalFile.getName());
+        assertNotNull(result);
+        return result;
     }
 }
