@@ -320,8 +320,7 @@ public class DescriptorResolver {
                         DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                             @Override
                             protected JetType compute() {
-                                //JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
-                                JetType type = expressionTypingServices.inferFunctionReturnType(scope, function, functionDescriptor, trace);
+                                JetType type = expressionTypingServices.getBodyExpressionType(trace, scope, function, functionDescriptor);
                                 return transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
                             }
                         });
