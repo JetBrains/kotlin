@@ -64,7 +64,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (fields.length == 0) return Collections.emptyList();
         List<JavaField> result = new ArrayList<JavaField>(fields.length);
         for (PsiField psiField : fields) {
-            result.add(new JavaField(psiField));
+            result.add(new JavaFieldImpl(psiField));
         }
         return result;
     }

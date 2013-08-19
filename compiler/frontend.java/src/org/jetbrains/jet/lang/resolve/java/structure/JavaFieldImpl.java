@@ -16,16 +16,29 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
 import org.jetbrains.annotations.NotNull;
 
-public interface JavaField extends JavaMember {
+public class JavaFieldImpl extends JavaMemberImpl implements JavaField {
+    public JavaFieldImpl(@NotNull PsiField psiField) {
+        super(psiField);
+    }
+
     @NotNull
     @Override
-    PsiField getPsi();
+    public PsiField getPsi() {
+        return (PsiField) super.getPsi();
+    }
 
-    boolean isEnumEntry();
+    @Override
+    public boolean isEnumEntry() {
+        return getPsi() instanceof PsiEnumConstant;
+    }
 
+    @Override
     @NotNull
-    JavaType getType();
+    public JavaType getType() {
+        return JavaType.create(getPsi().getType());
+    }
 }

@@ -40,7 +40,7 @@ public class JavaReferenceAnnotationArgument extends JavaAnnotationArgument {
         PsiReferenceExpression expression = getPsi();
         PsiElement element = expression.resolve();
         if (element instanceof PsiEnumConstant) {
-            return new JavaField((PsiField) element);
+            return new JavaFieldImpl((PsiField) element);
         }
         // TODO: other types of references
         return null;
