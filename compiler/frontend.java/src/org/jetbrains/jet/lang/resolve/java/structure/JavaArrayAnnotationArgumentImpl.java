@@ -18,14 +18,27 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiArrayInitializerMemberValue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-public interface JavaArrayAnnotationArgument extends JavaAnnotationArgument {
-    @NotNull
-    @Override
-    PsiArrayInitializerMemberValue getPsi();
+import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.namelessAnnotationArguments;
+
+public class JavaArrayAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaArrayAnnotationArgument {
+    protected JavaArrayAnnotationArgumentImpl(@NotNull PsiArrayInitializerMemberValue psiArrayInitializerMemberValue, @Nullable Name name) {
+        super(psiArrayInitializerMemberValue, name);
+    }
 
     @NotNull
-    Collection<JavaAnnotationArgument> getElements();
+    @Override
+    public PsiArrayInitializerMemberValue getPsi() {
+        return (PsiArrayInitializerMemberValue) super.getPsi();
+    }
+
+    @Override
+    @NotNull
+    public Collection<JavaAnnotationArgument> getElements() {
+        return namelessAnnotationArguments(getPsi().getInitializers());
+    }
 }

@@ -16,33 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaReferenceAnnotationArgument extends JavaAnnotationArgumentImpl {
-    protected JavaReferenceAnnotationArgument(@NotNull PsiReferenceExpression psiReferenceExpression, @Nullable Name name) {
-        super(psiReferenceExpression, name);
-    }
-
+public interface JavaReferenceAnnotationArgument extends JavaAnnotationArgument {
     @NotNull
     @Override
-    public PsiReferenceExpression getPsi() {
-        return (PsiReferenceExpression) super.getPsi();
-    }
+    PsiReferenceExpression getPsi();
 
     @Nullable
-    public JavaElement resolve() {
-        PsiReferenceExpression expression = getPsi();
-        PsiElement element = expression.resolve();
-        if (element instanceof PsiEnumConstant) {
-            return new JavaFieldImpl((PsiField) element);
-        }
-        // TODO: other types of references
-        return null;
-    }
+    JavaElement resolve();
 }

@@ -38,16 +38,16 @@ public abstract class JavaAnnotationArgumentImpl extends JavaElementImpl impleme
     @NotNull
     /* package */ static JavaAnnotationArgument create(@NotNull PsiAnnotationMemberValue argument, @Nullable Name name) {
         if (argument instanceof PsiLiteralExpression) {
-            return new JavaLiteralAnnotationArgument((PsiLiteralExpression) argument, name);
+            return new JavaLiteralAnnotationArgumentImpl((PsiLiteralExpression) argument, name);
         }
         else if (argument instanceof PsiReferenceExpression) {
-            return new JavaReferenceAnnotationArgument((PsiReferenceExpression) argument, name);
+            return new JavaReferenceAnnotationArgumentImpl((PsiReferenceExpression) argument, name);
         }
         else if (argument instanceof PsiArrayInitializerMemberValue) {
-            return new JavaArrayAnnotationArgument((PsiArrayInitializerMemberValue) argument, name);
+            return new JavaArrayAnnotationArgumentImpl((PsiArrayInitializerMemberValue) argument, name);
         }
         else if (argument instanceof PsiAnnotation) {
-            return new JavaAnnotationAsAnnotationArgument((PsiAnnotation) argument, name);
+            return new JavaAnnotationAsAnnotationArgumentImpl((PsiAnnotation) argument, name);
         }
         else {
             throw new UnsupportedOperationException("Unsupported annotation argument type: " + argument);

@@ -16,14 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-public interface JavaAnnotationAsAnnotationArgument extends JavaAnnotationArgument {
+public class JavaLiteralAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaLiteralAnnotationArgument {
+    protected JavaLiteralAnnotationArgumentImpl(@NotNull PsiLiteralExpression psiLiteralExpression, @Nullable Name name) {
+        super(psiLiteralExpression, name);
+    }
+
     @NotNull
     @Override
-    PsiAnnotation getPsi();
+    public PsiLiteralExpression getPsi() {
+        return (PsiLiteralExpression) super.getPsi();
+    }
 
-    @NotNull
-    JavaAnnotation getAnnotation();
+    @Override
+    @Nullable
+    public Object getValue() {
+        return getPsi().getValue();
+    }
 }

@@ -18,12 +18,23 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-public interface JavaAnnotationAsAnnotationArgument extends JavaAnnotationArgument {
+public class JavaAnnotationAsAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaAnnotationAsAnnotationArgument {
+    protected JavaAnnotationAsAnnotationArgumentImpl(@NotNull PsiAnnotation psiAnnotation, @Nullable Name name) {
+        super(psiAnnotation, name);
+    }
+
     @NotNull
     @Override
-    PsiAnnotation getPsi();
+    public PsiAnnotation getPsi() {
+        return (PsiAnnotation) super.getPsi();
+    }
 
+    @Override
     @NotNull
-    JavaAnnotation getAnnotation();
+    public JavaAnnotation getAnnotation() {
+        return new JavaAnnotationImpl(getPsi());
+    }
 }
