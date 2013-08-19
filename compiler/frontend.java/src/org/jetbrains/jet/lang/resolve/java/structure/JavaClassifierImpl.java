@@ -34,7 +34,7 @@ public abstract class JavaClassifierImpl extends JavaElementImpl implements Java
     @NotNull
     /* package */ static JavaClassifier create(@NotNull PsiClass psiClass) {
         if (psiClass instanceof PsiTypeParameter) {
-            return new JavaTypeParameter((PsiTypeParameter) psiClass);
+            return new JavaTypeParameterImpl((PsiTypeParameter) psiClass);
         }
         else {
             return new JavaClass(psiClass);

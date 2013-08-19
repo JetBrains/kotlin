@@ -75,7 +75,7 @@ public class JavaTypeSubstitutor {
             substitutionMap = new HashMap<JavaTypeParameter, JavaType>();
             for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
                 PsiType value = entry.getValue();
-                substitutionMap.put(new JavaTypeParameter(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
+                substitutionMap.put(new JavaTypeParameterImpl(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
             }
         }
 

@@ -84,7 +84,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (typeParameters.length == 0) return Collections.emptyList();
         List<JavaTypeParameter> result = new ArrayList<JavaTypeParameter>(typeParameters.length);
         for (PsiTypeParameter psiTypeParameter : typeParameters) {
-            result.add(new JavaTypeParameter(psiTypeParameter));
+            result.add(new JavaTypeParameterImpl(psiTypeParameter));
         }
         return result;
     }
