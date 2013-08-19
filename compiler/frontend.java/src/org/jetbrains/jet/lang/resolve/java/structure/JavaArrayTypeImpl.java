@@ -16,14 +16,23 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiPrimitiveType;
+import com.intellij.psi.PsiArrayType;
 import org.jetbrains.annotations.NotNull;
 
-public interface JavaPrimitiveType extends JavaType {
-    @NotNull
-    @Override
-    PsiPrimitiveType getPsi();
+public class JavaArrayTypeImpl extends JavaTypeImpl implements JavaArrayType {
+    public JavaArrayTypeImpl(@NotNull PsiArrayType psiArrayType) {
+        super(psiArrayType);
+    }
 
     @NotNull
-    String getCanonicalText();
+    @Override
+    public PsiArrayType getPsi() {
+        return (PsiArrayType) super.getPsi();
+    }
+
+    @Override
+    @NotNull
+    public JavaType getComponentType() {
+        return JavaTypeImpl.create(getPsi().getComponentType());
+    }
 }

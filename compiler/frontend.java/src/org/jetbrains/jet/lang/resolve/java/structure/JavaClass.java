@@ -171,7 +171,7 @@ public class JavaClass extends JavaClassifierImpl
 
     @NotNull
     public JavaClassifierType getDefaultType() {
-        return new JavaClassifierType(JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi()));
+        return new JavaClassifierTypeImpl(JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi()));
     }
 
     @NotNull

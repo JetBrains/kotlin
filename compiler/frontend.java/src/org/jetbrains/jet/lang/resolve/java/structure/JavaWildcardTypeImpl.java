@@ -16,20 +16,37 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiWildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface JavaWildcardType extends JavaType {
+public class JavaWildcardTypeImpl extends JavaTypeImpl implements JavaWildcardType {
+    public JavaWildcardTypeImpl(@NotNull PsiWildcardType psiWildcardType) {
+        super(psiWildcardType);
+    }
+
     @NotNull
     @Override
-    PsiWildcardType getPsi();
+    public PsiWildcardType getPsi() {
+        return (PsiWildcardType) super.getPsi();
+    }
 
+    @Override
     @Nullable
-    JavaType getBound();
+    public JavaType getBound() {
+        PsiType bound = getPsi().getBound();
+        return bound == null ? null : JavaTypeImpl.create(bound);
+    }
 
-    boolean isExtends();
+    @Override
+    public boolean isExtends() {
+        return getPsi().isExtends();
+    }
 
+    @Override
     @NotNull
-    JavaTypeProvider getTypeProvider();
+    public JavaTypeProvider getTypeProvider() {
+        return new JavaTypeProvider(getPsi().getManager());
+    }
 }

@@ -104,7 +104,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (classTypes.length == 0) return Collections.emptyList();
         List<JavaClassifierType> result = new ArrayList<JavaClassifierType>(classTypes.length);
         for (PsiClassType psiClassType : classTypes) {
-            result.add(new JavaClassifierType(psiClassType));
+            result.add(new JavaClassifierTypeImpl(psiClassType));
         }
         return result;
     }

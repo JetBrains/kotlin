@@ -16,90 +16,31 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.types;
-
-public class JavaClassifierType extends JavaTypeImpl {
-    private static class ResolutionResult {
-        private final JavaClassifier classifier;
-        private final JavaTypeSubstitutor substitutor;
-
-        private ResolutionResult(@Nullable JavaClassifier classifier, @NotNull JavaTypeSubstitutor substitutor) {
-            this.classifier = classifier;
-            this.substitutor = substitutor;
-        }
-    }
-
-    private ResolutionResult resolutionResult;
-
-    public JavaClassifierType(@NotNull PsiClassType psiClassType) {
-        super(psiClassType);
-    }
-
+public interface JavaClassifierType extends JavaType {
     @NotNull
     @Override
-    public PsiClassType getPsi() {
-        return (PsiClassType) super.getPsi();
-    }
+    PsiClassType getPsi();
 
     @Nullable
-    public JavaClassifier getClassifier() {
-        resolve();
-        return resolutionResult.classifier;
-    }
+    JavaClassifier getClassifier();
 
     @NotNull
-    public JavaTypeSubstitutor getSubstitutor() {
-        resolve();
-        return resolutionResult.substitutor;
-    }
-
-    private void resolve() {
-        if (resolutionResult == null) {
-            PsiClassType.ClassResolveResult result = getPsi().resolveGenerics();
-            PsiClass psiClass = result.getElement();
-            resolutionResult = new ResolutionResult(
-                    psiClass == null ? null : JavaClassifierImpl.create(psiClass),
-                    new JavaTypeSubstitutor(result.getSubstitutor())
-            );
-        }
-    }
+    JavaTypeSubstitutor getSubstitutor();
 
     @NotNull
-    public Collection<JavaClassifierType> getSupertypes() {
-        PsiType[] psiTypes = getPsi().getSuperTypes();
-        if (psiTypes.length == 0) return Collections.emptyList();
-        List<JavaClassifierType> result = new ArrayList<JavaClassifierType>(psiTypes.length);
-        for (PsiType psiType : psiTypes) {
-            if (!(psiType instanceof PsiClassType)) {
-                throw new IllegalStateException("Supertype should be a class: " + psiType + ", type: " + getPsi());
-            }
-            result.add(new JavaClassifierType((PsiClassType) psiType));
-        }
-        return result;
-    }
+    Collection<JavaClassifierType> getSupertypes();
 
     @NotNull
-    public String getPresentableText() {
-        return getPsi().getPresentableText();
-    }
+    String getPresentableText();
 
-    public boolean isRaw() {
-        return getPsi().isRaw();
-    }
+    boolean isRaw();
 
     @NotNull
-    public Collection<JavaType> getTypeArguments() {
-        return types(getPsi().getParameters());
-    }
+    Collection<JavaType> getTypeArguments();
 }

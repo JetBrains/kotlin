@@ -19,19 +19,11 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import com.intellij.psi.PsiArrayType;
 import org.jetbrains.annotations.NotNull;
 
-public class JavaArrayType extends JavaTypeImpl {
-    public JavaArrayType(@NotNull PsiArrayType psiArrayType) {
-        super(psiArrayType);
-    }
-
+public interface JavaArrayType extends JavaType {
     @NotNull
     @Override
-    public PsiArrayType getPsi() {
-        return (PsiArrayType) super.getPsi();
-    }
+    PsiArrayType getPsi();
 
     @NotNull
-    public JavaType getComponentType() {
-        return JavaTypeImpl.create(getPsi().getComponentType());
-    }
+    JavaType getComponentType();
 }

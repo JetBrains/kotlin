@@ -22,6 +22,6 @@ public class JavaElementFactoryImpl extends JavaElementFactory {
     @NotNull
     @Override
     public JavaArrayType createArrayType(@NotNull JavaType elementType) {
-        return new JavaArrayType(elementType.getPsi().createArrayType());
+        return new JavaArrayTypeImpl(elementType.getPsi().createArrayType());
     }
 }

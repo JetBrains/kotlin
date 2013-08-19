@@ -45,25 +45,25 @@ public abstract class JavaTypeImpl implements JavaType {
             @Nullable
             @Override
             public JavaType visitPrimitiveType(PsiPrimitiveType primitiveType) {
-                return new JavaPrimitiveType(primitiveType);
+                return new JavaPrimitiveTypeImpl(primitiveType);
             }
 
             @Nullable
             @Override
             public JavaType visitArrayType(PsiArrayType arrayType) {
-                return new JavaArrayType(arrayType);
+                return new JavaArrayTypeImpl(arrayType);
             }
 
             @Nullable
             @Override
             public JavaType visitClassType(PsiClassType classType) {
-                return new JavaClassifierType(classType);
+                return new JavaClassifierTypeImpl(classType);
             }
 
             @Nullable
             @Override
             public JavaType visitWildcardType(PsiWildcardType wildcardType) {
-                return new JavaWildcardType(wildcardType);
+                return new JavaWildcardTypeImpl(wildcardType);
             }
         });
     }
