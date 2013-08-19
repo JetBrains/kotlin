@@ -16,46 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotationMemberValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public abstract class JavaAnnotationArgument extends JavaElementImpl {
-    private final Name name;
-
-    protected JavaAnnotationArgument(@NotNull PsiAnnotationMemberValue psiAnnotationMemberValue, @Nullable Name name) {
-        super(psiAnnotationMemberValue);
-        this.name = name;
-    }
-
+public interface JavaAnnotationArgument extends JavaElement {
     @NotNull
     @Override
-    public PsiAnnotationMemberValue getPsi() {
-        return (PsiAnnotationMemberValue) super.getPsi();
-    }
-
-    @NotNull
-    public static JavaAnnotationArgument create(@NotNull PsiAnnotationMemberValue argument, @Nullable Name name) {
-        if (argument instanceof PsiLiteralExpression) {
-            return new JavaLiteralAnnotationArgument((PsiLiteralExpression) argument, name);
-        }
-        else if (argument instanceof PsiReferenceExpression) {
-            return new JavaReferenceAnnotationArgument((PsiReferenceExpression) argument, name);
-        }
-        else if (argument instanceof PsiArrayInitializerMemberValue) {
-            return new JavaArrayAnnotationArgument((PsiArrayInitializerMemberValue) argument, name);
-        }
-        else if (argument instanceof PsiAnnotation) {
-            return new JavaAnnotationAsAnnotationArgument((PsiAnnotation) argument, name);
-        }
-        else {
-            throw new UnsupportedOperationException("Unsupported annotation argument type: " + argument);
-        }
-    }
+    PsiAnnotationMemberValue getPsi();
 
     @Nullable
-    public Name getName() {
-        return name;
-    }
+    Name getName();
 }

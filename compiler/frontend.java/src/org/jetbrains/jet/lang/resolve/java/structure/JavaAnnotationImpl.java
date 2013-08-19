@@ -42,7 +42,7 @@ public class JavaAnnotationImpl extends JavaElementImpl implements JavaAnnotatio
     @Nullable
     public JavaAnnotationArgument findArgument(@NotNull Name name) {
         PsiAnnotationMemberValue attribute = getPsi().findAttributeValue(name.asString());
-        return attribute == null ? null : JavaAnnotationArgument.create(attribute, name);
+        return attribute == null ? null : JavaAnnotationArgumentImpl.create(attribute, name);
     }
 
     @Override

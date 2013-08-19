@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaLiteralAnnotationArgument extends JavaAnnotationArgument {
+public class JavaLiteralAnnotationArgument extends JavaAnnotationArgumentImpl {
     protected JavaLiteralAnnotationArgument(@NotNull PsiLiteralExpression psiLiteralExpression, @Nullable Name name) {
         super(psiLiteralExpression, name);
     }

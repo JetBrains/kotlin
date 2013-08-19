@@ -25,7 +25,7 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.namelessAnnotationArguments;
 
-public class JavaArrayAnnotationArgument extends JavaAnnotationArgument {
+public class JavaArrayAnnotationArgument extends JavaAnnotationArgumentImpl {
     protected JavaArrayAnnotationArgument(@NotNull PsiArrayInitializerMemberValue psiArrayInitializerMemberValue, @Nullable Name name) {
         super(psiArrayInitializerMemberValue, name);
     }

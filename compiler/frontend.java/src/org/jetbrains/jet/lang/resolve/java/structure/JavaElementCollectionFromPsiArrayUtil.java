@@ -124,7 +124,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (memberValues.length == 0) return Collections.emptyList();
         List<JavaAnnotationArgument> result = new ArrayList<JavaAnnotationArgument>(memberValues.length);
         for (PsiAnnotationMemberValue psiAnnotationMemberValue : memberValues) {
-            result.add(JavaAnnotationArgument.create(psiAnnotationMemberValue, null));
+            result.add(JavaAnnotationArgumentImpl.create(psiAnnotationMemberValue, null));
         }
         return result;
     }
@@ -137,7 +137,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
             String name = pair.getName();
             PsiAnnotationMemberValue value = pair.getValue();
             assert value != null : "Annotation argument value cannot be null: " + name;
-            result.add(JavaAnnotationArgument.create(value, name == null ? null : Name.identifier(name)));
+            result.add(JavaAnnotationArgumentImpl.create(value, name == null ? null : Name.identifier(name)));
         }
         return result;
     }

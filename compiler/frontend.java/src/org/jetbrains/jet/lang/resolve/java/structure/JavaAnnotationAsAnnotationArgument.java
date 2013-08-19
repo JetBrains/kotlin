@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaAnnotationAsAnnotationArgument extends JavaAnnotationArgument {
+public class JavaAnnotationAsAnnotationArgument extends JavaAnnotationArgumentImpl {
     protected JavaAnnotationAsAnnotationArgument(@NotNull PsiAnnotation psiAnnotation, @Nullable Name name) {
         super(psiAnnotation, name);
     }

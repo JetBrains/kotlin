@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaReferenceAnnotationArgument extends JavaAnnotationArgument {
+public class JavaReferenceAnnotationArgument extends JavaAnnotationArgumentImpl {
     protected JavaReferenceAnnotationArgument(@NotNull PsiReferenceExpression psiReferenceExpression, @Nullable Name name) {
         super(psiReferenceExpression, name);
     }
