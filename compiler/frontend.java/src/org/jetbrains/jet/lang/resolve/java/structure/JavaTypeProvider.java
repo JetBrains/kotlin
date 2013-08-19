@@ -30,6 +30,6 @@ public class JavaTypeProvider {
 
     @NotNull
     public JavaType createJavaLangObjectType() {
-        return JavaType.create(PsiType.getJavaLangObject(manager, GlobalSearchScope.allScope(manager.getProject())));
+        return JavaTypeImpl.create(PsiType.getJavaLangObject(manager, GlobalSearchScope.allScope(manager.getProject())));
     }
 }

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import com.intellij.psi.PsiPrimitiveType;
 import org.jetbrains.annotations.NotNull;
 
-public class JavaPrimitiveType extends JavaType {
+public class JavaPrimitiveType extends JavaTypeImpl {
     public JavaPrimitiveType(@NotNull PsiPrimitiveType psiPrimitiveType) {
         super(psiPrimitiveType);
     }

@@ -16,69 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class JavaType {
-    private final PsiType psiType;
-
-    public JavaType(@NotNull PsiType psiType) {
-        this.psiType = psiType;
-    }
-
+public interface JavaType {
     @NotNull
-    public PsiType getPsi() {
-        return psiType;
-    }
-
-    @NotNull
-    public static JavaType create(@NotNull PsiType psiType) {
-        return psiType.accept(new PsiTypeVisitor<JavaType>() {
-            @Nullable
-            @Override
-            public JavaType visitType(PsiType type) {
-                throw new UnsupportedOperationException("Unsupported PsiType: " + type);
-            }
-
-            @Nullable
-            @Override
-            public JavaType visitPrimitiveType(PsiPrimitiveType primitiveType) {
-                return new JavaPrimitiveType(primitiveType);
-            }
-
-            @Nullable
-            @Override
-            public JavaType visitArrayType(PsiArrayType arrayType) {
-                return new JavaArrayType(arrayType);
-            }
-
-            @Nullable
-            @Override
-            public JavaType visitClassType(PsiClassType classType) {
-                return new JavaClassifierType(classType);
-            }
-
-            @Nullable
-            @Override
-            public JavaType visitWildcardType(PsiWildcardType wildcardType) {
-                return new JavaWildcardType(wildcardType);
-            }
-        });
-    }
-
-    @Override
-    public int hashCode() {
-        return getPsi().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof JavaType && getPsi().equals(((JavaType) obj).getPsi());
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ": " + getPsi();
-    }
+    PsiType getPsi();
 }

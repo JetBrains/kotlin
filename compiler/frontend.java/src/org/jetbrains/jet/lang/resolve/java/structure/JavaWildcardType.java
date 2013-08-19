@@ -21,7 +21,7 @@ import com.intellij.psi.PsiWildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JavaWildcardType extends JavaType {
+public class JavaWildcardType extends JavaTypeImpl {
     public JavaWildcardType(@NotNull PsiWildcardType psiWildcardType) {
         super(psiWildcardType);
     }
@@ -35,7 +35,7 @@ public class JavaWildcardType extends JavaType {
     @Nullable
     public JavaType getBound() {
         PsiType bound = getPsi().getBound();
-        return bound == null ? null : JavaType.create(bound);
+        return bound == null ? null : JavaTypeImpl.create(bound);
     }
 
     public boolean isExtends() {

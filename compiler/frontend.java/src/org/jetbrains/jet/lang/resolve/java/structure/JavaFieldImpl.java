@@ -39,6 +39,6 @@ public class JavaFieldImpl extends JavaMemberImpl implements JavaField {
     @Override
     @NotNull
     public JavaType getType() {
-        return JavaType.create(getPsi().getType());
+        return JavaTypeImpl.create(getPsi().getType());
     }
 }

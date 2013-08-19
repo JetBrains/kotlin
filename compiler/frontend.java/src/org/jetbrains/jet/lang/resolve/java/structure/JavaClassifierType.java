@@ -29,7 +29,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.types;
 
-public class JavaClassifierType extends JavaType {
+public class JavaClassifierType extends JavaTypeImpl {
     private static class ResolutionResult {
         private final JavaClassifier classifier;
         private final JavaTypeSubstitutor substitutor;

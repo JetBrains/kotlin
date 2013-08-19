@@ -94,7 +94,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (types.length == 0) return Collections.emptyList();
         List<JavaType> result = new ArrayList<JavaType>(types.length);
         for (PsiType psiType : types) {
-            result.add(JavaType.create(psiType));
+            result.add(JavaTypeImpl.create(psiType));
         }
         return result;
     }

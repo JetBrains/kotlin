@@ -59,13 +59,13 @@ public class JavaTypeSubstitutor {
 
     @NotNull
     public JavaType substitute(@NotNull JavaType type) {
-        return JavaType.create(getPsi().substitute(type.getPsi()));
+        return JavaTypeImpl.create(getPsi().substitute(type.getPsi()));
     }
 
     @Nullable
     public JavaType substitute(@NotNull JavaTypeParameter typeParameter) {
         PsiType psiType = getPsi().substitute(typeParameter.getPsi());
-        return psiType == null ? null : JavaType.create(psiType);
+        return psiType == null ? null : JavaTypeImpl.create(psiType);
     }
 
     @NotNull
@@ -75,7 +75,7 @@ public class JavaTypeSubstitutor {
             substitutionMap = new HashMap<JavaTypeParameter, JavaType>();
             for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
                 PsiType value = entry.getValue();
-                substitutionMap.put(new JavaTypeParameter(entry.getKey()), value == null ? null : JavaType.create(value));
+                substitutionMap.put(new JavaTypeParameter(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
             }
         }
 
