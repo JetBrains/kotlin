@@ -75,7 +75,7 @@ import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectio
         PsiModifierList modifierList = owner.getPsi().getModifierList();
         if (modifierList != null) {
             PsiAnnotation psiAnnotation = modifierList.findAnnotation(fqName.asString());
-            return psiAnnotation == null ? null : new JavaAnnotation(psiAnnotation);
+            return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
         }
         return null;
     }

@@ -114,7 +114,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (annotations.length == 0) return Collections.emptyList();
         List<JavaAnnotation> result = new ArrayList<JavaAnnotation>(annotations.length);
         for (PsiAnnotation psiAnnotation : annotations) {
-            result.add(new JavaAnnotation(psiAnnotation));
+            result.add(new JavaAnnotationImpl(psiAnnotation));
         }
         return result;
     }

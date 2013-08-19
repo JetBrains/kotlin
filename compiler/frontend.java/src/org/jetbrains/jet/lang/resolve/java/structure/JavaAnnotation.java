@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -25,33 +24,17 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.namedAnnotationArguments;
-
-public class JavaAnnotation extends JavaElementImpl {
-    public JavaAnnotation(@NotNull PsiAnnotation psiAnnotation) {
-        super(psiAnnotation);
-    }
-
+public interface JavaAnnotation extends JavaElement {
     @NotNull
     @Override
-    public PsiAnnotation getPsi() {
-        return (PsiAnnotation) super.getPsi();
-    }
+    PsiAnnotation getPsi();
 
     @Nullable
-    public JavaAnnotationArgument findArgument(@NotNull Name name) {
-        PsiAnnotationMemberValue attribute = getPsi().findAttributeValue(name.asString());
-        return attribute == null ? null : JavaAnnotationArgument.create(attribute, name);
-    }
+    JavaAnnotationArgument findArgument(@NotNull Name name);
 
     @NotNull
-    public Collection<JavaAnnotationArgument> getArguments() {
-        return namedAnnotationArguments(getPsi().getParameterList().getAttributes());
-    }
+    Collection<JavaAnnotationArgument> getArguments();
 
     @Nullable
-    public FqName getFqName() {
-        String qualifiedName = getPsi().getQualifiedName();
-        return qualifiedName == null ? null : new FqName(qualifiedName);
-    }
+    FqName getFqName();
 }

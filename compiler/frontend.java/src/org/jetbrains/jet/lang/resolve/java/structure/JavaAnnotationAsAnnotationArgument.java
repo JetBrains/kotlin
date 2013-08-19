@@ -34,6 +34,6 @@ public class JavaAnnotationAsAnnotationArgument extends JavaAnnotationArgument {
 
     @NotNull
     public JavaAnnotation getAnnotation() {
-        return new JavaAnnotation(getPsi());
+        return new JavaAnnotationImpl(getPsi());
     }
 }

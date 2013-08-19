@@ -62,7 +62,7 @@ public class JavaClass extends JavaClassifierImpl
         if (modifierList != null) {
             PsiAnnotation annotation = modifierList.findAnnotation(fqName);
             if (annotation != null) {
-                return new JavaAnnotation(annotation);
+                return new JavaAnnotationImpl(annotation);
             }
         }
         return null;

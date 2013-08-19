@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -36,7 +37,7 @@ public class PsiBasedExternalAnnotationResolver implements ExternalAnnotationRes
     @Override
     public JavaAnnotation findExternalAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName) {
         PsiAnnotation psiAnnotation = findExternalAnnotation(owner.getPsi(), fqName);
-        return psiAnnotation == null ? null : new JavaAnnotation(psiAnnotation);
+        return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
     }
 
     @NotNull
