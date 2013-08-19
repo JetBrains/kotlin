@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiCompiledElement;
+import com.intellij.psi.PsiTypeParameter;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,18 +57,6 @@ public class JavaClass extends JavaClassifierImpl
     public FqName getFqName() {
         String qualifiedName = getPsi().getQualifiedName();
         return qualifiedName == null ? null : new FqName(qualifiedName);
-    }
-
-    @Nullable
-    public JavaAnnotation findAnnotation(@NotNull String fqName) {
-        PsiModifierList modifierList = getPsi().getModifierList();
-        if (modifierList != null) {
-            PsiAnnotation annotation = modifierList.findAnnotation(fqName);
-            if (annotation != null) {
-                return new JavaAnnotationImpl(annotation);
-            }
-        }
-        return null;
     }
 
     @NotNull

@@ -216,7 +216,7 @@ public final class JavaClassResolver {
         }
 
         if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            if (javaClass.findAnnotation(JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().asString()) != null) {
+            if (javaClass.findAnnotation(JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName()) != null) {
                 if (ApplicationManager.getApplication().isInternal()) {
                     LOG.error("classpath is configured incorrectly:" +
                               " class " + qualifiedName + " from runtime must not be loaded by compiler");

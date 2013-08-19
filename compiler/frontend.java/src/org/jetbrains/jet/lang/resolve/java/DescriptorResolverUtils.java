@@ -38,7 +38,7 @@ public final class DescriptorResolverUtils {
         if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
             FqName fqName = javaClass.getFqName();
             if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
-                return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName().asString()) != null;
+                return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName()) != null;
             }
         }
         return false;
@@ -46,7 +46,7 @@ public final class DescriptorResolverUtils {
 
     public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
         if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getFqName().asString()) != null;
+            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getFqName()) != null;
         }
         return false;
     }
