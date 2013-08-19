@@ -22,17 +22,35 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
-public interface JavaPackage extends JavaElement {
+import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.classes;
+import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.packages;
+
+public class JavaPackageImpl extends JavaElementImpl implements JavaPackage {
+    public JavaPackageImpl(@NotNull PsiPackage psiPackage) {
+        super(psiPackage);
+    }
+
     @NotNull
     @Override
-    PsiPackage getPsi();
+    public PsiPackage getPsi() {
+        return (PsiPackage) super.getPsi();
+    }
 
+    @Override
     @NotNull
-    Collection<JavaClass> getClasses();
+    public Collection<JavaClass> getClasses() {
+        return classes(getPsi().getClasses());
+    }
 
+    @Override
     @NotNull
-    Collection<JavaPackage> getSubPackages();
+    public Collection<JavaPackage> getSubPackages() {
+        return packages(getPsi().getSubPackages());
+    }
 
+    @Override
     @NotNull
-    FqName getFqName();
+    public FqName getFqName() {
+        return new FqName(getPsi().getQualifiedName());
+    }
 }

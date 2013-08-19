@@ -44,7 +44,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (packages.length == 0) return Collections.emptyList();
         List<JavaPackage> result = new ArrayList<JavaPackage>(packages.length);
         for (PsiPackage psiPackage : packages) {
-            result.add(new JavaPackage(psiPackage));
+            result.add(new JavaPackageImpl(psiPackage));
         }
         return result;
     }

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPackageImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
@@ -45,6 +46,6 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Override
     public JavaPackage findPackage(@NotNull FqName fqName) {
         PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
-        return psiPackage == null ? null : new JavaPackage(psiPackage);
+        return psiPackage == null ? null : new JavaPackageImpl(psiPackage);
     }
 }
