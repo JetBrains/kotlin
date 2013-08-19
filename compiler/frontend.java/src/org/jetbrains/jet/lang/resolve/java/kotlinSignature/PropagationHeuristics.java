@@ -213,7 +213,7 @@ class PropagationHeuristics {
 
         @NotNull
         private static JavaType varargToArray(@NotNull JavaType type, boolean isVararg) {
-            return isVararg ? JavaArrayType.create(((JavaArrayType) type).getComponentType()) : type;
+            return isVararg ? JavaElementFactory.getInstance().createArrayType(((JavaArrayType) type).getComponentType()) : type;
         }
 
         @NotNull
