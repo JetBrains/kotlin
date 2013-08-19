@@ -179,16 +179,24 @@ public class DeclarationResolver {
         // TODO : Extensions
     }
 
-    private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations,
-            final @NotNull JetScope scopeForFunctions,
-            final @NotNull JetScope scopeForPropertyInitializers, final @NotNull JetScope scopeForPropertyAccessors,
-            final @NotNull NamespaceLikeBuilder namespaceLike)
+    private void resolveFunctionAndPropertyHeaders(
+            @NotNull List<JetDeclaration> declarations,
+            @NotNull final JetScope scopeForFunctions,
+            @NotNull final JetScope scopeForPropertyInitializers,
+            @NotNull final JetScope scopeForPropertyAccessors,
+            @NotNull final NamespaceLikeBuilder namespaceLike)
     {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
-                    SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(namespaceLike.getOwnerForChildren(), scopeForFunctions, function, trace);
+                    SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(
+                            namespaceLike.getOwnerForChildren(),
+                            scopeForFunctions,
+                            function,
+                            trace,
+                            context.getOuterDataFlowInfo()
+                    );
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
                     context.registerDeclaringScope(function, scopeForFunctions);

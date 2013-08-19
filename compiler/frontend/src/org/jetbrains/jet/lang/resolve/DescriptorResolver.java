@@ -250,9 +250,10 @@ public class DescriptorResolver {
             @NotNull DeclarationDescriptor containingDescriptor,
             @NotNull JetScope scope,
             @NotNull JetNamedFunction function,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
-        return resolveFunctionDescriptor(containingDescriptor, scope, function, trace,
+        return resolveFunctionDescriptor(containingDescriptor, scope, function, trace, dataFlowInfo,
                                          annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace));
     }
 
@@ -261,9 +262,10 @@ public class DescriptorResolver {
             @NotNull DeclarationDescriptor containingDescriptor,
             @NotNull JetScope scope,
             @NotNull JetNamedFunction function,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull DataFlowInfo dataFlowInfo
     ) {
-       return resolveFunctionDescriptor(containingDescriptor, scope, function, trace,
+       return resolveFunctionDescriptor(containingDescriptor, scope, function, trace, dataFlowInfo,
                                         annotationResolver.resolveAnnotations(scope, function.getModifierList(), trace));
     }
 
@@ -273,6 +275,7 @@ public class DescriptorResolver {
             @NotNull final JetScope scope,
             @NotNull final JetNamedFunction function,
             @NotNull final BindingTrace trace,
+            @NotNull final DataFlowInfo dataFlowInfo,
             @NotNull List<AnnotationDescriptor> annotations
     ) {
         final SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
@@ -320,7 +323,7 @@ public class DescriptorResolver {
                         DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                             @Override
                             protected JetType compute() {
-                                JetType type = expressionTypingServices.getBodyExpressionType(trace, scope, function, functionDescriptor);
+                                JetType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
                                 return transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
                             }
                         });

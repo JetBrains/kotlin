@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider;
@@ -151,9 +152,14 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         Collection<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
         for (JetNamedFunction functionDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration);
-            result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(thisDescriptor, resolutionScope,
-                                                                                                      functionDeclaration,
-                                                                                                      resolveSession.getTrace()));
+            result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(
+                  thisDescriptor, resolutionScope,
+                  functionDeclaration,
+                  resolveSession.getTrace(),
+                  // this relies on the assumption that a lazily resolved declaration is not a local one,
+                  // thus doesn't have a surrounding data flow
+                  DataFlowInfo.EMPTY)
+            );
         }
 
         getNonDeclaredFunctions(name, result);

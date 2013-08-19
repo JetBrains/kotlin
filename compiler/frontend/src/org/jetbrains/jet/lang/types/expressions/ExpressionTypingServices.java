@@ -17,7 +17,9 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,9 +43,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.makeTraceInterceptingTypeMismatch;
@@ -214,6 +216,7 @@ public class ExpressionTypingServices {
     public JetType getBodyExpressionType(
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
+            @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor
     ) {
@@ -222,7 +225,7 @@ public class ExpressionTypingServices {
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                this, trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, ExpressionPosition.FREE
+                this, trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, ExpressionPosition.FREE
         );
         JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, !function.hasBlockBody());
 

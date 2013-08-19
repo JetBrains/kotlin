@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -112,7 +113,9 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetNamedFunction function = (JetNamedFunction) declarations.get(0);
-            SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function, JetTestUtils.DUMMY_TRACE);
+            SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function,
+                                                                                                       JetTestUtils.DUMMY_TRACE,
+                                                                                                       DataFlowInfo.EMPTY);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
         }

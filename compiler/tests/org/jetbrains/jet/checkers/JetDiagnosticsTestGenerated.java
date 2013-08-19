@@ -1439,6 +1439,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/dataFlow")
+        @InnerTestClasses({DataFlow.Local.class})
         public static class DataFlow extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInDataFlow() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/dataFlow"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1459,6 +1460,40 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlow/WhenSubject.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/dataFlow/local")
+            public static class Local extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInLocal() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/dataFlow/local"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("kt2835.kt")
+                public void testKt2835() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/kt2835.kt");
+                }
+                
+                @TestMetadata("LocalClass.kt")
+                public void testLocalClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClass.kt");
+                }
+                
+                @TestMetadata("LocalObject.kt")
+                public void testLocalObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalObject.kt");
+                }
+                
+                @TestMetadata("LocalObjectDelegation.kt")
+                public void testLocalObjectDelegation() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalObjectDelegation.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("DataFlow");
+                suite.addTestSuite(DataFlow.class);
+                suite.addTestSuite(Local.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal")
@@ -5122,7 +5157,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(ControlFlowAnalysis.class);
             suite.addTestSuite(ControlStructures.class);
             suite.addTestSuite(DataClasses.class);
-            suite.addTestSuite(DataFlow.class);
+            suite.addTest(DataFlow.innerSuite());
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
             suite.addTest(DelegatedProperty.innerSuite());
