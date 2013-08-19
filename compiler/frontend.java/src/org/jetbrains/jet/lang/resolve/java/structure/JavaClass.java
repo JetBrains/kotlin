@@ -16,175 +16,69 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiCompiledElement;
-import com.intellij.psi.PsiTypeParameter;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.Visibility;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.*;
+public interface JavaClass
+        extends JavaClassifier, JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
+    @NotNull
+    @Override
+    PsiClass getPsi();
 
-public class JavaClass extends JavaClassifierImpl
-        implements JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
-    public enum OriginKind {
+    @NotNull
+    Collection<JavaClass> getInnerClasses();
+
+    @Nullable
+    FqName getFqName();
+
+    boolean isInterface();
+
+    boolean isAnnotationType();
+
+    boolean isEnum();
+
+    @NotNull
+    ClassKind getKind();
+
+    @Nullable
+    JavaClass getOuterClass();
+
+    @NotNull
+    Modality getModality();
+
+    @NotNull
+    Collection<JavaClassifierType> getSupertypes();
+
+    @NotNull
+    Collection<JavaMethod> getMethods();
+
+    @NotNull
+    Collection<JavaMethod> getAllMethods();
+
+    @NotNull
+    Collection<JavaField> getFields();
+
+    @NotNull
+    Collection<JavaField> getAllFields();
+
+    @NotNull
+    Collection<JavaMethod> getConstructors();
+
+    @NotNull
+    JavaClassifierType getDefaultType();
+
+    @NotNull
+    OriginKind getOriginKind();
+
+    enum OriginKind {
         COMPILED,
         SOURCE,
         KOTLIN_LIGHT_CLASS
-    }
-
-    public JavaClass(@NotNull PsiClass psiClass) {
-        super(psiClass);
-        assert !(psiClass instanceof PsiTypeParameter)
-                : "PsiTypeParameter should be wrapped in JavaTypeParameter, not JavaClass: use JavaClassifier.create()";
-    }
-
-    @NotNull
-    public Collection<JavaClass> getInnerClasses() {
-        return classes(getPsi().getInnerClasses());
-    }
-
-    @Nullable
-    public FqName getFqName() {
-        String qualifiedName = getPsi().getQualifiedName();
-        return qualifiedName == null ? null : new FqName(qualifiedName);
-    }
-
-    @NotNull
-    @Override
-    public Name getName() {
-        return Name.identifier(getPsi().getName());
-    }
-
-    public boolean isInterface() {
-        return getPsi().isInterface();
-    }
-
-    public boolean isAnnotationType() {
-        return getPsi().isAnnotationType();
-    }
-
-    public boolean isEnum() {
-        return getPsi().isEnum();
-    }
-
-    @NotNull
-    public ClassKind getKind() {
-        if (isInterface()) {
-            return isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT;
-        }
-        return isEnum() ? ClassKind.ENUM_CLASS : ClassKind.CLASS;
-    }
-
-    @Nullable
-    public JavaClass getOuterClass() {
-        PsiClass outer = getPsi().getContainingClass();
-        return outer == null ? null : new JavaClass(outer);
-    }
-
-    @NotNull
-    public Modality getModality() {
-        return isAnnotationType() ? Modality.FINAL : Modality.convertFromFlags(isAbstract() || isInterface(), !isFinal());
-    }
-
-    @NotNull
-    @Override
-    public Collection<JavaTypeParameter> getTypeParameters() {
-        return typeParameters(getPsi().getTypeParameters());
-    }
-
-    @SuppressWarnings("unchecked")
-    @NotNull
-    public Collection<JavaClassifierType> getSupertypes() {
-        // TODO: getPsi().getSuperTypes() ?
-        Collection<JavaClassifierType> superClasses = classifierTypes(getPsi().getExtendsListTypes());
-        Collection<JavaClassifierType> superInterfaces = classifierTypes(getPsi().getImplementsListTypes());
-        return ContainerUtil.collect(ContainerUtil.concat(superClasses, superInterfaces).iterator());
-    }
-
-    @NotNull
-    public Collection<JavaMethod> getMethods() {
-        return methods(getPsi().getMethods());
-    }
-
-    @NotNull
-    public Collection<JavaMethod> getAllMethods() {
-        return methods(getPsi().getAllMethods());
-    }
-
-    @NotNull
-    public Collection<JavaField> getFields() {
-        return fields(getPsi().getFields());
-    }
-
-    @NotNull
-    public Collection<JavaField> getAllFields() {
-        return fields(getPsi().getAllFields());
-    }
-
-    @NotNull
-    public Collection<JavaMethod> getConstructors() {
-        return methods(getPsi().getConstructors());
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return JavaElementUtil.isAbstract(this);
-    }
-
-    @Override
-    public boolean isStatic() {
-        return JavaElementUtil.isStatic(this);
-    }
-
-    @Override
-    public boolean isFinal() {
-        return JavaElementUtil.isFinal(this);
-    }
-
-    @NotNull
-    @Override
-    public Visibility getVisibility() {
-        return JavaElementUtil.getVisibility(this);
-    }
-
-    @NotNull
-    @Override
-    public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getAnnotations(this);
-    }
-
-    @Nullable
-    @Override
-    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
-    }
-
-    @NotNull
-    public JavaClassifierType getDefaultType() {
-        return new JavaClassifierTypeImpl(JavaPsiFacade.getElementFactory(getPsi().getProject()).createType(getPsi()));
-    }
-
-    @NotNull
-    public OriginKind getOriginKind() {
-        PsiClass psiClass = getPsi();
-        if (psiClass instanceof JetJavaMirrorMarker) {
-            return OriginKind.KOTLIN_LIGHT_CLASS;
-        }
-        else if (psiClass instanceof PsiCompiledElement) {
-            return OriginKind.COMPILED;
-        }
-        else {
-            return OriginKind.SOURCE;
-        }
     }
 }

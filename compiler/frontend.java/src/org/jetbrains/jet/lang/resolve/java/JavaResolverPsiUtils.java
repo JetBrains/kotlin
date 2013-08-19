@@ -18,18 +18,18 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassImpl;
 
 public class JavaResolverPsiUtils {
     private JavaResolverPsiUtils() {
     }
 
     public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
-        return DescriptorResolverUtils.isCompiledKotlinClass(new JavaClass(psiClass));
+        return DescriptorResolverUtils.isCompiledKotlinClass(new JavaClassImpl(psiClass));
     }
 
     public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
-        return DescriptorResolverUtils.isCompiledKotlinPackageClass(new JavaClass(psiClass));
+        return DescriptorResolverUtils.isCompiledKotlinPackageClass(new JavaClassImpl(psiClass));
     }
 
     public static boolean isCompiledKotlinClassOrPackageClass(@NotNull PsiClass psiClass) {

@@ -34,7 +34,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (classes.length == 0) return Collections.emptyList();
         List<JavaClass> result = new ArrayList<JavaClass>(classes.length);
         for (PsiClass psiClass : classes) {
-            result.add(new JavaClass(psiClass));
+            result.add(new JavaClassImpl(psiClass));
         }
         return result;
     }

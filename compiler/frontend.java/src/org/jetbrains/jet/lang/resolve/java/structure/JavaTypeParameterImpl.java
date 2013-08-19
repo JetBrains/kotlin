@@ -62,7 +62,7 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl implements JavaTyp
             return new JavaMethodImpl((PsiMethod) owner);
         }
         else if (owner instanceof PsiClass) {
-            return new JavaClass((PsiClass) owner);
+            return new JavaClassImpl((PsiClass) owner);
         }
         else if (owner != null) {
             throw new UnsupportedOperationException("Unsupported type parameter list owner: " + owner);

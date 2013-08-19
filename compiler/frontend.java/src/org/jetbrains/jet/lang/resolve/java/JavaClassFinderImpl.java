@@ -21,6 +21,7 @@ import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackageImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -39,7 +40,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     @Override
     public JavaClass findClass(@NotNull FqName fqName) {
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
-        return psiClass == null ? null : new JavaClass(psiClass);
+        return psiClass == null ? null : new JavaClassImpl(psiClass);
     }
 
     @Nullable

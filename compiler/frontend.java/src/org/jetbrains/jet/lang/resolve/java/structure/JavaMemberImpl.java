@@ -50,7 +50,7 @@ public abstract class JavaMemberImpl extends JavaElementImpl implements JavaMemb
     public JavaClass getContainingClass() {
         PsiClass psiClass = getPsi().getContainingClass();
         assert psiClass != null : "Member must have a containing class: " + getPsi();
-        return new JavaClass(psiClass);
+        return new JavaClassImpl(psiClass);
     }
 
     @Override

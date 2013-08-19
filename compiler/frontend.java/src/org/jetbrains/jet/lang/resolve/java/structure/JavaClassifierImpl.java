@@ -37,7 +37,7 @@ public abstract class JavaClassifierImpl extends JavaElementImpl implements Java
             return new JavaTypeParameterImpl((PsiTypeParameter) psiClass);
         }
         else {
-            return new JavaClass(psiClass);
+            return new JavaClassImpl(psiClass);
         }
     }
 }
