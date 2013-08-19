@@ -36,5 +36,8 @@ public interface JavaTypeParameter extends JavaClassifier, JavaNamedElement {
     JavaTypeParameterListOwner getOwner();
 
     @NotNull
+    JavaType getType();
+
+    @NotNull
     JavaTypeProvider getTypeProvider();
 }

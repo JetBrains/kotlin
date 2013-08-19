@@ -16,14 +16,37 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiSubstitutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Map;
 
 public interface JavaTypeSubstitutor {
-    JavaTypeSubstitutor EMPTY = new JavaTypeSubstitutorImpl(PsiSubstitutor.EMPTY);
+    JavaTypeSubstitutor EMPTY = new JavaTypeSubstitutor() {
+        @NotNull
+        @Override
+        public JavaType substitute(@NotNull JavaType type) {
+            return type;
+        }
+
+        @Nullable
+        @Override
+        public JavaType substitute(@NotNull JavaTypeParameter typeParameter) {
+            return typeParameter.getType();
+        }
+
+        @NotNull
+        @Override
+        public Map<JavaTypeParameter, JavaType> getSubstitutionMap() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public String toString() {
+            return "Empty JavaTypeSubstitutor";
+        }
+    };
 
     @NotNull
     JavaType substitute(@NotNull JavaType type);

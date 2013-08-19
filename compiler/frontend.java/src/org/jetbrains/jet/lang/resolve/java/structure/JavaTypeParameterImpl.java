@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiTypeParameter;
-import com.intellij.psi.PsiTypeParameterListOwner;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -72,6 +69,12 @@ public class JavaTypeParameterImpl extends JavaClassifierImpl implements JavaTyp
         }
 
         return null;
+    }
+
+    @NotNull
+    @Override
+    public JavaType getType() {
+        return JavaTypeImpl.create(JavaPsiFacade.getInstance(getPsi().getProject()).getElementFactory().createType(getPsi()));
     }
 
     @Override
