@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -45,8 +46,6 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
     protected static final String SOURCES_PATH = TEST_DATA_PATH + "/library";
     protected static final String SRC_DIR_NAME = "src";
     private static File tempDirWithCompiled;
-    protected VirtualFile libraryDir;
-    protected VirtualFile librarySourceDir;
 
     protected abstract boolean isWithSources();
 
@@ -70,16 +69,13 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
         super.setUp();
         final VirtualFile baseDir = getProject().getBaseDir();
         assertNotNull(baseDir);
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+
+        final VirtualFile libraryDir = ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<VirtualFile, IOException>() {
             @Override
-            public void run() {
-                try {
-                    libraryDir = baseDir.createChildDirectory(this, "lib");
-                    baseDir.createChildDirectory(this, SRC_DIR_NAME);
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            public VirtualFile compute() throws IOException {
+                VirtualFile libraryDir = baseDir.createChildDirectory(this, "lib");
+                baseDir.createChildDirectory(this, SRC_DIR_NAME);
+                return libraryDir;
             }
         });
 
@@ -93,7 +89,7 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
                 return true;
             }
         });
-        librarySourceDir = LocalFileSystem.getInstance().findFileByPath(SOURCES_PATH);
+        final VirtualFile librarySourceDir = LocalFileSystem.getInstance().findFileByPath(SOURCES_PATH);
         assertNotNull(librarySourceDir);
 
         FileUtil.copyDir(getTempDirWithCompiled(), new File(libraryDir.getPath()));
