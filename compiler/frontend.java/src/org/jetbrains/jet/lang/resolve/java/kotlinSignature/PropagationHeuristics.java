@@ -224,7 +224,7 @@ class PropagationHeuristics {
                 JavaType value = entry.getValue();
                 erasedMap.put(entry.getKey(), value == null ? null : erasure(value));
             }
-            return JavaTypeSubstitutor.create(erasedMap);
+            return JavaTypeSubstitutorImpl.create(erasedMap);
         }
 
         private static boolean canHaveSuperMethod(@NotNull JavaMethod method) {

@@ -17,83 +17,20 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiSubstitutor;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiTypeParameter;
-import com.intellij.psi.impl.PsiSubstitutorImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class JavaTypeSubstitutor {
-    public static final JavaTypeSubstitutor EMPTY = new JavaTypeSubstitutor(PsiSubstitutor.EMPTY);
-
-    private final PsiSubstitutor psiSubstitutor;
-    private Map<JavaTypeParameter, JavaType> substitutionMap;
-
-    public JavaTypeSubstitutor(@NotNull PsiSubstitutor psiSubstitutor) {
-        this.psiSubstitutor = psiSubstitutor;
-    }
-
-    public JavaTypeSubstitutor(@NotNull PsiSubstitutor psiSubstitutor, @NotNull Map<JavaTypeParameter, JavaType> substitutionMap) {
-        this(psiSubstitutor);
-        this.substitutionMap = substitutionMap;
-    }
+public interface JavaTypeSubstitutor {
+    JavaTypeSubstitutor EMPTY = new JavaTypeSubstitutorImpl(PsiSubstitutor.EMPTY);
 
     @NotNull
-    public PsiSubstitutor getPsi() {
-        return psiSubstitutor;
-    }
-
-    @NotNull
-    public static JavaTypeSubstitutor create(@NotNull Map<JavaTypeParameter, JavaType> substitutionMap) {
-        Map<PsiTypeParameter, PsiType> psiMap = new HashMap<PsiTypeParameter, PsiType>();
-        for (Map.Entry<JavaTypeParameter, JavaType> entry : substitutionMap.entrySet()) {
-            JavaType value = entry.getValue();
-            psiMap.put(entry.getKey().getPsi(), value == null ? null : value.getPsi());
-        }
-        PsiSubstitutor psiSubstitutor = PsiSubstitutorImpl.createSubstitutor(psiMap);
-        return new JavaTypeSubstitutor(psiSubstitutor, substitutionMap);
-    }
-
-    @NotNull
-    public JavaType substitute(@NotNull JavaType type) {
-        return JavaTypeImpl.create(getPsi().substitute(type.getPsi()));
-    }
+    JavaType substitute(@NotNull JavaType type);
 
     @Nullable
-    public JavaType substitute(@NotNull JavaTypeParameter typeParameter) {
-        PsiType psiType = getPsi().substitute(typeParameter.getPsi());
-        return psiType == null ? null : JavaTypeImpl.create(psiType);
-    }
+    JavaType substitute(@NotNull JavaTypeParameter typeParameter);
 
     @NotNull
-    public Map<JavaTypeParameter, JavaType> getSubstitutionMap() {
-        if (substitutionMap == null) {
-            Map<PsiTypeParameter, PsiType> psiMap = psiSubstitutor.getSubstitutionMap();
-            substitutionMap = new HashMap<JavaTypeParameter, JavaType>();
-            for (Map.Entry<PsiTypeParameter, PsiType> entry : psiMap.entrySet()) {
-                PsiType value = entry.getValue();
-                substitutionMap.put(new JavaTypeParameterImpl(entry.getKey()), value == null ? null : JavaTypeImpl.create(value));
-            }
-        }
-
-        return substitutionMap;
-    }
-
-    @Override
-    public int hashCode() {
-        return getPsi().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof JavaTypeSubstitutor && getPsi().equals(((JavaTypeSubstitutor) obj).getPsi());
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ": " + getPsi();
-    }
+    Map<JavaTypeParameter, JavaType> getSubstitutionMap();
 }

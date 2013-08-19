@@ -72,7 +72,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl implements JavaClassifi
             PsiClass psiClass = result.getElement();
             resolutionResult = new ResolutionResult(
                     psiClass == null ? null : JavaClassifierImpl.create(psiClass),
-                    new JavaTypeSubstitutor(result.getSubstitutor())
+                    new JavaTypeSubstitutorImpl(result.getSubstitutor())
             );
         }
     }
