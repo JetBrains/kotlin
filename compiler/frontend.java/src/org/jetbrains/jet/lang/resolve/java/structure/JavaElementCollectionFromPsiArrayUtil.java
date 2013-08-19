@@ -74,7 +74,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
         if (parameters.length == 0) return Collections.emptyList();
         List<JavaValueParameter> result = new ArrayList<JavaValueParameter>(parameters.length);
         for (PsiParameter psiParameter : parameters) {
-            result.add(new JavaValueParameter(psiParameter));
+            result.add(new JavaValueParameterImpl(psiParameter));
         }
         return result;
     }

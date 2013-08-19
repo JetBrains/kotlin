@@ -19,46 +19,18 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-
-public class JavaValueParameter extends JavaElementImpl implements JavaAnnotationOwner {
-    public JavaValueParameter(@NotNull PsiParameter psiParameter) {
-        super(psiParameter);
-    }
-
+public interface JavaValueParameter extends JavaAnnotationOwner {
     @NotNull
     @Override
-    public PsiParameter getPsi() {
-        return (PsiParameter) super.getPsi();
-    }
-
-    @NotNull
-    @Override
-    public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getAnnotations(this);
-    }
+    PsiParameter getPsi();
 
     @Nullable
-    @Override
-    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
-    }
-
-    @Nullable
-    public Name getName() {
-        String name = getPsi().getName();
-        return name == null ? null : Name.identifier(name);
-    }
+    Name getName();
 
     @NotNull
-    public JavaType getType() {
-        return JavaTypeImpl.create(getPsi().getType());
-    }
+    JavaType getType();
 
-    public boolean isVararg() {
-        return getPsi().isVarArgs();
-    }
+    boolean isVararg();
 }
