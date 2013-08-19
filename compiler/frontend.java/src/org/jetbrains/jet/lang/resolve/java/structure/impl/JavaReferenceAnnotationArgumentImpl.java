@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiEnumConstant;
@@ -22,6 +22,8 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaReferenceAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class JavaReferenceAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaReferenceAnnotationArgument {

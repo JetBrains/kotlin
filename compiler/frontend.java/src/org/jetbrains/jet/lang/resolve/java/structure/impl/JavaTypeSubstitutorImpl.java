@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.PsiType;
@@ -22,6 +22,9 @@ import com.intellij.psi.PsiTypeParameter;
 import com.intellij.psi.impl.PsiSubstitutorImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeSubstitutor;
 
 import java.util.HashMap;
 import java.util.Map;

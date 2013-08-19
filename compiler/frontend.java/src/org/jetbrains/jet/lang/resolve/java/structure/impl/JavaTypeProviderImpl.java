@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeProvider;
 
 public class JavaTypeProviderImpl implements JavaTypeProvider {
     private final PsiManager manager;

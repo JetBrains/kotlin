@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
 
 public abstract class JavaClassifierImpl extends JavaElementImpl implements JavaClassifier {
     protected JavaClassifierImpl(@NotNull PsiClass psiClass) {

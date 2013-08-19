@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiWildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeProvider;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaWildcardType;
 
 public class JavaWildcardTypeImpl extends JavaTypeImpl implements JavaWildcardType {
     public JavaWildcardTypeImpl(@NotNull PsiWildcardType psiWildcardType) {
@@ -36,7 +39,7 @@ public class JavaWildcardTypeImpl extends JavaTypeImpl implements JavaWildcardTy
     @Nullable
     public JavaType getBound() {
         PsiType bound = getPsi().getBound();
-        return bound == null ? null : JavaTypeImpl.create(bound);
+        return bound == null ? null : create(bound);
     }
 
     @Override

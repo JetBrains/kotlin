@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaSignatureFormatterImpl;
 
 public abstract class JavaSignatureFormatter {
     public static JavaSignatureFormatter getInstance() {

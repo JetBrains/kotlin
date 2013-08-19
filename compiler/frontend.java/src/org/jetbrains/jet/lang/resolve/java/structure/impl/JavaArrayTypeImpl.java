@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiArrayType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 
 public class JavaArrayTypeImpl extends JavaTypeImpl implements JavaArrayType {
     public JavaArrayTypeImpl(@NotNull PsiArrayType psiArrayType) {

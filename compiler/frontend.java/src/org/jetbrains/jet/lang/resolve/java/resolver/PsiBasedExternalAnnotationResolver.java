@@ -24,9 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaAnnotationImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationAsAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class JavaAnnotationAsAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaAnnotationAsAnnotationArgument {

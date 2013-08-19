@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
 
 public class JavaResolverPsiUtils {
     private JavaResolverPsiUtils() {

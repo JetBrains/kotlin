@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
-import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiPrimitiveType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPrimitiveType;
 
-public class JavaFieldImpl extends JavaMemberImpl implements JavaField {
-    public JavaFieldImpl(@NotNull PsiField psiField) {
-        super(psiField);
+public class JavaPrimitiveTypeImpl extends JavaTypeImpl implements JavaPrimitiveType {
+    public JavaPrimitiveTypeImpl(@NotNull PsiPrimitiveType psiPrimitiveType) {
+        super(psiPrimitiveType);
     }
 
     @NotNull
     @Override
-    public PsiField getPsi() {
-        return (PsiField) super.getPsi();
-    }
-
-    @Override
-    public boolean isEnumEntry() {
-        return getPsi() instanceof PsiEnumConstant;
+    public PsiPrimitiveType getPsi() {
+        return (PsiPrimitiveType) super.getPsi();
     }
 
     @Override
     @NotNull
-    public JavaType getType() {
-        return JavaTypeImpl.create(getPsi().getType());
+    public String getCanonicalText() {
+        return getPsi().getCanonicalText();
     }
 }

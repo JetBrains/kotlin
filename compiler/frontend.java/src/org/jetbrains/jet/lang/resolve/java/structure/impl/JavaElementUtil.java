@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifier;
@@ -24,12 +24,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaModifierListOwner;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.annotations;
+import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.annotations;
 
 /* package */ class JavaElementUtil {
     private JavaElementUtil() {

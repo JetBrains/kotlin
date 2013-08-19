@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementFactoryImpl;
 
 public abstract class JavaElementFactory {
     @NotNull

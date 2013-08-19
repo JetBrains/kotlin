@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.structure;
+package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiArrayInitializerMemberValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.namelessAnnotationArguments;
+import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.namelessAnnotationArguments;
 
 public class JavaArrayAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaArrayAnnotationArgument {
     protected JavaArrayAnnotationArgumentImpl(@NotNull PsiArrayInitializerMemberValue psiArrayInitializerMemberValue, @Nullable Name name) {
