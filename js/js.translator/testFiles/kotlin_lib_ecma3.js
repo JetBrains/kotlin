@@ -69,7 +69,7 @@ var Kotlin = {};
 
         var current = object.get_class();
         while (current !== klass) {
-            if (current === null) {
+            if (current === null || current === undefined) {
                 return false;
             }
             current = current.superclass;
