@@ -20,15 +20,9 @@ import com.intellij.psi.PsiPrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPrimitiveType;
 
-public class JavaPrimitiveTypeImpl extends JavaTypeImpl implements JavaPrimitiveType {
+public class JavaPrimitiveTypeImpl extends JavaTypeImpl<PsiPrimitiveType> implements JavaPrimitiveType {
     public JavaPrimitiveTypeImpl(@NotNull PsiPrimitiveType psiPrimitiveType) {
         super(psiPrimitiveType);
-    }
-
-    @NotNull
-    @Override
-    public PsiPrimitiveType getPsi() {
-        return (PsiPrimitiveType) super.getPsi();
     }
 
     @Override

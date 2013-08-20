@@ -33,7 +33,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.types;
 
-public class JavaClassifierTypeImpl extends JavaTypeImpl implements JavaClassifierType {
+public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implements JavaClassifierType {
     private static class ResolutionResult {
         private final JavaClassifier classifier;
         private final JavaTypeSubstitutor substitutor;
@@ -48,12 +48,6 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl implements JavaClassifi
 
     public JavaClassifierTypeImpl(@NotNull PsiClassType psiClassType) {
         super(psiClassType);
-    }
-
-    @NotNull
-    @Override
-    public PsiClassType getPsi() {
-        return (PsiClassType) super.getPsi();
     }
 
     @Override

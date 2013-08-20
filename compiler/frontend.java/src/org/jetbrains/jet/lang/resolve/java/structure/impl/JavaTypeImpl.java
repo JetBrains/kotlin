@@ -21,15 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 
-public abstract class JavaTypeImpl implements JavaType {
-    private final PsiType psiType;
+public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType {
+    private final Psi psiType;
 
-    public JavaTypeImpl(@NotNull PsiType psiType) {
+    public JavaTypeImpl(@NotNull Psi psiType) {
         this.psiType = psiType;
     }
 
     @NotNull
-    public PsiType getPsi() {
+    public Psi getPsi() {
         return psiType;
     }
 

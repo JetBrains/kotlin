@@ -21,15 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 
-public class JavaArrayTypeImpl extends JavaTypeImpl implements JavaArrayType {
+public class JavaArrayTypeImpl extends JavaTypeImpl<PsiArrayType> implements JavaArrayType {
     public JavaArrayTypeImpl(@NotNull PsiArrayType psiArrayType) {
         super(psiArrayType);
-    }
-
-    @NotNull
-    @Override
-    public PsiArrayType getPsi() {
-        return (PsiArrayType) super.getPsi();
     }
 
     @Override

@@ -24,15 +24,9 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeProvider;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaWildcardType;
 
-public class JavaWildcardTypeImpl extends JavaTypeImpl implements JavaWildcardType {
+public class JavaWildcardTypeImpl extends JavaTypeImpl<PsiWildcardType> implements JavaWildcardType {
     public JavaWildcardTypeImpl(@NotNull PsiWildcardType psiWildcardType) {
         super(psiWildcardType);
-    }
-
-    @NotNull
-    @Override
-    public PsiWildcardType getPsi() {
-        return (PsiWildcardType) super.getPsi();
     }
 
     @Override

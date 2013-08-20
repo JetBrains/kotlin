@@ -20,15 +20,15 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
 
-public abstract class JavaElementImpl implements JavaElement {
-    private final PsiElement psiElement;
+public abstract class JavaElementImpl<Psi extends PsiElement> implements JavaElement {
+    private final Psi psiElement;
 
-    protected JavaElementImpl(@NotNull PsiElement psiElement) {
+    protected JavaElementImpl(@NotNull Psi psiElement) {
         this.psiElement = psiElement;
     }
 
     @NotNull
-    public PsiElement getPsi() {
+    public Psi getPsi() {
         return psiElement;
     }
 

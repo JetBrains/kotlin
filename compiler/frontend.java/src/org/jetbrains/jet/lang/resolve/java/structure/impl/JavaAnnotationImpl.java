@@ -29,15 +29,9 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.namedAnnotationArguments;
 
-public class JavaAnnotationImpl extends JavaElementImpl implements JavaAnnotation {
+public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implements JavaAnnotation {
     public JavaAnnotationImpl(@NotNull PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
-    }
-
-    @NotNull
-    @Override
-    public PsiAnnotation getPsi() {
-        return (PsiAnnotation) super.getPsi();
     }
 
     @Override

@@ -27,15 +27,9 @@ import java.util.Collection;
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.classes;
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.packages;
 
-public class JavaPackageImpl extends JavaElementImpl implements JavaPackage {
+public class JavaPackageImpl extends JavaElementImpl<PsiPackage> implements JavaPackage {
     public JavaPackageImpl(@NotNull PsiPackage psiPackage) {
         super(psiPackage);
-    }
-
-    @NotNull
-    @Override
-    public PsiPackage getPsi() {
-        return (PsiPackage) super.getPsi();
     }
 
     @Override
