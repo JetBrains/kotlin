@@ -38,6 +38,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator.createDefineInvocation;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
@@ -89,7 +90,7 @@ final class NamespaceTranslator extends AbstractTranslator {
 
     private List<JsExpression> createDefinitionPlace(@Nullable JsExpression initializer,
             Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation) {
-        List<JsExpression> place = createDefineInvocation(initializer, new JsObjectLiteral(visitor.getResult(), true));
+        List<JsExpression> place = createDefineInvocation(descriptor, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
         descriptorToDefineInvocation.put(descriptor, place);
         addToParent((NamespaceDescriptor) descriptor.getContainingDeclaration(), getEntry(descriptor, place), descriptorToDefineInvocation);
         return place;
@@ -133,10 +134,6 @@ final class NamespaceTranslator extends AbstractTranslator {
         return ((JsObjectLiteral) defineInvocation.get(context().isEcma5() ? 2 : 0)).getPropertyInitializers();
     }
 
-    private List<JsExpression> createDefineInvocation(@Nullable JsExpression initializer, @NotNull JsObjectLiteral members) {
-        return NamespaceDeclarationTranslator.createDefineInvocation(descriptor, initializer, members, context());
-    }
-
     private JsPropertyInitializer getEntry(@NotNull NamespaceDescriptor descriptor, List<JsExpression> defineInvocation) {
         return new JsPropertyInitializer(context().getNameForDescriptor(descriptor).makeRef(),
                                          new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation));
@@ -157,7 +154,8 @@ final class NamespaceTranslator extends AbstractTranslator {
             JsPropertyInitializer entry,
             Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation) {
         while (!addEntryIfParentExists(parentDescriptor, entry, descriptorToDefineInvocation)) {
-            List<JsExpression> defineInvocation = createDefineInvocation(null, new JsObjectLiteral(new SmartList<JsPropertyInitializer>(entry), true));
+            JsObjectLiteral members = new JsObjectLiteral(new SmartList<JsPropertyInitializer>(entry), true);
+            List<JsExpression> defineInvocation = createDefineInvocation(parentDescriptor, null, members, context());
             entry = getEntry(parentDescriptor, defineInvocation);
 
             descriptorToDefineInvocation.put(parentDescriptor, defineInvocation);
