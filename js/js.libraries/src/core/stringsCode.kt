@@ -17,7 +17,7 @@ public inline fun String.matches(regex : String) : Boolean {
  * @includeFunctionBody ../../test/StringTest.kt capitalize
  */
 public inline fun String.capitalize(): String {
-    return if (notEmpty()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
 /**
@@ -26,5 +26,5 @@ public inline fun String.capitalize(): String {
  * @includeFunctionBody ../../test/StringTest.kt decapitalize
  */
 public inline fun String.decapitalize(): String {
-    return if (notEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
 }

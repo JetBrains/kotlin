@@ -17,7 +17,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     protected fun keyword(name: String): String = "<B>$name</B>"
 
     fun printFunctionSummary(functions: Collection<KFunction>): Unit {
-        if (functions.notEmpty()) {
+        if (functions.isNotEmpty()) {
             println("""<!-- ========== FUNCTION SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
@@ -90,7 +90,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     }
 
     fun printFunctionDetail(functions: Collection<KFunction>): Unit {
-        if (functions.notEmpty()) {
+        if (functions.isNotEmpty()) {
             println("""
 
             <!-- ============ FUNCTION DETAIL ========== -->
@@ -159,7 +159,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     }
 
     fun printPropertySummary(properties: Collection<KProperty>): Unit {
-        if (properties.notEmpty()) {
+        if (properties.isNotEmpty()) {
             println("""<!-- ========== PROPERTY SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
