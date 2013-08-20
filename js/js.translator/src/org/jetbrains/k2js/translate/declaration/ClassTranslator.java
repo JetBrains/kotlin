@@ -119,7 +119,7 @@ public final class ClassTranslator extends AbstractTranslator {
         if (containingClass == null) {
             return translate(context());
         }
-        return context().literalFunctionTranslator().translate(containingClass, classDeclaration, descriptor, this);
+        return context().literalFunctionTranslator().translate(containingClass, context(), classDeclaration, descriptor, this);
     }
 
     @NotNull
