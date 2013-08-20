@@ -16,17 +16,11 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -38,15 +32,12 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
  * Attaching library with sources, and trying to navigate to its entities from source code.
  */
 public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
-    private VirtualFile userFile;
-
     public void testEnum() {
         doTest();
     }
@@ -96,12 +87,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     }
 
     private void doTest() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                userFile = copyFileToSrcDir(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
-            }
-        });
+        myFixture.configureByFile(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
 
         checkAnnotatedLibraryCode(false);
         checkAnnotatedLibraryCode(true);
@@ -121,8 +107,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     }
 
     private Collection<JetPsiReference> collectInterestingReferences() {
-        PsiFile psiFile = getPsiManager().findFile(userFile);
-        assert psiFile != null;
+        PsiFile psiFile = myFixture.getFile();
         Map<PsiElement, JetPsiReference> referenceContainersToReferences = new LinkedHashMap<PsiElement, JetPsiReference>();
         for (int offset = 0; offset < psiFile.getTextLength(); offset++) {
             PsiReference ref = psiFile.findReferenceAt(offset);
@@ -201,33 +186,11 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     }
 
     private String getExpectedAnnotatedLibraryCode() {
-        Document document = FileDocumentManager.getInstance().getDocument(userFile);
+        Document document = myFixture.getDocument(myFixture.getFile());
         assertNotNull(document);
         return JetTestUtils.getLastCommentedLines(document);
     }
 
-
-    @NotNull
-    private VirtualFile copyFileToSrcDir(@NotNull String path) {
-        VirtualFile originalFile = LocalFileSystem.getInstance().findFileByPath(path);
-        assertNotNull(originalFile);
-
-        VirtualFile srcDir = ModuleRootManager.getInstance(myModule).getSourceRoots()[0];
-        assertNotNull(srcDir);
-        try {
-            VfsUtilCore.copyFile(null, originalFile, srcDir);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        ((NewVirtualFile)srcDir).markDirtyRecursively();
-        srcDir.refresh(false, true);
-
-        VirtualFile result = srcDir.findChild(originalFile.getName());
-        assertNotNull(result);
-        return result;
-    }
 
     @NotNull
     @Override
