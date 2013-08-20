@@ -17,9 +17,7 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,9 +41,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.makeTraceInterceptingTypeMismatch;
@@ -181,7 +179,13 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetTypeInfo getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    public JetTypeInfo getBlockReturnedType(
+            @NotNull JetScope outerScope,
+            @NotNull JetBlockExpression expression,
+            @NotNull CoercionStrategy coercionStrategyForLastExpression,
+            @NotNull ExpressionTypingContext context,
+            @NotNull BindingTrace trace
+    ) {
         List<JetElement> block = expression.getStatements();
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
@@ -239,9 +243,13 @@ public class ExpressionTypingServices {
         }
     }
 
-    /*package*/
-    @SuppressWarnings("SuspiciousMethodCalls")
-    JetTypeInfo getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    /*package*/ JetTypeInfo getBlockReturnedTypeWithWritableScope(
+            @NotNull WritableScope scope,
+            @NotNull List<? extends JetElement> block,
+            @NotNull CoercionStrategy coercionStrategyForLastExpression,
+            @NotNull ExpressionTypingContext context,
+            @NotNull BindingTrace trace
+    ) {
         if (block.isEmpty()) {
             return JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
         }
@@ -299,6 +307,7 @@ public class ExpressionTypingServices {
                         if (statementExpression instanceof JetBinaryExpression) {
                             JetBinaryExpression binaryExpression = (JetBinaryExpression) statementExpression;
                             IElementType operationType = binaryExpression.getOperationToken();
+                            //noinspection SuspiciousMethodCalls
                             if (operationType == JetTokens.EQ || OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
                                 mightBeUnit = true;
                             }
