@@ -179,7 +179,7 @@ get() = length()
  * @includeFunctionBody ../../test/StringTest.kt capitalize
  */
 public inline fun String.capitalize(): String {
-    return if (notEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
 /**
@@ -188,7 +188,7 @@ public inline fun String.capitalize(): String {
  * @includeFunctionBody ../../test/StringTest.kt decapitalize
  */
 public inline fun String.decapitalize(): String {
-    return if (notEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
 /**
