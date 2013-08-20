@@ -17,13 +17,22 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementFactoryImpl;
+
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 public abstract class JavaElementFactory {
+    private static JavaElementFactory instance;
+
     @NotNull
     public static JavaElementFactory getInstance() {
-        // TODO: ServiceLoader.load
-        return new JavaElementFactoryImpl();
+        if (instance == null) {
+            Iterator<JavaElementFactory> iterator =
+                    ServiceLoader.load(JavaElementFactory.class, JavaElementFactory.class.getClassLoader()).iterator();
+            assert iterator.hasNext() : "No service found: " + JavaElementFactory.class.getName();
+            instance = iterator.next();
+        }
+        return instance;
     }
 
     @NotNull

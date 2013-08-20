@@ -18,11 +18,21 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+import java.util.ServiceLoader;
+
 public abstract class ProgressChecker {
+    private static ProgressChecker instance;
+
     @NotNull
     public static ProgressChecker getInstance() {
-        // TODO: ServiceLoader.load()
-        return new ProgressCheckerImpl();
+        if (instance == null) {
+            Iterator<ProgressChecker> iterator =
+                    ServiceLoader.load(ProgressChecker.class, ProgressChecker.class.getClassLoader()).iterator();
+            assert iterator.hasNext() : "No service found: " + ProgressChecker.class.getName();
+            instance = iterator.next();
+        }
+        return instance;
     }
 
     public abstract void checkCanceled();

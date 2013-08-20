@@ -17,12 +17,22 @@
 package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaSignatureFormatterImpl;
+
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 public abstract class JavaSignatureFormatter {
+    private static JavaSignatureFormatter instance;
+
+    @NotNull
     public static JavaSignatureFormatter getInstance() {
-        // TODO: ServiceLoader.load
-        return new JavaSignatureFormatterImpl();
+        if (instance == null) {
+            Iterator<JavaSignatureFormatter> iterator =
+                    ServiceLoader.load(JavaSignatureFormatter.class, JavaSignatureFormatter.class.getClassLoader()).iterator();
+            assert iterator.hasNext() : "No service found: " + JavaSignatureFormatter.class.getName();
+            instance = iterator.next();
+        }
+        return instance;
     }
 
     /**
