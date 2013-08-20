@@ -268,8 +268,8 @@ public final class JavaClassResolver {
             @NotNull PostponedTasks taskList,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
-        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, javaClass.getKind(),
-                                                                                            isInnerClass(javaClass));
+        ClassDescriptorFromJvmBytecode classDescriptor =
+                new ClassDescriptorFromJvmBytecode(containingDeclaration, determineClassKind(javaClass), isInnerClass(javaClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
 
@@ -281,7 +281,7 @@ public final class JavaClassResolver {
         List<JetType> supertypes = new ArrayList<JetType>();
         classDescriptor.setSupertypes(supertypes);
         classDescriptor.setVisibility(javaClass.getVisibility());
-        classDescriptor.setModality(javaClass.getModality());
+        classDescriptor.setModality(determineClassModality(javaClass));
         classDescriptor.createTypeConstructor();
 
         JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, javaClass, false, memberResolver);
@@ -311,6 +311,21 @@ public final class JavaClassResolver {
         }
 
         return classDescriptor;
+    }
+
+    @NotNull
+    private static ClassKind determineClassKind(@NotNull JavaClass klass) {
+        if (klass.isInterface()) {
+            return klass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT;
+        }
+        return klass.isEnum() ? ClassKind.ENUM_CLASS : ClassKind.CLASS;
+    }
+
+    @NotNull
+    private static Modality determineClassModality(@NotNull JavaClass klass) {
+        return klass.isAnnotationType()
+               ? Modality.FINAL
+               : Modality.convertFromFlags(klass.isAbstract() || klass.isInterface(), !klass.isFinal());
     }
 
     @NotNull

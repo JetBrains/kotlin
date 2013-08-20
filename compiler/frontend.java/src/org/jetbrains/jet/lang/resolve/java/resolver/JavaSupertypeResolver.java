@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
@@ -70,7 +69,7 @@ public final class JavaSupertypeResolver {
 
     @NotNull
     private JetType getDefaultSupertype(@NotNull JavaClass javaClass) {
-        if (OBJECT_FQ_NAME.equals(javaClass.getFqName()) || javaClass.getKind() == ClassKind.ANNOTATION_CLASS) {
+        if (OBJECT_FQ_NAME.equals(javaClass.getFqName()) || javaClass.isAnnotationType()) {
             return KotlinBuiltIns.getInstance().getAnyType();
         }
         else {

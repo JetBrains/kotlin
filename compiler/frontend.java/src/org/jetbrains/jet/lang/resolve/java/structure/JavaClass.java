@@ -18,14 +18,11 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
-public interface JavaClass
-        extends JavaClassifier, JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
+public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
     @NotNull
     Collection<JavaClass> getInnerClasses();
 
@@ -38,14 +35,8 @@ public interface JavaClass
 
     boolean isEnum();
 
-    @NotNull
-    ClassKind getKind();
-
     @Nullable
     JavaClass getOuterClass();
-
-    @NotNull
-    Modality getModality();
 
     @NotNull
     Collection<JavaClassifierType> getSupertypes();

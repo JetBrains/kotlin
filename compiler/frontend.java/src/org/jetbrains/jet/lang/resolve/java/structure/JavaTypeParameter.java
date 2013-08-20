@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public interface JavaTypeParameter extends JavaClassifier, JavaNamedElement {
+public interface JavaTypeParameter extends JavaClassifier {
     int getIndex();
 
     @NotNull

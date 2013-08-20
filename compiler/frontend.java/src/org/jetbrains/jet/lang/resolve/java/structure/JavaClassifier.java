@@ -16,5 +16,5 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-public interface JavaClassifier extends JavaElement {
+public interface JavaClassifier extends JavaNamedElement {
 }
