@@ -63,13 +63,13 @@ var Kotlin = {};
     }
 
     Kotlin.isType = function (object, klass) {
-        if (object === null || object === undefined) {
+        if (object == null) {
             return false;
         }
 
         var current = object.get_class();
         while (current !== klass) {
-            if (current === null || current === undefined) {
+            if (current == null) {
                 return false;
             }
             current = current.superclass;
