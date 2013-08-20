@@ -171,7 +171,7 @@ public class ExpressionTypingServices {
             JetFunctionLiteral functionLiteral = (JetFunctionLiteral) function;
             JetBlockExpression blockExpression = functionLiteral.getBodyExpression();
             assert blockExpression != null;
-            getBlockReturnedType(newContext.scope, blockExpression, CoercionStrategy.COERCION_TO_UNIT, context, trace);
+            getBlockReturnedType(blockExpression, CoercionStrategy.COERCION_TO_UNIT, context);
         }
         else {
             expressionTypingFacade.getTypeInfo(bodyExpression, newContext, !blockBody);
@@ -180,15 +180,13 @@ public class ExpressionTypingServices {
 
     @NotNull
     public JetTypeInfo getBlockReturnedType(
-            @NotNull JetScope outerScope,
             @NotNull JetBlockExpression expression,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull BindingTrace trace
+            @NotNull ExpressionTypingContext context
     ) {
         List<JetElement> block = expression.getStatements();
 
-        DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
+        DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();
         if (containingDescriptor instanceof ScriptDescriptor) {
             if (!(expression.getParent() instanceof JetScript)) {
                 // top level script declarations should have ScriptDescriptor parent
@@ -197,7 +195,7 @@ public class ExpressionTypingServices {
             }
         }
         WritableScope scope = new WritableScopeImpl(
-                outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
+                context.scope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         JetTypeInfo r;
@@ -205,12 +203,12 @@ public class ExpressionTypingServices {
             r = DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, context, context.dataFlowInfo);
         }
         else {
-            r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
+            r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, context.trace);
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         if (containingDescriptor instanceof ScriptDescriptor) {
-            trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, scope);
+            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, scope);
         }
 
         return r;

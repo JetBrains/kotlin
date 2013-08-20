@@ -288,8 +288,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             return returnType;
         }
         ExpressionTypingContext newContext = context.replaceExpectedType(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE)
-                .replaceBindingTrace(temporaryTrace);
-        return context.expressionTypingServices.getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
-                                                                     newContext, temporaryTrace).getType();
+                .replaceBindingTrace(temporaryTrace).replaceScope(functionInnerScope);
+        return context.expressionTypingServices.getBlockReturnedType(bodyExpression, CoercionStrategy.COERCION_TO_UNIT, newContext).getType();
     }
 }
