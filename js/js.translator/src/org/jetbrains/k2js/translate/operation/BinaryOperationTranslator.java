@@ -30,7 +30,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.reference.CallType;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
@@ -76,8 +76,9 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         if (intrinsic != null) {
             return applyIntrinsic(intrinsic);
         }
-        if (isElvisOperator(expression)) {
-            return translateAsElvisOperator(expression);
+        if (getOperationToken(expression).equals(JetTokens.ELVIS)) {
+            return TranslationUtils.notNullConditional(translateLeftExpression(context(), expression),
+                                                       translateRightExpression(context(), expression), context());
         }
         if (isAssignmentOperator(expression)) {
             return AssignmentTranslator.translate(expression, context());
@@ -104,19 +105,6 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
                                translateLeftExpression(context(), expression),
                                translateRightExpression(context(), expression),
                                context());
-    }
-
-    private static boolean isElvisOperator(@NotNull JetBinaryExpression expression) {
-        return getOperationToken(expression).equals(JetTokens.ELVIS);
-    }
-
-    //TODO: use some generic mechanism
-    @NotNull
-    private JsExpression translateAsElvisOperator(@NotNull JetBinaryExpression expression) {
-        JsExpression translatedLeft = translateLeftExpression(context(), expression);
-        JsExpression translatedRight = translateRightExpression(context(), expression);
-        JsBinaryOperation leftIsNotNull = JsAstUtils.inequality(translatedLeft, JsLiteral.NULL);
-        return new JsConditional(leftIsNotNull, translatedLeft, translatedRight);
     }
 
     private boolean isNotOverloadable() {
