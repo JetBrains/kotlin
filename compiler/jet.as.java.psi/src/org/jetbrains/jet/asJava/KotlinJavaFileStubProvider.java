@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -179,7 +178,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             throw e;
         }
         catch (RuntimeException e) {
-            logErrorWithOSInfo(e, packageFqName, null);
+            LightClassUtil.logErrorWithOSInfo(e, packageFqName, null);
             throw e;
         }
 
@@ -226,18 +225,9 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
                 // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
                 // If it fails later, there will be an exception logged
-                logErrorWithOSInfo(null, fqName, file.getVirtualFile());
+                LightClassUtil.logErrorWithOSInfo(null, fqName, file.getVirtualFile());
             }
         }
-    }
-
-    private static void logErrorWithOSInfo(@Nullable Throwable cause, @NotNull FqName fqName, @Nullable VirtualFile virtualFile) {
-        String path = virtualFile == null ? "<null>" : virtualFile.getPath();
-        LOG.error(
-                "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
-                "built-ins dir URL is " + KotlinBuiltIns.getBuiltInsDirUrl() + "\n" +
-                "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
-                cause);
     }
 
     private interface StubGenerationStrategy {
