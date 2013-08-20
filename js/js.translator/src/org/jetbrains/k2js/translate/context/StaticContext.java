@@ -278,23 +278,6 @@ public final class StaticContext {
                     return declareName(descriptor, name);
                 }
             };
-            //TODO: hack!
-            Rule<JsName> toStringHack = new Rule<JsName>() {
-                @Override
-                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof FunctionDescriptor)) {
-                        return null;
-                    }
-                    if (!descriptor.getName().asString().equals("toString")) {
-                        return null;
-                    }
-                    if (((FunctionDescriptor) descriptor).getValueParameters().isEmpty()) {
-                        return getEnclosingScope(descriptor).declareName("toString");
-                    }
-                    return null;
-                }
-            };
-
             Rule<JsName> overridingDescriptorsReferToOriginalName = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
@@ -316,7 +299,6 @@ public final class StaticContext {
             addRule(namesForStandardClasses);
             addRule(constructorHasTheSameNameAsTheClass);
             addRule(predefinedObjectsHasUnobfuscatableNames);
-            addRule(toStringHack);
             addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
             addRule(namespacesShouldBeDefinedInRootScope);
             addRule(overridingDescriptorsReferToOriginalName);
