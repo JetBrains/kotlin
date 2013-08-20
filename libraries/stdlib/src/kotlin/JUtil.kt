@@ -19,7 +19,7 @@ val Int.indices: IntRange
 /** Returns true if the collection is not empty */
 public inline fun <T> Collection<T>.isNotEmpty() : Boolean = !this.isEmpty()
 
-/** Returns true if this collection is empty */
+/** Returns true if this collection is not empty */
 val Collection<*>.notEmpty : Boolean
     get() = isNotEmpty()
 
