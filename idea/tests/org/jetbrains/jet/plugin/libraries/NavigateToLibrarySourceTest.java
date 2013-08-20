@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -29,9 +31,11 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 
 import java.io.IOException;
@@ -92,7 +96,12 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     }
 
     private void doTest() {
-        userFile = copyFileToSrcDir(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                userFile = copyFileToSrcDir(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
+            }
+        });
 
         checkAnnotatedLibraryCode(false);
         checkAnnotatedLibraryCode(true);
@@ -197,18 +206,13 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         return JetTestUtils.getLastCommentedLines(document);
     }
 
-    @Override
-    protected boolean isWithSources() {
-        return true;
-    }
-
 
     @NotNull
     private VirtualFile copyFileToSrcDir(@NotNull String path) {
         VirtualFile originalFile = LocalFileSystem.getInstance().findFileByPath(path);
         assertNotNull(originalFile);
 
-        VirtualFile srcDir = getProject().getBaseDir().findChild(SRC_DIR_NAME);
+        VirtualFile srcDir = ModuleRootManager.getInstance(myModule).getSourceRoots()[0];
         assertNotNull(srcDir);
         try {
             VfsUtilCore.copyFile(null, originalFile, srcDir);
@@ -223,5 +227,11 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         VirtualFile result = srcDir.findChild(originalFile.getName());
         assertNotNull(result);
         return result;
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/library", true);
     }
 }
