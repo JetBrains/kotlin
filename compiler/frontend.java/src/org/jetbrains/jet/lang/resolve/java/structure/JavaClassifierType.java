@@ -16,17 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiClassType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 public interface JavaClassifierType extends JavaType {
-    @NotNull
-    @Override
-    PsiClassType getPsi();
-
     @Nullable
     JavaClassifier getClassifier();
 

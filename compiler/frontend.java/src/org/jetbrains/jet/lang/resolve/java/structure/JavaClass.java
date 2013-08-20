@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
@@ -27,10 +26,6 @@ import java.util.Collection;
 
 public interface JavaClass
         extends JavaClassifier, JavaNamedElement, JavaTypeParameterListOwner, JavaModifierListOwner, JavaAnnotationOwner {
-    @NotNull
-    @Override
-    PsiClass getPsi();
-
     @NotNull
     Collection<JavaClass> getInnerClasses();
 

@@ -46,8 +46,8 @@ public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
     public static JavaTypeSubstitutor create(@NotNull Map<JavaTypeParameter, JavaType> substitutionMap) {
         Map<PsiTypeParameter, PsiType> psiMap = new HashMap<PsiTypeParameter, PsiType>();
         for (Map.Entry<JavaTypeParameter, JavaType> entry : substitutionMap.entrySet()) {
-            JavaType value = entry.getValue();
-            psiMap.put(entry.getKey().getPsi(), value == null ? null : value.getPsi());
+            JavaTypeImpl value = ((JavaTypeImpl) entry.getValue());
+            psiMap.put(((JavaTypeParameterImpl) entry.getKey()).getPsi(), value == null ? null : value.getPsi());
         }
         PsiSubstitutor psiSubstitutor = PsiSubstitutorImpl.createSubstitutor(psiMap);
         return new JavaTypeSubstitutorImpl(psiSubstitutor, substitutionMap);
@@ -56,13 +56,13 @@ public class JavaTypeSubstitutorImpl implements JavaTypeSubstitutor {
     @Override
     @NotNull
     public JavaType substitute(@NotNull JavaType type) {
-        return JavaTypeImpl.create(psiSubstitutor.substitute(type.getPsi()));
+        return JavaTypeImpl.create(psiSubstitutor.substitute(((JavaTypeImpl) type).getPsi()));
     }
 
     @Override
     @Nullable
     public JavaType substitute(@NotNull JavaTypeParameter typeParameter) {
-        PsiType psiType = psiSubstitutor.substitute(typeParameter.getPsi());
+        PsiType psiType = psiSubstitutor.substitute(((JavaTypeParameterImpl) typeParameter).getPsi());
         return psiType == null ? null : JavaTypeImpl.create(psiType);
     }
 

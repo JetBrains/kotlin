@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -54,7 +55,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
     public AlternativeMethodSignatureData(
             @NotNull JavaAnnotationResolver annotationResolver,
-            @NotNull JavaMethod method,
+            @NotNull JavaMethodImpl method,
             @Nullable JetType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @Nullable JetType originalReturnType,

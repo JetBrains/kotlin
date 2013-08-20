@@ -16,14 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiField;
 import org.jetbrains.annotations.NotNull;
 
 public interface JavaField extends JavaMember {
-    @NotNull
-    @Override
-    PsiField getPsi();
-
     boolean isEnumEntry();
 
     @NotNull

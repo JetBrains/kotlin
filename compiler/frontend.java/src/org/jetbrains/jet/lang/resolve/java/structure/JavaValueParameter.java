@@ -16,16 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface JavaValueParameter extends JavaAnnotationOwner {
-    @NotNull
-    @Override
-    PsiParameter getPsi();
-
     @Nullable
     Name getName();
 

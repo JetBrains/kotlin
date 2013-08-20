@@ -16,16 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiAnnotationMemberValue;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface JavaAnnotationArgument extends JavaElement {
-    @NotNull
-    @Override
-    PsiAnnotationMemberValue getPsi();
-
     @Nullable
     Name getName();
 }

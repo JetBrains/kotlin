@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaAnnotationImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaAnnotationOwnerImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -36,14 +37,14 @@ public class PsiBasedExternalAnnotationResolver implements ExternalAnnotationRes
     @Nullable
     @Override
     public JavaAnnotation findExternalAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName) {
-        PsiAnnotation psiAnnotation = findExternalAnnotation(owner.getPsi(), fqName);
+        PsiAnnotation psiAnnotation = findExternalAnnotation(((JavaAnnotationOwnerImpl) owner).getPsi(), fqName);
         return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
     }
 
     @NotNull
     @Override
     public Collection<JavaAnnotation> findExternalAnnotations(@NotNull JavaAnnotationOwner owner) {
-        PsiModifierListOwner psiOwner = owner.getPsi();
+        PsiModifierListOwner psiOwner = ((JavaAnnotationOwnerImpl) owner).getPsi();
         PsiAnnotation[] annotations = ExternalAnnotationsManager.getInstance(psiOwner.getProject()).findExternalAnnotations(psiOwner);
         return annotations == null
                ? Collections.<JavaAnnotation>emptyList()

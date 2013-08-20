@@ -16,15 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiWildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface JavaWildcardType extends JavaType {
-    @NotNull
-    @Override
-    PsiWildcardType getPsi();
-
     @Nullable
     JavaType getBound();
 

@@ -16,10 +16,5 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiType;
-import org.jetbrains.annotations.NotNull;
-
 public interface JavaType {
-    @NotNull
-    PsiType getPsi();
 }

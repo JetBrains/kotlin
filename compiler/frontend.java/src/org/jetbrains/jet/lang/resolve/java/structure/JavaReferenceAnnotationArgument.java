@@ -16,15 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiReferenceExpression;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface JavaReferenceAnnotationArgument extends JavaAnnotationArgument {
-    @NotNull
-    @Override
-    PsiReferenceExpression getPsi();
-
     @Nullable
     JavaElement resolve();
 }

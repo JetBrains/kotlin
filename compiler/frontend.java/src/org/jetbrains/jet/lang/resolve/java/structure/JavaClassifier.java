@@ -16,11 +16,5 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiClass;
-import org.jetbrains.annotations.NotNull;
-
 public interface JavaClassifier extends JavaElement {
-    @NotNull
-    @Override
-    PsiClass getPsi();
 }

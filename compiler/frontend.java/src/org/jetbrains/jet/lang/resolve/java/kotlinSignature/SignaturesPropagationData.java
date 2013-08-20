@@ -72,7 +72,7 @@ public class SignaturesPropagationData {
             @Nullable JetType receiverType,
             @NotNull List<ValueParameterDescriptor> autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
-            @NotNull JavaMethod method,
+            @NotNull JavaMethodImpl method,
             @NotNull BindingTrace trace
     ) {
         this.containingClass = containingClass;
@@ -215,7 +215,7 @@ public class SignaturesPropagationData {
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
-            @NotNull JavaMethod method,
+            @NotNull JavaMethodImpl method,
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor containingClass
     ) {
@@ -223,10 +223,10 @@ public class SignaturesPropagationData {
 
         Map<ClassDescriptor, JetType> superclassToSupertype = getSuperclassToSupertypeMap(containingClass);
 
-        Multimap<FqName, Pair<FunctionDescriptor, JavaMethod>> superclassToFunctions =
+        Multimap<FqName, Pair<FunctionDescriptor, JavaMethodImpl>> superclassToFunctions =
                 getSuperclassToFunctionsMultimap(method, trace.getBindingContext(), containingClass);
 
-        for (JavaMethod superMethod : PropagationHeuristics.getSuperMethods(method)) {
+        for (JavaMethodImpl superMethod : PropagationHeuristics.getSuperMethods(method)) {
             JavaClass javaClass = superMethod.getContainingClass();
             FqName classFqName = javaClass.getFqName();
             assert classFqName != null : "Class FQ name should not be null: " + javaClass;
@@ -268,12 +268,12 @@ public class SignaturesPropagationData {
     }
 
     @NotNull
-    private static Multimap<FqName, Pair<FunctionDescriptor, JavaMethod>> getSuperclassToFunctionsMultimap(
+    private static Multimap<FqName, Pair<FunctionDescriptor, JavaMethodImpl>> getSuperclassToFunctionsMultimap(
             @NotNull JavaMethod method,
             @NotNull BindingContext bindingContext,
             @NotNull ClassDescriptor containingClass
     ) {
-        Multimap<FqName, Pair<FunctionDescriptor, JavaMethod>> result = HashMultimap.create();
+        Multimap<FqName, Pair<FunctionDescriptor, JavaMethodImpl>> result = HashMultimap.create();
 
         Name functionName = method.getName();
         int parameterCount = method.getValueParameters().size();
@@ -289,7 +289,7 @@ public class SignaturesPropagationData {
                     fun.getValueParameters().size() + (fun.getReceiverParameter() != null ? 1 : 0) == parameterCount) {
                     PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, fun);
                     if (declaration instanceof PsiMethod) {
-                        result.put(fqName, Pair.<FunctionDescriptor, JavaMethod>create(fun, new JavaMethodImpl((PsiMethod) declaration)));
+                        result.put(fqName, Pair.create(fun, new JavaMethodImpl((PsiMethod) declaration)));
                     } // else declaration is null or JetNamedFunction: both cases are processed later
                 }
             }
@@ -299,11 +299,11 @@ public class SignaturesPropagationData {
 
     @Nullable
     private static DeclarationDescriptor findSuperFunction(
-            @NotNull Collection<Pair<FunctionDescriptor, JavaMethod>> superFunctionCandidates,
-            @NotNull JavaMethod superMethod
+            @NotNull Collection<Pair<FunctionDescriptor, JavaMethodImpl>> superFunctionCandidates,
+            @NotNull JavaMethodImpl superMethod
     ) {
         PsiManager psiManager = PsiManager.getInstance(superMethod.getPsi().getProject());
-        for (Pair<FunctionDescriptor, JavaMethod> candidate : superFunctionCandidates) {
+        for (Pair<FunctionDescriptor, JavaMethodImpl> candidate : superFunctionCandidates) {
             if (psiManager.areElementsEquivalent(candidate.second.getPsi(), superMethod.getPsi())) {
                 return candidate.first;
             }

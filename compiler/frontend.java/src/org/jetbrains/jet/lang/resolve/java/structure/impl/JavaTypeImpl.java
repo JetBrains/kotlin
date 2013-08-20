@@ -28,7 +28,6 @@ public abstract class JavaTypeImpl implements JavaType {
         this.psiType = psiType;
     }
 
-    @Override
     @NotNull
     public PsiType getPsi() {
         return psiType;
@@ -76,7 +75,7 @@ public abstract class JavaTypeImpl implements JavaType {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof JavaTypeImpl && getPsi().equals(((JavaType) obj).getPsi());
+        return obj instanceof JavaTypeImpl && getPsi().equals(((JavaTypeImpl) obj).getPsi());
     }
 
     @Override

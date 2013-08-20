@@ -16,15 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaElementFactory;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
 
-public class JavaElementFactoryImpl extends JavaElementFactory {
+public interface JavaAnnotationOwnerImpl extends JavaAnnotationOwner {
     @NotNull
-    @Override
-    public JavaArrayType createArrayType(@NotNull JavaType elementType) {
-        return new JavaArrayTypeImpl(((JavaTypeImpl) elementType).getPsi().createArrayType());
-    }
+    PsiModifierListOwner getPsi();
 }

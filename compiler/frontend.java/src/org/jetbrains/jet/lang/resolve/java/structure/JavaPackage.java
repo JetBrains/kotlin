@@ -16,17 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
 public interface JavaPackage extends JavaElement {
-    @NotNull
-    @Override
-    PsiPackage getPsi();
-
     @NotNull
     Collection<JavaClass> getClasses();
 

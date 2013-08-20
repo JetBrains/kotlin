@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -24,10 +23,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.Collection;
 
 public interface JavaAnnotationOwner extends JavaElement {
-    @NotNull
-    @Override
-    PsiModifierListOwner getPsi();
-
     @NotNull
     Collection<JavaAnnotation> getAnnotations();
 

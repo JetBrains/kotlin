@@ -16,16 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiArrayInitializerMemberValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public interface JavaArrayAnnotationArgument extends JavaAnnotationArgument {
-    @NotNull
-    @Override
-    PsiArrayInitializerMemberValue getPsi();
-
     @NotNull
     Collection<JavaAnnotationArgument> getElements();
 }

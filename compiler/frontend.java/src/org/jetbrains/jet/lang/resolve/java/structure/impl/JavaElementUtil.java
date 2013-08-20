@@ -19,14 +19,13 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaModifierListOwner;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -38,34 +37,35 @@ import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementColl
     private JavaElementUtil() {
     }
 
-    public static boolean isAbstract(@NotNull JavaModifierListOwner owner) {
+    public static boolean isAbstract(@NotNull JavaModifierListOwnerImpl owner) {
         return owner.getPsi().hasModifierProperty(PsiModifier.ABSTRACT);
     }
 
-    public static boolean isStatic(@NotNull JavaModifierListOwner owner) {
+    public static boolean isStatic(@NotNull JavaModifierListOwnerImpl owner) {
         return owner.getPsi().hasModifierProperty(PsiModifier.STATIC);
     }
 
-    public static boolean isFinal(@NotNull JavaModifierListOwner owner) {
+    public static boolean isFinal(@NotNull JavaModifierListOwnerImpl owner) {
         return owner.getPsi().hasModifierProperty(PsiModifier.FINAL);
     }
 
     @NotNull
-    public static Visibility getVisibility(@NotNull JavaModifierListOwner owner) {
-        if (owner.getPsi().hasModifierProperty(PsiModifier.PUBLIC)) {
+    public static Visibility getVisibility(@NotNull JavaModifierListOwnerImpl owner) {
+        PsiModifierListOwner psiOwner = owner.getPsi();
+        if (psiOwner.hasModifierProperty(PsiModifier.PUBLIC)) {
             return Visibilities.PUBLIC;
         }
-        if (owner.getPsi().hasModifierProperty(PsiModifier.PRIVATE)) {
+        if (psiOwner.hasModifierProperty(PsiModifier.PRIVATE)) {
             return Visibilities.PRIVATE;
         }
-        if (owner.getPsi().hasModifierProperty(PsiModifier.PROTECTED)) {
+        if (psiOwner.hasModifierProperty(PsiModifier.PROTECTED)) {
             return owner.isStatic() ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY : JavaVisibilities.PROTECTED_AND_PACKAGE;
         }
         return JavaVisibilities.PACKAGE_VISIBILITY;
     }
 
     @NotNull
-    public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaAnnotationOwner owner) {
+    public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaAnnotationOwnerImpl owner) {
         PsiModifierList modifierList = owner.getPsi().getModifierList();
         if (modifierList != null) {
             return annotations(modifierList.getAnnotations());
@@ -74,7 +74,7 @@ import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementColl
     }
 
     @Nullable
-    public static JavaAnnotation findAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName) {
+    public static JavaAnnotation findAnnotation(@NotNull JavaAnnotationOwnerImpl owner, @NotNull FqName fqName) {
         PsiModifierList modifierList = owner.getPsi().getModifierList();
         if (modifierList != null) {
             PsiAnnotation psiAnnotation = modifierList.findAnnotation(fqName.asString());

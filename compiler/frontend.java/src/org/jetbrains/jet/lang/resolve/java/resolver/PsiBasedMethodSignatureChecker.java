@@ -107,7 +107,7 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
     }
 
     // Originally from com.intellij.codeInsight.daemon.impl.analysis.HighlightMethodUtil
-    private static boolean isMethodReturnTypeCompatible(@NotNull JavaMethod method) {
+    private static boolean isMethodReturnTypeCompatible(@NotNull JavaMethodImpl method) {
         if (method.isStatic()) return true;
 
         HierarchicalMethodSignature methodSignature = method.getPsi().getHierarchicalMethodSignature();
@@ -167,8 +167,9 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
             @NotNull List<String> signatureErrors,
             @NotNull List<FunctionDescriptor> superFunctions
     ) {
-        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(method) &&
-            isMethodReturnTypeCompatible(method) &&
+        JavaMethodImpl methodWithPsi = (JavaMethodImpl) method;
+        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(methodWithPsi) &&
+            isMethodReturnTypeCompatible(methodWithPsi) &&
             !containsErrorType(superFunctions, descriptor)) {
             if (signatureErrors.isEmpty()) {
                 for (FunctionDescriptor superFunction : superFunctions) {
@@ -236,7 +237,7 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
             return false;
         }
 
-        public static boolean hasRawTypesInHierarchicalSignature(@NotNull JavaMethod method) {
+        public static boolean hasRawTypesInHierarchicalSignature(@NotNull JavaMethodImpl method) {
             // This is a very important optimization: package-classes are big and full of static methods
             // building method hierarchies for such classes takes a very long time
             if (method.isStatic()) return false;

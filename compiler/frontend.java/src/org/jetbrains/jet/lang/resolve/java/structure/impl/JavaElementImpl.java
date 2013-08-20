@@ -28,7 +28,6 @@ public abstract class JavaElementImpl implements JavaElement {
     }
 
     @NotNull
-    @Override
     public PsiElement getPsi() {
         return psiElement;
     }
@@ -40,7 +39,7 @@ public abstract class JavaElementImpl implements JavaElement {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof JavaElement && getPsi().equals(((JavaElement) obj).getPsi());
+        return obj instanceof JavaElementImpl && getPsi().equals(((JavaElementImpl) obj).getPsi());
     }
 
     @Override

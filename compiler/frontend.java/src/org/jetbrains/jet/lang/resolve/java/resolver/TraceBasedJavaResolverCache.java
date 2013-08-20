@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +32,10 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
@@ -65,37 +70,38 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     @Nullable
     @Override
     public SimpleFunctionDescriptor getMethod(@NotNull JavaMethod method) {
-        return trace.get(FUNCTION, method.getPsi());
+        return trace.get(FUNCTION, ((JavaMethodImpl) method).getPsi());
     }
 
     @Nullable
     @Override
     public ConstructorDescriptor getConstructor(@NotNull JavaElement constructor) {
-        return trace.get(CONSTRUCTOR, constructor.getPsi());
+        return trace.get(CONSTRUCTOR, ((JavaElementImpl) constructor).getPsi());
     }
 
     @Nullable
     @Override
     public ClassDescriptor getClass(@NotNull JavaClass javaClass) {
-        return trace.get(CLASS, javaClass.getPsi());
+        return trace.get(CLASS, ((JavaClassImpl) javaClass).getPsi());
     }
 
     @Override
     public void recordMethod(@NotNull JavaMethod method, @NotNull SimpleFunctionDescriptor descriptor) {
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, method.getPsi(), descriptor);
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, ((JavaMethodImpl) method).getPsi(), descriptor);
     }
 
     @Override
     public void recordConstructor(@NotNull JavaElement element, @NotNull ConstructorDescriptor descriptor) {
-        trace.record(CONSTRUCTOR, element.getPsi(), descriptor);
+        trace.record(CONSTRUCTOR, ((JavaElementImpl) element).getPsi(), descriptor);
     }
 
     @Override
     public void recordField(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor) {
-        trace.record(VARIABLE, field.getPsi(), descriptor);
+        PsiField psiField = ((JavaFieldImpl) field).getPsi();
+        trace.record(VARIABLE, psiField, descriptor);
 
         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(descriptor)) {
-            PsiExpression initializer = field.getPsi().getInitializer();
+            PsiExpression initializer = psiField.getInitializer();
             if (initializer instanceof PsiLiteralExpression) {
                 CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver
                         .resolveCompileTimeConstantValue(((PsiLiteralExpression) initializer).getValue(), descriptor.getType());
@@ -108,7 +114,7 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
 
     @Override
     public void recordClass(@NotNull JavaClass javaClass, @NotNull ClassDescriptor descriptor) {
-        trace.record(CLASS, javaClass.getPsi(), descriptor);
+        trace.record(CLASS, ((JavaClassImpl) javaClass).getPsi(), descriptor);
     }
 
     @Override
@@ -123,6 +129,6 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
 
     @Override
     public void recordPackage(@NotNull JavaElement element, @NotNull NamespaceDescriptor descriptor) {
-        trace.record(NAMESPACE, element.getPsi(), descriptor);
+        trace.record(NAMESPACE, ((JavaElementImpl) element).getPsi(), descriptor);
     }
 }

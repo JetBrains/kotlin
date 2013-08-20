@@ -16,15 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.Visibility;
 
 public interface JavaModifierListOwner extends JavaElement {
-    @NotNull
-    @Override
-    PsiModifierListOwner getPsi();
-
     boolean isAbstract();
 
     boolean isStatic();

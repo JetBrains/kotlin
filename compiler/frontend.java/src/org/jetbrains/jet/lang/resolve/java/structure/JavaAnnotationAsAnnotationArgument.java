@@ -16,14 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.NotNull;
 
 public interface JavaAnnotationAsAnnotationArgument extends JavaAnnotationArgument {
-    @NotNull
-    @Override
-    PsiAnnotation getPsi();
-
     @NotNull
     JavaAnnotation getAnnotation();
 }

@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-public class JavaValueParameterImpl extends JavaElementImpl implements JavaValueParameter {
+public class JavaValueParameterImpl extends JavaElementImpl implements JavaValueParameter, JavaAnnotationOwnerImpl {
     public JavaValueParameterImpl(@NotNull PsiParameter psiParameter) {
         super(psiParameter);
     }

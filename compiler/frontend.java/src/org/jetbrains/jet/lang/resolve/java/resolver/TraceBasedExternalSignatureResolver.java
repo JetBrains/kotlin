@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSign
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
@@ -60,7 +62,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
         SignaturesPropagationData data =
-                new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, method, trace);
+                new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, (JavaMethodImpl) method,
+                                              trace);
         return new PropagatedMethodSignature(data.getModifiedReturnType(), data.getModifiedReceiverType(),
                                              data.getModifiedValueParameters(), data.getModifiedTypeParameters(), data.getSignatureErrors(),
                                              data.getSuperFunctions());
@@ -77,8 +80,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
         AlternativeMethodSignatureData data =
-                new AlternativeMethodSignatureData(annotationResolver, method, receiverType, valueParameters, returnType, typeParameters,
-                                                   hasSuperMethods);
+                new AlternativeMethodSignatureData(annotationResolver, (JavaMethodImpl) method, receiverType, valueParameters, returnType,
+                                                   typeParameters, hasSuperMethods);
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
@@ -96,7 +99,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull JetType returnType,
             boolean isVar
     ) {
-        AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(annotationResolver, field, returnType, isVar);
+        AlternativeFieldSignatureData data =
+                new AlternativeFieldSignatureData(annotationResolver, (JavaFieldImpl) field, returnType, isVar);
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeFieldSignature(data.getReturnType(), null);

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -25,10 +24,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 
 public interface JavaAnnotation extends JavaElement {
-    @NotNull
-    @Override
-    PsiAnnotation getPsi();
-
     @Nullable
     JavaAnnotationArgument findArgument(@NotNull Name name);
 

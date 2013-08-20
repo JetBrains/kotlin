@@ -16,15 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface JavaMember extends JavaModifierListOwner, JavaAnnotationOwner, JavaNamedElement {
-    @NotNull
-    @Override
-    PsiMember getPsi();
-
     @NotNull
     JavaClass getContainingClass();
 }

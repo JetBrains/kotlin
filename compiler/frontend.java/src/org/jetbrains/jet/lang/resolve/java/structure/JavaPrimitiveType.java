@@ -16,14 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiPrimitiveType;
 import org.jetbrains.annotations.NotNull;
 
 public interface JavaPrimitiveType extends JavaType {
-    @NotNull
-    @Override
-    PsiPrimitiveType getPsi();
-
     @NotNull
     String getCanonicalText();
 }
