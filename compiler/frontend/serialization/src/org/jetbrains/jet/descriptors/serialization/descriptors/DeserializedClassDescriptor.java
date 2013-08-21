@@ -24,7 +24,7 @@ import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DefaultDescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
@@ -285,14 +285,16 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObject.createTypeConstructor();
 
-        ConstructorDescriptorImpl primaryConstructor = DescriptorResolver.createPrimaryConstructorForObject(classObject);
+        ConstructorDescriptorImpl primaryConstructor = DefaultDescriptorFactory.createPrimaryConstructorForObject(classObject);
         primaryConstructor.setReturnType(classObject.getDefaultType());
         classObject.setPrimaryConstructor(primaryConstructor);
 
         JetType defaultType = getDefaultType();
         JetType defaultTypeArray = KotlinBuiltIns.getInstance().getArrayType(defaultType);
-        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, defaultTypeArray));
-        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, defaultType));
+        classObject.getBuilder().addFunctionDescriptor(
+                DefaultDescriptorFactory.createEnumClassObjectValuesMethod(classObject, defaultTypeArray));
+        classObject.getBuilder().addFunctionDescriptor(
+                DefaultDescriptorFactory.createEnumClassObjectValueOfMethod(classObject, defaultType));
 
         return classObject;
     }
@@ -304,7 +306,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         property.setType(getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
                          enumClassObject.getThisAsReceiverParameter(), NO_RECEIVER_PARAMETER);
 
-        PropertyGetterDescriptorImpl getter = DescriptorResolver.createDefaultGetter(property);
+        PropertyGetterDescriptorImpl getter = DefaultDescriptorFactory.createDefaultGetter(property);
         getter.initialize(property.getReturnType());
         property.initialize(getter, null);
 

@@ -33,7 +33,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DefaultDescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -231,7 +231,7 @@ public class PropertyCodegen extends GenerationStateAware {
         //if (!defaultGetter || isExternallyAccessible(propertyDescriptor)) {
         JvmMethodSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-        getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorResolver.createDefaultGetter(propertyDescriptor);
+        getterDescriptor = getterDescriptor != null ? getterDescriptor : DefaultDescriptorFactory.createDefaultGetter(propertyDescriptor);
 
         if (kind != OwnerKind.TRAIT_IMPL || !defaultGetter) {
             FunctionGenerationStrategy strategy;
@@ -261,7 +261,8 @@ public class PropertyCodegen extends GenerationStateAware {
         if (/*!defaultSetter || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
             JvmMethodSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
             PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-            setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorResolver.createDefaultSetter(propertyDescriptor);
+            setterDescriptor =
+                    setterDescriptor != null ? setterDescriptor : DefaultDescriptorFactory.createDefaultSetter(propertyDescriptor);
 
             if (kind != OwnerKind.TRAIT_IMPL || !defaultSetter) {
                 FunctionGenerationStrategy strategy;

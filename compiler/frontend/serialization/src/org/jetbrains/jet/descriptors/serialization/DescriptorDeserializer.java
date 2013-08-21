@@ -23,7 +23,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeP
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DefaultDescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -162,7 +162,7 @@ public class DescriptorDeserializer {
                 );
             }
             else {
-                getter = DescriptorResolver.createDefaultGetter(property);
+                getter = DefaultDescriptorFactory.createDefaultGetter(property);
             }
             getter.initialize(property.getReturnType());
         }
@@ -182,7 +182,7 @@ public class DescriptorDeserializer {
                         property.getReturnType(), false, null));
             }
             else {
-                setter = DescriptorResolver.createDefaultSetter(property);
+                setter = DefaultDescriptorFactory.createDefaultSetter(property);
             }
         }
 

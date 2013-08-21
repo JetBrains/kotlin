@@ -59,8 +59,6 @@ import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 
 public class DescriptorResolver {
-    public static final Name VALUE_OF_METHOD_NAME = Name.identifier("valueOf");
-    public static final Name VALUES_METHOD_NAME = Name.identifier("values");
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
     public static final String COMPONENT_FUNCTION_NAME_PREFIX = "component";
 
@@ -595,20 +593,10 @@ public class DescriptorResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull BindingTrace trace
     ) {
-        ConstructorDescriptorImpl constructorDescriptor = createPrimaryConstructorForObject(classDescriptor);
+        ConstructorDescriptorImpl constructorDescriptor = DefaultDescriptorFactory.createPrimaryConstructorForObject(classDescriptor);
         if (object != null) {
             trace.record(CONSTRUCTOR, object, constructorDescriptor);
         }
-        return constructorDescriptor;
-    }
-
-    @NotNull
-    public static ConstructorDescriptorImpl createPrimaryConstructorForObject(@NotNull ClassDescriptor containingClass) {
-        ConstructorDescriptorImpl constructorDescriptor =
-                new ConstructorDescriptorImpl(containingClass, Collections.<AnnotationDescriptor>emptyList(), true);
-        constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(),
-                                         Collections.<ValueParameterDescriptor>emptyList(),
-                                         getDefaultConstructorVisibility(containingClass));
         return constructorDescriptor;
     }
 
@@ -1197,12 +1185,7 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
         else if (property.isVar()) {
-            if (property.getDelegateExpression() != null) {
-                setterDescriptor = createSetterForDelegatedProperty(propertyDescriptor);
-            }
-            else {
-                setterDescriptor = createDefaultSetter(propertyDescriptor);
-            }
+            setterDescriptor = DefaultDescriptorFactory.createSetter(propertyDescriptor, property.getDelegateExpression() == null);
         }
 
         if (!property.isVar()) {
@@ -1211,27 +1194,6 @@ public class DescriptorResolver {
                 trace.report(VAL_WITH_SETTER.on(setter));
             }
         }
-        return setterDescriptor;
-    }
-
-    @NotNull
-    public static PropertySetterDescriptorImpl createDefaultSetter(@NotNull PropertyDescriptor propertyDescriptor) {
-        return createSetter(propertyDescriptor, false, true);
-    }
-
-    @NotNull
-    public static PropertySetterDescriptorImpl createSetterForDelegatedProperty(@NotNull PropertyDescriptor propertyDescriptor) {
-        return createSetter(propertyDescriptor, true, false);
-    }
-
-    @NotNull
-    private static PropertySetterDescriptorImpl createSetter(@NotNull PropertyDescriptor propertyDescriptor, boolean hasBody, boolean isDefault) {
-        PropertySetterDescriptorImpl setterDescriptor;
-        setterDescriptor = new PropertySetterDescriptorImpl(
-                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
-                propertyDescriptor.getVisibility(),
-                hasBody, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
-        setterDescriptor.initializeDefault();
         return setterDescriptor;
     }
 
@@ -1267,33 +1229,9 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
-            if (property.getDelegateExpression() != null) {
-                getterDescriptor = createGetterForDelegatedProperty(propertyDescriptor);
-            }
-            else {
-                getterDescriptor = createDefaultGetter(propertyDescriptor);
-            }
+            getterDescriptor = DefaultDescriptorFactory.createGetter(propertyDescriptor, property.getDelegateExpression() == null);
             getterDescriptor.initialize(propertyDescriptor.getType());
         }
-        return getterDescriptor;
-    }
-
-    @NotNull
-    public static PropertyGetterDescriptorImpl createDefaultGetter(@NotNull PropertyDescriptor propertyDescriptor) {
-        return createGetter(propertyDescriptor, false, true);
-    }
-
-    @NotNull
-    public static PropertyGetterDescriptorImpl createGetterForDelegatedProperty(@NotNull PropertyDescriptor propertyDescriptor) {
-        return createGetter(propertyDescriptor, true, false);
-    }
-
-    private static PropertyGetterDescriptorImpl createGetter(@NotNull PropertyDescriptor propertyDescriptor, boolean hasBody, boolean isDefault) {
-        PropertyGetterDescriptorImpl getterDescriptor;
-        getterDescriptor = new PropertyGetterDescriptorImpl(
-                propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
-                propertyDescriptor.getVisibility(),
-                hasBody, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
         return getterDescriptor;
     }
 
@@ -1377,8 +1315,9 @@ public class DescriptorResolver {
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
                                    getExpectedThisObjectIfNeeded(classDescriptor), NO_RECEIVER_PARAMETER);
 
-        PropertyGetterDescriptorImpl getter = createDefaultGetter(propertyDescriptor);
-        PropertySetterDescriptor setter = propertyDescriptor.isVar() ? createDefaultSetter(propertyDescriptor) : null;
+        PropertyGetterDescriptorImpl getter = DefaultDescriptorFactory.createDefaultGetter(propertyDescriptor);
+        PropertySetterDescriptor setter =
+                propertyDescriptor.isVar() ? DefaultDescriptorFactory.createDefaultSetter(propertyDescriptor) : null;
 
         propertyDescriptor.initialize(getter, setter);
         getter.initialize(propertyDescriptor.getType());
@@ -1436,26 +1375,13 @@ public class DescriptorResolver {
     ) {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "values should be created in enum class: " + enumClassDescriptor;
-        return createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
-            @Override
-            protected JetType compute() {
-                return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
-            }
-        }));
-    }
-
-    @NotNull
-    public static SimpleFunctionDescriptor createEnumClassObjectValuesMethod(
-            @NotNull ClassDescriptor classObject,
-            @NotNull JetType returnType
-    ) {
-        SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUES_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.DECLARATION);
-        return values.initialize(null, classObject.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
-                                 Collections.<ValueParameterDescriptor>emptyList(),
-                                 returnType, Modality.FINAL,
-                                 Visibilities.PUBLIC, false);
+        return DefaultDescriptorFactory
+                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
+                    @Override
+                    protected JetType compute() {
+                        return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
+                    }
+                }));
     }
 
 
@@ -1466,35 +1392,13 @@ public class DescriptorResolver {
     ) {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "valueOf should be created in enum class: " + enumClassDescriptor;
-        return createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
-            @Override
-            protected JetType compute() {
-                return enumClassDescriptor.getDefaultType();
-            }
-        }));
-    }
-
-    @NotNull
-    public static SimpleFunctionDescriptor createEnumClassObjectValueOfMethod(
-            @NotNull ClassDescriptor classObject,
-            @NotNull JetType returnType
-    ) {
-        SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUE_OF_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.DECLARATION);
-        ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
-                values,
-                0,
-                Collections.<AnnotationDescriptor>emptyList(),
-                Name.identifier("value"),
-                KotlinBuiltIns.getInstance().getStringType(),
-                false,
-                null);
-        return values.initialize(null, classObject.getThisAsReceiverParameter(),
-                                 Collections.<TypeParameterDescriptor>emptyList(),
-                                 Collections.singletonList(parameterDescriptor),
-                                 returnType, Modality.FINAL,
-                                 Visibilities.PUBLIC, false);
+        return DefaultDescriptorFactory
+                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
+                    @Override
+                    protected JetType compute() {
+                        return enumClassDescriptor.getDefaultType();
+                    }
+                }));
     }
 
     public static ReceiverParameterDescriptor createLazyReceiverParameterDescriptor(@NotNull final ClassDescriptor classDescriptor) {
