@@ -477,7 +477,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext context) {
-        JetElement element = context.labelResolver.resolveLabel(expression, context);
+        JetElement labelTargetElement = context.labelResolver.resolveLabel(expression, context);
 
         JetExpression returnedExpression = expression.getReturnedExpression();
 
@@ -516,10 +516,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 resultType = ErrorUtils.createErrorType("Return not allowed");
             }
         }
-        else if (element != null) {
-            SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, element);
+        else if (labelTargetElement != null) {
+            SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
-                expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, element);
+                expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, labelTargetElement);
                 if (functionDescriptor != containingFunctionDescriptor) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
