@@ -80,6 +80,7 @@ public class GenerateTests {
     }
 
     public static void main(String[] args) throws IOException {
+        System.setProperty("java.awt.headless", "true");
         generateTest(
                 "compiler/tests/",
                 "JetDiagnosticsTestGenerated",
