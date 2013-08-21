@@ -58,6 +58,8 @@ class KotlinAndroidGradleIT {
             println(buildOutput)
 
             assertEquals(result, 0)
+
+            assertTrue(buildOutput.contains(":LibAlfa:compileReleaseKotlin"), "Should contain ':LibAlfa:compileReleaseKotlin'")
             assertTrue(buildOutput.contains(":compileFlavor1DebugKotlin"), "Should contain ':compileFlavor1DebugKotlin'")
             assertTrue(buildOutput.contains(":compileFlavor2DebugKotlin"), "Should contain ':compileFlavor2DebugKotlin'")
             assertTrue(buildOutput.contains(":compileFlavor1JnidebugKotlin"), "Should contain ':compileFlavor1JnidebugKotlin'")
@@ -92,18 +94,9 @@ class KotlinAndroidGradleIT {
             println(up2dateBuildOutput)
 
             assertEquals(up2dateResult, 0)
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor1DebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor1DebugKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor2DebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor2DebugKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor1JnidebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor1JnidebugKotlin' UP-TO-DATE")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor1ReleaseKotlin UP-TO-DATE"), "Should contain ':compileFlavor1ReleaseKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor2JnidebugKotlin UP-TO-DATE"), "Should contain ':compileFlavor2JnidebugKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor2ReleaseKotlin UP-TO-DATE"), "Should contain ':compileFlavor2ReleaseKotlin UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor1Debug UP-TO-DATE"), "Should contain ':compileFlavor1Debug UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor2Debug UP-TO-DATE"), "Should contain ':compileFlavor2Debug UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor1Jnidebug UP-TO-DATE"), "Should contain ':compileFlavor1Jnidebug UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor2Jnidebug UP-TO-DATE"), "Should contain ':compileFlavor2Jnidebug UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor1Release UP-TO-DATE"), "Should contain ':compileFlavor1Release UP-TO-DATE'")
-            assertTrue(up2dateBuildOutput.contains(":compileFlavor2Release UP-TO-DATE"), "Should contain ':compileFlavor2Release UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":LibAlfa:compileReleaseKotlin UP-TO-DATE"), "Should contain ':LibAlfa:compileReleaseKotlin UP-TO-DATE'")
+            assertTrue(up2dateBuildOutput.contains(":LibAlfa:compileRelease UP-TO-DATE"), "Should contain ':LibAlfa:compileReleas UP-TO-DATE'")
+
 
             // Run the build third time, re-run tasks
 
@@ -126,6 +119,7 @@ class KotlinAndroidGradleIT {
             println(rebuildOutput)
 
             assertEquals(reresult, 0)
+            assertTrue(buildOutput.contains(":LibAlfa:compileReleaseKotlin"), "Should contain ':LibAlfa:compileReleaseKotlin'")
             assertTrue(rebuildOutput.contains(":compileFlavor1DebugKotlin"), "Should contain ':compileFlavor1DebugKotlin'")
             assertTrue(rebuildOutput.contains(":compileFlavor2DebugKotlin"), "Should contain ':compileFlavor2DebugKotlin'")
             assertTrue(rebuildOutput.contains(":compileFlavor1JnidebugKotlin"), "Should contain ':compileFlavor1JnidebugKotlin'")

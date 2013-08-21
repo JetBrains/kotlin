@@ -1,1 +1,1 @@
-include ':AndroidAlfa'
+include ':AndroidAlfa', ':LibAlfa'
