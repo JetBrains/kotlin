@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -120,15 +120,14 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
 
     public static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
         PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
-        if(getter == null) {
-            getter = propertyDescriptor.getVisibility() != Visibilities.PRIVATE ? DescriptorResolver.createDefaultGetter(propertyDescriptor) : null;
-            if(getter != null)
-                getter.initialize(propertyDescriptor.getType());
+        if (getter == null && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
+            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
+            getter.initialize(propertyDescriptor.getType());
         }
 
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        if(setter == null) {
-            setter = propertyDescriptor.isVar() ? DescriptorResolver.createDefaultSetter(propertyDescriptor) : null;
+        if (setter == null && propertyDescriptor.isVar()) {
+            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor);
         }
         propertyDescriptor.initialize(getter, setter);
     }

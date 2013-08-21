@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
@@ -81,7 +81,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.receiverParameter = DescriptorResolver.resolveReceiverParameterFor(this, receiverParameterType);
+        this.receiverParameter = DescriptorFactory.createReceiverParameterForCallable(this, receiverParameterType);
         this.expectedThisObject = expectedThisObject;
         
         for (int i = 0; i < typeParameters.size(); ++i) {

@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -64,7 +64,7 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
         if (getter == null) {
             //TODO: Temporary hack!!! Rewrite codegen!
             //Now for consistency we don't create default getter for object declaration property descriptor
-            PropertyGetterDescriptorImpl getterImpl = DescriptorResolver.createDefaultGetter(propertyDescriptor);
+            PropertyGetterDescriptorImpl getterImpl = DescriptorFactory.createDefaultGetter(propertyDescriptor);
             getterImpl.initialize(propertyDescriptor.getType());
             ((PropertyDescriptorImpl)propertyDescriptor).initialize(getterImpl, null);
             getter = getterImpl;

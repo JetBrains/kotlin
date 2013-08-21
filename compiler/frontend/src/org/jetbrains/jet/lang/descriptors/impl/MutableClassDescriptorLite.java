@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -217,7 +217,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         if (implicitReceiver == null) {
-            implicitReceiver = DescriptorResolver.createLazyReceiverParameterDescriptor(this);
+            implicitReceiver = DescriptorFactory.createLazyReceiverParameterDescriptor(this);
         }
         return implicitReceiver;
     }

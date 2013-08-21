@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
@@ -448,12 +448,12 @@ public final class JavaClassResolver {
 
         JetType valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(containing.getDefaultType());
         SimpleFunctionDescriptor valuesMethod =
-                DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, valuesReturnType);
+                DescriptorFactory.createEnumClassObjectValuesMethod(classObjectDescriptor, valuesReturnType);
         classObjectDescriptor.getBuilder().addFunctionDescriptor(valuesMethod);
 
         JetType valueOfReturnType = containing.getDefaultType();
         SimpleFunctionDescriptor valueOfMethod =
-                DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, valueOfReturnType);
+                DescriptorFactory.createEnumClassObjectValueOfMethod(classObjectDescriptor, valueOfReturnType);
         classObjectDescriptor.getBuilder().addFunctionDescriptor(valueOfMethod);
 
         return classObjectDescriptor;

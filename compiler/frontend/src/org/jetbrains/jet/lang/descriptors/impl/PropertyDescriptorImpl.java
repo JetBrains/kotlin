@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -102,7 +102,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @Nullable ReceiverParameterDescriptor expectedThisObject,
             @Nullable JetType receiverType
     ) {
-        ReceiverParameterDescriptor receiverParameter = DescriptorResolver.resolveReceiverParameterFor(this, receiverType);
+        ReceiverParameterDescriptor receiverParameter = DescriptorFactory.createReceiverParameterForCallable(this, receiverType);
         setType(outType, typeParameters, expectedThisObject, receiverParameter);
     }
 

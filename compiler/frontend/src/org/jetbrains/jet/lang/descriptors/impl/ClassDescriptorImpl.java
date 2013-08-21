@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
@@ -172,7 +172,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         if (thisAsReceiverParameter == null) {
-            thisAsReceiverParameter = DescriptorResolver.createLazyReceiverParameterDescriptor(this);
+            thisAsReceiverParameter = DescriptorFactory.createLazyReceiverParameterDescriptor(this);
         }
         return thisAsReceiverParameter;
     }

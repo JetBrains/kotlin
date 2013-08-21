@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
@@ -129,7 +129,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         this.thisAsReceiverParameter = storageManager.createLazyValue(new Computable<ReceiverParameterDescriptor>() {
             @Override
             public ReceiverParameterDescriptor compute() {
-                return DescriptorResolver.createLazyReceiverParameterDescriptor(LazyClassDescriptor.this);
+                return DescriptorFactory.createLazyReceiverParameterDescriptor(LazyClassDescriptor.this);
             }
         });
         this.annotations = storageManager.createLazyValue(new Computable<List<AnnotationDescriptor>>() {

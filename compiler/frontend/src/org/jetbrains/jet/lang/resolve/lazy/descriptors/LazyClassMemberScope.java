@@ -195,12 +195,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
         if (!DescriptorUtils.isEnumClassObject(thisDescriptor)) return;
 
-        if (name.equals(DescriptorResolver.VALUES_METHOD_NAME)) {
+        if (name.equals(DescriptorFactory.VALUES_METHOD_NAME)) {
             SimpleFunctionDescriptor valuesMethod = DescriptorResolver
                     .createEnumClassObjectValuesMethod(thisDescriptor, resolveSession.getTrace());
             result.add(valuesMethod);
         }
-        else if (name.equals(DescriptorResolver.VALUE_OF_METHOD_NAME)) {
+        else if (name.equals(DescriptorFactory.VALUE_OF_METHOD_NAME)) {
             SimpleFunctionDescriptor valueOfMethod = DescriptorResolver
                     .createEnumClassObjectValueOfMethod(thisDescriptor, resolveSession.getTrace());
             result.add(valueOfMethod);
@@ -294,8 +294,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
         }
 
-        result.addAll(getFunctions(DescriptorResolver.VALUES_METHOD_NAME));
-        result.addAll(getFunctions(DescriptorResolver.VALUE_OF_METHOD_NAME));
+        result.addAll(getFunctions(DescriptorFactory.VALUES_METHOD_NAME));
+        result.addAll(getFunctions(DescriptorFactory.VALUE_OF_METHOD_NAME));
 
         addDataClassMethods(result);
     }
