@@ -20,12 +20,10 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -65,32 +63,26 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor, @NotNull BindingTrace trace) {
-        if (constructorDescriptor.getContainingDeclaration() != this) {
-            throw new IllegalStateException("invalid containing declaration of constructor");
-        }
+    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+        assert primaryConstructor == null : "Primary constructor assigned twice " + this;
+        primaryConstructor = constructorDescriptor;
+
         constructors.add(constructorDescriptor);
+
         if (defaultType != null) {
             ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
         }
 
-        boolean primary = constructorDescriptor.isPrimary();
-        if (primary) {
+        if (constructorDescriptor.isPrimary()) {
             setUpScopeForInitializers(constructorDescriptor);
-            for (ValueParameterDescriptor valueParameterDescriptor : constructorDescriptor.getValueParameters()) {
-                JetParameter parameter = (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), valueParameterDescriptor);
-                assert parameter != null;
-                if (parameter.getValOrVarNode() == null) {
-                    getWritableScopeForInitializers().addVariableDescriptor(valueParameterDescriptor);
-                }
-            }
         }
     }
 
-    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor, BindingTrace trace) {
-        assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
-        this.primaryConstructor = constructorDescriptor;
-        addConstructor(constructorDescriptor, trace);
+    public void addConstructorParametersToInitializersScope(@NotNull Collection<? extends VariableDescriptor> variables) {
+        WritableScope scope = getWritableScopeForInitializers();
+        for (VariableDescriptor variable : variables) {
+            scope.addVariableDescriptor(variable);
+        }
     }
 
     @NotNull

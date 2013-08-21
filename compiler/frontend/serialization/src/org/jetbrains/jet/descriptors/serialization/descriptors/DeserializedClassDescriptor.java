@@ -24,7 +24,9 @@ import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
@@ -36,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -282,14 +285,14 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObject.createTypeConstructor();
 
-        // TODO: do something if trace has errors?
-        BindingTrace trace = new BindingTraceContext();
         ConstructorDescriptorImpl primaryConstructor = DescriptorResolver.createPrimaryConstructorForObject(classObject);
         primaryConstructor.setReturnType(classObject.getDefaultType());
-        classObject.setPrimaryConstructor(primaryConstructor, trace);
+        classObject.setPrimaryConstructor(primaryConstructor);
 
-        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, trace));
-        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, trace));
+        JetType defaultType = getDefaultType();
+        JetType defaultTypeArray = KotlinBuiltIns.getInstance().getArrayType(defaultType);
+        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, defaultTypeArray));
+        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, defaultType));
 
         return classObject;
     }
