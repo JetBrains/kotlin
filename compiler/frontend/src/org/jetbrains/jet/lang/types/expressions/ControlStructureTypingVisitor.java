@@ -542,7 +542,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
                 }
                 if (containingFunctionDescriptor != null) {
-                    expectedType = DescriptorUtils.getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunction);
+                    expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunction);
                 }
             }
             else {
@@ -554,7 +554,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         else if (labelTargetElement != null) {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
-                expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, labelTargetElement);
+                expectedType = getFunctionExpectedReturnType(functionDescriptor, labelTargetElement);
                 if (functionDescriptor != containingFunctionDescriptor) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
@@ -592,5 +592,22 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitContinueExpression(JetContinueExpression expression, ExpressionTypingContext context) {
         context.labelResolver.resolveLabel(expression, context);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
+    }
+
+    @NotNull
+    private static JetType getFunctionExpectedReturnType(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
+        JetType expectedType;
+        if (function instanceof JetFunction) {
+            if (((JetFunction) function).getReturnTypeRef() != null || ((JetFunction) function).hasBlockBody()) {
+                expectedType = descriptor.getReturnType();
+            }
+            else {
+                expectedType = TypeUtils.NO_EXPECTED_TYPE;
+            }
+        }
+        else {
+            expectedType = descriptor.getReturnType();
+        }
+        return expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE;
     }
 }

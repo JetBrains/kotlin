@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.state;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -132,10 +133,9 @@ public class JetTypeMapper extends BindingTraceAware {
             @NotNull DeclarationDescriptor descriptor,
             boolean insideModule
     ) {
-
         StringBuilder r = new StringBuilder();
 
-        List<DeclarationDescriptor> path = DescriptorUtils.getPathWithoutRootNsAndModule(namespace);
+        List<DeclarationDescriptor> path = getPathWithoutRootNsAndModule(namespace);
 
         for (DeclarationDescriptor pathElement : path) {
             NamespaceDescriptor ns = (NamespaceDescriptor) pathElement;
@@ -171,6 +171,20 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         return JvmClassName.byInternalName(r.toString());
+    }
+
+    @NotNull
+    public static List<DeclarationDescriptor> getPathWithoutRootNsAndModule(@NotNull NamespaceDescriptor descriptor) {
+        List<DeclarationDescriptor> path = new ArrayList<DeclarationDescriptor>();
+        DeclarationDescriptor current = descriptor;
+        while (true) {
+            if (current instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) current)) {
+                return Lists.reverse(path);
+            }
+            path.add(current);
+            assert current != null : "Namespace must have a parent: " + descriptor;
+            current = current.getContainingDeclaration();
+        }
     }
 
     @NotNull

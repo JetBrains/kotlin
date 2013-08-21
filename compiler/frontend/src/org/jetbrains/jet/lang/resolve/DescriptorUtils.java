@@ -24,17 +24,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -48,6 +43,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 public class DescriptorUtils {
+    private DescriptorUtils() {
+    }
 
     @NotNull
     public static <D extends CallableDescriptor> D substituteBounds(@NotNull D functionDescriptor) {
@@ -62,7 +59,8 @@ public class DescriptorUtils {
         return substitutedFunction;
     }
 
-    public static Modality convertModality(Modality modality, boolean makeNonAbstract) {
+    @NotNull
+    public static Modality convertModality(@NotNull Modality modality, boolean makeNonAbstract) {
         if (makeNonAbstract && modality == Modality.ABSTRACT) return Modality.OPEN;
         return modality;
     }
@@ -129,7 +127,7 @@ public class DescriptorUtils {
                     return FqName.ROOT.toUnsafe();
                 }
             }
-            throw new IllegalStateException("descriptor is not module descriptor and has null containingDeclaration: " + containingDeclaration);
+            throw new IllegalStateException("descriptor is not module descriptor and has null containingDeclaration: " + descriptor);
         }
 
         if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.CLASS_OBJECT) {
@@ -146,8 +144,8 @@ public class DescriptorUtils {
     }
 
     public static boolean isInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(first, ModuleDescriptorImpl.class, false);
-        ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(second, ModuleDescriptorImpl.class, false);
+        ModuleDescriptor parentModule = getParentOfType(first, ModuleDescriptorImpl.class, false);
+        ModuleDescriptor fromModule = getParentOfType(second, ModuleDescriptorImpl.class, false);
         assert parentModule != null && fromModule != null;
         return parentModule.equals(fromModule);
     }
@@ -156,7 +154,7 @@ public class DescriptorUtils {
     public static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
         DeclarationDescriptor descriptor = declarationDescriptor;
         if (declarationDescriptor instanceof PropertyAccessorDescriptor) {
-            descriptor = ((PropertyAccessorDescriptor)descriptor).getCorrespondingProperty();
+            descriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
         }
         while (!(descriptor == null || isTopLevelDeclaration(descriptor))) {
             descriptor = descriptor.getContainingDeclaration();
@@ -165,12 +163,19 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static <D extends DeclarationDescriptor> D getParentOfType(@Nullable DeclarationDescriptor descriptor, @NotNull Class<D> aClass) {
+    public static <D extends DeclarationDescriptor> D getParentOfType(
+            @Nullable DeclarationDescriptor descriptor,
+            @NotNull Class<D> aClass
+    ) {
         return getParentOfType(descriptor, aClass, true);
     }
 
     @Nullable
-    public static <D extends DeclarationDescriptor> D getParentOfType(@Nullable DeclarationDescriptor descriptor, @NotNull Class<D> aClass, boolean strict) {
+    public static <D extends DeclarationDescriptor> D getParentOfType(
+            @Nullable DeclarationDescriptor descriptor,
+            @NotNull Class<D> aClass,
+            boolean strict
+    ) {
         if (descriptor == null) return null;
         if (strict) {
             descriptor = descriptor.getContainingDeclaration();
@@ -185,7 +190,11 @@ public class DescriptorUtils {
         return null;
     }
 
-    public static boolean isAncestor(@Nullable DeclarationDescriptor ancestor, @NotNull DeclarationDescriptor declarationDescriptor, boolean strict) {
+    public static boolean isAncestor(
+            @Nullable DeclarationDescriptor ancestor,
+            @NotNull DeclarationDescriptor declarationDescriptor,
+            boolean strict
+    ) {
         if (ancestor == null) return false;
         DeclarationDescriptor descriptor = strict ? declarationDescriptor.getContainingDeclaration() : declarationDescriptor;
         while (descriptor != null) {
@@ -193,33 +202,6 @@ public class DescriptorUtils {
             descriptor = descriptor.getContainingDeclaration();
         }
         return false;
-    }
-
-    @Nullable
-    public static VariableDescriptor filterNonExtensionProperty(Collection<VariableDescriptor> variables) {
-        for (VariableDescriptor variable : variables) {
-            if (variable.getReceiverParameter() == null) {
-                return variable;
-            }
-        }
-        return null;
-    }
-
-    @NotNull
-    public static JetType getFunctionExpectedReturnType(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
-        JetType expectedType;
-        if (function instanceof JetFunction) {
-            if (((JetFunction) function).getReturnTypeRef() != null || ((JetFunction) function).hasBlockBody()) {
-                expectedType = descriptor.getReturnType();
-            }
-            else {
-                expectedType = TypeUtils.NO_EXPECTED_TYPE;
-            }
-        }
-        else {
-            expectedType = descriptor.getReturnType();
-        }
-        return expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE;
     }
 
     public static boolean isSubclass(@NotNull ClassDescriptor subClass, @NotNull ClassDescriptor superClass) {
@@ -239,7 +221,7 @@ public class DescriptorUtils {
         return false;
     }
 
-    public static void addSuperTypes(JetType type, Set<JetType> set) {
+    public static void addSuperTypes(@NotNull JetType type, @NotNull Set<JetType> set) {
         set.add(type);
 
         for (JetType jetType : type.getConstructor().getSupertypes()) {
@@ -251,19 +233,6 @@ public class DescriptorUtils {
         return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
     }
 
-    @NotNull
-    public static List<DeclarationDescriptor> getPathWithoutRootNsAndModule(@NotNull DeclarationDescriptor descriptor) {
-        List<DeclarationDescriptor> path = Lists.newArrayList();
-        DeclarationDescriptor current = descriptor;
-        while (true) {
-            if (current instanceof NamespaceDescriptor && isRootNamespace((NamespaceDescriptor) current)) {
-                return Lists.reverse(path);
-            }
-            path.add(current);
-            current = current.getContainingDeclaration();
-        }
-    }
-
     public static boolean isFunctionLiteral(@NotNull FunctionDescriptor descriptor) {
         return descriptor instanceof AnonymousFunctionDescriptor;
     }
@@ -272,7 +241,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS_OBJECT);
     }
 
-    public static boolean isAnonymous(@Nullable ClassifierDescriptor descriptor) {
+    public static boolean isAnonymous(@NotNull ClassifierDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT) && descriptor.getName().isSpecial();
     }
 
@@ -288,20 +257,16 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ANNOTATION_CLASS);
     }
 
+    public static boolean isTrait(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.TRAIT);
+    }
+
     public static boolean isClass(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.CLASS);
     }
 
-    public static boolean isKindOf(@NotNull JetType jetType, @NotNull ClassKind classKind) {
-        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        return isKindOf(descriptor, classKind);
-    }
-
     public static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
-        if (descriptor instanceof ClassDescriptor) {
-            return ((ClassDescriptor) descriptor).getKind() == classKind;
-        }
-        return false;
+        return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == classKind;
     }
 
     @NotNull
@@ -319,11 +284,10 @@ public class DescriptorUtils {
 
     @NotNull
     public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
-        DeclarationDescriptor superClassDescriptor =
-            type.getConstructor().getDeclarationDescriptor();
-        assert superClassDescriptor instanceof ClassDescriptor
-            : "Superclass descriptor of a type should be of type ClassDescriptor";
-        return (ClassDescriptor)superClassDescriptor;
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        assert descriptor instanceof ClassDescriptor
+            : "Classifier descriptor of a type should be of type ClassDescriptor: " + type;
+        return (ClassDescriptor) descriptor;
     }
 
     public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
@@ -342,24 +306,6 @@ public class DescriptorUtils {
                 return inStaticContext(classDescriptor.getContainingDeclaration());
             }
 
-        }
-        return false;
-    }
-
-    public static boolean isIteratorWithoutRemoveImpl(@NotNull ClassDescriptor classDescriptor) {
-        ClassDescriptor iteratorOfT = KotlinBuiltIns.getInstance().getIterator();
-        JetType iteratorOfAny = TypeUtils.substituteParameters(iteratorOfT, Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()));
-        boolean isIterator = JetTypeChecker.INSTANCE.isSubtypeOf(classDescriptor.getDefaultType(), iteratorOfAny);
-        boolean hasRemove = hasMethod(classDescriptor, Name.identifier("remove"));
-        return isIterator && !hasRemove;
-    }
-
-    private static boolean hasMethod(ClassDescriptor classDescriptor, Name name) {
-        Collection<FunctionDescriptor> removeFunctions = classDescriptor.getDefaultType().getMemberScope().getFunctions(name);
-        for (FunctionDescriptor function : removeFunctions) {
-            if (function.getValueParameters().isEmpty() && function.getTypeParameters().isEmpty()) {
-                return true;
-            }
         }
         return false;
     }
@@ -447,34 +393,9 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static ReceiverValue safeGetValue(@Nullable ReceiverParameterDescriptor receiverParameterDescriptor) {
-        if (receiverParameterDescriptor == null) {
-            return ReceiverValue.NO_RECEIVER;
-        }
-        return receiverParameterDescriptor.getValue();
-    }
-
-
-    public static boolean isExternallyAccessible(PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getVisibility() != Visibilities.PRIVATE || isClassObject(propertyDescriptor.getContainingDeclaration())
-               || isTopLevelDeclaration(propertyDescriptor);
-    }
-
-    @NotNull
     public static JetType getVarargParameterType(@NotNull JetType elementType) {
-        return getVarargParameterType(elementType, Variance.INVARIANT);
-    }
-
-    @NotNull
-    public static JetType getVarargParameterType(@NotNull JetType elementType, @NotNull Variance projectionKind) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        JetType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
-        if (primitiveArrayType != null) {
-            return primitiveArrayType;
-        }
-        else {
-            return builtIns.getArrayType(projectionKind, elementType);
-        }
+        JetType primitiveArrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+        return primitiveArrayType != null ? primitiveArrayType : KotlinBuiltIns.getInstance().getArrayType(Variance.INVARIANT, elementType);
     }
 
     @NotNull
@@ -542,24 +463,6 @@ public class DescriptorUtils {
             allSuperclasses.add(superclass);
         }
         return allSuperclasses;
-    }
-
-    @NotNull
-    public static PropertyDescriptor getPropertyDescriptor(@NotNull JetProperty property, @NotNull BindingContext bindingContext) {
-        VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, property);
-        if (!(descriptor instanceof PropertyDescriptor)) {
-            throw new UnsupportedOperationException("expect a property to have a property descriptor");
-        }
-        return (PropertyDescriptor) descriptor;
-    }
-
-
-    @NotNull
-    public static PropertyDescriptor getPropertyDescriptor(@NotNull JetParameter constructorParameter, @NotNull BindingContext bindingContext) {
-        assert constructorParameter.getValOrVarNode() != null;
-        PropertyDescriptor descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, constructorParameter);
-        assert descriptor != null;
-        return descriptor;
     }
 
     /**

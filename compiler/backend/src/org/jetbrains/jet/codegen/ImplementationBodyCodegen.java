@@ -467,11 +467,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private List<PropertyDescriptor> getDataProperties() {
         ArrayList<PropertyDescriptor> result = Lists.newArrayList();
         for (JetParameter parameter : getPrimaryConstructorParameters()) {
-            if (parameter.getValOrVarNode() == null) continue;
-
-            PropertyDescriptor propertyDescriptor = DescriptorUtils.getPropertyDescriptor(parameter, bindingContext);
-
-            result.add(propertyDescriptor);
+            if (parameter.getValOrVarNode() != null) {
+                result.add(bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter));
+            }
         }
         return result;
     }
@@ -1107,9 +1105,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type type = typeMapper.mapType(descriptor);
                 iv.load(0, classAsmType);
                 iv.load(codegen.myFrameMap.getIndex(descriptor), type);
-                iv.putfield(classAsmType.getInternalName(),
-                            context.getFieldName(DescriptorUtils.getPropertyDescriptor(parameter, bindingContext)),
-                            type.getDescriptor());
+                PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+                assert propertyDescriptor != null : "Property descriptor is not found for primary constructor parameter: " + parameter;
+                iv.putfield(classAsmType.getInternalName(), context.getFieldName(propertyDescriptor), type.getDescriptor());
             }
             curParam++;
         }
@@ -1740,7 +1738,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             CallableMemberDescriptor candidate = null;
 
             for (CallableMemberDescriptor overriddenDeclaration : filteredOverriddenDeclarations) {
-                if (isKindOf(overriddenDeclaration.getContainingDeclaration(), ClassKind.TRAIT) &&
+                if (isTrait(overriddenDeclaration.getContainingDeclaration()) &&
                     overriddenDeclaration.getModality() != Modality.ABSTRACT) {
                     candidate = overriddenDeclaration;
                     count++;

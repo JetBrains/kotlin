@@ -1091,14 +1091,14 @@ public class DescriptorResolver {
     }
 
     @Nullable
-    private JetType transformAnonymousTypeIfNeeded(
+    private static JetType transformAnonymousTypeIfNeeded(
             @NotNull DeclarationDescriptorWithVisibility descriptor,
             @NotNull JetNamedDeclaration declaration,
             @NotNull JetType type,
             @NotNull BindingTrace trace
     ) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (!DescriptorUtils.isAnonymous(classifierDescriptor)) {
+        if (classifierDescriptor == null || !DescriptorUtils.isAnonymous(classifierDescriptor)) {
             return type;
         }
 

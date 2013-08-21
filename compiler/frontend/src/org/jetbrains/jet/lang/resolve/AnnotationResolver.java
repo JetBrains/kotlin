@@ -24,12 +24,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -341,13 +341,10 @@ public class AnnotationResolver {
     }
 
     private static boolean isEnumProperty(@NotNull PropertyDescriptor descriptor) {
-        if (DescriptorUtils.isKindOf(descriptor.getType(), ClassKind.ENUM_CLASS)) {
-            DeclarationDescriptor enumClassObject = descriptor.getContainingDeclaration();
-            if (DescriptorUtils.isKindOf(enumClassObject, ClassKind.CLASS_OBJECT))  {
-                return DescriptorUtils.isKindOf(enumClassObject.getContainingDeclaration(), ClassKind.ENUM_CLASS);
-            }
-        }
-        return false;
+        ClassifierDescriptor classifier = descriptor.getType().getConstructor().getDeclarationDescriptor();
+        return classifier != null &&
+               DescriptorUtils.isEnumClass(classifier) &&
+               DescriptorUtils.isEnumClassObject(descriptor.getContainingDeclaration());
     }
 
     @NotNull

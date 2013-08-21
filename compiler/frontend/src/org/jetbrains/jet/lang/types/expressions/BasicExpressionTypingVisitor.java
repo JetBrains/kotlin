@@ -363,8 +363,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         if (result != null) {
-            if (DescriptorUtils.isKindOf(thisType, ClassKind.TRAIT)) {
-                if (DescriptorUtils.isKindOf(result, ClassKind.CLASS)) {
+            if (DescriptorUtils.isTrait(thisType.getConstructor().getDeclarationDescriptor())) {
+                if (DescriptorUtils.isClass(result.getConstructor().getDeclarationDescriptor())) {
                     context.trace.report(SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT.on(expression));
                 }
             }

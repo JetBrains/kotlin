@@ -251,7 +251,13 @@ public class CodegenUtil {
                !specialTypeProperty &&
                (accessorDescriptor == null ||
                 accessorDescriptor.isDefault() &&
-                (!DescriptorUtils.isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
+                (!isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
+    }
+
+    private static boolean isExternallyAccessible(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getVisibility() != Visibilities.PRIVATE ||
+               DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
+               DescriptorUtils.isTopLevelDeclaration(propertyDescriptor);
     }
 
     @NotNull
