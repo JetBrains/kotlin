@@ -2472,6 +2472,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnUnit.kt");
                 }
                 
+                @TestMetadata("LocalReturnsWithExplicitReturnType.kt")
+                public void testLocalReturnsWithExplicitReturnType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnsWithExplicitReturnType.kt");
+                }
+                
                 @TestMetadata("MixedReturnsFromLambda.kt")
                 public void testMixedReturnsFromLambda() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/MixedReturnsFromLambda.kt");

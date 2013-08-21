@@ -1,9 +1,9 @@
 fun test() {
     (run @f{
       run @ff {
-        return@ff "2"
+        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@ff "2"<!>
       }
-      return@f 1
+      <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f 1<!>
     }): Int
 }
 

@@ -1,7 +1,7 @@
 fun test(a: Int) {
     (run @f{
-      if (a > 0) return@f
-      else return@f Unit.VALUE
+      if (a > 0) <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f<!>
+      else <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f Unit.VALUE<!>
     }): Unit
 }
 

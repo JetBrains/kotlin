@@ -4,7 +4,7 @@ fun test() {
         if (a > 0) return "2"
         return@local "3"
       }
-      return@f 1
+      <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f 1<!>
     }): Int
 }
 

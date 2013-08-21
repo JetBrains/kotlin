@@ -83,6 +83,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
                 "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly"); // TODO: message
         MAP.put(RETURN_NOT_ALLOWED, "'return' is not allowed here");
+        MAP.put(RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED, "'return' is only allowed in function literals that have return types specified explicitly");
         MAP.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype");
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
         MAP.put(EXPRESSION_EXPECTED_NAMESPACE_FOUND, "Expression expected, but a namespace name found");

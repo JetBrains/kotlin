@@ -5,7 +5,7 @@ trait C: A
 
 fun test(a: C, b: B) {
     (run @f{
-      if (a != b) return@f a
+      if (a != b) <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f a<!>
       b
     }): A
 }

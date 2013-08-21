@@ -282,6 +282,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType declaredReturnType = null;
         if (returnTypeRef != null) {
             declaredReturnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
+            // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
+            functionDescriptor.setReturnType(declaredReturnType);
             if (expectedReturnType != null) {
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(declaredReturnType, expectedReturnType)) {
                     temporaryTrace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(returnTypeRef, expectedReturnType));

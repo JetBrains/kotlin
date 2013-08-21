@@ -6,10 +6,10 @@ fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <!TYPE_MISMATCH!>1<!>}
 fun unitUnitReturn() : Unit {return Unit.VALUE}
 fun test1() : Any = {<!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return<!>}
-fun test2() : Any = @a {return@a 1}
+fun test2() : Any = @a {<!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@a 1<!>}
 fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
 fun test4(): ()-> Unit = { <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return@test4<!> }
-fun test5(): Any = @{ return@ }
+fun test5(): Any = @{ <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@<!> }
 fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return 1<!>}
 
 fun bbb() {
