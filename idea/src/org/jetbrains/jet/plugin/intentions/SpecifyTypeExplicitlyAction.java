@@ -32,6 +32,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -42,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
@@ -219,8 +219,8 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     ) {
         assert !ErrorUtils.isErrorType(exprType) : "Unexpected error type: " + namedDeclaration.getText();
 
-        TypeConstructor constructor = exprType.getConstructor();
-        boolean isAnonymous = DescriptorUtils.isAnonymous(constructor.getDeclarationDescriptor());
+        ClassifierDescriptor descriptor = exprType.getConstructor().getDeclarationDescriptor();
+        boolean isAnonymous = descriptor != null && DescriptorUtils.isAnonymous(descriptor);
 
         Set<JetType> allSupertypes = TypeUtils.getAllSupertypes(exprType);
         List<JetType> types = isAnonymous ? new ArrayList<JetType>() : Lists.newArrayList(exprType);

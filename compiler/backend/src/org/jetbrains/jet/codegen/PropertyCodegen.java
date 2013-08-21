@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -82,7 +81,10 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public void gen(JetProperty p) {
-        PropertyDescriptor propertyDescriptor = DescriptorUtils.getPropertyDescriptor(p, bindingContext);
+        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, p);
+        assert variableDescriptor instanceof PropertyDescriptor : "Property should have a property descriptor: " + variableDescriptor;
+
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
         assert kind instanceof OwnerKind.StaticDelegateKind || kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
 

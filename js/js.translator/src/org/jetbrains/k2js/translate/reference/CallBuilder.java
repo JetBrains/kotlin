@@ -21,15 +21,16 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
-import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
-import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.Arrays;
@@ -107,8 +108,8 @@ public final class CallBuilder {
     private CallTranslator finish() {
         if (resolvedCall == null) {
             assert descriptor != null;
-            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, DescriptorUtils.safeGetValue(descriptor.getExpectedThisObject()),
-                                                                              DescriptorUtils.safeGetValue(descriptor.getReceiverParameter()),
+            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, safeGetValue(descriptor.getExpectedThisObject()),
+                                                                              safeGetValue(descriptor.getReceiverParameter()),
                                                                               ExplicitReceiverKind.THIS_OBJECT, false),
                                                    TemporaryBindingTrace.create(new BindingTraceContext(), "trace to resolve call (in js)"),
                                                    TracingStrategy.EMPTY,
@@ -122,9 +123,12 @@ public final class CallBuilder {
     }
 
     @NotNull
+    private static ReceiverValue safeGetValue(@Nullable ReceiverParameterDescriptor descriptor) {
+        return descriptor == null ? ReceiverValue.NO_RECEIVER : descriptor.getValue();
+    }
+
+    @NotNull
     public JsExpression translate() {
         return finish().translate();
     }
-
-
 }
