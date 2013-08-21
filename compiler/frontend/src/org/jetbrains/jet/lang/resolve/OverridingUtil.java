@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,14 +26,12 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_INFER_VISIBILITY;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
@@ -489,42 +486,38 @@ public class OverridingUtil {
         return overridable;
     }
 
-    public static void resolveUnknownVisibilityForMember(@Nullable JetDeclaration member, @NotNull CallableMemberDescriptor memberDescriptor, @NotNull BindingTrace trace) {
-        resolveUnknownVisibilityForOverriddenDescriptors(memberDescriptor.getOverriddenDescriptors(), trace);
+    public static void resolveUnknownVisibilityForMember(
+            @NotNull CallableMemberDescriptor memberDescriptor,
+            @NotNull NotInferredVisibilitySink sink
+    ) {
+        for (CallableMemberDescriptor descriptor : memberDescriptor.getOverriddenDescriptors()) {
+            if (descriptor.getVisibility() == Visibilities.INHERITED) {
+                resolveUnknownVisibilityForMember(descriptor, sink);
+            }
+        }
+
         if (memberDescriptor.getVisibility() != Visibilities.INHERITED) {
             return;
         }
 
         Visibility visibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
         if (visibility == null) {
-            if (member != null) {
-                trace.report(CANNOT_INFER_VISIBILITY.on(member));
-            }
+            sink.cannotInferVisibility(memberDescriptor);
             visibility = Visibilities.PUBLIC;
         }
 
         if (memberDescriptor instanceof PropertyDescriptorImpl) {
-            ((PropertyDescriptorImpl)memberDescriptor).setVisibility(visibility.normalize());
+            ((PropertyDescriptorImpl) memberDescriptor).setVisibility(visibility.normalize());
             for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
-                resolveUnknownVisibilityForMember(null, accessor, trace);
+                resolveUnknownVisibilityForMember(accessor, sink);
             }
         }
         else if (memberDescriptor instanceof FunctionDescriptorImpl) {
-            ((FunctionDescriptorImpl)memberDescriptor).setVisibility(visibility.normalize());
+            ((FunctionDescriptorImpl) memberDescriptor).setVisibility(visibility.normalize());
         }
         else {
             assert memberDescriptor instanceof PropertyAccessorDescriptorImpl;
             ((PropertyAccessorDescriptorImpl) memberDescriptor).setVisibility(visibility.normalize());
-        }
-    }
-
-    private static void resolveUnknownVisibilityForOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> descriptors, @NotNull BindingTrace trace) {
-        for (CallableMemberDescriptor descriptor : descriptors) {
-            if (descriptor.getVisibility() == Visibilities.INHERITED) {
-                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
-                JetDeclaration declaration = (element instanceof JetDeclaration) ? (JetDeclaration) element : null;
-                resolveUnknownVisibilityForMember(declaration, descriptor, trace);
-            }
         }
     }
 
@@ -565,6 +558,10 @@ public class OverridingUtil {
         void addToScope(@NotNull CallableMemberDescriptor fakeOverride);
 
         void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
+    }
+
+    public interface NotInferredVisibilitySink {
+        void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
     }
 
     public static class OverrideCompatibilityInfo {

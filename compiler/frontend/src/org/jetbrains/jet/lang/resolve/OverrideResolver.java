@@ -168,16 +168,21 @@ public class OverrideResolver {
     public static void resolveUnknownVisibilities(
             @NotNull Collection<? extends CallableMemberDescriptor> descriptors,
             @NotNull BindingTrace trace) {
-        for (CallableMemberDescriptor memberDescriptor : descriptors) {
-            JetDeclaration declaration = null;
-            if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            resolveUnknownVisibilityForMember(descriptor, trace);
+        }
+    }
+
+    public static void resolveUnknownVisibilityForMember(@NotNull CallableMemberDescriptor descriptor, @NotNull final BindingTrace trace) {
+        OverridingUtil.resolveUnknownVisibilityForMember(descriptor, new OverridingUtil.NotInferredVisibilitySink() {
+            @Override
+            public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
                 if (element instanceof JetDeclaration) {
-                    declaration = (JetDeclaration) element;
+                    trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element));
                 }
             }
-            OverridingUtil.resolveUnknownVisibilityForMember(declaration, memberDescriptor, trace);
-        }
+        });
     }
 
     private static <T extends DeclarationDescriptor> MultiMap<Name, T> groupDescriptorsByName(Collection<T> properties) {

@@ -66,7 +66,7 @@ public final class DescriptorResolverUtils {
             @NotNull Collection<D> membersFromSupertypes,
             @NotNull Collection<D> membersFromCurrent,
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull final FakeOverrideVisibilityResolver visibilityResolver
+            @NotNull final ErrorReporter errorReporter
     ) {
         final Set<D> result = new HashSet<D>();
 
@@ -76,7 +76,12 @@ public final class DescriptorResolverUtils {
                     @Override
                     @SuppressWarnings("unchecked")
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                        visibilityResolver.resolveUnknownVisibilityForMember(fakeOverride);
+                        OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new OverridingUtil.NotInferredVisibilitySink() {
+                            @Override
+                            public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+                                errorReporter.reportCannotInferVisibility(descriptor);
+                            }
+                        });
                         result.add((D) fakeOverride);
                     }
 
