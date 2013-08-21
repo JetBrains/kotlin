@@ -9,12 +9,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="protobuf-java" level="project" />
-    <orderEntry type="library" scope="TEST" name="junit" level="project" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="library" name="trove4j" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
-    <orderEntry type="module" module-name="util" />
   </component>
 </module>
 

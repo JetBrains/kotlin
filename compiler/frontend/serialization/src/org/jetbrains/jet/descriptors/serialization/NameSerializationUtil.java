@@ -17,7 +17,6 @@
 package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +34,7 @@ public class NameSerializationUtil {
             return new NameResolver(simpleNames, qualifiedNames);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -57,7 +56,7 @@ public class NameSerializationUtil {
             qualifiedNameTable.writeDelimitedTo(out);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw new RuntimeException(e);
         }
     }
 
