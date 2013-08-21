@@ -39,6 +39,7 @@
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="serialization.java" />
+    <orderEntry type="module" module-name="descriptor.loader.java" />
   </component>
 </module>
 

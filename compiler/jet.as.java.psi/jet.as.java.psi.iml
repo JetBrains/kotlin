@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
+    <orderEntry type="module" module-name="descriptor.loader.java" />
   </component>
 </module>
 

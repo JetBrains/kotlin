@@ -32,7 +32,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
@@ -40,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -71,7 +73,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                                 return loadMemberAnnotationsFromFile(file);
                             }
                             catch (IOException e) {
-                                throw ExceptionUtils.rethrow(e);
+                                throw new RuntimeException(e);
                             }
                         }
                     }, StorageManager.ReferenceKind.STRONG);
@@ -99,7 +101,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             return loadClassAnnotationsFromFile(virtualFile);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw new RuntimeException(e);
         }
     }
 

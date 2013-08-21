@@ -36,7 +36,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
-
     private DescriptorResolverUtils() {
     }
 

@@ -8,6 +8,7 @@
             <element id="module-output" name="backend" />
             <element id="module-output" name="frontend" />
             <element id="module-output" name="frontend.java" />
+            <element id="module-output" name="descriptor.loader.java" />
             <element id="module-output" name="idea" />
             <element id="module-output" name="jet.as.java.psi" />
             <element id="module-output" name="runtime" />

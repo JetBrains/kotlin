@@ -30,7 +30,6 @@ public class AsmTypeConstants {
     public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
     public static final Type JAVA_ARRAY_GENERIC_TYPE = getType(Object[].class);
 
-    public static final Type JET_NOTHING_TYPE = Type.getObjectType("jet/Nothing");
     public static final Type JET_UNIT_TYPE = Type.getObjectType("jet/Unit");
     public static final Type JET_FUNCTION0_TYPE = Type.getObjectType("jet/Function0");
     public static final Type JET_FUNCTION1_TYPE = Type.getObjectType("jet/Function1");

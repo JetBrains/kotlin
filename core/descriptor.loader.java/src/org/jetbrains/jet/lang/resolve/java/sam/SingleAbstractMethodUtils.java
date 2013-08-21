@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.erasure;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class SingleAbstractMethodUtils {
@@ -406,8 +405,8 @@ public class SingleAbstractMethodUtils {
             if (parameters1.size() != parameters2.size()) return false;
 
             for (Iterator<JavaValueParameter> it1 = parameters1.iterator(), it2 = parameters2.iterator(); it1.hasNext(); ) {
-                JavaType type1 = erasure(substitutor1.substitute(it1.next().getType()), substitutor1);
-                JavaType type2 = erasure(substitutor2.substitute(it2.next().getType()), substitutor2);
+                JavaType type1 = DescriptorResolverUtils.erasure(substitutor1.substitute(it1.next().getType()), substitutor1);
+                JavaType type2 = DescriptorResolverUtils.erasure(substitutor2.substitute(it2.next().getType()), substitutor2);
                 if (!(type1 == null ? type2 == null : type1.equals(type2))) return false;
             }
 

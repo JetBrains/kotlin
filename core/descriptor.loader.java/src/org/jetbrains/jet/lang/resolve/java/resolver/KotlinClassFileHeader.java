@@ -14,7 +14,6 @@ import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +39,7 @@ public final class KotlinClassFileHeader {
             }
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw new RuntimeException(e);
         }
     }
 
