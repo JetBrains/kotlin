@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
@@ -70,9 +70,9 @@ public final class DescriptorResolverUtils {
     ) {
         final Set<D> result = new HashSet<D>();
 
-        OverrideResolver.generateOverridesInFunctionGroup(
+        OverridingUtil.generateOverridesInFunctionGroup(
                 name, membersFromSupertypes, membersFromCurrent, classDescriptor,
-                new OverrideResolver.DescriptorSink() {
+                new OverridingUtil.DescriptorSink() {
                     @Override
                     @SuppressWarnings("unchecked")
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {

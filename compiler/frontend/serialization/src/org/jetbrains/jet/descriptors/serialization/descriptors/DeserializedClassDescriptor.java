@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
@@ -420,15 +420,15 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
                 @NotNull final Collection<D> result
         ) {
             List<CallableMemberDescriptor> fromCurrent = new ArrayList<CallableMemberDescriptor>(result);
-            OverrideResolver.generateOverridesInFunctionGroup(
+            OverridingUtil.generateOverridesInFunctionGroup(
                     name,
                     fromSupertypes,
                     fromCurrent,
                     classDescriptor,
-                    new OverrideResolver.DescriptorSink() {
+                    new OverridingUtil.DescriptorSink() {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            OverrideResolver.resolveUnknownVisibilityForMember(null, fakeOverride, TraceUtil.TRACE_STUB);
+                            OverridingUtil.resolveUnknownVisibilityForMember(null, fakeOverride, TraceUtil.TRACE_STUB);
                             //noinspection unchecked
                             result.add((D) fakeOverride);
                         }
