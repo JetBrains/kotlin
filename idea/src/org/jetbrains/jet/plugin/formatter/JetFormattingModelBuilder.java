@@ -47,7 +47,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
         JetCodeStyleSettings jetSettings = settings.getCustomSettings(JetCodeStyleSettings.class);
         CommonCodeStyleSettings jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE);
 
-        return new SpacingBuilder(settings)
+        return new SpacingBuilder(settings, JetLanguage.INSTANCE)
                 // ============ Line breaks ==============
                 .after(NAMESPACE_HEADER).blankLines(1)
 
