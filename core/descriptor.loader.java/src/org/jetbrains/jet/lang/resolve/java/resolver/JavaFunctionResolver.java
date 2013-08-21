@@ -47,7 +47,7 @@ public final class JavaFunctionResolver {
     private JavaValueParameterResolver valueParameterResolver;
     private JavaAnnotationResolver annotationResolver;
     private ExternalSignatureResolver externalSignatureResolver;
-    private FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver;
+    private ErrorReporter errorReporter;
     private MethodSignatureChecker signatureChecker;
 
     @Inject
@@ -81,8 +81,8 @@ public final class JavaFunctionResolver {
     }
 
     @Inject
-    public void setFakeOverrideVisibilityResolver(FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver) {
-        this.fakeOverrideVisibilityResolver = fakeOverrideVisibilityResolver;
+    public void setErrorReporter(ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
     }
 
     @Inject
@@ -211,8 +211,7 @@ public final class JavaFunctionResolver {
 
             Collection<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(methodName, classDescriptor);
 
-            functions.addAll(resolveOverrides(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
-                                              fakeOverrideVisibilityResolver));
+            functions.addAll(resolveOverrides(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor, errorReporter));
         }
 
         if (isEnumClassObject(owner)) {

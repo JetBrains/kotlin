@@ -18,8 +18,11 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface ErrorReporter {
     void reportIncompatibleAbiVersion(@NotNull FqName fqName, @NotNull VirtualFile file, int actualVersion);
+
+    void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
 }

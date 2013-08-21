@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
-import org.jetbrains.jet.lang.resolve.java.resolver.FakeOverrideVisibilityResolverImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
@@ -53,7 +52,6 @@ public class InjectorForJavaDescriptorResolver {
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private final TraceBasedJavaResolverCache traceBasedJavaResolverCache;
-    private final FakeOverrideVisibilityResolverImpl fakeOverrideVisibilityResolver;
     private final TraceBasedErrorReporter traceBasedErrorReporter;
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
@@ -84,7 +82,6 @@ public class InjectorForJavaDescriptorResolver {
         this.javaClassFinder = new JavaClassFinderImpl();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
-        this.fakeOverrideVisibilityResolver = new FakeOverrideVisibilityResolverImpl();
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
@@ -112,8 +109,6 @@ public class InjectorForJavaDescriptorResolver {
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
         traceBasedJavaResolverCache.setTrace(bindingTrace);
-
-        fakeOverrideVisibilityResolver.setTrace(bindingTrace);
 
         traceBasedErrorReporter.setTrace(bindingTrace);
 
@@ -176,8 +171,8 @@ public class InjectorForJavaDescriptorResolver {
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setCache(traceBasedJavaResolverCache);
+        javaFunctionResolver.setErrorReporter(traceBasedErrorReporter);
         javaFunctionResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaFunctionResolver.setFakeOverrideVisibilityResolver(fakeOverrideVisibilityResolver);
         javaFunctionResolver.setSignatureChecker(psiBasedMethodSignatureChecker);
         javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
         javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
@@ -187,8 +182,8 @@ public class InjectorForJavaDescriptorResolver {
 
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
         javaPropertyResolver.setCache(traceBasedJavaResolverCache);
+        javaPropertyResolver.setErrorReporter(traceBasedErrorReporter);
         javaPropertyResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaPropertyResolver.setFakeOverrideVisibilityResolver(fakeOverrideVisibilityResolver);
         javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);

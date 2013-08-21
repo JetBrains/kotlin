@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -140,10 +139,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // TODO: this should be handled by lazy function descriptors
         Set<FunctionDescriptor> functions = super.getFunctions(name);
         for (FunctionDescriptor functionDescriptor : functions) {
-            if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-            PsiElement element =
-                    BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), functionDescriptor);
-            OverridingUtil.resolveUnknownVisibilityForMember((JetDeclaration) element, functionDescriptor, resolveSession.getTrace());
+            if (functionDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                OverrideResolver.resolveUnknownVisibilityForMember(functionDescriptor, resolveSession.getTrace());
+            }
         }
         return functions;
     }
@@ -214,10 +212,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         Set<VariableDescriptor> properties = super.getProperties(name);
         for (VariableDescriptor variableDescriptor : properties) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-            PsiElement element =
-                    BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), propertyDescriptor);
-            OverridingUtil.resolveUnknownVisibilityForMember((JetDeclaration) element, propertyDescriptor, resolveSession.getTrace());
+            if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                OverrideResolver.resolveUnknownVisibilityForMember(propertyDescriptor, resolveSession.getTrace());
+            }
         }
         return properties;
     }
