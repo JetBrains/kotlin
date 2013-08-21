@@ -37,6 +37,7 @@
               <element id="module-output" name="preloader" />
             </element>
           </element>
+          <element id="library" level="project" name="kotlin-runtime" />
         </element>
         <element id="directory" name="kotlinc">
           <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
