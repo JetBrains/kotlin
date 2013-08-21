@@ -16,44 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
-import org.jetbrains.jet.util.slicedmap.Slices;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
-
 public final class AbiVersionUtil {
-    public static final WritableSlice<AbiVersionErrorLocation, Integer> ABI_VERSION_ERRORS =
-            new BasicWritableSlice<AbiVersionErrorLocation, Integer>(Slices.ONLY_REWRITE_TO_EQUAL, true);
     public static final int INVALID_VERSION = -1;
 
     public static boolean isAbiVersionCompatible(int abiVersion) {
         return abiVersion == JvmAbi.VERSION;
-    }
-
-    public static final class AbiVersionErrorLocation {
-        @NotNull
-        private final FqName classFqName;
-        @NotNull
-        private final VirtualFile file;
-
-        public AbiVersionErrorLocation(@NotNull FqName name, @NotNull VirtualFile file) {
-            this.classFqName = name;
-            this.file = file;
-        }
-
-        @NotNull
-        public FqName getClassFqName() {
-            return classFqName;
-        }
-
-        @NotNull
-        public String getPath() {
-            return file.getPath();
-        }
     }
 
     private AbiVersionUtil() {
