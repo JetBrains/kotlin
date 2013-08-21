@@ -2437,6 +2437,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/ForbiddenNonLocalReturnNoType.kt");
                 }
                 
+                @TestMetadata("LocalAndNonLocalReturnInLambda.kt")
+                public void testLocalAndNonLocalReturnInLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalAndNonLocalReturnInLambda.kt");
+                }
+                
                 @TestMetadata("LocalReturnExplicitLabelNoParens.kt")
                 public void testLocalReturnExplicitLabelNoParens() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnExplicitLabelNoParens.kt");
@@ -2445,6 +2450,31 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 @TestMetadata("LocalReturnExplicitLabelParens.kt")
                 public void testLocalReturnExplicitLabelParens() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnExplicitLabelParens.kt");
+                }
+                
+                @TestMetadata("LocalReturnInNestedFunction.kt")
+                public void testLocalReturnInNestedFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnInNestedFunction.kt");
+                }
+                
+                @TestMetadata("LocalReturnInNestedLambda.kt")
+                public void testLocalReturnInNestedLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnInNestedLambda.kt");
+                }
+                
+                @TestMetadata("LocalReturnNoCoercionToUnit.kt")
+                public void testLocalReturnNoCoercionToUnit() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnNoCoercionToUnit.kt");
+                }
+                
+                @TestMetadata("LocalReturnUnit.kt")
+                public void testLocalReturnUnit() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnUnit.kt");
+                }
+                
+                @TestMetadata("MixedReturnsFromLambda.kt")
+                public void testMixedReturnsFromLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/MixedReturnsFromLambda.kt");
                 }
                 
             }

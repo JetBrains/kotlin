@@ -154,10 +154,10 @@ public class ExpressionTypingServices {
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
                 this, trace, functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, ExpressionPosition.FREE
-        ), trace);
+        ));
     }
 
-    /*package*/ void checkFunctionReturnType(JetDeclarationWithBody function, ExpressionTypingContext context, BindingTrace trace) {
+    /*package*/ void checkFunctionReturnType(JetDeclarationWithBody function, ExpressionTypingContext context) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
 
@@ -167,15 +167,7 @@ public class ExpressionTypingServices {
                 ? context.replaceExpectedType(NO_EXPECTED_TYPE)
                 : context;
 
-        if (function instanceof JetFunctionLiteral) {
-            JetFunctionLiteral functionLiteral = (JetFunctionLiteral) function;
-            JetBlockExpression blockExpression = functionLiteral.getBodyExpression();
-            assert blockExpression != null;
-            getBlockReturnedType(blockExpression, CoercionStrategy.COERCION_TO_UNIT, context);
-        }
-        else {
-            expressionTypingFacade.getTypeInfo(bodyExpression, newContext, !blockBody);
-        }
+        expressionTypingFacade.getTypeInfo(bodyExpression, newContext, !blockBody);
     }
 
     @NotNull
