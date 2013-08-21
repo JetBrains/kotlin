@@ -272,6 +272,7 @@
           <jar jarfile="@{jarfile}" compress="@{compress}">
               <fileset dir="${output}/classes/compiler"/>
               <fileset dir="${basedir}/compiler/frontend/builtins" includes="jet/**"/>
+              <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
   
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
