@@ -4,10 +4,11 @@ trait C: A
 
 
 fun test(a: C, b: B) {
-    (run @f{
+    val x = run @f{
       if (a != b) <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@f a<!>
       b
-    }): A
+    }
+    x: A
 }
 
 fun run<T>(f: () -> T): T { return f() }

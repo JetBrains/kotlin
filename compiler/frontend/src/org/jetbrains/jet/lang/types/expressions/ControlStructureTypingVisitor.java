@@ -522,17 +522,15 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
                 expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, labelTargetElement);
-                boolean inLambdaWithNoExplicitType = expectedType == TypeUtils.NO_EXPECTED_TYPE;
-                if (inLambdaWithNoExplicitType) {
-                    // expectedType is NO_EXPECTED_TYPE iff the return type of the corresponding function descriptor is not computed yet
-                    // our temporary policy is to prohibit returns in this case. It mostly applies to local returns in lambdas
-                    context.trace.report(RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED.on(expression));
-                    resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
-                }
-                else if (functionDescriptor != containingFunctionDescriptor) {
+                if (functionDescriptor != containingFunctionDescriptor) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                }
+                else if (expectedType == TypeUtils.NO_EXPECTED_TYPE) {
+                    // expectedType is NO_EXPECTED_TYPE iff the return type of the corresponding function descriptor is not computed yet
+                    // our temporary policy is to prohibit returns in this case. It mostly applies to local returns in lambdas
+                    context.trace.report(RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED.on(expression));
                 }
             }
             else {
