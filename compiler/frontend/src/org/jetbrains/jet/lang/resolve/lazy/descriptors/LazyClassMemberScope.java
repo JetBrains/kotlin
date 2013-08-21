@@ -39,7 +39,10 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
 
@@ -101,12 +104,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @NotNull final Collection<D> result,
             @NotNull final Class<? extends D> exactDescriptorClass
     ) {
-        OverrideResolver.generateOverridesInFunctionGroup(
+        OverridingUtil.generateOverridesInFunctionGroup(
                 name,
                 fromSupertypes,
                 Lists.newArrayList(result),
                 thisDescriptor,
-                new OverrideResolver.DescriptorSink() {
+                new OverridingUtil.DescriptorSink() {
                     @Override
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                         assert exactDescriptorClass.isInstance(fakeOverride) : "Wrong descriptor type in an override: " +
@@ -140,7 +143,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
             PsiElement element =
                     BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), functionDescriptor);
-            OverrideResolver.resolveUnknownVisibilityForMember((JetDeclaration) element, functionDescriptor, resolveSession.getTrace());
+            OverridingUtil.resolveUnknownVisibilityForMember((JetDeclaration) element, functionDescriptor, resolveSession.getTrace());
         }
         return functions;
     }
@@ -214,7 +217,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
             PsiElement element =
                     BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), propertyDescriptor);
-            OverrideResolver.resolveUnknownVisibilityForMember((JetDeclaration) element, propertyDescriptor, resolveSession.getTrace());
+            OverridingUtil.resolveUnknownVisibilityForMember((JetDeclaration) element, propertyDescriptor, resolveSession.getTrace());
         }
         return properties;
     }
