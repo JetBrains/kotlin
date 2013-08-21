@@ -298,6 +298,7 @@ public class DeclarationResolver {
             List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
             List<JetParameter> primaryConstructorParameters = klass.getPrimaryConstructorParameters();
             assert valueParameterDescriptors.size() == primaryConstructorParameters.size();
+            List<ValueParameterDescriptor> notProperties = new ArrayList<ValueParameterDescriptor>();
             for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
                 JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
                 if (parameter.getValOrVarNode() != null) {
@@ -310,9 +311,14 @@ public class DeclarationResolver {
                     classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
                     context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
                 }
+                else {
+                    notProperties.add(valueParameterDescriptor);
+                }
             }
+
             if (classDescriptor.getKind() != ClassKind.TRAIT) {
-                classDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
+                classDescriptor.setPrimaryConstructor(constructorDescriptor);
+                classDescriptor.addConstructorParametersToInitializersScope(notProperties);
             }
         }
     }
