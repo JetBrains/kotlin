@@ -2452,6 +2452,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnExplicitLabelParens.kt");
                 }
                 
+                @TestMetadata("LocalReturnHasTypeNothing.kt")
+                public void testLocalReturnHasTypeNothing() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnHasTypeNothing.kt");
+                }
+                
                 @TestMetadata("LocalReturnInNestedFunction.kt")
                 public void testLocalReturnInNestedFunction() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnInNestedFunction.kt");
