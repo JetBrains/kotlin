@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.utils.DFS;
 
 import java.util.*;
 
@@ -647,5 +648,54 @@ public class TypeUtils {
             }
         }
         return Pair.create(otherTypes, numberTypes);
+    }
+
+    public static List<TypeConstructor> topologicallySortSuperclassesAndRecordAllInstances(
+            @NotNull JetType type,
+            @NotNull final Map<TypeConstructor, Set<JetType>> constructorToAllInstances,
+            @NotNull final Set<TypeConstructor> visited
+    ) {
+        return DFS.dfs(
+                Collections.singletonList(type),
+                new DFS.Neighbors<JetType>() {
+                    @NotNull
+                    @Override
+                    public Iterable<JetType> getNeighbors(JetType current) {
+                        TypeSubstitutor substitutor = TypeSubstitutor.create(current);
+                        List<JetType> result = Lists.newArrayList();
+                        for (JetType supertype : current.getConstructor().getSupertypes()) {
+                            if (visited.contains(supertype.getConstructor())) {
+                                continue;
+                            }
+                            result.add(substitutor.safeSubstitute(supertype, Variance.INVARIANT));
+                        }
+                        return result;
+                    }
+                },
+                new DFS.Visited<JetType>() {
+                    @Override
+                    public boolean checkAndMarkVisited(JetType current) {
+                        return visited.add(current.getConstructor());
+                    }
+                },
+                new DFS.NodeHandlerWithListResult<JetType, TypeConstructor>() {
+                    @Override
+                    public void beforeChildren(JetType current) {
+                        TypeConstructor constructor = current.getConstructor();
+
+                        Set<JetType> instances = constructorToAllInstances.get(constructor);
+                        if (instances == null) {
+                            instances = new HashSet<JetType>();
+                            constructorToAllInstances.put(constructor, instances);
+                        }
+                        instances.add(current);
+                    }
+
+                    @Override
+                    public void afterChildren(JetType current) {
+                        result.addFirst(current.getConstructor());
+                    }
+                }
+        );
     }
 }
