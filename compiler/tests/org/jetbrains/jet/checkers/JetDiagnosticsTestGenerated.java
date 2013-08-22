@@ -2432,6 +2432,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/functionLiterals/return"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("AutoLabels.kt")
+                public void testAutoLabels() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/AutoLabels.kt");
+                }
+                
                 @TestMetadata("ForbiddenNonLocalReturnNoType.kt")
                 public void testForbiddenNonLocalReturnNoType() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/ForbiddenNonLocalReturnNoType.kt");
