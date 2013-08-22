@@ -22,8 +22,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 
 public class ScriptNameUtil {
-    public static final String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
-
     private ScriptNameUtil() {
     }
 

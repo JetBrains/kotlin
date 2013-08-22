@@ -17,14 +17,9 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DefaultDescriptorFactory;
-import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -40,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
+    public static final String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
     private static final Name NAME = Name.special("<script>");
 
     private final int priority;
@@ -59,17 +55,20 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
 
     private final WritableScopeImpl classScope;
 
-    public ScriptDescriptor(@Nullable DeclarationDescriptor containingDeclaration, int priority, JetScript script, JetScope scriptScope) {
+    public ScriptDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            int priority,
+            @NotNull JetScope scriptScope,
+            @NotNull Name className
+    ) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
         this.priority = priority;
-
-        String className = ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile()).replace('/','.');
 
         classDescriptor = new ClassDescriptorImpl(
                 containingDeclaration,
                 Collections.<AnnotationDescriptor>emptyList(),
                 Modality.FINAL,
-                new FqName(className).shortName());
+                className);
         classScope = new WritableScopeImpl(scriptScope, containingDeclaration, RedeclarationHandler.DO_NOTHING, "script members");
         classScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classDescriptor.initialize(
@@ -82,7 +81,11 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                 false);
     }
 
-    public void initialize(@NotNull JetType returnType, JetScript declaration, BindingContext bindingContext) {
+    public void initialize(
+            @NotNull JetType returnType,
+            @NotNull List<? extends PropertyDescriptorImpl> properties,
+            @NotNull List<? extends FunctionDescriptor> functions
+    ) {
         this.returnType = returnType;
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
 
@@ -91,7 +94,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                                                                Modality.FINAL,
                                                                Visibilities.PUBLIC,
                                                                false,
-                                                               Name.identifier(ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME),
+                                                               Name.identifier(LAST_EXPRESSION_VALUE_FIELD_NAME),
                                                                CallableMemberDescriptor.Kind.DECLARATION);
         propertyDescriptor.setType(
                 returnType,
@@ -101,20 +104,13 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
         propertyDescriptor.initialize(null, null);
         classScope.addPropertyDescriptor(propertyDescriptor);
 
-        for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
-            if(jetDeclaration instanceof JetProperty) {
-                VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, jetDeclaration);
-                assert descriptor != null;
-                initializeWithDefaultGetterSetter((PropertyDescriptorImpl) descriptor);
-                classScope.addPropertyDescriptor(descriptor);
-            }
-            else if(jetDeclaration instanceof JetNamedFunction) {
-                SimpleFunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, jetDeclaration);
-                assert descriptor != null;
-                SimpleFunctionDescriptor copy =
-                        descriptor.copy(classDescriptor, descriptor.getModality(), descriptor.getVisibility(), CallableMemberDescriptor.Kind.DECLARATION, false);
-                classScope.addFunctionDescriptor(copy);
-            }
+        for (PropertyDescriptorImpl property : properties) {
+            initializeWithDefaultGetterSetter(property);
+            classScope.addPropertyDescriptor(property);
+        }
+
+        for (FunctionDescriptor function : functions) {
+            classScope.addFunctionDescriptor(function);
         }
     }
 
@@ -195,6 +191,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
         }
     }
 
+    @NotNull
     public ClassDescriptor getClassDescriptor() {
         return classDescriptor;
     }

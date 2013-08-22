@@ -17,7 +17,13 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
@@ -29,6 +35,8 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -79,7 +87,24 @@ public class ScriptBodyResolver {
             if (returnType == null) {
                 returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
             }
-            descriptor.initialize(returnType, declaration, trace.getBindingContext());
+
+            List<PropertyDescriptorImpl> properties = new ArrayList<PropertyDescriptorImpl>();
+            List<SimpleFunctionDescriptor> functions = new ArrayList<SimpleFunctionDescriptor>();
+
+            BindingContext bindingContext = trace.getBindingContext();
+            for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
+                if (jetDeclaration instanceof JetProperty) {
+                    properties.add((PropertyDescriptorImpl) bindingContext.get(BindingContext.VARIABLE, jetDeclaration));
+                }
+                else if (jetDeclaration instanceof JetNamedFunction) {
+                    SimpleFunctionDescriptor function = bindingContext.get(BindingContext.FUNCTION, jetDeclaration);
+                    assert function != null;
+                    functions.add(function.copy(descriptor.getClassDescriptor(), function.getModality(), function.getVisibility(),
+                                                CallableMemberDescriptor.Kind.DECLARATION, false));
+                }
+            }
+
+            descriptor.initialize(returnType, properties, functions);
         }
     }
 
