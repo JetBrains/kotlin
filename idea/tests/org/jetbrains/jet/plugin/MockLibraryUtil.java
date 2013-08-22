@@ -41,6 +41,7 @@ public class MockLibraryUtil {
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
+            // Running compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
             File kotlinCompilerJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-compiler.jar");
             URLClassLoader classLoader = new URLClassLoader(new URL[] {kotlinCompilerJar.toURI().toURL()}, Object.class.getClassLoader());
 
