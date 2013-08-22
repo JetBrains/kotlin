@@ -109,6 +109,16 @@
             <mapper type="flatten"/>
         </untar>
 
+        <!-- Kotlin plugin for bootstrap building -->
+        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_CompilerAndPluginBootstrap/bootstrap.tcbuildtag/kotlin-plugin-%7Bbuild.number%7D.zip"
+             dest="dependencies/download/kotlin-bootstrap-plugin.zip"
+             usetimestamp="true"/>
+        <unzip src="dependencies/download/kotlin-bootstrap-plugin.zip" dest="dependencies/kotlin-bootstrap-plugin">
+          <patternset>
+            <include name="**/*"/>
+          </patternset>
+        </unzip>
+
         <delete dir="dependencies/ant" failonerror="false"/>
         <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip"/>
         <move file="dependencies/apache-ant-1.7.0" tofile="dependencies/ant"/>
