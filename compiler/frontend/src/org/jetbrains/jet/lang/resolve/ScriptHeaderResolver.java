@@ -19,7 +19,9 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
@@ -29,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -39,7 +42,10 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class ScriptHeaderResolver {
 
@@ -122,7 +128,9 @@ public class ScriptHeaderResolver {
             priority = 0;
         }
 
-        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority, script, outerScope);
+        Name className = new FqName(ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile()).replace('/', '.')).shortName();
+        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority, outerScope, className);
+
         //WriteThroughScope scriptScope = new WriteThroughScope(
         //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");

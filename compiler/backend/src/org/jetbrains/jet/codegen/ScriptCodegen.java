@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import javax.inject.Inject;
@@ -106,7 +105,7 @@ public class ScriptCodegen extends MemberCodegen {
 
         Type blockType = typeMapper.mapType(scriptDescriptor.getReturnType());
 
-        classBuilder.newField(null, ACC_PUBLIC | ACC_FINAL, ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME,
+        classBuilder.newField(null, ACC_PUBLIC | ACC_FINAL, ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME,
                               blockType.getDescriptor(), null, null);
 
         JvmMethodSignature jvmSignature = typeMapper.mapScriptSignature(scriptDescriptor, importedScripts);
@@ -173,7 +172,7 @@ public class ScriptCodegen extends MemberCodegen {
         if (stackValue.type != Type.VOID_TYPE) {
             stackValue.put(stackValue.type, instructionAdapter);
             instructionAdapter
-                    .putfield(className.getInternalName(), ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
+                    .putfield(className.getInternalName(), ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
         }
 
         instructionAdapter.areturn(Type.VOID_TYPE);
