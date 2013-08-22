@@ -2437,6 +2437,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/AutoLabels.kt");
                 }
                 
+                @TestMetadata("AutoLabelsNonLocal.kt")
+                public void testAutoLabelsNonLocal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/AutoLabelsNonLocal.kt");
+                }
+                
                 @TestMetadata("ForbiddenNonLocalReturnNoType.kt")
                 public void testForbiddenNonLocalReturnNoType() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/functionLiterals/return/ForbiddenNonLocalReturnNoType.kt");
