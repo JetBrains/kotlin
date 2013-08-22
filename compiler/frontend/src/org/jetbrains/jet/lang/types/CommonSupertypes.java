@@ -35,8 +35,9 @@ import static org.jetbrains.jet.lang.types.Variance.*;
 public class CommonSupertypes {
     @NotNull
     public static JetType commonSupertype(@NotNull Collection<JetType> types) {
+        assert !types.isEmpty();
         Collection<JetType> typeSet = new HashSet<JetType>(types);
-        assert !typeSet.isEmpty();
+        if (typeSet.size() == 1) return typeSet.iterator().next();
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
