@@ -214,7 +214,7 @@ public class JetSourceNavigationHelper {
         }
 
         Project project = decompiledDeclaration.getProject();
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedStorageManager storageManager = LockBasedStorageManager.create();
         FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(storageManager, getContainingFiles(candidates),
                 new Predicate<FqName>() {
                     @Override

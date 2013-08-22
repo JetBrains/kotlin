@@ -56,7 +56,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
 
         ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(injectorForTopDownAnalyzer.getModuleDescriptor().getModuleConfiguration());
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedStorageManager storageManager = LockBasedStorageManager.create();
         final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule,
                                                                  new FileBasedDeclarationProviderFactory(storageManager, files));
 

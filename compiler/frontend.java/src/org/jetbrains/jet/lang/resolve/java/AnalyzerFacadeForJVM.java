@@ -86,7 +86,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
 
         // TODO: Replace with stub declaration provider
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedStorageManager storageManager = LockBasedStorageManager.create();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {

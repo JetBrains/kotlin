@@ -140,7 +140,7 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     public static ResolveSession getLazyResolveSession(Collection<JetFile> files, Config config) {
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedStorageManager storageManager = LockBasedStorageManager.create();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptorImpl lazyModule = createJsModule("<lazy module>");
