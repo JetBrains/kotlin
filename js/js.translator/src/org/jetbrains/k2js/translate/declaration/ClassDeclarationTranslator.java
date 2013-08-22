@@ -19,16 +19,17 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.utils.DFS;
-import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -47,7 +48,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor
  * Generates a big block where are all the classes(objects representing them) are created.
  */
 public final class ClassDeclarationTranslator extends AbstractTranslator {
-    private final LabelGenerator localLabelGenerator = new LabelGenerator('c');
+    private final THashSet<String> nameClashGuard = new THashSet<String>();
 
     @NotNull
     private final THashMap<ClassDescriptor, OpenClassInfo> openClassDescriptorToItem = new THashMap<ClassDescriptor, OpenClassInfo>();
@@ -201,7 +202,28 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         });
     }
 
-    @NotNull
+    private String createNameForClass(ClassDescriptor descriptor) {
+        String suggestedName = descriptor.getName().asString();
+        String name = suggestedName;
+        DeclarationDescriptor containing = descriptor;
+        while (!nameClashGuard.add(name)) {
+            containing = containing.getContainingDeclaration();
+            assert containing != null;
+            name = suggestedName + '_' + containing.getName().asString();
+        }
+        return name;
+    }
+
+    @Nullable
+    public JsNameRef getQualifiedReference(ClassDescriptor descriptor) {
+        if (descriptor.getModality() != Modality.FINAL) {
+            //noinspection ConstantConditions
+            return classDescriptorToQualifiedLabel.get(descriptor, null);
+        }
+        return null;
+    }
+
+    @Nullable
     public JsPropertyInitializer translate(@NotNull JetClassOrObject declaration, TranslationContext context) {
         ClassDescriptor descriptor = getClassDescriptor(context().bindingContext(), declaration);
         JsExpression value;
@@ -209,7 +231,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             value = new ClassTranslator(declaration, classDescriptorToQualifiedLabel, context).translate();
         }
         else {
-            String label = localLabelGenerator.generate();
+            String label = createNameForClass(descriptor);
             JsName name = dummyFunction.getScope().declareName(label);
             JsNameRef qualifiedLabel = openClassDescriptorToQualifiedLabel.get(descriptor);
             if (qualifiedLabel == null) {
@@ -227,6 +249,11 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             openClassDescriptorToItem.put(descriptor, item);
 
             value = qualifiedLabel;
+
+            // not public api classes referenced to internal var _c
+            if (!descriptor.getVisibility().isPublicAPI()) {
+                return null;
+            }
         }
 
         return InitializerUtils.createPropertyInitializer(descriptor, value, context());
