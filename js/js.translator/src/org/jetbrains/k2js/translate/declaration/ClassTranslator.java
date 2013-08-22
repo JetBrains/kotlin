@@ -29,21 +29,18 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
-import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isNotAny;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createPropertyInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
@@ -257,40 +254,32 @@ public final class ClassTranslator extends AbstractTranslator {
         if (supertypes.isEmpty()) {
             return Collections.emptyList();
         }
+        if (supertypes.size() == 1) {
+            JetType type = supertypes.iterator().next();
+            ClassDescriptor supertypeDescriptor = getClassDescriptorForType(type);
+            if (isAny(supertypeDescriptor)) {
+                return Collections.emptyList();
+            }
+            return Collections.<JsExpression>singletonList(getClassReference(supertypeDescriptor));
+        }
 
-        JsExpression base = null;
-        List<JsExpression> list = null;
+        Set<TypeConstructor> supertypeConstructors = new HashSet<TypeConstructor>();
         for (JetType type : supertypes) {
-            ClassDescriptor result = getClassDescriptorForType(type);
-            if (isNotAny(result) && !AnnotationsUtils.isNativeObject(result)) {
-                switch (result.getKind()) {
-                    case CLASS:
-                        base = getClassReference(result);
-                        break;
-                    case TRAIT:
-                        if (list == null) {
-                            list = new ArrayList<JsExpression>();
-                        }
-                        list.add(getClassReference(result));
-                        break;
-                    case ENUM_CLASS:
-                        base = getClassReference(result);
-                        break;
-
-                    default:
-                        throw new UnsupportedOperationException("unsupported super class kind " + result.getKind().name());
+            supertypeConstructors.add(type.getConstructor());
+        }
+        List<TypeConstructor> sortedAllSuperTypes = topologicallySortSuperclassesAndRecordAllInstances(descriptor.getDefaultType(),
+                                                                                                       new HashMap<TypeConstructor, Set<JetType>>(),
+                                                                                                       new HashSet<TypeConstructor>());
+        List<JsExpression> supertypesRefs = new ArrayList<JsExpression>();
+        for (TypeConstructor typeConstructor : sortedAllSuperTypes) {
+            if (supertypeConstructors.contains(typeConstructor)) {
+                ClassDescriptor supertypeDescriptor = getClassDescriptorForTypeConstructor(typeConstructor);
+                if (!isAny(supertypeDescriptor)) {
+                    supertypesRefs.add(getClassReference(supertypeDescriptor));
                 }
             }
         }
-
-        if (list == null) {
-            return base == null ? Collections.<JsExpression>emptyList() : Collections.singletonList(base);
-        }
-        else if (base != null) {
-            list.add(0, base);
-        }
-
-        return list;
+        return supertypesRefs;
     }
 
     @NotNull

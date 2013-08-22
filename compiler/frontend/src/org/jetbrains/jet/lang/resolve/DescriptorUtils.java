@@ -35,10 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -300,7 +297,7 @@ public class DescriptorUtils {
         List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
         for (JetType type : superclassTypes) {
             ClassDescriptor result = getClassDescriptorForType(type);
-            if (isNotAny(result)) {
+            if (!isAny(result)) {
                 superClassDescriptors.add(result);
             }
         }
@@ -309,15 +306,20 @@ public class DescriptorUtils {
 
     @NotNull
     public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
+        return getClassDescriptorForTypeConstructor(type.getConstructor());
+    }
+
+    @NotNull
+    public static ClassDescriptor getClassDescriptorForTypeConstructor(@NotNull TypeConstructor typeConstructor) {
         DeclarationDescriptor superClassDescriptor =
-            type.getConstructor().getDeclarationDescriptor();
+            typeConstructor.getDeclarationDescriptor();
         assert superClassDescriptor instanceof ClassDescriptor
             : "Superclass descriptor of a type should be of type ClassDescriptor";
         return (ClassDescriptor)superClassDescriptor;
     }
 
-    public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
-        return !superClassDescriptor.equals(KotlinBuiltIns.getInstance().getAny());
+    public static boolean isAny(@NotNull DeclarationDescriptor superClassDescriptor) {
+        return superClassDescriptor.equals(KotlinBuiltIns.getInstance().getAny());
     }
 
     public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
