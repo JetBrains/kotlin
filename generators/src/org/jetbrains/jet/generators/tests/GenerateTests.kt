@@ -87,6 +87,7 @@ import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil
 import org.jetbrains.jet.resolve.AbstractAdditionalLazyResolveDescriptorRendererTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
+import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -446,6 +447,10 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractCompiledKotlinInJavaCompletionTest>()) {
+            model("completion/injava/compiled", extension = "java")
+        }
+
+        testClass(javaClass<AbstractKotlinSourceInJavaCompletionTest>()) {
             model("completion/injava/compiled", extension = "java")
         }
     }
