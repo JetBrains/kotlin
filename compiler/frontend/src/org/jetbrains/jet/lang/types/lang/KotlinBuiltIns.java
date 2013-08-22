@@ -28,6 +28,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -303,12 +304,10 @@ public class KotlinBuiltIns {
     @NotNull
     public static URL getBuiltInsDirUrl() {
         String builtInFilePath = "/" + LIBRARY_FILES.get(0);
-        String dirPath = "/" + BUILT_INS_DIR;
 
         URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
-        URL dirUrl = KotlinBuiltIns.class.getResource(dirPath);
 
-        if (url == null || dirUrl == null) {
+        if (url == null) {
             if (ApplicationManager.getApplication().isUnitTestMode()) {
                 // HACK: Temp code. Get built-in files from the sources when running from test.
                 try {
@@ -320,15 +319,15 @@ public class KotlinBuiltIns {
                 }
             }
 
-            if (url == null) {
-                throw new IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath);
-            }
-            else {
-                throw new IllegalStateException("Built-ins directory wasn't found at url: " + dirPath);
-            }
+            throw new IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath);
         }
 
-        return dirUrl;
+        try {
+            return new URL(url.getProtocol(), url.getHost(), PathUtil.getParentPath(url.getFile()));
+        }
+        catch (MalformedURLException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @NotNull
