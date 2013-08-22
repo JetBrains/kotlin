@@ -43,7 +43,6 @@ import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 
 final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
@@ -73,7 +72,7 @@ final class NamespaceTranslator extends AbstractTranslator {
                     defineInvocation = createDefinitionPlace(null, descriptorToDefineInvocation);
                 }
 
-                return createPlace(getListFromPlace(defineInvocation), getQualifiedReference(context(), descriptor));
+                return createPlace(getListFromPlace(defineInvocation), context().getQualifiedReference(descriptor));
             }
         };
     }
@@ -106,7 +105,7 @@ final class NamespaceTranslator extends AbstractTranslator {
             initializer = visitor.initializer;
             if (!context().isEcma5()) {
                 initializers.add(new JsInvocation(new JsNameRef("call", initializer),
-                                                  getQualifiedReference(context(), descriptor)).makeStmt());
+                                                  context().getQualifiedReference(descriptor)).makeStmt());
             }
         }
 
@@ -178,7 +177,10 @@ final class NamespaceTranslator extends AbstractTranslator {
 
         @Override
         public Void visitClass(@NotNull JetClass declaration, @NotNull TranslationContext context) {
-            result.add(context.classDeclarationTranslator().translate(declaration, context));
+            JsPropertyInitializer entry = context.classDeclarationTranslator().translate(declaration, context);
+            if (entry != null) {
+                result.add(entry);
+            }
             return null;
         }
 

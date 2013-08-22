@@ -127,11 +127,6 @@ public final class StaticContext {
     }
 
     @NotNull
-    public EcmaVersion getEcmaVersion() {
-        return ecmaVersion;
-    }
-
-    @NotNull
     public JsProgram getProgram() {
         return program;
     }
@@ -169,6 +164,28 @@ public final class StaticContext {
         JsFunction function = scopeToFunction.get(scope);
         assert scope.equals(function.getScope()) : "Inconsistency.";
         return function;
+    }
+
+    @NotNull
+    public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
+        ClassDescriptor classDescriptor;
+        if (descriptor instanceof ConstructorDescriptor) {
+            classDescriptor = ((ConstructorDescriptor) descriptor).getContainingDeclaration();
+        }
+        else if (descriptor instanceof ClassDescriptor) {
+            classDescriptor = (ClassDescriptor) descriptor;
+        }
+        else {
+            classDescriptor = null;
+        }
+
+        if (classDescriptor != null) {
+            JsNameRef reference = classDeclarationTranslator.getQualifiedReference((classDescriptor));
+            if (reference != null) {
+                return reference;
+            }
+        }
+        return new JsNameRef(getNameForDescriptor(descriptor), getQualifierForDescriptor(descriptor));
     }
 
     @NotNull

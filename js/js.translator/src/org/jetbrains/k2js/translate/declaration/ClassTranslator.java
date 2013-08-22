@@ -50,7 +50,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
 
 /**
@@ -164,7 +163,7 @@ public final class ClassTranslator extends AbstractTranslator {
                     });
         }
         else {
-            qualifiedReference = getQualifiedReference(declarationContext, descriptor);
+            qualifiedReference = declarationContext.getQualifiedReference(descriptor);
             declarationContext.literalFunctionTranslator().setDefinitionPlace(
                     new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
                         @Override
@@ -305,7 +304,7 @@ public final class ClassTranslator extends AbstractTranslator {
         }
 
         // from library
-        return getQualifiedReference(context(), superClassDescriptor);
+        return context().getQualifiedReference(superClassDescriptor);
     }
 
     private void translatePropertiesAsConstructorParameters(@NotNull TranslationContext classDeclarationContext,

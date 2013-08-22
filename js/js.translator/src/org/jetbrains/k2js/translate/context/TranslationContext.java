@@ -181,6 +181,11 @@ public class TranslationContext {
         return program().getStringLiteral(named.getName().asString());
     }
 
+    @NotNull
+    public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
+        return staticContext.getQualifiedReference(descriptor);
+    }
+
     @Nullable
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getQualifierForDescriptor(descriptor);

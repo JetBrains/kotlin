@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -43,11 +42,7 @@ public final class ReferenceTranslator {
     public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
             @NotNull TranslationContext context) {
         JsExpression alias = context.getAliasForDescriptor(referencedDescriptor);
-        if (alias != null) {
-            return alias;
-        }
-
-        return new JsNameRef(context.getNameForDescriptor(referencedDescriptor), context.getQualifierForDescriptor(referencedDescriptor));
+        return alias != null ? alias : context.getQualifiedReference(referencedDescriptor);
     }
 
     @NotNull

@@ -32,7 +32,6 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.*;
 
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 
 public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private final Iterable<JetFile> files;
@@ -114,7 +113,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     ) {
         if (context.isEcma5()) {
             return Arrays.asList(initializer == null ? JsLiteral.NULL : initializer,
-                                 new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, getQualifiedReference(context, descriptor)),
+                                 new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, context.getQualifiedReference(descriptor)),
                                  members);
         }
         else {
