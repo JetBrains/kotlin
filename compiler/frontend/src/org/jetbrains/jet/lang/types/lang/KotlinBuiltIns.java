@@ -18,13 +18,8 @@ package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -42,12 +37,8 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
@@ -55,7 +46,6 @@ import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
 public class KotlinBuiltIns {
     public static final JetScope STUB = JetScope.EMPTY;
 
-    public static final String BUILT_INS_DIR = "jet";
     public static final String BUILT_INS_PACKAGE_NAME_STRING = "jet";
     /* package */ static final Name BUILT_INS_PACKAGE_NAME = Name.identifier(BUILT_INS_PACKAGE_NAME_STRING);
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
@@ -215,40 +205,7 @@ public class KotlinBuiltIns {
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
     }
 
-    @TestOnly
-    private static File getInTestBuiltInPath(String path) {
-        return new File("idea/builtinsSrc", path);
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @NotNull
-    public static URL getBuiltInsDirUrl() {
-        String builtInFilePath = "/" + BUILT_INS_DIR + "/Library.jet";
-
-        URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
-
-        if (url == null) {
-            if (ApplicationManager.getApplication().isUnitTestMode()) {
-                // HACK: Temp code. Get built-in files from the sources when running from test.
-                try {
-                    @SuppressWarnings("TestOnlyProblems") File builtInDir = getInTestBuiltInPath(BUILT_INS_DIR);
-                    return new URL(StandardFileSystems.FILE_PROTOCOL, "", FileUtil.toSystemIndependentName(builtInDir.getAbsolutePath()));
-                }
-                catch (MalformedURLException e) {
-                    throw ExceptionUtils.rethrow(e);
-                }
-            }
-
-            throw new IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath);
-        }
-
-        try {
-            return new URL(url.getProtocol(), url.getHost(), PathUtil.getParentPath(url.getFile()));
-        }
-        catch (MalformedURLException e) {
-            throw new AssertionError(e);
-        }
-    }
 
     @NotNull
     public ModuleDescriptorImpl getBuiltInsModule() {

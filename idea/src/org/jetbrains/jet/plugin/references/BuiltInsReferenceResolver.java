@@ -32,6 +32,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -92,7 +93,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     private List<JetFile> getJetBuiltinsFiles() {
-        URL url = KotlinBuiltIns.getBuiltInsDirUrl();
+        URL url = LightClassUtil.getBuiltInsDirUrl();
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null : "Virtual file not found by URL: " + url;
 

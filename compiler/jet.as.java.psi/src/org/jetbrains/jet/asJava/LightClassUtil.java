@@ -16,10 +16,13 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -29,6 +32,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,13 +43,18 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.KotlinVfsUtil;
 
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 public class LightClassUtil {
     private static final Logger LOG = Logger.getInstance(LightClassUtil.class);
+
+    public static final File BUILT_INS_SRC_DIR = new File("idea/builtinsSrc", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
 
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
@@ -59,7 +68,7 @@ public class LightClassUtil {
             VirtualFile parent = virtualFile.getParent();
             if (parent != null) {
                 try {
-                    String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(KotlinBuiltIns.getBuiltInsDirUrl());
+                    String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(getBuiltInsDirUrl());
                     String fileDirVfsUrl = parent.getUrl();
                     if (jetVfsPathUrl.equals(fileDirVfsUrl)) {
                         return true;
@@ -74,6 +83,35 @@ public class LightClassUtil {
         // We deliberately return false on error: who knows what weird URLs we might come across out there
         // it would be a pity if no light classes would be created in such cases
         return false;
+    }
+
+    @NotNull
+    public static URL getBuiltInsDirUrl() {
+        String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING + "/Library.jet";
+
+        URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
+
+        if (url == null) {
+            if (ApplicationManager.getApplication().isUnitTestMode()) {
+                // HACK: Temp code. Get built-in files from the sources when running from test.
+                try {
+                    return new URL(StandardFileSystems.FILE_PROTOCOL, "",
+                                   FileUtil.toSystemIndependentName(BUILT_INS_SRC_DIR.getAbsolutePath()));
+                }
+                catch (MalformedURLException e) {
+                    throw ExceptionUtils.rethrow(e);
+                }
+            }
+
+            throw new IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath);
+        }
+
+        try {
+            return new URL(url.getProtocol(), url.getHost(), PathUtil.getParentPath(url.getFile()));
+        }
+        catch (MalformedURLException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Nullable
