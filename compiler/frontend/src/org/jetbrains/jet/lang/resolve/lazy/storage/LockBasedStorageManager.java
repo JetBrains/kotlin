@@ -37,13 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class LockBasedStorageManager implements StorageManager {
-    public static LockBasedStorageManager create() {
-        return new LockBasedStorageManager(true);
-    }
-
-    public static LockBasedStorageManager createWithoutExceptionMemoization() {
-        return new LockBasedStorageManager(false);
-    }
 
     private final Object lock = new Object() {
         @Override
@@ -52,19 +45,13 @@ public class LockBasedStorageManager implements StorageManager {
         }
     };
 
-    private final boolean memoizeExceptions;
-
-    private LockBasedStorageManager(boolean memoizeExceptions) {
-        this.memoizeExceptions = memoizeExceptions;
-    }
-
     @NotNull
     @Override
     public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
             @NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind
     ) {
         ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
-        return new MapBasedMemoizedFunctionToNotNull<K, V>(lock, map, compute, memoizeExceptions);
+        return new MapBasedMemoizedFunctionToNotNull<K, V>(lock, map, compute);
     }
 
     @NotNull
@@ -73,7 +60,7 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind
     ) {
         ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
-        return new MapBasedMemoizedFunction<K, V>(lock, map, compute, memoizeExceptions);
+        return new MapBasedMemoizedFunction<K, V>(lock, map, compute);
     }
 
     private static <K, V> ConcurrentMap<K, V> createConcurrentMap(ReferenceKind referenceKind) {
@@ -83,13 +70,13 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NotNullLazyValue<T> createLazyValue(@NotNull Computable<T> computable) {
-        return new LockBasedNotNullLazyValue<T>(lock, computable, memoizeExceptions);
+        return new LockBasedNotNullLazyValue<T>(lock, computable);
     }
 
     @NotNull
     @Override
     public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute) {
-        return new LockBasedNotNullLazyValue<T>(lock, computable, memoizeExceptions) {
+        return new LockBasedNotNullLazyValue<T>(lock, computable) {
             @Override
             protected void postCompute(@NotNull T value) {
                 postCompute.consume(value);
@@ -100,7 +87,7 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable) {
-        return new LockBasedLazyValue<T>(lock, computable, memoizeExceptions);
+        return new LockBasedLazyValue<T>(lock, computable);
     }
 
     @NotNull
@@ -108,7 +95,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
             @NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute
     ) {
-        return new LockBasedLazyValue<T>(lock, computable, memoizeExceptions) {
+        return new LockBasedLazyValue<T>(lock, computable) {
             @Override
             protected void postCompute(@Nullable T value) {
                 postCompute.consume(value);
@@ -134,15 +121,13 @@ public class LockBasedStorageManager implements StorageManager {
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
         private final Object lock;
         private final Computable<T> computable;
-        private final boolean memoizeExceptions;
 
         @Nullable
         private volatile Object value = null;
 
-        public LockBasedLazyValue(@NotNull Object lock, @NotNull Computable<T> computable, boolean memoizeExceptions) {
+        public LockBasedLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
             this.lock = lock;
             this.computable = computable;
-            this.memoizeExceptions = memoizeExceptions;
         }
 
         @Override
@@ -161,9 +146,7 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
-                    if (memoizeExceptions) {
-                        value = WrappedValues.escapeThrowable(throwable);
-                    }
+                    value = WrappedValues.escapeThrowable(throwable);
                     throw ExceptionUtils.rethrow(throwable);
                 }
             }
@@ -176,8 +159,8 @@ public class LockBasedStorageManager implements StorageManager {
 
     private static class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
 
-        public LockBasedNotNullLazyValue(@NotNull Object lock, @NotNull Computable<T> computable, boolean memoizeExceptions) {
-            super(lock, computable, memoizeExceptions);
+        public LockBasedNotNullLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+            super(lock, computable);
         }
 
         @Override
@@ -193,15 +176,11 @@ public class LockBasedStorageManager implements StorageManager {
         private final Object lock;
         private final ConcurrentMap<K, Object> cache;
         private final Function<K, V> compute;
-        private final boolean memoizeExceptions;
 
-        public MapBasedMemoizedFunction(
-                @NotNull Object lock, @NotNull ConcurrentMap<K, Object> map,
-                @NotNull Function<K, V> compute, boolean memoizeExceptions) {
+        public MapBasedMemoizedFunction(@NotNull Object lock, @NotNull ConcurrentMap<K, Object> map, @NotNull Function<K, V> compute) {
             this.lock = lock;
             this.cache = map;
             this.compute = compute;
-            this.memoizeExceptions = memoizeExceptions;
         }
 
         @Override
@@ -222,10 +201,8 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
-                    if (memoizeExceptions) {
-                        Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
-                        assert oldValue == null : "Race condition detected";
-                    }
+                    Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
+                    assert oldValue == null : "Race condition detected";
 
                     throw ExceptionUtils.rethrow(throwable);
                 }
@@ -238,10 +215,9 @@ public class LockBasedStorageManager implements StorageManager {
         public MapBasedMemoizedFunctionToNotNull(
                 @NotNull Object lock,
                 @NotNull ConcurrentMap<K, Object> map,
-                @NotNull Function<K, V> compute,
-                boolean memoizeExceptions
+                @NotNull Function<K, V> compute
         ) {
-            super(lock, map, compute, memoizeExceptions);
+            super(lock, map, compute);
         }
 
         @NotNull
@@ -348,4 +324,5 @@ public class LockBasedStorageManager implements StorageManager {
             }
         }
     }
+
 }

@@ -238,10 +238,7 @@ public class KotlinBuiltIns {
     @NotNull
     private KotlinCodeAnalyzer createLazyResolveSession(@NotNull Project project) throws IOException {
         List<JetFile> files = loadResourcesAsJetFiles(project, LIBRARY_FILES);
-
-        // As builtins resolve session is never recreated, we don't want it be corrupted forever with stored exceptions
-        LockBasedStorageManager storageManager = LockBasedStorageManager.createWithoutExceptionMemoization();
-
+        LockBasedStorageManager storageManager = new LockBasedStorageManager();
         return new ResolveSession(
                 project,
                 storageManager,

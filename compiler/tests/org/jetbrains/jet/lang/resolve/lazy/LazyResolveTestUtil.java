@@ -100,7 +100,7 @@ public class LazyResolveTestUtil {
         final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
 
-        LockBasedStorageManager storageManager = LockBasedStorageManager.create();
+        LockBasedStorageManager storageManager = new LockBasedStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
