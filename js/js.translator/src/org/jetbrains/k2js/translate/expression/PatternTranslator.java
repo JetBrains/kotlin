@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,14 +25,17 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetIsExpression;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getNameIfStandardType;
 
 public final class PatternTranslator extends AbstractTranslator {
 
@@ -81,15 +83,22 @@ public final class PatternTranslator extends AbstractTranslator {
     @Nullable
     private JsExpression translateAsIntrinsicTypeCheck(@NotNull JsExpression expressionToMatch,
                                                        @NotNull JetTypeReference typeReference) {
-        JsExpression result = null;
-        JsName className = getClassNameReference(typeReference).getName();
-        if (className.getIdent().equals("String")) {
-            result = typeof(expressionToMatch, program().getStringLiteral("string"));
+        Name typeName = getNameIfStandardType(getTypeByReference(bindingContext(), typeReference));
+        if (typeName == null) {
+            return null;
         }
-        if (className.getIdent().equals("Int")) {
-            result = typeof(expressionToMatch, program().getStringLiteral("number"));
+
+        String jsSTypeName;
+        if (NamePredicate.STRING.apply(typeName)) {
+            jsSTypeName = "string";
         }
-        return result;
+        else if (NamePredicate.PRIMITIVE_NUMBERS.apply(typeName)) {
+            jsSTypeName = "number";
+        }
+        else {
+            return null;
+        }
+        return typeof(expressionToMatch, program().getStringLiteral(jsSTypeName));
     }
 
     @NotNull
