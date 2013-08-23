@@ -38,6 +38,7 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.PsiUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getCallee;
@@ -143,10 +144,16 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
     @NotNull
     private List<JsExpression> translateArguments() {
-        List<JsExpression> result = new ArrayList<JsExpression>();
+        List<ValueParameterDescriptor> valueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
+        if (valueParameters.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<JsExpression> result = new ArrayList<JsExpression>(valueParameters.size());
+        List<ResolvedValueArgument> valueArgumentsByIndex = resolvedCall.getValueArgumentsByIndex();
         List<JsExpression> argsBeforeVararg = null;
-        for (ValueParameterDescriptor parameterDescriptor : resolvedCall.getResultingDescriptor().getValueParameters()) {
-            ResolvedValueArgument actualArgument = resolvedCall.getValueArgumentsByIndex().get(parameterDescriptor.getIndex());
+        for (ValueParameterDescriptor parameterDescriptor : valueParameters) {
+            ResolvedValueArgument actualArgument = valueArgumentsByIndex.get(parameterDescriptor.getIndex());
 
             if (actualArgument instanceof VarargValueArgument) {
                 assert !hasSpreadOperator;
@@ -161,7 +168,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
                 }
             }
 
-            result.addAll(translateSingleArgument(actualArgument, parameterDescriptor));
+            translateSingleArgument(actualArgument, parameterDescriptor, result);
         }
 
         if (isNativeFunctionCall && hasSpreadOperator) {
