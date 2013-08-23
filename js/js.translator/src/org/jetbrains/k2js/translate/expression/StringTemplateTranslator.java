@@ -34,9 +34,9 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 
 import java.util.Collections;
 
+import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.sum;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getNameIfStandardType;
-
 
 public final class StringTemplateTranslator extends AbstractTranslator {
     private final JetStringTemplateEntry[] expressionEntries;
@@ -47,14 +47,12 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         return (new StringTemplateTranslator(expression, context).translate());
     }
 
-
-
     private StringTemplateTranslator(@NotNull JetStringTemplateExpression expression,
                                      @NotNull TranslationContext context) {
         super(context);
 
         expressionEntries = expression.getEntries();
-        assert expressionEntries.length != 0 : "String template must have one or more entries.";
+        assert expressionEntries.length != 0 : message(expression, "String template must have one or more entries.");
     }
 
     @NotNull
