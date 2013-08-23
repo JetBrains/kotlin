@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiFormatUtil;
@@ -34,9 +33,9 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -96,41 +95,40 @@ public final class JavaFunctionResolver {
 
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
-            @NotNull JavaMethod javaMethod,
+            @NotNull JavaMethod method,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
             boolean record
     ) {
-        PsiMethodWrapper method = new PsiMethodWrapper(javaMethod.getPsi());
-
-        if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method.getPsiMember())) {
+        if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method)) {
             return null;
         }
 
-        PsiType returnPsiType = method.getReturnType();
+        PsiMethod psiMethod = method.getPsi();
+
+        PsiType returnPsiType = psiMethod.getReturnType();
         if (returnPsiType == null) {
             return null;
         }
 
-        PsiMethod psiMethod = method.getPsiMethod();
-
-        if (trace.get(BindingContext.FUNCTION, psiMethod) != null) {
-            return trace.get(BindingContext.FUNCTION, psiMethod);
+        SimpleFunctionDescriptor alreadyResolved = trace.get(BindingContext.FUNCTION, psiMethod);
+        if (alreadyResolved != null) {
+            return alreadyResolved;
         }
 
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 ownerDescriptor,
                 annotationResolver.resolveAnnotations(psiMethod),
-                Name.identifier(method.getName()),
+                method.getName(),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
 
         List<TypeParameterDescriptor> methodTypeParameters = signatureResolver.resolveMethodTypeParameters(method, functionDescriptorImpl);
 
         TypeVariableResolver methodTypeVariableResolver = new TypeVariableResolver(
-                methodTypeParameters, functionDescriptorImpl, "method " + method.getName() + " in class " + psiMethod.getContainingClass());
+                methodTypeParameters, functionDescriptorImpl, "method " + method.getName() + " in class " + method.getContainingClass());
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
-                .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
+                .resolveParameterDescriptors(functionDescriptorImpl, method.getValueParameters(), methodTypeVariableResolver);
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
         List<String> signatureErrors = Lists.newArrayList();
@@ -170,7 +168,7 @@ public final class JavaFunctionResolver {
                 valueParameterDescriptors.getDescriptors(),
                 returnType,
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
-                DescriptorResolverUtils.resolveVisibility(psiMethod),
+                method.getVisibility(),
                 /*isInline = */ false
         );
 
@@ -199,9 +197,9 @@ public final class JavaFunctionResolver {
     }
 
     private static void checkFunctionsOverrideCorrectly(
-            PsiMethodWrapper method,
-            List<FunctionDescriptor> superFunctions,
-            FunctionDescriptor functionDescriptor
+            @NotNull JavaMethod method,
+            @NotNull List<FunctionDescriptor> superFunctions,
+            @NotNull FunctionDescriptor functionDescriptor
     ) {
         for (FunctionDescriptor superFunction : superFunctions) {
             ClassDescriptor klass = (ClassDescriptor) functionDescriptor.getContainingDeclaration();
@@ -230,8 +228,8 @@ public final class JavaFunctionResolver {
                           + "super class = " + superFunction.getContainingDeclaration() + "\n"
                           + "sub function = " + functionDescriptor + "\n"
                           + "sub class = " + functionDescriptor.getContainingDeclaration() + "\n"
-                          + "sub method = " + PsiFormatUtil.getExternalName(method.getPsiMethod()) + "\n"
-                          + "@KotlinSignature = " + method.getSignatureAnnotation().signature());
+                          + "sub method = " + PsiFormatUtil.getExternalName(method.getPsi()) + "\n"
+                          + "@KotlinSignature = " + SignaturesUtil.getKotlinSignature(method));
             }
         }
     }
@@ -246,8 +244,8 @@ public final class JavaFunctionResolver {
         }
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
-        for (PsiMethodWrapper method : members.getMethods()) {
-            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(new JavaMethod(method.getPsiMethod()), owner, true);
+        for (JavaMethod method : members.getMethods()) {
+            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(method, owner, true);
             if (function != null) {
                 functionsFromCurrent.add(function);
                 ContainerUtil.addIfNotNull(functionsFromCurrent, resolveSamAdapter(function));
@@ -336,15 +334,11 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    private SimpleFunctionDescriptor resolveSamConstructor(
-            @NotNull NamespaceDescriptor ownerDescriptor,
-            @NotNull NamedMembers namedMembers
-    ) {
-        PsiClass samInterface = namedMembers.getSamInterface();
-        if (samInterface != null) {
-            ClassDescriptorFromJvmBytecode klass = findClassInNamespace(ownerDescriptor, namedMembers.getName());
+    private SimpleFunctionDescriptor resolveSamConstructor(@NotNull NamespaceDescriptor owner, @NotNull NamedMembers namedMembers) {
+        if (namedMembers.getSamInterface() != null) {
+            ClassDescriptorFromJvmBytecode klass = findClassInNamespace(owner, namedMembers.getName());
             if (klass != null) {
-                return recordSamConstructor(klass, createSamConstructorFunction(ownerDescriptor, klass), trace);
+                return recordSamConstructor(klass, createSamConstructorFunction(owner, klass), trace);
             }
         }
         return null;
@@ -368,15 +362,16 @@ public final class JavaFunctionResolver {
 
     @NotNull
     private JetType makeReturnType(
-            PsiType returnType, PsiMethodWrapper method,
+            @NotNull PsiType returnType,
+            @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
+        PsiMethod psiMethod = method.getPsi();
 
-        TypeUsage typeUsage = JavaTypeTransformer
-                .adjustTypeUsageWithMutabilityAnnotations(method.getPsiMethod(), TypeUsage.MEMBER_SIGNATURE_COVARIANT);
+        TypeUsage typeUsage = JavaTypeTransformer.adjustTypeUsageWithMutabilityAnnotations(psiMethod, TypeUsage.MEMBER_SIGNATURE_COVARIANT);
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
-        if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(psiMethod, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }
         else {

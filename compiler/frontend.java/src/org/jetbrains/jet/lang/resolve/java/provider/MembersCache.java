@@ -18,20 +18,14 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMember;
-import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
@@ -65,8 +59,8 @@ public final class MembersCache {
         return r;
     }
 
-    private void addTask(@NotNull PsiMember member, @NotNull RunOnce task) {
-        addTask(member.getName(), task);
+    private void addTask(@NotNull JavaNamedElement member, @NotNull RunOnce task) {
+        addTask(member.getName().asString(), task);
     }
 
     private void addTask(@Nullable String name, @NotNull RunOnce task) {
@@ -123,29 +117,27 @@ public final class MembersCache {
 
         private void process() {
             for (JavaClass javaClass : javaClasses) {
-                PsiClass psiClass = javaClass.getPsi();
-
-                if (!(psiClass instanceof JetJavaMirrorMarker)) { // to filter out JetLightClasses
-                    if (SingleAbstractMethodUtils.isSamInterface(psiClass)) {
-                        processSamInterface(psiClass);
+                if (!(javaClass.getPsi() instanceof JetJavaMirrorMarker)) { // to filter out JetLightClasses
+                    if (SingleAbstractMethodUtils.isSamInterface(javaClass)) {
+                        processSamInterface(javaClass);
                     }
                 }
             }
         }
 
-        private void processSamInterface(@NotNull PsiClass psiClass) {
-            NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(psiClass.getName()));
-            namedMembers.setSamInterface(psiClass);
+        private void processSamInterface(@NotNull JavaClass javaClass) {
+            NamedMembers namedMembers = getOrCreateEmpty(javaClass.getName());
+            namedMembers.setSamInterface(javaClass);
         }
     }
 
     private class ClassMemberProcessor {
         @NotNull
-        private final PsiClass psiClass;
+        private final JavaClass javaClass;
         private final boolean staticMembers;
 
         private ClassMemberProcessor(@NotNull JavaClass javaClass, boolean staticMembers) {
-            this.psiClass = javaClass.getPsi();
+            this.javaClass = javaClass;
             this.staticMembers = staticMembers;
         }
 
@@ -156,7 +148,7 @@ public final class MembersCache {
         }
 
         private void processFields() {
-            for (final PsiField field : psiClass.getAllFields()) {
+            for (final JavaField field : javaClass.getAllFields()) {
                 addTask(field, new RunOnce() {
                     @Override
                     public void doRun() {
@@ -172,13 +164,13 @@ public final class MembersCache {
         }
 
         private void createEntriesForAllMethods() {
-            for (PsiMethod method : psiClass.getAllMethods()) {
-                getOrCreateEmpty(Name.identifier(method.getName()));
+            for (JavaMethod method : javaClass.getAllMethods()) {
+                getOrCreateEmpty(method.getName());
             }
         }
 
         private void processOwnMethods() {
-            for (final PsiMethod method : psiClass.getMethods()) {
+            for (final JavaMethod method : javaClass.getMethods()) {
                 addTask(method, new RunOnce() {
                     @Override
                     public void doRun() {
@@ -192,7 +184,7 @@ public final class MembersCache {
             if (!staticMembers) {
                 return;
             }
-            for (final PsiClass nested : psiClass.getInnerClasses()) {
+            for (final JavaClass nested : javaClass.getInnerClasses()) {
                 addTask(nested, new RunOnce() {
                     @Override
                     public void doRun() {
@@ -202,8 +194,8 @@ public final class MembersCache {
             }
         }
 
-        private boolean includeMember(PsiMemberWrapper member) {
-            if (psiClass.isEnum() && staticMembers) {
+        private boolean includeMember(@NotNull JavaMember member) {
+            if (javaClass.isEnum() && staticMembers) {
                 return member.isStatic();
             }
 
@@ -211,48 +203,47 @@ public final class MembersCache {
                 return false;
             }
 
-            if (member.getPsiMember().getContainingClass() != psiClass) {
+            if (!isInCurrentClass(member)) {
                 return false;
             }
 
-            if (member.isPrivate()) {
+            if (member.getVisibility() == Visibilities.PRIVATE) {
                 return false;
             }
 
-            if (DescriptorResolverUtils.isObjectMethodInInterface(member.getPsiMember())) {
+            if (DescriptorResolverUtils.isObjectMethodInInterface(member.getPsi())) {
                 return false;
             }
 
             return true;
         }
 
-        private void processField(PsiField field) {
-            PsiFieldWrapper fieldWrapper = new PsiFieldWrapper(field);
+        private boolean isInCurrentClass(@NotNull JavaMember member) {
+            JavaClass containingClass = member.getContainingClass();
+            if (containingClass == null) return false;
+            FqName fqName = containingClass.getFqName();
+            return fqName != null && fqName.equals(javaClass.getFqName());
+        }
 
+        private void processField(@NotNull JavaField field) {
             // group must be created even for excluded field
-            NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(fieldWrapper.getName()));
+            NamedMembers namedMembers = getOrCreateEmpty(field.getName());
 
-            if (!includeMember(fieldWrapper)) {
-                return;
+            if (includeMember(field)) {
+                namedMembers.addField(field);
             }
-
-            namedMembers.addField(fieldWrapper);
         }
 
-        private void processOwnMethod(PsiMethod ownMethod) {
-            PsiMethodWrapper method = new PsiMethodWrapper(ownMethod);
-
-            if (!includeMember(method)) {
-                return;
+        private void processOwnMethod(@NotNull JavaMethod ownMethod) {
+            if (includeMember(ownMethod)) {
+                NamedMembers namedMembers = getOrCreateEmpty(ownMethod.getName());
+                namedMembers.addMethod(ownMethod);
             }
-
-            NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
-            namedMembers.addMethod(method);
         }
 
-        private void processNestedClass(PsiClass nested) {
+        private void processNestedClass(@NotNull JavaClass nested) {
             if (SingleAbstractMethodUtils.isSamInterface(nested)) {
-                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(nested.getName()));
+                NamedMembers namedMembers = getOrCreateEmpty(nested.getName());
                 namedMembers.setSamInterface(nested);
             }
         }

@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -33,11 +34,11 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public final class JavaValueParameterResolver {
-
     private JavaTypeTransformer typeTransformer;
 
     public JavaValueParameterResolver() {
@@ -45,18 +46,21 @@ public final class JavaValueParameterResolver {
 
     @NotNull
     private ValueParameterDescriptor resolveParameterDescriptor(
-            DeclarationDescriptor containingDeclaration, int i,
-            PsiParameter parameter, TypeVariableResolver typeVariableResolver
+            @NotNull DeclarationDescriptor containingDeclaration,
+            int i,
+            @NotNull JavaValueParameter parameter,
+            @NotNull TypeVariableResolver typeVariableResolver
     ) {
+        PsiParameter psiParameter = parameter.getPsi();
 
-        PsiType psiType = parameter.getType();
+        PsiType psiType = psiParameter.getType();
 
         // TODO: must be very slow, make it lazy?
-        Name name = Name.identifier(getParameterName(i, parameter));
+        Name name = getParameterName(i, parameter);
 
         TypeUsage typeUsage = JavaTypeTransformer
-                .adjustTypeUsageWithMutabilityAnnotations(parameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
-        JetType outType = getTypeTransformer().transformToType(psiType, typeUsage, typeVariableResolver);
+                .adjustTypeUsageWithMutabilityAnnotations(psiParameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT);
+        JetType outType = typeTransformer.transformToType(psiType, typeUsage, typeVariableResolver);
 
         JetType varargElementType;
         if (psiType instanceof PsiEllipsisType) {
@@ -69,7 +73,7 @@ public final class JavaValueParameterResolver {
 
         JetType transformedType;
         PsiAnnotation notNullAnnotation = JavaAnnotationResolver
-                .findAnnotationWithExternal(parameter, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
+                .findAnnotationWithExternal(psiParameter, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
         if (notNullAnnotation != null) {
             transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
         }
@@ -87,33 +91,29 @@ public final class JavaValueParameterResolver {
         );
     }
 
-    @NotNull
-    private JavaTypeTransformer getTypeTransformer() {
-        return typeTransformer;
-    }
-
     @Inject
     public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
         this.typeTransformer = typeTransformer;
     }
 
     @NotNull
-    private static String getParameterName(int number, @NotNull PsiParameter parameter) {
-        String psiParameterName = parameter.getName();
-        return psiParameterName != null ? psiParameterName : "p" + number;
+    private static Name getParameterName(int number, @NotNull JavaValueParameter parameter) {
+        Name psiParameterName = parameter.getName();
+        return psiParameterName != null ? psiParameterName : Name.identifier("p" + number);
     }
 
+    @NotNull
     public JavaDescriptorResolver.ValueParameterDescriptors resolveParameterDescriptors(
-            DeclarationDescriptor containingDeclaration,
-            List<PsiParameter> parameters, TypeVariableResolver typeVariableResolver
+            @NotNull DeclarationDescriptor container,
+            @NotNull Collection<JavaValueParameter> parameters,
+            @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        int indexDelta = 0;
-        for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
-            PsiParameter parameter = parameters.get(i);
-            ValueParameterDescriptor parameterDescriptor =
-                    resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(parameters.size());
+        int index = 0;
+        for (JavaValueParameter parameter : parameters) {
+            ValueParameterDescriptor parameterDescriptor = resolveParameterDescriptor(container, index, parameter, typeVariableResolver);
             result.add(parameterDescriptor);
+            index++;
         }
         return new JavaDescriptorResolver.ValueParameterDescriptors(null, result);
     }

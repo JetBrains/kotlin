@@ -17,11 +17,18 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.google.common.collect.Maps;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -30,6 +37,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SignaturesUtil {
+    private SignaturesUtil() {
+    }
+
     public static Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> recreateTypeParametersAndReturnMapping(
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
@@ -60,6 +70,20 @@ public class SignaturesUtil {
         return TypeSubstitutor.create(typeSubstitutionContext);
     }
 
-    private SignaturesUtil() {
+    @Nullable
+    public static String getKotlinSignature(@NotNull JavaMember member) {
+        PsiAnnotation annotation = JavaAnnotationResolver.findAnnotationWithExternal(member.getPsi(), JvmAnnotationNames.KOTLIN_SIGNATURE);
+
+        if (annotation != null) {
+            PsiAnnotationMemberValue attribute = annotation.findAttributeValue(JvmAnnotationNames.KOTLIN_SIGNATURE_VALUE_FIELD_NAME);
+            if (attribute instanceof PsiLiteralExpression) {
+                Object value = ((PsiLiteralExpression) attribute).getValue();
+                if (value instanceof String) {
+                    return StringUtil.unescapeStringCharacters((String) value);
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -320,8 +320,8 @@ public class SingleAbstractMethodUtils {
     private SingleAbstractMethodUtils() {
     }
 
-    public static boolean isSamInterface(@NotNull PsiClass psiClass) {
-        return getSamInterfaceMethod(new JavaClass(psiClass), psiClass.getProject()) != null;
+    public static boolean isSamInterface(@NotNull JavaClass javaClass) {
+        return getSamInterfaceMethod(javaClass, javaClass.getPsi().getProject()) != null;
     }
 
     // Returns null if not SAM interface

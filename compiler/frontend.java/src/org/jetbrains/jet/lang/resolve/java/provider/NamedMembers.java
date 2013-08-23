@@ -17,11 +17,11 @@
 package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
@@ -36,23 +36,23 @@ public final class NamedMembers {
     private final Name name;
 
     @NotNull
-    private final List<PsiMethodWrapper> methods = Lists.newArrayList();
+    private final List<JavaMethod> methods = Lists.newArrayList();
 
     @NotNull
-    private final List<PsiFieldWrapper> fields = Lists.newArrayList();
+    private final List<JavaField> fields = Lists.newArrayList();
 
     @Nullable
-    private PsiClass samInterface;
+    private JavaClass samInterface;
 
-    void addMethod(@NotNull PsiMethodWrapper method) {
+    void addMethod(@NotNull JavaMethod method) {
         methods.add(method);
     }
 
-    void addField(@NotNull PsiFieldWrapper field) {
+    void addField(@NotNull JavaField field) {
         fields.add(field);
     }
 
-    void setSamInterface(@NotNull PsiClass samInterface) {
+    void setSamInterface(@NotNull JavaClass samInterface) {
         this.samInterface = samInterface;
     }
 
@@ -62,17 +62,17 @@ public final class NamedMembers {
     }
 
     @NotNull
-    public List<PsiMethodWrapper> getMethods() {
+    public List<JavaMethod> getMethods() {
         return methods;
     }
 
     @NotNull
-    public List<PsiFieldWrapper> getFields() {
+    public List<JavaField> getFields() {
         return fields;
     }
 
     @Nullable
-    public PsiClass getSamInterface() {
+    public JavaClass getSamInterface() {
         return samInterface;
     }
 }

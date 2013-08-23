@@ -23,25 +23,24 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.HashMap;
 
 public class AlternativeFieldSignatureData extends ElementAlternativeSignatureData {
-
     private JetType altReturnType;
 
-    public AlternativeFieldSignatureData(@NotNull PsiFieldWrapper field, @NotNull JetType originalReturnType, boolean isVar) {
-        String signature = field.getSignatureAnnotation().signature();
+    public AlternativeFieldSignatureData(@NotNull JavaField field, @NotNull JetType originalReturnType, boolean isVar) {
+        String signature = SignaturesUtil.getKotlinSignature(field);
 
-        if (signature.isEmpty()) {
+        if (signature == null) {
             setAnnotated(false);
             return;
         }
 
         setAnnotated(true);
-        Project project = field.getPsiMember().getProject();
+        Project project = field.getPsi().getProject();
         JetProperty altPropertyDeclaration = JetPsiFactory.createProperty(project, signature);
 
         try {
@@ -61,10 +60,10 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         return altReturnType;
     }
 
-    private static void checkFieldAnnotation(JetProperty altProperty, PsiFieldWrapper fieldWrapper, boolean isVar) {
-        if (!ComparatorUtil.equalsNullable(fieldWrapper.getName(), altProperty.getName())) {
+    private static void checkFieldAnnotation(@NotNull JetProperty altProperty, @NotNull JavaField field, boolean isVar) {
+        if (!ComparatorUtil.equalsNullable(field.getName().asString(), altProperty.getName())) {
             throw new AlternativeSignatureMismatchException("Field name mismatch, original: %s, alternative: %s",
-                                                            fieldWrapper.getName(), altProperty.getName());
+                                                            field.getName().asString(), altProperty.getName());
         }
 
         if (altProperty.getTypeRef() == null) {

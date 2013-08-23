@@ -59,6 +59,26 @@ import java.util.List;
     }
 
     @NotNull
+    public static Collection<JavaField> fields(@NotNull PsiField[] fields) {
+        if (fields.length == 0) return Collections.emptyList();
+        List<JavaField> result = new ArrayList<JavaField>(fields.length);
+        for (PsiField psiField : fields) {
+            result.add(new JavaField(psiField));
+        }
+        return result;
+    }
+
+    @NotNull
+    public static Collection<JavaValueParameter> valueParameters(@NotNull PsiParameter[] parameters) {
+        if (parameters.length == 0) return Collections.emptyList();
+        List<JavaValueParameter> result = new ArrayList<JavaValueParameter>(parameters.length);
+        for (PsiParameter psiParameter : parameters) {
+            result.add(new JavaValueParameter(psiParameter));
+        }
+        return result;
+    }
+
+    @NotNull
     public static Collection<JavaTypeParameter> typeParameters(@NotNull PsiTypeParameter[] typeParameters) {
         if (typeParameters.length == 0) return Collections.emptyList();
         List<JavaTypeParameter> result = new ArrayList<JavaTypeParameter>(typeParameters.length);

@@ -16,16 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-public interface JavaMember extends JavaModifierListOwner, JavaNamedElement {
+public class JavaValueParameter extends JavaElementImpl {
+    public JavaValueParameter(@NotNull PsiParameter psiParameter) {
+        super(psiParameter);
+    }
+
     @NotNull
     @Override
-    PsiMember getPsi();
+    public PsiParameter getPsi() {
+        return (PsiParameter) super.getPsi();
+    }
 
-    // TODO: NotNull ?
     @Nullable
-    JavaClass getContainingClass();
+    public Name getName() {
+        String name = getPsi().getName();
+        return name == null ? null : Name.identifier(name);
+    }
 }

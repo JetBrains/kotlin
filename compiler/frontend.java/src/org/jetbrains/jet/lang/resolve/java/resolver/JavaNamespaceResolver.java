@@ -238,7 +238,7 @@ public final class JavaNamespaceResolver {
         }
 
         for (PsiClass nestedClass : psiClass.getInnerClasses()) {
-            if (SingleAbstractMethodUtils.isSamInterface(nestedClass)) {
+            if (SingleAbstractMethodUtils.isSamInterface(new JavaClass(nestedClass))) {
                 return true;
             }
             if (nestedClass.hasModifierProperty(PsiModifier.STATIC) && hasStaticMembers(nestedClass)) {

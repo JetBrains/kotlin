@@ -18,25 +18,20 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.Visibilities;
-import org.jetbrains.jet.lang.descriptors.Visibility;
-import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.*;
 
-public class JavaClass extends JavaElementImpl implements JavaNamedElement, JavaModifierListOwner, JavaTypeParameterListOwner {
+public class JavaClass extends JavaModifierListOwnerImpl implements JavaNamedElement, JavaTypeParameterListOwner {
     public JavaClass(@NotNull PsiClass psiClass) {
         super(psiClass);
     }
@@ -107,46 +102,6 @@ public class JavaClass extends JavaElementImpl implements JavaNamedElement, Java
         return isAnnotationType() ? Modality.FINAL : Modality.convertFromFlags(isAbstract() || isInterface(), !isFinal());
     }
 
-    @Override
-    public boolean isAbstract() {
-        return getPsi().hasModifierProperty(PsiModifier.ABSTRACT);
-    }
-
-    @Override
-    public boolean isFinal() {
-        return getPsi().hasModifierProperty(PsiModifier.FINAL);
-    }
-
-    @Override
-    public boolean isStatic() {
-        return getPsi().hasModifierProperty(PsiModifier.STATIC);
-    }
-
-    @NotNull
-    @Override
-    public Visibility getVisibility() {
-        if (getPsi().hasModifierProperty(PsiModifier.PUBLIC)) {
-            return Visibilities.PUBLIC;
-        }
-        if (getPsi().hasModifierProperty(PsiModifier.PRIVATE)) {
-            return Visibilities.PRIVATE;
-        }
-        if (getPsi().hasModifierProperty(PsiModifier.PROTECTED)) {
-            return isStatic() ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY : JavaVisibilities.PROTECTED_AND_PACKAGE;
-        }
-        return JavaVisibilities.PACKAGE_VISIBILITY;
-    }
-
-    @NotNull
-    @Override
-    public Collection<JavaAnnotation> getAnnotations() {
-        PsiModifierList modifierList = getPsi().getModifierList();
-        if (modifierList != null) {
-            return annotations(modifierList.getAnnotations());
-        }
-        return Collections.emptyList();
-    }
-
     @NotNull
     @Override
     public Collection<JavaTypeParameter> getTypeParameters() {
@@ -165,5 +120,20 @@ public class JavaClass extends JavaElementImpl implements JavaNamedElement, Java
     @NotNull
     public Collection<JavaMethod> getMethods() {
         return methods(getPsi().getMethods());
+    }
+
+    @NotNull
+    public Collection<JavaMethod> getAllMethods() {
+        return methods(getPsi().getAllMethods());
+    }
+
+    @NotNull
+    public Collection<JavaField> getAllFields() {
+        return fields(getPsi().getAllFields());
+    }
+
+    @NotNull
+    public Collection<JavaMethod> getConstructors() {
+        return methods(getPsi().getConstructors());
     }
 }

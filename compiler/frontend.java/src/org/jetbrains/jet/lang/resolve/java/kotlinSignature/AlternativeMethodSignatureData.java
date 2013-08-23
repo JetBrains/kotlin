@@ -22,12 +22,12 @@ import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -53,21 +53,22 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     private Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
     public AlternativeMethodSignatureData(
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethod method,
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
             @Nullable JetType originalReturnType,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             boolean hasSuperMethods
     ) {
-        String signature = method.getSignatureAnnotation().signature();
-        if (signature.isEmpty()) {
+        String signature = SignaturesUtil.getKotlinSignature(method);
+
+        if (signature == null) {
             setAnnotated(false);
             altFunDeclaration = null;
             return;
         }
 
         setAnnotated(true);
-        Project project = method.getPsiMethod().getProject();
+        Project project = method.getPsi().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
         originalToAltTypeParameters = SignaturesUtil.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
@@ -287,10 +288,10 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         return null;
     }
 
-    private static void checkEqualFunctionNames(PsiNamedElement namedElement, PsiMethodWrapper method) {
-        if (!ComparatorUtil.equalsNullable(method.getName(), namedElement.getName())) {
+    private static void checkEqualFunctionNames(@NotNull PsiNamedElement namedElement, @NotNull JavaMethod method) {
+        if (!ComparatorUtil.equalsNullable(method.getName().asString(), namedElement.getName())) {
             throw new AlternativeSignatureMismatchException("Function names mismatch, original: %s, alternative: %s",
-                                                            method.getName(), namedElement.getName());
+                                                            method.getName().asString(), namedElement.getName());
         }
     }
 }

@@ -18,14 +18,24 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-public interface JavaMember extends JavaModifierListOwner, JavaNamedElement {
+public abstract class JavaMemberImpl extends JavaModifierListOwnerImpl implements JavaMember {
+    protected JavaMemberImpl(@NotNull PsiMember psiMember) {
+        super(psiMember);
+    }
+
     @NotNull
     @Override
-    PsiMember getPsi();
+    public PsiMember getPsi() {
+        return (PsiMember) super.getPsi();
+    }
 
-    // TODO: NotNull ?
-    @Nullable
-    JavaClass getContainingClass();
+    @NotNull
+    @Override
+    public Name getName() {
+        String name = getPsi().getName();
+        assert name != null : "Member must have a name: " + getPsi();
+        return Name.identifier(name);
+    }
 }

@@ -25,8 +25,9 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.typeParameters;
+import static org.jetbrains.jet.lang.resolve.java.structure.JavaElementCollectionFromPsiArrayUtil.valueParameters;
 
-public class JavaMethod extends JavaElementImpl implements JavaTypeParameterListOwner, JavaNamedElement, JavaMember {
+public class JavaMethod extends JavaMemberImpl implements JavaTypeParameterListOwner {
     public JavaMethod(@NotNull PsiMethod psiMethod) {
         super(psiMethod);
     }
@@ -55,5 +56,10 @@ public class JavaMethod extends JavaElementImpl implements JavaTypeParameterList
     @Override
     public Collection<JavaTypeParameter> getTypeParameters() {
         return typeParameters(getPsi().getTypeParameters());
+    }
+
+    @NotNull
+    public Collection<JavaValueParameter> getValueParameters() {
+        return valueParameters(getPsi().getParameterList().getParameters());
     }
 }

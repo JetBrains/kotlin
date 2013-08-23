@@ -14,28 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.wrapper;
+package org.jetbrains.jet.lang.resolve.java.structure;
 
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiEnumConstant;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMember;
-import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PsiFieldWrapper extends PsiMemberWrapper {
-    public PsiFieldWrapper(@NotNull PsiMember psiMember) {
-        super(psiMember);
-    }
-    
-    public PsiField getPsiField() {
-        return (PsiField) psiMember;
-    }
-    
-    public PsiType getType() {
-        return getPsiField().getType();
+public class JavaField extends JavaMemberImpl {
+    public JavaField(@NotNull PsiField psiField) {
+        super(psiField);
     }
 
+    @NotNull
     @Override
-    public boolean isAbstract() {
-        return false;
+    public PsiField getPsi() {
+        return (PsiField) super.getPsi();
+    }
+
+    @Nullable
+    @Override
+    public JavaClass getContainingClass() {
+        PsiClass psiClass = getPsi().getContainingClass();
+        return psiClass == null ? null : new JavaClass(psiClass);
+    }
+
+    public boolean isEnumEntry() {
+        return getPsi() instanceof PsiEnumConstant;
     }
 }

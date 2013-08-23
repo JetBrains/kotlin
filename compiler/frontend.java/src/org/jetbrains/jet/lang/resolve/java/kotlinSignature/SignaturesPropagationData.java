@@ -35,9 +35,12 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -68,7 +71,7 @@ public class SignaturesPropagationData {
             @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethod method,
             @NotNull BindingTrace trace
     ) {
         this.containingClass = containingClass;
@@ -206,7 +209,7 @@ public class SignaturesPropagationData {
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethod method,
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor containingClass
     ) {
@@ -217,7 +220,7 @@ public class SignaturesPropagationData {
         Multimap<FqName, Pair<FunctionDescriptor, PsiMethod>> superclassToFunctions =
                 getSuperclassToFunctionsMultimap(method, trace.getBindingContext(), containingClass);
 
-        for (PsiMethod superMethod : PropagationHeuristics.getSuperMethods(method.getPsiMethod())) {
+        for (PsiMethod superMethod : PropagationHeuristics.getSuperMethods(method.getPsi())) {
             PsiClass psiClass = superMethod.getContainingClass();
             assert psiClass != null;
             String classFqNameString = psiClass.getQualifiedName();
@@ -237,7 +240,7 @@ public class SignaturesPropagationData {
             if (superFun == null) {
                 // Super methods which are Object methods in interfaces are not loaded by JDR.
                 if (!DescriptorResolverUtils.isObjectMethodInInterface(superMethod)) {
-                    reportCantFindSuperFunction(method);
+                    reportCantFindSuperFunction(method.getPsi());
                 }
                 continue;
             }
@@ -262,14 +265,14 @@ public class SignaturesPropagationData {
 
     @NotNull
     private static Multimap<FqName, Pair<FunctionDescriptor, PsiMethod>> getSuperclassToFunctionsMultimap(
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethod method,
             @NotNull BindingContext bindingContext,
             @NotNull ClassDescriptor containingClass
     ) {
         Multimap<FqName, Pair<FunctionDescriptor, PsiMethod>> result = HashMultimap.create();
 
-        Name functionName = Name.identifier(method.getName());
-        int parameterCount = method.getParameters().size();
+        Name functionName = method.getName();
+        int parameterCount = method.getValueParameters().size();
 
         for (JetType supertype : TypeUtils.getAllSupertypes(containingClass.getDefaultType())) {
             ClassifierDescriptor klass = supertype.getConstructor().getDeclarationDescriptor();
@@ -690,9 +693,8 @@ public class SignaturesPropagationData {
         return builtIns.isArray(type) || builtIns.isPrimitiveArray(type);
     }
 
-    private static void reportCantFindSuperFunction(PsiMethodWrapper method) {
-        String errorMessage = "Can't find super function for " + method.getPsiMethod() +
-                              " defined in " + method.getPsiMethod().getContainingClass();
+    private static void reportCantFindSuperFunction(@NotNull PsiMethod psiMethod) {
+        String errorMessage = "Can't find super function for " + psiMethod + " defined in " + psiMethod.getContainingClass();
         if (SystemInfo.isMac) {
             LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
         }

@@ -17,10 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -32,8 +29,8 @@ import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -71,16 +68,14 @@ public final class JavaSignatureResolver {
         }
     }
 
-
+    @NotNull
     private static List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull PsiTypeParameter[] typeParameters
+            @NotNull DeclarationDescriptor container,
+            @NotNull Collection<JavaTypeParameter> typeParameters
     ) {
         List<TypeParameterDescriptorInitialization> result = Lists.newArrayList();
-        for (PsiTypeParameter typeParameter : typeParameters) {
-            TypeParameterDescriptorInitialization typeParameterDescriptor =
-                    makeUninitializedTypeParameter(containingDeclaration, new JavaTypeParameter(typeParameter));
-            result.add(typeParameterDescriptor);
+        for (JavaTypeParameter typeParameter : typeParameters) {
+            result.add(makeUninitializedTypeParameter(container, typeParameter));
         }
         return result;
     }
@@ -88,17 +83,17 @@ public final class JavaSignatureResolver {
     @NotNull
     private static TypeParameterDescriptorInitialization makeUninitializedTypeParameter(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JavaTypeParameter javaTypeParameter
+            @NotNull JavaTypeParameter typeParameter
     ) {
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDeclaration,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false,
                 Variance.INVARIANT,
-                javaTypeParameter.getName(),
-                javaTypeParameter.getIndex()
+                typeParameter.getName(),
+                typeParameter.getIndex()
         );
-        return new TypeParameterDescriptorInitialization(typeParameterDescriptor, javaTypeParameter);
+        return new TypeParameterDescriptorInitialization(typeParameterDescriptor, typeParameter);
     }
 
     private void initializeTypeParameter(
@@ -153,19 +148,18 @@ public final class JavaSignatureResolver {
     }
 
 
+    @NotNull
     public List<TypeParameterDescriptor> resolveMethodTypeParameters(
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethod method,
             @NotNull DeclarationDescriptor functionDescriptor
     ) {
-
-        PsiMethod psiMethod = method.getPsiMethod();
         List<TypeParameterDescriptorInitialization> typeParametersIntialization =
-                makeUninitializedTypeParameters(functionDescriptor, psiMethod.getTypeParameters());
+                makeUninitializedTypeParameters(functionDescriptor, method.getTypeParameters());
 
-        PsiClass psiMethodContainingClass = psiMethod.getContainingClass();
-        assert psiMethodContainingClass != null;
-        String context = "method " + method.getName() + " in class " + psiMethodContainingClass.getQualifiedName();
-        initializeTypeParameters(typeParametersIntialization, functionDescriptor, context);
+        JavaClass containingClass = method.getContainingClass();
+        assert containingClass != null;
+        initializeTypeParameters(typeParametersIntialization, functionDescriptor,
+                                 "method " + method.getName() + " in class " + containingClass.getFqName());
 
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayListWithCapacity(typeParametersIntialization.size());
 
