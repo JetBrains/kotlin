@@ -10,6 +10,10 @@ val Collection<*>.size : Int
 val Collection<*>.empty : Boolean
     get() = isEmpty()
 
+/** Returns true if this collection is not empty */
+val Collection<*>.notEmpty : Boolean
+    get() = notEmpty()
+
 val Collection<*>.indices : IntRange
     get() = 0..size-1
 
