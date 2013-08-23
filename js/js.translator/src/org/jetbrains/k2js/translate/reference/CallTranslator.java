@@ -150,8 +150,19 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression extensionFunctionCall(boolean useThis) {
-        return callType.constructCall(callParameters.getReceiver(), new ExtensionCallConstructor(useThis), context());
+    public JsExpression extensionFunctionCall(final boolean useThis) {
+        return callType.constructCall(callParameters.getReceiver(), new CallType.CallConstructor() {
+            @NotNull
+            @Override
+            public JsExpression construct(@Nullable JsExpression receiver) {
+                assert receiver != null : "Could not be null for extensions";
+                JsExpression functionReference = callParameters.getFunctionReference();
+                if (useThis) {
+                    setQualifier(functionReference, getThisObjectOrQualifier());
+                }
+                return new JsInvocation(callParameters.getFunctionReference(), generateCallArgumentList(receiver));
+            }
+        }, context());
     }
 
     @NotNull
@@ -214,24 +225,5 @@ public final class CallTranslator extends AbstractTranslator {
             return thisObject;
         }
         return context().getQualifierForDescriptor(descriptor);
-    }
-
-    private class ExtensionCallConstructor implements CallType.CallConstructor {
-        private final boolean useThis;
-
-        private ExtensionCallConstructor(boolean useThis) {
-            this.useThis = useThis;
-        }
-
-        @NotNull
-        @Override
-        public JsExpression construct(@Nullable JsExpression receiver) {
-            assert receiver != null : "Could not be null for extensions";
-            JsExpression functionReference = callParameters.getFunctionReference();
-            if (useThis) {
-                setQualifier(functionReference, getThisObjectOrQualifier());
-            }
-            return new JsInvocation(callParameters.getFunctionReference(), generateCallArgumentList(receiver));
-        }
     }
 }
