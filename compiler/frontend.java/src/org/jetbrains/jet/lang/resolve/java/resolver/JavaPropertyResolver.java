@@ -17,18 +17,12 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.AnnotationUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject;
@@ -46,10 +40,10 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.resolv
 
 public final class JavaPropertyResolver {
     private JavaTypeTransformer typeTransformer;
-    private BindingTrace trace;
     private JavaResolverCache cache;
     private JavaAnnotationResolver annotationResolver;
     private ExternalSignatureResolver externalSignatureResolver;
+    private FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver;
 
     public JavaPropertyResolver() {
     }
@@ -57,11 +51,6 @@ public final class JavaPropertyResolver {
     @Inject
     public void setTypeTransformer(@NotNull JavaTypeTransformer javaTypeTransformer) {
         this.typeTransformer = javaTypeTransformer;
-    }
-
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
     }
 
     @Inject
@@ -77,6 +66,11 @@ public final class JavaPropertyResolver {
     @Inject
     public void setExternalSignatureResolver(ExternalSignatureResolver externalSignatureResolver) {
         this.externalSignatureResolver = externalSignatureResolver;
+    }
+
+    @Inject
+    public void setFakeOverrideVisibilityResolver(FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver) {
+        this.fakeOverrideVisibilityResolver = fakeOverrideVisibilityResolver;
     }
 
     @NotNull
@@ -100,7 +94,8 @@ public final class JavaPropertyResolver {
 
             Collection<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(propertyName, classDescriptor);
 
-            properties.addAll(resolveOverrides(propertyName, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor, trace));
+            properties.addAll(resolveOverrides(propertyName, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor,
+                                               fakeOverrideVisibilityResolver));
         }
 
         properties.addAll(propertiesFromCurrent);

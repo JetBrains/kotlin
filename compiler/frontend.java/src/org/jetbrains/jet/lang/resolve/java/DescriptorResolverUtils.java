@@ -24,8 +24,8 @@ import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.FakeOverrideVisibilityResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
@@ -76,7 +76,7 @@ public final class DescriptorResolverUtils {
             @NotNull Collection<D> membersFromSupertypes,
             @NotNull Collection<D> membersFromCurrent,
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull BindingTrace trace
+            @NotNull final FakeOverrideVisibilityResolver visibilityResolver
     ) {
         final Set<D> result = new HashSet<D>();
 
@@ -86,6 +86,7 @@ public final class DescriptorResolverUtils {
                     @Override
                     @SuppressWarnings("unchecked")
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                        visibilityResolver.resolveUnknownVisibilityForMember(fakeOverride);
                         result.add((D) fakeOverride);
                     }
 
@@ -95,8 +96,6 @@ public final class DescriptorResolverUtils {
                     }
                 }
         );
-
-        OverrideResolver.resolveUnknownVisibilities(result, trace);
 
         return result;
     }

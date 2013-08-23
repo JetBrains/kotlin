@@ -1039,6 +1039,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/JavaEnum.java");
         }
         
+        @TestMetadata("OverrideMethod.java")
+        public void testOverrideMethod() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/OverrideMethod.java");
+        }
+        
         @TestMetadata("PackageLocalVisibility.java")
         public void testPackageLocalVisibility() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/PackageLocalVisibility.java");
