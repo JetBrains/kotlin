@@ -37,6 +37,9 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "sourceFiles", description = "Source files (dir or file)")
     public String[] sourceFiles;
 
+    @Argument(value = "sourcemap", description = "Generate SourceMap")
+    public boolean sourcemap;
+
     @Argument(value = "target", description = "Generate js files for specific ECMA version (3 or 5, default ECMA 3)")
     public String target;
 

@@ -121,8 +121,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             @NotNull TranslationContext context) {
         JetExpression returnedExpression = jetReturnExpression.getReturnedExpression();
         if (returnedExpression != null) {
-            JsExpression jsExpression = translateAsExpression(returnedExpression, context);
-            return new JsReturn(jsExpression);
+            return new JsReturn(translateAsExpression(returnedExpression, context));
         }
         return new JsReturn();
     }

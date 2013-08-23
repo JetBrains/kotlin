@@ -88,7 +88,9 @@ public final class Translation {
     //NOTE: use with care
     @NotNull
     public static JsNode doTranslateExpression(JetExpression expression, TranslationContext context) {
-        return expression.accept(new ExpressionVisitor(), context);
+        JsNode jsNode = expression.accept(new ExpressionVisitor(), context);
+        jsNode.setSourceInfo(expression);
+        return jsNode;
     }
 
     @NotNull

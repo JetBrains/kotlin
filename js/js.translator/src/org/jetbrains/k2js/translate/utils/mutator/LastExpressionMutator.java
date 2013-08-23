@@ -45,14 +45,14 @@ public final class LastExpressionMutator {
         if (node instanceof JsIf) {
             return applyToIf((JsIf) node);
         }
-        if (node instanceof JsExprStmt) {
-            return applyToStatement((JsExprStmt) node);
+        if (node instanceof JsExpressionStatement) {
+            return applyToStatement((JsExpressionStatement) node);
         }
         return mutator.mutate(node);
     }
 
     @NotNull
-    private JsNode applyToStatement(@NotNull JsExprStmt node) {
+    private JsNode applyToStatement(@NotNull JsExpressionStatement node) {
         return convertToStatement(apply(node.getExpression()));
     }
 

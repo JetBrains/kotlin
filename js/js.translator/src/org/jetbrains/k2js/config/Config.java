@@ -149,10 +149,21 @@ public abstract class Config {
     @NotNull
     private final String moduleId;
 
+    private final boolean sourcemap;
+
     public Config(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion) {
+        this(project, moduleId, ecmaVersion, false);
+    }
+
+    public Config(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion ecmaVersion, boolean sourcemap) {
         this.project = project;
         this.target = ecmaVersion;
         this.moduleId = moduleId;
+        this.sourcemap = sourcemap;
+    }
+
+    public boolean isSourcemap() {
+        return sourcemap;
     }
 
     @NotNull
