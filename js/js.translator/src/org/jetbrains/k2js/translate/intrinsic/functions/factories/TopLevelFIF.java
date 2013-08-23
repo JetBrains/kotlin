@@ -158,15 +158,18 @@ public final class TopLevelFIF extends CompositeFIF {
                         @NotNull TranslationContext context
                 ) {
                     JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
+                    JsExpression functionReference = callTranslator.getCallParameters().getFunctionReference();
                     if (thisExpression == null) {
-                        return new JsInvocation(callTranslator.getCallParameters().getFunctionReference(), arguments);
+                        return new JsInvocation(functionReference, arguments);
                     }
                     else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
                         return callTranslator.extensionFunctionCall(false);
                     }
                     else {
-                        return new JsInvocation(new JsNameRef("call", callTranslator.getCallParameters().getFunctionReference()),
-                                                generateInvocationArguments(thisExpression, arguments));
+                        if (functionReference instanceof JsNameRef && ((JsNameRef) functionReference).getIdent().equals("invoke")) {
+                            return callTranslator.explicitInvokeCall();
+                        }
+                        return new JsInvocation(new JsNameRef("call", functionReference), generateInvocationArguments(thisExpression, arguments));
                     }
                 }
             }

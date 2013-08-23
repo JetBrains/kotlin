@@ -150,6 +150,17 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
+    public JsExpression explicitInvokeCall() {
+        return callType.constructCall(callParameters.getThisObject(), new CallType.CallConstructor() {
+            @NotNull
+            @Override
+            public JsExpression construct(@Nullable JsExpression receiver) {
+                return new JsInvocation(receiver, arguments);
+            }
+        }, context());
+    }
+
+    @NotNull
     public JsExpression extensionFunctionCall(final boolean useThis) {
         return callType.constructCall(callParameters.getReceiver(), new CallType.CallConstructor() {
             @NotNull

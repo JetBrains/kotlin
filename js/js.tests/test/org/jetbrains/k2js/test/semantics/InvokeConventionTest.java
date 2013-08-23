@@ -16,9 +16,9 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-public final class InvokeMethodTest extends AbstractExpressionTest {
+public final class InvokeConventionTest extends AbstractExpressionTest {
 
-    public InvokeMethodTest() {
+    public InvokeConventionTest() {
         super("invoke/");
     }
 
@@ -27,4 +27,7 @@ public final class InvokeMethodTest extends AbstractExpressionTest {
         // fooBoxIsValue("hello world!");
     }
 
+    public void testExplicitInvokeLambda() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
