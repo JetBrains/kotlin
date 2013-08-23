@@ -26,6 +26,10 @@ public final class IdentifierClashTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testOverloadedFun() throws Exception {
+        fooBoxTest();
+    }
+
     public void testDummyFunctionToMakeTestWork() {
     }
 }

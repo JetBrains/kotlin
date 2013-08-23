@@ -38,6 +38,9 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
@@ -232,7 +235,44 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     JsScope scope = getEnclosingScope(descriptor);
-                    return scope.declareFreshName(descriptor.getName().asString());
+                    DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+                    if (!(descriptor instanceof FunctionDescriptor) || !(declaration instanceof ClassDescriptor)) {
+                        return scope.declareFreshName(descriptor.getName().asString());
+                    }
+
+                    Collection<FunctionDescriptor> functions =
+                            ((ClassDescriptor) declaration).getDefaultType().getMemberScope().getFunctions(descriptor.getName());
+                    String name = descriptor.getName().asString();
+                    int counter = -1;
+                    if (functions.size() > 1) {
+                        // see testOverloadedFun
+                        FunctionDescriptor[] sorted = functions.toArray(new FunctionDescriptor[functions.size()]);
+                        Arrays.sort(sorted, new Comparator<FunctionDescriptor>() {
+                            @Override
+                            public int compare(@NotNull FunctionDescriptor a, @NotNull FunctionDescriptor b) {
+                                Integer result = Visibilities.compare(b.getVisibility(), a.getVisibility());
+                                if (result == null) {
+                                    return 0;
+                                }
+                                else if (result == 0) {
+                                    // open fun > not open fun
+                                    int aWeight = a.getModality().isOverridable() ? 1 : 0;
+                                    int bWeight = b.getModality().isOverridable() ? 1 : 0;
+                                    return bWeight - aWeight;
+                                }
+
+                                return result;
+                            }
+                        });
+                        for (FunctionDescriptor function : sorted) {
+                            if (function == descriptor) {
+                                break;
+                            }
+                            counter++;
+                        }
+                    }
+
+                    return scope.declareName(counter == -1 ? name : name + '_' + counter);
                 }
             };
             Rule<JsName> constructorHasTheSameNameAsTheClass = new Rule<JsName>() {
