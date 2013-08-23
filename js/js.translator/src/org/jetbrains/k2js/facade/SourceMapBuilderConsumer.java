@@ -36,6 +36,6 @@ class SourceMapBuilderConsumer implements PairConsumer<SourceMapBuilder, Object>
         assert document != null;
         int line = document.getLineNumber(offset);
         int column = offset - document.getLineStartOffset(line);
-        builder.addMapping(file.getViewProvider().getVirtualFile().getPath(), line, column);
+        builder.addMapping(file.getViewProvider().getVirtualFile().getUrl(), line, column);
     }
 }

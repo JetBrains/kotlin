@@ -54,11 +54,11 @@ public final class K2JSTranslator {
         K2JSTranslator translator = new K2JSTranslator(config);
         File outFile = new File(outputPath);
         TextOutputImpl output = new TextOutputImpl();
-        SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMapBuilder(outFile.getName(), output, new SourceMapBuilderConsumer()) : null;
+        SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMapBuilder(outFile, output, new SourceMapBuilderConsumer()) : null;
         String programCode = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder);
         FileUtil.writeToFile(outFile, programCode);
         if (sourceMapBuilder != null) {
-            FileUtil.writeToFile(new File(outFile.getParentFile(), sourceMapBuilder.getOutFilename()), sourceMapBuilder.build());
+            FileUtil.writeToFile(sourceMapBuilder.getOutFile(), sourceMapBuilder.build());
         }
     }
 
