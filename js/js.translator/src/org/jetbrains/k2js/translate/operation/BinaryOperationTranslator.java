@@ -37,6 +37,7 @@ import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompa
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.source;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
@@ -47,13 +48,15 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression translate(@NotNull JetBinaryExpression expression,
             @NotNull TranslationContext context) {
-        return (new BinaryOperationTranslator(expression, context).translate());
+        JsExpression jsExpression = new BinaryOperationTranslator(expression, context).translate();
+        return source(jsExpression, expression);
     }
 
     @NotNull
     /*package*/ static JsExpression translateAsOverloadedCall(@NotNull JetBinaryExpression expression,
             @NotNull TranslationContext context) {
-        return (new BinaryOperationTranslator(expression, context)).translateAsOverloadedBinaryOperation();
+        JsExpression jsExpression = (new BinaryOperationTranslator(expression, context)).translateAsOverloadedBinaryOperation();
+        return source(jsExpression, expression);
     }
 
     @NotNull

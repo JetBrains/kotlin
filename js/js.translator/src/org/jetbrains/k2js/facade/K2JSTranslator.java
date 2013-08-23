@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.facade;
 
-import com.google.dart.compiler.backend.js.JsSourceGenerationVisitor;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.TextOutputImpl;
 import com.intellij.openapi.project.Project;
@@ -25,7 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.js.compiler.JsSourceGenerationVisitor;
 import org.jetbrains.js.compiler.SourceMapBuilder;
+import org.jetbrains.js.compiler.sourcemap.SourceMap3Builder;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
@@ -54,7 +55,7 @@ public final class K2JSTranslator {
         K2JSTranslator translator = new K2JSTranslator(config);
         File outFile = new File(outputPath);
         TextOutputImpl output = new TextOutputImpl();
-        SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMapBuilder(outFile, output, new SourceMapBuilderConsumer()) : null;
+        SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMap3Builder(outFile, output, new SourceMapBuilderConsumer()) : null;
         String programCode = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder);
         FileUtil.writeToFile(outFile, programCode);
         if (sourceMapBuilder != null) {
