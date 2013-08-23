@@ -131,15 +131,12 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     private static String[] readData(@NotNull VirtualFile virtualFile, @NotNull ErrorReporter reporter) {
-        KotlinClassFileHeader headerData = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
-        int version = headerData.getVersion();
-        String[] annotationData = headerData.getAnnotationData();
-        if (isAbiVersionCompatible(version)) {
-            return annotationData;
-        }
-        if (annotationData != null) {
+        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
+        int version = header.getVersion();
+        if (!isAbiVersionCompatible(version) && header.getType() != KotlinClassFileHeader.HeaderType.NONE) {
             reporter.reportIncompatibleAbiVersion(version);
+            return null;
         }
-        return null;
+        return header.getAnnotationData();
     }
 }

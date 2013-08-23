@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.ClassReader.*;
+import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 
 public final class KotlinClassFileHeader {
     @NotNull
@@ -42,9 +43,12 @@ public final class KotlinClassFileHeader {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public enum HeaderType {
         CLASS(JvmAnnotationNames.KOTLIN_CLASS),
         PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
+        OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
+        OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION),
         NONE(null);
 
         @Nullable
@@ -52,6 +56,24 @@ public final class KotlinClassFileHeader {
 
         HeaderType(@Nullable JvmClassName annotation) {
             correspondingAnnotation = annotation;
+        }
+
+        boolean isValidAnnotation() {
+            return this == CLASS || this == PACKAGE;
+        }
+
+        @NotNull
+        public static HeaderType byDescriptor(@NotNull String desc) {
+            for (HeaderType headerType : HeaderType.values()) {
+                JvmClassName annotation = headerType.correspondingAnnotation;
+                if (annotation == null) {
+                    continue;
+                }
+                if (desc.equals(annotation.getDescriptor())) {
+                    return headerType;
+                }
+            }
+            return NONE;
         }
     }
 
@@ -73,8 +95,11 @@ public final class KotlinClassFileHeader {
         return type;
     }
 
+    /*
+        Checks that this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE.
+     */
     public boolean isKotlinCompiledFile() {
-        return type != HeaderType.NONE;
+        return type.isValidAnnotation() && isAbiVersionCompatible(version);
     }
 
     @NotNull
@@ -119,20 +144,18 @@ public final class KotlinClassFileHeader {
 
         @Override
         public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-            for (HeaderType headerType : HeaderType.values()) {
-                JvmClassName annotation = headerType.correspondingAnnotation;
-                if (annotation == null) {
-                    continue;
-                }
-                if (desc.equals(annotation.getDescriptor())) {
-                    if (type != HeaderType.NONE) {
-                        throw new IllegalStateException(
-                                "Both " + type.correspondingAnnotation + " and " + headerType.correspondingAnnotation + " present!");
-                    }
-                    type = headerType;
-                }
+            HeaderType headerTypeByAnnotation = HeaderType.byDescriptor(desc);
+            if (headerTypeByAnnotation == HeaderType.NONE) {
+                return null;
             }
-            if (type == HeaderType.NONE) {
+            if (headerTypeByAnnotation.isValidAnnotation() && type.isValidAnnotation()) {
+                throw new IllegalStateException("Both " + type.correspondingAnnotation + " and "
+                                                 + headerTypeByAnnotation.correspondingAnnotation + " present!");
+            }
+            if (!type.isValidAnnotation()) {
+                type = headerTypeByAnnotation;
+            }
+            if (!headerTypeByAnnotation.isValidAnnotation()) {
                 return null;
             }
             return new AnnotationVisitor(Opcodes.ASM4) {
@@ -141,7 +164,7 @@ public final class KotlinClassFileHeader {
                     if (name.equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
                         version = (Integer) value;
                     }
-                    else if (AbiVersionUtil.isAbiVersionCompatible(version)) {
+                    else if (isAbiVersionCompatible(version)) {
                         throw new IllegalStateException("Unexpected argument " + name + " for annotation " + desc);
                     }
                 }
@@ -151,7 +174,7 @@ public final class KotlinClassFileHeader {
                     if (name.equals(JvmAnnotationNames.DATA_FIELD_NAME)) {
                         return stringArrayVisitor();
                     }
-                    else if (AbiVersionUtil.isAbiVersionCompatible(version)) {
+                    else if (isAbiVersionCompatible(version)) {
                         throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + desc);
                     }
 

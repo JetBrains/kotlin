@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli.common.messages;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiModifierListOwner;
@@ -43,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import java.util.Collection;
 import java.util.List;
 
+import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
 import static org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.sortedDiagnostics;
 
 public final class AnalyzerWithCompilerReport {
@@ -143,13 +143,14 @@ public final class AnalyzerWithCompilerReport {
         assert analyzeExhaust != null;
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
-        Collection<PsiClass> psiClasses = bindingContext.getKeys(AbiVersionUtil.ABI_VERSION_ERRORS);
-        for (PsiClass psiClass : psiClasses) {
-            Integer abiVersion = bindingContext.get(AbiVersionUtil.ABI_VERSION_ERRORS, psiClass);
+        Collection<AbiVersionUtil.AbiVersionErrorLocation> errorLocations = bindingContext.getKeys(AbiVersionUtil.ABI_VERSION_ERRORS);
+        for (AbiVersionUtil.AbiVersionErrorLocation abiVersionErrorLocation : errorLocations) {
+            Integer abiVersion = bindingContext.get(AbiVersionUtil.ABI_VERSION_ERRORS, abiVersionErrorLocation);
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           "Class '" + psiClass.getQualifiedName() + "' was compiled with an incompatible version of Kotlin. " +
+                                           "Class '" + abiVersionErrorLocation.getClassFqName().asString() +
+                                           "' was compiled with an incompatible version of Kotlin. " +
                                            "Its ABI version is " + abiVersion + ", expected ABI version is " + JvmAbi.VERSION,
-                                           MessageUtil.psiElementToMessageLocation(psiClass));
+                                           CompilerMessageLocation.create(toSystemDependentName(abiVersionErrorLocation.getPath()), 0, 0));
         }
     }
 
