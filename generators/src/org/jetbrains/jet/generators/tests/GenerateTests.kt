@@ -447,11 +447,11 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractCompiledKotlinInJavaCompletionTest>()) {
-            model("completion/injava/compiled", extension = "java")
+            model("completion/injava", extension = "java")
         }
 
         testClass(javaClass<AbstractKotlinSourceInJavaCompletionTest>()) {
-            model("completion/injava/compiled", extension = "java")
+            model("completion/injava", extension = "java")
         }
     }
 

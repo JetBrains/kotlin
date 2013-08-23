@@ -19,7 +19,7 @@ public abstract class AbstractKotlinSourceInJavaCompletionTest extends JetFixtur
 
     @Override
     public void doTest(String testPath) {
-        File mockLibDir = new File(PluginTestCaseBase.getTestDataPathBase() + "/completion/injava/compiled/mockLib");
+        File mockLibDir = new File(PluginTestCaseBase.getTestDataPathBase() + "/completion/injava/mockLib");
         File[] listFiles = mockLibDir.listFiles();
         assertNotNull(listFiles);
         String[] paths = ArrayUtil.toStringArray(ContainerUtil.map(listFiles, new Function<File, String>() {
