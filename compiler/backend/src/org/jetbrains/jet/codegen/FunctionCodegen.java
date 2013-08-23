@@ -67,7 +67,8 @@ public class FunctionCodegen extends GenerationStateAware {
 
     public void gen(@NotNull JetNamedFunction function) {
         SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
-        assert functionDescriptor != null;
+        assert functionDescriptor != null : "No descriptor for function " + function.getText() + "\n" +
+                                            "in " + function.getContainingFile().getVirtualFile();
 
         OwnerKind kind = owner.getContextKind();
         JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, true, kind);
