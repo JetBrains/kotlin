@@ -371,6 +371,7 @@ public class GenerateTests {
                 testModel("idea/testData/intentions/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
                 testModel("idea/testData/intentions/declarations/split", "doTestSplitProperty"),
                 testModel("idea/testData/intentions/declarations/join", "doTestJoinProperty"),
+                testModel("idea/testData/intentions/declarations/convertMemberToExtension", "doTestConvertMemberToExtension"),
                 testModel("idea/testData/intentions/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
         );
 

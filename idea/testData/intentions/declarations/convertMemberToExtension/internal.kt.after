@@ -1,0 +1,4 @@
+abstract class Owner {
+}
+
+internal fun Owner.f() = 1

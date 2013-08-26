@@ -1,0 +1,4 @@
+abstract class Owner<T> {
+}
+
+fun <T> Owner<T>.f(t: T): T = t

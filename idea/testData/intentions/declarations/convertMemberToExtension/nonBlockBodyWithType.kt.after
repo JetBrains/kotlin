@@ -1,0 +1,4 @@
+class Owner {
+}
+
+fun Owner.f(): Int = 1

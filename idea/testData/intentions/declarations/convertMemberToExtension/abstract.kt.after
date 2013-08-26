@@ -1,0 +1,5 @@
+abstract class Owner {
+}
+
+fun Owner.f() {
+}
