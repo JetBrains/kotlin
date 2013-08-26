@@ -1,0 +1,2 @@
+<!-- illegalModifierInCatch1 -->
+Illegal modifier 'private'

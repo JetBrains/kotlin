@@ -113,4 +113,12 @@ public class DiagnosticMessageTest extends JetLiteFixture {
     public void testInvisibleMember() throws Exception {
         doTest("invisibleMember", 3, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER);
     }
+
+    public void testIllegalModifierInParameters() throws Exception {
+        doTest("illegalModifierInParameters", 2, Errors.ILLEGAL_MODIFIER);
+    }
+
+    public void testIllegalModifierInCatch() throws Exception {
+        doTest("illegalModifierInCatch", 1, Errors.ILLEGAL_MODIFIER);
+    }
 }

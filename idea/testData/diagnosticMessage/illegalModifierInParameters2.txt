@@ -1,0 +1,2 @@
+<!-- illegalModifierInParameters2 -->
+Illegal modifier 'private'

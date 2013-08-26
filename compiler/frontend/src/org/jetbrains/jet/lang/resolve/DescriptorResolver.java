@@ -486,6 +486,9 @@ public class DescriptorResolver {
 
             if (!(functionDescriptor instanceof ConstructorDescriptor)) {
                 checkParameterHasNoValOrVar(trace, valueParameter, VAL_OR_VAR_ON_FUN_PARAMETER);
+                checkParameterHasNoModifier(trace, valueParameter, ILLEGAL_MODIFIER);
+            } else {
+                checkConstructorParameterHasNoModifier(trace, valueParameter, ILLEGAL_MODIFIER);
             }
 
             ValueParameterDescriptor valueParameterDescriptor =
@@ -1562,6 +1565,29 @@ public class DescriptorResolver {
         ASTNode valOrVarNode = parameter.getValOrVarNode();
         if (valOrVarNode != null) {
             trace.report(diagnosticFactory.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
+        }
+    }
+
+    private static void checkConstructorParameterHasNoModifier(
+            @NotNull BindingTrace trace,
+            @NotNull JetParameter parameter,
+            @NotNull DiagnosticFactory1<PsiElement, JetKeywordToken> diagnosticFactory
+    ) {
+        // If is not a property, then it must have no modifier
+        if (parameter.getValOrVarNode() == null) {
+            checkParameterHasNoModifier(trace, parameter, diagnosticFactory);
+        }
+    }
+
+    public static void checkParameterHasNoModifier(
+            @NotNull BindingTrace trace,
+            @NotNull JetParameter parameter,
+            @NotNull DiagnosticFactory1<PsiElement, JetKeywordToken> diagnosticFactory
+    ) {
+        JetModifierList modifiers = parameter.getModifierList();
+        if (modifiers != null) {
+            ASTNode modifier = modifiers.getFirstChild().getNode();
+            trace.report(diagnosticFactory.on(modifier.getPsi(), (JetKeywordToken) modifier.getElementType()));
         }
     }
 }

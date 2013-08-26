@@ -433,6 +433,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
                 DescriptorResolver.checkParameterHasNoValOrVar(context.trace, catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
+                DescriptorResolver.checkParameterHasNoModifier(context.trace, catchParameter, ILLEGAL_MODIFIER);
 
                 VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);
