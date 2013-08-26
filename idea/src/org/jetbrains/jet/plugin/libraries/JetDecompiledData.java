@@ -54,7 +54,9 @@ public class JetDecompiledData {
     @NotNull
     public static JetDecompiledData getDecompiledData(@NotNull VirtualFile virtualFile, @NotNull Project project) {
         synchronized (LOCK) {
-            if (virtualFile.getUserData(USER_DATA_KEY) == null) {
+            JetDecompiledData cachedData = virtualFile.getUserData(USER_DATA_KEY);
+            //TODO: use cached value that keeps modification tracking for this virtual file
+            if (cachedData == null || cachedData.getProject() != project) {
                 virtualFile.putUserData(USER_DATA_KEY, DecompiledDataFactory.createDecompiledData(virtualFile, project));
             }
             JetDecompiledData decompiledData = virtualFile.getUserData(USER_DATA_KEY);
@@ -88,5 +90,10 @@ public class JetDecompiledData {
     @NotNull
     public JetFile getFile() {
         return file;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return file.getProject();
     }
 }
