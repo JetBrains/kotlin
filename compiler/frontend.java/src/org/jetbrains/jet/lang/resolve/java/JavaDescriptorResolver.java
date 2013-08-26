@@ -90,11 +90,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
     }
 
-    @Override
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
-        return resolveNamespace(qualifiedName, IGNORE_KOTLIN_SOURCES);
-    }
-
     @Nullable
     public JetScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
         return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(namespaceDescriptor);
