@@ -30,8 +30,8 @@ import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.junit.Assert
 import com.intellij.openapi.application.Result
-import kotlin.properties.Delegates
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import kotlin.properties.Delegates
 
 public class CompletionHandlerTest() : JetLightCodeInsightFixtureTestCase() {
     fun testClassCompletionImport() = doTest(CompletionType.BASIC, 2, "SortedSet", null, '\n')
@@ -68,11 +68,14 @@ public class CompletionHandlerTest() : JetLightCodeInsightFixtureTestCase() {
 
     fun testHigherOrderFunctionWithArg() = doTest(CompletionType.BASIC, 2, "filterNot", null, '\n')
 
+    fun testForceParenthesisForTabChar() = doTest(CompletionType.BASIC, 0, "some", null, '\t')
+
     var fixture by Delegates.notNull<JavaCodeInsightTestFixture>()
 
     protected override fun setUp() {
         super<JetLightCodeInsightFixtureTestCase>.setUp()
         fixture = myFixture!!
+        Delegates.notNull<JavaCodeInsightTestFixture>()
     }
 
     fun testSingleBrackets() {

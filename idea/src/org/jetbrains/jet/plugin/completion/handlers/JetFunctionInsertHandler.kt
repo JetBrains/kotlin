@@ -81,12 +81,15 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bra
         val document = context.getDocument()
         val completionChar = context.getCompletionChar()
 
-        val braces = bracketType == BracketType.BRACES && completionChar != '('
+        var documentText = document.getText()
+
+        val forceParenthesis = bracketType == BracketType.BRACES && completionChar == '\t' && documentText.charAt(offset) == '('
+
+        val braces = bracketType == BracketType.BRACES && completionChar != '(' && !forceParenthesis
 
         val openingBracket = if (braces) '{' else '('
         val closingBracket = if (braces) '}' else ')'
 
-        var documentText = document.getText()
         var openingBracketIndex = indexOfSkippingSpace(documentText, openingBracket, offset)
         var inBracketsShift = 0
         if (openingBracketIndex == -1) {
