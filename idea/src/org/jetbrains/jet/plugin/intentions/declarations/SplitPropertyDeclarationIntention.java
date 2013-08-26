@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.intentions.Transformer;
 
-public class SplitPropertyDeclarationIntention extends AbstractCodeTransformationIntention<Transformer> {
+public class SplitPropertyDeclarationIntention extends AbstractCodeTransformationIntention {
     private static final Transformer TRANSFORMER = new Transformer() {
         @NotNull
         @Override

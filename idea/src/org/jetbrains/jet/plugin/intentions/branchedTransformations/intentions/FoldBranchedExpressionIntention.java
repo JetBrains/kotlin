@@ -25,7 +25,7 @@ import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.BranchedFoldingUtils;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.FoldableKind;
 
-public abstract class FoldBranchedExpressionIntention extends AbstractCodeTransformationIntention<FoldableKind> {
+public abstract class FoldBranchedExpressionIntention extends AbstractCodeTransformationIntention {
     protected FoldBranchedExpressionIntention(@NotNull final FoldableKind foldableKind) {
         super(
                 foldableKind,

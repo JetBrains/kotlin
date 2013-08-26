@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.IfWhenUtils;
 import org.jetbrains.jet.plugin.intentions.Transformer;
 
-public class WhenToIfIntention extends AbstractCodeTransformationIntention<Transformer> {
+public class WhenToIfIntention extends AbstractCodeTransformationIntention {
     private static final Transformer TRANSFORMER = new Transformer() {
         @NotNull
         @Override

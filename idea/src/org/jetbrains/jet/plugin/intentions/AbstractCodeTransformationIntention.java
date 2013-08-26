@@ -30,11 +30,11 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 
-public abstract class AbstractCodeTransformationIntention<T extends Transformer> extends BaseIntentionAction {
-    private final T transformer;
+public abstract class AbstractCodeTransformationIntention extends BaseIntentionAction {
+    private final Transformer transformer;
     private final Predicate<PsiElement> isApplicable;
 
-    protected AbstractCodeTransformationIntention(@NotNull T transformer, @NotNull Predicate<PsiElement> isApplicable) {
+    protected AbstractCodeTransformationIntention(@NotNull Transformer transformer, @NotNull Predicate<PsiElement> isApplicable) {
         this.transformer = transformer;
         this.isApplicable = isApplicable;
         setText(JetBundle.message(transformer.getKey()));
