@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -30,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
 
@@ -102,8 +103,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     private ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
         String name = innerPsiClass.getQualifiedName();
         assert name != null : "Inner class has no qualified name: " + innerPsiClass;
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName(name),
-                                                                              DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName(name), IGNORE_KOTLIN_SOURCES);
         assert classDescriptor != null : "Couldn't resolve inner class " + name;
         return classDescriptor;
     }

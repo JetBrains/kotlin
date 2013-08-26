@@ -44,6 +44,7 @@ import java.util.*;
 import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.getClassId;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.naiveKotlinFqName;
 
 public abstract class AbstractDescriptorSerializationTest extends KotlinTestWithEnvironment {
@@ -184,7 +185,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
             ClassDescriptor found = super.findClass(classId);
-            return found != null ? found : javaDescriptorResolver.resolveClass(classId.asSingleFqName().toSafe());
+            return found != null ? found : javaDescriptorResolver.resolveClass(classId.asSingleFqName().toSafe(), IGNORE_KOTLIN_SOURCES);
         }
 
         @Nullable

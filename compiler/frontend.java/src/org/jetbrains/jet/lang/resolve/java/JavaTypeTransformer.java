@@ -37,6 +37,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
@@ -138,7 +139,7 @@ public class JavaTypeTransformer {
                                                                                                     howThisTypeIsUsed);
 
                     if (classData == null) {
-                        classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+                        classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), INCLUDE_KOTLIN_SOURCES);
                     }
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());

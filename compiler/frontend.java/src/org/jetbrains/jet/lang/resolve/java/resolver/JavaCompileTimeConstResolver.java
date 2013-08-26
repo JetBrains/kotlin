@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -39,6 +38,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaCompileTimeConstResolver {
     private JavaAnnotationResolver annotationResolver;
@@ -99,8 +100,7 @@ public final class JavaCompileTimeConstResolver {
         PsiAnnotationMemberValue[] initializers = value.getInitializers();
         List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, taskList, initializers);
 
-        ClassDescriptor classDescriptor =
-                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+        ClassDescriptor classDescriptor = classResolver.resolveClass(annotationFqName, INCLUDE_KOTLIN_SOURCES, taskList);
 
         //TODO: nullability issues
         ValueParameterDescriptor valueParameterDescriptor =
@@ -143,7 +143,7 @@ public final class JavaCompileTimeConstResolver {
                 }
 
                 JetScope scope;
-                ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(fqName), INCLUDE_KOTLIN_SOURCES, taskList);
                 if (classDescriptor == null) {
                     return null;
                 }

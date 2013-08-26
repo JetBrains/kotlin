@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -35,6 +34,7 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.plugin.libraries.JetDecompiledData.descriptorToKey;
 
 public final class DecompiledDataFactory {
@@ -73,7 +73,7 @@ public final class DecompiledDataFactory {
         appendDecompiledTextAndPackageName(packageFqName);
         KotlinClassFileHeader.HeaderType type = kotlinClassFileHeader.getType();
         if (type == KotlinClassFileHeader.HeaderType.PACKAGE) {
-            NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(packageFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+            NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(packageFqName, INCLUDE_KOTLIN_SOURCES);
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
                     if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor
@@ -88,7 +88,7 @@ public final class DecompiledDataFactory {
         else {
             assert type == KotlinClassFileHeader.HeaderType.CLASS;
             ClassDescriptor cd = javaDescriptorResolver.resolveClass(kotlinClassFileHeader.getJvmClassName().getFqName(),
-                                                                     DescriptorSearchRule.INCLUDE_KOTLIN);
+                                                                     INCLUDE_KOTLIN_SOURCES);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }

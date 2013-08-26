@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -53,6 +52,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public class JetTypeCheckerTest extends JetLiteFixture {
 
@@ -580,15 +582,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         return addImports(testData.getMemberScope());
     }
 
+    @SuppressWarnings("ConstantConditions")
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
-                DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),
-                DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN).getMemberScope());
+        writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT, INCLUDE_KOTLIN_SOURCES).getMemberScope());
+        writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"), IGNORE_KOTLIN_SOURCES).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         writableScope.importScope(builtIns.getBuiltInsScope());
         return writableScope;

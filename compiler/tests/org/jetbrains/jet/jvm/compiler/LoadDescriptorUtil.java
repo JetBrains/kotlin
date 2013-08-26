@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -48,6 +47,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class LoadDescriptorUtil {
 
@@ -99,7 +99,7 @@ public final class LoadDescriptorUtil {
         BindingTraceContext trace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(jetCoreEnvironment.getProject(), trace);
         NamespaceDescriptor namespaceDescriptor =
-                injector.getJavaDescriptorResolver().resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+                injector.getJavaDescriptorResolver().resolveNamespace(TEST_PACKAGE_FQNAME, IGNORE_KOTLIN_SOURCES);
         assert namespaceDescriptor != null;
 
         return Pair.create(namespaceDescriptor, trace.getBindingContext());

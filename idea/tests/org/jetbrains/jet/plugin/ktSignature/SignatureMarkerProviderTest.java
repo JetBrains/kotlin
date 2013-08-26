@@ -32,6 +32,8 @@ import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
+
 public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase {
 
     @NotNull
@@ -53,7 +55,8 @@ public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase
 
         InjectorForJavaDescriptorResolver injector =
                 new InjectorForJavaDescriptorResolver(project, KotlinSignatureInJavaMarkerProvider.createDelegatingTrace(project));
-        ClassDescriptor reResolvedClass = injector.getJavaDescriptorResolver().resolveClass(new FqName("java.lang.Thread"));
+        ClassDescriptor reResolvedClass = injector.getJavaDescriptorResolver()
+                .resolveClass(new FqName("java.lang.Thread"), IGNORE_KOTLIN_SOURCES);
 
         assertSame(preResolvedClass, reResolvedClass);
     }

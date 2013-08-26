@@ -34,7 +34,8 @@ import javax.inject.Inject;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
 public final class DeserializedDescriptorResolver {
@@ -52,13 +53,13 @@ public final class DeserializedDescriptorResolver {
         @Nullable
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
-            return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()));
+            return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()), IGNORE_KOTLIN_SOURCES);
         }
 
         @Nullable
         @Override
         public NamespaceDescriptor findPackage(@NotNull FqName name) {
-            return javaNamespaceResolver.resolveNamespace(name);
+            return javaNamespaceResolver.resolveNamespace(name, IGNORE_KOTLIN_SOURCES);
         }
 
         @NotNull
@@ -108,9 +109,9 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     private ClassDescriptor createDeserializedClass(@NotNull ClassData classData, @NotNull ClassId classId) {
         DeclarationDescriptor owner = classId.isTopLevelClass()
-                                      ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN)
-                                      : javaClassResolver
-                                              .resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()));
+                                      ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN_SOURCES)
+                                      : javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()),
+                                                                       IGNORE_KOTLIN_SOURCES);
         assert owner != null : "No owner found for " + classId;
 
         return new DeserializedClassDescriptor(classId, storageManager, owner, classData.getNameResolver(),

@@ -45,7 +45,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.asm4.ClassReader.*;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.*;
 
 public class AnnotationDescriptorDeserializer implements AnnotationDeserializer {
@@ -180,7 +180,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (ignoreAnnotation(desc)) return null;
 
         FqName annotationFqName = convertJvmDescriptorToFqName(desc);
-        final ClassDescriptor annotationClass = javaClassResolver.resolveClass(annotationFqName, ERROR_IF_FOUND_IN_KOTLIN);
+        final ClassDescriptor annotationClass = javaClassResolver.resolveClass(annotationFqName, IGNORE_KOTLIN_SOURCES);
         assert annotationClass != null : "Annotation class is not found: " + desc;
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
         annotation.setAnnotationType(annotationClass.getDefaultType());

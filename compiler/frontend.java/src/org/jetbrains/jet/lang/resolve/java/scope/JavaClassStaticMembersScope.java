@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -30,6 +29,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @NotNull
@@ -51,7 +52,7 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), INCLUDE_KOTLIN_SOURCES);
     }
 
     @NotNull

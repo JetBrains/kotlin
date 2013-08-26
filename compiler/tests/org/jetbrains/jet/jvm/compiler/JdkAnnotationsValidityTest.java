@@ -45,8 +45,8 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.TypeTransformingVisitor;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -58,6 +58,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
@@ -103,8 +105,8 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
-                    NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
+                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass, IGNORE_KOTLIN_SOURCES);
+                    NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass, IGNORE_KOTLIN_SOURCES);
                     if (topLevelClass == null) {
                         continue;
                     }

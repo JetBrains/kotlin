@@ -37,7 +37,6 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -48,6 +47,8 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import javax.swing.*;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
@@ -134,7 +135,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     private static String getDefaultSignature(@NotNull PsiMethod method, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver, BindingContext context) {
         if (method.getReturnType() == null) {
             // For constructor
-            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);
             assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
             classDescriptor.getConstructors();
 
@@ -185,12 +186,12 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     @NotNull
     private static JetScope getMemberScope(PsiModifierListOwner psiModifierListOwner, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver) {
         if (psiModifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-            NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
+            NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(classFqName, IGNORE_KOTLIN_SOURCES);
             assert namespaceDescriptor != null: "Couldn't resolve namespace descriptor for " + classFqName;
             return namespaceDescriptor.getMemberScope();
         }
 
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);
         assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
         return classDescriptor.getDefaultType().getMemberScope();
     }

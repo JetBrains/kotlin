@@ -23,7 +23,10 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -31,6 +34,9 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaPackageScope extends JavaBaseScope {
     @NotNull
@@ -61,8 +67,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassDescriptor classDescriptor =
-                javaDescriptorResolver.resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
         if (classDescriptor == null || classDescriptor.getKind().isObject()) {
             return null;
         }
@@ -71,8 +76,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        ClassDescriptor classDescriptor =
-                javaDescriptorResolver.resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
         if (classDescriptor != null && classDescriptor.getKind().isObject()) {
             return classDescriptor;
         }
@@ -81,7 +85,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), INCLUDE_KOTLIN_SOURCES);
     }
 
     @NotNull
@@ -98,7 +102,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
         for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
             FqName fqName = new FqName(psiSubPackage.getQualifiedName());
-            NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            NamespaceDescriptor childNs = javaDescriptorResolver.resolveNamespace(fqName, IGNORE_KOTLIN_SOURCES);
             if (childNs != null) {
                 result.add(childNs);
             }
@@ -117,12 +121,12 @@ public final class JavaPackageScope extends JavaBaseScope {
             if (qualifiedName == null) continue;
             FqName fqName = new FqName(qualifiedName);
 
-            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
             if (classDescriptor != null) {
                 result.add(classDescriptor);
             }
 
-            NamespaceDescriptor namespace = javaDescriptorResolver.resolveNamespace(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            NamespaceDescriptor namespace = javaDescriptorResolver.resolveNamespace(fqName, IGNORE_KOTLIN_SOURCES);
             if (namespace != null) {
                 result.add(namespace);
             }

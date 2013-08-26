@@ -24,7 +24,10 @@ import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
+import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -35,6 +38,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class JavaSupertypeResolver {
     private static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
@@ -85,7 +90,7 @@ public final class JavaSupertypeResolver {
             result.add(KotlinBuiltIns.getInstance().getAnyType());
         }
         else {
-            ClassDescriptor object = classResolver.resolveClass(OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            ClassDescriptor object = classResolver.resolveClass(OBJECT_FQ_NAME, IGNORE_KOTLIN_SOURCES);
             if (object != null) {
                 result.add(object.getDefaultType());
             }

@@ -33,6 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
+
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
@@ -75,7 +77,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return classResolver.resolveClass(qualifiedName);
+        return classResolver.resolveClass(qualifiedName, IGNORE_KOTLIN_SOURCES);
     }
 
     @NotNull
@@ -90,7 +92,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Override
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
-        return namespaceResolver.resolveNamespace(qualifiedName);
+        return resolveNamespace(qualifiedName, IGNORE_KOTLIN_SOURCES);
     }
 
     @Nullable

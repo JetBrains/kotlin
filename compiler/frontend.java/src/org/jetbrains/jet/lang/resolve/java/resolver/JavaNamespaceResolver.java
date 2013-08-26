@@ -49,6 +49,8 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
+
 public final class JavaNamespaceResolver {
 
     @NotNull
@@ -138,17 +140,12 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
-        return resolveNamespace(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-    }
-
-    @Nullable
     private NamespaceDescriptorParent resolveParentNamespace(@NotNull FqName fqName) {
         if (fqName.isRoot()) {
             return FAKE_ROOT_MODULE;
         }
         else {
-            return resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
+            return resolveNamespace(fqName.parent(), INCLUDE_KOTLIN_SOURCES);
         }
     }
 

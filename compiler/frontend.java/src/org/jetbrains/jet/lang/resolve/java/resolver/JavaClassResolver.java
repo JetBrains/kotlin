@@ -57,6 +57,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaClassResolver {
 
@@ -428,15 +429,14 @@ public final class JavaClassResolver {
     private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull FqName childClassFQName, boolean isInnerClass) {
         FqName parentFqName = childClassFQName.parent();
         if (isInnerClass) {
-            ClassDescriptor parentClass = resolveClass(parentFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+            ClassDescriptor parentClass = resolveClass(parentFqName, INCLUDE_KOTLIN_SOURCES);
             if (parentClass == null) {
                 throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
             }
             return parentClass;
         }
         else {
-            //TODO: why do we include kotlin here? what this flags means anyway?
-            NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(parentFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+            NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(parentFqName, INCLUDE_KOTLIN_SOURCES);
             if (parentNamespace == null) {
                 throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
             }
@@ -478,11 +478,6 @@ public final class JavaClassResolver {
             return ClassKind.ENUM_CLASS;
         }
         return ClassKind.CLASS;
-    }
-
-    @Nullable
-    public ClassDescriptor resolveClass(FqName name) {
-        return resolveClass(name, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     @NotNull
