@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
     public final ResolvedCallImpl<D> candidateCall;
@@ -46,10 +47,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
-              dataFlowInfoForArguments);
+              labelResolver, dataFlowInfoForArguments);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
@@ -61,7 +63,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
-                context.expressionPosition, context.resolutionResultsCache, context.dataFlowInfoForArguments);
+                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
@@ -76,7 +78,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.expressionPosition,
-                context.resolutionResultsCache, context.dataFlowInfoForArguments);
+                context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments);
     }
 
     @Override
@@ -87,11 +89,12 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency,
-                checkArguments, expressionPosition, resolutionResultsCache, dataFlowInfoForArguments);
+                checkArguments, expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
     }
 
     @Override

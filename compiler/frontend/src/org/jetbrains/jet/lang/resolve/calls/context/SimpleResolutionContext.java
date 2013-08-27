@@ -5,6 +5,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionContext> {
     public SimpleResolutionContext(
@@ -14,9 +15,10 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
     }
 
     @Override
@@ -27,9 +29,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver
     ) {
-        return new SimpleResolutionContext(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache);
+        return new SimpleResolutionContext(
+                trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
     }
 
     @Override

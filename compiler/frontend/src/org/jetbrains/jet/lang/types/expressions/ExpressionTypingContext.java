@@ -40,8 +40,9 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition
     ) {
-        return newContext(expressionTypingServices, new LabelResolver(), trace, scope, dataFlowInfo, expectedType, expressionPosition,
-                          ContextDependency.INDEPENDENT, ResolutionResultsCacheImpl.create());
+        return newContext(expressionTypingServices, trace, scope, dataFlowInfo, expectedType, expressionPosition,
+                          ContextDependency.INDEPENDENT, ResolutionResultsCacheImpl.create(), LabelResolver.create()
+        );
     }
 
     @NotNull
@@ -49,30 +50,29 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull ResolutionContext resolutionContext
     ) {
-        return newContext(expressionTypingServices, new LabelResolver(), resolutionContext.trace, resolutionContext.scope,
-                          resolutionContext.dataFlowInfo, resolutionContext.expectedType, resolutionContext.expressionPosition,
-                          resolutionContext.contextDependency, resolutionContext.resolutionResultsCache);
+        return newContext(expressionTypingServices, resolutionContext.trace, resolutionContext.scope, resolutionContext.dataFlowInfo,
+                          resolutionContext.expectedType, resolutionContext.expressionPosition, resolutionContext.contextDependency,
+                          resolutionContext.resolutionResultsCache, resolutionContext.labelResolver
+        );
     }
 
     @NotNull
     public static ExpressionTypingContext newContext(
             @NotNull ExpressionTypingServices expressionTypingServices,
-            @NotNull LabelResolver labelResolver,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver
     ) {
         return new ExpressionTypingContext(
                 expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache);
     }
 
     public final ExpressionTypingServices expressionTypingServices;
-
-    public final LabelResolver labelResolver;
 
     private CompileTimeConstantResolver compileTimeConstantResolver;
 
@@ -87,9 +87,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
         this.expressionTypingServices = expressionTypingServices;
-        this.labelResolver = labelResolver;
     }
 
     @Override
@@ -100,9 +99,10 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver
     ) {
-        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType,
+        return new ExpressionTypingContext(expressionTypingServices, this.labelResolver, trace, scope, dataFlowInfo, expectedType,
                                            expressionPosition, contextDependency, resolutionResultsCache);
     }
 

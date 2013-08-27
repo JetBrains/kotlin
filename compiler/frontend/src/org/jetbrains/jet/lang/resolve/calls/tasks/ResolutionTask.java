@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArgument
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 import java.util.Collection;
 import java.util.Set;
@@ -48,10 +49,10 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull TracingStrategy tracing, BindingTrace trace, JetScope scope, Call call, JetType expectedType,
             DataFlowInfo dataFlowInfo, ContextDependency contextDependency, CheckValueArgumentsMode checkArguments,
             ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache,
-            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
+            @NotNull LabelResolver labelResolver, @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
-              dataFlowInfoForArguments);
+              labelResolver, dataFlowInfoForArguments);
         this.candidates = candidates;
         this.reference = reference;
         this.tracing = tracing;
@@ -66,7 +67,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         this(candidates, reference, tracing != null ? tracing : TracingStrategyImpl.create(reference, context.call),
              context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
-             context.expressionPosition, context.resolutionResultsCache, context.dataFlowInfoForArguments);
+             context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments);
     }
 
     public ResolutionTask(
@@ -106,11 +107,12 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver
     ) {
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(
                 candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                expressionPosition, resolutionResultsCache, dataFlowInfoForArguments);
+                expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
     }
@@ -123,7 +125,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
                 candidates, reference, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                expressionPosition, resolutionResultsCache, dataFlowInfoForArguments);
+                expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
     }
 
     public interface DescriptorCheckStrategy {

@@ -39,9 +39,14 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 public class LabelResolver {
 
+    @NotNull
+    public static LabelResolver create() {
+        return new LabelResolver();
+    }
+
     private final Map<LabelName, Stack<JetElement>> labeledElements = new HashMap<LabelName, Stack<JetElement>>();
 
-    public LabelResolver() {}
+    private LabelResolver() {}
 
     public void enterLabeledElement(@NotNull LabelName labelName, @NotNull JetExpression labeledExpression) {
         JetExpression cacheExpression = getCachingExpression(labeledExpression);
