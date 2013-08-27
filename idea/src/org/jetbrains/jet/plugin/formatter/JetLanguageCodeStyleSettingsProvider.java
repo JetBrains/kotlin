@@ -97,7 +97,8 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
                         "SPACE_AROUND_UNARY_OPERATOR",
                         "SPACE_AFTER_COMMA",
-                        "SPACE_BEFORE_COMMA"
+                        "SPACE_BEFORE_COMMA",
+                        "SPACE_BEFORE_TRY_LBRACE"
                 );
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AROUND_RANGE", "Around range (..)",

@@ -114,6 +114,14 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(LBRACE,WHEN).spaceIf(jetSettings.SPACE_BEFORE_WHEN_LBRACE)
 
                 .aroundInside(ARROW,FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
+
+                //try catch
+                .between(TRY_KEYWORD,BLOCK).spacing(0,1,0,false,0)
+                .between(TRY_KEYWORD,BLOCK).spaceIf(jetCommonSettings.SPACE_BEFORE_TRY_LBRACE)
+                .between(BLOCK,CATCH).spacing(1,1,0,false,0)
+                .between(CATCH_KEYWORD,VALUE_PARAMETER_LIST).spacing(1,1,0,false,0)
+                .beforeInside(BLOCK,CATCH).spacing(1,1,0,false,0)
+
                 ;
     }
 
