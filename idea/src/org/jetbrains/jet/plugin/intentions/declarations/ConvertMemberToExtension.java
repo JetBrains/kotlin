@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.plugin.intentions.declarations;
 
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -28,9 +30,9 @@ import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetToken;
@@ -40,7 +42,12 @@ import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+
 public class ConvertMemberToExtension extends BaseIntentionAction {
+
+    public static final String CARET_ANCHOR = "____CARET_ANCHOR____";
+    public static final String THROW_UNSUPPORTED_OPERATION_EXCEPTION = " throw UnsupportedOperationException()";
 
     @NotNull
     @Override
@@ -58,32 +65,31 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
     public boolean isAvailable(
             @NotNull Project project, Editor editor, PsiFile file
     ) {
-        JetNamedFunction function = getTarget(editor, file);
-        return function != null
-               && function.getParent() instanceof JetClassBody
-               && function.getParent().getParent() instanceof JetClass
-               && function.getReceiverTypeRef() == null;
+        JetCallableDeclaration declaration = getTarget(editor, file);
+        if (declaration instanceof JetProperty) {
+            if (((JetProperty) declaration).getInitializer() != null) return false;
+        }
+        return declaration != null
+               && declaration.getParent() instanceof JetClassBody
+               && declaration.getParent().getParent() instanceof JetClass
+               && declaration.getReceiverTypeRef() == null;
     }
 
-    private static JetNamedFunction getTarget(Editor editor, PsiFile file) {
+    private static JetCallableDeclaration getTarget(Editor editor, PsiFile file) {
         PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-        return PsiTreeUtil.getParentOfType(element, JetNamedFunction.class, false, JetExpression.class);
+        return PsiTreeUtil.getParentOfType(element, JetCallableDeclaration.class, false, JetExpression.class);
     }
 
     @Override
     public void invoke(
             @NotNull Project project, Editor editor, PsiFile file
     ) throws IncorrectOperationException {
-        JetNamedFunction member = getTarget(editor, file);
+        JetCallableDeclaration member = getTarget(editor, file);
         assert member != null : "Must be checked by isAvailable";
 
         BindingContext bindingContext = KotlinCacheManagerUtil.getDeclarationsBindingContext(member);
-        SimpleFunctionDescriptor memberDescriptor = bindingContext.get(BindingContext.FUNCTION, member);
-
+        DeclarationDescriptor memberDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, member);
         if (memberDescriptor == null) return;
-        assert memberDescriptor.getReceiverParameter() == null : "Must have checked that there's no receiver earlier\n" +
-                                                                 "Descriptor: " + memberDescriptor + "\n" +
-                                                                 "Declaration: " + member.getText();
 
         DeclarationDescriptor containingClass = memberDescriptor.getContainingDeclaration();
         assert containingClass instanceof ClassDescriptor : "Members must be contained in classes: \n" +
@@ -98,23 +104,47 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
 
         JetParameterList valueParameterList = member.getValueParameterList();
         JetTypeReference returnTypeRef = member.getReturnTypeRef();
-        String receiverAndTheRest = receiver +
-                                   name +
-                                   (valueParameterList == null ? "" : valueParameterList.getText()) +
-                                   (returnTypeRef != null ? ": " + returnTypeRef.getText() : "") +
-                                   textOfBody(member);
 
-        String extensionText = modifiers(member) + "fun " + typeParameters(member) + receiverAndTheRest;
+        String extensionText = modifiers(member) +
+                               memberType(member) + " " +
+                               typeParameters(member) +
+                               receiver +
+                               name +
+                               (valueParameterList == null ? "" : valueParameterList.getText()) +
+                               (returnTypeRef != null ? ": " + returnTypeRef.getText() : "") +
+                               body(member);
 
-        JetNamedFunction extension = JetPsiFactory.createFunction(project, extensionText);
+        JetDeclaration extension = JetPsiFactory.createDeclaration(project, extensionText, JetDeclaration.class);
 
-        file.addAfter(extension, outermostParent);
+        PsiElement added = file.addAfter(extension, outermostParent);
         file.addAfter(JetPsiFactory.createNewLine(project), outermostParent);
         file.addAfter(JetPsiFactory.createNewLine(project), outermostParent);
         member.delete();
+
+        CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(added);
+
+        int caretAnchor = added.getText().indexOf(CARET_ANCHOR);
+        if (caretAnchor >= 0) {
+            int caretOffset = added.getTextRange().getStartOffset() + caretAnchor;
+            JetSimpleNameExpression anchor = PsiTreeUtil.findElementOfClassAtOffset(file, caretOffset, JetSimpleNameExpression.class, false);
+            if (anchor != null && CARET_ANCHOR.equals(anchor.getReferencedName())) {
+                JetExpression throwException = JetPsiFactory.createExpression(project, THROW_UNSUPPORTED_OPERATION_EXCEPTION);
+                PsiElement replaced = anchor.replace(throwException);
+                TextRange range = replaced.getTextRange();
+                editor.getCaretModel().moveToOffset(range.getStartOffset());
+                editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset());
+            }
+        }
     }
 
-    private static String modifiers(JetNamedFunction member) {
+    private static String memberType(JetCallableDeclaration member) {
+        if (member instanceof JetFunction) {
+            return "fun";
+        }
+        return ((JetProperty) member).getValOrVarNode().getText();
+    }
+
+    private static String modifiers(JetCallableDeclaration member) {
         JetModifierList modifierList = member.getModifierList();
         if (modifierList == null) return "";
         for (IElementType modifierType : JetTokens.VISIBILITY_MODIFIERS.getTypes()) {
@@ -126,7 +156,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
         return "";
     }
 
-    private static String typeParameters(JetNamedFunction member) {
+    private static String typeParameters(JetCallableDeclaration member) {
         PsiElement classElement = member.getParent().getParent();
         assert classElement instanceof JetClass : "Must be checked in isAvailable: " + classElement.getText();
 
@@ -142,11 +172,37 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
         }, ", ") + "> ";
     }
 
-    private static String textOfBody(JetNamedFunction member) {
-        JetExpression bodyExpression = member.getBodyExpression();
-        if (bodyExpression == null) return "{}";
-        if (!member.hasBlockBody()) return " = " + bodyExpression.getText();
-        return bodyExpression.getText();
+    private static String body(JetCallableDeclaration member) {
+        if (member instanceof JetProperty) {
+            JetProperty property = (JetProperty) member;
+            return "\n" + getter(property) + "\n" + setter(property, !synthesizeBody(property.getGetter()));
+        }
+        else if (member instanceof JetFunction) {
+            JetFunction function = (JetFunction) member;
+            JetExpression bodyExpression = function.getBodyExpression();
+            if (bodyExpression == null) return "{" + CARET_ANCHOR + "}";
+            if (!function.hasBlockBody()) return " = " + bodyExpression.getText();
+            return bodyExpression.getText();
+        }
+        else {
+            return "";
+        }
     }
 
+    private static String getter(JetProperty property) {
+        JetPropertyAccessor getter = property.getGetter();
+        if (synthesizeBody(getter)) return "get() = " + CARET_ANCHOR;
+        return getter.getText();
+    }
+
+    private static String setter(JetProperty property, boolean allowCaretAnchor) {
+        if (!property.isVar()) return "";
+        JetPropertyAccessor setter = property.getSetter();
+        if (synthesizeBody(setter)) return "set(value) {" + (allowCaretAnchor ? CARET_ANCHOR : THROW_UNSUPPORTED_OPERATION_EXCEPTION) + "}";
+        return setter.getText();
+    }
+
+    private static boolean synthesizeBody(@Nullable JetPropertyAccessor getter) {
+        return getter == null || getter.getBodyExpression() == null;
+    }
 }

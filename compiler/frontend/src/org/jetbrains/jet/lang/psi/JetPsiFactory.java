@@ -167,7 +167,7 @@ public class JetPsiFactory {
         return createDeclaration(project, text, JetProperty.class);
     }
 
-    private static <T> T createDeclaration(Project project, String text, Class<T> clazz) {
+    public static <T> T createDeclaration(Project project, String text, Class<T> clazz) {
         JetFile file = createFile(project, text);
         List<JetDeclaration> dcls = file.getDeclarations();
         assert dcls.size() == 1 : dcls.size() + " declarations in " + text;

@@ -798,6 +798,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
             doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/abstract.kt");
         }
         
+        @TestMetadata("abstractProperty.kt")
+        public void testAbstractProperty() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/abstractProperty.kt");
+        }
+        
         public void testAllFilesPresentInConvertMemberToExtension() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/intentions/declarations/convertMemberToExtension"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -810,6 +815,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/extension.kt");
+        }
+        
+        @TestMetadata("funcitonNoName.kt")
+        public void testFuncitonNoName() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/funcitonNoName.kt");
         }
         
         @TestMetadata("functionType.kt")
@@ -840,6 +850,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
         @TestMetadata("genericFunParamAfterName.kt")
         public void testGenericFunParamAfterName() throws Exception {
             doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/genericFunParamAfterName.kt");
+        }
+        
+        @TestMetadata("genericProperty.kt")
+        public void testGenericProperty() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/genericProperty.kt");
         }
         
         @TestMetadata("inFunctionBody.kt")
@@ -910,6 +925,46 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
         @TestMetadata("unknownType.kt")
         public void testUnknownType() throws Exception {
             doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/unknownType.kt");
+        }
+        
+        @TestMetadata("valWithDefaultGetter.kt")
+        public void testValWithDefaultGetter() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/valWithDefaultGetter.kt");
+        }
+        
+        @TestMetadata("valWithGetter.kt")
+        public void testValWithGetter() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/valWithGetter.kt");
+        }
+        
+        @TestMetadata("valWithGetterBlockBody.kt")
+        public void testValWithGetterBlockBody() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/valWithGetterBlockBody.kt");
+        }
+        
+        @TestMetadata("varWithDefaultGetterAndSetter.kt")
+        public void testVarWithDefaultGetterAndSetter() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/varWithDefaultGetterAndSetter.kt");
+        }
+        
+        @TestMetadata("varWithDefaultSetter.kt")
+        public void testVarWithDefaultSetter() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/varWithDefaultSetter.kt");
+        }
+        
+        @TestMetadata("varWithGetter.kt")
+        public void testVarWithGetter() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/varWithGetter.kt");
+        }
+        
+        @TestMetadata("varWithGetterAndSetter.kt")
+        public void testVarWithGetterAndSetter() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/varWithGetterAndSetter.kt");
+        }
+        
+        @TestMetadata("varWithSetter.kt")
+        public void testVarWithSetter() throws Exception {
+            doTestConvertMemberToExtension("idea/testData/intentions/declarations/convertMemberToExtension/varWithSetter.kt");
         }
         
         @TestMetadata("withType.kt")

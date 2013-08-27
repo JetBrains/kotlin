@@ -16,7 +16,15 @@
 
 package org.jetbrains.jet.lang.psi;
 
-public interface JetFunction extends JetDeclarationWithBody, JetCallableDeclaration {
+import org.jetbrains.annotations.Nullable;
 
-    boolean isLocal();
+public interface JetCallableDeclaration extends JetNamedDeclaration, JetTypeParameterListOwner {
+    @Nullable
+    JetParameterList getValueParameterList();
+
+    @Nullable
+    JetTypeReference getReceiverTypeRef();
+
+    @Nullable
+    JetTypeReference getReturnTypeRef();
 }

@@ -2,4 +2,5 @@ abstract class Owner {
 }
 
 fun Owner.f() {
+    <caret><selection>throw UnsupportedOperationException()</selection>
 }

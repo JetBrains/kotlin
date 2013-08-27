@@ -1,0 +1,7 @@
+class Owner {
+}
+
+val Owner.p: Int
+    get() {
+        return 1
+    }
