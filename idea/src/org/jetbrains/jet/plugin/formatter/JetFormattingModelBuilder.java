@@ -122,6 +122,8 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .between(CATCH_KEYWORD,VALUE_PARAMETER_LIST).spacing(1,1,0,false,0)
                 .beforeInside(BLOCK,CATCH).spacing(1,1,0,false,0)
 
+
+                .betweenInside(REFERENCE_EXPRESSION,FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spacing(1,1,0,false,0)
                 ;
     }
 
