@@ -57,39 +57,45 @@ public class CheckerTestUtilTest extends JetLiteFixture {
     }
 
     public void testMissing() throws Exception {
-        doTest(new TheTest("Missing TYPE_MISMATCH at 56 to 57") {
+        final DiagnosticData typeMismatch1 = diagnostics.get(1);
+        doTest(new TheTest(missing(typeMismatch1)) {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnostics.remove(1);
+                diagnostics.remove(typeMismatch1.index);
             }
         });
     }
 
     public void testUnexpected() throws Exception {
-        doTest(new TheTest("Unexpected TYPE_MISMATCH at 56 to 57") {
+        final DiagnosticData typeMismatch1 = diagnostics.get(1);
+        doTest(new TheTest(unexpected(typeMismatch1)) {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(1);
+                diagnosedRanges.remove(typeMismatch1.index);
             }
         });
     }
 
     public void testBoth() throws Exception {
-        doTest(new TheTest("Unexpected TYPE_MISMATCH at 56 to 57", "Missing UNRESOLVED_REFERENCE at 164 to 166") {
+        final DiagnosticData typeMismatch1 = diagnostics.get(1);
+        final DiagnosticData unresolvedReference = diagnostics.get(6);
+        doTest(new TheTest(unexpected(typeMismatch1), missing(unresolvedReference)) {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(1);
-                diagnostics.remove(diagnostics.size() - 1);
+                diagnosedRanges.remove(typeMismatch1.rangeIndex);
+                diagnostics.remove(unresolvedReference.index);
             }
         });
     }
 
     public void testMissingInTheMiddle() throws Exception {
-        doTest(new TheTest("Unexpected NONE_APPLICABLE at 120 to 121", "Missing TYPE_MISMATCH at 159 to 167") {
+        final DiagnosticData noneApplicable = diagnostics.get(4);
+        final DiagnosticData typeMismatch3 = diagnostics.get(5);
+        doTest(new TheTest(unexpected(noneApplicable), missing(typeMismatch3)) {
             @Override
             protected void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges) {
-                diagnosedRanges.remove(4);
-                diagnostics.remove(diagnostics.size() - 3);
+                diagnosedRanges.remove(noneApplicable.rangeIndex);
+                diagnostics.remove(typeMismatch3.index);
             }
         });
     }
@@ -101,7 +107,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
             this.expected = expectedMessages;
         }
 
-        public void test(final @NotNull PsiFile psiFile) {
+        public void test(@NotNull PsiFile psiFile) {
             BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                     (JetFile) psiFile,Collections.<AnalyzerScriptParameter>emptyList())
                     .getBindingContext();
@@ -126,14 +132,12 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
                 @Override
                 public void missingDiagnostic(String type, int expectedStart, int expectedEnd) {
-                    String message = "Missing " + type + " at " + expectedStart + " to " + expectedEnd;
-                    actualMessages.add(message);
+                    actualMessages.add(missing(type, expectedStart, expectedEnd));
                 }
 
                 @Override
                 public void unexpectedDiagnostic(String type, int actualStart, int actualEnd) {
-                    String message = "Unexpected " + type + " at " + actualStart + " to " + actualEnd;
-                    actualMessages.add(message);
+                    actualMessages.add(unexpected(type, actualStart, actualEnd));
                 }
             });
 
@@ -151,4 +155,46 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         protected abstract void makeTestData(List<Diagnostic> diagnostics, List<CheckerTestUtil.DiagnosedRange> diagnosedRanges);
     }
 
+    private static String unexpected(String type, int actualStart, int actualEnd) {
+        return "Unexpected " + type + " at " + actualStart + " to " + actualEnd;
+    }
+
+    private static String missing(String type, int expectedStart, int expectedEnd) {
+        return "Missing " + type + " at " + expectedStart + " to " + expectedEnd;
+    }
+
+    private static String unexpected(DiagnosticData data) {
+        return unexpected(data.name, data.startOffset, data.endOffset);
+    }
+
+    private static String missing(DiagnosticData data) {
+        return missing(data.name, data.startOffset, data.endOffset);
+    }
+
+    private static class DiagnosticData {
+        public int index;
+        public int rangeIndex;
+        public String name;
+        public int startOffset;
+        public int endOffset;
+
+        private DiagnosticData(int index, int rangeIndex, String name, int startOffset, int endOffset) {
+            this.index = index;
+            this.rangeIndex = rangeIndex;
+            this.name = name;
+            this.startOffset = startOffset;
+            this.endOffset = endOffset;
+        }
+    }
+
+    private final List<DiagnosticData> diagnostics = Lists.newArrayList(
+            new DiagnosticData(0, 0, "UNUSED_PARAMETER", 8, 9),
+            new DiagnosticData(1, 1, "TYPE_MISMATCH", 56, 57),
+            new DiagnosticData(2, 2, "UNUSED_VARIABLE", 67, 68),
+            new DiagnosticData(3, 3, "TYPE_MISMATCH", 98, 99),
+            new DiagnosticData(4, 4, "NONE_APPLICABLE", 120, 121),
+            new DiagnosticData(5, 5, "TYPE_MISMATCH", 159, 167),
+            new DiagnosticData(6, 6, "UNRESOLVED_REFERENCE", 164, 166),
+            new DiagnosticData(7, 6, "TOO_MANY_ARGUMENTS", 164, 166)
+    );
 }
