@@ -16,8 +16,11 @@
 
 package org.jetbrains.jet.jps.build;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jps.model.java.*;
+import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 
@@ -88,10 +91,22 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
 
     public void testTestDependencyLibrary() throws Throwable {
         initProject();
-        addKotlinRuntimeDependency(JpsJavaDependencyScope.TEST);
+        addKotlinRuntimeDependency(JpsJavaDependencyScope.TEST, myProject.getModules(), false);
         makeAll().assertSuccessful();
         change(workDir + "/src/src.kt", "fun foo() { println() }");
         makeAll().assertFailed();
+    }
+
+    public void testReexportedDependency() {
+        initProject();
+        addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE,
+                                   ContainerUtil.filter(myProject.getModules(), new Condition<JpsModule>() {
+                                       @Override
+                                       public boolean value(JpsModule module) {
+                                           return module.getName().equals("module2");
+                                       }
+                                   }), true);
+        makeAll().assertSuccessful();
     }
 
 }
