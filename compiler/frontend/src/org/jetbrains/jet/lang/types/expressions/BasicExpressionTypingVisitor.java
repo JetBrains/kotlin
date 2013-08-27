@@ -817,9 +817,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert operationSign.getReferencedNameElementType() == JetTokens.EXCLEXCL;
 
         Call call = createCallForSpecialConstruction(expression, Collections.singletonList(baseExpression));
-        ResolvedCall<FunctionDescriptor> resolvedCall = resolveSpecialConstructionAsCall(
+        resolveSpecialConstructionAsCall(
                 call, "ExclExcl", Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);
-        resolvedCall.getResultingDescriptor();
         JetTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
         assert baseTypeInfo != null : "Base expression was not processed: " + expression;
         JetType baseType = baseTypeInfo.getType();

@@ -15,6 +15,7 @@ fun test(a: A, b: B, c: C) {
         val d: C = id(a)
         val e: Any = id(a)
         val f = id(a)
+        f: A
         val g = two(a, b)
         g: B
         g: A

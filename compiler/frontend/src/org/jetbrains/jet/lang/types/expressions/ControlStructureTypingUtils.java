@@ -122,7 +122,7 @@ public class ControlStructureTypingUtils {
         return function;
     }
 
-    /*package*/ static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsForCall(
+    /*package*/ static MutableDataFlowInfoForArguments createIndependentDataFlowInfoForArgumentsForCall(
             final Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
     ) {
         return new MutableDataFlowInfoForArguments() {
@@ -135,6 +135,7 @@ public class ControlStructureTypingUtils {
 
             @Override
             public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
+                //todo
             }
 
             @NotNull
@@ -146,6 +147,7 @@ public class ControlStructureTypingUtils {
             @NotNull
             @Override
             public DataFlowInfo getResultInfo() {
+                //todo merge and use
                 return initialDataFlowInfo;
             }
         };
@@ -159,7 +161,7 @@ public class ControlStructureTypingUtils {
         Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(0), thenInfo);
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(1), elseInfo);
-        return createDataFlowInfoForArgumentsForCall(dataFlowInfoForArgumentsMap);
+        return createIndependentDataFlowInfoForArgumentsForCall(dataFlowInfoForArgumentsMap);
     }
 
     /*package*/ static Call createCallForSpecialConstruction(
