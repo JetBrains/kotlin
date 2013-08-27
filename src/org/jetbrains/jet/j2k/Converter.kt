@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import com.intellij.psi.*
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.j2k.ast.*
-import org.jetbrains.jet.j2k.ast.Class
-import org.jetbrains.jet.j2k.ast.Enum
 import org.jetbrains.jet.j2k.ast.types.ClassType
 import org.jetbrains.jet.j2k.ast.types.EmptyType
 import org.jetbrains.jet.j2k.ast.types.Type
@@ -19,14 +16,12 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.util.Pair
 import java.text.MessageFormat
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import com.intellij.openapi.project.Project
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import com.intellij.openapi.Disposable
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.util.QualifiedNamesUtil
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 
 public open class Converter() {
 
@@ -44,10 +39,6 @@ public open class Converter() {
 
 
     private val project = jetCoreEnvironment.getProject();
-
-    {
-        KotlinBuiltIns.initialize(project, KotlinBuiltIns.InitializationMode.MULTI_THREADED)
-    }
 
     private val javaToKotlinClassMap: JavaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
 
@@ -101,7 +92,7 @@ public open class Converter() {
     private fun fileToFile(javaFile: PsiJavaFile, additionalImports: List<String>): File {
         val importList: PsiImportList? = javaFile.getImportList()
         val imports: MutableList<Import> = (if (importList == null)
-            arrayList()
+            arrayListOf()
         else
             ArrayList(importsToImportList(importList.getAllImportStatements()) filter {
                 // If name is invalid, like with star imports, don't try to filter
@@ -116,7 +107,7 @@ public open class Converter() {
         for (i : String in additionalImports)
             imports.add(Import(i))
 
-        val body: ArrayList<Node> = arrayList()
+        val body: ArrayList<Node> = arrayListOf()
         for(element in javaFile.getChildren()) {
             if (element !is PsiImportStatementBase) {
                 val node = topElementToElement(element)
@@ -221,7 +212,7 @@ public open class Converter() {
                     }
                 }
             }
-            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayList(), Collections.emptySet<Modifier>(),
+            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayListOf(), Collections.emptySet<Modifier>(),
                     ClassType(name, Collections.emptyList<Element>(), false),
                     Collections.emptyList<Element>(),
                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
@@ -718,7 +709,7 @@ public open class Converter() {
         }
 
         public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): MutableSet<Modifier> {
-            val modifiersSet: HashSet<Modifier> = hashSet()
+            val modifiersSet: HashSet<Modifier> = hashSetOf()
             if (modifierList != null) {
                 if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT))
                     modifiersSet.add(Modifier.ABSTRACT)
@@ -778,7 +769,7 @@ public fun createMainFunction(file: PsiFile): String {
 
     if (classNamesWithMains.size() > 0) {
         var className: String? = classNamesWithMains.get(0)?.getFirst()
-        return MessageFormat.format("fun main(args : Array<String>) = {0}.main(args as Array<String?>?)", className)!!
+        return MessageFormat.format("fun main(args : Array<String>) = {0}.main(args as Array<String?>?)", className)
     }
 
     return ""
