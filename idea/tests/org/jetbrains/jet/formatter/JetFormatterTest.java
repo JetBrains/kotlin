@@ -131,6 +131,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTest();
     }
 
+    public void testWhenArrow() throws Exception {
+        doTestWithInvert();
+    }
+
     @Override
     public void doTest() throws Exception {
         String originalFileText = AbstractJetFormatterTest.loadFile(getTestName(false) + ".kt");
