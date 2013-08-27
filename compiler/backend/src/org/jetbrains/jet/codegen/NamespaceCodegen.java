@@ -102,8 +102,8 @@ public class NamespaceCodegen extends MemberCodegen {
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
         List<MemberMap> namespaceMembers = new ArrayList<MemberMap>(files.size() + 1);
-
-        if (shouldGenerateNSClass(files)) {
+        boolean shouldGeneratePackageClass = shouldGenerateNSClass(files);
+        if (shouldGeneratePackageClass) {
             namespaceMembers.add(v.getClassBuilder().getMemberMap());
         }
 
@@ -128,9 +128,12 @@ public class NamespaceCodegen extends MemberCodegen {
             }
         }
 
-        writeKotlinPackageAnnotationIfNeeded(MemberMap.union(namespaceMembers));
+        if (shouldGeneratePackageClass) {
+            writeKotlinPackageAnnotationIfNeeded(MemberMap.union(namespaceMembers));
+        }
 
-        assert v.isActivated() == shouldGenerateNSClass(files) : "Different algorithms for generating namespace class and for heuristics";
+        assert v.isActivated() == shouldGeneratePackageClass :
+                "Different algorithms for generating namespace class and for heuristics for: " + name.asString();
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull MemberMap members) {
