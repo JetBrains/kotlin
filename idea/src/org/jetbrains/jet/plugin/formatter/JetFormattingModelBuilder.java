@@ -112,6 +112,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(LBRACE, WHEN).spacing(1,1,0,false,0)          //omit blank lines before '{' in 'when' statement
                 .beforeInside(LBRACE,WHEN).spaceIf(jetSettings.SPACE_BEFORE_WHEN_LBRACE)
 
+                .aroundInside(ARROW,FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
                 ;
     }
 
