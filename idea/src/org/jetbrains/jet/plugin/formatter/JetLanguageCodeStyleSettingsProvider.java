@@ -135,6 +135,10 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                                           "'when' left brace",
                                           CodeStyleSettingsCustomizable.SPACES_BEFORE_LEFT_BRACE);
 
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_LAMBDA_ARROW",
+                                          "Before lambda arrow",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
                 break;
             case WRAPPING_AND_BRACES_SETTINGS:
                 consumer.showStandardOptions(
