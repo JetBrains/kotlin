@@ -134,6 +134,9 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
     public void testTryCatch() throws Exception {
         doTest();
     }
+    public void testReferenceExpressionFunctionLiteral() throws Exception {
+        doTest();
+    }
 
     @Override
     public void doTest() throws Exception {
