@@ -123,6 +123,9 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                                           "Insert whitespaces in simple one line methods",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AROUND_WHEN_ARROW",
+                                          "Surround arrow in \"when\" clause with spaces",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
                 break;
             case WRAPPING_AND_BRACES_SETTINGS:
                 consumer.showStandardOptions(

@@ -106,7 +106,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
 
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
-                .aroundInside(ARROW, WHEN_ENTRY).spaces(1)
+                .aroundInside(ARROW,WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
                 ;
     }
 
