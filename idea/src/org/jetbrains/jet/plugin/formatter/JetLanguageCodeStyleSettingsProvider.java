@@ -57,17 +57,25 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "}";
             default:
                 return
-                        "open class Some {\n" +
-                        "  private val f = {(a: Int)->a*2}\n" +
-                        "  fun foo() : Int {\n" +
-                        "    val test : Int = 12\n" +
-                        "    return test\n" +
-                        "  }\n" +
-                        "  private fun <T>foo2():Int where T : List<T> {\n" +
-                        "    return 0\n" +
-                        "  }\n" +
-                        "}\n\n" +
-                        "class AnotherClass<T:Any>: Some";
+                        "open class Some {\n"+
+                        "    private val f: (Int)->Int = { (a: Int) -> a * 2 }\n"+
+                        "    fun foo(): Int {\n"+
+                        "        val test: Int = 12\n"+
+                        "        for (i in 10..42) {\n"+
+                        "            println (when {\n"+
+                        "                i < test -> -1\n"+
+                        "                i > test -> 1\n"+
+                        "                else -> 0\n"+
+                        "            })\n"+
+                        "        }\n"+
+                        "        return test\n"+
+                        "    }\n"+
+                        "    private fun <T>foo2(): Int where T : List<T> {\n"+
+                        "        return 0\n"+
+                        "    }\n"+
+                        "}\n"+
+                        "class AnotherClass<T : Any> : Some()\n";
+
         }
     }
 
@@ -89,7 +97,8 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
                         "SPACE_AROUND_UNARY_OPERATOR",
                         "SPACE_AFTER_COMMA",
-                        "SPACE_BEFORE_COMMA"
+                        "SPACE_BEFORE_COMMA",
+                        "SPACE_BEFORE_TRY_LBRACE"
                 );
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AROUND_RANGE", "Around range (..)",
@@ -113,6 +122,22 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
 
                 consumer.showCustomOption(JetCodeStyleSettings.class, "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD",
                                           "Insert whitespaces in simple one line methods",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AROUND_FUNCTION_TYPE_ARROW",
+                                          "Surround arrow in function types with spaces",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AROUND_WHEN_ARROW",
+                                          "Surround arrow in \"when\" clause with spaces",
+                                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_WHEN_LBRACE",
+                                          "'when' left brace",
+                                          CodeStyleSettingsCustomizable.SPACES_BEFORE_LEFT_BRACE);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_LAMBDA_ARROW",
+                                          "Before lambda arrow",
                                           CodeStyleSettingsCustomizable.SPACES_OTHER);
 
                 break;

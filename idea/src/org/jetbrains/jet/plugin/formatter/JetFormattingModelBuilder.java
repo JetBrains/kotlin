@@ -106,7 +106,24 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
 
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
-                .aroundInside(ARROW, WHEN_ENTRY).spaces(1)
+                .beforeInside(ARROW,FUNCTION_LITERAL).spaceIf(jetSettings.SPACE_BEFORE_LAMBDA_ARROW)
+
+                //when
+                .aroundInside(ARROW,WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
+                .beforeInside(LBRACE, WHEN).spacing(1,1,0,false,0)          //omit blank lines before '{' in 'when' statement
+                .beforeInside(LBRACE,WHEN).spaceIf(jetSettings.SPACE_BEFORE_WHEN_LBRACE)
+
+                .aroundInside(ARROW,FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
+
+                //try catch
+                .between(TRY_KEYWORD,BLOCK).spacing(0,1,0,false,0)
+                .between(TRY_KEYWORD,BLOCK).spaceIf(jetCommonSettings.SPACE_BEFORE_TRY_LBRACE)
+                .between(BLOCK,CATCH).spacing(1,1,0,false,0)
+                .between(CATCH_KEYWORD,VALUE_PARAMETER_LIST).spacing(1,1,0,false,0)
+                .beforeInside(BLOCK,CATCH).spacing(1,1,0,false,0)
+
+
+                .betweenInside(REFERENCE_EXPRESSION,FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spacing(1,1,0,false,0)
                 ;
     }
 
