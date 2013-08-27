@@ -2416,6 +2416,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");
             }
             
+            @TestMetadata("LabeledFunctionLiterals.kt")
+            public void testLabeledFunctionLiterals() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/LabeledFunctionLiterals.kt");
+            }
+            
             @TestMetadata("NoDanglingFunctionLiteralForNestedCalls.kt")
             public void testNoDanglingFunctionLiteralForNestedCalls() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/NoDanglingFunctionLiteralForNestedCalls.kt");

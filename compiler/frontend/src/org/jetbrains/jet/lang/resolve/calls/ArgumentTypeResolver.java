@@ -166,8 +166,9 @@ public class ArgumentTypeResolver {
         if (expression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        if (expression instanceof JetFunctionLiteralExpression) {
-            return getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) expression, context, resolveArgumentsMode);
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression, false);
+        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
+            return getFunctionLiteralTypeInfo(expression, (JetFunctionLiteralExpression) deparenthesizedExpression, context, resolveArgumentsMode);
         }
         JetTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
@@ -181,6 +182,7 @@ public class ArgumentTypeResolver {
 
     @NotNull
     public JetTypeInfo getFunctionLiteralTypeInfo(
+            @NotNull JetExpression expression,
             @NotNull JetFunctionLiteralExpression functionLiteralExpression,
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
@@ -189,7 +191,7 @@ public class ArgumentTypeResolver {
             JetType type = getFunctionLiteralType(functionLiteralExpression, context.scope, context.trace);
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
-        return expressionTypingServices.getTypeInfo(context.scope, functionLiteralExpression, context.expectedType, context.dataFlowInfo, context.trace);
+        return expressionTypingServices.getTypeInfo(expression, context);
     }
 
     @Nullable
@@ -212,7 +214,8 @@ public class ArgumentTypeResolver {
         JetType returnType = resolveTypeRefWithDefault(functionLiteral.getReturnTypeRef(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
         JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeRef(), scope, temporaryTrace, null);
-        return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiverType, parameterTypes, returnType);
+        return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiverType, parameterTypes,
+                                                            returnType);
     }
 
     @Nullable
