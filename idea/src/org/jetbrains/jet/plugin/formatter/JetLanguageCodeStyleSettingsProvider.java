@@ -57,17 +57,25 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "}";
             default:
                 return
-                        "open class Some {\n" +
-                        "  private val f = {(a: Int)->a*2}\n" +
-                        "  fun foo() : Int {\n" +
-                        "    val test : Int = 12\n" +
-                        "    return test\n" +
-                        "  }\n" +
-                        "  private fun <T>foo2():Int where T : List<T> {\n" +
-                        "    return 0\n" +
-                        "  }\n" +
-                        "}\n\n" +
-                        "class AnotherClass<T:Any>: Some";
+                        "open class Some {\n"+
+                        "    private val f: (Int)->Int = { (a: Int) -> a * 2 }\n"+
+                        "    fun foo(): Int {\n"+
+                        "        val test: Int = 12\n"+
+                        "        for (i in 10..42) {\n"+
+                        "            println (when {\n"+
+                        "                i < test -> -1\n"+
+                        "                i > test -> 1\n"+
+                        "                else -> 0\n"+
+                        "            })\n"+
+                        "        }\n"+
+                        "        return test\n"+
+                        "    }\n"+
+                        "    private fun <T>foo2(): Int where T : List<T> {\n"+
+                        "        return 0\n"+
+                        "    }\n"+
+                        "}\n"+
+                        "class AnotherClass<T : Any> : Some()\n";
+
         }
     }
 
