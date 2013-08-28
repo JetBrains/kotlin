@@ -27,6 +27,9 @@
       <implementation-class>org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
     <component>
+      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.NonConfiguredKotlinProjectNotification</implementation-class>
+    </component>
+    <component>
       <implementation-class>org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
     </component>
   </project-components>
