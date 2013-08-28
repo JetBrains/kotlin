@@ -20,13 +20,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -50,14 +49,14 @@ public class ConstraintsUtil {
 
         Pair<Collection<JetType>, Collection<JetType>> pair =
                 TypeUtils.filterNumberTypes(typeConstraintsWithoutErrorTypes.getLowerBounds());
-        Collection<JetType> lowerBounds = pair.getFirst();
+        Collection<JetType> generalLowerBounds = pair.getFirst();
         Collection<JetType> numberLowerBounds = pair.getSecond();
 
-        JetType superTypeOfLowerBounds = commonSupertype(lowerBounds);
+        JetType superTypeOfLowerBounds = commonSupertype(generalLowerBounds);
         if (trySuggestion(superTypeOfLowerBounds, typeConstraints)) {
             return Collections.singleton(superTypeOfLowerBounds);
         }
-        addToValuesIfDifferent(superTypeOfLowerBounds, values);
+        ContainerUtil.addIfNotNull(superTypeOfLowerBounds, values);
 
         Collection<JetType> upperBounds = typeConstraintsWithoutErrorTypes.getUpperBounds();
         for (JetType upperBound : upperBounds) {
@@ -69,15 +68,13 @@ public class ConstraintsUtil {
         //fun <T> foo(t: T, consumer: Consumer<T>): T
         //foo(1, c: Consumer<Any>) - infer Int, not Any here
 
-        for (JetType upperBound : typeConstraintsWithoutErrorTypes.getUpperBounds()) {
-            addToValuesIfDifferent(upperBound, values);
-        }
+        values.addAll(typeConstraintsWithoutErrorTypes.getUpperBounds());
 
         JetType superTypeOfNumberLowerBounds = commonSupertypeForNumberTypes(numberLowerBounds);
         if (trySuggestion(superTypeOfNumberLowerBounds, typeConstraints)) {
             return Collections.singleton(superTypeOfNumberLowerBounds);
         }
-        addToValuesIfDifferent(superTypeOfNumberLowerBounds, values);
+        ContainerUtil.addIfNotNull(superTypeOfNumberLowerBounds, values);
 
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
             JetType superTypeOfAllLowerBounds = commonSupertype(Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
@@ -86,20 +83,6 @@ public class ConstraintsUtil {
             }
         }
         return values;
-    }
-
-    private static void addToValuesIfDifferent(@Nullable JetType type, @NotNull Set<JetType> values) {
-        if (type == null) return;
-        if (values.isEmpty()) {
-            values.add(type);
-            return;
-        }
-        for (JetType value : values) {
-            if (!JetTypeChecker.INSTANCE.equalTypes(type, value)) {
-                values.add(type);
-                return;
-            }
-        }
     }
 
     @Nullable
@@ -159,7 +142,7 @@ public class ConstraintsUtil {
             if (ErrorUtils.containsErrorType(type)) {
                 values.add(type);
             }
-            else {
+            else if (type != null) {
                 typeConstraintsWithoutErrorType.addBound(boundKind, type);
             }
         }

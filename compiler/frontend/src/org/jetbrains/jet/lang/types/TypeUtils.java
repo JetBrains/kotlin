@@ -637,15 +637,4 @@ public class TypeUtils {
         }
         return Pair.create(otherTypes, numberTypes);
     }
-
-    @NotNull
-    public static JetType commonSupertypeForPossiblyNumberTypes(@NotNull Collection<JetType> types) {
-        Pair<Collection<JetType>, Collection<JetType>> pair = filterNumberTypes(types);
-        Collection<JetType> numberTypes = pair.getSecond();
-        Collection<JetType> otherTypes = pair.getFirst();
-        if (!numberTypes.isEmpty()) {
-            otherTypes.add(commonSupertypeForNumberTypes(numberTypes));
-        }
-        return CommonSupertypes.commonSupertype(otherTypes);
-    }
 }

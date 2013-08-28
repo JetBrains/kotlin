@@ -61,6 +61,10 @@ fun <T> upperBound(t: T, <!UNUSED_PARAMETER!>l<!>: Contr<T>) = t
 fun testUpperBound(contrS: Contr<String>, contrB: Contr<Byte>, contrN: Contr<Number>) {
     <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>upperBound<!>(1, contrS)
 
-    upperBound(1, contrN)
-    upperBound(1, contrB)
+    val n = upperBound(1, contrN)
+    n: Number
+    <!TYPE_MISMATCH!>n<!>: Int
+    val b = upperBound(1, contrB)
+    b: Byte
+    <!TYPE_MISMATCH!>b<!>: Int
 }
