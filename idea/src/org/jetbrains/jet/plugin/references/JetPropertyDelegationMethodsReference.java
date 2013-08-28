@@ -18,20 +18,27 @@ package org.jetbrains.jet.plugin.references;
 
 import com.beust.jcommander.internal.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyDelegate;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
+import java.util.Collection;
 import java.util.List;
 
 public class JetPropertyDelegationMethodsReference implements PsiPolyVariantReference {
@@ -64,23 +71,41 @@ public class JetPropertyDelegationMethodsReference implements PsiPolyVariantRefe
         List<ResolveResult> results = Lists.newArrayList();
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        addResultsForAccessor(context, results, propertyDescriptor.getGetter());
-        addResultsForAccessor(context, results, propertyDescriptor.getSetter());
+        addResultsForAccessor(property.getProject(), context, results, propertyDescriptor.getGetter());
+        addResultsForAccessor(property.getProject(), context, results, propertyDescriptor.getSetter());
 
         return results.toArray(new ResolveResult[results.size()]);
     }
 
-    private static void addResultsForAccessor(BindingContext context, List<ResolveResult> results, PropertyAccessorDescriptor accessor) {
-        if (accessor != null) {
-            ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor);
-            if (resolvedCall != null) {
-                FunctionDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
+    private static void addResultsForAccessor(
+            Project project,
+            BindingContext context,
+            List<ResolveResult> results,
+            PropertyAccessorDescriptor accessor
+    ) {
+        if (accessor == null) return;
 
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resultingDescriptor);
-                if (declaration != null) {
-                    results.add(new PsiElementResolveResult(declaration, true));
-                }
-            }
+        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor);
+        if (resolvedCall == null) return;
+
+        FunctionDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor().getOriginal();
+
+        List<PsiElement> declarations = BindingContextUtils.descriptorToDeclarations(context, resultingDescriptor);
+        for (PsiElement declaration : declarations) {
+            results.add(new PsiElementResolveResult(declaration, true));
+        }
+
+        JetDeclaration declarationInDecompiledFile =
+                DecompiledNavigationUtils.findDeclarationForReference(project, resultingDescriptor);
+        if (declarationInDecompiledFile != null) {
+            results.add(new PsiElementResolveResult(declarationInDecompiledFile));
+        }
+
+        Collection<PsiElement> stdlibSymbols =
+                project.getComponent(BuiltInsReferenceResolver.class).resolveStandardLibrarySymbol(resultingDescriptor);
+
+        for (PsiElement symbol : stdlibSymbols) {
+            results.add(new PsiElementResolveResult(symbol));
         }
     }
 
@@ -107,7 +132,7 @@ public class JetPropertyDelegationMethodsReference implements PsiPolyVariantRefe
     @NotNull
     @Override
     public String getCanonicalText() {
-        return "get";
+        return "<unknown>";
     }
 
     @Override
