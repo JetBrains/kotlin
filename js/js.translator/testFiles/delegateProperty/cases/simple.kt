@@ -19,7 +19,7 @@ class A : WithNumber {
 }
 
 fun box(): String {
-    if (A().nextNumber != 8) return "A().nextNumber != 8"
+    if (A().nextNumber != 8) return "A().nextNumber != 8, it: ${A().nextNumber}"
 
     val a = A()
     a.nextNumber = 10;
