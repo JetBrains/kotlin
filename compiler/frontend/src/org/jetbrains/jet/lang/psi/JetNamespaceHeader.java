@@ -49,19 +49,6 @@ public class JetNamespaceHeader extends JetReferenceExpression {
         return (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
-    @NotNull
-    @Override
-    public PsiReference[] getReferences() {
-        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
-    }
-
-    @Nullable
-    @Override
-    public PsiReference getReference() {
-        PsiReference[] references = getReferences();
-        return references.length == 1 ? references[0] : null;
-    }
-
     @Nullable
     public PsiElement getNameIdentifier() {
         JetSimpleNameExpression lastPart = (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
