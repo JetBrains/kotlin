@@ -106,7 +106,10 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
 
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
+
+                //when
                 .aroundInside(ARROW, WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
+                .beforeInside(LBRACE, WHEN).spacing(1, 1, 0, true, 0)          //omit blank lines before '{' in 'when' statement
                 ;
     }
 
