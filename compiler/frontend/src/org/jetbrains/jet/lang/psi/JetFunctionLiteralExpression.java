@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -64,5 +64,15 @@ public class JetFunctionLiteralExpression extends JetExpressionImpl {
     @NotNull
     public JetElement asElement() {
         return this;
+    }
+
+    @NotNull
+    public ASTNode getLeftCurlyBrace() {
+        return getFunctionLiteral().getNode().findChildByType(JetTokens.LBRACE);
+    }
+
+    @Nullable
+    public ASTNode getRightCurlyBrace() {
+        return getFunctionLiteral().getNode().findChildByType(JetTokens.RBRACE);
     }
 }
