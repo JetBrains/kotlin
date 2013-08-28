@@ -65,6 +65,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/DelegatedProperty.kt");
             }
             
+            @TestMetadata("EnumArgument.kt")
+            public void testEnumArgument() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/EnumArgument.kt");
+            }
+            
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
@@ -113,6 +118,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classes/Deprecated.kt");
             }
             
+            @TestMetadata("EnumArgument.kt")
+            public void testEnumArgument() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classes/EnumArgument.kt");
+            }
+            
             @TestMetadata("MultipleAnnotations.kt")
             public void testMultipleAnnotations() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classes/MultipleAnnotations.kt");
@@ -121,6 +131,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("NestedClass.kt")
             public void testNestedClass() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classes/NestedClass.kt");
+            }
+            
+            @TestMetadata("Retention.kt")
+            public void testRetention() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classes/Retention.kt");
             }
             
             @TestMetadata("Simple.kt")
@@ -149,6 +164,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("DelegatedProperty.kt")
             public void testDelegatedProperty() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/DelegatedProperty.kt");
+            }
+            
+            @TestMetadata("EnumArgument.kt")
+            public void testEnumArgument() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/EnumArgument.kt");
             }
             
             @TestMetadata("Function.kt")

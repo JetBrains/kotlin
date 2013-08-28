@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
@@ -38,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
@@ -186,22 +188,39 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
         return new AnnotationVisitor(Opcodes.ASM4) {
-            // TODO: arrays, annotations, enums
+            // TODO: arrays, annotations
             @Override
             public void visit(String name, Object value) {
-                ValueParameterDescriptor parameter =
-                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(Name.identifier(name), annotationClass);
-                if (parameter != null) {
-                    CompileTimeConstant<?> argument = JavaCompileTimeConstResolver.resolveCompileTimeConstantValue(value, null);
-                    if (argument != null) {
-                        annotation.setValueArgument(parameter, argument);
-                    }
+                CompileTimeConstant<?> argument = JavaCompileTimeConstResolver.resolveCompileTimeConstantValue(value, null);
+                if (argument != null) {
+                    setArgumentValueByName(name, argument);
                 }
+            }
+
+            @Override
+            public void visitEnum(String name, String desc, String value) {
+                FqName fqName = convertJvmDescriptorToFqName(desc);
+                ClassDescriptor enumClass = javaClassResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
+                assert enumClass != null : "Enum class referenced in annotation is not found: " + desc;
+                JetScope scope = DescriptorUtils.getEnumEntriesScope(enumClass);
+                Collection<VariableDescriptor> properties = scope.getProperties(Name.identifier(value));
+                assert properties.size() == 1 : "Enum class should have exactly one property with the referenced name: " + value +
+                                                "\n" + properties + "\n" + enumClass;
+                EnumValue enumValue = new EnumValue((PropertyDescriptor) properties.iterator().next());
+                setArgumentValueByName(name, enumValue);
             }
 
             @Override
             public void visitEnd() {
                 result.add(annotation);
+            }
+
+            private void setArgumentValueByName(@NotNull String name, @NotNull CompileTimeConstant<?> argumentValue) {
+                ValueParameterDescriptor parameter =
+                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(Name.identifier(name), annotationClass);
+                if (parameter != null) {
+                    annotation.setValueArgument(parameter, argumentValue);
+                }
             }
         };
     }
