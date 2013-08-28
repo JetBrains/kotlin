@@ -20,37 +20,31 @@ import com.beust.jcommander.internal.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyDelegate;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
-import java.util.Collection;
 import java.util.List;
 
-public class JetPropertyDelegationMethodsReference implements PsiPolyVariantReference {
+public class JetPropertyDelegationMethodsReference extends AbstractPolyVariantJetReference<JetPropertyDelegate> {
 
     public static PsiReference[] create(@NotNull JetPropertyDelegate delegate) {
         return new PsiReference[] { new JetPropertyDelegationMethodsReference(delegate) };
     }
 
-    private final JetPropertyDelegate element;
-
-    private JetPropertyDelegationMethodsReference(@NotNull JetPropertyDelegate element) {
-        this.element = element;
+    public JetPropertyDelegationMethodsReference(@NotNull JetPropertyDelegate element) {
+        super(element);
     }
 
     @NotNull
@@ -81,37 +75,14 @@ public class JetPropertyDelegationMethodsReference implements PsiPolyVariantRefe
             Project project,
             BindingContext context,
             List<ResolveResult> results,
-            PropertyAccessorDescriptor accessor
+            @Nullable PropertyAccessorDescriptor accessor
     ) {
         if (accessor == null) return;
 
         ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor);
         if (resolvedCall == null) return;
 
-        FunctionDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor().getOriginal();
-
-        List<PsiElement> declarations = BindingContextUtils.descriptorToDeclarations(context, resultingDescriptor);
-        for (PsiElement declaration : declarations) {
-            results.add(new PsiElementResolveResult(declaration, true));
-        }
-
-        JetDeclaration declarationInDecompiledFile =
-                DecompiledNavigationUtils.findDeclarationForReference(project, resultingDescriptor);
-        if (declarationInDecompiledFile != null) {
-            results.add(new PsiElementResolveResult(declarationInDecompiledFile));
-        }
-
-        Collection<PsiElement> builtInSymbols =
-                project.getComponent(BuiltInsReferenceResolver.class).resolveBuiltInSymbol(resultingDescriptor);
-
-        for (PsiElement symbol : builtInSymbols) {
-            results.add(new PsiElementResolveResult(symbol));
-        }
-    }
-
-    @Override
-    public PsiElement getElement() {
-        return element;
+        JetReferenceUtil.findPsiElements(project, context, results, resolvedCall.getResultingDescriptor());
     }
 
     @Override
@@ -121,49 +92,9 @@ public class JetPropertyDelegationMethodsReference implements PsiPolyVariantRefe
         return new TextRange(offset, offset + byKeywordNode.getTextLength());
     }
 
-    @Nullable
-    @Override
-    public PsiElement resolve() {
-        ResolveResult[] results = multiResolve(false);
-        if (results.length == 1) return results[0].getElement();
-        return null;
-    }
-
     @NotNull
     @Override
     public String getCanonicalText() {
         return "<unknown>";
-    }
-
-    @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        throw new IncorrectOperationException();
-    }
-
-    @Override
-    public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-        throw new IncorrectOperationException();
-    }
-
-    @Override
-    public boolean isReferenceTo(PsiElement element) {
-        if (element == null) return false;
-
-        ResolveResult[] results = multiResolve(false);
-        for (ResolveResult result : results) {
-            if (element.equals(result.getElement())) return true;
-        }
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public Object[] getVariants() {
-        return EMPTY_ARRAY;
-    }
-
-    @Override
-    public boolean isSoft() {
-        return false;
     }
 }
