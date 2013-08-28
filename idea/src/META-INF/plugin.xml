@@ -73,6 +73,21 @@
       <action id="ShowKotlinSignatures" class="org.jetbrains.jet.plugin.ktSignature.ShowKotlinSignaturesAction"/>
       <add-to-group group-id="EditorGutterPopupMenu" anchor="last"/>
     </group>
+
+    <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/jet/plugin/icons/kotlin13.png"
+           class="org.jetbrains.jet.plugin.actions.KotlinActionGroup">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </group>
+
+    <action id="ConfigureKotlinInProject" class="org.jetbrains.jet.plugin.actions.ConfigureKotlinInProjectAction"
+            text="Configure Kotlin in Project">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
+
+    <action id="ConfigureKotlinJsInProject" class="org.jetbrains.jet.plugin.actions.ConfigureKotlinJsInProjectAction"
+            text="Configure Kotlin (JavaScript) in Project">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
