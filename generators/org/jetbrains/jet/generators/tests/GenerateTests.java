@@ -446,7 +446,7 @@ public class GenerateTests {
                 "idea/tests/",
                 "ReferenceResolveTestGenerated",
                 AbstractResolveBaseTest.class,
-                testModel("idea/testData/resolve/references", "doTest")
+                testModel("idea/testData/resolve/references", true, "doTest")
         );
 
         generateTest(
