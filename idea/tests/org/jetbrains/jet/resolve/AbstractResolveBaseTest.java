@@ -35,6 +35,10 @@ import org.jetbrains.jet.testing.ReferenceUtils;
 import java.util.List;
 
 public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
+
+    public static final String MULTIRESOLVE = "MULTIRESOLVE";
+    public static final String REF_EMPTY = "REF_EMPTY";
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -44,7 +48,7 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
     protected void doTest(String path) {
         configureByFile(path);
 
-        if (InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), "MULTIRESOLVE")) {
+        if (InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), MULTIRESOLVE)) {
             doMultiResolveTest();
         }
         else {
@@ -53,14 +57,20 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
     }
 
     protected static void doSingleResolveTest() {
-        boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), "REF_EMPTY");
-        String referenceToString = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "REF:");
+        boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), REF_EMPTY);
+        List<String> refs = InTextDirectivesUtils.findLinesWithPrefixesRemoved(getFile().getText(), "REF:");
 
+        String referenceToString;
         if (shouldBeUnresolved) {
-            Assert.assertNull("REF: directives will be ignored for REF_EMPTY test", referenceToString);
+            Assert.assertTrue("REF: directives will be ignored for " + REF_EMPTY + " test: " + refs, refs.isEmpty());
             referenceToString = "<empty>";
         }
         else {
+            assertTrue("Must be a single ref: " + refs + ".\n" +
+                       "Use " + MULTIRESOLVE + " if you need multiple refs\n" +
+                       "Use "+ REF_EMPTY + " for an unresolved reference",
+                       refs.size() == 1);
+            referenceToString = refs.get(0);
             Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString);
         }
 
@@ -83,8 +93,9 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
             }
         }
         else {
-            Assert.assertNull(String.format("No reference found at offset: %s, but one resolved to %s was expected", offset, referenceToString),
-                              referenceToString);
+            Assert.assertNull(
+                    String.format("No reference found at offset: %s, but one resolved to %s was expected", offset, referenceToString),
+                    referenceToString);
         }
     }
 
