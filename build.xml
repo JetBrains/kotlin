@@ -224,26 +224,7 @@
             <arg value="--js"/>
             <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
             <arg value="--js_output_file"/>
-            <arg value="${kotlin-home}/lib/kotlinEcma5.js"/>
-        </java>
-        <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
-            <classpath>
-                <pathelement location="${basedir}/js/js.tests/testLib/closure-compiler.jar"/>
-            </classpath>
-            <arg value="--formatting"/>
-            <arg value="PRETTY_PRINT"/>
-            <arg value="--language_in"/>
-            <arg value="ECMASCRIPT3"/>
-            <arg value="--compilation_level"/>
-            <arg value="SIMPLE_OPTIMIZATIONS"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma3.js"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
-            <arg value="--js_output_file"/>
-            <arg value="${kotlin-home}/lib/kotlinEcma3.js"/>
+            <arg value="${kotlin-home}/lib/kotlin.js"/>
         </java>
     </target>
 

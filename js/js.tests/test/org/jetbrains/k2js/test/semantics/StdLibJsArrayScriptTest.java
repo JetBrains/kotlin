@@ -23,8 +23,6 @@ import org.jetbrains.k2js.test.rhino.CompositeRhinoResultsChecker;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 
-import java.io.File;
-import java.util.EnumSet;
 import java.util.Map;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
@@ -33,8 +31,7 @@ import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
  */
 public class StdLibJsArrayScriptTest extends StdLibTestBase {
     public void testArrayScriptTest() throws Exception {
-        //performStdLibTest(EcmaVersion.all(),
-        performStdLibTest(EnumSet.of(EcmaVersion.v3),
+        performStdLibTest(DEFAULT_ECMA_VERSIONS,
                           "libraries/stdlib/test",
                           "js/JsArrayScript.kt");
     }

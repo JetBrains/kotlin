@@ -16,20 +16,13 @@
 
 package org.jetbrains.k2js.config;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public enum EcmaVersion {
     v3, v5;
 
     @NotNull
-    public static EcmaVersion fromString(@Nullable String target) {
-        return StringUtil.compareVersionNumbers(target, "v5") >= 0 ? v5 : v3;
-    }
-
-    @NotNull
     public static EcmaVersion defaultVersion() {
-        return v3;
+        return v5;
     }
 }

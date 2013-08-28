@@ -40,7 +40,7 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "sourcemap", description = "Generate SourceMap")
     public boolean sourcemap;
 
-    @Argument(value = "target", description = "Generate js files for specific ECMA version (3 or 5, default ECMA 3)")
+    @Argument(value = "target", description = "Generate js files for specific ECMA version (now support only ECMA 5)")
     public String target;
 
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")

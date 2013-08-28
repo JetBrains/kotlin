@@ -60,6 +60,14 @@ public class RegressionMergeEcmaTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testOverloadFun() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testOverloadExtension() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testClassInitializer() throws Exception {
         checkFooBoxIsOk();
     }
