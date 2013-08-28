@@ -575,4 +575,12 @@ public class DescriptorUtils {
         return isTopLevelDeclaration(descriptor) ||
                containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
     }
+
+    @NotNull
+    public static JetScope getEnumEntriesScope(@NotNull ClassDescriptor enumClass) {
+        assert enumClass.getKind() == ClassKind.ENUM_CLASS : "Only enum classes have enum entries: " + enumClass;
+        ClassDescriptor classObject = enumClass.getClassObjectDescriptor();
+        assert classObject != null : "Enum class should have a class object: " + enumClass;
+        return classObject.getDefaultType().getMemberScope();
+    }
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -24,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
@@ -142,16 +141,9 @@ public final class JavaCompileTimeConstResolver {
                     return null;
                 }
 
-                JetScope scope;
                 ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(fqName), INCLUDE_KOTLIN_SOURCES, taskList);
-                if (classDescriptor == null) {
-                    return null;
-                }
-                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-                if (classObjectDescriptor == null) {
-                    return null;
-                }
-                scope = classObjectDescriptor.getMemberScope(Lists.<TypeProjection>newArrayList());
+                if (classDescriptor == null) return null;
+                JetScope scope = DescriptorUtils.getEnumEntriesScope(classDescriptor);
 
                 Name identifier = Name.identifier(((PsiEnumConstant) resolveElement).getName());
                 Collection<VariableDescriptor> properties = scope.getProperties(identifier);

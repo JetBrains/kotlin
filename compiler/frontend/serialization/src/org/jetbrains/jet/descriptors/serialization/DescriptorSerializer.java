@@ -25,6 +25,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTopLevelOrInnerClass;
 
 public class DescriptorSerializer {
@@ -127,9 +128,7 @@ public class DescriptorSerializer {
         }
 
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-            ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
-            assert classObject != null : "Enum class object shouldn't be null: " + classDescriptor;
-            for (ClassDescriptor descriptor : classObject.getDefaultType().getMemberScope().getObjectDescriptors()) {
+            for (ClassDescriptor descriptor : getEnumEntriesScope(classDescriptor).getObjectDescriptors()) {
                 if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
                     builder.addEnumEntry(nameTable.getSimpleNameIndex(descriptor.getName()));
                 }
