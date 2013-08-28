@@ -9,7 +9,7 @@
   <idea-version since-build="132.27" until-build="133.0"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
-  <depends optional="true" config-file="gradle.xml">JUnit</depends>
+  <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
