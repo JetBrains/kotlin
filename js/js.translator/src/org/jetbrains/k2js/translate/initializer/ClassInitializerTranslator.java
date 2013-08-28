@@ -89,11 +89,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             arguments = Collections.emptyList();
         }
         JsNameRef reference = context().getQualifiedReference(getClassDescriptorForType(enumClassType));
-        if(context().isEcma5()) {
-            return new JsInvocation(reference, arguments);
-        } else {
-            return new JsNew(reference, arguments);
-        }
+        return new JsNew(reference, arguments);
     }
 
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {

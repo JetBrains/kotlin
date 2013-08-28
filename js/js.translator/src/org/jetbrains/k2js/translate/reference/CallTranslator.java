@@ -131,12 +131,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     public HasArguments createConstructorCallExpression(@NotNull JsExpression constructorReference) {
-        if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
-            return new JsInvocation(constructorReference, arguments);
-        }
-        else {
-            return new JsNew(constructorReference, arguments);
-        }
+        return new JsNew(constructorReference, arguments);
     }
 
     @NotNull

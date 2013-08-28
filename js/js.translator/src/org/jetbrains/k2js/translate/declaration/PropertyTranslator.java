@@ -140,11 +140,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     private JsExpression createPropertyMetadata() {
         JsNameRef propertyMetadataRef = context().namer().propertyMetadataRef();
         JsExpression argument = context().program().getStringLiteral(getPropertyName());
-        if (context().isEcma5()) {
-            return new JsInvocation(propertyMetadataRef, argument);
-        } else {
-            return new JsNew(propertyMetadataRef, Collections.singletonList(argument));
-        }
+        return new JsNew(propertyMetadataRef, Collections.singletonList(argument));
     }
 
     private JsExpression getDelegateCall(ResolvedCall<FunctionDescriptor> call, List<JsExpression> args) {

@@ -1,155 +1,223 @@
-// Be aware — Google Chrome has serious issue — you can rewrite READ-ONLY property (if it is defined in prototype). Firefox and Safari work correct.
-// Always test property access issues in Firefox, but not in Chrome.
-var Kotlin = Object.create(null);
+
+
+var KotlinNew = {};
 
 (function () {
-    "use strict";
+    'use strict';
 
-    Kotlin.keys = Object.keys;
+    if (!Array.isArray) {
+        Array.isArray = function (vArg) {
+            return Object.prototype.toString.call(vArg) === "[object Array]";
+        };
+    }
 
-    Kotlin.isType = function (object, type) {
-        if (object === null || object === undefined) {
-            return false;
+    if (!Function.prototype.bind) {
+        Function.prototype.bind = function (oThis) {
+            if (typeof this !== "function") {
+                // closest thing possible to the ECMAScript 5 internal IsCallable function
+                throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+            }
+
+            var aArgs = Array.prototype.slice.call(arguments, 1),
+                fToBind = this,
+                fNOP = function () {
+                },
+                fBound = function () {
+                    return fToBind.apply(this instanceof fNOP && oThis
+                                             ? this
+                                             : oThis,
+                                         aArgs.concat(Array.prototype.slice.call(arguments)));
+                };
+
+            fNOP.prototype = this.prototype;
+            fBound.prototype = new fNOP();
+
+            return fBound;
+        };
+    }
+
+    if (!Object.keys) {
+        Object.keys = function (o) {
+            var result = [];
+            var i = 0;
+            for (var p in o) {
+                if (o.hasOwnProperty(p)) {
+                    result[i++] = p;
+                }
+            }
+            return result;
+        };
+    }
+
+    if (!Object.create) {
+        Object.create = function(proto) {
+            function F() {}
+            F.prototype = proto;
+            return new F();
         }
+    }
 
-        var proto = Object.getPrototypeOf(object);
-        // todo test nested class
-        //noinspection RedundantIfStatementJS
-        if (proto == type.proto) {
-            return true;
+    // http://ejohn.org/blog/objectgetprototypeof/
+    if ( typeof Object.getPrototypeOf !== "function" ) {
+        if ( typeof "test".__proto__ === "object" ) {
+            Object.getPrototypeOf = function(object){
+                return object.__proto__;
+            };
+        } else {
+            Object.getPrototypeOf = function(object){
+                // May break if the constructor has been tampered with
+                return object.constructor.prototype;
+            };
         }
+    }
 
-        return false;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    var Util = {};
+
+    Util.toArray = function(obj) {
+        var array;
+        if (nullOrUndefined(obj)) {
+            array = [];
+        }
+        else if(!Array.isArray(obj)) {
+            array = [obj];
+        }
+        else {
+            array = obj;
+        }
+        return array;
     };
+
+    Util.copyProperties = function(to, from) {
+        if (nullOrUndefined(to) || nullOrUndefined(from)) {
+            return;
+        }
+        for (var p in from) {
+            if (from.hasOwnProperty(p)) {
+                Object.defineProperty(to, p, Object.getOwnPropertyDescriptor(from, p));
+                //to[p] = from[p];
+            }
+        }
+    };
+
+    function nullOrUndefined(o) {
+        return o === null || o === undefined;
+    }
+
+    var emptyFunction = function() {};
+
+    Util.getClass = function (bases) {
+        var basesArray = Util.toArray(bases);
+        for (var i = 0; i < basesArray.length; i++) {
+            if (basesArray[i].$isClass === true) {
+                return basesArray[i];
+            }
+        }
+        return null;
+    };
+
+    KotlinNew.Util = Util;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    function computePrototype(bases, functions, obj)  {
+        if (nullOrUndefined(obj)) {
+            obj = {};
+        }
+        var basesArray = Util.toArray(bases);
+        Util.copyProperties(obj, functions);
+
+        for (var i = 0; i < basesArray.length; i++) {
+            var basePrototype = basesArray[i].prototype;
+            for (var p in basePrototype) {
+                if (basePrototype.hasOwnProperty(p)) {
+                    if (!obj.hasOwnProperty(p)) {
+                        Object.defineProperty(obj, p, Object.getOwnPropertyDescriptor(basePrototype, p));
+                    }
+                }
+            }
+        }
+        return obj;
+    }
+
+    function class_object() {
+        if (typeof this.$object$ === "undefined") {
+            this.$object$ = this.object_initializer$();
+        }
+        return this.$object$;
+    }
 
     // as separated function to reduce scope
     function createConstructor() {
         return function $fun() {
-            var o = Object.create($fun.proto);
-            var initializer = $fun.initializer;
+            var initializer = $fun.$initializer;
             if (initializer != null) {
-                if (initializer.length == 0) {
-                    initializer.call(o);
-                }
-                else {
-                    initializer.apply(o, arguments);
-                }
+                initializer.apply(this, arguments);
             }
-
-            Object.seal(o);
-            return o;
         };
     }
 
-    function computeProto(bases, properties) {
-        var proto = null;
-        for (var i = 0, n = bases.length; i < n; i++) {
-            var base = bases[i];
-            var baseProto = base.proto;
-            if (baseProto === null || base.properties === null) {
-                continue;
-            }
-
-            if (proto === null) {
-                proto = Object.create(baseProto, properties || undefined);
-                continue;
-            }
-            Object.defineProperties(proto, base.properties);
-            // todo test A -> B, C(->D) *properties from D is not yet added to proto*
-        }
-
-        return proto;
-    }
-
-    Kotlin.createTrait = function (bases, properties, staticProperties) {
-        return createClass(bases, null, properties, staticProperties, false);
-    };
-
-    Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
-        // proto must be created for class even if it is not needed (requires for is operator)
-        return createClass(bases, initializer === null ? function () {} : initializer, properties, staticProperties, true);
-    };
-
-    function computeProto2(bases, properties) {
-        if (bases === null) {
-            return Object.prototype;
-        }
-        return Array.isArray(bases) ? computeProto(bases, properties) : bases.proto;
-    }
-
-    Kotlin.createObject = function (bases, initializer, properties) {
-        var o = Object.create(computeProto2(bases, properties), properties || undefined);
-        if (initializer !== null) {
-            if (bases !== null) {
-                Object.defineProperty(initializer, "baseInitializer", {value: Array.isArray(bases) ? bases[0].initializer : bases.initializer});
-            }
-            initializer.call(o);
-        }
-        Object.seal(o);
-        return o;
-    };
-
-    function class_object$() {
-        if (typeof this.$object$ === "undefined") {
-            this.$object$ = this.object_initializer$();
-        }
-
-        return this.$object$;
-    }
-
-    function createClass(bases, initializer, properties, staticProperties, isClass) {
-        var proto;
+    // bases - array, @NotNull, baseClass - _.foo.B, @Nullable
+    KotlinNew.createClass = function (bases, baseClass, initializer, functions, staticProperties) {
+        var constr = createConstructor();
+        var basePrototypeObj;
         var baseInitializer;
-        if (bases === null) {
-            baseInitializer = null;
-            proto = !isClass && properties === null ? null : Object.create(null, properties || undefined);
-        }
-        else if (!Array.isArray(bases)) {
-            baseInitializer = bases.initializer;
-            proto = !isClass && properties === null ? bases.proto : Object.create(bases.proto, properties || undefined);
-        }
-        else {
-            // first is superclass, other are traits
-            baseInitializer = bases[0].initializer;
-            proto = computeProto(bases, properties);
-            // all bases are traits without properties
-            if (proto === null && isClass) {
-                proto = Object.create(null, properties || undefined);
-            }
+        if (!nullOrUndefined(baseClass)) {
+            baseInitializer = baseClass.$initializer;
+            basePrototypeObj = Object.create(baseClass.prototype);
         }
 
-        var constructor = createConstructor();
-        Object.defineProperty(constructor, "object$", {value: class_object$});
-        Object.defineProperty(constructor, "$object$", {value: undefined, writable: true});
-
-        Object.defineProperty(constructor, "proto", {value: proto});
-        Object.defineProperty(constructor, "properties", {value: properties || null});
-        if (isClass) {
-            Object.defineProperty(constructor, "initializer", {value: initializer});
-
-            Object.defineProperty(initializer, "baseInitializer", {value: baseInitializer});
-            Object.freeze(initializer);
+        Util.copyProperties(constr, staticProperties);
+        constr.prototype = computePrototype(bases, functions, basePrototypeObj);
+        if (!nullOrUndefined(initializer)) {
+            constr.$initializer = initializer;
+            constr.$initializer.baseInitializer = baseInitializer;
+        } else {
+            constr.$initializer = emptyFunction;
         }
+        constr.$isClass = true;
 
-        if (staticProperties !== null && staticProperties !== undefined) {
-            Object.defineProperties(constructor, staticProperties);
+        //Object.defineProperty(constr, "$object", {get: class_object}); // TODO: check & fix call $object()
+        constr.object$ = class_object;
+        return constr;
+    };
+
+    KotlinNew.createObject = function (bases, baseClass, initializer, functions) {
+        var basePrototypeObj;
+        var baseInitializer;
+        if (!nullOrUndefined(baseClass)) {
+            baseInitializer = baseClass.$initializer;
+            basePrototypeObj = Object.create(baseClass.prototype);
         }
-
-        Object.seal(constructor);
-        return constructor;
-    }
-
-    Kotlin.definePackage = function (initializer, members) {
-        var definition = Object.create(null, members === null ? undefined : members);
-        if (initializer === null) {
-            return {value: definition};
+        var obj = Object.create(computePrototype(bases, functions, basePrototypeObj));
+        if (!nullOrUndefined(initializer)) {
+            initializer.baseInitializer = baseInitializer;
+            initializer.call(obj);
         }
-        else {
-            var getter = createPackageGetter(definition, initializer);
-            Object.freeze(getter);
-            return {get: getter};
+        obj.$isClass = false;
+        return obj;
+    };
+
+    KotlinNew.createTrait = function (bases, functions, staticProperties) {
+        var obj = function () {};
+        obj.prototype = computePrototype(bases, functions);
+        Util.copyProperties(obj, staticProperties);
+        obj.$isClass = false;
+        return obj;
+    };
+
+    KotlinNew.keys = Object.keys;
+
+    KotlinNew.isType = function (object, klass) {
+        if (nullOrUndefined(object) || nullOrUndefined(klass)) {
+            return false;
+        } else {
+            return object instanceof klass; // TODO trait support
         }
     };
+
 
     function createPackageGetter(instance, initializer) {
         return function () {
@@ -157,15 +225,100 @@ var Kotlin = Object.create(null);
                 var tmp = initializer;
                 initializer = null;
                 tmp.call(instance);
-                Object.seal(instance);
             }
 
             return instance;
         };
     }
 
+    KotlinNew.definePackage = function (initializer, members) {
+        var definition = Object.create(null, members === null ? undefined : members);
+        if (initializer === null) {
+            return {value: definition};
+        }
+        else {
+            var getter = createPackageGetter(definition, initializer);
+            return {get: getter};
+        }
+    };
+
+    KotlinNew.defineModule = function (id, module) {
+        if (id in Kotlin.modules) {
+            throw Kotlin.$new(Kotlin.IllegalArgumentException)();
+        }
+
+        Object.defineProperty(Kotlin.modules, id, {value: module});
+    };
+
+})();
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+// Be aware — Google Chrome has serious issue — you can rewrite READ-ONLY property (if it is defined in prototype). Firefox and Safari work correct.
+// Always test property access issues in Firefox, but not in Chrome.
+var Kotlin = Object.create(null);
+
+(function () {
+    "use strict";
+
+    Kotlin.keys = KotlinNew.keys;
+
+    Kotlin.isType = function (object, type) {
+        return KotlinNew.isType(object, type);
+    };
+
+    function propertyDescriptorConverter(propertyDescriptor) {
+        var obj = {};
+        if (propertyDescriptor === null || propertyDescriptor === undefined) {
+            return obj;
+        }
+        for (var p in propertyDescriptor) {
+            if (propertyDescriptor.hasOwnProperty(p)) {
+                propertyDescriptor[p].enumerable = true;
+            }
+        }
+        Object.defineProperties(obj, propertyDescriptor);
+        return obj;
+    }
+
+
+    Kotlin.createTrait = function (bases, properties, staticProperties) {
+        return KotlinNew.createTrait(bases, propertyDescriptorConverter(properties), propertyDescriptorConverter(staticProperties));
+    };
+
+    Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
+        return KotlinNew.createClass(bases, KotlinNew.Util.getClass(bases), initializer, propertyDescriptorConverter(properties), propertyDescriptorConverter(staticProperties));
+    };
+
+
+    Kotlin.createObject = function (bases, initializer, properties) {
+        return KotlinNew.createObject(bases, KotlinNew.Util.getClass(bases), initializer, propertyDescriptorConverter(properties))
+    };
+
+    Kotlin.definePackage = function (initializer, members) {
+        return KotlinNew.definePackage(initializer, members);
+    };
+
+    Kotlin.defineModule = function (id, module) {
+        KotlinNew.defineModule(id, module);
+    };
+
+
     Kotlin.$new = function (f) {
-        return f;
+        var o = Object.create(f.prototype);
+        return function () {
+            f.apply(o, arguments);
+            return o;
+        };
     };
 
     Kotlin.$createClass = function (parent, properties) {
@@ -204,12 +357,6 @@ var Kotlin = Object.create(null);
         return Kotlin.createClass(parent || null, initializer, descriptors);
     };
 
-    Kotlin.defineModule = function (id, module) {
-        if (id in Kotlin.modules) {
-            throw Kotlin.$new(Kotlin.IllegalArgumentException)();
-        }
-
-        Object.freeze(module);
-        Object.defineProperty(Kotlin.modules, id, {value: module});
-    };
 })();
+
+
