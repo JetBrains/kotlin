@@ -70,5 +70,14 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                     return JetPropertyDelegationMethodsReference.create((JetPropertyDelegate) element);
                                                 }
                                             });
+
+        registrar.registerReferenceProvider(psiElement(JetForExpression.class),
+                                            new PsiReferenceProvider() {
+                                                @NotNull
+                                                @Override
+                                                public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
+                                                    return JetForLoopInReference.create((JetForExpression) element);
+                                                }
+                                            });
     }
 }
