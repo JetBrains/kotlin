@@ -19,8 +19,10 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
+import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
@@ -121,6 +123,8 @@ public class FunctionCodegen extends GenerationStateAware {
 
         generateParameterAnnotations(functionDescriptor, mv);
 
+        generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
+
         if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
@@ -140,6 +144,57 @@ public class FunctionCodegen extends GenerationStateAware {
     private void generateParameterAnnotations(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodVisitor mv) {
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
             AnnotationCodegen.forParameter(parameter.getIndex(), mv, typeMapper).genAnnotations(parameter);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void generateJetValueParameterAnnotations(
+            @NotNull MethodVisitor mv,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull JvmMethodSignature jvmSignature
+    ) {
+        Iterator<ValueParameterDescriptor> descriptors = functionDescriptor.getValueParameters().iterator();
+        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
+
+        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
+            JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
+            if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
+                // We shouldn't generate annotations for invisible in runtime parameters otherwise we get bad
+                // RuntimeInvisibleParameterAnnotations error in javac
+                continue;
+            }
+
+            String name;
+            boolean nullableType;
+            if (kind == JvmMethodParameterKind.VALUE) {
+                ValueParameterDescriptor descriptor = descriptors.next();
+                name = descriptor.getName().asString();
+                nullableType = descriptor.getType().isNullable();
+            }
+            else {
+                String lowercaseKind = kind.name().toLowerCase();
+                if (needIndexForVar(kind)) {
+                    name = "$" + lowercaseKind + "$" + i;
+                }
+                else {
+                    name = "$" + lowercaseKind;
+                }
+
+                if (kind == JvmMethodParameterKind.RECEIVER) {
+                    ReceiverParameterDescriptor receiver = functionDescriptor.getReceiverParameter();
+                    nullableType = receiver == null || receiver.getType().isNullable();
+                }
+                else {
+                    nullableType = true;
+                }
+            }
+
+            AnnotationVisitor av = mv.visitParameterAnnotation(i, JvmClassName.byClass(JetValueParameter.class).getDescriptor(), true);
+            av.visit("name", name);
+            if (nullableType) {
+                av.visit("type", "?");
+            }
+            av.visitEnd();
         }
     }
 
