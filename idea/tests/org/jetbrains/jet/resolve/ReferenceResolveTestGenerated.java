@@ -205,6 +205,11 @@ public class ReferenceResolveTestGenerated extends AbstractResolveBaseTest {
                 doTest("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getMultipleDeclarations.kt");
             }
             
+            @TestMetadata("getOneFakeOverride.kt")
+            public void testGetOneFakeOverride() throws Exception {
+                doTest("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getOneFakeOverride.kt");
+            }
+            
             @TestMetadata("getSetExtension.kt")
             public void testGetSetExtension() throws Exception {
                 doTest("idea/testData/resolve/references/delegatedPropertyAccessors/inSource/getSetExtension.kt");
