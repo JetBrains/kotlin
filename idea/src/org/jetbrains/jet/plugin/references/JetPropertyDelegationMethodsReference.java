@@ -101,10 +101,10 @@ public class JetPropertyDelegationMethodsReference implements PsiPolyVariantRefe
             results.add(new PsiElementResolveResult(declarationInDecompiledFile));
         }
 
-        Collection<PsiElement> stdlibSymbols =
-                project.getComponent(BuiltInsReferenceResolver.class).resolveStandardLibrarySymbol(resultingDescriptor);
+        Collection<PsiElement> builtInSymbols =
+                project.getComponent(BuiltInsReferenceResolver.class).resolveBuiltInSymbol(resultingDescriptor);
 
-        for (PsiElement symbol : stdlibSymbols) {
+        for (PsiElement symbol : builtInSymbols) {
             results.add(new PsiElementResolveResult(symbol));
         }
     }

@@ -40,7 +40,7 @@ public final class DescriptorToDeclarationUtil {
         if (elements.isEmpty()) {
             BuiltInsReferenceResolver libraryReferenceResolver =
                     project.getComponent(BuiltInsReferenceResolver.class);
-            elements = libraryReferenceResolver.resolveStandardLibrarySymbol(descriptor);
+            elements = libraryReferenceResolver.resolveBuiltInSymbol(descriptor);
         }
 
         if (!elements.isEmpty()) {

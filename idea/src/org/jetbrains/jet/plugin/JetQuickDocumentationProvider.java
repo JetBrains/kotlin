@@ -110,7 +110,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         if (declaration == null) {
             BuiltInsReferenceResolver libraryReferenceResolver = project
                     .getComponent(BuiltInsReferenceResolver.class);
-            Collection<PsiElement> elements = libraryReferenceResolver.resolveStandardLibrarySymbol(descriptor);
+            Collection<PsiElement> elements = libraryReferenceResolver.resolveBuiltInSymbol(descriptor);
             return !elements.isEmpty();
         }
 
