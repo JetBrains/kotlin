@@ -413,5 +413,11 @@
 
   <extensionPoints>
     <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
+    <extensionPoint name="projectConfigurator" interface="org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator"/>
   </extensionPoints>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator"/>
+    <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator"/>
+  </extensions>
 </idea-plugin>

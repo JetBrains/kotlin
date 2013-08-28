@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialog">
-  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialogBase">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="48" y="54" width="436" height="297"/>
@@ -10,18 +10,18 @@
     <children>
       <vspacer id="bb37c">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <grid id="46726" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="10" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="90315" class="javax.swing.JCheckBox" binding="copyLibraryCheckbox">
+          <component id="90315" class="javax.swing.JCheckBox" binding="copyJarCheckbox">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -30,7 +30,7 @@
               <text value="&amp;Make local copy of library (could be stored in VCS) "/>
             </properties>
           </component>
-          <component id="dd25b" class="javax.swing.JCheckBox" binding="copyJSRuntimeCheckbox" default-binding="true">
+          <component id="dd25b" class="javax.swing.JCheckBox" binding="copyJsFilesCheckbox" default-binding="true">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -39,7 +39,7 @@
               <text value="&amp;Get JavaScript runtime files"/>
             </properties>
           </component>
-          <grid id="11e35" binding="copyJSIntoPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="11e35" binding="copyJsFilesPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
             </constraints>
@@ -47,7 +47,7 @@
             <border type="none"/>
             <children/>
           </grid>
-          <grid id="2bd15" binding="copyHeadersIntoPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="2bd15" binding="copyJarFilePanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="3" use-parent-layout="false"/>
             </constraints>
@@ -65,6 +65,14 @@
           <text value="Using compiler bundled into plugin"/>
         </properties>
       </component>
+      <grid id="beed7" binding="chooseModulesPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
     </children>
   </grid>
   <buttonGroups>

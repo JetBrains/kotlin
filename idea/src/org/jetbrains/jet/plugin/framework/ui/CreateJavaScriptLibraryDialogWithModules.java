@@ -16,18 +16,39 @@
 
 package org.jetbrains.jet.plugin.framework.ui;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.framework.JSLibraryCreateOptions;
 
-public class CreateJavaScriptLibraryDialog extends CreateJavaScriptLibraryDialogBase implements JSLibraryCreateOptions {
+import java.awt.*;
+import java.util.List;
 
-    public CreateJavaScriptLibraryDialog(
+public class CreateJavaScriptLibraryDialogWithModules extends CreateJavaScriptLibraryDialogBase implements JSLibraryCreateOptions {
+
+    private final ChooseModulePanel chooseModulePanel;
+
+    public CreateJavaScriptLibraryDialogWithModules(
+            @NotNull Project project,
+            @NotNull List<Module> modules,
             @NotNull String defaultPathToJar,
             @NotNull String defaultPathToJsFile,
             boolean showPathToJarPanel,
             boolean showPathToJsFilePanel
     ) {
-        super(null, defaultPathToJar, defaultPathToJsFile, showPathToJarPanel, showPathToJsFilePanel);
+        super(project, defaultPathToJar, defaultPathToJsFile, showPathToJarPanel, showPathToJsFilePanel);
+
+        chooseModulePanel = new ChooseModulePanel(project, modules);
+        chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
+
+        if (showPathToJarPanel || showPathToJsFilePanel) {
+            chooseModulePanel.showSeparator();
+        }
+
         updateComponents();
+    }
+
+    public List<Module> getModulesToConfigure() {
+        return chooseModulePanel.getModulesToConfigure();
     }
 }
