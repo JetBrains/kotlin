@@ -30,8 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 public class DelegatingBindingTrace implements BindingTrace {
+    @SuppressWarnings("ConstantConditions")
+    private final MutableSlicedMap map = BindingTraceContext.TRACK_REWRITES ? new TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create();
+
     private final BindingContext parentContext;
-    private final MutableSlicedMap map = SlicedMapImpl.create();
     private final List<Diagnostic> diagnostics = Lists.newArrayList();
     private final String name;
 

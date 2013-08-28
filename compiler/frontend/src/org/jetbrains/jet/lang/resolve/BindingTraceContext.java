@@ -30,8 +30,8 @@ public class BindingTraceContext implements BindingTrace {
     private final List<Diagnostic> diagnostics = Lists.newArrayList();
 
     // These flags are used for debugging of "Rewrite at slice..." exceptions
-    private final static boolean TRACK_REWRITES = false;
-    private final static boolean TRACK_WITH_STACK_TRACES = true;
+    /* package */ final static boolean TRACK_REWRITES = false;
+    /* package */ final static boolean TRACK_WITH_STACK_TRACES = true;
 
     private final MutableSlicedMap map;
 
