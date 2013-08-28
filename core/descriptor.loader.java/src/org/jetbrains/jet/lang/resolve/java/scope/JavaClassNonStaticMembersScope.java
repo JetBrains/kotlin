@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
@@ -35,18 +34,15 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     private final ClassDescriptor descriptor;
     @NotNull
     private final JavaClass javaClass;
-    private final boolean staticMembersOfPsiClass;
 
     public JavaClassNonStaticMembersScope(
             @NotNull ClassDescriptor descriptor,
             @NotNull JavaClass javaClass,
-            boolean staticMembersOfClass,
             @NotNull JavaMemberResolver memberResolver
     ) {
-        super(descriptor, MembersProvider.forClass(javaClass, staticMembersOfClass), memberResolver);
+        super(descriptor, MembersProvider.forClass(javaClass, false), memberResolver);
         this.descriptor = descriptor;
         this.javaClass = javaClass;
-        this.staticMembersOfPsiClass = staticMembersOfClass;
     }
 
     @NotNull
@@ -57,10 +53,6 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     @NotNull
     @Override
     protected Collection<ClassDescriptor> computeInnerClasses() {
-        if (staticMembersOfPsiClass) {
-            return Collections.emptyList();
-        }
-
         Collection<JavaClass> innerClasses = javaClass.getInnerClasses();
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>(innerClasses.size());
         for (JavaClass innerClass : innerClasses) {

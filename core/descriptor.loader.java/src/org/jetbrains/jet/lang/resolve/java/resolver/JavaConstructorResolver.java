@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.DefaultDescriptorFactory;
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -71,10 +70,7 @@ public final class JavaConstructorResolver {
 
         Collection<JavaMethod> constructors = javaClass.getConstructors();
 
-        if (containingClass.getKind() == ClassKind.OBJECT || containingClass.getKind() == ClassKind.CLASS_OBJECT) {
-            result.add(DefaultDescriptorFactory.createPrimaryConstructorForObject(containingClass));
-        }
-        else if (constructors.isEmpty()) {
+        if (constructors.isEmpty()) {
             ConstructorDescriptor defaultConstructor = resolveDefaultConstructor(javaClass, containingClass);
             if (defaultConstructor != null) {
                 result.add(defaultConstructor);
