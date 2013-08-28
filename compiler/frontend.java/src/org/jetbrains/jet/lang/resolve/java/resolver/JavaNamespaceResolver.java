@@ -248,7 +248,7 @@ public final class JavaNamespaceResolver {
         JavaPackage javaPackage = javaClassFinder.findPackage(packageName);
         if (javaPackage == null) return Collections.emptyList();
 
-        Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
+        Collection<JavaClass> classes = DescriptorResolverUtils.getClassesInPackage(javaPackage);
         List<Name> result = new ArrayList<Name>(classes.size());
         for (JavaClass javaClass : classes) {
             if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass)) {

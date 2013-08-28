@@ -93,7 +93,7 @@ public final class JavaPackageScope extends JavaBaseScope {
             }
         }
 
-        for (JavaClass javaClass : DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses())) {
+        for (JavaClass javaClass : DescriptorResolverUtils.getClassesInPackage(javaPackage)) {
             if (DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass)) continue;
 
             if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) continue;

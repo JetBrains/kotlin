@@ -93,7 +93,7 @@ import java.util.Map;
     public static MembersCache buildForPackage(@NotNull JavaPackage javaPackage) {
         MembersCache membersCache = new MembersCache();
 
-        Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
+        Collection<JavaClass> classes = DescriptorResolverUtils.getClassesInPackage(javaPackage);
         membersCache.new ExtraPackageMembersProcessor(classes).process();
 
         return membersCache;

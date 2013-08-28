@@ -131,7 +131,8 @@ public final class DescriptorResolverUtils {
     }
 
     @NotNull
-    public static Collection<JavaClass> filterDuplicateClasses(@NotNull Collection<JavaClass> classes) {
+    public static Collection<JavaClass> getClassesInPackage(@NotNull JavaPackage javaPackage) {
+        Collection<JavaClass> classes = javaPackage.getClasses();
         Set<FqName> addedQualifiedNames = new HashSet<FqName>(classes.size());
         List<JavaClass> result = new ArrayList<JavaClass>(classes.size());
 

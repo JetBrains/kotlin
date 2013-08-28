@@ -22,6 +22,10 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.Collection;
 
 public interface JavaPackage extends JavaElement {
+    /**
+     * NOTE: do not use this method directly
+     * @see org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils#getClassesInPackage(JavaPackage)
+     */
     @NotNull
     Collection<JavaClass> getClasses();
 
