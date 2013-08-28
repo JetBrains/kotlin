@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
@@ -32,8 +31,6 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
-    private Collection<ConstructorDescriptor> constructors = null;
-    private ConstructorDescriptor primaryConstructor = null;
     @NotNull
     private final ClassDescriptor descriptor;
     @NotNull
@@ -52,33 +49,9 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
         this.staticMembersOfPsiClass = staticMembersOfClass;
     }
 
-
     @NotNull
     public Collection<ConstructorDescriptor> getConstructors() {
-        initConstructorsIfNeeded();
-        return constructors;
-    }
-
-    @Nullable
-    public ConstructorDescriptor getPrimaryConstructor() {
-        initConstructorsIfNeeded();
-        return primaryConstructor;
-    }
-
-    private void initConstructorsIfNeeded() {
-        if (constructors == null) {
-            constructors = memberResolver.resolveConstructors(javaClass, descriptor);
-
-            for (ConstructorDescriptor constructor : constructors) {
-                if (constructor.isPrimary()) {
-                    if (primaryConstructor != null) {
-                        throw new IllegalStateException(
-                                "Class has more than one primary constructor: " + primaryConstructor + "\n" + constructor);
-                    }
-                    primaryConstructor = constructor;
-                }
-            }
-        }
+        return memberResolver.resolveConstructors(javaClass, descriptor);
     }
 
     @NotNull
