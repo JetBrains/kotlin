@@ -1,0 +1,5 @@
+<root>
+    <item name='j.J java.lang.String foo()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

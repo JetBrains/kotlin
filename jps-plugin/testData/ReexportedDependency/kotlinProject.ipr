@@ -13,4 +13,19 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA_JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
+  <component name="libraryTable">
+    <library name="lib">
+      <ANNOTATIONS>
+        <root url="file://$PROJECT_DIR$/module2/lib" />
+      </ANNOTATIONS>
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/module2/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/module2/lib" />
+      </SOURCES>
+    </library>
+  </component>
 </project>
+

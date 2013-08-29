@@ -27,17 +27,13 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
-import org.jetbrains.jps.model.java.JpsAnnotationRootType;
-import org.jetbrains.jps.model.java.JpsJavaClasspathKind;
-import org.jetbrains.jps.model.java.JpsJavaDependenciesEnumerator;
-import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.jps.model.JpsDummyElement;
+import org.jetbrains.jps.model.java.*;
 import org.jetbrains.jps.model.library.JpsLibrary;
-import org.jetbrains.jps.model.library.JpsLibraryRoot;
+import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
-import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsSdkDependency;
-import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,11 +88,8 @@ public class KotlinBuilderModuleScriptGenerator {
 
     @NotNull
     private static Collection<File> findClassPathRoots(@NotNull ModuleBuildTarget target) {
-        JpsModule module = target.getModule();
-        JpsJavaDependenciesEnumerator dependencies = JpsJavaExtensionService.dependencies(module).recursively().exportedOnly()
-                .includedIn(JpsJavaClasspathKind.compile(target.isTests()));
 
-        return dependencies.classes().getRoots();
+        return getAllDependencies(target).classes().getRoots();
     }
 
     @NotNull
@@ -114,20 +107,15 @@ public class KotlinBuilderModuleScriptGenerator {
 
     @NotNull
     private static List<File> findAnnotationRoots(@NotNull ModuleBuildTarget target) {
-        JpsModule module = target.getModule();
-        List<JpsDependencyElement> dependencies = module.getDependenciesList().getDependencies();
-
         List<File> annotationRootFiles = ContainerUtil.newArrayList();
-        for (JpsDependencyElement dependencyElement : dependencies) {
-            JpsLibrary library = getLibrary(dependencyElement);
-            if (library == null) continue;
 
-            List<JpsLibraryRoot> annotationRoots = library.getRoots(JpsAnnotationRootType.INSTANCE);
-            for (JpsLibraryRoot root : annotationRoots) {
-                File file = new File(JpsPathUtil.urlToPath(root.getUrl()));
+        JpsSdk<JpsDummyElement> sdk = target.getModule().getSdk(JpsJavaSdkType.INSTANCE);
+        if (sdk != null) {
+            annotationRootFiles.addAll(sdk.getParent().getFiles(JpsAnnotationRootType.INSTANCE));
+        }
 
-                annotationRootFiles.add(file);
-            }
+        for (JpsLibrary library : getAllDependencies(target).getLibraries()) {
+            annotationRootFiles.addAll(library.getFiles(JpsAnnotationRootType.INSTANCE));
         }
 
         // JDK is stored locally on user's machine, so its configuration, including external annotation paths
@@ -141,6 +129,12 @@ public class KotlinBuilderModuleScriptGenerator {
         }
 
         return annotationRootFiles;
+    }
+
+    @NotNull
+    private static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
+        return JpsJavaExtensionService.dependencies(target.getModule()).recursively().exportedOnly()
+                    .includedIn(JpsJavaClasspathKind.compile(target.isTests()));
     }
 
     @Nullable
