@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.doc.highlighter2.Html2CompilerPlugin
 import org.jetbrains.kotlin.doc.model.*
 
 /** Generates the Kotlin Documentation for the model */
-class KDoc(protected arguments: KDocArguments) : KModelCompilerPlugin(arguments) {
+class KDoc(arguments: KDocArguments) : KModelCompilerPlugin(arguments) {
 
     protected override fun processModel(model: KModel) {
         val outputDir = File(arguments.apply().docOutputDir)
