@@ -159,8 +159,9 @@ var KotlinNew = {};
         };
     }
 
-    // bases - array, @NotNull, baseClass - _.foo.B, @Nullable
-    KotlinNew.createClass = function (bases, baseClass, initializer, functions, staticProperties) {
+    // bases - array, @Nullable, baseClass - _.foo.B, @Nullable
+    KotlinNew.createClass = function (bases, initializer, functions, staticProperties) {
+        var baseClass = KotlinNew.Util.getClass(bases);
         var constr = createConstructor();
         var basePrototypeObj;
         var baseInitializer;
@@ -184,7 +185,8 @@ var KotlinNew = {};
         return constr;
     };
 
-    KotlinNew.createObject = function (bases, baseClass, initializer, functions) {
+    KotlinNew.createObject = function (bases, initializer, functions) {
+        var baseClass = KotlinNew.Util.getClass(bases);
         var basePrototypeObj;
         var baseInitializer;
         if (!nullOrUndefined(baseClass)) {
@@ -296,12 +298,12 @@ var Kotlin = Object.create(null);
     };
 
     Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
-        return KotlinNew.createClass(bases, KotlinNew.Util.getClass(bases), initializer, propertyDescriptorConverter(properties), propertyDescriptorConverter(staticProperties));
+        return KotlinNew.createClass(bases, initializer, propertyDescriptorConverter(properties), propertyDescriptorConverter(staticProperties));
     };
 
 
     Kotlin.createObject = function (bases, initializer, properties) {
-        return KotlinNew.createObject(bases, KotlinNew.Util.getClass(bases), initializer, propertyDescriptorConverter(properties))
+        return KotlinNew.createObject(bases, initializer, propertyDescriptorConverter(properties))
     };
 
     Kotlin.definePackage = function (initializer, members) {
