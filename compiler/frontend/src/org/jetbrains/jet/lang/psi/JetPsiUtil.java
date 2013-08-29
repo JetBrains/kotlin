@@ -563,6 +563,21 @@ public class JetPsiUtil {
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
     }
 
+    @NotNull
+    public static JetExpression unwrapFromBlock(@NotNull JetExpression expression) {
+        //used for 'if' branches that are wrapped in a block
+        if (expression instanceof JetBlockExpression) {
+            List<JetElement> statements = ((JetBlockExpression) expression).getStatements();
+            if (statements.size() == 1) {
+                JetElement lastStatement = getLastStatementInABlock((JetBlockExpression) expression);
+                if (lastStatement instanceof JetExpression) {
+                    return (JetExpression) lastStatement;
+                }
+            }
+        }
+        return expression;
+    }
+
     public static boolean isLocalClass(@NotNull JetClassOrObject classOrObject) {
         return getOutermostClassOrObject(classOrObject) == null;
     }

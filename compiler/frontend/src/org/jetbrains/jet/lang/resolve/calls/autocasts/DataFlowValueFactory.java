@@ -160,15 +160,6 @@ public class DataFlowValueFactory {
 
             return getIdForStableIdentifier(innerExpression, bindingContext);
         }
-        else if (expression instanceof JetBlockExpression) {
-            List<JetElement> statements = ((JetBlockExpression) expression).getStatements();
-            if (statements.size() == 1) {
-                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) expression);
-                if (lastStatement instanceof JetExpression) {
-                    return getIdForStableIdentifier((JetExpression) lastStatement, bindingContext);
-                }
-            }
-        }
         else if (expression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
             JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();

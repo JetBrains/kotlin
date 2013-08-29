@@ -145,9 +145,11 @@ public class DataFlowUtils {
     }
 
     @Nullable
-    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression,
+    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression possiblyWrappedInBlockExpression,
             @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace
     ) {
+        // non-block 'if' branches are wrapped in a block, but here genuine expressions (not wrappers) should be checked
+        JetExpression expression = JetPsiUtil.unwrapFromBlock(possiblyWrappedInBlockExpression);
         if (!noExpectedType(expectedType)) {
             trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, expectedType);
         }

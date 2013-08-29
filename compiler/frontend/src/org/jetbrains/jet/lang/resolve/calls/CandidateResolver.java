@@ -698,7 +698,8 @@ public class CandidateResolver {
     ) {
         if (argumentExpression == null || type == null) return type;
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(argumentExpression, type, trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(
+                JetPsiUtil.unwrapFromBlock(argumentExpression), type, trace.getBindingContext());
         Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;
 
@@ -819,8 +820,9 @@ public class CandidateResolver {
             @NotNull JetType actualType,
             @NotNull ResolutionContext<?> context
     ) {
-        ExpressionReceiver receiverToCast = new ExpressionReceiver(expression, actualType);
-        List<ReceiverValue> variants = AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
+        ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.unwrapFromBlock(expression), actualType);
+        List<ReceiverValue> variants =
+                AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (ReceiverValue receiverValue : variants) {
             JetType possibleType = receiverValue.getType();
             if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
