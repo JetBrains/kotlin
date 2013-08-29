@@ -25,22 +25,13 @@ import org.jetbrains.asm4.signature.SignatureVisitor;
 import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.asm4.util.CheckSignatureAdapter;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JetSignatureUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
-import org.jetbrains.jet.rt.signature.JetSignatureReader;
-import org.jetbrains.jet.rt.signature.JetSignatureVariance;
-import org.jetbrains.jet.rt.signature.JetSignatureWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BothSignatureWriter {
-
-    private static final boolean DEBUG_SIGNATURE_WRITER = true;
-
     public enum Mode {
         METHOD(CheckSignatureAdapter.METHOD_SIGNATURE),
         CLASS(CheckSignatureAdapter.CLASS_SIGNATURE),
@@ -53,32 +44,10 @@ public class BothSignatureWriter {
         }
     }
 
-    private enum State {
-        START,
-        TYPE_PARAMETERS,
-
-        PARAMETERS,
-        PARAMETER,
-        RETURN_TYPE,
-        METHOD_END,
-
-        FIELD,
-        FIELD_END,
-
-        SUPERS,
-        CLASS_END,
-    }
-
     private final SignatureWriter signatureWriter = new SignatureWriter();
     private final SignatureVisitor signatureVisitor;
 
-    private JetSignatureWriter jetSignatureWriter;
-
-    private String kotlinClassParameters;
-    private String kotlinClassSignature;
-
     private final List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<JvmMethodParameterSignature>();
-    private String kotlinReturnType;
 
     private int jvmCurrentTypeArrayLevel;
     private Type jvmCurrentType;
@@ -86,26 +55,16 @@ public class BothSignatureWriter {
 
     private JvmMethodParameterKind currentParameterKind;
 
-    private final Mode mode;
     private final boolean needGenerics;
-
-    private State state = State.START;
 
     private boolean generic = false;
 
     public BothSignatureWriter(Mode mode, boolean needGenerics) {
-        this.mode = mode;
         this.needGenerics = needGenerics;
 
-        if (DEBUG_SIGNATURE_WRITER) {
-            signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
-        }
-        else {
-            signatureVisitor = signatureWriter;
-        }
+        this.signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
     }
 
-    // TODO: ignore when debugging is disabled
     private final Stack<SignatureVisitor> visitors = new Stack<SignatureVisitor>();
 
     private void push(SignatureVisitor visitor) {
@@ -116,96 +75,39 @@ public class BothSignatureWriter {
         visitors.pop();
     }
 
-
     private SignatureVisitor signatureVisitor() {
         return !visitors.isEmpty() ? visitors.peek() : signatureVisitor;
-    }
-
-    private void checkTopLevel() {
-        if (DEBUG_SIGNATURE_WRITER) {
-            if (!visitors.isEmpty()) {
-                throw new IllegalStateException();
-            }
-        }
-    }
-
-    private void checkMode(Mode mode) {
-        if (DEBUG_SIGNATURE_WRITER) {
-            if (mode != this.mode) {
-                throw new IllegalStateException();
-            }
-        }
-    }
-
-    private void checkState(State state) {
-        if (DEBUG_SIGNATURE_WRITER) {
-            if (state != this.state) {
-                throw new IllegalStateException();
-            }
-            if (jetSignatureWriter != null) {
-                throw new IllegalStateException();
-            }
-            checkTopLevel();
-        }
-    }
-
-    private void transitionState(State from, State to) {
-        checkState(from);
-        state = to;
-    }
-
-    public void writeAsmType(Type asmType, boolean nullable) {
-        writeAsmType(asmType, nullable, null);
     }
 
     /**
      * Shortcut
      */
-    public void writeAsmType(Type asmType, boolean nullable, @Nullable String kotlinTypeName) {
+    public void writeAsmType(Type asmType) {
         switch (asmType.getSort()) {
             case Type.OBJECT:
-                writeClassBegin(asmType.getInternalName(), nullable, false, kotlinTypeName);
+                writeClassBegin(asmType);
                 writeClassEnd();
                 return;
             case Type.ARRAY:
-                writeArrayType(nullable, Variance.INVARIANT);
-                writeAsmType(asmType.getElementType(), false, kotlinTypeName);
+                writeArrayType();
+                writeAsmType(asmType.getElementType());
                 writeArrayEnd();
                 return;
             default:
-                String descriptor = asmType.getDescriptor();
-                if (descriptor.length() != 1) {
-                    throw new IllegalStateException();
-                }
-                writeBaseType(descriptor.charAt(0), nullable);
+                signatureVisitor().visitBaseType(asmType.getDescriptor().charAt(0));
+                writeAsmType0(asmType);
         }
     }
 
-    private void writeBaseType(char c, boolean nullable) {
-        if (nullable) {
-            throw new IllegalStateException();
-        }
-        signatureVisitor().visitBaseType(c);
-        jetSignatureWriter.visitBaseType(c, nullable);
-        writeAsmType0(Type.getType(String.valueOf(c)));
+    public void writeNothing() {
+        signatureVisitor().visitBaseType('V');
+        writeAsmType0(Type.VOID_TYPE);
     }
 
-    public void writeNothing(boolean nullable) {
-        if (nullable) {
-            signatureVisitor().visitClassType("java/lang/Object");
-            signatureVisitor().visitEnd();
-        }
-        else {
-            signatureVisitor().visitBaseType('V');
-        }
-        jetSignatureWriter.visitClassType("jet/Nothing", nullable, false);
-        jetSignatureWriter.visitEnd();
-        if (nullable) {
-            writeAsmType0(AsmTypeConstants.OBJECT_TYPE);
-        }
-        else {
-            writeAsmType0(Type.VOID_TYPE);
-        }
+    public void writeNullableNothing() {
+        signatureVisitor().visitClassType("java/lang/Object");
+        signatureVisitor().visitEnd();
+        writeAsmType0(AsmTypeConstants.OBJECT_TYPE);
     }
 
     private String makeArrayPrefix() {
@@ -222,24 +124,17 @@ public class BothSignatureWriter {
         }
     }
 
-    public void writeClassBegin(String internalName, boolean nullable, boolean real) {
-        writeClassBegin(internalName, nullable, real, null);
-    }
-
-    public void writeClassBegin(String internalName, boolean nullable, boolean real, @Nullable String kotlinTypeName) {
-        signatureVisitor().visitClassType(internalName);
-        jetSignatureWriter.visitClassType(kotlinTypeName == null ? internalName : kotlinTypeName, nullable, real);
-        writeAsmType0(Type.getObjectType(internalName));
+    public void writeClassBegin(Type asmType) {
+        signatureVisitor().visitClassType(asmType.getInternalName());
+        writeAsmType0(asmType);
     }
 
     public void writeClassEnd() {
         signatureVisitor().visitEnd();
-        jetSignatureWriter.visitEnd();
     }
 
-    public void writeArrayType(boolean nullable, Variance projectionKind) {
+    public void writeArrayType() {
         push(signatureVisitor().visitArrayType());
-        jetSignatureWriter.visitArrayType(nullable, toJetSignatureVariance(projectionKind));
         if (jvmCurrentType == null) {
             ++jvmCurrentTypeArrayLevel;
         }
@@ -249,25 +144,18 @@ public class BothSignatureWriter {
         pop();
     }
 
-    private static JetSignatureVariance toJetSignatureVariance(Variance variance) {
+    private static char toJvmVariance(@NotNull Variance variance) {
         switch (variance) {
-            case INVARIANT:
-                return JetSignatureVariance.INVARIANT;
-            case IN_VARIANCE:
-                return JetSignatureVariance.IN;
-            case OUT_VARIANCE:
-                return JetSignatureVariance.OUT;
-            default:
-                throw new IllegalStateException();
+            case INVARIANT: return '=';
+            case IN_VARIANCE: return '-';
+            case OUT_VARIANCE: return '+';
+            default: throw new IllegalStateException("Unknown variance: " + variance);
         }
     }
 
-    public void writeTypeArgument(Variance projectionKindForKotlin, Variance projectionKindForJava) {
-        push(signatureVisitor().visitTypeArgument(
-                toJetSignatureVariance(projectionKindForJava).getChar()
-        ));
+    public void writeTypeArgument(@NotNull Variance projectionKind) {
+        push(signatureVisitor().visitTypeArgument(toJvmVariance(projectionKind)));
 
-        jetSignatureWriter.visitTypeArgument(toJetSignatureVariance(projectionKindForKotlin));
         generic = true;
     }
 
@@ -275,49 +163,20 @@ public class BothSignatureWriter {
         pop();
     }
 
-    public void writeTypeVariable(Name name, boolean nullable, Type asmType) {
+    public void writeTypeVariable(Name name, Type asmType) {
         signatureVisitor().visitTypeVariable(name.asString());
-        jetSignatureWriter.visitTypeVariable(name.asString(), nullable);
         generic = true;
         writeAsmType0(asmType);
     }
 
-    public void writeFormalTypeParameter(String name, Variance variance, boolean reified) {
-        checkTopLevel();
-
+    public void writeFormalTypeParameter(String name) {
         signatureVisitor().visitFormalTypeParameter(name);
-        jetSignatureWriter.visitFormalTypeParameter(name, JetSignatureUtils.translateVariance(variance), reified);
 
         generic = true;
     }
 
-    public void writeFormalTypeParameterEnd() {
-        jetSignatureWriter.visitFormalTypeParameterEnd();
-    }
-
-    public void writeFormalTypeParametersStart() {
-        checkTopLevel();
-        transitionState(State.START, State.TYPE_PARAMETERS);
-        jetSignatureWriter = new JetSignatureWriter();
-    }
-
-    public void writeFormalTypeParametersEnd() {
-        jetSignatureWriter.visitSuperclass(); // just to call endFormals
-
-        kotlinClassParameters = jetSignatureWriter.toString();
-
-        jetSignatureWriter = null;
-
-        if (DEBUG_SIGNATURE_WRITER) {
-            new JetSignatureReader(kotlinClassParameters).acceptFormalTypeParametersOnly(new JetSignatureAdapter());
-        }
-
-        checkState(State.TYPE_PARAMETERS);
-    }
-
     public void writeClassBound() {
         push(signatureVisitor().visitClassBound());
-        jetSignatureWriter.visitClassBound();
     }
 
     public void writeClassBoundEnd() {
@@ -326,7 +185,6 @@ public class BothSignatureWriter {
 
     public void writeInterfaceBound() {
         push(signatureVisitor().visitInterfaceBound());
-        jetSignatureWriter.visitInterfaceBound();
     }
 
     public void writeInterfaceBoundEnd() {
@@ -334,30 +192,12 @@ public class BothSignatureWriter {
     }
 
     public void writeParametersStart() {
-        transitionState(State.TYPE_PARAMETERS, State.PARAMETERS);
-
         // hacks
         jvmCurrentType = null;
         jvmCurrentTypeArrayLevel = 0;
     }
 
-    public void writeParametersEnd() {
-        checkState(State.PARAMETERS);
-    }
-
-    public void writeFieldTypeStart() {
-        transitionState(State.START, State.FIELD);
-        jetSignatureWriter = new JetSignatureWriter();
-    }
-
-    public void writeFieldTypeEnd() {
-        jetSignatureWriter = null;
-        transitionState(State.FIELD, State.FIELD_END);
-    }
-
     public void writeParameterType(JvmMethodParameterKind parameterKind) {
-        transitionState(State.PARAMETERS, State.PARAMETER);
-
         // This magic mimics the behavior of javac that enum constructor have these synthetic parameters in erased signature, but doesn't
         // have them in generic signature. IDEA relies on this behavior.
         if (parameterKind == JvmMethodParameterKind.ENUM_NAME || parameterKind == JvmMethodParameterKind.ENUM_ORDINAL) {
@@ -370,127 +210,50 @@ public class BothSignatureWriter {
             push(signatureVisitor().visitParameterType());
         }
 
-        jetSignatureWriter = new JetSignatureWriter();
-        if (jvmCurrentType != null || jvmCurrentTypeArrayLevel != 0) {
-            throw new IllegalStateException();
-        }
-
-        if (currentParameterKind != null) {
-            throw new IllegalStateException();
-        }
         this.currentParameterKind = parameterKind;
-
-        //jetSignatureWriter.visitParameterType();
     }
 
     public void writeParameterTypeEnd() {
         pop();
 
-        if (jvmCurrentType == null) {
-            throw new IllegalStateException();
-        }
-
-        String signature = jetSignatureWriter.toString();
-        kotlinParameterTypes.add(new JvmMethodParameterSignature(jvmCurrentType, signature, currentParameterKind));
-
-        if (DEBUG_SIGNATURE_WRITER) {
-            new JetSignatureReader(signature).acceptTypeOnly(new JetSignatureAdapter());
-        }
+        kotlinParameterTypes.add(new JvmMethodParameterSignature(jvmCurrentType, currentParameterKind));
 
         currentParameterKind = null;
         jvmCurrentType = null;
         jvmCurrentTypeArrayLevel = 0;
-
-        jetSignatureWriter = null;
-        transitionState(State.PARAMETER, State.PARAMETERS);
     }
 
     public void writeReturnType() {
-        transitionState(State.PARAMETERS, State.RETURN_TYPE);
-
-        jetSignatureWriter = new JetSignatureWriter();
-
-        if (jvmCurrentType != null) {
-            throw new IllegalStateException();
-        }
-
         push(signatureVisitor().visitReturnType());
-        //jetSignatureWriter.visitReturnType();
     }
 
     public void writeReturnTypeEnd() {
         pop();
 
-        kotlinReturnType = jetSignatureWriter.toString();
-
-        if (jvmCurrentType == null) {
-            throw new IllegalStateException();
-        }
-
         jvmReturnType = jvmCurrentType;
         jvmCurrentType = null;
         jvmCurrentTypeArrayLevel = 0;
-
-        if (DEBUG_SIGNATURE_WRITER) {
-            new JetSignatureReader(kotlinReturnType).acceptTypeOnly(new JetSignatureAdapter());
-        }
-
-        jetSignatureWriter = null;
-        transitionState(State.RETURN_TYPE, State.METHOD_END);
-    }
-
-    public void writeVoidReturn() {
-        writeReturnType();
-        writeAsmType(Type.VOID_TYPE, false);
-        writeReturnTypeEnd();
-    }
-
-    public void writeSupersStart() {
-        transitionState(State.TYPE_PARAMETERS, State.SUPERS);
-        jetSignatureWriter = new JetSignatureWriter();
-    }
-
-    public void writeSupersEnd() {
-        kotlinClassSignature = jetSignatureWriter.toString();
-        jetSignatureWriter = null;
-
-        if (DEBUG_SIGNATURE_WRITER) {
-            new JetSignatureReader(kotlinClassSignature).accept(new JetSignatureAdapter());
-        }
-
-        transitionState(State.SUPERS, State.CLASS_END);
     }
 
     public void writeSuperclass() {
         push(signatureVisitor().visitSuperclass());
-        jetSignatureWriter.visitSuperclass();
     }
 
     public void writeSuperclassEnd() {
         pop();
-        if (!visitors.isEmpty()) {
-            throw new IllegalStateException();
-        }
     }
 
     public void writeInterface() {
-        checkTopLevel();
-        checkMode(Mode.CLASS);
-
         push(signatureVisitor().visitInterface());
-        jetSignatureWriter.visitInterface();
     }
 
     public void writeInterfaceEnd() {
         pop();
-        if (!visitors.isEmpty()) {
-            throw new IllegalStateException();
-        }
     }
 
 
     @NotNull
-    protected Method makeAsmMethod(String name) {
+    private Method makeAsmMethod(String name) {
         List<Type> jvmParameterTypes = new ArrayList<Type>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature p : kotlinParameterTypes) {
             jvmParameterTypes.add(p.getAsmType());
@@ -500,41 +263,7 @@ public class BothSignatureWriter {
 
     @Nullable
     public String makeJavaGenericSignature() {
-        if (state != State.METHOD_END && state != State.CLASS_END && state != State.FIELD_END) {
-            throw new IllegalStateException();
-        }
-        checkTopLevel();
         return generic ? signatureWriter.toString() : null;
-    }
-
-    @NotNull
-    protected List<JvmMethodParameterSignature> makeKotlinParameterTypes() {
-        checkState(State.METHOD_END);
-        // TODO: return nulls if equal to #makeJavaString
-        return kotlinParameterTypes;
-    }
-
-    @NotNull
-    protected String makeKotlinReturnTypeSignature() {
-        checkState(State.METHOD_END);
-        return kotlinReturnType;
-    }
-
-    protected String makeKotlinMethodTypeParameters() {
-        checkState(State.METHOD_END);
-        return kotlinClassParameters;
-    }
-
-    @NotNull
-    public String makeKotlinClassSignature() {
-        checkState(State.CLASS_END);
-        if (kotlinClassParameters == null) {
-            throw new IllegalStateException();
-        }
-        if (kotlinClassSignature == null) {
-            throw new IllegalStateException();
-        }
-        return kotlinClassParameters + kotlinClassSignature;
     }
 
     @NotNull
@@ -542,23 +271,7 @@ public class BothSignatureWriter {
         return new JvmMethodSignature(
                 makeAsmMethod(name),
                 needGenerics ? makeJavaGenericSignature() : null,
-                needGenerics ? makeKotlinMethodTypeParameters() : null,
-                makeKotlinParameterTypes(),
-                makeKotlinReturnTypeSignature(),
-                needGenerics
-        );
-    }
-
-    @NotNull
-    public JvmPropertyAccessorSignature makeJvmPropertyAccessorSignature(String name, boolean isGetter) {
-        return new JvmPropertyAccessorSignature(
-                makeAsmMethod(name),
-                needGenerics ? makeJavaGenericSignature() : null,
-                needGenerics ? makeKotlinMethodTypeParameters() : null,
-                makeKotlinParameterTypes(),
-                makeKotlinReturnTypeSignature(),
-                needGenerics,
-                isGetter
+                kotlinParameterTypes
         );
     }
 }

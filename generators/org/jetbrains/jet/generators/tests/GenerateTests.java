@@ -31,6 +31,7 @@ import org.jetbrains.jet.completion.AbstractJavaCompletionTest;
 import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
+import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest;
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 import org.jetbrains.jet.jvm.compiler.*;
@@ -80,6 +81,7 @@ public class GenerateTests {
     }
 
     public static void main(String[] args) throws IOException {
+        System.setProperty("java.awt.headless", "true");
         generateTest(
                 "compiler/tests/",
                 "JetDiagnosticsTestGenerated",
@@ -229,6 +231,20 @@ public class GenerateTests {
         );
 
         generateTest(
+                "compiler/tests/",
+                "DescriptorSerializationTestGenerated",
+                AbstractDescriptorSerializationTest.class,
+                testModel("compiler/testData/loadKotlin/class"),
+                testModel("compiler/testData/loadKotlin/classFun"),
+                testModel("compiler/testData/loadKotlin/classObject"),
+                testModel("compiler/testData/loadKotlin/constructor"),
+                testModel("compiler/testData/loadKotlin/fun"),
+                testModel("compiler/testData/loadKotlin/prop"),
+                testModel("compiler/testData/loadKotlin/type"),
+                testModel("compiler/testData/loadKotlin/visibility")
+        );
+
+        generateTest(
                 "idea/tests/",
                 "JetPsiMatcherTest",
                 AbstractJetPsiMatcherTest.class,
@@ -355,6 +371,7 @@ public class GenerateTests {
                 testModel("idea/testData/intentions/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
                 testModel("idea/testData/intentions/declarations/split", "doTestSplitProperty"),
                 testModel("idea/testData/intentions/declarations/join", "doTestJoinProperty"),
+                testModel("idea/testData/intentions/declarations/convertMemberToExtension", "doTestConvertMemberToExtension"),
                 testModel("idea/testData/intentions/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
         );
 
@@ -429,7 +446,7 @@ public class GenerateTests {
                 "idea/tests/",
                 "ReferenceResolveTestGenerated",
                 AbstractResolveBaseTest.class,
-                testModel("idea/testData/resolve/references", "doTest")
+                testModel("idea/testData/resolve/references", true, "doTest")
         );
 
         generateTest(

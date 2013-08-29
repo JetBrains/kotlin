@@ -23,8 +23,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.plugin.intentions.RemoveUnnecessaryParenthesesIntention;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.*;
+import org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension;
 import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention;
 
 import java.io.File;
@@ -104,6 +104,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
 
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
         doTestIntention(path, new RemoveUnnecessaryParenthesesIntention());
+    }
+
+    public void doTestConvertMemberToExtension(@NotNull String path) throws Exception {
+        doTestIntention(path, new ConvertMemberToExtension());
     }
 
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {

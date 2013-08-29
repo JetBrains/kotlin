@@ -172,6 +172,15 @@ String.prototype.contains = function (s) {
         };
     })();
 
+    Kotlin.PropertyMetadata = Kotlin.$createClass(null, {
+        initialize: function(name) {
+            this.$name = name;
+        },
+        get_name: function () {
+            return this.$name;
+        }
+    });
+
     Kotlin.AbstractCollection = Kotlin.$createClass(Kotlin.Collection, {
         size: function () {
             return this.$size;

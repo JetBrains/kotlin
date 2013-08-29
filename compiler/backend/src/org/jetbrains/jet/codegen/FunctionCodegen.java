@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +19,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
+import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -32,9 +34,6 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
-import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
-import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
-import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -44,8 +43,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
@@ -71,14 +69,14 @@ public class FunctionCodegen extends GenerationStateAware {
 
     public void gen(@NotNull JetNamedFunction function) {
         SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
-        assert functionDescriptor != null;
+        assert functionDescriptor != null : "No descriptor for function " + function.getText() + "\n" +
+                                            "in " + function.getContainingFile().getVirtualFile();
 
         OwnerKind kind = owner.getContextKind();
         JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, true, kind);
 
         if (kind != OwnerKind.TRAIT_IMPL || function.getBodyExpression() != null) {
-            boolean needJetAnnotations = kind != OwnerKind.TRAIT_IMPL;
-            generateMethod(function, method, needJetAnnotations, functionDescriptor,
+            generateMethod(function, method, functionDescriptor,
                            new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
         }
 
@@ -89,22 +87,19 @@ public class FunctionCodegen extends GenerationStateAware {
     public void generateMethod(
             @Nullable PsiElement origin,
             @NotNull JvmMethodSignature jvmSignature,
-            boolean needJetAnnotations,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-        generateMethod(origin, jvmSignature, needJetAnnotations, functionDescriptor, owner.intoFunction(functionDescriptor), strategy);
+        generateMethod(origin, jvmSignature, functionDescriptor, owner.intoFunction(functionDescriptor), strategy);
     }
 
     public void generateMethod(
             @Nullable PsiElement origin,
             @NotNull JvmMethodSignature jvmSignature,
-            boolean needJetAnnotations,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext methodContext,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-
         Method asmMethod = jvmSignature.getAsmMethod();
 
         MethodVisitor mv = v.newMethod(origin,
@@ -114,12 +109,21 @@ public class FunctionCodegen extends GenerationStateAware {
                                        jvmSignature.getGenericsSignature(),
                                        null);
 
+        OwnerKind contextKind = owner.getContextKind();
+        if (contextKind instanceof OwnerKind.StaticDelegateKind) {
+            FqName fqName = ((OwnerKind.StaticDelegateKind) contextKind).getOwnerClass().getFqName();
+            v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, fqName.shortName());
+        }
+        else {
+            v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);
+        }
+
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;
 
-        if (needJetAnnotations) {
-            genJetAnnotations(mv, functionDescriptor, jvmSignature);
-        }
+        generateParameterAnnotations(functionDescriptor, mv);
+
+        generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
 
         if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
 
@@ -135,6 +139,63 @@ public class FunctionCodegen extends GenerationStateAware {
         generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
 
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, typeMapper);
+    }
+
+    private void generateParameterAnnotations(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodVisitor mv) {
+        for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
+            AnnotationCodegen.forParameter(parameter.getIndex(), mv, typeMapper).genAnnotations(parameter);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void generateJetValueParameterAnnotations(
+            @NotNull MethodVisitor mv,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull JvmMethodSignature jvmSignature
+    ) {
+        Iterator<ValueParameterDescriptor> descriptors = functionDescriptor.getValueParameters().iterator();
+        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
+
+        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
+            JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
+            if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
+                // We shouldn't generate annotations for invisible in runtime parameters otherwise we get bad
+                // RuntimeInvisibleParameterAnnotations error in javac
+                continue;
+            }
+
+            String name;
+            boolean nullableType;
+            if (kind == JvmMethodParameterKind.VALUE) {
+                ValueParameterDescriptor descriptor = descriptors.next();
+                name = descriptor.getName().asString();
+                nullableType = descriptor.getType().isNullable();
+            }
+            else {
+                String lowercaseKind = kind.name().toLowerCase();
+                if (needIndexForVar(kind)) {
+                    name = "$" + lowercaseKind + "$" + i;
+                }
+                else {
+                    name = "$" + lowercaseKind;
+                }
+
+                if (kind == JvmMethodParameterKind.RECEIVER) {
+                    ReceiverParameterDescriptor receiver = functionDescriptor.getReceiverParameter();
+                    nullableType = receiver == null || receiver.getType().isNullable();
+                }
+                else {
+                    nullableType = true;
+                }
+            }
+
+            AnnotationVisitor av = mv.visitParameterAnnotation(i, JvmClassName.byClass(JetValueParameter.class).getDescriptor(), true);
+            av.visit("name", name);
+            if (nullableType) {
+                av.visit("type", "?");
+            }
+            av.visitEnd();
+        }
     }
 
     @Nullable
@@ -321,96 +382,8 @@ public class FunctionCodegen extends GenerationStateAware {
             iv.load(k, argType);
             k += argType.getSize();
         }
-        iv.invokestatic(dk.getOwnerClass(), asmMethod.getName(), asmMethod.getDescriptor());
+        iv.invokestatic(dk.getOwnerClass().getInternalName(), asmMethod.getName(), asmMethod.getDescriptor());
         iv.areturn(asmMethod.getReturnType());
-    }
-
-    private void genJetAnnotations(
-            @NotNull MethodVisitor mv,
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JvmMethodSignature jvmSignature
-    ) {
-
-        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
-            assert jvmSignature instanceof JvmPropertyAccessorSignature : "jvmSignature for property should have JvmPropertyAccessorSignature type";
-            PropertyCodegen.generateJetPropertyAnnotation(mv, (JvmPropertyAccessorSignature) jvmSignature,
-                    ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty(), functionDescriptor.getVisibility());
-        }
-        else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
-            assert !(jvmSignature instanceof JvmPropertyAccessorSignature) : "jvmSignature for function shouldn't have JvmPropertyAccessorSignature type";
-
-            Modality modality = functionDescriptor.getModality();
-            JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-            int kotlinFlags = getFlagsForVisibility(functionDescriptor.getVisibility());
-            if (isInterface(functionDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
-                kotlinFlags |= modality == Modality.FINAL
-                                ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
-                                : JvmStdlibNames.FLAG_FORCE_OPEN_BIT;
-            }
-            kotlinFlags |= DescriptorKindUtils.kindToFlags(functionDescriptor.getKind());
-            aw.writeFlags(kotlinFlags);
-            if (jvmSignature.getKotlinTypeParameter() != null) {
-                aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
-            }
-            aw.writeReturnType(jvmSignature.getKotlinReturnType());
-            aw.visitEnd();
-        }
-        else if (functionDescriptor instanceof ConstructorDescriptor) {
-            AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
-
-            int flagsValue = getFlagsForVisibility(functionDescriptor.getVisibility());
-            if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
-                jetConstructorVisitor.visit(JvmStdlibNames.JET_FLAGS_FIELD, flagsValue);
-            }
-
-            jetConstructorVisitor.visitEnd();
-        }
-        else {
-            throw new IllegalStateException();
-        }
-
-        generateMethodParametersAnnotations(mv, functionDescriptor, jvmSignature);
-    }
-
-    void generateMethodParametersAnnotations(
-            MethodVisitor mv,
-            FunctionDescriptor functionDescriptor,
-            JvmMethodSignature jvmSignature
-    ) {
-        Iterator<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters().iterator();
-        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
-
-        assert kotlinParameterTypes != null;
-
-        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
-            JvmMethodParameterSignature param =  kotlinParameterTypes.get(i);
-            JvmMethodParameterKind kind = param.getKind();
-            String parameterName = "$" + param.getKind().name().toLowerCase();
-
-            ValueParameterDescriptor parameterDescriptor = null;
-            if (kind == JvmMethodParameterKind.VALUE) {
-                parameterDescriptor = valueParameters.next();
-                parameterName = parameterDescriptor.getName().asString();
-            } else if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
-                //we shouldn't generate annotations for invisible in runtime parameters otherwise we get bad RuntimeInvisibleParameterAnnotations error in javac
-                continue;
-            } else if (needIndexForVar(kind)) {
-                parameterName = parameterName + "$" + i;
-            }
-
-            AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameterDescriptor);
-            JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i);
-            av.writeName(parameterName);
-            if (kind == JvmMethodParameterKind.RECEIVER) {
-                av.writeReceiver();
-            }
-            if (parameterDescriptor != null) {
-                av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
-                av.writeVararg(parameterDescriptor.getVarargElementType() != null);
-            }
-            av.writeType(param.getKotlinSignature());
-            av.visitEnd();
-        }
     }
 
     private boolean needIndexForVar(JvmMethodParameterKind kind) {

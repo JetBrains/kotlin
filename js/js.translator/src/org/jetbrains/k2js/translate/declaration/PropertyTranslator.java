@@ -20,23 +20,26 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.reference.CallType;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
+import static org.jetbrains.k2js.translate.context.Namer.getDelegateNameRef;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 /**
  * Translates single property /w accessors.
@@ -134,11 +137,50 @@ public final class PropertyTranslator extends AbstractTranslator {
         return generateDefaultAccessor(getterDescriptor, generateDefaultGetterFunction(getterDescriptor));
     }
 
+    private JsExpression createPropertyMetadata() {
+        JsNameRef propertyMetadataRef = context().namer().propertyMetadataRef();
+        JsExpression argument = context().program().getStringLiteral(getPropertyName());
+        if (context().isEcma5()) {
+            return new JsInvocation(propertyMetadataRef, argument);
+        } else {
+            return new JsNew(propertyMetadataRef, Collections.singletonList(argument));
+        }
+    }
+
+    private JsExpression getDelegateCall(ResolvedCall<FunctionDescriptor> call, List<JsExpression> args) {
+        return CallBuilder.build(context())
+                .receiver(getDelegateNameRef(getPropertyName()))
+                .args(args)
+                .resolvedCall(call)
+                .type(CallType.NORMAL)
+                .translate();
+    }
+
+    private String getPropertyName() {
+        return descriptor.getName().asString();
+    }
+
     @NotNull
-    private JsFunction generateDefaultGetterFunction(@NotNull PropertyGetterDescriptor descriptor) {
-        JsFunction fun = new JsFunction(context().getScopeForDescriptor(descriptor.getContainingDeclaration()));
-        fun.setBody(new JsBlock(new JsReturn(backingFieldReference(context(), this.descriptor))));
-        return fun;
+    private JsFunction generateDefaultGetterFunction(@NotNull PropertyGetterDescriptor getterDescriptor) {
+        JsExpression value;
+        ResolvedCall<FunctionDescriptor> delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor);
+        if (delegatedCall != null) {
+            value = getDelegateCall(delegatedCall, getDelegateCallArgs(null));
+        } else {
+            value = backingFieldReference(context(), this.descriptor);
+        }
+        return simpleReturnFunction(context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration()), value);
+    }
+
+    @NotNull
+    private List<JsExpression> getDelegateCallArgs(@Nullable JsExpression valueExpression) {
+        List<JsExpression> args = new ArrayList<JsExpression>();
+        args.add(JsLiteral.THIS);
+        args.add(createPropertyMetadata());
+        if (valueExpression != null) {
+            args.add(valueExpression);
+        }
+        return args;
     }
 
     @NotNull
@@ -153,7 +195,16 @@ public final class PropertyTranslator extends AbstractTranslator {
         JsFunction fun = new JsFunction(context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration()));
         JsParameter defaultParameter = new JsParameter(propertyAccessContext(setterDescriptor).scope().declareTemporary());
         fun.getParameters().add(defaultParameter);
-        fun.setBody(new JsBlock(assignmentToBackingField(context(), descriptor, defaultParameter.getName().makeRef()).makeStmt()));
+        JsExpression setExpression;
+
+        ResolvedCall<FunctionDescriptor> delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor);
+        JsNameRef defaultParameterRef = defaultParameter.getName().makeRef();
+        if (delegatedCall != null) {
+            setExpression = getDelegateCall(delegatedCall, getDelegateCallArgs(defaultParameterRef));
+        } else {
+            setExpression = assignmentToBackingField(context(), descriptor, defaultParameterRef);
+        }
+        fun.setBody(new JsBlock(setExpression.makeStmt()));
         return fun;
     }
 

@@ -36,15 +36,17 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.TypeTransformingVisitor;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -56,6 +58,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
@@ -91,17 +95,18 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
             try {
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
-                InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(commonEnvironment.getProject());
+                BindingTrace trace = new BindingTraceContext();
+                InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(commonEnvironment.getProject(), trace);
 
-                BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
+                BindingContext bindingContext = trace.getBindingContext();
                 JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
                 AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
-                    NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
+                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass, IGNORE_KOTLIN_SOURCES);
+                    NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass, IGNORE_KOTLIN_SOURCES);
                     if (topLevelClass == null) {
                         continue;
                     }

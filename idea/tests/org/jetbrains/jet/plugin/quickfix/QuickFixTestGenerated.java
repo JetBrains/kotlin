@@ -1251,6 +1251,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeChangeReturnTypeOfOverriddenFunction.kt");
             }
             
+            @TestMetadata("beforeObjectInsideBody.kt")
+            public void testObjectInsideBody() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeObjectInsideBody.kt");
+            }
+            
             @TestMetadata("beforePropertyReturnTypeMismatchOnOverride.kt")
             public void testPropertyReturnTypeMismatchOnOverride() throws Exception {
                 doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforePropertyReturnTypeMismatchOnOverride.kt");

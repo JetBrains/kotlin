@@ -30,7 +30,9 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetEnumEntry;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -85,7 +87,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         findClassesAndObjects(qualifiedName, scope, answer);
 
-        if (PackageClassUtils.isPackageClass(qualifiedName)) {
+        if (PackageClassUtils.isPackageClassFqName(qualifiedName)) {
             findPackageClass(qualifiedName.parent(), scope, answer);
         }
 

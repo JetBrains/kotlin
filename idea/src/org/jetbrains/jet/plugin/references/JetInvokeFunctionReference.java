@@ -22,15 +22,13 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetValueArgumentList;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +53,7 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
     @Override
     protected PsiElement doResolve() {
         JetExpression calleeExpression = ((JetCallExpression) myExpression).getCalleeExpression();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement(myExpression);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(myExpression);
 
         ResolvedCall<? extends CallableDescriptor> invokeFunction = bindingContext.get(RESOLVED_CALL, calleeExpression);
 
@@ -79,25 +77,42 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
 
     @Override
     public List<TextRange> getRanges() {
+        JetCallExpression callExpression = (JetCallExpression) myExpression;
+
         List<TextRange> list = new ArrayList<TextRange>();
-        JetValueArgumentList valueArgumentList = ((JetCallExpression) myExpression).getValueArgumentList();
-        if (valueArgumentList == null) {
-            return list;
+        JetValueArgumentList valueArgumentList = callExpression.getValueArgumentList();
+        if (valueArgumentList != null) {
+            if (valueArgumentList.getArguments().size() > 0) {
+                ASTNode valueArgumentListNode = valueArgumentList.getNode();
+                ASTNode lPar = valueArgumentListNode.findChildByType(JetTokens.LPAR);
+                if (lPar != null) {
+                    list.add(getRange(lPar));
+                }
+
+                ASTNode rPar = valueArgumentListNode.findChildByType(JetTokens.RPAR);
+                if (rPar != null) {
+                    list.add(getRange(rPar));
+                }
+            }
+            else {
+                list.add(getRange(valueArgumentList.getNode()));
+            }
         }
-        if (valueArgumentList.getArguments().size() > 0) {
-            ASTNode valueArgumentListNode = valueArgumentList.getNode();
-            ASTNode lPar = valueArgumentListNode.findChildByType(JetTokens.LPAR);
-            if (lPar != null) {
-                list.add(getRange(lPar));
+
+        List<JetExpression> functionLiteralArguments = callExpression.getFunctionLiteralArguments();
+        for (JetExpression functionLiteralArgument : functionLiteralArguments) {
+            while (functionLiteralArgument instanceof JetPrefixExpression) {
+                functionLiteralArgument = ((JetPrefixExpression) functionLiteralArgument).getBaseExpression();
             }
 
-            ASTNode rPar = valueArgumentListNode.findChildByType(JetTokens.RPAR);
-            if (rPar != null) {
-                list.add(getRange(rPar));
+            if (functionLiteralArgument instanceof JetFunctionLiteralExpression) {
+                JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) functionLiteralArgument;
+                list.add(getRange(functionLiteralExpression.getLeftCurlyBrace()));
+                ASTNode rightCurlyBrace = functionLiteralExpression.getRightCurlyBrace();
+                if (rightCurlyBrace != null) {
+                    list.add(getRange(rightCurlyBrace));
+                }
             }
-        }
-        else {
-            list.add(getRange(valueArgumentList.getNode()));
         }
 
         return list;

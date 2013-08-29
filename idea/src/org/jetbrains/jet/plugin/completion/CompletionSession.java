@@ -37,8 +37,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
@@ -59,7 +59,8 @@ public class CompletionSession {
         this.parameters = parameters;
         this.jetReference = jetReference;
 
-        CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile((JetFile) position.getContainingFile());
+        CancelableResolveSession resolveSession =
+                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
         BindingContext expressionBindingContext = resolveSession.resolveToElement(jetReference.getExpression());
         JetScope scope = expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
 

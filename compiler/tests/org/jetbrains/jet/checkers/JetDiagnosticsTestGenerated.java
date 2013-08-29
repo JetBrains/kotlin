@@ -1439,6 +1439,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/dataFlow")
+        @InnerTestClasses({DataFlow.Local.class})
         public static class DataFlow extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInDataFlow() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/dataFlow"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1459,6 +1460,80 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlow/WhenSubject.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/dataFlow/local")
+            public static class Local extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInLocal() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/dataFlow/local"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("kt2835.kt")
+                public void testKt2835() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/kt2835.kt");
+                }
+                
+                @TestMetadata("LocalClassBase.kt")
+                public void testLocalClassBase() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassBase.kt");
+                }
+                
+                @TestMetadata("LocalClassDefaultParameters.kt")
+                public void testLocalClassDefaultParameters() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassDefaultParameters.kt");
+                }
+                
+                @TestMetadata("LocalClassDelegatedProperties.kt")
+                public void testLocalClassDelegatedProperties() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassDelegatedProperties.kt");
+                }
+                
+                @TestMetadata("LocalClassDelegation.kt")
+                public void testLocalClassDelegation() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassDelegation.kt");
+                }
+                
+                @TestMetadata("LocalClassFunctions.kt")
+                public void testLocalClassFunctions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassFunctions.kt");
+                }
+                
+                @TestMetadata("LocalClassInMemberOfLocalClass.kt")
+                public void testLocalClassInMemberOfLocalClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassInMemberOfLocalClass.kt");
+                }
+                
+                @TestMetadata("LocalClassInitializer.kt")
+                public void testLocalClassInitializer() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassInitializer.kt");
+                }
+                
+                @TestMetadata("LocalClassProperty.kt")
+                public void testLocalClassProperty() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalClassProperty.kt");
+                }
+                
+                @TestMetadata("LocalObject.kt")
+                public void testLocalObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalObject.kt");
+                }
+                
+                @TestMetadata("LocalObjectDelegation.kt")
+                public void testLocalObjectDelegation() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/LocalObjectDelegation.kt");
+                }
+                
+                @TestMetadata("NestedLocalClass.kt")
+                public void testNestedLocalClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/dataFlow/local/NestedLocalClass.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("DataFlow");
+                suite.addTestSuite(DataFlow.class);
+                suite.addTestSuite(Local.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/dataFlowInfoTraversal")
@@ -2315,6 +2390,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/functionLiterals")
+        @InnerTestClasses({FunctionLiterals.Return.class})
         public static class FunctionLiterals extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInFunctionLiterals() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2350,6 +2426,85 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/unusedLiteral.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/functionLiterals/return")
+            public static class Return extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInReturn() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/functionLiterals/return"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("AutoLabels.kt")
+                public void testAutoLabels() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/AutoLabels.kt");
+                }
+                
+                @TestMetadata("AutoLabelsNonLocal.kt")
+                public void testAutoLabelsNonLocal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/AutoLabelsNonLocal.kt");
+                }
+                
+                @TestMetadata("ForbiddenNonLocalReturnNoType.kt")
+                public void testForbiddenNonLocalReturnNoType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/ForbiddenNonLocalReturnNoType.kt");
+                }
+                
+                @TestMetadata("LocalAndNonLocalReturnInLambda.kt")
+                public void testLocalAndNonLocalReturnInLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalAndNonLocalReturnInLambda.kt");
+                }
+                
+                @TestMetadata("LocalReturnExplicitLabelNoParens.kt")
+                public void testLocalReturnExplicitLabelNoParens() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnExplicitLabelNoParens.kt");
+                }
+                
+                @TestMetadata("LocalReturnExplicitLabelParens.kt")
+                public void testLocalReturnExplicitLabelParens() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnExplicitLabelParens.kt");
+                }
+                
+                @TestMetadata("LocalReturnHasTypeNothing.kt")
+                public void testLocalReturnHasTypeNothing() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnHasTypeNothing.kt");
+                }
+                
+                @TestMetadata("LocalReturnInNestedFunction.kt")
+                public void testLocalReturnInNestedFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnInNestedFunction.kt");
+                }
+                
+                @TestMetadata("LocalReturnInNestedLambda.kt")
+                public void testLocalReturnInNestedLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnInNestedLambda.kt");
+                }
+                
+                @TestMetadata("LocalReturnNoCoercionToUnit.kt")
+                public void testLocalReturnNoCoercionToUnit() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnNoCoercionToUnit.kt");
+                }
+                
+                @TestMetadata("LocalReturnUnit.kt")
+                public void testLocalReturnUnit() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnUnit.kt");
+                }
+                
+                @TestMetadata("LocalReturnsWithExplicitReturnType.kt")
+                public void testLocalReturnsWithExplicitReturnType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/LocalReturnsWithExplicitReturnType.kt");
+                }
+                
+                @TestMetadata("MixedReturnsFromLambda.kt")
+                public void testMixedReturnsFromLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/functionLiterals/return/MixedReturnsFromLambda.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("FunctionLiterals");
+                suite.addTestSuite(FunctionLiterals.class);
+                suite.addTestSuite(Return.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/generics")
@@ -5122,14 +5277,14 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(ControlFlowAnalysis.class);
             suite.addTestSuite(ControlStructures.class);
             suite.addTestSuite(DataClasses.class);
-            suite.addTestSuite(DataFlow.class);
+            suite.addTest(DataFlow.innerSuite());
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
             suite.addTest(DelegatedProperty.innerSuite());
             suite.addTestSuite(Deparenthesize.class);
             suite.addTest(Enum.innerSuite());
             suite.addTestSuite(Extensions.class);
-            suite.addTestSuite(FunctionLiterals.class);
+            suite.addTest(FunctionLiterals.innerSuite());
             suite.addTestSuite(Generics.class);
             suite.addTest(IncompleteCode.innerSuite());
             suite.addTest(Inference.innerSuite());

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
@@ -26,32 +27,37 @@ import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.MembersCache;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaClassResolver {
 
@@ -79,15 +85,21 @@ public final class JavaClassResolver {
 
     private BindingTrace trace;
     private JavaSignatureResolver signatureResolver;
-    private JavaSemanticServices semanticServices;
+    private JavaDescriptorResolver javaDescriptorResolver;
     private JavaAnnotationResolver annotationResolver;
     private PsiClassFinder psiClassFinder;
     private JavaNamespaceResolver namespaceResolver;
-    private JavaClassObjectResolver classObjectResolver;
     private JavaSupertypeResolver supertypesResolver;
     private JavaFunctionResolver functionResolver;
+    private DeserializedDescriptorResolver kotlinDescriptorResolver;
+    private VirtualFileFinder virtualFileFinder;
 
     public JavaClassResolver() {
+    }
+
+    @Inject
+    public void setVirtualFileFinder(VirtualFileFinder virtualFileFinder) {
+        this.virtualFileFinder = virtualFileFinder;
     }
 
     @Inject
@@ -96,18 +108,18 @@ public final class JavaClassResolver {
     }
 
     @Inject
+    public void setKotlinDescriptorResolver(DeserializedDescriptorResolver kotlinDescriptorResolver) {
+        this.kotlinDescriptorResolver = kotlinDescriptorResolver;
+    }
+
+    @Inject
     public void setSignatureResolver(JavaSignatureResolver signatureResolver) {
         this.signatureResolver = signatureResolver;
     }
 
     @Inject
-    public void setClassObjectResolver(JavaClassObjectResolver classObjectResolver) {
-        this.classObjectResolver = classObjectResolver;
-    }
-
-    @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
+    public void setJavaDescriptorResolver(JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @Inject
@@ -153,13 +165,13 @@ public final class JavaClassResolver {
             return null;
         }
 
-        ClassDescriptor builtinClassDescriptor = semanticServices.getKotlinBuiltinClassDescriptor(qualifiedName);
+        ClassDescriptor builtinClassDescriptor = getKotlinBuiltinClassDescriptor(qualifiedName);
         if (builtinClassDescriptor != null) {
             return builtinClassDescriptor;
         }
 
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
-        ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
+        ClassDescriptor kotlinClassDescriptor = trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
         if (kotlinClassDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinClassDescriptor);
         }
@@ -178,7 +190,49 @@ public final class JavaClassResolver {
         return doResolveClass(qualifiedName, tasks);
     }
 
+    @Nullable
+    private static ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
+        if (!qualifiedName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null;
+
+        List<Name> segments = qualifiedName.pathSegments();
+        if (segments.size() < 2) return null;
+
+        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsScope();
+        for (int i = 1, size = segments.size(); i < size; i++) {
+            ClassifierDescriptor classifier = scope.getClassifier(segments.get(i));
+            if (classifier == null) return null;
+            assert classifier instanceof ClassDescriptor : "Unexpected classifier in built-ins: " + classifier;
+            scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
+        }
+
+        return (ClassDescriptor) scope.getContainingDeclaration();
+    }
+
     private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
+        //TODO: correct scope
+        VirtualFile file = virtualFileFinder.find(qualifiedName);
+        if (file != null) {
+            //TODO: code duplication
+            //TODO: it is a hackish way to determine whether it is inner class or not
+            boolean isInnerClass = file.getName().contains("$");
+            ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, isInnerClass);
+            // class may be resolved during resolution of parent
+            ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
+            if (cachedDescriptor != null) {
+                return cachedDescriptor;
+            }
+            assert (!unresolvedCache.contains(qualifiedName))
+                    : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
+
+            ClassId id = ClassId.fromFqNameAndContainingDeclaration(qualifiedName, containingDeclaration);
+            ErrorReporter errorReporter = AbiVersionUtil.abiVersionErrorReporter(file, qualifiedName, trace);
+            ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(id, file, errorReporter);
+            if (deserializedDescriptor != null) {
+                cache(javaClassToKotlinFqName(qualifiedName), deserializedDescriptor);
+                return deserializedDescriptor;
+            }
+        }
+
         PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.REPORT_ERROR);
         if (psiClass == null) {
             cacheNegativeValue(javaClassToKotlinFqName(qualifiedName));
@@ -190,8 +244,21 @@ public final class JavaClassResolver {
         if (alreadyResolved != null) {
             return alreadyResolved;
         }
+        //TODO: code duplication
+        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, isContainedInClass(psiClass));
+        // class may be resolved during resolution of parent
+        ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
+        if (cachedDescriptor != null) {
+            return cachedDescriptor;
+        }
+        assert (!unresolvedCache
+                .contains(qualifiedName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
-        return createJavaClassDescriptor(qualifiedName, psiClass, tasks);
+        checkFqNamesAreConsistent(psiClass, qualifiedName);
+        checkPsiClassIsNotJet(psiClass);
+
+
+        return doCreateClassDescriptor(qualifiedName, psiClass, tasks, containingDeclaration);
     }
 
     private void cacheNegativeValue(@NotNull FqNameBase qualifiedName) {
@@ -207,67 +274,44 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassDescriptor createJavaClassDescriptor(
-            @NotNull FqName fqName, @NotNull PsiClass psiClass,
-            @NotNull PostponedTasks taskList
-    ) {
-
-        checkFqNamesAreConsistent(psiClass, fqName);
-        DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
-
-        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
-        // class may be resolved during resolution of parent
-        ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(fqName));
-        if (cachedDescriptor != null) {
-            return cachedDescriptor;
-        }
-
-        assert (!unresolvedCache.contains(fqName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
-
-        return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);
-    }
-
-    @NotNull
     private ClassDescriptorFromJvmBytecode doCreateClassDescriptor(
             @NotNull FqName fqName,
             @NotNull PsiClass psiClass,
             @NotNull PostponedTasks taskList,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
-        JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
-        AbiVersionUtil.checkAbiVersion(psiClass, jetClassAnnotation, trace);
-
-        ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
-        ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
-        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(
-                containingDeclaration, kind, isInnerClass(psiClass));
+        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, getClassKind(psiClass),
+                                                                                            isInnerClass(psiClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
+
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
-                = signatureResolver.createUninitializedClassTypeParameters(psiClass, classDescriptor);
+                = JavaSignatureResolver.createUninitializedClassTypeParameters(psiClass, classDescriptor);
 
         classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
         List<JetType> supertypes = Lists.newArrayList();
         classDescriptor.setSupertypes(supertypes);
-        classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
+        classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, semanticServices);
-        classDescriptor.setScopeForMemberLookup(membersScope);
-        classDescriptor.setScopeForConstructorResolve(membersScope);
+
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, psiClass, false, psiClassFinder,
+                                                                                  javaDescriptorResolver);
+        classDescriptor.setScopeForMemberLookup(scope);
+        classDescriptor.setScopeForConstructorResolve(scope);
 
         String context = "class " + psiClass.getQualifiedName();
         signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
-        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classData, classTypeParameters));
+        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, psiClass, classTypeParameters));
 
-        ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
-        cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);
-        if (classObjectDescriptor != null) {
+        if (psiClass.isEnum()) {
+            ClassDescriptorFromJvmBytecode classObjectDescriptor = createClassObjectDescriptorForEnum(classDescriptor, psiClass);
+            cache(getFqNameForClassObject(psiClass), classObjectDescriptor);
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
 
@@ -275,13 +319,20 @@ public final class JavaClassResolver {
 
         trace.record(BindingContext.CLASS, psiClass, classDescriptor);
 
-        PsiMethod samInterfaceMethod = MembersCache.getSamInterfaceMethod(psiClass);
+        PsiMethod samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(psiClass);
         if (samInterfaceMethod != null) {
             SimpleFunctionDescriptor abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod, classDescriptor);
             classDescriptor.setFunctionTypeForSamInterface(SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod));
         }
 
         return classDescriptor;
+    }
+
+    @NotNull
+    private static FqNameUnsafe getFqNameForClassObject(@NotNull PsiClass psiClass) {
+        String qualifiedName = psiClass.getQualifiedName();
+        assert qualifiedName != null : "Reading java class with no qualified name";
+        return new FqNameUnsafe(qualifiedName + "." + getClassObjectName(psiClass.getName()).asString());
     }
 
     @NotNull
@@ -356,7 +407,7 @@ public final class JavaClassResolver {
                 !psiClass.hasModifierProperty(PsiModifier.FINAL));
     }
 
-    void checkFqNamesAreConsistent(@NotNull PsiClass psiClass, @NotNull FqName desiredFqName) {
+    private void checkFqNamesAreConsistent(@NotNull PsiClass psiClass, @NotNull FqName desiredFqName) {
         String qualifiedName = psiClass.getQualifiedName();
         assert qualifiedName != null;
 
@@ -368,21 +419,29 @@ public final class JavaClassResolver {
         }
     }
 
-    @NotNull
-    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
-        if (isContainedInClass(psiClass)) {
-            return resolveParentClass(psiClass);
-        }
-        else {
-            return resolveParentNamespace(psiClass);
+    private static void checkPsiClassIsNotJet(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof JetJavaMirrorMarker) {
+            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
         }
     }
 
     @NotNull
-    private static FqName getFqName(@NotNull PsiClass psiClass) {
-        String qualifiedName = psiClass.getQualifiedName();
-        assert qualifiedName != null;
-        return new FqName(qualifiedName);
+    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull FqName childClassFQName, boolean isInnerClass) {
+        FqName parentFqName = childClassFQName.parent();
+        if (isInnerClass) {
+            ClassDescriptor parentClass = resolveClass(parentFqName, INCLUDE_KOTLIN_SOURCES);
+            if (parentClass == null) {
+                throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
+            }
+            return parentClass;
+        }
+        else {
+            NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(parentFqName, INCLUDE_KOTLIN_SOURCES);
+            if (parentNamespace == null) {
+                throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
+            }
+            return parentNamespace;
+        }
     }
 
     // This method replaces "object" segments of FQ name to "<class-object-for-...>"
@@ -411,44 +470,48 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassOrNamespaceDescriptor resolveParentClass(@NotNull PsiClass psiClass) {
-        PsiClass containingClass = psiClass.getContainingClass();
-        assert containingClass != null;
-        FqName containerFqName = getFqName(containingClass);
-        ClassDescriptor parentClass = resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
-        if (parentClass == null) {
-            throw new IllegalStateException(
-                    "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + getFqName(psiClass));
-        }
-        return parentClass;
-    }
-
-    @NotNull
-    private ClassOrNamespaceDescriptor resolveParentNamespace(@NotNull PsiClass psiClass) {
-        FqName namespaceFqName = getFqName(psiClass).parent();
-        NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(namespaceFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
-        if (parentNamespace == null) {
-            throw new IllegalStateException("cannot resolve namespace " + namespaceFqName +
-                                            ", required to be container for " + getFqName(psiClass));
-        }
-        return parentNamespace;
-    }
-
-    @NotNull
-    private static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
+    private static ClassKind getClassKind(@NotNull PsiClass psiClass) {
         if (psiClass.isInterface()) {
             return (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT);
         }
         if (psiClass.isEnum()) {
             return ClassKind.ENUM_CLASS;
         }
-        else {
-            return jetClassAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT ? ClassKind.OBJECT : ClassKind.CLASS;
-        }
+        return ClassKind.CLASS;
     }
 
-    @Nullable
-    public ClassDescriptor resolveClass(FqName name) {
-        return resolveClass(name, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+    @NotNull
+    private ClassDescriptorFromJvmBytecode createClassObjectDescriptorForEnum(
+            @NotNull ClassDescriptor containing,
+            @NotNull PsiClass psiClass
+    ) {
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = createSyntheticClassObject(containing, psiClass);
+
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+
+        return classObjectDescriptor;
+    }
+
+    @NotNull
+    private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
+        ClassDescriptorFromJvmBytecode classObjectDescriptor =
+                new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
+
+        classObjectDescriptor.setName(getClassObjectName(containing.getName()));
+        classObjectDescriptor.setModality(Modality.FINAL);
+        classObjectDescriptor.setVisibility(containing.getVisibility());
+        classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classObjectDescriptor.createTypeConstructor();
+
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, psiClass, true, psiClassFinder,
+                                                                                  javaDescriptorResolver);
+        WritableScopeImpl writableScope =
+                new WritableScopeImpl(scope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");
+        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        classObjectDescriptor.setScopeForMemberLookup(writableScope);
+        classObjectDescriptor.setScopeForConstructorResolve(scope);
+
+        return classObjectDescriptor;
     }
 }

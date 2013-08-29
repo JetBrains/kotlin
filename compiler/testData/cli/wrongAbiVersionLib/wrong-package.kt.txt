@@ -1,0 +1,3 @@
+package wrong
+
+fun bar() {}

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -152,7 +153,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public FieldOwnerContext intoNamespacePart(String delegateTo, NamespaceDescriptor descriptor) {
+    public FieldOwnerContext intoNamespacePart(@NotNull JvmClassName delegateTo, @NotNull NamespaceDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 

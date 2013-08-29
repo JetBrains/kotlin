@@ -1,0 +1,8 @@
+package test
+
+test.Anno() internal val property: jet.Int
+    internal fun <get-property>(): jet.Int
+
+internal final annotation class Anno : jet.Annotation {
+    /*primary*/ public constructor Anno()
+}

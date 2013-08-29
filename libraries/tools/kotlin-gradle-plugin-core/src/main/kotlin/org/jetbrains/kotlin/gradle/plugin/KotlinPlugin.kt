@@ -241,9 +241,9 @@ open class KotlinAndroidPlugin: Plugin<Project> {
                 }
 
                 kotlinTask.doFirst({ task  ->
-                    var plugin = project.getPlugins().getPlugin("android")
+                    var plugin = project.getPlugins().findPlugin("android")
                     if (null == plugin) {
-                        plugin = project.getPlugins().getPlugin("android-library")
+                        plugin = project.getPlugins().findPlugin("android-library")
                     }
                     val basePlugin : BasePlugin = plugin as BasePlugin
                     val javaSources = project.files(javaSourceList)

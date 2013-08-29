@@ -31,11 +31,11 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -176,7 +176,7 @@ public class JetImportOptimizer implements ImportOptimizer {
 
             @Override
             public void visitForExpression(JetForExpression expression) {
-                BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(expression);
+                BindingContext context = AnalyzerFacadeWithCache.getContextForElement(expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange());
                 addResolvedCallFqName(resolvedCall);
 
@@ -185,7 +185,7 @@ public class JetImportOptimizer implements ImportOptimizer {
 
             @Override
             public void visitMultiDeclaration(JetMultiDeclaration declaration) {
-                BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(declaration);
+                BindingContext context = AnalyzerFacadeWithCache.getContextForElement(declaration);
                 List<JetMultiDeclarationEntry> entries = declaration.getEntries();
                 for (JetMultiDeclarationEntry entry : entries) {
                     ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
@@ -283,7 +283,7 @@ public class JetImportOptimizer implements ImportOptimizer {
         if (memberName == null) {
             return null;
         }
-        if (PackageClassUtils.isPackageClass(containingClass)) {
+        if (DescriptorResolverUtils.isCompiledKotlinPackageClass(containingClass)) {
             return QualifiedNamesUtil.combine(classFQN.parent(), Name.identifier(memberName));
         }
         else {

@@ -92,7 +92,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
 
     public void gen() {
-        ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName(), fun.getContainingFile());
+        ClassBuilder cv = state.getFactory().newVisitor(name, fun.getContainingFile());
 
         FunctionDescriptor interfaceFunction;
         String[] superInterfaces;
@@ -122,7 +122,7 @@ public class ClosureCodegen extends GenerationStateAware {
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor);
 
         FunctionCodegen fc = new FunctionCodegen(context, cv, state);
-        fc.generateMethod(fun, jvmMethodSignature, false, funDescriptor, strategy);
+        fc.generateMethod(fun, jvmMethodSignature, funDescriptor, strategy);
 
         this.constructor = generateConstructor(cv);
 
@@ -298,11 +298,9 @@ public class ClosureCodegen extends GenerationStateAware {
 
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS, true);
         typeMapper.writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), sw);
-        sw.writeSupersStart();
         sw.writeSuperclass();
         typeMapper.mapType(supertype, sw, JetTypeMapperMode.TYPE_PARAMETER);
         sw.writeSuperclassEnd();
-        sw.writeSupersEnd();
 
         String signature = sw.makeJavaGenericSignature();
         assert signature != null : "Closure superclass must have a generic signature: " + funDescriptor;

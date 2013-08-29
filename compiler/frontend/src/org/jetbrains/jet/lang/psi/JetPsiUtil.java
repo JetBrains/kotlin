@@ -20,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
@@ -945,5 +946,29 @@ public class JetPsiUtil {
             return element.getParent();
         }
         return element;
+    }
+
+    @NotNull
+    public static String getElementTextWithContext(@NotNull JetElement element) {
+        if (element instanceof JetFile) {
+            return element.getContainingFile().getText();
+        }
+
+        // Find parent for element among file children
+        PsiElement inFileParent = PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
+            @Override
+            public boolean value(PsiElement parentCandidate) {
+                return parentCandidate != null && parentCandidate.getParent() instanceof JetFile;
+            }
+        });
+
+        assert inFileParent != null : "For non-file element we should always be able to find parent in file children";
+
+        int startContextOffset = inFileParent.getTextRange().getStartOffset();
+        int elementContextOffset = element.getTextRange().getStartOffset();
+
+        int inFileParentOffset = elementContextOffset - startContextOffset;
+
+        return new StringBuilder(inFileParent.getText()).insert(inFileParentOffset, "<caret>").toString();
     }
 }

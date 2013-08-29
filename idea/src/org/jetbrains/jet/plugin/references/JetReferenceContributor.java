@@ -19,10 +19,7 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetThisReferenceExpression;
+import org.jetbrains.jet.lang.psi.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -62,6 +59,24 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
                                                     return JetInvokeFunctionReference.create((JetCallExpression) element);
+                                                }
+                                            });
+
+        registrar.registerReferenceProvider(psiElement(JetPropertyDelegate.class),
+                                            new PsiReferenceProvider() {
+                                                @NotNull
+                                                @Override
+                                                public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
+                                                    return JetPropertyDelegationMethodsReference.create((JetPropertyDelegate) element);
+                                                }
+                                            });
+
+        registrar.registerReferenceProvider(psiElement(JetForExpression.class),
+                                            new PsiReferenceProvider() {
+                                                @NotNull
+                                                @Override
+                                                public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
+                                                    return JetForLoopInReference.create((JetForExpression) element);
                                                 }
                                             });
     }

@@ -29,7 +29,6 @@ import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -51,7 +50,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     private static final Pattern TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test." + LINE_NUMBER_FUN + "\\(\\).*$");
 
     @NotNull
-    private String getTestDataPath() {
+    private static String getTestDataPath() {
         return JetParsingTest.getTestDataDir() + "/lineNumber";
     }
 
@@ -94,7 +93,8 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         JetFile psiFile = createPsiFile(filename);
         GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
 
-        List<Integer> expectedLineNumbers, actualLineNumbers;
+        List<Integer> expectedLineNumbers;
+        List<Integer> actualLineNumbers;
         if (custom) {
             expectedLineNumbers = extractCustomLineNumbersFromSource(psiFile);
             actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
@@ -109,10 +109,14 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
+    private static List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
         ClassFileFactory factory = state.getFactory();
         List<Integer> actualLineNumbers = Lists.newArrayList();
         for (String filename : factory.files()) {
+            if (PackageClassUtils.isPackageClassFqName(new FqName(FileUtil.getNameWithoutExtension(filename)))) {
+                // Don't test line numbers in *Package facade classes
+                continue;
+            }
             ClassReader cr = new ClassReader(factory.asBytes(filename));
             try {
                 List<Integer> lineNumbers = testFunInvoke ? readTestFunLineNumbers(cr) : readAllLineNumbers(cr);
@@ -136,7 +140,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private List<Integer> extractCustomLineNumbersFromSource(@NotNull JetFile file) {
+    private static List<Integer> extractCustomLineNumbersFromSource(@NotNull JetFile file) {
         String fileContent = file.getText();
         List<Integer> lineNumbers = Lists.newArrayList();
         String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
@@ -154,7 +158,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private List<Integer> extractSelectedLineNumbersFromSource(@NotNull JetFile file) {
+    private static List<Integer> extractSelectedLineNumbersFromSource(@NotNull JetFile file) {
         String fileContent = file.getText();
         List<Integer> lineNumbers = Lists.newArrayList();
         String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
@@ -170,7 +174,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private List<Integer> readTestFunLineNumbers(@NotNull ClassReader cr) {
+    private static List<Integer> readTestFunLineNumbers(@NotNull ClassReader cr) {
         final List<Label> labels = Lists.newArrayList();
         final Map<Label, Integer> labels2LineNumbers = Maps.newHashMap();
 
@@ -215,7 +219,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private List<Integer> readAllLineNumbers(@NotNull ClassReader reader) {
+    private static List<Integer> readAllLineNumbers(@NotNull ClassReader reader) {
         final List<Integer> result = new ArrayList<Integer>();
         reader.accept(new ClassVisitor(Opcodes.ASM4) {
             @Override

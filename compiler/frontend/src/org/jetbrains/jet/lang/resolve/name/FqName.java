@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class FqName extends FqNameBase {
+public final class FqName extends FqNameBase {
 
     @NotNull
     public static FqName fromSegments(@NotNull List<String> names) {
@@ -156,7 +156,7 @@ public class FqName extends FqNameBase {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof FqName)) return false;
 
         FqName otherFqName = (FqName) o;
 

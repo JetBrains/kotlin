@@ -39,7 +39,8 @@ import static org.jetbrains.jet.JetNodeTypes.PROPERTY_ACCESSOR;
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> implements JetVariableDeclaration {
+public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> implements JetVariableDeclaration,
+                                                                                              JetCallableDeclaration {
     public JetProperty(@NotNull ASTNode node) {
         super(node);
     }
@@ -99,6 +100,13 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     @Nullable
+    @Override
+    public JetParameterList getValueParameterList() {
+        return null;
+    }
+
+    @Override
+    @Nullable
     public JetTypeReference getReceiverTypeRef() {
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
@@ -112,6 +120,12 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         }
 
         return null;
+    }
+
+    @Nullable
+    @Override
+    public JetTypeReference getReturnTypeRef() {
+        return getTypeRef();
     }
 
     @Override

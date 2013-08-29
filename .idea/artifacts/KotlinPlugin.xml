@@ -17,6 +17,11 @@
             <element id="module-output" name="cli-common" />
             <element id="module-output" name="ide-compiler-runner" />
             <element id="module-output" name="preloader" />
+            <element id="module-output" name="serialization" />
+            <element id="module-output" name="serialization.java" />
+            <element id="directory" name="jet">
+              <element id="dir-copy" path="$PROJECT_DIR$/idea/builtinsSrc/jet" />
+            </element>
           </element>
           <element id="library" level="project" name="js-libs" />
           <element id="library" level="project" name="javax.inject" />
@@ -32,6 +37,7 @@
               <element id="module-output" name="preloader" />
             </element>
           </element>
+          <element id="library" level="project" name="kotlin-runtime" />
         </element>
         <element id="directory" name="kotlinc">
           <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

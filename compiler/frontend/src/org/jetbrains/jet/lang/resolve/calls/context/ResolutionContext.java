@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
-public abstract class ResolutionContext<Context extends ResolutionContext> {
+public abstract class ResolutionContext<Context extends ResolutionContext<Context>> {
     public final BindingTrace trace;
     public final JetScope scope;
     public final JetType expectedType;

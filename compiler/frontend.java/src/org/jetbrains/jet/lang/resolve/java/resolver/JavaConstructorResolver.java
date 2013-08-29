@@ -30,8 +30,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
-import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -69,17 +67,13 @@ public final class JavaConstructorResolver {
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(
-            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptor containingClass
-    ) {
+    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull PsiClass psiClass, @NotNull ClassDescriptor containingClass) {
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
-        PsiClass psiClass = classData.getPsiClass();
-
-        TypeVariableResolver resolverForTypeParameters = TypeVariableResolvers.classTypeVariableResolver(
-                containingClass, "class " + psiClass.getQualifiedName());
-
         List<TypeParameterDescriptor> typeParameters = containingClass.getTypeConstructor().getParameters();
+
+        TypeVariableResolver typeVariableResolver =
+                new TypeVariableResolver(typeParameters, containingClass, "class " + psiClass.getQualifiedName());
 
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
@@ -92,7 +86,7 @@ public final class JavaConstructorResolver {
                 constructors.add(trace.get(BindingContext.CONSTRUCTOR, psiClass));
             }
             else {
-                Visibility constructorVisibility = DescriptorResolverUtils.getConstructorVisibility(containingClass);
+                Visibility constructorVisibility = getConstructorVisibility(containingClass);
                 // We need to create default constructors for classes and abstract classes.
                 // Example:
                 // class Kotlin() : Java() {}
@@ -102,7 +96,8 @@ public final class JavaConstructorResolver {
                             containingClass,
                             Collections.<AnnotationDescriptor>emptyList(),
                             true);
-                    constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), constructorVisibility, isStatic);
+                    constructorDescriptor
+                            .initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), constructorVisibility, isStatic);
                     constructors.add(constructorDescriptor);
                     trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
                 }
@@ -128,7 +123,7 @@ public final class JavaConstructorResolver {
                             JetType varargElementType = null;
                             if (i == methods.length - 1 && (returnType instanceof PsiArrayType)) {
                                 varargElementType = typeTransformer
-                                        .transformToType(((PsiArrayType) returnType).getComponentType(), resolverForTypeParameters);
+                                        .transformToType(((PsiArrayType) returnType).getComponentType(), typeVariableResolver);
                             }
 
                             assert returnType != null;
@@ -137,7 +132,7 @@ public final class JavaConstructorResolver {
                                     i,
                                     Collections.<AnnotationDescriptor>emptyList(),
                                     Name.identifier(method.getName()),
-                                    typeTransformer.transformToType(returnType, resolverForTypeParameters),
+                                    typeTransformer.transformToType(returnType, typeVariableResolver),
                                     annotationMethod.getDefaultValue() != null,
                                     varargElementType));
                         }
@@ -166,6 +161,15 @@ public final class JavaConstructorResolver {
         return constructors;
     }
 
+    @NotNull
+    private static Visibility getConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+        Visibility visibility = classDescriptor.getVisibility();
+        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
+            return JavaVisibilities.PROTECTED_AND_PACKAGE;
+        }
+        return visibility;
+    }
+
     @Nullable
     private ConstructorDescriptor resolveConstructor(
             PsiClass psiClass,
@@ -175,32 +179,21 @@ public final class JavaConstructorResolver {
     ) {
         PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 
-        JetConstructorAnnotation constructorAnnotation = constructor.getJetConstructorAnnotation();
-        //noinspection deprecation
-        if (constructorAnnotation.hidden()) {
-            return null;
-        }
-
-        // Do not resolve kotlin constructors without JetConstructorAnnotation
-        if (DescriptorResolverUtils.isKotlinClass(psiClass) && !constructorAnnotation.isDefined()) {
-            return null;
-        }
-
         if (trace.get(BindingContext.CONSTRUCTOR, psiConstructor) != null) {
             return trace.get(BindingContext.CONSTRUCTOR, psiConstructor);
         }
 
-        boolean primary = constructor.getJetConstructorAnnotation().isDefined();
-
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                primary);
+                false);
 
-        String context = "constructor of class " + psiClass.getQualifiedName();
+        List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
+
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
                 constructorDescriptor, constructor.getParameters(),
-                TypeVariableResolvers.classTypeVariableResolver(classDescriptor, context));
+                new TypeVariableResolver(typeParameters, classDescriptor, "constructor of class " + psiClass.getQualifiedName())
+        );
 
         if (valueParameterDescriptors.getReceiverType() != null) {
             throw new IllegalStateException();
@@ -217,9 +210,9 @@ public final class JavaConstructorResolver {
                          Collections.singletonList(alternativeMethodSignatureData.getError()));
         }
 
-        constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(),
+        constructorDescriptor.initialize(typeParameters,
                                          valueParameterDescriptors.getDescriptors(),
-                                         DescriptorResolverUtils.resolveVisibility(psiConstructor, constructorAnnotation),
+                                         DescriptorResolverUtils.resolveVisibility(psiConstructor),
                                          aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;

@@ -1,4 +1,4 @@
 package java;
 
-public class JFirst extends kotlin.KFirst {
+public class JFirst extends kt.KFirst {
 }

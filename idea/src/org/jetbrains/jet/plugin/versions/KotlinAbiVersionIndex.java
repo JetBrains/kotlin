@@ -30,9 +30,8 @@ import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 
-import java.lang.Throwable;
 import java.util.Map;
 
 /**
@@ -43,7 +42,7 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
 
     public static final KotlinAbiVersionIndex INSTANCE = new KotlinAbiVersionIndex();
 
-    private static final int VERSION = 0;
+    private static final int VERSION = 1;
 
     private static final ID<Integer, Void> NAME = ID.create(KotlinAbiVersionIndex.class.getCanonicalName());
     private static final ExternalIntegerKeyDescriptor KEY_DESCRIPTOR = new ExternalIntegerKeyDescriptor();
@@ -64,17 +63,20 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
             try {
                 ClassReader classReader = new ClassReader(inputData.getContent());
                 classReader.accept(new ClassVisitor(Opcodes.ASM4) {
+                    @SuppressWarnings("deprecation")
                     @Override
                     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                        if (!JvmStdlibNames.JET_CLASS.getDescriptor().equals(desc) &&
-                            !JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor().equals(desc)) {
+                        if (!JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION.getDescriptor().equals(desc) &&
+                            !JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION.getDescriptor().equals(desc) &&
+                            !JvmAnnotationNames.KOTLIN_CLASS.getDescriptor().equals(desc) &&
+                            !JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor().equals(desc)) {
                             return null;
                         }
                         annotationPresent.set(true);
                         return new AnnotationVisitor(Opcodes.ASM4) {
                             @Override
                             public void visit(String name, Object value) {
-                                if (JvmStdlibNames.ABI_VERSION_NAME.equals(name)) {
+                                if (JvmAnnotationNames.ABI_VERSION_FIELD_NAME.equals(name)) {
                                     if (value instanceof Integer) {
                                         Integer abiVersion = (Integer) value;
                                         result.put(abiVersion, null);
@@ -102,7 +104,8 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
         }
     };
 
-    private KotlinAbiVersionIndex() {}
+    private KotlinAbiVersionIndex() {
+    }
 
     @NotNull
     @Override

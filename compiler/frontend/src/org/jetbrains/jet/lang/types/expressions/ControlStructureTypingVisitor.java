@@ -58,6 +58,8 @@ import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
+    public static final String RETURN_NOT_ALLOWED_MESSAGE = "Return not allowed";
+
     protected ControlStructureTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);
     }
@@ -477,14 +479,16 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext context) {
-        JetElement element = context.labelResolver.resolveLabel(expression, context);
+        JetElement labelTargetElement = context.labelResolver.resolveLabel(expression, context);
 
         JetExpression returnedExpression = expression.getReturnedExpression();
 
         JetType expectedType = TypeUtils.NO_EXPECTED_TYPE;
+        JetType resultType = KotlinBuiltIns.getInstance().getNothingType();
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
 
         if (parentDeclaration instanceof JetParameter) {
+            // In a default value for parameter
             context.trace.report(RETURN_NOT_ALLOWED.on(expression));
         }
         assert parentDeclaration != null;
@@ -500,22 +504,33 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                         containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
                         containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
                     } while (containingFunction instanceof JetFunctionLiteral);
+                    // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                    resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
                 }
                 if (containingFunctionDescriptor != null) {
                     expectedType = DescriptorUtils.getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunction);
                 }
             }
             else {
+                // Outside a function
                 context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
             }
         }
-        else if (element != null) {
-            SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, element);
+        else if (labelTargetElement != null) {
+            SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, labelTargetElement);
             if (functionDescriptor != null) {
-                expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, element);
+                expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, labelTargetElement);
                 if (functionDescriptor != containingFunctionDescriptor) {
+                    // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                    resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                }
+                else if (expectedType == TypeUtils.NO_EXPECTED_TYPE) {
+                    // expectedType is NO_EXPECTED_TYPE iff the return type of the corresponding function descriptor is not computed yet
+                    // our temporary policy is to prohibit returns in this case. It mostly applies to local returns in lambdas
+                    context.trace.report(RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED.on(expression));
                 }
             }
             else {
@@ -530,7 +545,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
+        return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
     }
 
     @Override

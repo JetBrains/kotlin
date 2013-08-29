@@ -51,7 +51,8 @@ import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.CliVirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -67,6 +68,7 @@ public class JetCoreEnvironment {
     private final JavaCoreApplicationEnvironment applicationEnvironment;
     private final JavaCoreProjectEnvironment projectEnvironment;
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+    private final ClassPath classPath = new ClassPath();
 
     private final CoreExternalAnnotationsManager annotationsManager;
 
@@ -123,9 +125,10 @@ public class JetCoreEnvironment {
             addSources(path);
         }
 
-        JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
+        JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
+                configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
-        KotlinBuiltIns.initialize(project, KotlinBuiltIns.InitializationMode.SINGLE_THREADED);
+        project.registerService(VirtualFileFinder.class, new CliVirtualFileFinder(classPath));
     }
 
     public CompilerConfiguration getConfiguration() {
@@ -196,6 +199,7 @@ public class JetCoreEnvironment {
                 return;
             }
             projectEnvironment.addJarToClassPath(path);
+            classPath.add(jarFile);
         }
         else {
             VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
@@ -204,6 +208,7 @@ public class JetCoreEnvironment {
                 return;
             }
             projectEnvironment.addSourcesToClasspath(root);
+            classPath.add(root);
         }
     }
 

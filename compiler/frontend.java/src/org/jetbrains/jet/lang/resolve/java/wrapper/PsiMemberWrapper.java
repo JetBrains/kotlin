@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.wrapper;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.kt.KotlinSignatureAnnotation;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.KotlinSignatureAnnotation;
 
 public abstract class PsiMemberWrapper {
 

@@ -63,11 +63,11 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(
+    public List<AnnotationDescriptor> resolveAnnotationsWithoutArguments(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
-            @NotNull BindingTrace trace)
-    {
+            @NotNull BindingTrace trace
+    ) {
         return resolveAnnotations(scope, modifierList, trace, false);
     }
 

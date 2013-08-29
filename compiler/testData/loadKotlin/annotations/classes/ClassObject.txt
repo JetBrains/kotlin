@@ -1,0 +1,13 @@
+package test
+
+internal final annotation class Anno : jet.Annotation {
+    /*primary*/ public constructor Anno()
+}
+
+internal final class Class {
+    /*primary*/ public constructor Class()
+    
+    test.Anno() internal class object <class-object-for-Class> {
+        /*primary*/ private constructor <class-object-for-Class>()
+    }
+}

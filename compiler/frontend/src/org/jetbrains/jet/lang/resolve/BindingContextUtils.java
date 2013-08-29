@@ -88,12 +88,7 @@ public class BindingContextUtils {
             return Lists.newArrayList(bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression));
         }
 
-        List<PsiElement> elements = descriptorToDeclarations(bindingContext, declarationDescriptor);
-        if (elements.size() > 0) {
-            return elements;
-        }
-
-        return Lists.newArrayList();
+        return descriptorToDeclarations(bindingContext, declarationDescriptor);
     }
 
 

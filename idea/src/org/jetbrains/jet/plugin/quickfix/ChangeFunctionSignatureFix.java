@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -120,6 +121,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                 JetChangeInfo changeInfo = dialog.evaluateChangeInfo();
                 JetChangeSignatureProcessor processor = new JetChangeSignatureProcessor(element.getProject(), changeInfo, getText());
                 processor.run();
+                Disposer.dispose(dialog.getDisposable());
             }
         });
     }

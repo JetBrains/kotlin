@@ -87,18 +87,14 @@ public class LazyResolveTestUtil {
         return module;
     }
 
-    public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment) {
+    public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment, final boolean addBuiltIns) {
         JetTestUtils.newTrace(environment);
-
-        ModuleDescriptorImpl javaModule = AnalyzerFacadeForJVM.createJavaModule("<java module>");
 
         Project project = environment.getProject();
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-        InjectorForJavaDescriptorResolver injector =
-                new InjectorForJavaDescriptorResolver(project, sharedTrace, javaModule);
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, sharedTrace);
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
         final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-
 
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
@@ -117,7 +113,7 @@ public class LazyResolveTestUtil {
                     @NotNull WritableScope namespaceMemberScope
             ) {
                 FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-                if (new FqName("jet").equals(fqName)) {
+                if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName) && addBuiltIns) {
                     namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                 }
                 if (psiClassFinder.findPsiPackage(fqName) != null) {
@@ -127,7 +123,6 @@ public class LazyResolveTestUtil {
                 }
             }
         };
-        javaModule.setModuleConfiguration(moduleConfiguration);
 
         ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(moduleConfiguration);
@@ -135,7 +130,11 @@ public class LazyResolveTestUtil {
     }
 
     public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
-        return resolveLazilyWithSession(files, environment).getRootModuleDescriptor();
+        return resolveLazily(files, environment, true);
+    }
+
+    public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment, boolean addBuiltIns) {
+        return resolveLazilyWithSession(files, environment, addBuiltIns).getRootModuleDescriptor();
     }
 
     @NotNull

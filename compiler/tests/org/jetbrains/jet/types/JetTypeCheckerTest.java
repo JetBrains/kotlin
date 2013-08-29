@@ -25,7 +25,7 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -33,10 +33,9 @@ import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -54,10 +53,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
+
 public class JetTypeCheckerTest extends JetLiteFixture {
 
     private KotlinBuiltIns builtIns;
-    private DescriptorResolver descriptorResolver;
     private JetScope scopeWithImports;
     private TypeResolver typeResolver;
     private ExpressionTypingServices expressionTypingServices;
@@ -79,7 +80,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         builtIns = KotlinBuiltIns.getInstance();
 
         InjectorForTests injector = new InjectorForTests(getProject(), JetTestUtils.createEmptyModule());
-        descriptorResolver = injector.getDescriptorResolver();
         typeResolver = injector.getTypeResolver();
         expressionTypingServices = injector.getExpressionTypingServices();
 
@@ -92,7 +92,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         expressionTypingServices = null;
         typeResolver = null;
-        descriptorResolver = null;
 
         builtIns = null;
 
@@ -148,8 +147,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     public void testIf() throws Exception {
         assertType("if (true) 1", "Unit");
         assertType("if (true) 1 else 1", "Int");
-        assertType("if (true) 1 else return", "Int");
-        assertType("if (true) return else 1", "Int");
+        assertType("if (true) 1 else throw Exception()", "Int");
+        assertType("if (true) throw Exception() else 1", "Int");
         assertType("if (true) throw Exception() else throw Exception()", "Nothing");
 
         assertType("if (true) 1 else null", "Int?");
@@ -583,15 +582,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         return addImports(testData.getMemberScope());
     }
 
+    @SuppressWarnings("ConstantConditions")
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject());
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
-                DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),
-                DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN).getMemberScope());
+        writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT, INCLUDE_KOTLIN_SOURCES).getMemberScope());
+        writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"), IGNORE_KOTLIN_SOURCES).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         writableScope.importScope(builtIns.getBuiltInsScope());
         return writableScope;

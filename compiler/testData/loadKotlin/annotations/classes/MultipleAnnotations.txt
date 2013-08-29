@@ -1,0 +1,17 @@
+package test
+
+internal final annotation class A1 : jet.Annotation {
+    /*primary*/ public constructor A1()
+}
+
+internal final annotation class A2 : jet.Annotation {
+    /*primary*/ public constructor A2()
+}
+
+internal final annotation class A3 : jet.Annotation {
+    /*primary*/ public constructor A3()
+}
+
+test.A1() test.A2() test.A3() internal final class Class {
+    /*primary*/ public constructor Class()
+}

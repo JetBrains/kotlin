@@ -52,8 +52,8 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil;
 
 import java.util.Collection;
@@ -86,8 +86,8 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             return Collections.emptyList();
         }
 
-        CancelableResolveSession cancelableResolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile(
-                (JetFile) element.getContainingFile());
+        CancelableResolveSession cancelableResolveSession =
+                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) element.getContainingFile());
 
         List<FqName> result = Lists.newArrayList();
         if (!isSuppressedTopLevelImportInPosition(element)) {

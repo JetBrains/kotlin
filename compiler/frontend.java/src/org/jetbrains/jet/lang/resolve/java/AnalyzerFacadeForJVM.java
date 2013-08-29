@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
@@ -78,10 +79,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        ModuleDescriptorImpl javaModule = createJavaModule("<java module>");
-
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace, javaModule);
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace);
 
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
 
@@ -115,7 +114,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 }
             }
         };
-        javaModule.setModuleConfiguration(moduleConfiguration);
 
         ModuleDescriptorImpl lazyModule = createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(moduleConfiguration);

@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -119,7 +119,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     public TreeElement[] getChildren() {
         if (myElement instanceof JetFile) {
             JetFile jetFile = (JetFile) myElement;
-            context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
+            context = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
             return wrapDeclarations(jetFile.getDeclarations());
         }
         else if (myElement instanceof JetClass) {

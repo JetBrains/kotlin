@@ -325,8 +325,7 @@ public class QualifiedExpressionResolver {
                     public boolean apply(@Nullable DeclarationDescriptor descriptor) {
                         return (descriptor instanceof NamespaceDescriptor) ||
                                (descriptor instanceof ClassifierDescriptor) ||
-                               ((descriptor instanceof PropertyDescriptor) &&
-                                (trace.get(BindingContext.OBJECT_DECLARATION_CLASS, ((PropertyDescriptor) descriptor)) != null));
+                               (descriptor instanceof VariableDescriptorForObject);
                     }
                 }));
             }

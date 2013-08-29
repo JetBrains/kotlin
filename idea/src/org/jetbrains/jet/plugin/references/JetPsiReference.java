@@ -25,12 +25,14 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
 import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,7 +106,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     @Nullable
     protected PsiElement doResolve() {
-        BindingContext context = WholeProjectAnalyzerFacade.getContextForElement(myExpression);
+        BindingContext context = AnalyzerFacadeWithCache.getContextForElement(myExpression);
 
         List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(context, myExpression);
         if (psiElements.size() == 1) {
@@ -112,6 +114,14 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         }
         if (psiElements.size() > 1) {
             return null;
+        }
+        DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, myExpression);
+        if (referencedDescriptor != null) {
+            JetDeclaration declarationInDecompiledFile =
+                    DecompiledNavigationUtils.findDeclarationForReference(myExpression.getProject(), referencedDescriptor);
+            if (declarationInDecompiledFile != null) {
+                return declarationInDecompiledFile;
+            }
         }
         Collection<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(context);
         if (stdlibSymbols.size() == 1) {
@@ -123,7 +133,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors == null) {
             List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
@@ -153,6 +163,6 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     private Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext bindingContext) {
         return myExpression.getProject().getComponent(BuiltInsReferenceResolver.class)
-                .resolveStandardLibrarySymbol(bindingContext, myExpression);
+                .resolveBuiltInSymbol(bindingContext, myExpression);
     }
 }

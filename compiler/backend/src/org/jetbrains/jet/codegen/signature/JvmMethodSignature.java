@@ -32,47 +32,17 @@ public class JvmMethodSignature {
      * Null when we don't care about type parameters
      */
     private final String genericsSignature;
-    private final String kotlinTypeParameter;
     @NotNull
     private final List<JvmMethodParameterSignature> kotlinParameterTypes;
-    @NotNull
-    private final String kotlinReturnType;
-
-    /**
-     * Generics info is generated. However it can be trivial (e.g. fields are null).
-     */
-    private final boolean genericsAvailable;
 
     protected JvmMethodSignature(
             @NotNull Method asmMethod,
             @Nullable String genericsSignature,
-            @Nullable String kotlinTypeParameters,
-            @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes,
-            @NotNull String kotlinReturnType,
-            boolean genericsAvailable
+            @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes
     ) {
         this.asmMethod = asmMethod;
         this.genericsSignature = genericsSignature;
-        this.kotlinTypeParameter = kotlinTypeParameters;
         this.kotlinParameterTypes = kotlinParameterTypes;
-        this.kotlinReturnType = kotlinReturnType;
-        this.genericsAvailable = genericsAvailable;
-    }
-
-    @NotNull
-    private static List<Type> getTypes(@NotNull List<JvmMethodParameterSignature> signatures) {
-        List<Type> r = new ArrayList<Type>(signatures.size());
-        for (JvmMethodParameterSignature signature : signatures) {
-            r.add(signature.getAsmType());
-        }
-        return r;
-    }
-
-    private void checkGenericsAvailable() {
-        if (!genericsAvailable) {
-            // TODO: uncomment following line and fix all broken tests
-            //throw new IllegalStateException("incorrect call sequence");
-        }
     }
 
     @NotNull
@@ -81,36 +51,12 @@ public class JvmMethodSignature {
     }
 
     public String getGenericsSignature() {
-        checkGenericsAvailable();
         return genericsSignature;
-    }
-
-    public String getKotlinTypeParameter() {
-        checkGenericsAvailable();
-        return kotlinTypeParameter;
     }
 
     @NotNull
     public List<JvmMethodParameterSignature> getKotlinParameterTypes() {
-        checkGenericsAvailable();
         return kotlinParameterTypes;
-    }
-
-    public int getParameterCount() {
-        // TODO: slow
-        return asmMethod.getArgumentTypes().length;
-    }
-
-    @NotNull
-    public String getKotlinParameterType(int i) {
-        checkGenericsAvailable();
-        return kotlinParameterTypes.get(i).getKotlinSignature();
-    }
-
-    @NotNull
-    public String getKotlinReturnType() {
-        checkGenericsAvailable();
-        return kotlinReturnType;
     }
 
     public List<Type> getValueParameterTypes() {

@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public final class JetTypeImpl extends AnnotatedImpl implements JetType {
@@ -84,19 +83,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
     @Override
     public String toString() {
-        return constructor + (arguments.isEmpty() ? "" : "<" + argumentsToString() + ">") + (isNullable() ? "?" : "");
-    }
-
-    private StringBuilder argumentsToString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Iterator<TypeProjection> iterator = arguments.iterator(); iterator.hasNext();) {
-            TypeProjection argument = iterator.next();
-            stringBuilder.append(argument);
-            if (iterator.hasNext()) {
-                stringBuilder.append(", ");
-            }
-        }
-        return stringBuilder;
+        return TypeUtils.toString(this);
     }
 
     @Override

@@ -22,43 +22,52 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.Collections;
 
-import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllPackageDeclarations;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @NotNull
     private final FqName packageFQN;
+    @NotNull
+    private final PsiClass psiClass;
 
     public JavaClassStaticMembersScope(
             @NotNull NamespaceDescriptor descriptor,
-            @NotNull ClassPsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull PsiClass psiClass,
+            @NotNull PsiClassFinder psiClassFinder,
+            @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, declarationProvider, semanticServices);
+        super(descriptor, psiClass, MembersProvider.forClass(psiClassFinder, psiClass, true), javaDescriptorResolver);
         this.packageFQN = packageFQN;
+        this.psiClass = psiClass;
     }
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+        return javaDescriptorResolver.resolveNamespace(packageFQN.child(name), INCLUDE_KOTLIN_SOURCES);
     }
 
     @NotNull
     @Override
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
-        for (PsiClass nested : declarationProvider.getPsiClass().getInnerClasses()) {
+        for (PsiClass nested : psiClass.getInnerClasses()) {
             ContainerUtil.addIfNotNull(result, getNamespace(Name.identifier(nested.getName())));
         }
         return result;
+    }
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        return Collections.emptyList();
     }
 }

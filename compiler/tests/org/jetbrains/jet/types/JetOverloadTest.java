@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverloadUtil;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class JetOverloadTest extends JetLiteFixture {
@@ -181,6 +182,7 @@ public class JetOverloadTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
-        return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsScope(), function, JetTestUtils.DUMMY_TRACE);
+        return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsScope(), function,
+                                                            JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }
 }

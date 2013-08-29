@@ -27,22 +27,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.*;
 
 public abstract class JavaBaseScope extends JetScopeImpl {
-
     @NotNull
-    protected final JavaSemanticServices semanticServices;
+    protected final JavaDescriptorResolver javaDescriptorResolver;
     @NotNull
-    protected final PsiDeclarationProvider declarationProvider;
+    protected final MembersProvider membersProvider;
     @NotNull
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
     @NotNull
@@ -59,11 +54,11 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     protected JavaBaseScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull JavaSemanticServices semanticServices,
-            @NotNull PsiDeclarationProvider declarationProvider
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull MembersProvider membersProvider
     ) {
-        this.semanticServices = semanticServices;
-        this.declarationProvider = declarationProvider;
+        this.javaDescriptorResolver = javaDescriptorResolver;
+        this.membersProvider = membersProvider;
         this.descriptor = descriptor;
     }
 
@@ -90,7 +85,11 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<VariableDescriptor> computePropertyDescriptors(@NotNull Name name) {
-        return getResolver().resolveFieldGroupByName(name, declarationProvider, descriptor);
+        NamedMembers members = membersProvider.get(name);
+        if (members == null) {
+            return Collections.emptySet();
+        }
+        return javaDescriptorResolver.resolveFieldGroup(members, descriptor);
     }
 
     @NotNull
@@ -150,7 +149,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     private Collection<DeclarationDescriptor> computeFieldAndFunctionDescriptors() {
         Collection<DeclarationDescriptor> result = Lists.newArrayList();
-        for (NamedMembers members : declarationProvider.getMembersCache().allMembers()) {
+        for (NamedMembers members : membersProvider.allMembers()) {
             Name name = members.getName();
             ProgressIndicatorProvider.checkCanceled();
             result.addAll(getFunctions(name));
@@ -160,22 +159,9 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         return result;
     }
 
-    @NotNull
-    protected JavaDescriptorResolver getResolver() {
-        return semanticServices.getDescriptorResolver();
-    }
-
     //TODO: remove this method
     @NotNull
-    public PsiElement getPsiElement() {
-        if (declarationProvider instanceof ClassPsiDeclarationProvider) {
-            return ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
-        }
-        if (declarationProvider instanceof PackagePsiDeclarationProvider) {
-            return ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
-        }
-        throw new IllegalStateException();
-    }
+    public abstract PsiElement getPsiElement();
 
     @NotNull
     protected Collection<ClassDescriptor> getInnerClasses() {

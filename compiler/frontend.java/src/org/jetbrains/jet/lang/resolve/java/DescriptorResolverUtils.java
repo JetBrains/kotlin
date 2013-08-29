@@ -16,19 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.ImmutableSet;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
-import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -37,18 +32,41 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.psi.util.PsiFormatUtilBase.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
-    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+    private static final ImmutableSet<String> OBJECT_METHODS = ImmutableSet.of("hashCode()", "equals(java.lang.Object)", "toString()");
 
     private DescriptorResolverUtils() {
     }
 
-    public static boolean isKotlinClass(@NotNull PsiClass psiClass) {
-        PsiClassWrapper wrapper = new PsiClassWrapper(psiClass);
-        return wrapper.getJetClass().isDefined() ||  wrapper.getJetPackageClass().isDefined();
+    public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof ClsClassImpl) {
+            String qualifiedName = psiClass.getQualifiedName();
+            if (qualifiedName != null && PackageClassUtils.isPackageClassFqName(new FqName(qualifiedName))) {
+                return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_PACKAGE.getFqName());
+            }
+        }
+        return false;
+    }
+
+    public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
+        if (psiClass instanceof ClsClassImpl) {
+            return hasAnnotation(psiClass, JvmAnnotationNames.KOTLIN_CLASS.getFqName());
+        }
+        return false;
+    }
+
+    public static boolean hasAnnotation(@NotNull PsiClass psiClass, @NotNull FqName annotationFqName) {
+        PsiModifierList list = psiClass.getModifierList();
+        if (list != null) {
+            return list.findAnnotation(annotationFqName.asString()) != null;
+        }
+        return false;
+    }
+
+    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull PsiClass psiClass) {
+        return isCompiledKotlinClass(psiClass) || isCompiledKotlinPackageClass(psiClass);
     }
 
     @NotNull
@@ -59,36 +77,7 @@ public final class DescriptorResolverUtils {
         return Collections.emptyList();
     }
 
-    public static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
-        if (memberWrapper instanceof PsiMethodWrapper) {
-            PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
-            if (method.getJetMethodAnnotation().hasForceOpenFlag()) {
-                return Modality.OPEN;
-            }
-            if (method.getJetMethodAnnotation().hasForceFinalFlag()) {
-                return Modality.FINAL;
-            }
-        }
-
-        return Modality.convertFromFlags(memberWrapper.isAbstract(), !isFinal);
-    }
-
-    public static Visibility resolveVisibility(
-            @NotNull PsiModifierListOwner modifierListOwner,
-            @Nullable PsiAnnotationWithFlags annotation
-    ) {
-        if (annotation != null) {
-            if (annotation.hasPrivateFlag()) {
-                return Visibilities.PRIVATE;
-            }
-            else if (annotation.hasInternalFlag()) {
-                return Visibilities.INTERNAL;
-            }
-            else if (annotation.hasProtectedFlag()) {
-                return Visibilities.PROTECTED;
-            }
-        }
-
+    public static Visibility resolveVisibility(@NotNull PsiModifierListOwner modifierListOwner) {
         if (modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC)) {
             return Visibilities.PUBLIC;
         }
@@ -97,11 +86,11 @@ public final class DescriptorResolverUtils {
         }
         if (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED)) {
             if (modifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-                return JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY;
+                return JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
             }
-            return JavaDescriptorResolver.PROTECTED_AND_PACKAGE;
+            return JavaVisibilities.PROTECTED_AND_PACKAGE;
         }
-        return JavaDescriptorResolver.PACKAGE_VISIBILITY;
+        return JavaVisibilities.PACKAGE_VISIBILITY;
     }
 
     @Nullable
@@ -122,40 +111,9 @@ public final class DescriptorResolverUtils {
         return null;
     }
 
-    public static Visibility getConstructorVisibility(ClassDescriptor classDescriptor) {
-        Visibility containingClassVisibility = classDescriptor.getVisibility();
-        if (containingClassVisibility == JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY) {
-            return JavaDescriptorResolver.PROTECTED_AND_PACKAGE;
-        }
-        return containingClassVisibility;
-    }
-
-    public static void checkPsiClassIsNotJet(@Nullable PsiClass psiClass) {
-        if (psiClass instanceof JetJavaMirrorMarker) {
-            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
-        }
-    }
-
-    @NotNull
-    public static FqNameUnsafe getFqNameForClassObject(@NotNull PsiClass psiClass) {
-        String psiClassQualifiedName = psiClass.getQualifiedName();
-        assert psiClassQualifiedName != null : "Reading java class with no qualified name";
-        return new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).asString());
-    }
-
-    @NotNull
-    public static AnnotationDescriptor getAnnotationDescriptorForJavaLangDeprecated(ClassDescriptor classDescriptor) {
-        AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
-        annotationDescriptor.setAnnotationType(classDescriptor.getDefaultType());
-        ValueParameterDescriptor value = getValueParameterDescriptorForAnnotationParameter(Name.identifier("value"), classDescriptor);
-        assert value != null : "jet.deprecated must have one parameter called value";
-        annotationDescriptor.setValueArgument(value, new StringValue("Deprecated in Java"));
-        return annotationDescriptor;
-    }
-
     /**
      * @return true if {@code member} is a static member of enum class, which is to be put into its class object (and not into the
-     * corresponding package). This applies to enum entries, values() and valueOf(String) methods
+     *         corresponding package). This applies to enum entries, values() and valueOf(String) methods
      */
     public static boolean shouldBeInEnumClassObject(@NotNull PsiMember member) {
         PsiClass psiClass = member.getContainingClass();
@@ -165,7 +123,7 @@ public final class DescriptorResolverUtils {
 
         if (!(member instanceof PsiMethod)) return false;
         String signature = PsiFormatUtil.formatMethod((PsiMethod) member,
-                PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+                                                      PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);
@@ -176,5 +134,25 @@ public final class DescriptorResolverUtils {
             @NotNull PsiMember member
     ) {
         return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member);
+    }
+
+    public static boolean isObjectMethodInInterface(@NotNull PsiMember member) {
+        if (!(member instanceof PsiMethod)) {
+            return false;
+        }
+        PsiClass containingClass = member.getContainingClass();
+        assert containingClass != null : "containing class is null for " + member;
+
+        if (!containingClass.isInterface()) {
+            return false;
+        }
+
+        return isObjectMethod((PsiMethod) member);
+    }
+
+    public static boolean isObjectMethod(@NotNull PsiMethod method) {
+        String formattedMethod = PsiFormatUtil.formatMethod(
+                method, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
+        return OBJECT_METHODS.contains(formattedMethod);
     }
 }

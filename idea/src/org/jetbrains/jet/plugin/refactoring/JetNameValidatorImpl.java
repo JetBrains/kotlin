@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
 
@@ -67,8 +67,7 @@ public class JetNameValidatorImpl extends JetNameValidator {
 
     private boolean checkElement(final String name, PsiElement sibling) {
         if (myBindingContext == null) {
-            myBindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                    (JetFile) myContainer.getContainingFile()).getBindingContext();
+            myBindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) myContainer.getContainingFile()).getBindingContext();
         }
         final Ref<Boolean> result = new Ref<Boolean>(true);
         JetVisitorVoid visitor = new JetVisitorVoid() {

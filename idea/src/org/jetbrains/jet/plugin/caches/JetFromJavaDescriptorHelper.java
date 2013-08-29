@@ -16,36 +16,32 @@
 
 package org.jetbrains.jet.plugin.caches;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
-import com.intellij.psi.impl.java.stubs.index.JavaMethodNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import jet.runtime.typeinfo.JetClass;
-import jet.runtime.typeinfo.JetPackageClass;
-import jet.runtime.typeinfo.JetValueParameter;
+import jet.KotlinClass;
+import jet.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
-import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
+import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Number of helper methods for searching jet element prototypes in java. Methods use java indices for search.
  */
-class JetFromJavaDescriptorHelper {
+public class JetFromJavaDescriptorHelper {
 
     private JetFromJavaDescriptorHelper() {
     }
@@ -57,8 +53,7 @@ class JetFromJavaDescriptorHelper {
         /* Will iterate through short name caches
            Kotlin namespaces from jar a class files will be collected from java cache
            Kotlin namespaces classes from sources will be collected with JetShortNamesCache.getClassesByName */
-
-        return getClassesByAnnotation(JetPackageClass.class.getSimpleName(), project, scope);
+        return getClassesByAnnotation(KotlinPackage.class.getSimpleName(), project, scope);
     }
 
     /**
@@ -81,10 +76,14 @@ class JetFromJavaDescriptorHelper {
     static Collection<PsiClass> getCompiledClassesForTopLevelObjects(Project project, GlobalSearchScope scope) {
         Set<PsiClass> jetObjectClasses = Sets.newHashSet();
 
-        Collection<PsiClass> classesByAnnotation = getClassesByAnnotation(JetClass.class.getSimpleName(), project, scope);
+        Collection<PsiClass> classesByAnnotation = getClassesByAnnotation(KotlinClass.class.getSimpleName(), project, scope);
+
         for (PsiClass psiClass : classesByAnnotation) {
-            JetClassAnnotation jetAnnotation = JetClassAnnotation.get(psiClass);
-            if (psiClass.getContainingClass() == null && jetAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
+            ClassKind kind = getCompiledClassKind(psiClass);
+            if (kind == null) {
+                continue;
+            }
+            if (psiClass.getContainingClass() == null && kind == ClassKind.OBJECT) {
                 jetObjectClasses.add(psiClass);
             }
         }
@@ -92,58 +91,41 @@ class JetFromJavaDescriptorHelper {
         return jetObjectClasses;
     }
 
-    static Collection<String> getTopExtensionFunctionNames(Project project, GlobalSearchScope scope) {
+    @Nullable
+    public static ClassKind getCompiledClassKind(@NotNull PsiClass psiClass) {
+        ClassData classData = getClassData(psiClass);
+        if (classData == null) return null;
+        return DescriptorDeserializer.classKind(Flags.CLASS_KIND.get(classData.getClassProto().getFlags()));
+    }
 
-        // Extension function should have an parameter of type JetValueParameter with explicit receiver parameter.
 
-        Set<String> extensionNames = new HashSet<String>();
+    @Nullable
+    private static ClassData getClassData(@NotNull PsiClass psiClass) {
+        VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
+        if (virtualFile == null) return null;
+        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile).readClassData();
+    }
 
-        Collection<PsiAnnotation> valueParametersAnnotations = JavaAnnotationIndex.getInstance().get(
-                JetValueParameter.class.getSimpleName(), project, scope);
+    @Nullable
+    private static PackageData getPackageData(@NotNull PsiClass psiClass) {
+        VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
+        if (virtualFile == null) return null;
+        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile).readPackageData();
+    }
 
-        for (PsiAnnotation parameterAnnotation : valueParametersAnnotations) {
-            PsiParameter parameter = PsiTreeUtil.getParentOfType(parameterAnnotation, PsiParameter.class);
-            if (parameter == null) {
-                continue;
-            }
-
-            if (!JetValueParameterAnnotation.get(parameter).receiver()) {
-                continue;
-            }
-
-            PsiMethod psiMethod = PsiTreeUtil.getParentOfType(parameter, PsiMethod.class);
-            if (psiMethod != null) {
-                extensionNames.add(psiMethod.getName());
-            }
+    //TODO: common utility
+    //TODO: doesn't work for inner classes and stuff
+    @Nullable
+    private static VirtualFile getVirtualFileForPsiClass(@NotNull PsiClass psiClass) {
+        PsiFile psiFile = psiClass.getContainingFile();
+        if (psiFile == null) {
+            return null;
         }
-
-        return extensionNames;
-    }
-
-    static Collection<PsiMethod> getTopExtensionFunctionPrototypesByName(String name, Project project, GlobalSearchScope scope) {
-        return filterJetJavaPrototypesByName(
-                name, project, scope,
-                new Predicate<PsiMethod>() {
-                    @Override
-                    public boolean apply(@Nullable PsiMethod psiMethod) {
-                        assert psiMethod != null;
-                        PsiParameter[] parameters = psiMethod.getParameterList().getParameters();
-                        return parameters.length > 0 && JetValueParameterAnnotation.get(parameters[0]).receiver();
-                    }
-                });
-    }
-
-    static Collection<PsiMethod> getTopLevelFunctionPrototypesByName(String name, Project project, GlobalSearchScope scope) {
-        return filterJetJavaPrototypesByName(
-                name, project, scope,
-                new Predicate<PsiMethod>() {
-                    @Override
-                    public boolean apply(@Nullable PsiMethod psiMethod) {
-                        assert psiMethod != null;
-                        PsiParameter[] parameters = psiMethod.getParameterList().getParameters();
-                        return parameters.length == 0 || !JetValueParameterAnnotation.get(parameters[0]).receiver();
-                    }
-                });
+        VirtualFile virtualFile = psiFile.getVirtualFile();
+        if (virtualFile == null) {
+            return null;
+        }
+        return virtualFile;
     }
 
     @Nullable
@@ -156,40 +138,13 @@ class JetFromJavaDescriptorHelper {
 
             FqName classFQN = new FqName(qualifiedName);
 
-            if (PackageClassUtils.isPackageClass(containingClass)) {
+            if (DescriptorResolverUtils.isCompiledKotlinPackageClass(containingClass)) {
                 FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
                 return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
             }
         }
 
         return null;
-    }
-
-    private static Collection<PsiMethod> filterJetJavaPrototypesByName(
-            String name, Project project, GlobalSearchScope scope,
-            Predicate<PsiMethod> filterPredicate
-    ) {
-        Set<PsiMethod> selectedMethods = new HashSet<PsiMethod>();
-
-        Collection<PsiMethod> psiMethods = JavaMethodNameIndex.getInstance().get(name, project, scope);
-        for (PsiMethod psiMethod : psiMethods) {
-            if (psiMethod == null) {
-                continue;
-            }
-
-            // Check this is top level function
-            PsiClass containingClass = psiMethod.getContainingClass();
-            if (containingClass == null || !PackageClassUtils.isPackageClass(containingClass)) {
-                continue;
-            }
-
-            // Should be parameter with JetValueParameter.receiver == true
-            if (filterPredicate.apply(psiMethod)) {
-                selectedMethods.add(psiMethod);
-            }
-        }
-
-        return selectedMethods;
     }
 
     private static Collection<PsiClass> getClassesByAnnotation(
@@ -205,5 +160,35 @@ class JetFromJavaDescriptorHelper {
             }
         }
         return classes;
+    }
+
+
+    @NotNull
+    public static Collection<FqName> getTopLevelFunctionFqNames(
+            @NotNull Project project,
+            @NotNull GlobalSearchScope scope,
+            boolean shouldBeExtension
+    ) {
+        Collection<FqName> result = Sets.newHashSet();
+        Collection<PsiClass> packageClasses = getClassesByAnnotation(KotlinPackage.class.getSimpleName(), project, scope);
+        for (PsiClass psiClass : packageClasses) {
+            String qualifiedName = psiClass.getQualifiedName();
+            if (qualifiedName == null) {
+                continue;
+            }
+            FqName packageFqName = new FqName(qualifiedName).parent();
+            PackageData data = getPackageData(psiClass);
+            if (data == null) {
+                continue;
+            }
+            NameResolver nameResolver = data.getNameResolver();
+            for (ProtoBuf.Callable callable : data.getPackageProto().getMemberList()) {
+                if (callable.hasReceiverType() == shouldBeExtension) {
+                    Name name = nameResolver.getName(callable.getName());
+                    result.add(packageFqName.child(name));
+                }
+            }
+        }
+        return result;
     }
 }

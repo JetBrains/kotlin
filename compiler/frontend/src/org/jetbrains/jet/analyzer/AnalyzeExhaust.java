@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 public class AnalyzeExhaust {
+    public static final AnalyzeExhaust EMPTY = success(BindingContext.EMPTY, ErrorUtils.getErrorModule());
 
     public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleDescriptor module) {
         return new AnalyzeExhaust(bindingContext, module, null, null);
@@ -69,6 +70,7 @@ public class AnalyzeExhaust {
 
     @NotNull
     public Throwable getError() {
+        if (error == null) throw new IllegalStateException("Should be called only for error analyze result");
         return error;
     }
 

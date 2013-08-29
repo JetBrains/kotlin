@@ -14,6 +14,7 @@
 
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
+        <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jline.jar"/>
@@ -23,7 +24,9 @@
 
     <dirset id="compilerSources.dirset" dir="${basedir}/">
         <include name="compiler/frontend/src"/>
+        <include name="compiler/frontend/serialization/src"/>
         <include name="compiler/frontend.java/src"/>
+        <include name="compiler/frontend.java/serialization.java/src"/>
         <include name="compiler/backend/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
@@ -39,6 +42,7 @@
     <property name="idea.out" value="${basedir}/out/production"/>
     <patternset id="compilerClassesFromIDEA.fileset">
         <include name="frontend/**"/>
+        <include name="serialization/**"/>
         <include name="frontend.java/**"/>
         <include name="backend/**"/>
         <include name="cli/**"/>
@@ -104,7 +108,7 @@
             <classpath refid="classpath"/>
         </javac>
         <copy todir="${output}/classes/generators">
-            <fileset dir="compiler/frontend/src" includes="**/*.jet"/>
+            <fileset dir="compiler/frontend/builtins" includes="jet/**"/>
         </copy>
     </target>
 
@@ -267,12 +271,13 @@
         <sequential>
           <jar jarfile="@{jarfile}" compress="@{compress}">
               <fileset dir="${output}/classes/compiler"/>
-              <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
+              <fileset dir="${basedir}/compiler/frontend/builtins" includes="jet/**"/>
   
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
+              <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.5.0.jar"/>
               <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
 
@@ -346,7 +351,7 @@
                     !org/jdom/xpath/Jaxen*,
                     !org/mozilla/javascript/xml/impl/xmlbeans/**,
                     !META-INF/maven**,
-                    **.class,**.properties,**.jet,**.kt,
+                    **.class,**.properties,**.kt,**.kotlin_*,
                     META-INF/services/**,META-INF/native/**,META-INF/MANIFEST.MF,
                     messages/**)
 

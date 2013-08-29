@@ -5,12 +5,14 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/generator" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/builtins" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="library" name="javax.inject" level="project" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="serialization" />
   </component>
 </module>
 

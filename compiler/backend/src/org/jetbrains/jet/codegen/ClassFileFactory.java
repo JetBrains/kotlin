@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
@@ -51,11 +52,14 @@ public final class ClassFileFactory extends GenerationStateAware {
         this.builderFactory = builderFactory;
     }
 
-    ClassBuilder newVisitor(String internalClassName, PsiFile sourceFile) {
-        return newVisitor(internalClassName + ".class", Collections.singletonList(sourceFile));
+    @NotNull
+    ClassBuilder newVisitor(@NotNull JvmClassName className, @NotNull PsiFile sourceFile) {
+        return newVisitor(className, Collections.singletonList(sourceFile));
     }
-    
-    private ClassBuilder newVisitor(String outputFilePath, Collection<? extends PsiFile> sourceFiles) {
+
+    @NotNull
+    private ClassBuilder newVisitor(@NotNull JvmClassName className, @NotNull Collection<? extends PsiFile> sourceFiles) {
+        String outputFilePath = className.getInternalName() + ".class";
         state.getProgress().reportOutput(toIoFilesIgnoringNonPhysical(sourceFiles), new File(outputFilePath));
         ClassBuilder answer = builderFactory.newClassBuilder();
         generators.put(outputFilePath, answer);
@@ -108,10 +112,7 @@ public final class ClassFileFactory extends GenerationStateAware {
                 @NotNull
                 @Override
                 protected ClassBuilder createClassBuilder() {
-                    return newVisitor(
-                            NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName() + ".class",
-                            files
-                    );
+                    return newVisitor(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName), files);
                 }
             };
             codegen = new NamespaceCodegen(onDemand, fqName, state, files);
@@ -126,17 +127,18 @@ public final class ClassFileFactory extends GenerationStateAware {
         if (isPrimitive(type)) {
             throw new IllegalStateException("Codegen for primitive type is not possible: " + aClass);
         }
-        return newVisitor(type.getInternalName(), sourceFile);
+        return newVisitor(JvmClassName.byType(type), sourceFile);
     }
 
-    public ClassBuilder forNamespacepart(String internalName, PsiFile sourceFile) {
-        return newVisitor(internalName, sourceFile);
+    @NotNull
+    public ClassBuilder forNamespacePart(@NotNull JvmClassName name, @NotNull PsiFile sourceFile) {
+        return newVisitor(name, sourceFile);
     }
 
-    public ClassBuilder forTraitImplementation(ClassDescriptor aClass, GenerationState state, PsiFile sourceFile) {
-        return newVisitor(
-                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName(),
-                sourceFile);
+    @NotNull
+    public ClassBuilder forTraitImplementation(@NotNull ClassDescriptor aClass, @NotNull GenerationState state, @NotNull PsiFile file) {
+        Type type = state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL);
+        return newVisitor(JvmClassName.byType(type), file);
     }
 
     private static Collection<File> toIoFilesIgnoringNonPhysical(Collection<? extends PsiFile> psiFiles) {

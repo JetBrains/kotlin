@@ -77,7 +77,9 @@ public final class InTextDirectivesUtils {
 
         if (strings.size() != 1) {
             throw new IllegalStateException("There is more than one string with given prefixes " +
-                                            Arrays.toString(prefixes) + ". Use findListWithPrefixes() instead.");
+                                            Arrays.toString(prefixes) + ":\n" +
+                                            StringUtil.join(strings, "\n") + "\n" +
+                                            "Use findListWithPrefixes() instead.");
         }
 
         return strings.get(0);

@@ -19,22 +19,26 @@ package org.jetbrains.jet.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.util.List;
 
-public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
+public abstract class AbstractResolveBaseTest extends LightPlatformCodeInsightFixtureTestCase {
+
+    public static final String MULTIRESOLVE = "MULTIRESOLVE";
+    public static final String REF_EMPTY = "REF_EMPTY";
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -42,9 +46,9 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
     }
 
     protected void doTest(String path) {
-        configureByFile(path);
+        myFixture.configureByFile(path);
 
-        if (InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), "MULTIRESOLVE")) {
+        if (InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), MULTIRESOLVE)) {
             doMultiResolveTest();
         }
         else {
@@ -52,20 +56,26 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
         }
     }
 
-    protected static void doSingleResolveTest() {
-        boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(getFile().getText(), "REF_EMPTY");
-        String referenceToString = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "REF:");
+    protected void doSingleResolveTest() {
+        boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), REF_EMPTY);
+        List<String> refs = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "REF:");
 
+        String referenceToString;
         if (shouldBeUnresolved) {
-            Assert.assertNull("REF: directives will be ignored for REF_EMPTY test", referenceToString);
+            Assert.assertTrue("REF: directives will be ignored for " + REF_EMPTY + " test: " + refs, refs.isEmpty());
             referenceToString = "<empty>";
         }
         else {
+            assertTrue("Must be a single ref: " + refs + ".\n" +
+                       "Use " + MULTIRESOLVE + " if you need multiple refs\n" +
+                       "Use "+ REF_EMPTY + " for an unresolved reference",
+                       refs.size() == 1);
+            referenceToString = refs.get(0);
             Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString);
         }
 
-        int offset = getEditor().getCaretModel().getOffset();
-        PsiReference psiReference = getFile().findReferenceAt(offset);
+        int offset = myFixture.getEditor().getCaretModel().getOffset();
+        PsiReference psiReference = myFixture.getFile().findReferenceAt(offset);
         if (psiReference != null) {
             PsiElement resolvedTo = psiReference.resolve();
             if (resolvedTo != null) {
@@ -88,11 +98,11 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
         }
     }
 
-    protected static void doMultiResolveTest() {
-        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(getFile().getText(), "REF:");
+    protected void doMultiResolveTest() {
+        List<String> expectedReferences = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "REF:");
 
         PsiReference psiReference =
-                getFile().findReferenceAt(getEditor().getCaretModel().getOffset());
+                myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
 
         assertTrue(psiReference instanceof PsiPolyVariantReference);
 
@@ -112,8 +122,8 @@ public abstract class AbstractResolveBaseTest extends LightCodeInsightTestCase {
     }
 
     @Override
-    protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @NotNull

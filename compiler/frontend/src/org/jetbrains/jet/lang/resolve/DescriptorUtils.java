@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
@@ -36,7 +35,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -44,7 +46,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
 
 public class DescriptorUtils {
 
@@ -142,12 +143,6 @@ public class DescriptorUtils {
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
         return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
-    }
-
-    public static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        NamespaceDescriptor whatPackage = DescriptorUtils.getParentOfType(first, NamespaceDescriptor.class, false);
-        NamespaceDescriptor fromPackage = DescriptorUtils.getParentOfType(second, NamespaceDescriptor.class, false);
-        return fromPackage != null && whatPackage != null && whatPackage.equals(fromPackage);
     }
 
     public static boolean isInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
@@ -528,33 +523,6 @@ public class DescriptorUtils {
         });
     }
 
-    @Nullable
-    public static ClassDescriptor getClassForCorrespondingJavaNamespace(@NotNull NamespaceDescriptor correspondingNamespace) {
-        NamespaceDescriptorParent containingDeclaration = correspondingNamespace.getContainingDeclaration();
-        if (!(containingDeclaration instanceof NamespaceDescriptor)) {
-            return null;
-        }
-
-        NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-
-        ClassifierDescriptor classDescriptor = namespaceDescriptor.getMemberScope().getClassifier(correspondingNamespace.getName());
-        if (classDescriptor != null && classDescriptor instanceof ClassDescriptor) {
-            return (ClassDescriptor) classDescriptor;
-        }
-
-        ClassDescriptor classDescriptorForOuterClass = getClassForCorrespondingJavaNamespace(namespaceDescriptor);
-        if (classDescriptorForOuterClass == null) {
-            return null;
-        }
-
-        ClassifierDescriptor innerClassDescriptor =
-                classDescriptorForOuterClass.getUnsubstitutedInnerClassesScope().getClassifier(correspondingNamespace.getName());
-        if (innerClassDescriptor instanceof ClassDescriptor) {
-            return (ClassDescriptor) innerClassDescriptor;
-        }
-        return null;
-    }
-
     public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
@@ -597,5 +565,22 @@ public class DescriptorUtils {
         PropertyDescriptor descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, constructorParameter);
         assert descriptor != null;
         return descriptor;
+    }
+
+    /**
+     * @return true iff {@code descriptor}'s first non-class container is a namespace
+     */
+    public static boolean isTopLevelOrInnerClass(@NotNull ClassDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        return isTopLevelDeclaration(descriptor) ||
+               containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
+    }
+
+    @NotNull
+    public static JetScope getEnumEntriesScope(@NotNull ClassDescriptor enumClass) {
+        assert enumClass.getKind() == ClassKind.ENUM_CLASS : "Only enum classes have enum entries: " + enumClass;
+        ClassDescriptor classObject = enumClass.getClassObjectDescriptor();
+        assert classObject != null : "Enum class should have a class object: " + enumClass;
+        return classObject.getDefaultType().getMemberScope();
     }
 }

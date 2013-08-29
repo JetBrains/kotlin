@@ -17,8 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetPropertyDelegate extends JetElementImpl {
     public JetPropertyDelegate(@NotNull ASTNode node) {
@@ -38,5 +42,11 @@ public class JetPropertyDelegate extends JetElementImpl {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitPropertyDelegate(this, data);
+    }
+
+    @NotNull
+    public ASTNode getByKeywordNode() {
+        //noinspection ConstantConditions
+        return getNode().findChildByType(JetTokens.BY_KEYWORD);
     }
 }

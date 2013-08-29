@@ -25,11 +25,8 @@ import com.intellij.psi.impl.PsiSubstitutorImpl;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
@@ -71,7 +68,7 @@ class PropagationHeuristics {
                     JetType elementType = type.getArguments().get(0).getType();
 
                     if (JetTypeChecker.INSTANCE.isSubtypeOf(elementType, elementTypeInSuper)
-                            && !JetTypeChecker.INSTANCE.equalTypes(elementType, elementTypeInSuper)) {
+                        && !JetTypeChecker.INSTANCE.equalTypes(elementType, elementTypeInSuper)) {
                         JetTypeImpl betterTypeInSuper = new JetTypeImpl(
                                 arrayTypeFromSuper.getAnnotations(),
                                 arrayTypeFromSuper.getConstructor(),
@@ -127,21 +124,7 @@ class PropagationHeuristics {
 
     @NotNull
     static List<PsiMethod> getSuperMethods(@NotNull PsiMethod method) {
-        List<PsiMethod> superMethods = Lists.newArrayList();
-        for (PsiMethod superMethod : new SuperMethodCollector(method).collect()) {
-            CallableMemberDescriptor.Kind kindFromFlags =
-                    DescriptorKindUtils.flagsToKind(new PsiMethodWrapper(superMethod).getJetMethodAnnotation().kind());
-            if (kindFromFlags == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                // This is for the case when a Kotlin class inherits a non-abstract method from a trait:
-                // from Kotlin's point of view it is fake override, from Java's it is normal override.
-                // We replace this "fake override" method with original method from the trait.
-                superMethods.addAll(getSuperMethods(superMethod));
-            }
-            else {
-                superMethods.add(superMethod);
-            }
-        }
-        return superMethods;
+        return new SuperMethodCollector(method).collect();
     }
 
     private PropagationHeuristics() {

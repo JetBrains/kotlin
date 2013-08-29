@@ -24,13 +24,13 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClass;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
@@ -92,8 +92,8 @@ public class JetTypesCompletionHelper {
             return true;
         }
 
-        if (DescriptorResolverUtils.isKotlinClass(aClass)) {
-            if (JetClassAnnotation.get(aClass).kind() != JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
+        if (DescriptorResolverUtils.isCompiledKotlinClass(aClass)) {
+            if (JetFromJavaDescriptorHelper.getCompiledClassKind(aClass) != ClassKind.CLASS_OBJECT) {
                 String qualifiedName = aClass.getQualifiedName();
                 if (qualifiedName != null) {
                     FqName fqName = new FqName(qualifiedName);

@@ -108,20 +108,6 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
         return getReferencedNameElement().getNode().getElementType();
     }
 
-    @NotNull
-    @Override
-    public PsiReference[] getReferences() {
-        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
-    }
-
-    @Nullable
-    @Override
-    public PsiReference getReference() {
-        PsiReference[] references = getReferences();
-        if (references.length == 1) return references[0];
-        else return null;
-    }
-
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitSimpleNameExpression(this);

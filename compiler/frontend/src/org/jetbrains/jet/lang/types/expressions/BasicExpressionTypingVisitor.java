@@ -567,9 +567,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public static JetTypeInfo visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
-        return context.expressionTypingServices.getBlockReturnedType(context.scope, expression, isStatement
-                                                                                                ? CoercionStrategy.COERCION_TO_UNIT
-                                                                                                : CoercionStrategy.NO_COERCION, context, context.trace);
+        return context.expressionTypingServices.getBlockReturnedType(expression, isStatement
+                                                                                    ? CoercionStrategy.COERCION_TO_UNIT
+                                                                                    : CoercionStrategy.NO_COERCION, context);
     }
 
     @Override

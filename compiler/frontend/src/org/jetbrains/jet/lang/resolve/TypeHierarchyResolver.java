@@ -43,6 +43,8 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
+import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 
 public class TypeHierarchyResolver {
     @NotNull
@@ -181,7 +183,7 @@ public class TypeHierarchyResolver {
             JetObjectDeclaration objectDeclaration = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             descriptor.setModality(Modality.FINAL);
-            descriptor.setVisibility(ModifiersChecker.resolveVisibilityFromModifiers(objectDeclaration));
+            descriptor.setVisibility(resolveVisibilityFromModifiers(objectDeclaration, getDefaultClassVisibility(descriptor)));
             descriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
             descriptor.createTypeConstructor();
         }
@@ -516,7 +518,7 @@ public class TypeHierarchyResolver {
         private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
             if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
                 MutableClassDescriptor classObjectDescriptor =
-                        createClassObjectDescriptor(mutableClassDescriptor, ModifiersChecker.resolveVisibilityFromModifiers(klass));
+                        createClassObjectDescriptor(mutableClassDescriptor, resolveVisibilityFromModifiers(klass));
                 mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
                 classObjectDescriptor.getBuilder().addFunctionDescriptor(
                         DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));

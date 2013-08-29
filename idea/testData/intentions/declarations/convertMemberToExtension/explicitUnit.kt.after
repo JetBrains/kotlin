@@ -1,0 +1,5 @@
+class Owner {
+}
+
+fun Owner.f(): Unit {
+}

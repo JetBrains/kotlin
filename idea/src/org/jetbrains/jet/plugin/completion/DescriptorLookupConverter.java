@@ -138,14 +138,14 @@ public final class DescriptorLookupConverter {
     private static LookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
         if (declaration instanceof PsiClass) {
             PsiClass psiClass = (PsiClass) declaration;
-            if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
+            if (!DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
                 return setCustomInsertHandler(new JavaPsiClassReferenceElement(psiClass));
             }
         }
 
         if (declaration instanceof PsiMember) {
             PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
-            if (containingClass != null && !DescriptorResolverUtils.isKotlinClass(containingClass)) {
+            if (containingClass != null && !DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(containingClass)) {
                 if (declaration instanceof PsiMethod) {
                     InsertHandler<LookupElement> handler = getInsertHandler(descriptor);
                     assert handler != null: "Special kotlin handler is expected for function: " + declaration.getText() + " and descriptor" + DescriptorRenderer.TEXT.render(descriptor);

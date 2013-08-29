@@ -22,6 +22,7 @@ import com.intellij.psi.impl.compiled.StubBuildingVisitor;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
@@ -29,7 +30,6 @@ import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -53,11 +53,12 @@ public class StubClassBuilder extends ClassBuilder {
     private final Stack<StubElement> parentStack;
     private boolean isNamespace = false;
 
-    public StubClassBuilder(Stack<StubElement> parentStack) {
+    public StubClassBuilder(@NotNull Stack<StubElement> parentStack) {
         this.parentStack = parentStack;
         this.parent = parentStack.peek();
     }
 
+    @NotNull
     @Override
     public ClassVisitor getVisitor() {
         assert v != null : "Called before class is defined";
@@ -65,7 +66,15 @@ public class StubClassBuilder extends ClassBuilder {
     }
 
     @Override
-    public void defineClass(PsiElement origin, int version, int access, String name, @Nullable String signature, String superName, String[] interfaces) {
+    public void defineClass(
+            PsiElement origin,
+            int version,
+            int access,
+            @NotNull String name,
+            @Nullable String signature,
+            @NotNull String superName,
+            @NotNull String[] interfaces
+    ) {
         assert v == null : "defineClass() called twice?";
         v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access);
 
@@ -88,7 +97,14 @@ public class StubClassBuilder extends ClassBuilder {
     }
 
     @Override
-    public MethodVisitor newMethod(@Nullable PsiElement origin, int access, String name, String desc, @Nullable String signature, @Nullable String[] exceptions) {
+    public MethodVisitor newMethod(
+            @Nullable PsiElement origin,
+            int access,
+            @NotNull String name,
+            @NotNull String desc,
+            @Nullable String signature,
+            @Nullable String[] exceptions
+    ) {
         MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
 
         if (internalVisitor != null) {
@@ -100,7 +116,14 @@ public class StubClassBuilder extends ClassBuilder {
     }
 
     @Override
-    public FieldVisitor newField(@Nullable PsiElement origin, int access, String name, String desc, @Nullable String signature, @Nullable Object value) {
+    public FieldVisitor newField(
+            @Nullable PsiElement origin,
+            int access,
+            @NotNull String name,
+            @NotNull String desc,
+            @Nullable String signature,
+            @Nullable Object value
+    ) {
         FieldVisitor internalVisitor = super.newField(origin, access, name, desc, signature, value);
 
         if (internalVisitor != null) {

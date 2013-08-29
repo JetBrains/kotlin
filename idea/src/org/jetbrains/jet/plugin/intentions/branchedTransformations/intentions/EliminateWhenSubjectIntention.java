@@ -11,7 +11,7 @@ import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationIntention;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.WhenUtils;
 import org.jetbrains.jet.plugin.intentions.Transformer;
 
-public class EliminateWhenSubjectIntention extends AbstractCodeTransformationIntention<Transformer> {
+public class EliminateWhenSubjectIntention extends AbstractCodeTransformationIntention {
     private static final Transformer TRANSFORMER = new Transformer() {
         @NotNull
         @Override

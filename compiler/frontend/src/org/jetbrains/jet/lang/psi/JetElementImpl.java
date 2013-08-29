@@ -19,8 +19,10 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -63,5 +65,18 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitJetElement(this, data);
+    }
+
+    @Override
+    public PsiReference getReference() {
+        PsiReference[] references = getReferences();
+        if (references.length == 1) return references[0];
+        else return null;
+    }
+
+    @NotNull
+    @Override
+    public PsiReference[] getReferences() {
+        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
     }
 }

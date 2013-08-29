@@ -28,17 +28,15 @@ import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -49,6 +47,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class LoadDescriptorUtil {
 
@@ -97,13 +96,13 @@ public final class LoadDescriptorUtil {
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
         JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        BindingTraceContext trace = new BindingTraceContext();
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(jetCoreEnvironment.getProject(), trace);
         NamespaceDescriptor namespaceDescriptor =
-                javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+                injector.getJavaDescriptorResolver().resolveNamespace(TEST_PACKAGE_FQNAME, IGNORE_KOTLIN_SOURCES);
         assert namespaceDescriptor != null;
 
-        return Pair.create(namespaceDescriptor, injector.getBindingTrace().getBindingContext());
+        return Pair.create(namespaceDescriptor, trace.getBindingContext());
     }
 
     @NotNull

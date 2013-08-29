@@ -16,16 +16,8 @@
 
 package org.jetbrains.jet.lang.types.lang;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
@@ -33,25 +25,20 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
@@ -59,29 +46,9 @@ import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
 public class KotlinBuiltIns {
     public static final JetScope STUB = JetScope.EMPTY;
 
-    public static final String BUILT_INS_DIR = "jet";
-    private static final String BUILT_INS_PACKAGE_NAME_STRING = "jet";
-    private static final Name BUILT_INS_PACKAGE_NAME = Name.identifier(BUILT_INS_PACKAGE_NAME_STRING);
+    public static final String BUILT_INS_PACKAGE_NAME_STRING = "jet";
+    public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier(BUILT_INS_PACKAGE_NAME_STRING);
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
-
-    private static final List<String> LIBRARY_FILES = Arrays.asList(
-            BUILT_INS_DIR + "/Library.jet",
-            BUILT_INS_DIR + "/Numbers.jet",
-            BUILT_INS_DIR + "/Ranges.jet",
-            BUILT_INS_DIR + "/Progressions.jet",
-            BUILT_INS_DIR + "/Iterators.jet",
-            BUILT_INS_DIR + "/Arrays.jet",
-            BUILT_INS_DIR + "/Enum.jet",
-            BUILT_INS_DIR + "/Collections.jet",
-            BUILT_INS_DIR + "/Any.jet",
-            BUILT_INS_DIR + "/ExtensionFunctions.jet",
-            BUILT_INS_DIR + "/Functions.jet",
-            BUILT_INS_DIR + "/KFunctions.jet",
-            BUILT_INS_DIR + "/KMemberFunctions.jet",
-            BUILT_INS_DIR + "/KExtensionFunctions.jet",
-            BUILT_INS_DIR + "/Nothing.jet",
-            BUILT_INS_DIR + "/Unit.jet"
-    );
 
     public static final int FUNCTION_TRAIT_COUNT = 23;
 
@@ -92,16 +59,7 @@ public class KotlinBuiltIns {
     private static volatile boolean initializing;
     private static Throwable initializationFailed;
 
-    public enum InitializationMode {
-        // Multi-threaded mode is used in the IDE
-        MULTI_THREADED,
-        // Single-threaded mode is used in the compiler and IDE-independent tests
-        SINGLE_THREADED
-    }
-
-    // This method must be called at least once per application run, on any project
-    // before any type checking is run
-    public static synchronized void initialize(@NotNull Project project, @NotNull InitializationMode initializationMode) {
+    private static synchronized void initialize() {
         if (instance == null) {
             if (initializationFailed != null) {
                 throw new RuntimeException(
@@ -112,8 +70,8 @@ public class KotlinBuiltIns {
             }
             initializing = true;
             try {
-                instance = new KotlinBuiltIns(project);
-                instance.initialize(initializationMode == InitializationMode.MULTI_THREADED);
+                instance = new KotlinBuiltIns();
+                instance.doInitialize();
             }
             catch (Throwable e) {
                 initializationFailed = e;
@@ -125,7 +83,7 @@ public class KotlinBuiltIns {
         }
     }
 
-    @NotNull // This asserts that initialize() is called before any resolution happens
+    @NotNull
     public static KotlinBuiltIns getInstance() {
         if (initializing) {
             synchronized (KotlinBuiltIns.class) {
@@ -134,14 +92,13 @@ public class KotlinBuiltIns {
             }
         }
         if (instance == null) {
-            throw new IllegalStateException("Initialize standard library first");
+            initialize();
         }
         return instance;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private final KotlinCodeAnalyzer analyzer;
     private final ModuleDescriptorImpl builtInsModule;
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
@@ -172,13 +129,13 @@ public class KotlinBuiltIns {
     private volatile JetType stringType;
     private volatile JetType annotationType;
 
-    private KotlinBuiltIns(@NotNull Project project) {
+    private KotlinBuiltIns() {
         try {
             this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
                                                            DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
                                                            PlatformToKotlinClassMap.EMPTY);
             builtInsModule.setModuleConfiguration(ModuleConfiguration.EMPTY);
-            this.analyzer = createLazyResolveSession(project);
+            loadBuiltIns(builtInsModule);
 
             this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
             this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
@@ -205,7 +162,19 @@ public class KotlinBuiltIns {
         }
     }
 
-    private void initialize(boolean forceResolveAll) {
+    private static void loadBuiltIns(@NotNull ModuleDescriptorImpl module) throws IOException {
+        NamespaceDescriptorImpl rootNamespace =
+                        new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
+        rootNamespace.initialize(
+                new WritableScopeImpl(JetScope.EMPTY, rootNamespace, RedeclarationHandler.DO_NOTHING, "members of root namespace"));
+
+        module.setRootNamespace(rootNamespace);
+
+        rootNamespace.getMemberScope().addNamespace(new BuiltinsNamespaceDescriptorImpl(new LockBasedStorageManager(), rootNamespace));
+        rootNamespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
+    }
+
+    private void doInitialize() {
         anyType = getBuiltInTypeByClassName("Any");
         nullableAnyType = TypeUtils.makeNullable(anyType);
         nothingType = getBuiltInTypeByClassName("Nothing");
@@ -219,47 +188,6 @@ public class KotlinBuiltIns {
         }
 
         nonPhysicalClasses = computeNonPhysicalClasses();
-
-        if (forceResolveAll) {
-            analyzer.forceResolveAll();
-        }
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzer.getBindingContext());
-    }
-
-    @NotNull
-    private KotlinCodeAnalyzer createLazyResolveSession(@NotNull Project project) throws IOException {
-        List<JetFile> files = loadResourcesAsJetFiles(project, LIBRARY_FILES);
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
-        return new ResolveSession(
-                project,
-                storageManager,
-                builtInsModule,
-                new FileBasedDeclarationProviderFactory(storageManager, files),
-                ResolveSession.NO_ALIASES,
-                Predicates.in(Sets.newHashSet(new FqNameUnsafe("jet.Any"), new FqNameUnsafe("jet.Nothing"))),
-                new BindingTraceContext());
-    }
-
-    @NotNull
-    private static List<JetFile> loadResourcesAsJetFiles(@NotNull Project project, @NotNull List<String> libraryFiles)
-            throws IOException, ProcessCanceledException
-    {
-        List<JetFile> files = new LinkedList<JetFile>();
-        for(String path : libraryFiles) {
-            InputStream stream = KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
-
-            if (stream == null) {
-                throw new IllegalStateException("Resource not found in classpath: " + path);
-            }
-
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            String text = FileUtil.loadTextAndClose(new InputStreamReader(stream));
-            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(path,
-                    JetFileType.INSTANCE, StringUtil.convertLineSeparators(text), LocalTimeCounter.currentTime(), true, false);
-            files.add(file);
-        }
-        return files;
     }
 
     private void makePrimitive(PrimitiveType primitiveType) {

@@ -150,7 +150,7 @@ import js.noImpl
             }
             val fields = klass.getDeclaredFields()
             if (fields != null) {
-                if (fields.notEmpty()) {
+                if (fields.isNotEmpty()) {
                     println("")
                     println("    public class object {")
                     for (field in fields) {

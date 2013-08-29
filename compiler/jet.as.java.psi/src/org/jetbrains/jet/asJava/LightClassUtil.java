@@ -16,11 +16,13 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -30,6 +32,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,67 +43,81 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.KotlinVfsUtil;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
 public class LightClassUtil {
     private static final Logger LOG = Logger.getInstance(LightClassUtil.class);
-    private static final String DEFINITION_OF_ANY = "Any.jet";
+
+    public static final File BUILT_INS_SRC_DIR = new File("idea/builtinsSrc", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
 
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
-     * As of today, this is compiler/frontend/src/jet directory and files such as Any.jet, Nothing.jet etc.
+     * As of today, this is idea/builtinsSrc/jet directory and files such as Any.jet, Nothing.jet etc.
      *
      * Used to skip JetLightClass creation for built-ins, because built-in classes have no Java counterparts
      */
     public static boolean belongsToKotlinBuiltIns(@NotNull JetFile file) {
-        try {
-            String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(getBuiltInsDirResourceUrl());
-            VirtualFile virtualFile = file.getVirtualFile();
-            if (virtualFile != null) {
-                VirtualFile parent = virtualFile.getParent();
-                if (parent != null) {
-                    String fileDirVfsUrl = parent.getUrl() + "/" + DEFINITION_OF_ANY;
+        VirtualFile virtualFile = file.getVirtualFile();
+        if (virtualFile != null) {
+            VirtualFile parent = virtualFile.getParent();
+            if (parent != null) {
+                try {
+                    String jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(getBuiltInsDirUrl());
+                    String fileDirVfsUrl = parent.getUrl();
                     if (jetVfsPathUrl.equals(fileDirVfsUrl)) {
                         return true;
                     }
                 }
+                catch (MalformedURLException e) {
+                    LOG.error(e);
+                }
             }
         }
-        catch (MalformedURLException e) {
-            LOG.error(e);
-        }
+
         // We deliberately return false on error: who knows what weird URLs we might come across out there
         // it would be a pity if no light classes would be created in such cases
         return false;
     }
 
     @NotNull
-    public static URL getBuiltInsDirResourceUrl() {
-        String pathToAny = "/" + KotlinBuiltIns.BUILT_INS_DIR + "/" + DEFINITION_OF_ANY;
-        URL url = KotlinBuiltIns.class.getResource(pathToAny);
-        if (url == null) {
-            throw new IllegalStateException("Built-ins not found in the classpath: " + pathToAny);
-        }
-        return url;
-    }
+    public static URL getBuiltInsDirUrl() {
+        String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING + "/Library.jet";
 
-    /*package*/ static void logErrorWithOSInfo(@Nullable Throwable cause, @NotNull FqName fqName, @Nullable VirtualFile virtualFile) {
-        String path = virtualFile == null ? "<null>" : virtualFile.getPath();
-        LOG.error(
-                "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
-                "built-ins dir URL is " + getBuiltInsDirResourceUrl() + "\n" +
-                "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
-                cause);
+        URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
+
+        if (url == null) {
+            if (ApplicationManager.getApplication().isUnitTestMode()) {
+                // HACK: Temp code. Get built-in files from the sources when running from test.
+                try {
+                    return new URL(StandardFileSystems.FILE_PROTOCOL, "",
+                                   FileUtil.toSystemIndependentName(BUILT_INS_SRC_DIR.getAbsolutePath()));
+                }
+                catch (MalformedURLException e) {
+                    throw ExceptionUtils.rethrow(e);
+                }
+            }
+
+            throw new IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath);
+        }
+
+        try {
+            return new URL(url.getProtocol(), url.getHost(), PathUtil.getParentPath(url.getFile()));
+        }
+        catch (MalformedURLException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Nullable
     /*package*/ static PsiClass findClass(@NotNull FqName fqn, @NotNull StubElement<?> stub) {
         if (stub instanceof PsiClassStub && Comparing.equal(fqn.asString(), ((PsiClassStub) stub).getQualifiedName())) {
-            return (PsiClass)stub.getPsi();
+            return (PsiClass) stub.getPsi();
         }
 
         if (stub instanceof PsiClassStub || stub instanceof PsiFileStub) {
@@ -236,8 +253,8 @@ public class LightClassUtil {
 
     private static PropertyAccessorsPsiMethods extractPropertyAccessors(
             @NotNull JetDeclaration jetDeclaration,
-            @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter)
-    {
+            @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter
+    ) {
         PsiMethod getterWrapper = specialGetter;
         PsiMethod setterWrapper = specialSetter;
 
@@ -300,5 +317,6 @@ public class LightClassUtil {
         }
     }
 
-    private LightClassUtil() {}
+    private LightClassUtil() {
+    }
 }

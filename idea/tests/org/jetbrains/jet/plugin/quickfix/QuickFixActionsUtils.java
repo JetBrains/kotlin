@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class QuickFixActionsUtils {
             return;
         }
 
-        AnalyzeExhaust exhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        AnalyzeExhaust exhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
 
         Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics();
         Collection<Diagnostic> errorDiagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {

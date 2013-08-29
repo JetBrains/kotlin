@@ -17,20 +17,27 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.*;
+import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.asm4.FieldVisitor;
+import org.jetbrains.asm4.MethodVisitor;
 
 public abstract class ClassBuilder {
     private String thisName;
 
+    private final MemberMap members = new MemberMap();
+
     public static class Concrete extends ClassBuilder {
         private final ClassVisitor v;
 
-        public Concrete(ClassVisitor v) {
+        public Concrete(@NotNull ClassVisitor v) {
             this.v = v;
         }
 
         @Override
+        @NotNull
         public ClassVisitor getVisitor() {
             return v;
         }
@@ -39,8 +46,8 @@ public abstract class ClassBuilder {
     public FieldVisitor newField(
             @Nullable PsiElement origin,
             int access,
-            String name,
-            String desc,
+            @NotNull String name,
+            @NotNull String desc,
             @Nullable String signature,
             @Nullable Object value
     ) {
@@ -50,18 +57,21 @@ public abstract class ClassBuilder {
     public MethodVisitor newMethod(
             @Nullable PsiElement origin,
             int access,
-            String name,
-            String desc,
+            @NotNull String name,
+            @NotNull String desc,
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
         return getVisitor().visitMethod(access, name, desc, signature, exceptions);
     }
 
-    public AnnotationVisitor newAnnotation(
-            String desc,
-            boolean visible
-    ) {
+    @NotNull
+    public MemberMap getMemberMap() {
+        return members;
+    }
+
+    @NotNull
+    public AnnotationVisitor newAnnotation(@NotNull String desc, boolean visible) {
         return getVisitor().visitAnnotation(desc, visible);
     }
 
@@ -69,34 +79,37 @@ public abstract class ClassBuilder {
         getVisitor().visitEnd();
     }
 
+    @NotNull
     public abstract ClassVisitor getVisitor();
 
     public void defineClass(
-            PsiElement origin,
+            @Nullable PsiElement origin,
             int version,
             int access,
-            String name,
+            @NotNull String name,
             @Nullable String signature,
-            String superName,
-            String[] interfaces
+            @NotNull String superName,
+            @NotNull String[] interfaces
     ) {
         thisName = name;
         getVisitor().visit(version, access, name, signature, superName, interfaces);
     }
 
-    public void visitSource(String name, @Nullable String debug) {
+    public void visitSource(@NotNull String name, @Nullable String debug) {
         getVisitor().visitSource(name, debug);
     }
 
-    public void visitOuterClass(String owner, @Nullable String name, @Nullable String desc) {
+    public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {
         getVisitor().visitOuterClass(owner, name, desc);
     }
 
-    public void visitInnerClass(String name, String outerName, String innerName, int access) {
+    public void visitInnerClass(@NotNull String name, @Nullable String outerName, @Nullable String innerName, int access) {
         getVisitor().visitInnerClass(name, outerName, innerName, access);
     }
 
+    @NotNull
     public String getThisName() {
+        assert thisName != null : "This name isn't set";
         return thisName;
     }
 }

@@ -30,7 +30,6 @@ import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -39,7 +38,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.codeInsight.TipsManager;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -60,7 +60,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
-        AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) psiFile);
         BindingContext bc = analyzeExhaust.getBindingContext();
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scope == null) {

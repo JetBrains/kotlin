@@ -25,7 +25,7 @@ Object.<init>():ConstructorDescriptor
 Object.nestedFunc:SimpleFunctionDescriptor
 Object.this:ReceiverParameterDescriptor
 Object:ClassDescriptor
-Outer.Object:PropertyDescriptor
+Outer.Object:VariableDescriptorForObject
 Outer.this:ReceiverParameterDescriptor
 Outer:ClassDescriptor
 T1:TypeParameterDescriptor
@@ -46,7 +46,7 @@ func.this:ReceiverParameterDescriptor
 innerTest.<get-prop>:PropertyGetterDescriptor
 innerTest.<get-propVar>:PropertyGetterDescriptor
 innerTest.<set-propVar>:PropertySetterDescriptor
-innerTest.Object:PropertyDescriptor
+innerTest.Object:VariableDescriptorForObject
 innerTest.func:SimpleFunctionDescriptor
 innerTest.prop:PropertyDescriptor
 innerTest.propVar:PropertyDescriptor

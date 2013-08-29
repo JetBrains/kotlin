@@ -52,6 +52,10 @@ public final class Namer {
     private static final String CLASS_OBJECT_GETTER = "object$";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
 
+
+    private static final String DELEGATE_POSTFIX = "$delegate";
+    private static final String PROPERTY_METADATA = "PropertyMetadata";
+
     private static final Named CLASS_OBJECT_INITIALIZER_NAMED = new Named() {
         @NotNull
         @Override
@@ -114,12 +118,24 @@ public final class Namer {
         return getNameWithPrefix(propertyName, SETTER_PREFIX);
     }
 
+    @NotNull
     public static JsExpression getClassObjectAccessor(@NotNull JsExpression referenceToClass) {
         return new JsInvocation(new JsNameRef(CLASS_OBJECT_GETTER, referenceToClass));
     }
 
+    @NotNull
     public static Named getNamedForClassObjectInitializer() {
         return CLASS_OBJECT_INITIALIZER_NAMED;
+    }
+
+    @NotNull
+    public static String getDelegateName(@NotNull String propertyName) {
+        return propertyName + DELEGATE_POSTFIX;
+    }
+
+    @NotNull
+    public static JsNameRef getDelegateNameRef(String propertyName) {
+        return new JsNameRef(getDelegateName(propertyName), JsLiteral.THIS);
     }
 
     @NotNull
@@ -127,6 +143,7 @@ public final class Namer {
         return prefix + name;
     }
 
+    @NotNull
     public static Namer newInstance(@NotNull JsScope rootScope) {
         return new Namer(rootScope);
     }
@@ -191,6 +208,11 @@ public final class Namer {
     @NotNull
     public JsExpression throwNPEFunctionRef() {
         return new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject());
+    }
+
+    @NotNull
+    public JsNameRef propertyMetadataRef() {
+        return new JsNameRef(PROPERTY_METADATA, kotlinObject());
     }
 
     @NotNull

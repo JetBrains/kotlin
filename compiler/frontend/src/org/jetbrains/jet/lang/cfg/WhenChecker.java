@@ -21,16 +21,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptorForObject;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 
 import java.util.Collection;
-import java.util.Collections;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
 
 public final class WhenChecker {
     private WhenChecker() {
@@ -45,10 +44,7 @@ public final class WhenChecker {
         if (!(declarationDescriptor instanceof ClassDescriptor)) return false;
         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
         if (classDescriptor.getKind() != ClassKind.ENUM_CLASS || classDescriptor.getModality().isOverridable()) return false;
-        ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-        assert classObjectDescriptor != null : "Enum classes must have class object.";
-        JetScope memberScope = classObjectDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-        Collection<ClassDescriptor> objectDescriptors = memberScope.getObjectDescriptors();
+        Collection<ClassDescriptor> objectDescriptors = getEnumEntriesScope(classDescriptor).getObjectDescriptors();
         boolean isExhaust = true;
         boolean notEmpty = false;
         for (ClassDescriptor descriptor : objectDescriptors) {
@@ -90,11 +86,11 @@ public final class WhenChecker {
         if (reference == null) return false;
 
         DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
-        if (!(target instanceof VariableDescriptor)) {
+        if (!(target instanceof VariableDescriptorForObject)) {
             return false;
         }
 
-        ClassDescriptor classDescriptor = trace.get(BindingContext.OBJECT_DECLARATION_CLASS, (VariableDescriptor) target);
+        ClassDescriptor classDescriptor = ((VariableDescriptorForObject) target).getObjectClass();
         return classDescriptor == enumEntry;
     }
 

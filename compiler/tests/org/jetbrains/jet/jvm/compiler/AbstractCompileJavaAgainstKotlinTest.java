@@ -29,9 +29,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
 
-/**
- * @see WriteSignatureTest
- */
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
 public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
     protected void doTest(String ktFilePath) throws Exception {

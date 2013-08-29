@@ -27,6 +27,7 @@ import java.util.Set;
 public interface TypeParameterDescriptor extends ClassifierDescriptor {
     boolean isReified();
 
+    @NotNull
     Variance getVariance();
 
     @NotNull

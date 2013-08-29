@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
+import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -47,20 +48,18 @@ import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassObjectResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaInnerClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -83,6 +82,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final PsiClassFinderImpl psiClassFinder;
     private final NamespaceFactoryImpl namespaceFactory;
+    private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -99,20 +99,18 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
     private final ScriptBodyResolver scriptBodyResolver;
-    private final JavaSemanticServices javaSemanticServices;
-    private final PsiDeclarationProviderFactory psiDeclarationProviderFactory;
-    private final JavaTypeTransformer javaTypeTransformer;
     private final JavaClassResolver javaClassResolver;
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaCompileTimeConstResolver javaCompileTimeConstResolver;
-    private final JavaClassObjectResolver javaClassObjectResolver;
-    private final JavaSupertypeResolver javaSupertypeResolver;
     private final JavaFunctionResolver javaFunctionResolver;
     private final JavaValueParameterResolver javaValueParameterResolver;
+    private final JavaTypeTransformer javaTypeTransformer;
     private final JavaSignatureResolver javaSignatureResolver;
+    private final DeserializedDescriptorResolver deserializedDescriptorResolver;
+    private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final JavaNamespaceResolver javaNamespaceResolver;
+    private final JavaSupertypeResolver javaSupertypeResolver;
     private final JavaConstructorResolver javaConstructorResolver;
-    private final JavaInnerClassResolver javaInnerClassResolver;
     private final JavaPropertyResolver javaPropertyResolver;
     
     public InjectorForTopDownAnalyzerForJvm(
@@ -136,6 +134,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.namespaceFactory = new NamespaceFactoryImpl();
+        this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -152,20 +151,18 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptBodyResolver = new ScriptBodyResolver();
-        this.javaSemanticServices = new JavaSemanticServices();
-        this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(psiClassFinder);
-        this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
-        this.javaClassObjectResolver = new JavaClassObjectResolver();
-        this.javaSupertypeResolver = new JavaSupertypeResolver();
         this.javaFunctionResolver = new JavaFunctionResolver();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
+        this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaSignatureResolver = new JavaSignatureResolver();
+        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
+        this.javaSupertypeResolver = new JavaSupertypeResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
-        this.javaInnerClassResolver = new JavaInnerClassResolver();
         this.javaPropertyResolver = new JavaPropertyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
@@ -201,12 +198,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
-        this.javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
+        this.javaBridgeConfiguration.setJavaDescriptorResolver(javaDescriptorResolver);
 
         javaDescriptorResolver.setClassResolver(javaClassResolver);
         javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
         javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
-        javaDescriptorResolver.setInnerClassResolver(javaInnerClassResolver);
         javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
         javaDescriptorResolver.setPropertiesResolver(javaPropertyResolver);
 
@@ -281,39 +277,22 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
         scriptBodyResolver.setTrace(bindingTrace);
 
-        javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
-        javaSemanticServices.setPsiClassFinder(psiClassFinder);
-        javaSemanticServices.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
-        javaSemanticServices.setTrace(bindingTrace);
-        javaSemanticServices.setTypeTransformer(javaTypeTransformer);
-
-        javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
-        javaTypeTransformer.setResolver(javaDescriptorResolver);
-
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
+        javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
+        javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setPsiClassFinder(psiClassFinder);
-        javaClassResolver.setSemanticServices(javaSemanticServices);
         javaClassResolver.setSignatureResolver(javaSignatureResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTrace(bindingTrace);
+        javaClassResolver.setVirtualFileFinder(virtualFileFinder);
 
         javaAnnotationResolver.setClassResolver(javaClassResolver);
         javaAnnotationResolver.setCompileTimeConstResolver(javaCompileTimeConstResolver);
 
         javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
         javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
-
-        javaClassObjectResolver.setSemanticServices(javaSemanticServices);
-        javaClassObjectResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassObjectResolver.setTrace(bindingTrace);
-
-        javaSupertypeResolver.setClassResolver(javaClassResolver);
-        javaSupertypeResolver.setSemanticServices(javaSemanticServices);
-        javaSupertypeResolver.setTrace(bindingTrace);
-        javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setParameterResolver(javaValueParameterResolver);
@@ -323,22 +302,35 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
-        javaSignatureResolver.setJavaSemanticServices(javaSemanticServices);
+        javaTypeTransformer.setResolver(javaDescriptorResolver);
 
-        javaNamespaceResolver.setJavaSemanticServices(javaSemanticServices);
+        javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
+
+        deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
+        deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
+        deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
+
+        annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
+        annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
+        annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
+
+        javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaNamespaceResolver.setPsiClassFinder(psiClassFinder);
         javaNamespaceResolver.setTrace(bindingTrace);
+        javaNamespaceResolver.setVirtualFileFinder(virtualFileFinder);
+
+        javaSupertypeResolver.setClassResolver(javaClassResolver);
+        javaSupertypeResolver.setTrace(bindingTrace);
+        javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaConstructorResolver.setTrace(bindingTrace);
         javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
         javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
 
-        javaInnerClassResolver.setClassResolver(javaClassResolver);
-
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaPropertyResolver.setJavaSignatureResolver(javaSignatureResolver);
-        javaPropertyResolver.setSemanticServices(javaSemanticServices);
         javaPropertyResolver.setTrace(bindingTrace);
+        javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
         psiClassFinder.initialize();
 

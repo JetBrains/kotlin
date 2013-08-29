@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -232,7 +232,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
 
         BindingContext bindingContext =
-                WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) classOrObject.getContainingFile())
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) classOrObject.getContainingFile())
                         .getBindingContext();
 
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject, bindingContext);

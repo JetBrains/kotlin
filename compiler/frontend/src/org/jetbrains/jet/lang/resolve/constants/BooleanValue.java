@@ -32,6 +32,11 @@ public class BooleanValue implements CompileTimeConstant<Boolean> {
         this.value = value;
     }
 
+    @NotNull
+    public static BooleanValue valueOf(boolean value) {
+        return value ? TRUE : FALSE;
+    }
+
     @Override
     public Boolean getValue() {
         return value;

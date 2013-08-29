@@ -17,16 +17,15 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JvmAbi {
+public final class JvmAbi {
     /**
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
      */
-    public static final int VERSION = 6;
+    public static final int VERSION = 7;
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;
@@ -38,30 +37,31 @@ public class JvmAbi {
     public static final String CLASS_OBJECT_CLASS_NAME = "object";
     public static final String CLASS_OBJECT_SUFFIX = "$" + CLASS_OBJECT_CLASS_NAME;
 
-    public static final String DELEGATED_PROPERTY_NAME_POSTFIX = "$delegate";
+    public static final String DELEGATED_PROPERTY_NAME_SUFFIX = "$delegate";
+    public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
+    public static final String ANNOTATED_PROPERTY_METHOD_SIGNATURE = "()V";
 
     public static final String INSTANCE_FIELD = "instance$";
     public static final String CLASS_OBJECT_FIELD = "object$";
-    public static final String RECEIVER_PARAMETER = "$receiver";
 
-    public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION =
-            JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.NotNull");
-
-    public static final JvmClassName JETBRAINS_MUTABLE_ANNOTATION =
-            JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.Mutable");
-    public static final JvmClassName JETBRAINS_READONLY_ANNOTATION =
-            JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.ReadOnly");
+    public static final JvmClassName JET_OBJECT = JvmClassName.byFqNameWithoutInnerClasses("jet.JetObject");
 
     public static boolean isClassObjectFqName(@NotNull FqName fqName) {
         return fqName.lastSegmentIs(Name.identifier(CLASS_OBJECT_CLASS_NAME));
     }
 
+    @NotNull
     public static String getPropertyDelegateName(@NotNull Name name) {
-        return name.asString() + DELEGATED_PROPERTY_NAME_POSTFIX;
+        return name.asString() + DELEGATED_PROPERTY_NAME_SUFFIX;
     }
 
+    @NotNull
+    public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
+        return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
+    }
 
-    public static String getDefaultPropertyName(Name propertyName, boolean isDelegated, boolean isExtensionProperty) {
+    @NotNull
+    public static String getDefaultPropertyName(@NotNull Name propertyName, boolean isDelegated, boolean isExtensionProperty) {
         if (isDelegated) {
             return getPropertyDelegateName(propertyName);
         }

@@ -1,0 +1,15 @@
+package test
+
+internal final annotation class Anno : jet.Annotation {
+    /*primary*/ public constructor Anno(/*0*/ int: jet.Int, /*1*/ string: jet.String, /*2*/ double: jet.Double)
+    internal final val double: jet.Double
+        internal final fun <get-double>(): jet.Double
+    internal final val int: jet.Int
+        internal final fun <get-int>(): jet.Int
+    internal final val string: jet.String
+        internal final fun <get-string>(): jet.String
+}
+
+test.Anno(double = 3.14.toDouble(): jet.Double, int = 42.toInt(): jet.Int, string = "OK": jet.String) internal final class Class {
+    /*primary*/ public constructor Class()
+}

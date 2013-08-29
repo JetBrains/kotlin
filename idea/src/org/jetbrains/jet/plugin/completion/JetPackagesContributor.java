@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 /**
@@ -71,8 +71,8 @@ public class JetPackagesContributor extends CompletionContributor {
                                int prefixLength = parameters.getOffset() - simpleNameReference.getExpression().getTextOffset();
                                result = result.withPrefixMatcher(new PlainPrefixMatcher(name.substring(0, prefixLength)));
 
-                               CancelableResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveResultForFile(
-                                       (JetFile) simpleNameReference.getExpression().getContainingFile());
+                               CancelableResolveSession resolveSession = AnalyzerFacadeWithCache
+                                       .getLazyResolveSessionForFile((JetFile) simpleNameReference.getExpression().getContainingFile());
                                BindingContext bindingContext = resolveSession.resolveToElement(simpleNameReference.getExpression());
 
                                for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(

@@ -22,9 +22,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
+import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
@@ -47,6 +51,18 @@ public final class InitializerUtils {
         else {
             return assignmentToBackingField(context, descriptor, value).makeStmt();
         }
+    }
+
+    @Nullable
+    public static JsStatement generateInitializerForDelegate(@NotNull TranslationContext context, @NotNull JetProperty property) {
+        JetExpression delegate = property.getDelegateExpression();
+        if (delegate != null) {
+            JsExpression value = Translation.translateAsExpression(delegate, context);
+            String name = property.getName();
+            assert name != null: "Delegate property must have name";
+            return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value, context);
+        }
+        return null;
     }
 
     public static void generate(@NotNull JetObjectDeclaration declaration,

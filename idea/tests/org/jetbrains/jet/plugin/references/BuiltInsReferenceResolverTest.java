@@ -75,7 +75,7 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
         BuiltInsReferenceResolver referenceResolver = getProject().getComponent(BuiltInsReferenceResolver.class);
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackage())) {
             if (descriptor instanceof NamespaceDescriptor && "jet".equals(descriptor.getName().asString())) continue;
-            assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveStandardLibrarySymbol(descriptor));
+            assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveBuiltInSymbol(descriptor));
         }
     }
 

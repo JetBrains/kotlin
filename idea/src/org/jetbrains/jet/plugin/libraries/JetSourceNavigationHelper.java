@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -419,5 +419,33 @@ public class JetSourceNavigationHelper {
         });
 
         return original;
+    }
+
+    @NotNull
+    public static JetDeclaration replaceBySourceDeclarationIfPresent(@NotNull JetDeclaration original) {
+        JetDeclaration sourceElement = original.accept(new SourceForDecompiledExtractingVisitor(), null);
+        return sourceElement != null ? sourceElement : original;
+    }
+
+    private static class SourceForDecompiledExtractingVisitor extends JetVisitor<JetDeclaration, Void> {
+        @Override
+        public JetDeclaration visitNamedFunction(JetNamedFunction function, Void data) {
+            return getSourceFunction(function);
+        }
+
+        @Override
+        public JetDeclaration visitProperty(JetProperty property, Void data) {
+            return getSourceProperty(property);
+        }
+
+        @Override
+        public JetDeclaration visitObjectDeclaration(JetObjectDeclaration declaration, Void data) {
+            return getSourceClassOrObject(declaration);
+        }
+
+        @Override
+        public JetDeclaration visitClass(JetClass klass, Void data) {
+            return getSourceClassOrObject(klass);
+        }
     }
 }

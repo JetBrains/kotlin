@@ -16,4 +16,3 @@ fun f(): Out<Out<X>> = throw Exception()
 // method: _DefaultPackage::f
 // jvm signature:     ()LOut;
 // generic signature: ()LOut<LOut<+LX;>;>;
-// kotlin signature:  ()LOut<LOut<LX;>;>;

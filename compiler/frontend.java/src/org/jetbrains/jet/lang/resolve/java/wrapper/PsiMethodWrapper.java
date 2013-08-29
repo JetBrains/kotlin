@@ -16,16 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.java.wrapper;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
-import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PsiMethodWrapper extends PsiMemberWrapper {
@@ -33,41 +31,15 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
     public PsiMethodWrapper(@NotNull PsiMethod psiMethod) {
         super(psiMethod);
     }
-    
-    private List<PsiParameterWrapper> parameters;
+
+    private List<PsiParameter> parameters;
+
     @NotNull
-    public List<PsiParameterWrapper> getParameters() {
+    public List<PsiParameter> getParameters() {
         if (parameters == null) {
-            PsiParameter[] psiParameters = getPsiMethod().getParameterList().getParameters();
-            parameters = new ArrayList<PsiParameterWrapper>(psiParameters.length);
-            for (PsiParameter psiParameter : psiParameters) {
-                parameters.add(new PsiParameterWrapper(psiParameter));
-            }
+            parameters = Lists.newArrayList(getPsiMethod().getParameterList().getParameters());
         }
         return parameters;
-    }
-
-    @NotNull
-    public PsiParameterWrapper getParameter(int i) {
-        return getParameters().get(i);
-    }
-
-    private JetMethodAnnotation jetMethodAnnotation;
-    @NotNull
-    public JetMethodAnnotation getJetMethodAnnotation() {
-        if (jetMethodAnnotation == null) {
-            jetMethodAnnotation = JetMethodAnnotation.get(getPsiMethod());
-        }
-        return jetMethodAnnotation;
-    }
-
-    private JetConstructorAnnotation jetConstructorAnnotation;
-    @NotNull
-    public JetConstructorAnnotation getJetConstructorAnnotation() {
-        if (jetConstructorAnnotation == null) {
-            jetConstructorAnnotation = JetConstructorAnnotation.get(getPsiMethod());
-        }
-        return jetConstructorAnnotation;
     }
 
     @Override

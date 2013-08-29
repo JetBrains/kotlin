@@ -180,6 +180,24 @@ public class TypeUtils {
                 new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
     }
 
+    @NotNull
+    public static String toString(@NotNull JetType type) {
+        List<TypeProjection> arguments = type.getArguments();
+        return type.getConstructor() + (arguments.isEmpty() ? "" : "<" + argumentsToString(arguments) + ">") + (type.isNullable() ? "?" : "");
+    }
+
+    private static StringBuilder argumentsToString(List<TypeProjection> arguments) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Iterator<TypeProjection> iterator = arguments.iterator(); iterator.hasNext();) {
+            TypeProjection argument = iterator.next();
+            stringBuilder.append(argument);
+            if (iterator.hasNext()) {
+                stringBuilder.append(", ");
+            }
+        }
+        return stringBuilder;
+    }
+
     private static class TypeUnifier {
         private static class TypeParameterUsage {
             private final TypeParameterDescriptor typeParameterDescriptor;

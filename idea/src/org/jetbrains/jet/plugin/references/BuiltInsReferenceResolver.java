@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.references;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.DumbService;
@@ -34,6 +32,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -48,7 +47,6 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.BuiltInsInitializer;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.net.URL;
@@ -61,11 +59,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
     private Set<? extends PsiFile> builtInsSources = Sets.newHashSet();
 
-    public BuiltInsReferenceResolver(
-            Project project,
-            // This parameter is needed to initialize built-ins before this component
-            BuiltInsInitializer ignored
-    ) {
+    public BuiltInsReferenceResolver(Project project) {
         super(project);
     }
 
@@ -91,15 +85,15 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         jetNamespace.setMemberScope(scope);
 
-        List<JetFile> jetBuiltInsFiles = getJetFiles("jet", Predicates.<JetFile>alwaysTrue());
+        List<JetFile> jetBuiltInsFiles = getJetBuiltInsFiles();
         TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, jetBuiltInsFiles);
 
         builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
         bindingContext = context.getBindingContext();
     }
 
-    private List<JetFile> getJetFiles(String dir, final Predicate<JetFile> filter) {
-        URL url = BuiltInsReferenceResolver.class.getResource("/" + dir + "/");
+    private List<JetFile> getJetBuiltInsFiles() {
+        URL url = LightClassUtil.getBuiltInsDirUrl();
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null : "Virtual file not found by URL: " + url;
 
@@ -116,11 +110,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         return ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
             @Override
             public JetFile fun(PsiFile file) {
-                if (file instanceof JetFile) {
-                    JetFile jetFile = (JetFile) file;
-                    return filter.apply(jetFile) ? jetFile : null;
-                }
-                return null;
+                return file instanceof JetFile ? (JetFile) file : null;
             }
         });
     }
@@ -177,7 +167,10 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     @NotNull
-    public Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext originalContext, @Nullable JetReferenceExpression referenceExpression) {
+    public Collection<PsiElement> resolveBuiltInSymbol(
+            @NotNull BindingContext originalContext,
+            @Nullable JetReferenceExpression referenceExpression
+    ) {
         if (bindingContext == null) {
             assert DumbService.getInstance(myProject).isDumb() : "Builtins component wasn't initialized properly";
             return Collections.emptyList();
@@ -185,11 +178,11 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
         DeclarationDescriptor declarationDescriptor = originalContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
 
-        return declarationDescriptor != null ? resolveStandardLibrarySymbol(declarationDescriptor) : Collections.<PsiElement>emptyList();
+        return declarationDescriptor != null ? resolveBuiltInSymbol(declarationDescriptor) : Collections.<PsiElement>emptyList();
     }
 
     @NotNull
-    public Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
+    public Collection<PsiElement> resolveBuiltInSymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (bindingContext == null) {
             assert DumbService.getInstance(myProject).isDumb() : "Builtins component wasn't initialized properly";
             return Collections.emptyList();

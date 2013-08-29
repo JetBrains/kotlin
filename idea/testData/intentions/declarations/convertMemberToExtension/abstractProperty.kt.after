@@ -1,0 +1,5 @@
+abstract class Owner {
+}
+
+val Owner.p: Int
+    get() = <caret><selection>throw UnsupportedOperationException()</selection>

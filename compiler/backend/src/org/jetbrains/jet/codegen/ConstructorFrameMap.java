@@ -21,8 +21,6 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 
-import java.util.List;
-
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class ConstructorFrameMap extends FrameMap {
@@ -31,18 +29,15 @@ public class ConstructorFrameMap extends FrameMap {
     public ConstructorFrameMap(@NotNull JvmMethodSignature signature) {
         enterTemp(OBJECT_TYPE); // this
 
-        List<JvmMethodParameterSignature> parameterTypes = signature.getKotlinParameterTypes();
-        if (parameterTypes != null) {
-            for (JvmMethodParameterSignature parameterType : parameterTypes) {
-                if (parameterType.getKind() == JvmMethodParameterKind.OUTER) {
-                    myOuterThisIndex = enterTemp(OBJECT_TYPE); // this0
-                }
-                else if (parameterType.getKind() != JvmMethodParameterKind.VALUE) {
-                    enterTemp(parameterType.getAsmType());
-                }
-                else {
-                    break;
-                }
+        for (JvmMethodParameterSignature parameterType : signature.getKotlinParameterTypes()) {
+            if (parameterType.getKind() == JvmMethodParameterKind.OUTER) {
+                myOuterThisIndex = enterTemp(OBJECT_TYPE); // this0
+            }
+            else if (parameterType.getKind() != JvmMethodParameterKind.VALUE) {
+                enterTemp(parameterType.getAsmType());
+            }
+            else {
+                break;
             }
         }
     }

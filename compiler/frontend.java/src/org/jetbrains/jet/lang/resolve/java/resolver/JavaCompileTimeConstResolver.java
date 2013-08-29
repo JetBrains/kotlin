@@ -16,27 +16,29 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.*;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaCompileTimeConstResolver {
     private JavaAnnotationResolver annotationResolver;
@@ -61,7 +63,7 @@ public final class JavaCompileTimeConstResolver {
             PsiAnnotationMemberValue value, PostponedTasks postponedTasks
     ) {
         if (value instanceof PsiLiteralExpression) {
-            return getCompileTimeConstFromLiteralExpression((PsiLiteralExpression) value);
+            return resolveCompileTimeConstantValue(((PsiLiteralExpression) value).getValue(), null);
         }
         // Enum
         else if (value instanceof PsiReferenceExpression) {
@@ -97,8 +99,7 @@ public final class JavaCompileTimeConstResolver {
         PsiAnnotationMemberValue[] initializers = value.getInitializers();
         List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, taskList, initializers);
 
-        ClassDescriptor classDescriptor =
-                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+        ClassDescriptor classDescriptor = classResolver.resolveClass(annotationFqName, INCLUDE_KOTLIN_SOURCES, taskList);
 
         //TODO: nullability issues
         ValueParameterDescriptor valueParameterDescriptor =
@@ -140,16 +141,9 @@ public final class JavaCompileTimeConstResolver {
                     return null;
                 }
 
-                JetScope scope;
-                ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
-                if (classDescriptor == null) {
-                    return null;
-                }
-                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-                if (classObjectDescriptor == null) {
-                    return null;
-                }
-                scope = classObjectDescriptor.getMemberScope(Lists.<TypeProjection>newArrayList());
+                ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(fqName), INCLUDE_KOTLIN_SOURCES, taskList);
+                if (classDescriptor == null) return null;
+                JetScope scope = DescriptorUtils.getEnumEntriesScope(classDescriptor);
 
                 Name identifier = Name.identifier(((PsiEnumConstant) resolveElement).getName());
                 Collection<VariableDescriptor> properties = scope.getProperties(identifier);
@@ -165,54 +159,46 @@ public final class JavaCompileTimeConstResolver {
     }
 
     @Nullable
-    private static CompileTimeConstant<?> getCompileTimeConstFromLiteralExpression(PsiLiteralExpression value) {
-        return getCompileTimeConstFromLiteralExpressionWithExpectedType(value, null);
-    }
-
-    @Nullable
-    public static CompileTimeConstant<?> getCompileTimeConstFromLiteralExpressionWithExpectedType(
-            @NotNull PsiLiteralExpression value,
-            @Nullable JetType expectedType
-    ) {
-        Object literalValue = value.getValue();
-        if (literalValue instanceof String) {
-            return new StringValue((String) literalValue);
+    public static CompileTimeConstant<?> resolveCompileTimeConstantValue(@Nullable Object value, @Nullable JetType expectedType) {
+        if (value instanceof String) {
+            return new StringValue((String) value);
         }
-        else if (literalValue instanceof Byte) {
-            return new ByteValue((Byte) literalValue);
+        else if (value instanceof Byte) {
+            return new ByteValue((Byte) value);
         }
-        else if (literalValue instanceof Short) {
-            return new ShortValue((Short) literalValue);
+        else if (value instanceof Short) {
+            return new ShortValue((Short) value);
         }
-        else if (literalValue instanceof Character) {
-            return new CharValue((Character) literalValue);
+        else if (value instanceof Character) {
+            return new CharValue((Character) value);
         }
-        else if (literalValue instanceof Integer) {
+        else if (value instanceof Integer) {
             KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+            Integer integer = (Integer) value;
             if (builtIns.getShortType().equals(expectedType)) {
-                return new ShortValue(((Integer) literalValue).shortValue());
+                return new ShortValue(integer.shortValue());
             }
             else if (builtIns.getByteType().equals(expectedType)) {
-                return new ByteValue(((Integer) literalValue).byteValue());
+                return new ByteValue(integer.byteValue());
             }
             else if (builtIns.getCharType().equals(expectedType)) {
-                return new CharValue((char) ((Integer)literalValue).intValue());
+                return new CharValue((char) integer.intValue());
             }
-            return new IntValue((Integer) literalValue);
+            return new IntValue(integer);
         }
-        else if (literalValue instanceof Long) {
-            return new LongValue((Long) literalValue);
+        else if (value instanceof Long) {
+            return new LongValue((Long) value);
         }
-        else if (literalValue instanceof Float) {
-            return new FloatValue((Float) literalValue);
+        else if (value instanceof Float) {
+            return new FloatValue((Float) value);
         }
-        else if (literalValue instanceof Double) {
-            return new DoubleValue((Double) literalValue);
+        else if (value instanceof Double) {
+            return new DoubleValue((Double) value);
         }
-        else if (literalValue instanceof Boolean) {
-            return ((Boolean) literalValue) ? BooleanValue.TRUE : BooleanValue.FALSE;
+        else if (value instanceof Boolean) {
+            return BooleanValue.valueOf((Boolean) value);
         }
-        else if (literalValue == null) {
+        else if (value == null) {
             return NullValue.NULL;
         }
         return null;

@@ -106,7 +106,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
 
         if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
             PsiAnnotation assertInvisibleAnnotation = JavaAnnotationResolver.findOwnAnnotation(
-                    original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().asString());
+                    original, JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().asString());
 
             if (assertInvisibleAnnotation != null) {
                 switch (runtimeClassesHandleMode) {

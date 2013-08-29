@@ -37,20 +37,6 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
         super(node);
     }
 
-    @Nullable
-    @Override
-    public PsiReference getReference() {
-        PsiReference[] references = getReferences();
-        if (references.length == 1) return references[0];
-        else return null;
-    }
-
-    @NotNull
-    @Override
-    public PsiReference[] getReferences() {
-        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
-    }
-
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitArrayAccessExpression(this);

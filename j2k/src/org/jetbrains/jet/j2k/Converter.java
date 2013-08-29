@@ -29,7 +29,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 import org.jetbrains.jet.j2k.visitors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -63,7 +62,6 @@ public class Converter {
 
     public Converter(@NotNull Project project) {
         this.project = project;
-        KotlinBuiltIns.initialize(project, KotlinBuiltIns.InitializationMode.MULTI_THREADED);
     }
 
     @NotNull

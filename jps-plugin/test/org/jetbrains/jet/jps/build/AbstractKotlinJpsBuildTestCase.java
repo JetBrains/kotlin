@@ -34,6 +34,7 @@ import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
     protected static final String TEST_DATA_PATH = "jps-plugin/testData/";
@@ -75,15 +76,15 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
     }
 
     protected JpsLibrary addKotlinRuntimeDependency() {
-       return addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE);
+       return addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE, myProject.getModules(), false);
     }
 
-    protected JpsLibrary addKotlinRuntimeDependency(JpsJavaDependencyScope type) {
+    protected JpsLibrary addKotlinRuntimeDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported) {
         JpsLibrary library = myProject.addLibrary("kotlin-runtime", JpsJavaLibraryType.INSTANCE);
         File runtime = PathUtil.getKotlinPathsForDistDirectory().getRuntimePath();
         library.addRoot(runtime, JpsOrderRootType.COMPILED);
-        for (JpsModule module : myProject.getModules()) {
-            JpsModuleRootModificationUtil.addDependency(module, library, type, false);
+        for (JpsModule module : modules) {
+            JpsModuleRootModificationUtil.addDependency(module, library, type, exported);
         }
         return library;
     }

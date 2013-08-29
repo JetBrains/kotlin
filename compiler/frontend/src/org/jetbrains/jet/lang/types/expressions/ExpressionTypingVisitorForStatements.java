@@ -84,8 +84,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitObjectDeclaration(JetObjectDeclaration declaration, ExpressionTypingContext context) {
-        TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), context.trace, scope,
-                                             scope.getContainingDeclaration(), declaration);
+        TopDownAnalyzer.processClassOrObject(context.replaceScope(scope), scope.getContainingDeclaration(), declaration);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
             VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver()
@@ -158,7 +157,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
         SimpleFunctionDescriptor functionDescriptor = context.expressionTypingServices.getDescriptorResolver().
-                resolveFunctionDescriptorWithAnnotationArguments(scope.getContainingDeclaration(), scope, function, context.trace);
+                resolveFunctionDescriptorWithAnnotationArguments(
+                        scope.getContainingDeclaration(), scope, function, context.trace, context.dataFlowInfo);
 
         scope.addFunctionDescriptor(functionDescriptor);
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
@@ -169,8 +169,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitClass(JetClass klass, ExpressionTypingContext context) {
-        TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), context.trace, scope,
-                                             scope.getContainingDeclaration(), klass);
+        TopDownAnalyzer.processClassOrObject(context.replaceScope(scope), scope.getContainingDeclaration(), klass);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, klass);
         if (classDescriptor != null) {
             scope.addClassifierDescriptor(classDescriptor);

@@ -1,0 +1,79 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet.descriptors.serialization;
+
+import "compiler/frontend/serialization/src/descriptors.proto";
+
+option java_outer_classname = "JavaProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+message JavaType {
+  enum PrimitiveType {
+    // These values correspond to ASM Type sorts
+    VOID = 0;
+    BOOLEAN = 1;
+    CHAR = 2;
+    BYTE = 3;
+    SHORT = 4;
+    INT = 5;
+    FLOAT = 6;
+    LONG = 7;
+    DOUBLE = 8;
+  }
+
+  // One of these should be present
+  optional PrimitiveType primitive_type = 1;
+  optional int32 class_fq_name = 2;
+
+  optional int32 array_dimension = 3 [default = 0];
+}
+
+message JavaMethodSignature {
+  required int32 name = 1;
+  required JavaType return_type = 2;
+  repeated JavaType parameter_type = 3;
+}
+
+message JavaFieldSignature {
+  required int32 name = 1;
+  required JavaType type = 2;
+
+  // True iff this field is a backing field for a class object and is really present as a static
+  // field in the outer class, not as an instance field here
+  optional bool is_static_in_outer = 3 [default = false];
+}
+
+message JavaPropertySignature {
+  // A property itself is identified either by the field, or by the name of the synthetic method.
+  // If the property is annotated, then either field or synthetic_method_name should be present
+  optional JavaFieldSignature field = 1;
+
+  // Name of the synthetic method created to store property annotations. Signature is always "()V"
+  optional int32 synthetic_method_name = 2;
+
+  optional JavaMethodSignature getter = 3;
+  optional JavaMethodSignature setter = 4;
+}
+
+extend Callable {
+  optional JavaMethodSignature method_signature = 100;
+
+  optional JavaPropertySignature property_signature = 101;
+
+  // For top-level callables, short name of "...Package$src$..." class with the callable's body and annotations
+  optional int32 src_class_name = 102;
+}

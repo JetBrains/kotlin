@@ -254,10 +254,9 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
 
     @NotNull
     private ClassDescriptor getLocalObjectDescriptor(@NotNull String name) {
-        for (ClassDescriptor descriptor : context.getSliceContents(BindingContext.OBJECT_DECLARATION_CLASS).values()) {
-            if (descriptor.getName().asString().equals(name)) {
-                return descriptor;
-            }
+        ClassDescriptor localClassDescriptor = getLocalClassDescriptor(name);
+        if (localClassDescriptor.getKind() == ClassKind.OBJECT) {
+            return localClassDescriptor;
         }
 
         fail("Failed to find local object " + name);

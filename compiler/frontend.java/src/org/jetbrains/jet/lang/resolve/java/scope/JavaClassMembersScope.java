@@ -16,31 +16,36 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
-    protected final ClassPsiDeclarationProvider declarationProvider;
+    protected final PsiClass psiClass;
 
     private Map<Name, ClassDescriptor> innerClassesMap = null;
 
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull ClassPsiDeclarationProvider declarationProvider,
-            @NotNull JavaSemanticServices semanticServices
+            @NotNull PsiClass psiClass,
+            @NotNull MembersProvider membersProvider,
+            @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, semanticServices, declarationProvider);
-        this.declarationProvider = declarationProvider;
+        super(descriptor, javaDescriptorResolver, membersProvider);
+        this.psiClass = psiClass;
+    }
+
+    @NotNull
+    @Override
+    public PsiClass getPsiElement() {
+        return psiClass;
     }
 
     @NotNull
@@ -53,7 +58,11 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
+        NamedMembers members = membersProvider.get(name);
+        if (members == null) {
+            return Collections.emptySet();
+        }
+        return javaDescriptorResolver.resolveFunctionGroupForClass(members, descriptor, psiClass);
     }
 
     @NotNull
@@ -66,12 +75,6 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
             }
         }
         return innerClassesMap;
-    }
-
-    @NotNull
-    @Override
-    protected Collection<ClassDescriptor> computeInnerClasses() {
-        return getResolver().resolveInnerClasses(declarationProvider);
     }
 
     @Override

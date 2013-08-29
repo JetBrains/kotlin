@@ -16,13 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,120 +33,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
+
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
-
-    public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
-        @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            return DescriptorUtils.isInSameNamespace(what, from);
-        }
-
-        @Override
-        protected Integer compareTo(@NotNull Visibility visibility) {
-            if (this == visibility) return 0;
-            if (visibility == Visibilities.PRIVATE) return 1;
-            return -1;
-        }
-
-        @Override
-        public String toString() {
-            return "public/*package*/";
-        }
-
-        @NotNull
-        @Override
-        public Visibility normalize() {
-            return Visibilities.INTERNAL;
-        }
-    };
-
-    public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", false) {
-        @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
-            if (fromClass == null) return false;
-
-            ClassDescriptor whatClass;
-            // protected static class
-            if (what instanceof ClassDescriptor) {
-                DeclarationDescriptor containingDeclaration = what.getContainingDeclaration();
-                assert containingDeclaration instanceof ClassDescriptor : "Only static nested classes can have protected_static visibility";
-                whatClass = (ClassDescriptor) containingDeclaration;
-            }
-            // protected static function or property
-            else {
-                DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
-                assert whatDeclarationDescriptor instanceof NamespaceDescriptor : "Only static declarations can have protected_static visibility";
-                whatClass = DescriptorUtils.getClassForCorrespondingJavaNamespace((NamespaceDescriptor) whatDeclarationDescriptor);
-            }
-
-            assert whatClass != null : "Couldn't find ClassDescriptor for protected static member " + what;
-
-            if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
-                return true;
-            }
-            return isVisible(what, fromClass.getContainingDeclaration());
-        }
-
-        @Override
-        public String toString() {
-            return "protected/*protected static*/";
-        }
-
-        @NotNull
-        @Override
-        public Visibility normalize() {
-            return Visibilities.PROTECTED;
-        }
-    };
-
-    public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", false) {
-        @Override
-        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (DescriptorUtils.isInSameNamespace(what, from)) {
-                return true;
-            }
-
-            ClassDescriptor whatClass = DescriptorUtils.getParentOfType(what, ClassDescriptor.class, false);
-            if (whatClass == null) return false;
-
-            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
-            if (fromClass == null) return false;
-
-            if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
-                return true;
-            }
-            return isVisible(what, fromClass.getContainingDeclaration());
-        }
-
-        @Override
-        protected Integer compareTo(@NotNull Visibility visibility) {
-            if (this == visibility) return 0;
-            if (visibility == Visibilities.INTERNAL) return null;
-            if (visibility == Visibilities.PRIVATE) return 1;
-            return -1;
-        }
-
-        @Override
-        public String toString() {
-            return "protected/*protected and package*/";
-        }
-
-        @NotNull
-        @Override
-        public Visibility normalize() {
-            return Visibilities.PROTECTED;
-        }
-    };
 
     private JavaPropertyResolver propertiesResolver;
     private JavaClassResolver classResolver;
     private JavaConstructorResolver constructorResolver;
     private JavaFunctionResolver functionResolver;
     private JavaNamespaceResolver namespaceResolver;
-    private JavaInnerClassResolver innerClassResolver;
 
     @Inject
     public void setFunctionResolver(JavaFunctionResolver functionResolver) {
@@ -175,11 +70,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         this.constructorResolver = constructorResolver;
     }
 
-    @Inject
-    public void setInnerClassResolver(JavaInnerClassResolver innerClassResolver) {
-        this.innerClassResolver = innerClassResolver;
-    }
-
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         return classResolver.resolveClass(qualifiedName, searchRule);
@@ -187,24 +77,17 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return classResolver.resolveClass(qualifiedName);
+        return classResolver.resolveClass(qualifiedName, IGNORE_KOTLIN_SOURCES);
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(
-            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptor classDescriptor
-    ) {
-        return constructorResolver.resolveConstructors(classData, classDescriptor);
+    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
+        return constructorResolver.resolveConstructors(psiClass, classDescriptor);
     }
 
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
-    }
-
-    @Override
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
-        return namespaceResolver.resolveNamespace(qualifiedName);
     }
 
     @Nullable
@@ -213,17 +96,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroupByName(
-            @NotNull Name name,
-            @NotNull PsiDeclarationProvider data,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
-    ) {
-        return propertiesResolver.resolveFieldGroupByName(name, data, ownerDescriptor);
-    }
-
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull FqName name, @NotNull DescriptorSearchRule searchRule, @NotNull PostponedTasks tasks) {
-        return classResolver.resolveClass(name, searchRule, tasks);
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
+        return propertiesResolver.resolveFieldGroup(members, ownerDescriptor);
     }
 
     public static class ValueParameterDescriptors {
@@ -247,25 +121,16 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(
-            @NotNull Name methodName,
-            @NotNull ClassPsiDeclarationProvider scopeData,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(
+            @NotNull NamedMembers members,
+            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull PsiClass psiClass
     ) {
-        return functionResolver.resolveFunctionGroup(methodName, scopeData, ownerDescriptor);
+        return functionResolver.resolveFunctionGroupForClass(members, owner, psiClass);
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(
-            @NotNull Name methodName,
-            @NotNull PackagePsiDeclarationProvider scopeData,
-            @NotNull NamespaceDescriptor ownerDescriptor
-    ) {
-        return functionResolver.resolveFunctionGroup(methodName, scopeData, ownerDescriptor);
-    }
-
-    @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(@NotNull ClassPsiDeclarationProvider declarationProvider) {
-        return innerClassResolver.resolveInnerClasses(declarationProvider);
+    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
+        return functionResolver.resolveFunctionGroupForPackage(members, owner);
     }
 }

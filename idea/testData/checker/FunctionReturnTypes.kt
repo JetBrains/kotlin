@@ -6,7 +6,7 @@ fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <error>1</error>}
 fun unitUnitReturn() : Unit {return Unit.VALUE}
 fun test1() : Any = { <error>return</error> }
-fun test2() : Any = @a {return@a 1}
+fun test2() : Any = @a {<error>return@a 1</error>}
 fun test3() : Any { <error>return</error> }
 
 fun bbb() {

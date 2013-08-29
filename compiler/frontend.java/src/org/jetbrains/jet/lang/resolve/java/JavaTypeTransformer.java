@@ -24,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.rt.signature.JetSignatureReader;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -37,6 +37,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
@@ -44,12 +45,7 @@ public class JavaTypeTransformer {
 
     private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
 
-    private JavaSemanticServices javaSemanticServices;
     private JavaDescriptorResolver resolver;
-    @Inject
-    public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
-        this.javaSemanticServices = javaSemanticServices;
-    }
 
     @Inject
     public void setResolver(JavaDescriptorResolver resolver) {
@@ -87,19 +83,6 @@ public class JavaTypeTransformer {
             }
         });
         return result;
-    }
-
-    @NotNull
-    public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
-        final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, KotlinBuiltIns.getInstance(), typeVariableResolver) {
-            @Override
-            protected void done(@NotNull JetType jetType) {
-                r[0] = jetType;
-            }
-        };
-        new JetSignatureReader(kotlinSignature).acceptType(reader);
-        return r[0];
     }
 
     @NotNull
@@ -156,7 +139,7 @@ public class JavaTypeTransformer {
                                                                                                     howThisTypeIsUsed);
 
                     if (classData == null) {
-                        classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+                        classData = resolver.resolveClass(new FqName(psiClass.getQualifiedName()), INCLUDE_KOTLIN_SOURCES);
                     }
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
@@ -280,10 +263,10 @@ public class JavaTypeTransformer {
         if (!signatureTypeUsages.contains(originalTypeUsage)) {
             return originalTypeUsage;
         }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_MUTABLE_ANNOTATION.getFqName().asString()) != null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION.getFqName().asString()) != null) {
             return TypeUsage.MEMBER_SIGNATURE_COVARIANT;
         }
-        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAbi.JETBRAINS_READONLY_ANNOTATION.getFqName().asString()) != null) {
+        if (JavaAnnotationResolver.findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION.getFqName().asString()) != null) {
             return TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
         }
         return originalTypeUsage;

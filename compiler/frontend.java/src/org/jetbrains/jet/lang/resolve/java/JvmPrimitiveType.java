@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -120,10 +120,5 @@ public enum JvmPrimitiveType {
     @Nullable
     public static JvmPrimitiveType getByWrapperAsmType(Type type) {
         return MapByWrapperAsmTypeHolder.map.get(type);
-    }
-
-    @Nullable
-    public static JvmPrimitiveType getByWrapperClass(JvmClassName className) {
-        return getByWrapperAsmType(className.getAsmType());
     }
 }

@@ -93,7 +93,7 @@ public class KotlinBuilderModuleScriptGenerator {
     @NotNull
     private static Collection<File> findClassPathRoots(@NotNull ModuleBuildTarget target) {
         JpsModule module = target.getModule();
-        JpsJavaDependenciesEnumerator dependencies = JpsJavaExtensionService.dependencies(module)
+        JpsJavaDependenciesEnumerator dependencies = JpsJavaExtensionService.dependencies(module).recursively().exportedOnly()
                 .includedIn(JpsJavaClasspathKind.compile(target.isTests()));
 
         return dependencies.classes().getRoots();

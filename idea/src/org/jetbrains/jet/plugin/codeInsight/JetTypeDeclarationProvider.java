@@ -26,14 +26,14 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
     @Override
     public PsiElement[] getSymbolTypeDeclarations(PsiElement symbol) {
         if (symbol instanceof JetElement && symbol.getContainingFile() instanceof JetFile) {
             BindingContext bindingContext =
-                    WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) symbol.getContainingFile()).getBindingContext();
+                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) symbol.getContainingFile()).getBindingContext();
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol);
             if (descriptor instanceof CallableDescriptor) {
                 JetType type = ((CallableDescriptor) descriptor).getReturnType();

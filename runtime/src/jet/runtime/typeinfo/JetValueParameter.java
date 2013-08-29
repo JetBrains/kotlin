@@ -21,39 +21,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Annotation for parameters
- *
- * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
- */
-@Target({ElementType.PARAMETER})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 public @interface JetValueParameter {
-    /**
-     * @return name of parameter
-     */
-    String name ();
+    String name();
 
     /**
-     * @return if this parameter has default value
-     */
-    boolean hasDefaultValue() default false;
-
-    /**
-     * @return if this parameter is receiver
-     */
-    boolean receiver() default false;
-
-    /**
-     * @return type unless Java type is correct Kotlin type.
+     * This is a hack for Kara
+     * @return <code>"?"</code> if the type of this parameter is nullable, an empty string otherwise
      */
     String type() default "";
-
-    /**
-     * @return <code>true</code> if this parameter is a vararg
-     *
-     * NOTE: a method may have a vararg parameter in Kotlin and not be marked as Opcodes.ACC_VARARGS, e.g.
-     * fun foo(vararg x: Int, f: () -> Unit)
-     */
-    boolean vararg() default false;
 }

@@ -61,7 +61,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -237,7 +237,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if (!(element instanceof JetNamedFunction || element instanceof JetProperty)) return null;
 
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement((JetElement) element);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
 
         if (!(descriptor instanceof CallableMemberDescriptor)) {
@@ -280,7 +280,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = (JetFile)elt.getContainingFile();
         assert file != null;
 
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.getContextForElement((JetElement) elt);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) elt);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, elt);
         if (!(descriptor instanceof CallableMemberDescriptor)) {
             return;
@@ -323,7 +323,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = (JetFile)element.getContainingFile();
         if (file == null) return "";
 
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
 
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         if (!(descriptor instanceof CallableMemberDescriptor)) {

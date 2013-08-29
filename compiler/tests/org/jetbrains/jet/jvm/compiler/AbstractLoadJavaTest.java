@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
@@ -52,6 +51,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.NamespaceComparator.*;
 
@@ -142,15 +142,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("compiler/tests")); // for @ExpectLoadError annotation
         JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
-        ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<test module>");
-
         // we need the same binding trace for resolve from Java and Kotlin
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
 
-        InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(),
-                                                                                                  trace,
-                                                                                                  moduleDescriptor);
+        InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(), trace);
 
+        ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<test module>");
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),
                 new TopDownAnalysisParameters(
@@ -162,8 +159,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
         JavaDescriptorResolver javaDescriptorResolver = injectorForJava.getJavaDescriptorResolver();
-        NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(
-                LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
+        NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, INCLUDE_KOTLIN_SOURCES);
         assert namespaceDescriptor != null : "Test namespace not found";
 
         checkJavaNamespace(expectedFile, namespaceDescriptor, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);

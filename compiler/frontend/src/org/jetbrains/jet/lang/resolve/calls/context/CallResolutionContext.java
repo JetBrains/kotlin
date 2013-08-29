@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-public abstract class CallResolutionContext<Context extends CallResolutionContext> extends ResolutionContext<Context> {
+public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     public final Call call;
     public final ResolveMode resolveMode;
     public final CheckValueArgumentsMode checkArguments;

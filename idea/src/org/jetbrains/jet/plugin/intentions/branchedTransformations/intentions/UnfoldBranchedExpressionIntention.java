@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.*;
 import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationIntention;
 
-public abstract class UnfoldBranchedExpressionIntention extends AbstractCodeTransformationIntention<UnfoldableKind> {
+public abstract class UnfoldBranchedExpressionIntention extends AbstractCodeTransformationIntention {
     protected UnfoldBranchedExpressionIntention(@NotNull final UnfoldableKind unfoldableKind) {
         super(
                 unfoldableKind,

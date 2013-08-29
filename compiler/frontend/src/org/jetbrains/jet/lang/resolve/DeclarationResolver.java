@@ -135,7 +135,8 @@ public class DeclarationResolver {
     private void resolveAnnotationsForClassOrObject(AnnotationResolver annotationResolver, JetClassOrObject jetClass, MutableClassDescriptor descriptor) {
         JetModifierList modifierList = jetClass.getModifierList();
         if (modifierList != null) {
-            descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotations(descriptor.getScopeForSupertypeResolution(), modifierList, trace));
+            descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotationsWithoutArguments(
+                    descriptor.getScopeForSupertypeResolution(), modifierList, trace));
         }
     }
 
@@ -179,16 +180,24 @@ public class DeclarationResolver {
         // TODO : Extensions
     }
 
-    private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations,
-            final @NotNull JetScope scopeForFunctions,
-            final @NotNull JetScope scopeForPropertyInitializers, final @NotNull JetScope scopeForPropertyAccessors,
-            final @NotNull NamespaceLikeBuilder namespaceLike)
+    private void resolveFunctionAndPropertyHeaders(
+            @NotNull List<JetDeclaration> declarations,
+            @NotNull final JetScope scopeForFunctions,
+            @NotNull final JetScope scopeForPropertyInitializers,
+            @NotNull final JetScope scopeForPropertyAccessors,
+            @NotNull final NamespaceLikeBuilder namespaceLike)
     {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
-                    SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(namespaceLike.getOwnerForChildren(), scopeForFunctions, function, trace);
+                    SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(
+                            namespaceLike.getOwnerForChildren(),
+                            scopeForFunctions,
+                            function,
+                            trace,
+                            context.getOuterDataFlowInfo()
+                    );
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
                     context.registerDeclaringScope(function, scopeForFunctions);
@@ -196,7 +205,12 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitProperty(JetProperty property) {
-                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(namespaceLike.getOwnerForChildren(), scopeForPropertyInitializers, property, trace);
+                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
+                            namespaceLike.getOwnerForChildren(),
+                            scopeForPropertyInitializers,
+                            property,
+                            trace,
+                            context.getOuterDataFlowInfo());
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
                     context.registerDeclaringScope(property, scopeForPropertyInitializers);

@@ -28,12 +28,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 
 class JetArrayAccessReference extends JetPsiReference implements MultiRangeReference {
     private JetArrayAccessExpression expression;
@@ -55,7 +56,7 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
 
     @Override
     protected PsiElement doResolve() {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile())
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) getElement().getContainingFile())
                 .getBindingContext();
         ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
         ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
@@ -67,7 +68,7 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
 
     @Override
     protected ResolveResult[] doMultiResolve() {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile())
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) getElement().getContainingFile())
                 .getBindingContext();
         ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
         ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);

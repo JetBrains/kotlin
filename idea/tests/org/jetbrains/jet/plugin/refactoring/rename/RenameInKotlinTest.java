@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.refactoring.rename;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
@@ -38,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.testing.LocalFileSystemUtils;
 
 import java.io.File;
@@ -69,7 +68,7 @@ public class RenameInKotlinTest extends MultiFileTestCase {
         doTestWithRename(new Function<PsiFile, PsiElement>() {
             @Override
             public PsiElement fun(PsiFile file) {
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) file)
+                BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file)
                         .getBindingContext();
                 ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
 
@@ -85,7 +84,7 @@ public class RenameInKotlinTest extends MultiFileTestCase {
         doTestWithRename(new Function<PsiFile, PsiElement>() {
             @Override
             public PsiElement fun(PsiFile file) {
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) file)
+                BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file)
                         .getBindingContext();
                 ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
 

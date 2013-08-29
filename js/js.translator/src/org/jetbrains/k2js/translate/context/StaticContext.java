@@ -225,7 +225,7 @@ public final class StaticContext {
 
                     PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
                     String propertyName = accessorDescriptor.getCorrespondingProperty().getName().asString();
-                    if (isObjectDeclaration(bindingContext, accessorDescriptor.getCorrespondingProperty())) {
+                    if (isObjectDeclaration(accessorDescriptor.getCorrespondingProperty())) {
                         return declareName(descriptor, propertyName);
                     }
 

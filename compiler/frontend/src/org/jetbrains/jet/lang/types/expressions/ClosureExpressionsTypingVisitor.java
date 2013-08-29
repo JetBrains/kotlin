@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,23 +28,23 @@ import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValueWithDefault;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
@@ -81,8 +83,9 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), traceAdapter, context.scope,
-                                             context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
+        TopDownAnalyzer.processClassOrObject(context.replaceBindingTrace(traceAdapter),
+                                             context.scope.getContainingDeclaration(),
+                                             expression.getObjectDeclaration());
 
         DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
                 new BindingTraceContext().getBindingContext(), "cached delta trace for object literal expression resolve", expression);
@@ -96,6 +99,11 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
         JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
         if (bodyExpression == null) return null;
+
+        Name callerName = getCallerName(expression);
+        if (callerName != null) {
+            context.labelResolver.enterLabeledElement(new LabelName(callerName.asString()), expression);
+        }
 
         JetType expectedType = context.expectedType;
         boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
@@ -113,7 +121,47 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
         }
+
+        if (callerName != null) {
+            context.labelResolver.exitLabeledElement(expression);
+        }
+
         return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
+    }
+
+    @Nullable
+    private static Name getCallerName(@NotNull JetFunctionLiteralExpression expression) {
+        JetCallExpression callExpression = getContainingCallExpression(expression);
+        if (callExpression == null) return null;
+
+        JetExpression calleeExpression = callExpression.getCalleeExpression();
+        if (calleeExpression instanceof JetSimpleNameExpression) {
+            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
+            return nameExpression.getReferencedNameAsName();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static JetCallExpression getContainingCallExpression(JetFunctionLiteralExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (parent instanceof JetCallExpression) {
+            // f {}
+            return (JetCallExpression) parent;
+        }
+
+        if (parent instanceof JetValueArgument) {
+            // f ({}) or f(p = {})
+            JetValueArgument argument = (JetValueArgument) parent;
+            PsiElement argList = argument.getParent();
+            if (argList == null) return null;
+            PsiElement call = argList.getParent();
+            if (call instanceof JetCallExpression) {
+                return (JetCallExpression) call;
+            }
+        }
+        return null;
     }
 
     @NotNull
@@ -127,7 +175,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), CallableMemberDescriptor.Kind.DECLARATION);
 
-        List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral, functionDescriptor, functionTypeExpected);
+        List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral,
+                                                                                                   functionDescriptor, functionTypeExpected);
 
         JetType effectiveReceiverType;
         if (receiverTypeRef == null) {
@@ -242,7 +291,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
             boolean functionTypeExpected
     ) {
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve function literal expression", expression);
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve function literal expression",
+                                                                            expression);
         JetType expectedReturnType = functionTypeExpected ? KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(context.expectedType) : null;
         JetType returnType = computeUnsafeReturnType(expression, context, functionDescriptor, temporaryTrace, expectedReturnType);
 
@@ -275,20 +325,81 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
+        JetType declaredReturnType = null;
         if (returnTypeRef != null) {
-            JetType returnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
-            context.expressionTypingServices.checkFunctionReturnType(expression.getFunctionLiteral(), context.replaceScope(functionInnerScope).
-                    replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace);
+            declaredReturnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
+            // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
+            functionDescriptor.setReturnType(declaredReturnType);
             if (expectedReturnType != null) {
-                if (!JetTypeChecker.INSTANCE.isSubtypeOf(returnType, expectedReturnType)) {
+                if (!JetTypeChecker.INSTANCE.isSubtypeOf(declaredReturnType, expectedReturnType)) {
                     temporaryTrace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(returnTypeRef, expectedReturnType));
                 }
             }
-            return returnType;
         }
-        ExpressionTypingContext newContext = context.replaceExpectedType(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE)
-                .replaceBindingTrace(temporaryTrace);
-        return context.expressionTypingServices.getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
-                                                                     newContext, temporaryTrace).getType();
+
+        // Type-check the body
+        ExpressionTypingContext newContext = context.replaceBindingTrace(temporaryTrace).replaceScope(functionInnerScope)
+                .replaceExpectedType(declaredReturnType != null
+                                     ? declaredReturnType
+                                     : (expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE));
+
+        JetType typeOfBodyExpression = context.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
+
+        List<JetType> returnedExpressionTypes = Lists.newArrayList(getTypesOfLocallyReturnedExpressions(
+                functionLiteral, temporaryTrace, collectReturns(bodyExpression)));
+        ContainerUtil.addIfNotNull(returnedExpressionTypes, typeOfBodyExpression);
+
+        if (declaredReturnType != null) return declaredReturnType;
+        if (returnedExpressionTypes.isEmpty()) return null;
+        return CommonSupertypes.commonSupertype(returnedExpressionTypes);
+    }
+
+    private static List<JetType> getTypesOfLocallyReturnedExpressions(
+            final JetFunctionLiteral functionLiteral,
+            final TemporaryBindingTrace temporaryTrace,
+            Collection<JetReturnExpression> returnExpressions
+    ) {
+        return ContainerUtil.mapNotNull(returnExpressions, new Function<JetReturnExpression, JetType>() {
+            @Override
+            public JetType fun(JetReturnExpression returnExpression) {
+                JetSimpleNameExpression label = returnExpression.getTargetLabel();
+                if (label == null) {
+                    // No label => non-local return
+                    return null;
+                }
+
+                PsiElement labelTarget = temporaryTrace.get(BindingContext.LABEL_TARGET, label);
+                if (labelTarget != functionLiteral) {
+                    // Either a local return of inner lambda/function or a non-local return
+                    return null;
+                }
+
+                JetExpression returnedExpression = returnExpression.getReturnedExpression();
+                if (returnedExpression == null) {
+                    return KotlinBuiltIns.getInstance().getUnitType();
+                }
+                JetType returnedType = temporaryTrace.get(EXPRESSION_TYPE, returnedExpression);
+                assert returnedType != null : "No type for returned expression: " + returnedExpression + ",\n" +
+                                              "the type should have been computed by getBlockReturnedType() above";
+                return returnedType;
+            }
+        });
+    }
+
+    public static Collection<JetReturnExpression> collectReturns(@NotNull JetExpression expression) {
+        Collection<JetReturnExpression> result = Lists.newArrayList();
+        expression.accept(
+                new JetTreeVisitor<Collection<JetReturnExpression>>() {
+                    @Override
+                    public Void visitReturnExpression(
+                            JetReturnExpression expression, Collection<JetReturnExpression> data
+                    ) {
+                        data.add(expression);
+                        return null;
+                    }
+                },
+                result
+        );
+        return result;
     }
 }

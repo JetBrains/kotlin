@@ -14,9 +14,6 @@
 
   <project-components>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.BuiltInsInitializer</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
     </component>
     <component>
@@ -90,6 +87,9 @@
 
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"/>
+
+    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder"
+                    serviceImplementation="org.jetbrains.jet.plugin.vfilefinder.IDEVirtualFileFinder"/>
 
     <projectService serviceInterface="org.jetbrains.jet.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport"/>
@@ -268,10 +268,9 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelShortObjectNameIndex"/>
 
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex"/>
+    <fileBasedIndex implementation="org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex"/>
 
     <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor"/>
-    <psi.clsCustomNavigationPolicy implementation="org.jetbrains.jet.plugin.libraries.JetClsNavigationPolicy"/>
-    <psi.clsDecompiledFileProvider implementation="org.jetbrains.jet.plugin.libraries.JetClsFileDecompiledPsiFileProvider"/>
 
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.KotlinLibrariesNotificationProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.AbsentJdkAnnotationsNotifications"/>
@@ -403,6 +402,11 @@
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension</className>
       <category>Kotlin</category>
     </intentionAction>
 

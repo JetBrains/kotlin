@@ -268,6 +268,19 @@ public class ErrorUtils {
         }
     };
 
+    private static final class ErrorTypeConstructor extends TypeConstructorImpl {
+        private ErrorTypeConstructor(
+                @Nullable ClassifierDescriptor classifierDescriptor,
+                @NotNull List<AnnotationDescriptor> annotations,
+                boolean sealed,
+                @NotNull String debugName,
+                @NotNull List<? extends TypeParameterDescriptor> parameters,
+                @NotNull Collection<JetType> supertypes
+        ) {
+            super(classifierDescriptor, annotations, sealed, debugName, parameters, supertypes);
+        }
+    }
+
     private static final Set<ConstructorDescriptor> ERROR_CONSTRUCTOR_GROUP = Collections.singleton(createErrorConstructor(0, Collections.<JetType>emptyList()));
     private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
 
@@ -359,7 +372,11 @@ public class ErrorUtils {
     }
 
     private static JetType createErrorTypeWithCustomDebugName(JetScope memberScope, String debugName) {
-        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName, Collections.<TypeParameterDescriptorImpl>emptyList(), Collections.singleton(KotlinBuiltIns.getInstance().getAnyType())), memberScope);
+        TypeConstructorImpl constructor =
+                new ErrorTypeConstructor(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName,
+                                        Collections.<TypeParameterDescriptorImpl>emptyList(),
+                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
+        return new ErrorTypeImpl(constructor, memberScope);
     }
 
     public static JetType createWrongVarianceErrorType(TypeProjection value) {
@@ -371,7 +388,7 @@ public class ErrorUtils {
     }
 
     public static boolean isError(@NotNull TypeConstructor typeConstructor) {
-        return typeConstructor == ERROR_CLASS.getTypeConstructor();
+        return typeConstructor == ERROR_CLASS.getTypeConstructor() || typeConstructor instanceof ErrorTypeConstructor;
     }
 
     public static boolean isErrorType(@NotNull JetType type) {

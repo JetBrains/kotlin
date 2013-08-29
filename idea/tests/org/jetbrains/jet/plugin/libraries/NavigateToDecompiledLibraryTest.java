@@ -16,17 +16,20 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
+import com.beust.jcommander.internal.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.compiled.ClsElementImpl;
-import com.intellij.psi.impl.compiled.ClsFileImpl;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.Map;
+
+import static org.jetbrains.jet.plugin.libraries.JetDecompiledData.getDecompiledData;
 
 public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTest {
     private VirtualFile classFile;
@@ -77,15 +80,15 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
 
     private void doTest() {
         classFile = getClassFile();
-
-        Map<ClsElementImpl, JetDeclaration> map = getDecompiledData(classFile).getClsElementsToJetElements();
-        checkNavigationElements(map);
+        JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData(classFile, getProject());
+        Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(decompiledData.getFile(),
+                                                    getDecompiledData(classFile, getProject()) .getRenderedDescriptorsToRanges());
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 
         assertSameLinesWithFile(TEST_DATA_PATH + "/decompiled/" + getTestName(false) + ".kt", decompiledTextWithMarks);
     }
 
-    private String getDecompiledTextWithMarks(Map<ClsElementImpl, JetDeclaration> map) {
+    private String getDecompiledTextWithMarks(Map<String, JetDeclaration> map) {
         String decompiledText = getDecompiledText();
 
         int[] openings = new int[decompiledText.length() + 1];
@@ -113,21 +116,6 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
         return document.getText();
     }
 
-    private JetDecompiledData getDecompiledData(VirtualFile classFile) {
-        PsiFile classPsiFile = getPsiManager().findFile(classFile);
-        assertInstanceOf(classPsiFile, ClsFileImpl.class);
-        ClsFileImpl clsFile = (ClsFileImpl) classPsiFile;
-        return JetDecompiledData.getDecompiledData(clsFile);
-    }
-
-    private void checkNavigationElements(Map<ClsElementImpl, JetDeclaration> map) {
-        PsiFile classPsiFile = getPsiManager().findFile(classFile);
-        for (Map.Entry<ClsElementImpl, JetDeclaration> clsToJet : map.entrySet()) {
-            assertSame(classPsiFile, clsToJet.getKey().getContainingFile());
-            assertSame(clsToJet.getValue(), clsToJet.getKey().getNavigationElement());
-        }
-    }
-
     private VirtualFile getClassFile() {
         VirtualFile packageDir = libraryDir.findFileByRelativePath(PACKAGE.replace(".", "/"));
         assertNotNull(packageDir);
@@ -139,5 +127,22 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
     @Override
     protected boolean isWithSources() {
         return false;
+    }
+
+    @NotNull
+    private static Map<String, JetDeclaration> getRenderedDescriptorToKotlinPsiMap(
+            @NotNull JetFile file, @NotNull Map<String, TextRange> renderedDescriptorsToRanges
+    ) {
+        Map<String, JetDeclaration> renderedDescriptorsToJetDeclarations = Maps.newHashMap();
+        for (Map.Entry<String, TextRange> renderedDescriptorToRange : renderedDescriptorsToRanges.entrySet()) {
+            String renderedDescriptor = renderedDescriptorToRange.getKey();
+            TextRange range = renderedDescriptorToRange.getValue();
+            JetDeclaration jetDeclaration = PsiTreeUtil.findElementOfClassAtRange(file, range.getStartOffset(), range.getEndOffset(),
+                                                                                  JetDeclaration.class);
+            assert jetDeclaration != null : "Can't find declaration at " + range + ": "
+                                            + file.getText().substring(range.getStartOffset(), range.getEndOffset());
+            renderedDescriptorsToJetDeclarations.put(renderedDescriptor, jetDeclaration);
+        }
+        return renderedDescriptorsToJetDeclarations;
     }
 }

@@ -535,6 +535,7 @@ public interface Errors {
     DiagnosticFactory0<JetSimpleNameExpression> EXPRESSION_EXPECTED_NAMESPACE_FOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetReturnExpression> RETURN_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetReturnExpression> RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetDeclarationWithBody>
             NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_WITH_BODY);
