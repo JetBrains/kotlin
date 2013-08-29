@@ -14,7 +14,7 @@
 
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
-        <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
+        <fileset dir="${idea.sdk}" includes="lib/protobuf-2.4.1.jar"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jline.jar"/>
@@ -277,7 +277,7 @@
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
-              <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.5.0.jar"/>
+              <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.4.1.jar"/>
               <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
 
