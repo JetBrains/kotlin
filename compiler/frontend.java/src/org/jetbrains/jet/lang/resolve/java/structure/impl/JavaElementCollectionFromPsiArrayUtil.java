@@ -24,122 +24,177 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class JavaElementCollectionFromPsiArrayUtil {
     private JavaElementCollectionFromPsiArrayUtil() {
     }
 
+    private interface Factory<Psi, Java> {
+        @NotNull
+        Java create(@NotNull Psi psi);
+    }
+
+    private static class Factories {
+        private static final Factory<PsiClass, JavaClassImpl> CLASSES = new Factory<PsiClass, JavaClassImpl>() {
+            @NotNull
+            @Override
+            public JavaClassImpl create(@NotNull PsiClass psiClass) {
+                return new JavaClassImpl(psiClass);
+            }
+        };
+
+        private static final Factory<PsiPackage, JavaPackageImpl> PACKAGES = new Factory<PsiPackage, JavaPackageImpl>() {
+            @NotNull
+            @Override
+            public JavaPackageImpl create(@NotNull PsiPackage psiPackage) {
+                return new JavaPackageImpl(psiPackage);
+            }
+        };
+
+        private static final Factory<PsiMethod, JavaMethodImpl> METHODS = new Factory<PsiMethod, JavaMethodImpl>() {
+            @NotNull
+            @Override
+            public JavaMethodImpl create(@NotNull PsiMethod psiMethod) {
+                return new JavaMethodImpl(psiMethod);
+            }
+        };
+
+        private static final Factory<PsiField, JavaFieldImpl> FIELDS = new Factory<PsiField, JavaFieldImpl>() {
+            @NotNull
+            @Override
+            public JavaFieldImpl create(@NotNull PsiField psiField) {
+                return new JavaFieldImpl(psiField);
+            }
+        };
+
+        private static final Factory<PsiParameter, JavaValueParameterImpl> VALUE_PARAMETERS =
+                new Factory<PsiParameter, JavaValueParameterImpl>() {
+            @NotNull
+            @Override
+            public JavaValueParameterImpl create(@NotNull PsiParameter psiParameter) {
+                return new JavaValueParameterImpl(psiParameter);
+            }
+        };
+
+        private static final Factory<PsiTypeParameter, JavaTypeParameterImpl> TYPE_PARAMETERS =
+                new Factory<PsiTypeParameter, JavaTypeParameterImpl>() {
+            @NotNull
+            @Override
+            public JavaTypeParameterImpl create(@NotNull PsiTypeParameter psiTypeParameter) {
+                return new JavaTypeParameterImpl(psiTypeParameter);
+            }
+        };
+
+        private static final Factory<PsiType, JavaTypeImpl<?>> TYPES = new Factory<PsiType, JavaTypeImpl<?>>() {
+            @NotNull
+            @Override
+            public JavaTypeImpl<?> create(@NotNull PsiType psiType) {
+                return JavaTypeImpl.create(psiType);
+            }
+        };
+
+        private static final Factory<PsiClassType, JavaClassifierTypeImpl> CLASSIFIER_TYPES =
+                new Factory<PsiClassType, JavaClassifierTypeImpl>() {
+            @NotNull
+            @Override
+            public JavaClassifierTypeImpl create(@NotNull PsiClassType psiClassType) {
+                return new JavaClassifierTypeImpl(psiClassType);
+            }
+        };
+
+        private static final Factory<PsiAnnotation, JavaAnnotationImpl> ANNOTATIONS = new Factory<PsiAnnotation, JavaAnnotationImpl>() {
+            @NotNull
+            @Override
+            public JavaAnnotationImpl create(@NotNull PsiAnnotation psiAnnotation) {
+                return new JavaAnnotationImpl(psiAnnotation);
+            }
+        };
+
+        private static final Factory<PsiAnnotationMemberValue, JavaAnnotationArgument> NAMELESS_ANNOTATION_ARGUMENTS =
+                new Factory<PsiAnnotationMemberValue, JavaAnnotationArgument>() {
+            @NotNull
+            @Override
+            public JavaAnnotationArgument create(@NotNull PsiAnnotationMemberValue psiAnnotationMemberValue) {
+                return JavaAnnotationArgumentImpl.create(psiAnnotationMemberValue, null);
+            }
+        };
+
+        private static final Factory<PsiNameValuePair, JavaAnnotationArgument> NAMED_ANNOTATION_ARGUMENTS =
+                new Factory<PsiNameValuePair, JavaAnnotationArgument>() {
+            @NotNull
+            @Override
+            public JavaAnnotationArgument create(@NotNull PsiNameValuePair psiNameValuePair) {
+                String name = psiNameValuePair.getName();
+                PsiAnnotationMemberValue value = psiNameValuePair.getValue();
+                assert value != null : "Annotation argument value cannot be null: " + name;
+                return JavaAnnotationArgumentImpl.create(value, name == null ? null : Name.identifier(name));
+            }
+        };
+    }
+
     @NotNull
-    public static Collection<JavaClass> classes(@NotNull PsiClass[] classes) {
-        if (classes.length == 0) return Collections.emptyList();
-        List<JavaClass> result = new ArrayList<JavaClass>(classes.length);
-        for (PsiClass psiClass : classes) {
-            result.add(new JavaClassImpl(psiClass));
+    private static <Psi, Java> Collection<Java> convert(@NotNull Psi[] elements, @NotNull Factory<Psi, Java> factory) {
+        if (elements.length == 0) return Collections.emptyList();
+        Collection<Java> result = new ArrayList<Java>(elements.length);
+        for (Psi element : elements) {
+            result.add(factory.create(element));
         }
         return result;
+    }
+
+    @NotNull
+    public static Collection<JavaClass> classes(@NotNull PsiClass[] classes) {
+        return (Collection) convert(classes, Factories.CLASSES);
     }
 
     @NotNull
     public static Collection<JavaPackage> packages(@NotNull PsiPackage[] packages) {
-        if (packages.length == 0) return Collections.emptyList();
-        List<JavaPackage> result = new ArrayList<JavaPackage>(packages.length);
-        for (PsiPackage psiPackage : packages) {
-            result.add(new JavaPackageImpl(psiPackage));
-        }
-        return result;
+        return (Collection) convert(packages, Factories.PACKAGES);
     }
 
     @NotNull
     public static Collection<JavaMethod> methods(@NotNull PsiMethod[] methods) {
-        if (methods.length == 0) return Collections.emptyList();
-        List<JavaMethod> result = new ArrayList<JavaMethod>(methods.length);
-        for (PsiMethod psiMethod : methods) {
-            result.add(new JavaMethodImpl(psiMethod));
-        }
-        return result;
+        return (Collection) convert(methods, Factories.METHODS);
     }
 
     @NotNull
     public static Collection<JavaField> fields(@NotNull PsiField[] fields) {
-        if (fields.length == 0) return Collections.emptyList();
-        List<JavaField> result = new ArrayList<JavaField>(fields.length);
-        for (PsiField psiField : fields) {
-            result.add(new JavaFieldImpl(psiField));
-        }
-        return result;
+        return (Collection) convert(fields, Factories.FIELDS);
     }
 
     @NotNull
     public static Collection<JavaValueParameter> valueParameters(@NotNull PsiParameter[] parameters) {
-        if (parameters.length == 0) return Collections.emptyList();
-        List<JavaValueParameter> result = new ArrayList<JavaValueParameter>(parameters.length);
-        for (PsiParameter psiParameter : parameters) {
-            result.add(new JavaValueParameterImpl(psiParameter));
-        }
-        return result;
+        return (Collection) convert(parameters, Factories.VALUE_PARAMETERS);
     }
 
     @NotNull
     public static Collection<JavaTypeParameter> typeParameters(@NotNull PsiTypeParameter[] typeParameters) {
-        if (typeParameters.length == 0) return Collections.emptyList();
-        List<JavaTypeParameter> result = new ArrayList<JavaTypeParameter>(typeParameters.length);
-        for (PsiTypeParameter psiTypeParameter : typeParameters) {
-            result.add(new JavaTypeParameterImpl(psiTypeParameter));
-        }
-        return result;
+        return (Collection) convert(typeParameters, Factories.TYPE_PARAMETERS);
     }
 
     @NotNull
     public static Collection<JavaType> types(@NotNull PsiType[] types) {
-        if (types.length == 0) return Collections.emptyList();
-        List<JavaType> result = new ArrayList<JavaType>(types.length);
-        for (PsiType psiType : types) {
-            result.add(JavaTypeImpl.create(psiType));
-        }
-        return result;
+        return (Collection) convert(types, Factories.TYPES);
     }
 
     @NotNull
     public static Collection<JavaClassifierType> classifierTypes(@NotNull PsiClassType[] classTypes) {
-        if (classTypes.length == 0) return Collections.emptyList();
-        List<JavaClassifierType> result = new ArrayList<JavaClassifierType>(classTypes.length);
-        for (PsiClassType psiClassType : classTypes) {
-            result.add(new JavaClassifierTypeImpl(psiClassType));
-        }
-        return result;
+        return (Collection) convert(classTypes, Factories.CLASSIFIER_TYPES);
     }
 
     @NotNull
     public static Collection<JavaAnnotation> annotations(@NotNull PsiAnnotation[] annotations) {
-        if (annotations.length == 0) return Collections.emptyList();
-        List<JavaAnnotation> result = new ArrayList<JavaAnnotation>(annotations.length);
-        for (PsiAnnotation psiAnnotation : annotations) {
-            result.add(new JavaAnnotationImpl(psiAnnotation));
-        }
-        return result;
+        return (Collection) convert(annotations, Factories.ANNOTATIONS);
     }
 
     @NotNull
     public static Collection<JavaAnnotationArgument> namelessAnnotationArguments(@NotNull PsiAnnotationMemberValue[] memberValues) {
-        if (memberValues.length == 0) return Collections.emptyList();
-        List<JavaAnnotationArgument> result = new ArrayList<JavaAnnotationArgument>(memberValues.length);
-        for (PsiAnnotationMemberValue psiAnnotationMemberValue : memberValues) {
-            result.add(JavaAnnotationArgumentImpl.create(psiAnnotationMemberValue, null));
-        }
-        return result;
+        return (Collection) convert(memberValues, Factories.NAMELESS_ANNOTATION_ARGUMENTS);
     }
 
     @NotNull
     public static Collection<JavaAnnotationArgument> namedAnnotationArguments(@NotNull PsiNameValuePair[] nameValuePairs) {
-        if (nameValuePairs.length == 0) return Collections.emptyList();
-        List<JavaAnnotationArgument> result = new ArrayList<JavaAnnotationArgument>(nameValuePairs.length);
-        for (PsiNameValuePair pair : nameValuePairs) {
-            String name = pair.getName();
-            PsiAnnotationMemberValue value = pair.getValue();
-            assert value != null : "Annotation argument value cannot be null: " + name;
-            result.add(JavaAnnotationArgumentImpl.create(value, name == null ? null : Name.identifier(name)));
-        }
-        return result;
+        return (Collection) convert(nameValuePairs, Factories.NAMED_ANNOTATION_ARGUMENTS);
     }
 }
