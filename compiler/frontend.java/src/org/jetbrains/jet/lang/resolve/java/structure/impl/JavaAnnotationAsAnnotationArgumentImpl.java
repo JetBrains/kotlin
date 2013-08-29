@@ -23,15 +23,10 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationAsAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaAnnotationAsAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaAnnotationAsAnnotationArgument {
+public class JavaAnnotationAsAnnotationArgumentImpl extends JavaAnnotationArgumentImpl<PsiAnnotation>
+        implements JavaAnnotationAsAnnotationArgument {
     protected JavaAnnotationAsAnnotationArgumentImpl(@NotNull PsiAnnotation psiAnnotation, @Nullable Name name) {
         super(psiAnnotation, name);
-    }
-
-    @NotNull
-    @Override
-    public PsiAnnotation getPsi() {
-        return (PsiAnnotation) super.getPsi();
     }
 
     @Override

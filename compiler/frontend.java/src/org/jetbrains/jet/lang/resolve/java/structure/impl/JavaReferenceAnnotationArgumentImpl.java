@@ -26,15 +26,10 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaReferenceAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JavaReferenceAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaReferenceAnnotationArgument {
+public class JavaReferenceAnnotationArgumentImpl extends JavaAnnotationArgumentImpl<PsiReferenceExpression>
+        implements JavaReferenceAnnotationArgument {
     protected JavaReferenceAnnotationArgumentImpl(@NotNull PsiReferenceExpression psiReferenceExpression, @Nullable Name name) {
         super(psiReferenceExpression, name);
-    }
-
-    @NotNull
-    @Override
-    public PsiReferenceExpression getPsi() {
-        return (PsiReferenceExpression) super.getPsi();
     }
 
     @Override

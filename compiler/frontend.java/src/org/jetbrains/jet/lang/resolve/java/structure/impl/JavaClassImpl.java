@@ -33,7 +33,7 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.*;
 
-public class JavaClassImpl extends JavaClassifierImpl implements JavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
+public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
     public JavaClassImpl(@NotNull PsiClass psiClass) {
         super(psiClass);
         assert !(psiClass instanceof PsiTypeParameter)

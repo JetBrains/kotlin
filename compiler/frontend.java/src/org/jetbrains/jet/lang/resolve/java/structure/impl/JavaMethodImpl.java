@@ -32,15 +32,9 @@ import java.util.Collection;
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.typeParameters;
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.valueParameters;
 
-public class JavaMethodImpl extends JavaMemberImpl implements JavaMethod {
+public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMethod {
     public JavaMethodImpl(@NotNull PsiMethod psiMethod) {
         super(psiMethod);
-    }
-
-    @NotNull
-    @Override
-    public PsiMethod getPsi() {
-        return (PsiMethod) super.getPsi();
     }
 
     @NotNull

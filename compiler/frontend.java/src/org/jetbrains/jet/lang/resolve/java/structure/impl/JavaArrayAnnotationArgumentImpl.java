@@ -27,15 +27,10 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.namelessAnnotationArguments;
 
-public class JavaArrayAnnotationArgumentImpl extends JavaAnnotationArgumentImpl implements JavaArrayAnnotationArgument {
+public class JavaArrayAnnotationArgumentImpl extends JavaAnnotationArgumentImpl<PsiArrayInitializerMemberValue>
+        implements JavaArrayAnnotationArgument {
     protected JavaArrayAnnotationArgumentImpl(@NotNull PsiArrayInitializerMemberValue psiArrayInitializerMemberValue, @Nullable Name name) {
         super(psiArrayInitializerMemberValue, name);
-    }
-
-    @NotNull
-    @Override
-    public PsiArrayInitializerMemberValue getPsi() {
-        return (PsiArrayInitializerMemberValue) super.getPsi();
     }
 
     @Override

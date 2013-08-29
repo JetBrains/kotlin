@@ -22,15 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 
-public class JavaFieldImpl extends JavaMemberImpl implements JavaField {
+public class JavaFieldImpl extends JavaMemberImpl<PsiField> implements JavaField {
     public JavaFieldImpl(@NotNull PsiField psiField) {
         super(psiField);
-    }
-
-    @NotNull
-    @Override
-    public PsiField getPsi() {
-        return (PsiField) super.getPsi();
     }
 
     @Override

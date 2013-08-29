@@ -22,10 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-public abstract class JavaAnnotationArgumentImpl extends JavaElementImpl<PsiAnnotationMemberValue> implements JavaAnnotationArgument {
+public abstract class JavaAnnotationArgumentImpl<Psi extends PsiAnnotationMemberValue> extends JavaElementImpl<Psi>
+        implements JavaAnnotationArgument {
     private final Name name;
 
-    protected JavaAnnotationArgumentImpl(@NotNull PsiAnnotationMemberValue psiAnnotationMemberValue, @Nullable Name name) {
+    protected JavaAnnotationArgumentImpl(@NotNull Psi psiAnnotationMemberValue, @Nullable Name name) {
         super(psiAnnotationMemberValue);
         this.name = name;
     }

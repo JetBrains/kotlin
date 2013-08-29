@@ -21,8 +21,8 @@ import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
 
-public abstract class JavaClassifierImpl extends JavaElementImpl<PsiClass> implements JavaClassifier {
-    protected JavaClassifierImpl(@NotNull PsiClass psiClass) {
+public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaElementImpl<Psi> implements JavaClassifier {
+    protected JavaClassifierImpl(@NotNull Psi psiClass) {
         super(psiClass);
     }
 

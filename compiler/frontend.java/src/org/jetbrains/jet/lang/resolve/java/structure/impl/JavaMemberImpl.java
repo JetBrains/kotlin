@@ -29,9 +29,9 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-public abstract class JavaMemberImpl extends JavaElementImpl<PsiMember>
+public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementImpl<Psi>
         implements JavaMember, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
-    protected JavaMemberImpl(@NotNull PsiMember psiMember) {
+    protected JavaMemberImpl(@NotNull Psi psiMember) {
         super(psiMember);
     }
 
