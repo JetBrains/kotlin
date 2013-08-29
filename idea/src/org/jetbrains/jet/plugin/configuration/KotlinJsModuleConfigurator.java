@@ -92,18 +92,24 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
 
         List<Module> nonConfiguredModules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this);
 
-        CreateJavaScriptLibraryDialogWithModules dialog =
-                new CreateJavaScriptLibraryDialogWithModules(project, nonConfiguredModules,
-                                                  defaultPathToJar, defaultPathToJsFile,
-                                                  showPathToJarPanel, showPathToJsFilePanel);
-        dialog.show();
-
-        if (!dialog.isOK()) return;
-
-        for (Module module : dialog.getModulesToConfigure()) {
-            configureModuleWithLibrary(module, defaultPathToJar, dialog.getCopyLibraryIntoPath());
+        if (nonConfiguredModules.size() > 1 || showPathToJarPanel || showPathToJsFilePanel) {
+            CreateJavaScriptLibraryDialogWithModules dialog =
+                    new CreateJavaScriptLibraryDialogWithModules(project, nonConfiguredModules,
+                                                                 defaultPathToJar, defaultPathToJsFile,
+                                                                 showPathToJarPanel, showPathToJsFilePanel);
+            dialog.show();
+            if (!dialog.isOK()) return;
+            for (Module module : dialog.getModulesToConfigure()) {
+                configureModuleWithLibrary(module, defaultPathToJar, dialog.getCopyLibraryIntoPath());
+            }
+            configureModuleWithJsFile(defaultPathToJsFile, dialog.getCopyJsIntoPath());
         }
-        configureModuleWithJsFile(defaultPathToJsFile, dialog.getCopyJsIntoPath());
+        else {
+            for (Module module : nonConfiguredModules) {
+                configureModuleWithLibrary(module, defaultPathToJar, null);
+            }
+            configureModuleWithJsFile(defaultPathToJsFile, null);
+        }
     }
 
     public static boolean isJsFilePresent(@NotNull String dir) {
