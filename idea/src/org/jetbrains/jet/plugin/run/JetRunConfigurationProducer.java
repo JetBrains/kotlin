@@ -34,8 +34,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
-import java.util.List;
-
 public class JetRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
     @Nullable
     private PsiElement mySourceElement;
@@ -102,7 +100,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
     @Override
     protected RunnerAndConfigurationSettings findExistingByElement(
             Location location,
-            @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
+            @NotNull RunnerAndConfigurationSettings[] existingConfigurations,
             ConfigurationContext context
     ) {
         FqName startClassFQName = getStartClassFQName(location);
