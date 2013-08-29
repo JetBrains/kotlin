@@ -11,6 +11,7 @@
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
+  <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
 
   <project-components>
     <component>
