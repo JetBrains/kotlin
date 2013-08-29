@@ -70,6 +70,26 @@ public class CompletionHandlerTest() : JetLightCodeInsightFixtureTestCase() {
 
     fun testForceParenthesisForTabChar() = doTest(CompletionType.BASIC, 0, "some", null, '\t')
 
+    fun testTabInsertAtTheFileEnd() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertBeforeBraces() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertBeforeBrackets() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertBeforeOperator() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertBeforeParentheses() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertInsideBraces() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertInsideBrackets() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertInsideEmptyParentheses() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertInsideParentheses() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
+    fun testTabInsertInSimpleName() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
+
     var fixture by Delegates.notNull<JavaCodeInsightTestFixture>()
 
     protected override fun setUp() {
