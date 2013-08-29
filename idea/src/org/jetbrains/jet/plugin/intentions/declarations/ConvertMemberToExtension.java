@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.intentions.declarations;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -121,7 +121,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
         file.addAfter(JetPsiFactory.createNewLine(project), outermostParent);
         member.delete();
 
-        CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(added);
+        CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(added);
 
         int caretAnchor = added.getText().indexOf(CARET_ANCHOR);
         if (caretAnchor >= 0) {
