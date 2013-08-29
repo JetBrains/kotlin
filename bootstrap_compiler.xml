@@ -1,4 +1,6 @@
 <project name="Kotlin Compiler" default="get_kotlin_bootstrap">
+  <property name="teamcity.buildType.id" value="bt345"/>
+
   <!--
   Possible options for "kotlin.bootstrap.source":
     - tag - last build marked with tag "bootstrap" will be downloaded. The name of the tag can be changed with "kotlin.bootstrap.tag" property
@@ -7,11 +9,10 @@
   -->
   <property name="kotlin.bootstrap.source" value="tag"/>
   <property name="kotlin.bootstrap.tag" value="bootstrap"/>
-
-  <property name="teamcity.buildType.id" value="bt345"/>
+  <property name="kotlin.bootstrap.buildType.id" value="${teamcity.buildType.id}"/>
 
   <property name="kotlin.bootstrap.plugin.dir" value="dependencies/kotlin-bootstrap-plugin"/>
-  <property name="kotlin.bootstrap.base.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/${teamcity.buildType.id}"/>
+  <property name="kotlin.bootstrap.base.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/${kotlin.bootstrap.buildType.id}"/>
 
   <target name="get_kotlin_bootstrap" depends="set_kotlin_bootstrap_type,get_last_bootstrap_kotlin,get_tagged_bootstrap_kotlin,get_versioned_bootstrap_kotlin" />
 
