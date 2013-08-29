@@ -314,51 +314,6 @@ var Kotlin = Object.create(null);
         KotlinNew.defineModule(id, module);
     };
 
-
-    Kotlin.$new = function (f) {
-        var o = Object.create(f.prototype);
-        return function () {
-            f.apply(o, arguments);
-            return o;
-        };
-    };
-
-    Kotlin.$createClass = function (parent, properties) {
-        if (parent !== null && typeof (parent) != "function") {
-            properties = parent;
-            parent = null;
-        }
-
-        var initializer = null;
-        var descriptors = properties ? {} : null;
-        if (descriptors != null) {
-            var ownPropertyNames = Object.getOwnPropertyNames(properties);
-            for (var i = 0, n = ownPropertyNames.length; i < n; i++) {
-                var name = ownPropertyNames[i];
-                var value = properties[name];
-                if (name == "initialize") {
-                    initializer = value;
-                }
-                else if (name.indexOf("get_") === 0) {
-                    descriptors[name.substring(4)] = {get: value};
-                    // std lib code can refers to
-                    descriptors[name] = {value: value};
-                }
-                else if (name.indexOf("set_") === 0) {
-                    descriptors[name.substring(4)] = {set: value};
-                    // std lib code can refers to
-                    descriptors[name] = {value: value};
-                }
-                else {
-                    // we assume all our std lib functions are open
-                    descriptors[name] = {value: value, writable: true};
-                }
-            }
-        }
-
-        return Kotlin.createClass(parent || null, initializer, descriptors);
-    };
-
 })();
 
 
