@@ -55,7 +55,7 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
 
             case CHILDREN_CHANGED:
                 // general childrenChanged() event after each change
-                if (!event.isGenericChange()) {
+                if (!event.isGenericChildrenChange()) {
                     processChange(event.getParent(), event.getParent(), null);
                 }
                 break;

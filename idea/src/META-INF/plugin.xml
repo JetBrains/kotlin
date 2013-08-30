@@ -281,7 +281,7 @@
 
     <referencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDirectInheritorsSearcher"/>
-    <definitionsScopedSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
+    <definitionsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.KotlinAnnotatedElementsSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>
