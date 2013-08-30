@@ -34,6 +34,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
@@ -62,7 +63,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
                                  new JetTestUtils.TestFileFactory<JetFile>() {
                                      @Override
-                                     public JetFile create(String fileName, String text) {
+                                     public JetFile create(String fileName, String text, Map<String, String> directives) {
                                          return JetPsiFactory.createFile(getProject(), fileName, text);
                                      }
                                  });

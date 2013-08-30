@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     private ExpectedResolveData expectedResolveData;
@@ -53,7 +54,7 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
         String text = JetTestUtils.doLoadFile(file);
         List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
             @Override
-            public JetFile create(String fileName, String text) {
+            public JetFile create(String fileName, String text, Map<String, String> directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
         });

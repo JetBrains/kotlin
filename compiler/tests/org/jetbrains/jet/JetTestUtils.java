@@ -18,6 +18,7 @@ package org.jetbrains.jet;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
@@ -91,6 +92,9 @@ import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 public class JetTestUtils {
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
     private static List<File> filesToDelete = new ArrayList<File>();
+
+    public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+):\\s*(.*)$", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
 
@@ -308,8 +312,6 @@ public class JetTestUtils {
         }
     }
 
-    public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
-
     public static JetFile createFile(@NonNls String name, String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
@@ -376,15 +378,17 @@ public class JetTestUtils {
     }
 
     public interface TestFileFactory<F> {
-        F create(String fileName, String text);
+        F create(String fileName, String text, Map<String, String> directives);
     }
 
     public static <F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<F> factory) {
-        List<F> testFileFiles = Lists.newArrayList();
+        Map<String, String> directives = parseDirectives(expectedText);
+
+        List<F> testFiles = Lists.newArrayList();
         Matcher matcher = FILE_PATTERN.matcher(expectedText);
         if (!matcher.find()) {
             // One file
-            testFileFiles.add(factory.create(testFileName, expectedText));
+            testFiles.add(factory.create(testFileName, expectedText, directives));
         }
         else {
             int processedChars = 0;
@@ -405,7 +409,7 @@ public class JetTestUtils {
                 String fileText = expectedText.substring(start, end);
                 processedChars = end;
 
-                testFileFiles.add(factory.create(fileName, fileText));
+                testFiles.add(factory.create(fileName, fileText, directives));
 
                 if (!nextFileExists) break;
             }
@@ -414,7 +418,24 @@ public class JetTestUtils {
                                                              " to " +
                                                              (expectedText.length() - 1);
         }
-        return testFileFiles;
+        return testFiles;
+    }
+
+    private static Map<String, String> parseDirectives(String expectedText) {
+        Map<String, String> directives = Maps.newHashMap();
+        Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
+        int start = 0;
+        while (directiveMatcher.find()) {
+            if (directiveMatcher.start() != start) {
+                Assert.fail("Directives should only occur at the beginning of a file: " + directiveMatcher.group());
+            }
+            String name = directiveMatcher.group(1);
+            String value = directiveMatcher.group(2);
+            String oldValue = directives.put(name, value);
+            Assert.assertNull("Directive overwritten: " + name + " old value: " + oldValue + " new value: " + value, oldValue);
+            start = directiveMatcher.end() + 1;
+        }
+        return directives;
     }
 
     public static List<String> loadBeforeAfterText(String filePath) {
@@ -429,7 +450,7 @@ public class JetTestUtils {
 
         List<String> files = createTestFiles("", content, new TestFileFactory<String>() {
             @Override
-            public String create(String fileName, String text) {
+            public String create(String fileName, String text, Map<String, String> directives) {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }

@@ -345,7 +345,7 @@ public class CheckerTestUtil {
         @NotNull
         @Override
         public Severity getSeverity() {
-            throw new IllegalStateException();
+            return Severity.ERROR;
         }
 
         @NotNull
@@ -372,7 +372,7 @@ public class CheckerTestUtil {
         }
     }
 
-    private static class SyntaxErrorDiagnosticFactory extends AbstractDiagnosticFactory {
+    public static class SyntaxErrorDiagnosticFactory extends AbstractDiagnosticFactory {
         public static final SyntaxErrorDiagnosticFactory INSTANCE = new SyntaxErrorDiagnosticFactory();
 
         private SyntaxErrorDiagnosticFactory() {}

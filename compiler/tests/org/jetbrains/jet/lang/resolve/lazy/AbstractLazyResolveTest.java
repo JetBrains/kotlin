@@ -32,6 +32,7 @@ import org.jetbrains.jet.resolve.JetExpectedResolveDataUtil;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractLazyResolveTest extends JetLiteFixture {
     private ExpectedResolveData expectedResolveData;
@@ -66,7 +67,7 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
 
         List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
             @Override
-            public JetFile create(String fileName, String text) {
+            public JetFile create(String fileName, String text, Map<String, String> directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
         });
