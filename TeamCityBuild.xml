@@ -5,13 +5,15 @@
     <property name="jdk16.home" value="${java.home}"/>
     <property name="fail.on.plugin.verifier.error" value="true"/>
 
+    <property name="version_substitute_dir" value="${basedir}/versions_temp/" />
+
     <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
-    <property name="plugin.xml.bk" value="${plugin.xml}.bk"/>
+    <property name="plugin.xml.bk" value="${version_substitute_dir}/plugin.xml.bk"/>
     <property name="plugin.xml.versioned" value="${plugin.xml}.versioned" />
 
     <property name="compiler.version.java" value="compiler/cli/cli-common/src/org/jetbrains/jet/cli/common/KotlinVersion.java"/>
-    <property name="compiler.version.java.bk" value="${compiler.version.java}.bk"/>
+    <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinVersion.java.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
 
     <property name="plugin.verifier" value="${basedir}/dependencies/plugin-verifier.jar"/>
@@ -48,7 +50,7 @@
       <sequential>
         <!-- Create backup. Backup will be restored after build end. This will allow to rebuild project without renew
              plugin.xml from repository. -->
-        <copy file="@{target.file}" tofile="@{target.file}.bk"/>
+        <copy file="@{target.file}" tofile="@{target.file.bk}"/>
 
         <!-- Check that version has correct pattern for substitution -->
         <copy todir="">
@@ -71,6 +73,8 @@
     </macrodef>
 
     <target name="writeVersionToTemplateFiles">
+      <mkdir dir="${version_substitute_dir}"/>
+
       <substituteVersionInFile
           target.file="${plugin.xml}"
           target.file.bk="${plugin.xml.bk}"
@@ -86,10 +90,9 @@
 
   <target name="revertTemplateFiles">
       <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
-      <delete file="${plugin.xml.bk}" quiet="true"/>
-
       <copy file="${compiler.version.java.bk}" tofile="${compiler.version.java}" overwrite="true"/>
-      <delete file="${compiler.version.java.bk}" quiet="true"/>
+
+      <delete dir="${version_substitute_dir}" quiet="true"/>
   </target>
 
     <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts">
