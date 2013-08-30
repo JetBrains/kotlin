@@ -26,8 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface JavaResolverCache {
-    void recordSourceDescriptorForSynthesized(@NotNull FunctionDescriptor synthesized, @NotNull DeclarationDescriptor source);
-
     @Nullable
     ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName);
 

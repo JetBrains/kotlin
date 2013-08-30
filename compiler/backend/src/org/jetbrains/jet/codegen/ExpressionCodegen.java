@@ -1908,7 +1908,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (funDescriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor original = ((SimpleFunctionDescriptor) funDescriptor).getOriginal();
             if (original instanceof SamConstructorDescriptor) {
-                return invokeSamConstructor(expression, resolvedCall, ((SamConstructorDescriptor) original).getSamInterface());
+                return invokeSamConstructor(expression, resolvedCall, ((SamConstructorDescriptor) original).getBaseForSynthesized());
             }
         }
 

@@ -60,7 +60,7 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
             return null;
         }
 
-        SimpleFunctionDescriptor originalDeclarationOfSam = ((SamAdapterFunctionDescriptor) fun).getDeclaration();
+        SimpleFunctionDescriptor originalDeclarationOfSam = ((SamAdapterFunctionDescriptor) fun).getBaseForSynthesized();
 
         return ((SimpleFunctionDescriptor) originalDeclarationOfSam.substitute(TypeSubstitutor.create(declarationOrSynthesized.ownerType)));
     }

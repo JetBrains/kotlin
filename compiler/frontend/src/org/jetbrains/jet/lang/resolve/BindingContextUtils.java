@@ -170,8 +170,12 @@ public class BindingContextUtils {
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable);
-            return source != null ? descriptorToDeclaration(context, source) : null;
+            CallableMemberDescriptor original = callable.getOriginal();
+            if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
+                DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
+                return descriptorToDeclaration(context, base);
+            }
+            return null;
         }
 
         if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
@@ -191,8 +195,12 @@ public class BindingContextUtils {
     @NotNull
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable.getOriginal());
-            return source != null ? descriptorToDeclarations(context, source) : Collections.<PsiElement>emptyList();
+            CallableMemberDescriptor original = callable.getOriginal();
+            if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
+                DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
+                return descriptorToDeclarations(context, base);
+            }
+            return Collections.emptyList();
         }
 
         if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {

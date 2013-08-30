@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
@@ -271,34 +270,19 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    private SamConstructorDescriptor resolveSamConstructor(@NotNull NamespaceDescriptor owner, @NotNull NamedMembers namedMembers) {
+    public static SamConstructorDescriptor resolveSamConstructor(@NotNull NamespaceDescriptor owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
             ClassDescriptorFromJvmBytecode klass = findClassInNamespace(owner, namedMembers.getName());
             if (klass != null) {
-                SamConstructorDescriptor constructor = createSamConstructorFunction(owner, klass);
-                cache.recordSourceDescriptorForSynthesized(constructor, klass);
-                return constructor;
+                return createSamConstructorFunction(owner, klass);
             }
         }
         return null;
     }
 
     @Nullable
-    private SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
-        if (!isSamAdapterNecessary(original)) return null;
-
-        SamAdapterDescriptor<SimpleFunctionDescriptor> adapter = createSamAdapterFunction(original);
-        cache.recordSourceDescriptorForSynthesized(adapter, original);
-        return (SimpleFunctionDescriptor) adapter;
-    }
-
-    @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
-        SamConstructorDescriptor samConstructor = resolveSamConstructor(owner, members);
-        if (samConstructor != null) {
-            return Collections.<FunctionDescriptor>singleton(samConstructor);
-        }
-        return Collections.emptySet();
+    private static SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
+        return isSamAdapterNecessary(original) ? (SimpleFunctionDescriptor) createSamAdapterFunction(original) : null;
     }
 
     @NotNull

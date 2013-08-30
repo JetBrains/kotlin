@@ -50,11 +50,6 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
         this.trace = trace;
     }
 
-    @Override
-    public void recordSourceDescriptorForSynthesized(@NotNull FunctionDescriptor synthesized, @NotNull DeclarationDescriptor source) {
-        trace.record(SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, synthesized, source);
-    }
-
     @Nullable
     @Override
     public ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName) {

@@ -18,9 +18,11 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.SynthesizedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 
-public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl {
+public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
+        implements SynthesizedCallableMemberDescriptor<ClassDescriptorFromJvmBytecode> {
     private final ClassDescriptorFromJvmBytecode samInterface;
 
     public SamConstructorDescriptor(
@@ -32,7 +34,8 @@ public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl {
     }
 
     @NotNull
-    public ClassDescriptorFromJvmBytecode getSamInterface() {
+    @Override
+    public ClassDescriptorFromJvmBytecode getBaseForSynthesized() {
         return samInterface;
     }
 }

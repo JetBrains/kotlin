@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
     @NotNull
     @Override
-    public ConstructorDescriptor getDeclaration() {
+    public ConstructorDescriptor getBaseForSynthesized() {
         return declaration;
     }
 }

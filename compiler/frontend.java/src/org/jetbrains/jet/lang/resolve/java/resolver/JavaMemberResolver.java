@@ -76,11 +76,6 @@ public class JavaMemberResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
-        return functionResolver.resolveFunctionGroupForPackage(members, owner);
-    }
-
-    @NotNull
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
         return propertyResolver.resolveFieldGroup(members, ownerDescriptor);
     }

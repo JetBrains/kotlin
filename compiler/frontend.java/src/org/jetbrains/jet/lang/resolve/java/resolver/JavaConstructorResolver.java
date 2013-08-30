@@ -223,11 +223,7 @@ public final class JavaConstructorResolver {
     }
 
     @Nullable
-    private ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
-        if (!isSamAdapterNecessary(original)) return null;
-
-        SamAdapterDescriptor<ConstructorDescriptor> adapter = createSamAdapterConstructor(original);
-        cache.recordSourceDescriptorForSynthesized(adapter, original);
-        return (ConstructorDescriptor) adapter;
+    private static ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
+        return isSamAdapterNecessary(original) ? (ConstructorDescriptor) createSamAdapterConstructor(original) : null;
     }
 }

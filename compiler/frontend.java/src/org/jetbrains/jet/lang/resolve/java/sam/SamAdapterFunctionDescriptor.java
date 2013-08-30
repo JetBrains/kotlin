@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor getDeclaration() {
+    public SimpleFunctionDescriptor getBaseForSynthesized() {
         return declaration;
     }
 }

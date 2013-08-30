@@ -27,7 +27,7 @@ public class SamCodegenUtil {
     public static FunctionDescriptor getOriginalIfSamAdapter(@NotNull FunctionDescriptor fun) {
         FunctionDescriptor original = fun.getOriginal();
         if (original instanceof SamAdapterDescriptor<?>) {
-            return ((SamAdapterDescriptor) original).getDeclaration();
+            return ((SamAdapterDescriptor<?>) original).getBaseForSynthesized();
         }
 
         if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.descriptor;
+package org.jetbrains.jet.lang.descriptors;
 
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SynthesizedCallableMemberDescriptor;
+import org.jetbrains.annotations.NotNull;
 
-public interface SamAdapterDescriptor<D extends FunctionDescriptor> extends FunctionDescriptor, SynthesizedCallableMemberDescriptor<D> {
+public interface SynthesizedCallableMemberDescriptor<D extends DeclarationDescriptor> extends CallableMemberDescriptor {
+    @NotNull
+    D getBaseForSynthesized();
 }
