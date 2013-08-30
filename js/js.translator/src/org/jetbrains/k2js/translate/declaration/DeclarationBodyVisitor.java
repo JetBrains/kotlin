@@ -107,6 +107,12 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
+    public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, @NotNull TranslationContext context) {
+        // parsed it in initializer visitor => no additional actions are needed
+        return null;
+    }
+
+    @Override
     public Void visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         if (descriptor.getModality() == Modality.ABSTRACT) {
@@ -126,17 +132,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     public Void visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
         PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), expression);
         PropertyTranslator.translateAccessors(propertyDescriptor, expression, result, context);
-        return null;
-    }
-
-    @Override
-    public Void visitObjectDeclarationName(@NotNull JetObjectDeclarationName expression,
-            @NotNull TranslationContext context) {
-        if (!context.isEcma5()) {
-            PropertyTranslator
-                    .translateAccessors(getPropertyDescriptorForObjectDeclaration(context.bindingContext(), expression), result, context);
-        }
-
         return null;
     }
 

@@ -153,11 +153,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         EcmaVersion ecmaVersion = EcmaVersion.fromString(arguments.target);
         String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
         if (arguments.libraryFiles != null) {
-            return new LibrarySourcesConfig(project, moduleId, Arrays.asList(arguments.libraryFiles), ecmaVersion);
+            return new LibrarySourcesConfig(project, moduleId, Arrays.asList(arguments.libraryFiles), ecmaVersion, arguments.sourcemap);
         }
         else {
             // lets discover the JS library definitions on the classpath
-            return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion);
+            return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion, arguments.sourcemap);
         }
     }
 }

@@ -41,6 +41,9 @@ public final class NamePredicate implements Predicate<Name> {
     }));
 
     @NotNull
+    public static final NamePredicate STRING = new NamePredicate("String");
+
+    @NotNull
     private final List<Name> validNames = Lists.newArrayList();
 
     public NamePredicate(@NotNull String... validNames) {

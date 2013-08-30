@@ -41,7 +41,6 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorF
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgumentList;
 
 public final class ClassInitializerTranslator extends AbstractTranslator {
@@ -89,7 +88,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         } else {
             arguments = Collections.emptyList();
         }
-        JsNameRef reference = getQualifiedReference(context(), getClassDescriptorForType(enumClassType));
+        JsNameRef reference = context().getQualifiedReference(getClassDescriptorForType(enumClassType));
         if(context().isEcma5()) {
             return new JsInvocation(reference, arguments);
         } else {

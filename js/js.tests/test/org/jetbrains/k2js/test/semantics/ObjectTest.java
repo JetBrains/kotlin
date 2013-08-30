@@ -41,17 +41,18 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    //TODO: KT-2696
-    public void TODO_testObjectInObject() throws Exception {
+    public void testObjectInObject() throws Exception {
         fooBoxTest();
     }
-
 
     public void testObjectInheritingFromATrait() throws Exception {
         fooBoxTest();
     }
 
     public void testObjectInheritingFromClass() throws Exception {
+        fooBoxTest();
+    }
+    public void testObjectInObjectWithClosure() throws Exception {
         fooBoxTest();
     }
 }

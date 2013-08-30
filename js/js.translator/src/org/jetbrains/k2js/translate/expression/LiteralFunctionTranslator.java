@@ -36,6 +36,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.context.UsageTracker;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 
 import java.util.List;
@@ -43,16 +44,13 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
-public class LiteralFunctionTranslator {
-    private TranslationContext rootContext;
-
+public class LiteralFunctionTranslator extends AbstractTranslator {
     private final Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>> definitionPlaces =
             new Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>>();
     private NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> definitionPlace;
 
-    public void setRootContext(@NotNull TranslationContext rootContext) {
-        assert this.rootContext == null;
-        this.rootContext = rootContext;
+    public LiteralFunctionTranslator(@NotNull TranslationContext context) {
+        super(context);
     }
 
     public static Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> createPlace(@NotNull List<JsPropertyInitializer> list,
@@ -105,7 +103,7 @@ public class LiteralFunctionTranslator {
         }
 
         funContext = outerContext.newFunctionBody(fun, aliasingContext,
-                                                 new UsageTracker(descriptor, outerContext.usageTracker(), outerClass));
+                                                  new UsageTracker(descriptor, outerContext.usageTracker(), outerClass));
 
         fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration, funContext).getStatements());
 
@@ -120,7 +118,7 @@ public class LiteralFunctionTranslator {
                 UsageTracker usageTracker = funContext.usageTracker();
                 assert usageTracker != null;
                 if (usageTracker.isUsed()) {
-                    return new JsInvocation(rootContext.namer().kotlin("assignOwner"), fun, JsLiteral.THIS);
+                    return new JsInvocation(context().namer().kotlin("assignOwner"), fun, JsLiteral.THIS);
                 }
                 else {
                     fun.setName(null);
@@ -138,14 +136,16 @@ public class LiteralFunctionTranslator {
     private JsNameRef createReference(JsFunction fun) {
         Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> place = definitionPlace.getValue();
         JsNameRef nameRef = new JsNameRef(place.second.generate(), place.third);
-        place.first.add(new JsPropertyInitializer(nameRef, InitializerUtils.toDataDescriptor(fun, rootContext)));
+        place.first.add(new JsPropertyInitializer(nameRef, InitializerUtils.toDataDescriptor(fun, context())));
         return nameRef;
     }
 
-    private static void addRegularParameters(FunctionDescriptor descriptor,
-            JsFunction fun,
-            TranslationContext funContext,
-            JsName receiverName) {
+    private static void addRegularParameters(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull JsFunction fun,
+            @NotNull TranslationContext funContext,
+            @Nullable JsName receiverName
+    ) {
         if (receiverName != null) {
             fun.getParameters().add(new JsParameter(receiverName));
         }
@@ -153,24 +153,25 @@ public class LiteralFunctionTranslator {
     }
 
     private JsFunction createFunction() {
-        return new JsFunction(rootContext.scope(), new JsBlock());
+        return new JsFunction(context().scope(), new JsBlock());
     }
 
-    public JsExpression translate(@NotNull ClassDescriptor outerClass,
+    public JsExpression translate(
+            @NotNull ClassDescriptor outerClass,
+            @NotNull TranslationContext outerClassContext,
             @NotNull JetClassOrObject declaration,
             @NotNull ClassDescriptor descriptor,
-            @NotNull ClassTranslator classTranslator) {
+            @NotNull ClassTranslator classTranslator
+    ) {
         JsFunction fun = createFunction();
         JsNameRef outerClassRef = fun.getScope().declareName(Namer.OUTER_CLASS_NAME).makeRef();
-        UsageTracker usageTracker = new UsageTracker(descriptor, null, outerClass);
-        TranslationContext funContext = rootContext.newFunctionBody(fun, rootContext.aliasingContext().inner(outerClass, outerClassRef),
-                                                                    usageTracker);
+        UsageTracker usageTracker = new UsageTracker(descriptor, outerClassContext.usageTracker(), outerClass);
+        AliasingContext aliasingContext = outerClassContext.aliasingContext().inner(outerClass, outerClassRef);
+        TranslationContext funContext = outerClassContext.newFunctionBody(fun, aliasingContext, usageTracker);
 
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translate(funContext)));
         JetClassBody body = declaration.getBody();
         assert body != null;
-        InnerObjectTranslator translator = new InnerObjectTranslator(funContext, fun);
-        return translator.translate(createReference(fun), usageTracker.isUsed() ? outerClassRef : null);
+        return new InnerObjectTranslator(funContext, fun).translate(createReference(fun), usageTracker.isUsed() ? outerClassRef : null);
     }
 }
-

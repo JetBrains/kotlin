@@ -28,6 +28,9 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NULL;
 
 /* package */ class DelegatingDataFlowInfo implements DataFlowInfo {
+    private static final ImmutableMap<DataFlowValue,Nullability> EMPTY_NULLABILITY_INFO = ImmutableMap.of();
+    private static final SetMultimap<DataFlowValue, JetType> EMPTY_TYPE_INFO = newTypeInfo();
+
     @Nullable
     private final DataFlowInfo parent;
 
@@ -37,10 +40,6 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
     /** Also immutable */
     @NotNull
     private final SetMultimap<DataFlowValue, JetType> typeInfo;
-
-    private static final ImmutableMap<DataFlowValue,Nullability> EMPTY_NULLABILITY_INFO =
-            ImmutableMap.copyOf(Collections.<DataFlowValue, Nullability>emptyMap());
-    private static final SetMultimap<DataFlowValue, JetType> EMPTY_TYPE_INFO = newTypeInfo();
 
     /* package */ DelegatingDataFlowInfo(
             @Nullable DataFlowInfo parent,

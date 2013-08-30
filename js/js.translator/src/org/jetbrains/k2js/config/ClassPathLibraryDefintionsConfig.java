@@ -30,8 +30,8 @@ public class ClassPathLibraryDefintionsConfig extends Config {
     @NotNull
     public static final String META_INF_SERVICES_FILE = "META-INF/services/org.jetbrains.kotlin.js.libraryDefinitions";
 
-    public ClassPathLibraryDefintionsConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion version) {
-        super(project, moduleId, version);
+    public ClassPathLibraryDefintionsConfig(@NotNull Project project, @NotNull String moduleId, @NotNull EcmaVersion version, boolean sourcemap) {
+        super(project, moduleId, version, sourcemap);
     }
 
     @NotNull

@@ -124,10 +124,13 @@ public final class TopLevelFIF extends CompositeFIF {
     };
 
     @NotNull
+    public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
+
+    @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
-        add(pattern("jet", "toString").receiverExists(), new KotlinFunctionIntrinsic("toString"));
+        add(pattern("jet", "toString").receiverExists(), TO_STRING);
         add(pattern("jet", "equals").receiverExists(), EQUALS);
         add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
@@ -155,15 +158,18 @@ public final class TopLevelFIF extends CompositeFIF {
                         @NotNull TranslationContext context
                 ) {
                     JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
+                    JsExpression functionReference = callTranslator.getCallParameters().getFunctionReference();
                     if (thisExpression == null) {
-                        return new JsInvocation(callTranslator.getCallParameters().getFunctionReference(), arguments);
+                        return new JsInvocation(functionReference, arguments);
                     }
                     else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
                         return callTranslator.extensionFunctionCall(false);
                     }
                     else {
-                        return new JsInvocation(new JsNameRef("call", callTranslator.getCallParameters().getFunctionReference()),
-                                                generateInvocationArguments(thisExpression, arguments));
+                        if (functionReference instanceof JsNameRef && ((JsNameRef) functionReference).getIdent().equals("invoke")) {
+                            return callTranslator.explicitInvokeCall();
+                        }
+                        return new JsInvocation(new JsNameRef("call", functionReference), generateInvocationArguments(thisExpression, arguments));
                     }
                 }
             }

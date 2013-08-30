@@ -19,9 +19,7 @@ package org.jetbrains.k2js.translate.initializer;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.Named;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -65,27 +63,23 @@ public final class InitializerUtils {
         return null;
     }
 
-    public static void generate(@NotNull JetObjectDeclaration declaration,
+    public static void generate(
+            @NotNull JetObjectDeclaration declaration,
             @NotNull List<JsStatement> initializers,
-            @Nullable List<JsPropertyInitializer> definitions,
-            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context
+    ) {
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
-        JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
-        if (definitions != null && value instanceof JsLiteral) {
-            definitions.add(createPropertyInitializer(descriptor, value, context));
-        }
-        else {
-            initializers.add(create(descriptor, value, context));
-        }
+        JsExpression value = ClassTranslator.generateObjectLiteral(declaration, descriptor, context);
+        initializers.add(create(descriptor, !(descriptor.getContainingDeclaration() instanceof NamespaceDescriptor), value, context));
     }
 
-    public static JsStatement create(Named named, JsExpression value, TranslationContext context) {
+    private static JsStatement create(DeclarationDescriptor descriptor, boolean enumerable, JsExpression value, TranslationContext context) {
         JsExpression expression;
         if (context.isEcma5()) {
-            expression = JsAstUtils.defineProperty(named.getName().asString(), JsAstUtils.createDataDescriptor(value), context);
+            expression = JsAstUtils.defineProperty(descriptor.getName().asString(), JsAstUtils.createDataDescriptor(value, false, enumerable), context);
         }
         else {
-            expression = assignment(new JsNameRef(named.getName().asString(), JsLiteral.THIS), value);
+            expression = assignment(new JsNameRef(descriptor.getName().asString(), JsLiteral.THIS), value);
         }
         return expression.makeStmt();
     }

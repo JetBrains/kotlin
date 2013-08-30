@@ -16,9 +16,9 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsArrayLiteral;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -30,6 +30,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,40 +60,48 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
 
     protected abstract boolean shouldWrapVarargInArray();
 
-    @NotNull
-    protected List<JsExpression> translateSingleArgument(@NotNull ResolvedValueArgument actualArgument,
-            @NotNull ValueParameterDescriptor parameterDescriptor) {
+    protected void translateSingleArgument(
+            @NotNull ResolvedValueArgument actualArgument,
+            @NotNull ValueParameterDescriptor parameterDescriptor,
+            @NotNull List<JsExpression> result
+    ) {
         List<ValueArgument> valueArguments = actualArgument.getArguments();
         if (actualArgument instanceof VarargValueArgument) {
-            return translateVarargArgument(valueArguments);
+            translateVarargArgument(valueArguments, result);
         }
-        if (actualArgument instanceof DefaultValueArgument) {
+        else if (actualArgument instanceof DefaultValueArgument) {
             JetExpression defaultArgument = getDefaultArgument(bindingContext(), parameterDescriptor);
-            return Collections.singletonList(Translation.translateAsExpression(defaultArgument, context()));
+            result.add(Translation.translateAsExpression(defaultArgument, context()));
         }
-        assert actualArgument instanceof ExpressionValueArgument;
-        assert valueArguments.size() == 1;
-        JetExpression argumentExpression = valueArguments.get(0).getArgumentExpression();
-        assert argumentExpression != null;
-        return Collections.singletonList(Translation.translateAsExpression(argumentExpression, context()));
+        else {
+            assert actualArgument instanceof ExpressionValueArgument;
+            assert valueArguments.size() == 1;
+            JetExpression argumentExpression = valueArguments.get(0).getArgumentExpression();
+            assert argumentExpression != null;
+            result.add(Translation.translateAsExpression(argumentExpression, context()));
+        }
     }
 
-    @NotNull
-    private List<JsExpression> translateVarargArgument(@NotNull List<ValueArgument> arguments) {
-        List<JsExpression> translatedArgs = Lists.newArrayList();
+    private void translateVarargArgument(@NotNull List<ValueArgument> arguments, @NotNull List<JsExpression> result) {
+        if (arguments.isEmpty()) {
+            if (shouldWrapVarargInArray()) {
+                result.add(new JsArrayLiteral(Collections.<JsExpression>emptyList()));
+            }
+            return;
+        }
+
+        List<JsExpression> list;
+        if (shouldWrapVarargInArray()) {
+            list = arguments.size() == 1 ? new SmartList<JsExpression>() : new ArrayList<JsExpression>(arguments.size());
+            result.add(new JsArrayLiteral(list));
+        }
+        else {
+            list = result;
+        }
         for (ValueArgument argument : arguments) {
             JetExpression argumentExpression = argument.getArgumentExpression();
             assert argumentExpression != null;
-            translatedArgs.add(Translation.translateAsExpression(argumentExpression, context()));
+            list.add(Translation.translateAsExpression(argumentExpression, context()));
         }
-        if (shouldWrapVarargInArray()) {
-            return wrapInArrayLiteral(translatedArgs);
-        }
-        return translatedArgs;
-    }
-
-    @NotNull
-    private static List<JsExpression> wrapInArrayLiteral(@NotNull List<JsExpression> translatedArgs) {
-        return Collections.<JsExpression>singletonList(new JsArrayLiteral(translatedArgs));
     }
 }

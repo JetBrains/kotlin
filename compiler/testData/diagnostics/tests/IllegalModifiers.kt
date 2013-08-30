@@ -22,3 +22,47 @@ class FinalClass() {
 
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class C
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> object D
+
+//A sample annotation to check annotation usage in parameters.
+annotation class annotated(val text: String = "not given")
+
+//Check legal modifiers in constructor
+class LegalModifier(val a: Int, annotated private var b: String, annotated vararg v: Int)
+
+//Check illegal modifier in constructor parameters
+class IllegalModifiers1(<!ILLEGAL_MODIFIER!>private<!> a: Int)
+
+//Check multiple illegal modifiers in constructor
+class IllegalModifiers2(<!ILLEGAL_MODIFIER!>private<!> <!ILLEGAL_MODIFIER!>abstract<!> a: Int)
+
+
+//Check annotations with illegal modifiers in constructor
+class IllegalModifiers3(annotated <!ILLEGAL_MODIFIER!>public<!> <!ILLEGAL_MODIFIER!>abstract<!> b: String)
+
+//Check annotations and vararg with illegal modifiers in constructor
+class IllegalModifiers4(val a: Int, annotated("a text") <!ILLEGAL_MODIFIER!>protected<!> vararg v: Int)
+
+//Check illegal modifiers for functions and catch block
+abstract class IllegalModifiers5() {
+
+  //Check illegal modifier in function parameter
+  abstract fun foo(<!ILLEGAL_MODIFIER!>public<!> a: Int, vararg v: String)
+
+  //Check multiple illegal modifiers in function parameter
+  abstract fun bar(<!ILLEGAL_MODIFIER!>public<!> <!ILLEGAL_MODIFIER!>abstract<!> a: Int, vararg v: String)
+
+  //Check annotations with illegal modifiers
+  abstract fun baz(annotated("a text") <!ILLEGAL_MODIFIER!>public<!> <!ILLEGAL_MODIFIER!>abstract<!> a: Int)
+
+  private fun qux() {
+
+    //Check illegal modifier in catch block
+    try {} catch (<!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
+
+    //Check multiple illegal modifiers in catch block
+    try {} catch (<!ILLEGAL_MODIFIER!>abstract<!> <!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
+
+    //Check annotations with illegal modifiers
+    try {} catch (annotated("a text") <!ILLEGAL_MODIFIER!>abstract<!> <!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
+  }
+}

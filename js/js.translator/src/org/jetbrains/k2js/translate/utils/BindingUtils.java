@@ -58,7 +58,7 @@ public final class BindingUtils {
     @NotNull
     public static ClassDescriptor getClassDescriptor(@NotNull BindingContext context,
             @NotNull JetClassOrObject declaration) {
-        return getDescriptorForExpression(context, declaration, ClassDescriptor.class);
+        return BindingContextUtils.getNotNull(context, BindingContext.CLASS, declaration);
     }
 
     @NotNull
@@ -230,12 +230,6 @@ public final class BindingUtils {
     public static ResolvedCall<FunctionDescriptor> getHasNextCallable(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
         return BindingContextUtils.getNotNull(context, BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, rangeExpression);
-    }
-
-    @NotNull
-    public static PropertyDescriptor getPropertyDescriptorForObjectDeclaration(@NotNull BindingContext context,
-            @NotNull JetObjectDeclarationName name) {
-        return BindingContextUtils.getNotNull(context, BindingContext.OBJECT_DECLARATION, name);
     }
 
     @NotNull

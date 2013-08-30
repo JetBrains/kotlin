@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -486,6 +487,9 @@ public class DescriptorResolver {
 
             if (!(functionDescriptor instanceof ConstructorDescriptor)) {
                 checkParameterHasNoValOrVar(trace, valueParameter, VAL_OR_VAR_ON_FUN_PARAMETER);
+                checkParameterHasNoModifier(trace, valueParameter);
+            } else {
+                checkConstructorParameterHasNoModifier(trace, valueParameter);
             }
 
             ValueParameterDescriptor valueParameterDescriptor =
@@ -1558,6 +1562,35 @@ public class DescriptorResolver {
         ASTNode valOrVarNode = parameter.getValOrVarNode();
         if (valOrVarNode != null) {
             trace.report(diagnosticFactory.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
+        }
+    }
+
+    private static void checkConstructorParameterHasNoModifier(
+            @NotNull BindingTrace trace,
+            @NotNull JetParameter parameter
+    ) {
+        // If is not a property, then it must have no modifier
+        if (parameter.getValOrVarNode() == null) {
+            checkParameterHasNoModifier(trace, parameter);
+        }
+    }
+
+    public static void checkParameterHasNoModifier(
+            @NotNull BindingTrace trace,
+            @NotNull JetParameter parameter
+    ) {
+        JetModifierList modifiers = parameter.getModifierList();
+        if (modifiers != null) {
+            ASTNode node = modifiers.getNode().getFirstChildNode();
+
+            while (node != null) {
+                IElementType elementType = node.getElementType();
+
+                if (elementType != JetTokens.VARARG_KEYWORD && elementType instanceof JetKeywordToken) {
+                    trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) elementType));
+                }
+                node = node.getTreeNext();
+            }
         }
     }
 }

@@ -18,7 +18,6 @@ package org.jetbrains.k2js.test.utils;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
@@ -32,11 +31,13 @@ import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.List;
 
@@ -70,6 +71,7 @@ public final class TranslationUtils {
             Predicate<PsiFile> filesWithCode = new Predicate<PsiFile>() {
                 @Override
                 public boolean apply(@javax.annotation.Nullable PsiFile file) {
+                    assert file != null;
                     return isFileWithCode((JetFile) file);
                 }
             };
@@ -102,14 +104,8 @@ public final class TranslationUtils {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull EcmaVersion version, TestConfigFactory configFactory) throws Exception {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
-        JsProgram program = new K2JSTranslator(getConfig(project, version, configFactory)).generateProgram(psiFiles, mainCallParameters);
-        FileWriter writer = new FileWriter(new File(outputFile));
-        try {
-            writer.write(CodeGenerator.generateProgramToString(program));
-        }
-        finally {
-            writer.close();
-        }
+        K2JSTranslator translator = new K2JSTranslator(getConfig(project, version, configFactory));
+        FileUtil.writeToFile(new File(outputFile), translator.generateProgramCode(psiFiles, mainCallParameters));
     }
 
     @NotNull

@@ -18,19 +18,24 @@ package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetIsExpression;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getNameIfStandardType;
 
 public final class PatternTranslator extends AbstractTranslator {
 
@@ -68,7 +73,7 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression translateAsIsCheck(@NotNull JsExpression expressionToMatch,
                                             @NotNull JetTypeReference typeReference) {
         JsInvocation isCheck = new JsInvocation(context().namer().isOperationReference(),
-                                                     expressionToMatch, getClassReference(typeReference));
+                                                     expressionToMatch, getClassNameReference(typeReference));
         if (isNullable(typeReference)) {
             return addNullCheck(expressionToMatch, isCheck);
         }
@@ -78,15 +83,22 @@ public final class PatternTranslator extends AbstractTranslator {
     @Nullable
     private JsExpression translateAsIntrinsicTypeCheck(@NotNull JsExpression expressionToMatch,
                                                        @NotNull JetTypeReference typeReference) {
-        JsExpression result = null;
-        JsName className = getClassReference(typeReference).getName();
-        if (className.getIdent().equals("String")) {
-            result = typeof(expressionToMatch, program().getStringLiteral("string"));
+        Name typeName = getNameIfStandardType(getTypeByReference(bindingContext(), typeReference));
+        if (typeName == null) {
+            return null;
         }
-        if (className.getIdent().equals("Int")) {
-            result = typeof(expressionToMatch, program().getStringLiteral("number"));
+
+        String jsSTypeName;
+        if (NamePredicate.STRING.apply(typeName)) {
+            jsSTypeName = "string";
         }
-        return result;
+        else if (NamePredicate.PRIMITIVE_NUMBERS.apply(typeName)) {
+            jsSTypeName = "number";
+        }
+        else {
+            return null;
+        }
+        return typeof(expressionToMatch, program().getStringLiteral(jsSTypeName));
     }
 
     @NotNull
@@ -95,19 +107,14 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     private boolean isNullable(JetTypeReference typeReference) {
-        return BindingUtils.getTypeByReference(bindingContext(), typeReference).isNullable();
+        return getTypeByReference(bindingContext(), typeReference).isNullable();
     }
 
     @NotNull
-    private JsNameRef getClassReference(@NotNull JetTypeReference typeReference) {
-        return getClassNameReferenceForTypeReference(typeReference);
-    }
-
-    @NotNull
-    private JsNameRef getClassNameReferenceForTypeReference(@NotNull JetTypeReference typeReference) {
+    private JsNameRef getClassNameReference(@NotNull JetTypeReference typeReference) {
         ClassDescriptor referencedClass = BindingUtils.getClassDescriptorForTypeReference
             (bindingContext(), typeReference);
-        return TranslationUtils.getQualifiedReference(context(), referencedClass);
+        return context().getQualifiedReference(referencedClass);
     }
 
     @NotNull

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.translate.declaration.ClassDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
@@ -87,6 +88,7 @@ public class TranslationContext {
              usageTracker == null ? parent.usageTracker : usageTracker);
     }
 
+    @Nullable
     public UsageTracker usageTracker() {
         return usageTracker;
     }
@@ -179,6 +181,11 @@ public class TranslationContext {
         return program().getStringLiteral(named.getName().asString());
     }
 
+    @NotNull
+    public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
+        return staticContext.getQualifiedReference(descriptor);
+    }
+
     @Nullable
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getQualifierForDescriptor(descriptor);
@@ -241,6 +248,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public ClassDeclarationTranslator classDeclarationTranslator() {
+        return staticContext.getClassDeclarationTranslator();
+    }
+
+    @NotNull
     public JsFunction getFunctionObject(@NotNull CallableDescriptor descriptor) {
         return staticContext.getFunctionWithScope(descriptor);
     }
@@ -249,6 +261,7 @@ public class TranslationContext {
         dynamicContext.jsBlock().getStatements().add(statement);
     }
 
+    @Nullable
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (usageTracker != null) {
             usageTracker.triggerUsed(descriptor);

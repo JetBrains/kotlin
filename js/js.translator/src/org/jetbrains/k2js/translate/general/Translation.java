@@ -20,7 +20,10 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.MainCallParameters;
@@ -35,7 +38,6 @@ import org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
-import org.jetbrains.k2js.translate.expression.WhenTranslator;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
@@ -65,11 +67,6 @@ public final class Translation {
     public static FunctionTranslator functionTranslator(@NotNull JetDeclarationWithBody function,
             @NotNull TranslationContext context) {
         return FunctionTranslator.newInstance(function, context);
-    }
-
-    @NotNull
-    private static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
-        return NamespaceDeclarationTranslator.translateFiles(files, context);
     }
 
     @NotNull
@@ -108,12 +105,6 @@ public final class Translation {
         return convertToStatement(translateExpression(expression, context));
     }
 
-    @Nullable
-    public static JsNode translateWhenExpression(@NotNull JetWhenExpression expression,
-            @NotNull TranslationContext context) {
-        return WhenTranslator.translate(expression, context);
-    }
-
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
             @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
@@ -134,7 +125,6 @@ public final class Translation {
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Config config) throws MainFunctionNotFoundException {
-        //TODO: move some of the code somewhere
         StaticContext staticContext = StaticContext.generateStaticContext(bindingContext, config.getTarget());
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
@@ -145,8 +135,8 @@ public final class Translation {
         statements.add(program.getStringLiteral("use strict").makeStmt());
 
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
-        staticContext.getLiteralFunctionTranslator().setRootContext(context);
-        statements.addAll(translateFiles(files, context));
+        staticContext.initTranslators(context);
+        statements.addAll(NamespaceDeclarationTranslator.translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());
 
         if (mainCallParameters.shouldBeGenerated()) {

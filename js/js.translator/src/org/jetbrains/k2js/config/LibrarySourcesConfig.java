@@ -47,11 +47,14 @@ public class LibrarySourcesConfig extends Config {
     @NotNull
     private final List<String> files;
 
-    public LibrarySourcesConfig(@NotNull Project project,
+    public LibrarySourcesConfig(
+            @NotNull Project project,
             @NotNull String moduleId,
             @NotNull List<String> files,
-            @NotNull EcmaVersion ecmaVersion) {
-        super(project, moduleId, ecmaVersion);
+            @NotNull EcmaVersion ecmaVersion,
+            boolean sourcemap
+    ) {
+        super(project, moduleId, ecmaVersion, sourcemap);
         this.files = files;
     }
 
