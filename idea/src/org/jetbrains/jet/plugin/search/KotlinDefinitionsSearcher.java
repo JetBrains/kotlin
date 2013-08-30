@@ -18,68 +18,77 @@ package org.jetbrains.jet.plugin.search;
 
 import com.intellij.codeInsight.navigation.MethodImplementationsSearch;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
+import com.intellij.psi.search.searches.DefinitionsScopedSearch;
 import com.intellij.util.Processor;
+import com.intellij.util.QueryExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
 
-public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
+public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
     @Override
-    public void processQuery(@NotNull PsiElement queryParameters, @NotNull Processor<PsiElement> consumer) {
-        if (queryParameters instanceof JetClass) {
-            processClassImplementations((JetClass) queryParameters, consumer);
+    public boolean execute(@NotNull DefinitionsScopedSearch.SearchParameters queryParameters, @NotNull Processor<PsiElement> consumer) {
+        PsiElement element = queryParameters.getElement();
+        SearchScope scope = queryParameters.getScope();
+
+        if (element instanceof JetClass) {
+            return processClassImplementations((JetClass) element, consumer);
         }
 
-        if (queryParameters instanceof JetNamedFunction) {
-            processFunctionImplementations((JetNamedFunction) queryParameters, consumer);
+        if (element instanceof JetNamedFunction) {
+            return processFunctionImplementations((JetNamedFunction) element, scope, consumer);
         }
 
-        if (queryParameters instanceof JetProperty) {
-            processPropertyImplementations((JetProperty) queryParameters, consumer);
+        if (element instanceof JetProperty) {
+            return processPropertyImplementations((JetProperty) element, scope, consumer);
         }
 
-        if (queryParameters instanceof JetParameter) {
-            JetParameter parameter = (JetParameter) queryParameters;
+        if (element instanceof JetParameter) {
+            JetParameter parameter = (JetParameter) element;
             if (JetPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
-                processPropertyImplementations(parameter, consumer);
+                return processPropertyImplementations((JetParameter) element, scope, consumer);
             }
         }
-    }
 
-    private static void processClassImplementations(final JetClass queryParameters, Processor<PsiElement> consumer) {
+        return true;
+     }
+
+    private static boolean processClassImplementations(final JetClass klass, Processor<PsiElement> consumer) {
         PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
             @Override
             public PsiClass compute() {
-                return LightClassUtil.getPsiClass(queryParameters);
+                return LightClassUtil.getPsiClass(klass);
             }
         });
         if (psiClass != null) {
-            ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer);
+            return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer);
         }
+        return true;
     }
 
-    private static void processFunctionImplementations(final JetNamedFunction queryParameters, Processor<PsiElement> consumer) {
+    private static boolean processFunctionImplementations(final JetNamedFunction function, SearchScope scope, Processor<PsiElement> consumer) {
         PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
             @Override
             public PsiMethod compute() {
-                return LightClassUtil.getLightClassMethod(queryParameters);
+                return LightClassUtil.getLightClassMethod(function);
             }
         });
 
         if (psiMethod != null) {
-            ContainerUtil.process(MethodImplementationsSearch.getMethodImplementations(psiMethod), consumer);
+            ContainerUtil.process(MethodImplementationsSearch.getMethodImplementations(psiMethod, scope), consumer);
         }
+        return true;
     }
 
-    private static void processPropertyImplementations(@NotNull final JetParameter parameter, @NotNull Processor<PsiElement> consumer) {
+    private static boolean processPropertyImplementations(@NotNull final JetParameter parameter, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
         LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
@@ -88,10 +97,10 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
                     }
                 });
 
-        processPropertyImplementationsMethods(accessorsPsiMethods, consumer);
+        return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer);
     }
 
-    private static void processPropertyImplementations(@NotNull final JetProperty property, @NotNull Processor<PsiElement> consumer) {
+    private static boolean processPropertyImplementations(@NotNull final JetProperty property, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
         LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
@@ -100,24 +109,31 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
                     }
                 });
 
-        processPropertyImplementationsMethods(accessorsPsiMethods, consumer);
+        return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer);
     }
 
-    public static void processPropertyImplementationsMethods(LightClassUtil.PropertyAccessorsPsiMethods accessors, @NotNull Processor<PsiElement> consumer) {
+    public static boolean processPropertyImplementationsMethods(LightClassUtil.PropertyAccessorsPsiMethods accessors, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
         for (PsiMethod method : accessors) {
-            PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method);
+            PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method, scope);
             for (PsiMethod implementation : implementations) {
                 PsiElement mirrorElement = implementation instanceof JetClsMethod ? ((JetClsMethod) implementation).getOrigin() : null;
                 if (mirrorElement instanceof JetProperty || mirrorElement instanceof JetParameter) {
-                    consumer.process(mirrorElement);
+                    if (!consumer.process(mirrorElement)) {
+                        return false;
+                    }
                 }
                 else if (mirrorElement instanceof JetPropertyAccessor && mirrorElement.getParent() instanceof JetProperty) {
-                    consumer.process(mirrorElement.getParent());
+                    if (!consumer.process(mirrorElement.getParent())) {
+                        return false;
+                    }
                 }
                 else {
-                    consumer.process(implementation);
+                    if (!consumer.process(implementation)) {
+                        return false;
+                    }
                 }
             }
         }
+        return true;
     }
 }

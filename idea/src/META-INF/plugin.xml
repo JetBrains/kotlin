@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
 
-  <idea-version since-build="130.1619" until-build="131.0"/>
+  <idea-version since-build="132.27" until-build="133.0"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
@@ -281,7 +281,7 @@
 
     <referencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDirectInheritorsSearcher"/>
-    <definitionsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
+    <definitionsScopedSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.KotlinAnnotatedElementsSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>

@@ -38,6 +38,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
 import com.intellij.psi.search.searches.AllOverridingMethodsSearch;
@@ -163,7 +164,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
             new LineMarkerNavigator() {
                 @Override
-                public void browse(@Nullable MouseEvent e, @Nullable PsiElement element) {
+                public void browse(@Nullable MouseEvent e, @Nullable final PsiElement element) {
                     if (element == null) return;
 
                     assert element.getParent() instanceof JetProperty : "This marker navigator should be placed only on identifies in properties";
@@ -181,7 +182,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                     Runnable jetPsiMethodProcessor = new Runnable() {
                         @Override
                         public void run() {
-                            KotlinDefinitionsSearcher.processPropertyImplementationsMethods(psiPropertyMethods, elementProcessor);
+                            KotlinDefinitionsSearcher.processPropertyImplementationsMethods(psiPropertyMethods, GlobalSearchScope.allScope(element.getProject()), elementProcessor);
                         }
                     };
 
