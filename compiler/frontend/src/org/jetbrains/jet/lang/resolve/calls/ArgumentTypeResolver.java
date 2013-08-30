@@ -174,7 +174,7 @@ public class ArgumentTypeResolver {
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
-        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.UNKNOWN_EXPECTED_TYPE).replaceContextDependency(
+        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(
                 ContextDependency.DEPENDENT);
 
         return expressionTypingServices.getTypeInfo(expression, newContext);

@@ -83,12 +83,10 @@ public class TypeUtils {
 
     public static final JetType NO_EXPECTED_TYPE = new SpecialType("NO_EXPECTED_TYPE");
     
-    public static final JetType UNKNOWN_EXPECTED_TYPE = new SpecialType("UNKNOWN_EXPECTED_TYPE");
-
     public static final JetType UNIT_EXPECTED_TYPE = new SpecialType("UNIT_EXPECTED_TYPE");
 
     public static boolean noExpectedType(@NotNull JetType type) {
-        return type == NO_EXPECTED_TYPE || type == UNKNOWN_EXPECTED_TYPE || type == UNIT_EXPECTED_TYPE;
+        return type == NO_EXPECTED_TYPE || type == UNIT_EXPECTED_TYPE;
     }
 
     @NotNull

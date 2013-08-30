@@ -69,7 +69,6 @@ import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.DEP
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.UNKNOWN_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
@@ -124,7 +123,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
 
-        if (context.expectedType == UNKNOWN_EXPECTED_TYPE) {
+        if (noExpectedType(context.expectedType) && context.contextDependency == DEPENDENT) {
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
                 Long longValue = CompileTimeConstantResolver.parseLongValue(text);
                 if (longValue != null) {
@@ -141,8 +140,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         CompileTimeConstant<?> value = compileTimeConstantResolver.getCompileTimeConstant(expression, context.expectedType);
         if (value instanceof ErrorValue) {
-            // 'checkType' for 'UNKNOWN_EXPECTED_TYPE' will take place in 'completeInferenceForArgument'
-            if (context.expectedType != UNKNOWN_EXPECTED_TYPE) {
+            // 'checkType' for 'ContextDependency.DEPENDENT' will take place in 'completeInferenceForArgument'
+            if (context.contextDependency == INDEPENDENT) {
                 context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
             }
             return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
