@@ -3,9 +3,9 @@ fun main(j : C, s : Array<String?>) {
     j.from()
     j.from("")
     j.from("", "")
-    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>from("", "", "")<!>
+    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>from<!>("", "", "")
 
-    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>from("", *s)<!> // This should not be an ambiguity, see KT-1842
+    j.<!OVERLOAD_RESOLUTION_AMBIGUITY!>from<!>("", *s) // This should not be an ambiguity, see KT-1842
     j.from(*s)
 }
 

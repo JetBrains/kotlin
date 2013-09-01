@@ -12,7 +12,7 @@ public class A {
 // FILE: test.kt
 
 fun main() {
-    A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo { "Hello!" }<!>
+    A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { "Hello!" }
     A.foo(Runnable { "Hello!" })
 }
 

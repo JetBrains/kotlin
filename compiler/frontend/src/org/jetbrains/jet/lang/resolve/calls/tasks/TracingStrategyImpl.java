@@ -143,7 +143,7 @@ public class TracingStrategyImpl implements TracingStrategy {
 
     @Override
     public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {
-        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(call.getCallElement(), descriptors));
+        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(reference, descriptors));
     }
 
     @Override
