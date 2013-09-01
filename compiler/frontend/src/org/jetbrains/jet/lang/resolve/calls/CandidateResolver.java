@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -360,7 +359,7 @@ public class CandidateResolver {
                 || (expression instanceof JetFunctionLiteralExpression)) {
                 return;
             }
-            JetType type = updateResultArgumentTypeIfNotDenotable(context, expression);
+            JetType type = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
             checkResultArgumentType(type, argument, context);
             return;
         }
@@ -434,52 +433,6 @@ public class CandidateResolver {
         //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
         JetType type = trace.get(BindingContext.EXPRESSION_TYPE, safeQualifiedExpression.getReceiverExpression());
         return type != null && type.isNullable();
-    }
-
-    @Nullable
-    private <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
-            @NotNull CallCandidateResolutionContext<D> context,
-            @NotNull JetExpression expression
-    ) {
-        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
-        if (type != null && !type.getConstructor().isDenotable()) {
-            if (type.getConstructor() instanceof NumberValueTypeConstructor) {
-                NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
-                JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                updateNumberType(primitiveType, expression, context);
-                return primitiveType;
-            }
-        }
-        return type;
-    }
-
-    private <D extends CallableDescriptor> void updateNumberType(
-            @NotNull JetType numberType,
-            @Nullable JetExpression expression,
-            @NotNull CallCandidateResolutionContext<D> context
-    ) {
-        if (expression == null) return;
-        BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
-
-        if (!(expression instanceof JetConstantExpression)) {
-            JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression, false);
-            if (deparenthesized != expression) {
-                updateNumberType(numberType, deparenthesized, context);
-            }
-            if (deparenthesized instanceof JetBlockExpression) {
-                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesized);
-                if (lastStatement instanceof JetExpression) {
-                    updateNumberType(numberType, (JetExpression) lastStatement, context);
-                }
-            }
-            return;
-        }
-        CompileTimeConstant<?> constant =
-                new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, numberType);
-
-        if (!(constant instanceof ErrorValue)) {
-            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, constant);
-        }
     }
 
     private <D extends CallableDescriptor> void checkResultArgumentType(

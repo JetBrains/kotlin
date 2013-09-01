@@ -25,13 +25,14 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
+import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -244,6 +245,52 @@ public class ArgumentTypeResolver {
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
             JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SKIP_FUNCTION_ARGUMENTS);
             infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
+        }
+    }
+
+    @Nullable
+    public <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
+            @NotNull ResolutionContext context,
+            @NotNull JetExpression expression
+    ) {
+        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+        if (type != null && !type.getConstructor().isDenotable()) {
+            if (type.getConstructor() instanceof NumberValueTypeConstructor) {
+                NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
+                JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
+                updateNumberType(primitiveType, expression, context);
+                return primitiveType;
+            }
+        }
+        return type;
+    }
+
+    private <D extends CallableDescriptor> void updateNumberType(
+            @NotNull JetType numberType,
+            @Nullable JetExpression expression,
+            @NotNull ResolutionContext context
+    ) {
+        if (expression == null) return;
+        BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
+
+        if (!(expression instanceof JetConstantExpression)) {
+            JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression, false);
+            if (deparenthesized != expression) {
+                updateNumberType(numberType, deparenthesized, context);
+            }
+            if (deparenthesized instanceof JetBlockExpression) {
+                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesized);
+                if (lastStatement instanceof JetExpression) {
+                    updateNumberType(numberType, (JetExpression) lastStatement, context);
+                }
+            }
+            return;
+        }
+        CompileTimeConstant<?> constant =
+                new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, numberType);
+
+        if (!(constant instanceof ErrorValue)) {
+            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, constant);
         }
     }
 }
