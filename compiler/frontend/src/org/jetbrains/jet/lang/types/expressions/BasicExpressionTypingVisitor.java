@@ -101,7 +101,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
         JetTypeInfo typeInfo = facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
-        return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
+        return DataFlowUtils.checkType(typeInfo, expression, context);
     }
 
     private static JetTypeInfo createNumberValueTypeInfo(
@@ -845,7 +845,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // TODO : Some processing for the label?
         JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
         context.labelResolver.exitLabeledElement(baseExpression);
-        return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
+        return DataFlowUtils.checkType(typeInfo, expression, context);
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
@@ -932,7 +932,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             result = JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        return DataFlowUtils.checkType(result.getType(), expression, contextWithExpectedType, result.getDataFlowInfo());
+        return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }
 
     private JetTypeInfo visitEquality(
@@ -1166,7 +1166,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext context) {
         JetTypeInfo typeInfo = resolveArrayAccessGetMethod(expression, context);
-        return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
+        return DataFlowUtils.checkType(typeInfo, expression, context);
     }
 
     @NotNull

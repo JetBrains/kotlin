@@ -284,7 +284,7 @@ public class CallExpressionResolver {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
                 callExpression, receiver, callOperationNode, context);
         if (context.contextDependency == ContextDependency.INDEPENDENT) {
-            DataFlowUtils.checkType(typeInfo.getType(), callExpression, context, typeInfo.getDataFlowInfo());
+            DataFlowUtils.checkType(typeInfo, callExpression, context);
         }
         return typeInfo;
     }
@@ -409,7 +409,7 @@ public class CallExpressionResolver {
         }
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
         if (context.contextDependency == ContextDependency.INDEPENDENT) {
-            DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
+            DataFlowUtils.checkType(typeInfo, expression, context);
         }
         return typeInfo;
     }

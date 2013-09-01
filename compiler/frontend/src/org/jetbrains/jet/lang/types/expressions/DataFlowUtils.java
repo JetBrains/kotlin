@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
@@ -138,6 +137,15 @@ public class DataFlowUtils {
     @NotNull
     public static JetTypeInfo checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context, @NotNull DataFlowInfo dataFlowInfo) {
         return JetTypeInfo.create(checkType(expressionType, expression, context), dataFlowInfo);
+    }
+
+    @NotNull
+    public static JetTypeInfo checkType(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
+        JetType type = checkType(typeInfo.getType(), expression, context);
+        if (type == typeInfo.getType()) {
+            return typeInfo;
+        }
+        return JetTypeInfo.create(type, typeInfo.getDataFlowInfo());
     }
 
     @Nullable
