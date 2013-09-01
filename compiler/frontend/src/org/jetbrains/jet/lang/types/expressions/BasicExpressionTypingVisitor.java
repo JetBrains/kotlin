@@ -1075,9 +1075,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @Nullable JetExpression right,
             @NotNull ExpressionTypingContext context
     ) {
-        if (right == null) return JetTypeInfo.create(null, context.dataFlowInfo);
-
         ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
+        if (right == null) {
+            if (left != null) facade.getTypeInfo(left, contextWithNoExpectedType);
+            return JetTypeInfo.create(null, context.dataFlowInfo);
+        }
+
         DataFlowInfo dataFlowInfo = facade.getTypeInfo(right, contextWithNoExpectedType).getDataFlowInfo();
 
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, right, contextWithNoExpectedType);

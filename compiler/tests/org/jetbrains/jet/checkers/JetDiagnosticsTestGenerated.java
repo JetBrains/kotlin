@@ -2582,6 +2582,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/checkNothingIsSubtype.kt");
             }
             
+            @TestMetadata("inExpr.kt")
+            public void testInExpr() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/inExpr.kt");
+            }
+            
             @TestMetadata("incompleteAssignment.kt")
             public void testIncompleteAssignment() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteAssignment.kt");
