@@ -320,9 +320,7 @@ public class CallResolver {
         }
         traceToResolveCall.commit();
 
-        if (prioritizedTasks.isEmpty() || context.contextDependency == ContextDependency.DEPENDENT) {
-            //do nothing
-        } else {
+        if (!prioritizedTasks.isEmpty() && context.contextDependency == ContextDependency.INDEPENDENT) {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
         }
 
