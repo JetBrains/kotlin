@@ -51,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
@@ -483,5 +484,12 @@ public class ExpressionTypingUtils {
         return expression != null
                ? facade.getTypeInfo(expression, context)
                : JetTypeInfo.create(null, context.dataFlowInfo);
+    }
+
+    @SuppressWarnings("SuspiciousMethodCalls")
+    public static boolean isBinaryExpressionDependentOnExpectedType(@NotNull JetBinaryExpression expression) {
+        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+        return (operationType == JetTokens.IDENTIFIER || OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)
+                || operationType == JetTokens.ELVIS);
     }
 }

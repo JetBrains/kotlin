@@ -881,9 +881,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
-        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        ExpressionTypingContext context = isBinaryExpressionDependentOnExpectedType(expression)
+                ? contextWithExpectedType
+                : contextWithExpectedType.replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
 
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
         JetExpression left = expression.getLeft();
         JetExpression right = expression.getRight();
         IElementType operationType = operationSign.getReferencedNameElementType();
@@ -893,15 +895,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         //Expressions that can depend on expected type
         if (operationType == JetTokens.IDENTIFIER) {
             Name referencedName = operationSign.getReferencedNameAsName();
-            result = getTypeInfoForBinaryCall(referencedName, contextWithExpectedType, expression);
+            result = getTypeInfoForBinaryCall(referencedName, context, expression);
         }
         else if (OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)) {
             Name referencedName = OperatorConventions.BINARY_OPERATION_NAMES.get(operationType);
-            result = getTypeInfoForBinaryCall(referencedName, contextWithExpectedType, expression);
+            result = getTypeInfoForBinaryCall(referencedName, context, expression);
         }
         else if (operationType == JetTokens.ELVIS) {
-            //base expression of elvis operator (not the whole expression) is checked for 'type mismatch'
-            return visitElvisExpression(expression, contextWithExpectedType);
+            //base expression of elvis operator is checked for 'type mismatch', so the whole expression shouldn't be checked
+            return visitElvisExpression(expression, context);
         }
 
         //Expressions that don't depend on expected type

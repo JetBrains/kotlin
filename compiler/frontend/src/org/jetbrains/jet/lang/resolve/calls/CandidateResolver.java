@@ -22,7 +22,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -51,7 +50,6 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
@@ -417,21 +415,9 @@ public class CandidateResolver {
                 return expression;
             }
 
-            @SuppressWarnings("SuspiciousMethodCalls")
             @Override
             public JetExpression visitBinaryExpression(JetBinaryExpression expression, Void data) {
-                IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-                if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
-                    //Result type of comparison doesn't depend on expected type:
-                    //it's 'Boolean', but 'compareTo' should return 'Int'.
-                    //So we shouldn't check result type of such a call('Int') at completion phase.
-                    return null;
-                }
-                if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
-                    //the same, result type is always 'Unit'
-                    return null;
-                }
-                return super.visitBinaryExpression(expression, data);
+                return ExpressionTypingUtils.isBinaryExpressionDependentOnExpectedType(expression) ? expression : null;
             }
         };
         return expression.accept(selectorExpressionFinder, null);
