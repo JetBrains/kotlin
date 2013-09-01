@@ -92,7 +92,7 @@ public class ArgumentTypeResolver {
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && !(argumentExpression instanceof JetFunctionLiteralExpression)) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+                checkArgumentType(context, argumentExpression);
             }
         }
 
@@ -117,12 +117,12 @@ public class ArgumentTypeResolver {
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && (argumentExpression instanceof JetFunctionLiteralExpression)) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+                checkArgumentType(context, argumentExpression);
             }
         }
 
         for (JetExpression expression : context.call.getFunctionLiteralArguments()) {
-            expressionTypingServices.getType(context.scope, expression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+            checkArgumentType(context, expression);
         }
     }
 
@@ -130,9 +130,14 @@ public class ArgumentTypeResolver {
         for (ValueArgument valueArgument : unmappedArguments) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+                checkArgumentType(context, argumentExpression);
             }
         }
+    }
+
+    private void checkArgumentType(CallResolutionContext<?> context, JetExpression argumentExpression) {
+        expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+        updateResultArgumentTypeIfNotDenotable(context, argumentExpression);
     }
 
     public <D extends CallableDescriptor> void checkTypesForFunctionArguments(CallResolutionContext<?> context, ResolvedCallImpl<D> resolvedCall) {
