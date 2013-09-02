@@ -32,10 +32,12 @@ public abstract class JavaAnnotationArgumentImpl extends JavaElementImpl<PsiAnno
 
     @NotNull
     /* package */ static JavaAnnotationArgument create(@NotNull PsiAnnotationMemberValue argument, @Nullable Name name) {
-        if (argument instanceof PsiLiteralExpression) {
-            return new JavaLiteralAnnotationArgumentImpl((PsiLiteralExpression) argument, name);
+        Object value = JavaPsiFacade.getInstance(argument.getProject()).getConstantEvaluationHelper().computeConstantExpression(argument);
+        if (value != null || argument instanceof PsiLiteralExpression) {
+            return new JavaLiteralAnnotationArgumentImpl(name, value);
         }
-        else if (argument instanceof PsiReferenceExpression) {
+
+        if (argument instanceof PsiReferenceExpression) {
             return new JavaReferenceAnnotationArgumentImpl((PsiReferenceExpression) argument, name);
         }
         else if (argument instanceof PsiArrayInitializerMemberValue) {

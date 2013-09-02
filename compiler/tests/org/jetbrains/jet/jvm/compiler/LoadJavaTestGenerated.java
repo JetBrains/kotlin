@@ -1065,6 +1065,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithAnnotationInParam.java");
             }
             
+            @TestMetadata("AnnotationWithArithmeticExpressionInParam.java")
+            public void testAnnotationWithArithmeticExpressionInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithArithmeticExpressionInParam.java");
+            }
+            
             @TestMetadata("AnnotationWithArrayOfEnumInParam.java")
             public void testAnnotationWithArrayOfEnumInParam() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithArrayOfEnumInParam.java");
@@ -1088,6 +1093,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("AnnotationWithPrimitiveValueInParam.java")
             public void testAnnotationWithPrimitiveValueInParam() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithPrimitiveValueInParam.java");
+            }
+            
+            @TestMetadata("AnnotationWithStringConcatenationInParam.java")
+            public void testAnnotationWithStringConcatenationInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithStringConcatenationInParam.java");
+            }
+            
+            @TestMetadata("AnnotationWithStringConstantInParam.java")
+            public void testAnnotationWithStringConstantInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithStringConstantInParam.java");
+            }
+            
+            @TestMetadata("AnnotationWithStringInParam.java")
+            public void testAnnotationWithStringInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithStringInParam.java");
             }
             
             @TestMetadata("CustomAnnotation.java")

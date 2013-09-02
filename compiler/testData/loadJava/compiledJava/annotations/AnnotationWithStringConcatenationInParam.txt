@@ -1,0 +1,13 @@
+package test
+
+public trait AnnotationWithStringConcatenationInParam : java.lang.Object {
+    
+    public final annotation class Anno : jet.Annotation {
+        public constructor Anno(/*0*/ value: jet.String?)
+        public abstract fun value(): jet.String?
+    }
+    
+    test.AnnotationWithStringConcatenationInParam.Anno(value = "hello": jet.String) public open class Class : java.lang.Object {
+        public constructor Class()
+    }
+}
