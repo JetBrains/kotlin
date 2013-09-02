@@ -106,7 +106,7 @@ fun testImplicitCoercion() {
     val <!UNUSED_VARIABLE!>h<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (false) 4 else {}<!>
 
     bar(if (true) {
-        4
+        <!TYPE_MISMATCH!>4<!>
     }
     else {
         z = <!UNUSED_VALUE!>342<!>
