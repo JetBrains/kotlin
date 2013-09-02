@@ -16,21 +16,18 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-
+/*
+* This class indicates whether we should look into kotlin sources when searching for descriptors in JavaDescriptorResolver.
+* This is a hack because it should be done via correct scopes.
+* Order in which we attempt to resolve descriptors is also should be taken care of. (though it is correct for the most part now)
+* */
 public enum DescriptorSearchRule {
-    INCLUDE_KOTLIN_SOURCES {
-        @Override
-        public <T extends DeclarationDescriptor> T processFoundInKotlin(T foundDescriptor) {
-            return foundDescriptor;
-        }
-    },
-    IGNORE_KOTLIN_SOURCES {
-        @Override
-        public <T extends DeclarationDescriptor> T processFoundInKotlin(T foundDescriptor) {
-            return null;
-        }
-    };
-
-    public abstract <T extends DeclarationDescriptor> T processFoundInKotlin(T foundDescriptor);
+    //Return immediately if you found descriptor in kotlin sources, if not continue
+    INCLUDE_KOTLIN_SOURCES,
+    //Do not try to find descriptors in kotlin sources.
+    //This flag is mostly used when resolving descriptors from binaries or java descriptors.
+    //It will not prevent from looking into java sources which is often desirable behaviour.
+    //It is not correct because sometimes class from sources can override class from binary since it comes earlier in classpath
+    //and for a thousand more reasons.
+    IGNORE_KOTLIN_SOURCES
 }

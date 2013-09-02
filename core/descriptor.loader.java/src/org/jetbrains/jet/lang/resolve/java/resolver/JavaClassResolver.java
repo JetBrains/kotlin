@@ -149,9 +149,11 @@ public final class JavaClassResolver {
             return builtinClassDescriptor;
         }
 
-        ClassDescriptor kotlinClassDescriptor = cache.getClassResolvedFromSource(qualifiedName);
-        if (kotlinClassDescriptor != null) {
-            return searchRule.processFoundInKotlin(kotlinClassDescriptor);
+        if (searchRule == INCLUDE_KOTLIN_SOURCES) {
+            ClassDescriptor kotlinClassDescriptor = cache.getClassResolvedFromSource(qualifiedName);
+            if (kotlinClassDescriptor != null) {
+                return kotlinClassDescriptor;
+            }
         }
 
         FqNameUnsafe fqName = javaClassToKotlinFqName(qualifiedName);

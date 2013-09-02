@@ -90,10 +90,11 @@ public final class JavaNamespaceResolver {
 
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        // First, let's check that there is no Kotlin package:
-        NamespaceDescriptor kotlinNamespaceDescriptor = cache.getPackageResolvedFromSource(qualifiedName);
-        if (kotlinNamespaceDescriptor != null) {
-            return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
+        if (searchRule == INCLUDE_KOTLIN_SOURCES) {
+            NamespaceDescriptor kotlinNamespaceDescriptor = cache.getPackageResolvedFromSource(qualifiedName);
+            if (kotlinNamespaceDescriptor != null) {
+                return kotlinNamespaceDescriptor;
+            }
         }
 
         if (unresolvedCache.contains(qualifiedName)) {

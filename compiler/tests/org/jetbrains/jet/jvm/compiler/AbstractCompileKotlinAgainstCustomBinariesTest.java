@@ -54,25 +54,29 @@ public abstract class AbstractCompileKotlinAgainstCustomBinariesTest extends Tes
         File ktFile = new File(ktFilePath);
         String testFileWithoutExtension = FileUtil.getNameWithoutExtension(ktFile);
 
-        checkCompiledNamespace(ktFile, LoadDescriptorUtil.TEST_PACKAGE_FQNAME,
-                               new File(ktFile.getParentFile(), testFileWithoutExtension + ".txt"));
+        checkNamespace(ktFile, LoadDescriptorUtil.TEST_PACKAGE_FQNAME,
+                       new File(ktFile.getParentFile(), testFileWithoutExtension + ".txt"));
     }
 
-    private void checkCompiledNamespace(File ktFile, FqName namespaceFqn, File expectedFile) throws IOException {
-        JetCoreEnvironment environment = getEnvironment(ktFile);
-        Project project = environment.getProject();
-
-        List<JetFile> jetFiles = Collections.singletonList(JetTestUtils.loadJetFile(project, ktFile));
-
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
+    private void checkNamespace(File ktFile, FqName namespaceFqn, File expectedFile) throws IOException {
+        BindingContext bindingContext = analyzeFile(ktFile);
 
         NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceFqn);
         assertNotNull("Failed to find namespace: " + namespaceFqn, namespaceDescriptor);
 
         validateAndCompareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
                 DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES), expectedFile);
+    }
+
+    protected BindingContext analyzeFile(File ktFile) throws IOException {
+        JetCoreEnvironment environment = getEnvironment(ktFile);
+        Project project = environment.getProject();
+
+        List<JetFile> jetFiles = Collections.singletonList(JetTestUtils.loadJetFile(project, ktFile));
+
+        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                project, jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
+                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
     }
 
     private JetCoreEnvironment getEnvironment(File ktFile) {
