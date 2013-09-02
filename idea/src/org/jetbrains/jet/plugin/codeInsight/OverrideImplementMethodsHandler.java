@@ -20,6 +20,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -54,6 +55,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
             .setUnitReturnType(false).build();
 
+    private static final Logger LOG = Logger.getInstance(OverrideImplementMethodsHandler.class.getCanonicalName());
+
     public static List<DescriptorClassMember> membersFromDescriptors(
             JetFile file, Iterable<CallableMemberDescriptor> missingImplementations,
             BindingContext bindingContext
@@ -62,9 +65,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
 
             PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor, bindingContext);
-            assert declaration != null : "Can not find declaration for descriptor " + memberDescriptor;
-            DescriptorClassMember member = new DescriptorClassMember(declaration, memberDescriptor);
-            members.add(member);
+            if (declaration == null) {
+                LOG.error("Can not find declaration for descriptor " + memberDescriptor);
+            } else {
+                DescriptorClassMember member = new DescriptorClassMember(declaration, memberDescriptor);
+                members.add(member);
+            }
         }
         return members;
     }
