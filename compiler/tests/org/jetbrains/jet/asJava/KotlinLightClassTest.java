@@ -19,15 +19,10 @@ package org.jetbrains.jet.asJava;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.File;
 import java.util.Arrays;
@@ -139,6 +134,25 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
 
         public void testPackage() throws Exception {
             checkModifiers("test.TestPackage", PUBLIC, FINAL);
+        }
+    }
+
+    public static class CodeWithErrors extends KotlinLightClassTest {
+        @Override
+        protected List<File> getKotlinSourceRoots() {
+            return Collections.singletonList(new File("compiler/testData/asJava/lightClasses/CodeWithErrors.kt"));
+        }
+
+        public void testClassWithErrors() {
+            assertTrue(findMethodsOfClass("test.C").length == 2);
+        }
+
+        public void testPackageWithErrors() {
+            assertTrue(findMethodsOfClass("test.TestPackage").length == 1);
+        }
+
+        private PsiMethod[] findMethodsOfClass(String qualifiedName) {
+            return findClass(qualifiedName).getMethods();
         }
     }
 
