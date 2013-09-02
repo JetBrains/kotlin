@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.Set;
+
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
 public final class DecompiledNavigationUtils {
@@ -71,6 +73,16 @@ public final class DecompiledNavigationUtils {
     //TODO: should be done via some generic mechanism
     @NotNull
     private static DeclarationDescriptor getEffectiveReferencedDescriptor(@NotNull DeclarationDescriptor referencedDescriptor) {
+        if (referencedDescriptor instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) referencedDescriptor;
+            CallableMemberDescriptor.Kind kind = callableMemberDescriptor.getKind();
+            if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                Set<? extends CallableMemberDescriptor> overriddenDescriptors =
+                        callableMemberDescriptor.getOverriddenDescriptors();
+                //TODO: several descriptors
+                return getEffectiveReferencedDescriptor(overriddenDescriptors.iterator().next());
+            }
+        }
         if (referencedDescriptor instanceof VariableDescriptorForObject) {
             ClassDescriptor objectClass = ((VariableDescriptorForObject) referencedDescriptor).getObjectClass();
             if (objectClass.getKind() == ClassKind.OBJECT) {
