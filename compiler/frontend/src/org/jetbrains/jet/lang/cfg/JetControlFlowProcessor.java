@@ -181,7 +181,7 @@ public class JetControlFlowProcessor {
         }
 
         private void visitLabeledExpression(@NotNull String labelName, @NotNull JetExpression labeledExpression) {
-            JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(labeledExpression);
+            JetExpression deparenthesized = JetPsiUtil.deparenthesize(labeledExpression);
             if (deparenthesized != null) {
                 generateInstructions(labeledExpression, inCondition);
             }
@@ -216,7 +216,7 @@ public class JetControlFlowProcessor {
                 }
             }
             else if (operationType == JetTokens.EQ) {
-                JetExpression left = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression.getLeft());
+                JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
                 if (right != null) {
                     generateInstructions(right, false);
                 }
@@ -238,7 +238,7 @@ public class JetControlFlowProcessor {
                 }
             }
             else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
-                JetExpression left = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression.getLeft());
+                JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
                 if (left != null) {
                     generateInstructions(left, false);
                 }

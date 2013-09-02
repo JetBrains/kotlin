@@ -324,9 +324,10 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public JetExpression deparenthesize(
-            @NotNull JetExpression expression,
-            @NotNull final ExpressionTypingContext context) {
+    public JetExpression deparenthesizeWithTypeResolution(
+            @Nullable JetExpression expression,
+            @NotNull final ExpressionTypingContext context
+    ) {
         return JetPsiUtil.deparenthesizeWithResolutionStrategy(expression, true, new Function<JetTypeReference, Void>() {
             @Override
             public Void apply(JetTypeReference reference) {

@@ -864,7 +864,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static void checkLValue(@NotNull BindingTrace trace, @NotNull JetExpression expressionWithParenthesis, boolean canBeThis) {
-        JetExpression expression = JetPsiUtil.deparenthesizeWithNoTypeResolution(expressionWithParenthesis);
+        JetExpression expression = JetPsiUtil.deparenthesize(expressionWithParenthesis);
         if (expression instanceof JetArrayAccessExpression) {
             JetExpression arrayExpression = ((JetArrayAccessExpression) expression).getArrayExpression();
             if (arrayExpression != null) {

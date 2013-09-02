@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.ModifiersChecker;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -228,7 +227,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
 
         JetExpression right = expression.getRight();
-        JetExpression left = leftOperand == null ? null : JetPsiUtil.deparenthesizeWithNoTypeResolution(leftOperand);
+        JetExpression left = leftOperand == null ? null : JetPsiUtil.deparenthesize(leftOperand);
         if (right == null || left == null) {
             temporary.commit();
             return JetTypeInfo.create(null, dataFlowInfo);
@@ -300,7 +299,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(scope).replaceContextDependency(INDEPENDENT);
         JetExpression leftOperand = expression.getLeft();
-        JetExpression left = leftOperand == null ? null : context.expressionTypingServices.deparenthesize(leftOperand, context);
+        JetExpression left = context.expressionTypingServices.deparenthesizeWithTypeResolution(leftOperand, context);
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;

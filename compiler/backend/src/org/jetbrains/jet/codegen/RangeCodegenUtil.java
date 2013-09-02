@@ -63,7 +63,7 @@ public class RangeCodegenUtil {
         // Other binary operations will succeed too, but will be filtered out later (by examining a resolvedCall)
         JetExpression rangeExpression = forExpression.getLoopRange();
         assert rangeExpression != null;
-        JetExpression loopRange = JetPsiUtil.deparenthesizeWithNoTypeResolution(rangeExpression);
+        JetExpression loopRange = JetPsiUtil.deparenthesize(rangeExpression);
         if (loopRange instanceof JetQualifiedExpression) {
             // a.rangeTo(b)
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) loopRange;

@@ -65,12 +65,12 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetExpression deparenthesizeWithNoTypeResolution(@NotNull JetExpression expression) {
-        return deparenthesizeWithNoTypeResolution(expression, true);
+    public static JetExpression deparenthesize(@NotNull JetExpression expression) {
+        return deparenthesize(expression, true);
     }
 
     @Nullable
-    public static JetExpression deparenthesizeWithNoTypeResolution(
+    public static JetExpression deparenthesize(
             @NotNull JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS
     ) {
@@ -78,9 +78,9 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    @Deprecated //Use JetPsiUtil.deparenthesizeWithNoTypeResolution() or ExpressionTypingServices.deparenthesize()
+    @Deprecated //Use JetPsiUtil.deparenthesize() or ExpressionTypingServices.deparenthesize()
     public static JetExpression deparenthesizeWithResolutionStrategy(
-            @NotNull JetExpression expression,
+            @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS,
             @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
     ) {
@@ -504,7 +504,7 @@ public class JetPsiUtil {
     }
 
     public static boolean isNullConstant(@NotNull JetExpression expression) {
-        JetExpression deparenthesized = deparenthesizeWithNoTypeResolution(expression);
+        JetExpression deparenthesized = deparenthesize(expression);
         return deparenthesized instanceof JetConstantExpression && deparenthesized.getNode().getElementType() == JetNodeTypes.NULL;
     }
 

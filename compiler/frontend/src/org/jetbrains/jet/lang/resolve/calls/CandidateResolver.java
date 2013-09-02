@@ -479,7 +479,7 @@ public class CandidateResolver {
     ) {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         if (argumentExpression == null) return;
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesizeWithNoTypeResolution(
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(
                 JetPsiUtil.unwrapFromBlock(argumentExpression), false);
         if (!(deparenthesizedExpression instanceof JetFunctionLiteralExpression)) return;
         JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) deparenthesizedExpression;
