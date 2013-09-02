@@ -382,11 +382,16 @@ public class CandidateResolver {
 
     @Nullable
     private JetExpression getDeferredComputationKeyExpression(@NotNull JetExpression expression) {
-        JetVisitor<JetExpression, Void> selectorExpressionFinder = new JetVisitor<JetExpression, Void>() {
+        return expression.accept(new JetVisitor<JetExpression, Void>() {
+            @Nullable
+            private JetExpression visitInnerExpression(@Nullable JetElement expression) {
+                if (expression == null) return null;
+                return expression.accept(this, null);
+            }
+
             @Override
             public JetExpression visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
-                JetExpression selector = expression.getSelectorExpression();
-                return selector != null ? selector.accept(this, null) : null;
+                return visitInnerExpression(expression.getSelectorExpression());
             }
 
             @Override
@@ -396,20 +401,19 @@ public class CandidateResolver {
 
             @Override
             public JetExpression visitParenthesizedExpression(JetParenthesizedExpression expression, Void data) {
-                return expression.getExpression();
+                return visitInnerExpression(expression.getExpression());
             }
 
             @Override
             public JetExpression visitPrefixExpression(JetPrefixExpression expression, Void data) {
-                JetExpression baseExpression = JetPsiUtil.getBaseExpressionIfLabeledExpression(expression);
-                return baseExpression != null ? baseExpression : expression;
+                return visitInnerExpression(JetPsiUtil.getBaseExpressionIfLabeledExpression(expression));
             }
 
             @Override
             public JetExpression visitBlockExpression(JetBlockExpression expression, Void data) {
                 JetElement lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
                 if (lastStatement != null) {
-                    return lastStatement.accept(this, data);
+                    return visitInnerExpression(lastStatement);
                 }
                 return expression;
             }
@@ -418,8 +422,7 @@ public class CandidateResolver {
             public JetExpression visitBinaryExpression(JetBinaryExpression expression, Void data) {
                 return ExpressionTypingUtils.isBinaryExpressionDependentOnExpectedType(expression) ? expression : null;
             }
-        };
-        return expression.accept(selectorExpressionFinder, null);
+        }, null);
     }
 
     private boolean isFairSafeCallExpression(@NotNull JetExpression expression, @NotNull BindingTrace trace) {
