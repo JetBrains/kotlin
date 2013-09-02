@@ -43,4 +43,17 @@ public final class CompileKotlinAgainstBinariesCustomTest extends AbstractCompil
             Assert.assertFalse("Object property should have valid class", ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
         }
     }
+
+    public void testBrokenJarWithNoClassForObjectProperty() throws Exception {
+        BindingContext context = analyzeFile(new File(
+                "compiler/testData/compileKotlinAgainstBinariesCustom/brokenJarWithNoClassForObjectProperty/brokenJarWithNoClassForObjectProperty.kt"));
+        NamespaceDescriptor namespaceDescriptor = context.get(FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
+        assert namespaceDescriptor != null;
+        Collection<DeclarationDescriptor> allDescriptors = namespaceDescriptor.getMemberScope().getAllDescriptors();
+        Assert.assertEquals(allDescriptors.size(), 1);
+        DeclarationDescriptor descriptor = allDescriptors.iterator().next();
+        Assert.assertTrue(descriptor.getName().asString().equals("Lol"));
+        Assert.assertTrue(descriptor instanceof VariableDescriptorForObject);
+        Assert.assertTrue("Object property should have an error class", ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
+    }
 }
