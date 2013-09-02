@@ -476,12 +476,16 @@ public class CandidateResolver {
     ) {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         if (argumentExpression == null) return;
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesizeWithNoTypeResolution(argumentExpression, false);
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesizeWithNoTypeResolution(
+                JetPsiUtil.unwrapFromBlock(argumentExpression), false);
         if (!(deparenthesizedExpression instanceof JetFunctionLiteralExpression)) return;
         JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) deparenthesizedExpression;
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetType expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT);
+        if (expectedType == null || expectedType == DONT_CARE) {
+            expectedType = argumentTypeResolver.getFunctionLiteralType(functionLiteralExpression, context.scope, context.trace);
+        }
         if (expectedType == null || !KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)
                 || CallResolverUtil.hasUnknownFunctionParameter(expectedType)) {
             return;
@@ -489,6 +493,7 @@ public class CandidateResolver {
         MutableDataFlowInfoForArguments dataFlowInfoForArguments = context.candidateCall.getDataFlowInfoForArguments();
         DataFlowInfo dataFlowInfoForArgument = dataFlowInfoForArguments.getInfo(valueArgument);
 
+        //todo analyze function literal body once in 'dependent' mode, then complete it with respect to expected type
         boolean hasExpectedReturnType = !CallResolverUtil.hasUnknownReturnType(expectedType);
         if (hasExpectedReturnType) {
             TemporaryTraceAndCache temporaryToResolveFunctionLiteral = TemporaryTraceAndCache.create(
@@ -501,7 +506,8 @@ public class CandidateResolver {
                     temporaryToResolveFunctionLiteral.trace, statementExpression, mismatch);
             CallCandidateResolutionContext<D> newContext = context
                     .replaceBindingTrace(errorInterceptingTrace).replaceExpectedType(expectedType)
-                    .replaceDataFlowInfo(dataFlowInfoForArgument).replaceResolutionResultsCache(temporaryToResolveFunctionLiteral.cache);
+                    .replaceDataFlowInfo(dataFlowInfoForArgument).replaceResolutionResultsCache(temporaryToResolveFunctionLiteral.cache)
+                    .replaceContextDependency(ContextDependency.INDEPENDENT);
             JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(
                     argumentExpression, functionLiteralExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
             if (!mismatch[0]) {
@@ -512,8 +518,9 @@ public class CandidateResolver {
             }
         }
         JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeByUnknown(expectedType) : expectedType;
-        CallCandidateResolutionContext<D> newContext = 
-                context.replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument);
+        CallCandidateResolutionContext<D> newContext = context
+                .replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
+                .replaceContextDependency(ContextDependency.INDEPENDENT);
         JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteralExpression, newContext,
                                                                        RESOLVE_FUNCTION_ARGUMENTS).getType();
         constraintSystem.addSubtypeConstraint(

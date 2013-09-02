@@ -172,7 +172,7 @@ public class ArgumentTypeResolver {
         if (expression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression, false);
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesizeWithNoTypeResolution(JetPsiUtil.unwrapFromBlock(expression), false);
         if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
             return getFunctionLiteralTypeInfo(expression, (JetFunctionLiteralExpression) deparenthesizedExpression, context, resolveArgumentsMode);
         }
@@ -201,7 +201,7 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    private JetType getFunctionLiteralType(
+    public JetType getFunctionLiteralType(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull JetScope scope,
             @NotNull BindingTrace trace
