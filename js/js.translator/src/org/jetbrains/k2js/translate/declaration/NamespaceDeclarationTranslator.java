@@ -52,15 +52,15 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private List<JsStatement> translate() {
         // predictable order
         Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation = new THashMap<NamespaceDescriptor, List<JsExpression>>();
-        JsObjectLiteral rootNamespaceDefinition = null;
+        NamespaceDescriptor rootNamespaceDescriptor = null;
 
         for (JetFile file : files) {
             NamespaceDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
             assert descriptor != null;
             NamespaceTranslator translator = descriptorToTranslator.get(descriptor);
             if (translator == null) {
-                if (rootNamespaceDefinition == null) {
-                    rootNamespaceDefinition = getRootPackage(descriptorToDefineInvocation, descriptor);
+                if (rootNamespaceDescriptor == null) {
+                    rootNamespaceDescriptor = getRootPackageDescriptor(descriptorToDefineInvocation, descriptor);
                 }
                 translator = new NamespaceTranslator(descriptor, descriptorToDefineInvocation, context());
                 descriptorToTranslator.put(descriptor, translator);
@@ -69,7 +69,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
             translator.translate(file);
         }
 
-        if (rootNamespaceDefinition == null) {
+        if (rootNamespaceDescriptor == null) {
             return Collections.emptyList();
         }
 
@@ -89,20 +89,22 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         }
 
         vars.addIfHasInitializer(context().classDeclarationTranslator().getDeclaration());
-        vars.addIfHasInitializer(getDeclaration(rootNamespaceDefinition));
+        vars.addIfHasInitializer(getRootPackageDeclaration(descriptorToDefineInvocation.get(rootNamespaceDescriptor)));
         return result;
     }
 
-    private JsObjectLiteral getRootPackage(Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
-            NamespaceDescriptor descriptor) {
+    @NotNull
+    private NamespaceDescriptor getRootPackageDescriptor(
+            @NotNull Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
+            @NotNull NamespaceDescriptor descriptor
+    ) {
         NamespaceDescriptor rootNamespace = descriptor;
         while (DescriptorUtils.isTopLevelDeclaration(rootNamespace)) {
             rootNamespace = (NamespaceDescriptor) rootNamespace.getContainingDeclaration();
         }
 
-        JsObjectLiteral rootNamespaceDefinition = new JsObjectLiteral(true);
-        descriptorToDefineInvocation.put(rootNamespace, createDefineInvocation(rootNamespace, null, rootNamespaceDefinition, context()));
-        return rootNamespaceDefinition;
+        descriptorToDefineInvocation.put(rootNamespace, createDefineInvocation(rootNamespace, null, new JsObjectLiteral(true), context()));
+        return rootNamespace;
     }
 
     static List<JsExpression> createDefineInvocation(
@@ -121,16 +123,8 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         }
     }
 
-    private JsVar getDeclaration(@NotNull JsObjectLiteral rootNamespaceDefinition) {
-        JsExpression packageMapValue;
-        if (context().isEcma5()) {
-            packageMapValue = new JsInvocation(JsAstUtils.CREATE_OBJECT, JsLiteral.NULL,
-                                               new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, Namer.getRootNamespaceName()),
-                                               rootNamespaceDefinition);
-        }
-        else {
-            packageMapValue = rootNamespaceDefinition;
-        }
-        return new JsVar(context().scope().declareName(Namer.getRootNamespaceName()), packageMapValue);
+    private JsVar getRootPackageDeclaration(@NotNull List<JsExpression> defineInvocation) {
+        JsExpression rootPackageVar = new JsInvocation(context().namer().rootPackageDefinitionMethodReference(), defineInvocation);
+        return new JsVar(context().scope().declareName(Namer.getRootNamespaceName()), rootPackageVar);
     }
 }

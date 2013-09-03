@@ -55,9 +55,8 @@ public class RegressionMergeEcmaTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    //TODO
-    public void TestRootPackageValInit() throws Exception {
-        checkFooBoxIsOk();
+    public void testRootPackageValInit() throws Exception {
+        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, getTestName(true) + ".kt", "_", "box", "OK");
     }
 
     public void testIsClassSupport() throws Exception {

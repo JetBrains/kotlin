@@ -159,6 +159,8 @@ public final class Namer {
     @NotNull
     private final JsExpression definePackage;
     @NotNull
+    private final JsExpression defineRootPackage;
+    @NotNull
     private final JsName objectName;
     @NotNull
     private final JsName enumEntriesName;
@@ -172,6 +174,7 @@ public final class Namer {
         traitName = kotlinScope.declareName(TRAIT_OBJECT_NAME);
 
         definePackage = kotlin("definePackage");
+        defineRootPackage = kotlin("defineRootPackage");
 
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
         enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
@@ -198,6 +201,11 @@ public final class Namer {
     @NotNull
     public JsExpression packageDefinitionMethodReference() {
         return definePackage;
+    }
+
+    @NotNull
+    public JsExpression rootPackageDefinitionMethodReference() {
+        return defineRootPackage;
     }
 
     @NotNull

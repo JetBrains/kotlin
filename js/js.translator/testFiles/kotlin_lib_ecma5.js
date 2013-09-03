@@ -244,11 +244,22 @@ var KotlinNew = {};
         }
     };
 
+    KotlinNew.defineRootPackage = function (initializer, members) {
+        var definition = Object.create(null, members === null ? undefined : members);
+
+        if (initializer === null) {
+            definition.$initializer = emptyFunction;
+        } else {
+            definition.$initializer = initializer;
+        }
+        return definition;
+      };
+
     KotlinNew.defineModule = function (id, module) {
         if (id in Kotlin.modules) {
-            throw Kotlin.$new(Kotlin.IllegalArgumentException)();
+            throw new Kotlin.IllegalArgumentException();
         }
-
+        module.$initializer.call(module);
         Object.defineProperty(Kotlin.modules, id, {value: module});
     };
 
@@ -308,6 +319,10 @@ var Kotlin = Object.create(null);
 
     Kotlin.definePackage = function (initializer, members) {
         return KotlinNew.definePackage(initializer, members);
+    };
+
+    Kotlin.defineRootPackage = function (initializer, members) {
+        return KotlinNew.defineRootPackage(initializer, members);
     };
 
     Kotlin.defineModule = function (id, module) {

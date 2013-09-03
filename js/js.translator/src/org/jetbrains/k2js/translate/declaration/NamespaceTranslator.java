@@ -197,14 +197,7 @@ final class NamespaceTranslator extends AbstractTranslator {
             if (initializer != null) {
                 JsExpression value = Translation.translateAsExpression(initializer, initializerContext);
                 PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), property);
-                if (value instanceof JsLiteral) {
-                    result.add(new JsPropertyInitializer(context.getNameForDescriptor(propertyDescriptor).makeRef(),
-                                                         context().isEcma5() ? JsAstUtils
-                                                                 .createPropertyDataDescriptor(propertyDescriptor, value) : value));
-                }
-                else {
-                    initializerStatements.add(generateInitializerForProperty(context, propertyDescriptor, value));
-                }
+                initializerStatements.add(generateInitializerForProperty(context, propertyDescriptor, value));
             }
 
             JsStatement delegate = generateInitializerForDelegate(context, property);
