@@ -42,6 +42,7 @@ import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
+import org.jetbrains.jet.plugin.configuration.AbstractConfigureGradleProjectTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
@@ -454,6 +455,14 @@ public class GenerateTests {
                 "JetFindUsagesTest",
                 AbstractJetFindUsagesTest.class,
                 testModelWithPattern("idea/testData/findUsages", "^(.+).0.kt$", "doTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "ConfigureGradleProjectTestGenerated",
+                AbstractConfigureGradleProjectTest.class,
+                new SimpleTestClassModel(new File("idea/testData/configuration/android-gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestAndroidGradle"),
+                new SimpleTestClassModel(new File("idea/testData/configuration/gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestGradle")
         );
     }
 

@@ -1,0 +1,34 @@
+buildscript {
+    ext.kotlin_version = '$VERSION$'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$ext.kotlin_version"
+    }
+}
+
+apply plugin: 'android'
+apply plugin: 'kotlin-android'
+
+android {
+    target = 'android-16'
+    productFlavors {
+        playstore {
+            packageName = 'com.example.android.gradle.productflavors.playstore'
+        }
+        amazonappstore {
+            packageName = 'com.example.android.gradle.productflavors.amazonappstore'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$ext.kotlin_version"
+}

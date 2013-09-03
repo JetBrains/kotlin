@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 
 import java.io.File;
@@ -42,7 +43,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
-        return true;
+        return !JetPluginUtil.isAndroidGradleModule(module) && !JetPluginUtil.isMavenModule(module) && !JetPluginUtil.isGradleModule(module);
     }
 
     public boolean isJarPresent(@NotNull String dir) {

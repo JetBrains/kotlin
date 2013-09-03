@@ -1,0 +1,45 @@
+buildscript {
+    ext.kotlin_version = '$VERSION$'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$ext.kotlin_version"
+    }
+}
+
+apply plugin: 'android-library'
+apply plugin: 'kotlin-android'
+apply plugin: 'maven'
+
+repositories {
+    maven { url '../testrepo' }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.example.android.multiproject:util:1.0'
+    releaseCompile 'com.google.guava:guava:11.0.2'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$ext.kotlin_version"
+}
+
+android {
+    compileSdkVersion 15
+    buildToolsVersion "17.0"
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+group = 'com.example.android.multiproject'
+archivesBaseName = 'baseLib'
+version = '1.0'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri("../testrepo"))
+        }
+    }
+}
