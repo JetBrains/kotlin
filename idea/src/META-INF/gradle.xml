@@ -1,5 +1,4 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureAndroidGradleProjectNotification"/>
   </extensions>
 </idea-plugin>
