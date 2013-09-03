@@ -1,7 +1,5 @@
 package org.jetbrains.jet.plugin.configuration;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -24,7 +22,7 @@ import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 
 import java.io.File;
 
-import static com.intellij.notification.Notifications.Bus;
+import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
 public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConfigurator {
 
@@ -266,10 +264,6 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             showInfoNotification(file.getName() + " was copied to " + toDir);
         }
         return copy;
-    }
-
-    private static void showInfoNotification(@NotNull String message) {
-        Bus.notify(new Notification("Configure Kotlin", "Configure Kotlin", message, NotificationType.INFORMATION));
     }
 
     protected boolean needToChooseJarPath(@NotNull Project project) {
