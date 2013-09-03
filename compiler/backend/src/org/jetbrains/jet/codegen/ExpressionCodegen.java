@@ -2138,12 +2138,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        int mask = pushMethodArguments(resolvedCall, callableMethod.getValueParameterTypes());
+        pushArgumentsAndInvoke(resolvedCall, callableMethod);
+    }
+
+    private void pushArgumentsAndInvoke(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableMethod callable) {
+        int mask = pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
         if (mask == 0) {
-            callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
+            callable.invokeWithNotNullAssertion(v, state, resolvedCall);
         }
         else {
-            callableMethod.invokeDefaultWithNotNullAssertion(v, state, resolvedCall, mask);
+            callable.invokeDefaultWithNotNullAssertion(v, state, resolvedCall, mask);
         }
     }
 
@@ -2947,8 +2951,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             receiver.put(receiver.type, v);
         }
 
-        pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
-        callable.invokeWithNotNullAssertion(v, state, resolvedCall);
+        pushArgumentsAndInvoke(resolvedCall, callable);
+
         if (keepReturnValue) {
             value.store(callable.getReturnType(), v);
         }
@@ -3038,8 +3042,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
         assert resolvedCall != null;
         genThisAndReceiverFromResolvedCall(StackValue.none(), resolvedCall, callable);
-        pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
-        callable.invokeWithNotNullAssertion(v, state, resolvedCall);
+        pushArgumentsAndInvoke(resolvedCall, callable);
 
         return returnValueAsStackValue(op, callable.getSignature().getAsmMethod().getReturnType());
     }

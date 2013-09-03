@@ -1607,6 +1607,31 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("augmentedAssignment.kt")
+            public void testAugmentedAssignment() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/augmentedAssignment.kt");
+            }
+            
+            @TestMetadata("augmentedAssignmentViaBinaryExpression.kt")
+            public void testAugmentedAssignmentViaBinaryExpression() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/augmentedAssignmentViaBinaryExpression.kt");
+            }
+            
+            @TestMetadata("binaryCall.kt")
+            public void testBinaryCall() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/binaryCall.kt");
+            }
+            
+            @TestMetadata("binaryExpression.kt")
+            public void testBinaryExpression() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/binaryExpression.kt");
+            }
+            
+            @TestMetadata("contains.kt")
+            public void testContains() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/contains.kt");
+            }
+            
             @TestMetadata("extentionFunction.kt")
             public void testExtentionFunction() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunction.kt");
