@@ -1,0 +1,22 @@
+<component name="libraryTable">
+  <library name="maven">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/maven/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/src/test/java" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/jps-plugin/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/jps-plugin/testSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/maven-server-api/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/maven2-server-impl/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/maven2-server-impl/test" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/maven3-server-impl/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/maven3-server-impl/test" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/artifact-resolver-m2/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/maven/artifact-resolver-m3/src" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/maven/lib" recursive="false" />
+  </library>
+</component>

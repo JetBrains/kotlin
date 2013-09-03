@@ -41,6 +41,7 @@
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="serialization.java" />
     <orderEntry type="module" module-name="descriptor.loader.java" />
+    <orderEntry type="library" scope="PROVIDED" name="maven" level="project" />
   </component>
 </module>
 

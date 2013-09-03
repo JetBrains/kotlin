@@ -1,0 +1,4 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+  </extensions>
+</idea-plugin>
