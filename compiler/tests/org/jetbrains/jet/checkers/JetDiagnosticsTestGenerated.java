@@ -4748,7 +4748,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/resolve")
-        @InnerTestClasses({Resolve.Invoke.class, Resolve.SpecialConstructions.class})
+        @InnerTestClasses({Resolve.Invoke.class, Resolve.NestedCalls.class, Resolve.SpecialConstructions.class})
         public static class Resolve extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInResolve() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4817,6 +4817,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls")
+            public static class NestedCalls extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInNestedCalls() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve/nestedCalls"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("analyzeArgsInFreeExpressionPosition.kt")
+                public void testAnalyzeArgsInFreeExpressionPosition() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/analyzeArgsInFreeExpressionPosition.kt");
+                }
+                
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions")
             public static class SpecialConstructions extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInSpecialConstructions() throws Exception {
@@ -4844,6 +4857,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 TestSuite suite = new TestSuite("Resolve");
                 suite.addTestSuite(Resolve.class);
                 suite.addTestSuite(Invoke.class);
+                suite.addTestSuite(NestedCalls.class);
                 suite.addTestSuite(SpecialConstructions.class);
                 return suite;
             }

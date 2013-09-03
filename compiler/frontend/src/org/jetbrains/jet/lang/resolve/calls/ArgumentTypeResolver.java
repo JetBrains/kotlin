@@ -180,8 +180,8 @@ public class ArgumentTypeResolver {
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
-        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(
-                ContextDependency.DEPENDENT);
+        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+                .replaceContextDependency(ContextDependency.DEPENDENT).replaceExpressionPosition(ExpressionPosition.FREE);
 
         return expressionTypingServices.getTypeInfo(expression, newContext);
     }
