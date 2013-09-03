@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -41,6 +42,7 @@ public class InjectorForTests {
     private final CallResolver callResolver;
     private final NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
     private final KotlinBuiltIns kotlinBuiltIns;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
     private final AnnotationResolver annotationResolver;
@@ -59,6 +61,7 @@ public class InjectorForTests {
         this.callResolver = new CallResolver();
         this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
         this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
         this.annotationResolver = new AnnotationResolver();
@@ -74,6 +77,7 @@ public class InjectorForTests {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 

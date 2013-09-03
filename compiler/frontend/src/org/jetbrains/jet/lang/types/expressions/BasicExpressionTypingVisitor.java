@@ -23,6 +23,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
@@ -75,8 +76,12 @@ import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
-    protected BasicExpressionTypingVisitor(@NotNull ExpressionTypingInternals facade) {
+
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
+
+    protected BasicExpressionTypingVisitor(@NotNull ExpressionTypingInternals facade, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
         super(facade);
+        this.platformToKotlinClassMap = platformToKotlinClassMap;
     }
 
     @Override

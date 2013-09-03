@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -54,8 +55,8 @@ import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION
 
 public class ExpressionTypingServices {
 
-    private final ExpressionTypingFacade expressionTypingFacade = ExpressionTypingVisitorDispatcher.create();
-
+    @NotNull
+    private ExpressionTypingFacade expressionTypingFacade;
     @NotNull
     private Project project;
     @NotNull
@@ -66,8 +67,8 @@ public class ExpressionTypingServices {
     private DescriptorResolver descriptorResolver;
     @NotNull
     private TypeResolver typeResolver;
-
-
+    @NotNull
+    private PlatformToKotlinClassMap platformToKotlinClassMap;
 
     @NotNull
     public Project getProject() {
@@ -117,6 +118,17 @@ public class ExpressionTypingServices {
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
+    }
+
+    @Inject
+    public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+        this.platformToKotlinClassMap = platformToKotlinClassMap;
+        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(platformToKotlinClassMap);
+    }
+
+    @NotNull
+    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+        return platformToKotlinClassMap;
     }
 
     @NotNull
@@ -247,7 +259,7 @@ public class ExpressionTypingServices {
             return JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
         }
 
-        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(scope);
+        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(platformToKotlinClassMap, scope);
         ExpressionTypingContext newContext = createContext(context, trace, scope, context.dataFlowInfo, NO_EXPECTED_TYPE);
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
@@ -271,7 +283,7 @@ public class ExpressionTypingServices {
             if (newDataFlowInfo != context.dataFlowInfo) {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
             }
-            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(scope);
+            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(platformToKotlinClassMap, scope);
         }
         return result;
     }

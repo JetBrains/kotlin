@@ -163,7 +163,7 @@ public class TopDownAnalyzer {
                 Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
-                KotlinBuiltIns.getInstance().getBuiltInsModule());
+                KotlinBuiltIns.getInstance().getBuiltInsModule(), PlatformToKotlinClassMap.EMPTY);
 
         injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryNamespace, files);
     }
@@ -196,7 +196,8 @@ public class TopDownAnalyzer {
                 false, true, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace), moduleDescriptor);
+                object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace),
+                moduleDescriptor, context.expressionTypingServices.getPlatformToKotlinClassMap());
 
         injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
 

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -64,6 +65,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ModuleDescriptorImpl moduleDescriptor;
     private final DependencyClassByQualifiedNameResolverDummyImpl dependencyClassByQualifiedNameResolverDummy;
     private final NamespaceFactoryImpl namespaceFactory;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationResolver declarationResolver;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -100,6 +102,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.moduleDescriptor = moduleDescriptor;
         this.dependencyClassByQualifiedNameResolverDummy = new DependencyClassByQualifiedNameResolverDummyImpl();
         this.namespaceFactory = new NamespaceFactoryImpl();
+        this.platformToKotlinClassMap = org.jetbrains.jet.lang.PlatformToKotlinClassMap.EMPTY;
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -175,6 +178,7 @@ public class InjectorForTopDownAnalyzerForJs {
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
