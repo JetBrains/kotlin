@@ -23,13 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface PsiClassFinder {
-    enum RuntimeClassesHandleMode {
-        REPORT_ERROR,
-        IGNORE,
-    }
-
     @Nullable
-    PsiClass findPsiClass(@NotNull FqName fqName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode);
+    PsiClass findPsiClass(@NotNull FqName fqName);
 
     @Nullable
     PsiPackage findPsiPackage(@NotNull FqName fqName);

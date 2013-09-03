@@ -181,7 +181,7 @@ public final class JavaNamespaceResolver {
             return new JavaPackageScope(namespaceDescriptor, psiPackage, fqName, javaDescriptorResolver);
         }
 
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
         if (psiClass == null) {
             return null;
         }

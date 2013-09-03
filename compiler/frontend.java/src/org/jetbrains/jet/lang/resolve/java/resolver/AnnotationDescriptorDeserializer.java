@@ -123,7 +123,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (fileForKotlinFile != null) {
             return fileForKotlinFile;
         }
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE /* TODO: ?! */);
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
         if (psiClass == null) {
             throw new IllegalStateException("Psi class is not found for class: " + descriptor);
         }

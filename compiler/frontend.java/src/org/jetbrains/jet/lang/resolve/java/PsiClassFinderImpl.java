@@ -16,29 +16,22 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 public class PsiClassFinderImpl implements PsiClassFinder {
-    private static final Logger LOG = Logger.getInstance(PsiClassFinderImpl.class);
-
     @NotNull
     private Project project;
 
@@ -78,10 +71,9 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         javaFacade = new JavaPsiFacadeKotlinHacks(project);
     }
 
-
     @Override
     @Nullable
-    public PsiClass findPsiClass(@NotNull FqName qualifiedName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode) {
+    public PsiClass findPsiClass(@NotNull FqName qualifiedName) {
         PsiClass original = javaFacade.findClass(qualifiedName.asString(), javaSearchScope);
 
         if (original != null) {
@@ -94,31 +86,6 @@ public class PsiClassFinderImpl implements PsiClassFinder {
 
         if (original instanceof JetJavaMirrorMarker) {
             throw new IllegalStateException("JetJavaMirrorMaker is not possible in resolve.java, resolving: " + qualifiedName);
-        }
-
-        if (original == null) {
-            return null;
-        }
-
-        if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            PsiAnnotation assertInvisibleAnnotation = JavaAnnotationResolver.findOwnAnnotation(
-                    original, JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().asString());
-
-            if (assertInvisibleAnnotation != null) {
-                switch (runtimeClassesHandleMode) {
-                    case IGNORE:
-                        break;
-                    case REPORT_ERROR:
-                        if (ApplicationManager.getApplication().isInternal()) {
-                            LOG.error("classpath is configured incorrectly:" +
-                                      " class " + qualifiedName + " from runtime must not be loaded by compiler");
-                        }
-                        break;
-                    default:
-                        throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
-                }
-                return null;
-            }
         }
 
         return original;
