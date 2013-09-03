@@ -63,6 +63,7 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.PLACEHOLDER_
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.*;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
@@ -338,15 +339,10 @@ public class CandidateResolver {
             @NotNull ValueParameterDescriptor parameterDescriptor,
             @NotNull CallCandidateResolutionContext<D> context
     ) {
-        ConstraintSystem constraintSystem = context.candidateCall.getConstraintSystem();
-
         JetExpression expression = argument.getArgumentExpression();
         if (expression == null) return;
 
-        JetType effectiveExpectedType = getEffectiveExpectedType(parameterDescriptor, argument);
-        JetType expectedType = constraintSystem != null
-                               ? constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
-                               : effectiveExpectedType;
+        JetType expectedType = getEffectiveExpectedType(parameterDescriptor, argument);
         context = context.replaceExpectedType(expectedType);
 
         JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
@@ -365,8 +361,7 @@ public class CandidateResolver {
         }
 
         CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = storedContextForArgument
-                .replaceContextDependency(ContextDependency.INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(
-                        expectedType);
+                .replaceContextDependency(INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
         JetType type;
         if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
             type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
@@ -510,7 +505,7 @@ public class CandidateResolver {
             CallCandidateResolutionContext<D> newContext = context
                     .replaceBindingTrace(errorInterceptingTrace).replaceExpectedType(expectedType)
                     .replaceDataFlowInfo(dataFlowInfoForArgument).replaceResolutionResultsCache(temporaryToResolveFunctionLiteral.cache)
-                    .replaceContextDependency(ContextDependency.INDEPENDENT);
+                    .replaceContextDependency(INDEPENDENT);
             JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(
                     argumentExpression, functionLiteralExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
             if (!mismatch[0]) {
@@ -523,7 +518,7 @@ public class CandidateResolver {
         JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeByUnknown(expectedType) : expectedType;
         CallCandidateResolutionContext<D> newContext = context
                 .replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
-                .replaceContextDependency(ContextDependency.INDEPENDENT);
+                .replaceContextDependency(INDEPENDENT);
         JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteralExpression, newContext,
                                                                        RESOLVE_FUNCTION_ARGUMENTS).getType();
         constraintSystem.addSubtypeConstraint(

@@ -2820,6 +2820,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/noInformationForParameter.kt");
             }
             
+            @TestMetadata("opposite.kt")
+            public void testOpposite() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/opposite.kt");
+            }
+            
             @TestMetadata("possibleCycleOnConstraints.kt")
             public void testPossibleCycleOnConstraints() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/possibleCycleOnConstraints.kt");
