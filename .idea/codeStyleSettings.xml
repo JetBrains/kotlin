@@ -110,11 +110,8 @@
           </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="Groovy">
-          <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
-          <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
           <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
           <option name="ELSE_ON_NEW_LINE" value="true" />
-          <option name="WHILE_ON_NEW_LINE" value="true" />
           <option name="CATCH_ON_NEW_LINE" value="true" />
           <option name="FINALLY_ON_NEW_LINE" value="true" />
           <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
@@ -123,7 +120,6 @@
           <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
           <option name="ALIGN_MULTILINE_THROWS_LIST" value="true" />
           <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
-          <option name="ALIGN_MULTILINE_PARENTHESIZED_EXPRESSION" value="true" />
           <option name="SPACE_AFTER_TYPE_CAST" value="false" />
           <option name="CALL_PARAMETERS_WRAP" value="1" />
           <option name="METHOD_PARAMETERS_WRAP" value="5" />
@@ -134,12 +130,9 @@
           <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
           <option name="BINARY_OPERATION_WRAP" value="5" />
           <option name="TERNARY_OPERATION_WRAP" value="5" />
-          <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
           <option name="FOR_STATEMENT_WRAP" value="5" />
-          <option name="ARRAY_INITIALIZER_WRAP" value="1" />
           <option name="ASSIGNMENT_WRAP" value="1" />
           <option name="IF_BRACE_FORCE" value="1" />
-          <option name="DOWHILE_BRACE_FORCE" value="1" />
           <option name="WHILE_BRACE_FORCE" value="1" />
           <option name="FOR_BRACE_FORCE" value="1" />
           <option name="FIELD_ANNOTATION_WRAP" value="0" />
