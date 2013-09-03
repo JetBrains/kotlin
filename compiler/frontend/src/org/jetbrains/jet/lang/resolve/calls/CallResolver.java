@@ -282,8 +282,9 @@ public class CallResolver {
         BasicCallResolutionContext basicCallResolutionContext =
                 BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED, dataFlowInfoForArguments);
 
-        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks = TaskPrioritizer
-                .computePrioritizedTasksFromCandidates(basicCallResolutionContext, reference, Collections.singleton(candidate), tracing);
+        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
+                TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
+                        basicCallResolutionContext, reference, Collections.singleton(candidate), tracing);
         return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE, basicCallResolutionContext, tasks,
                                                CallTransformer.FUNCTION_CALL_TRANSFORMER, reference);
     }
