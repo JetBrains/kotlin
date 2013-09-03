@@ -23,6 +23,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -456,21 +457,31 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static JetType substituteParameters(@NotNull ClassDescriptor clazz, @NotNull List<JetType> actualTypeParameters) {
-        List<TypeParameterDescriptor> clazzTypeParameters = clazz.getTypeConstructor().getParameters();
+    public static JetType substituteParameters(@NotNull ClassDescriptor clazz, @NotNull List<JetType> typeArguments) {
+        List<TypeProjection> projections = ContainerUtil.map(typeArguments, new com.intellij.util.Function<JetType, TypeProjection>() {
+            @Override
+            public TypeProjection fun(JetType type) {
+                return new TypeProjection(type);
+            }
+        });
 
-        if (clazzTypeParameters.size() != actualTypeParameters.size()) {
-            throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + actualTypeParameters);
+        return substituteProjectionsForParameters(clazz, projections);
+    }
+
+    @NotNull
+    public static JetType substituteProjectionsForParameters(@NotNull ClassDescriptor clazz, @NotNull List<TypeProjection> projections) {
+        List<TypeParameterDescriptor> clazzTypeParameters = clazz.getTypeConstructor().getParameters();
+        if (clazzTypeParameters.size() != projections.size()) {
+            throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + projections);
         }
-        
+
         Map<TypeConstructor, TypeProjection> substitutions = Maps.newHashMap();
-        
+
         for (int i = 0; i < clazzTypeParameters.size(); ++i) {
             TypeConstructor typeConstructor = clazzTypeParameters.get(i).getTypeConstructor();
-            TypeProjection typeProjection = new TypeProjection(actualTypeParameters.get(i));
-            substitutions.put(typeConstructor, typeProjection);
+            substitutions.put(typeConstructor, projections.get(i));
         }
-        
+
         return TypeSubstitutor.create(substitutions).substitute(clazz.getDefaultType(), Variance.INVARIANT);
     }
 
