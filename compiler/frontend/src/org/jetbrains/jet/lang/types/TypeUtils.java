@@ -353,13 +353,18 @@ public class TypeUtils {
 
     @NotNull
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
-        if (ErrorUtils.isError(classDescriptor)) {
-            return ErrorUtils.createErrorType("Unsubstituted type for " + classDescriptor);
+        return makeUnsubstitutedType(classDescriptor.getTypeConstructor(), unsubstitutedMemberScope);
+    }
+
+    @NotNull
+    public static JetType makeUnsubstitutedType(TypeConstructor typeConstructor, JetScope unsubstitutedMemberScope) {
+        if (ErrorUtils.isError(typeConstructor)) {
+            return ErrorUtils.createErrorType("Unsubstituted type for " + typeConstructor);
         }
-        List<TypeProjection> arguments = getDefaultTypeProjections(classDescriptor.getTypeConstructor().getParameters());
+        List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
         return new JetTypeImpl(
                 Collections.<AnnotationDescriptor>emptyList(),
-                classDescriptor.getTypeConstructor(),
+                typeConstructor,
                 false,
                 arguments,
                 unsubstitutedMemberScope

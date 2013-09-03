@@ -1,6 +1,8 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -8,10 +10,12 @@ import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class CastDiagnosticsUtil {
 
@@ -44,11 +48,8 @@ public class CastDiagnosticsUtil {
         List<JetType> aTypes = mapToPlatformIndependentTypes(a, platformToKotlinClassMap);
         List<JetType> bTypes = mapToPlatformIndependentTypes(b, platformToKotlinClassMap);
 
-        for (int i = 0; i < aTypes.size(); i++) {
-            JetType aType = aTypes.get(i);
-            for (int j = 0; j < bTypes.size(); j++) {
-                JetType bType = bTypes.get(j);
-
+        for (JetType aType : aTypes) {
+            for (JetType bType : bTypes) {
                 if (JetTypeChecker.INSTANCE.isSubtypeOf(aType, bType)) return true;
                 if (JetTypeChecker.INSTANCE.isSubtypeOf(bType, aType)) return true;
             }
@@ -89,6 +90,83 @@ public class CastDiagnosticsUtil {
     private static boolean isTrait(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.TRAIT;
+    }
+
+    /**
+     * Check if cast from supertype to subtype is erased.
+     * It is an error in "is" statement and warning in "as".
+     */
+    public static boolean isCastErased(@NotNull JetType supertype, @NotNull JetType subtype, @NotNull JetTypeChecker typeChecker) {
+        // cast between T and T? is always OK
+        if (supertype.isNullable() || subtype.isNullable()) {
+            return isCastErased(TypeUtils.makeNotNullable(supertype), TypeUtils.makeNotNullable(subtype), typeChecker);
+        }
+
+        // if it is a upcast, it's never erased
+        if (typeChecker.isSubtypeOf(supertype, subtype)) return false;
+
+        // downcasting to a type parameter is always erased
+        if (isTypeParameter(subtype)) return true;
+
+        // Check that we are actually casting to a generic type
+        // NOTE: this does not account for 'as Array<List<T>>'
+        if (allParametersReified(subtype)) return false;
+
+        // Assume we are casting an expression of type Collection<Foo> to List<Bar>
+        // First, let's make List<T>, where T is a type variable
+        JetType subtypeWithVariables = TypeUtils.makeUnsubstitutedType(
+                subtype.getConstructor(),
+                ErrorUtils.createErrorScope("Scope for intermediate type. This type shouldn't be used outside isCastErased()", true));
+
+        // Now, let's find a supertype of List<T> that is a Collection of something,
+        // in this case it will be Collection<T>
+        JetType supertypeWithVariables = TypeCheckingProcedure.findCorrespondingSupertype(subtypeWithVariables, supertype);
+        if (supertypeWithVariables == null) return true;
+
+        // Now, let's try to unify Collection<T> and Collection<Foo>
+        // solution is a map from T to Foo
+        final List<TypeParameterDescriptor> variables = subtypeWithVariables.getConstructor().getParameters();
+        TypeUnifier.UnificationResult solution = TypeUnifier.unify(
+                new TypeProjection(supertype), new TypeProjection(supertypeWithVariables),
+                new Predicate<TypeConstructor>() {
+                    @Override
+                    public boolean apply(TypeConstructor typeConstructor) {
+                        ClassifierDescriptor descriptor = typeConstructor.getDeclarationDescriptor();
+                        return descriptor instanceof TypeParameterDescriptor && variables.contains(descriptor);
+                    }
+                });
+
+        // If some of the parameters are not determined by unification, it means that these parameters are lost,
+        // let's put stars instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
+        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap(solution.getSubstitution());
+        for (TypeParameterDescriptor variable : variables) {
+            TypeProjection value = substitution.get(variable.getTypeConstructor());
+            if (value == null) {
+                substitution.put(
+                        variable.getTypeConstructor(),
+                        SubstitutionUtils.makeStarProjection(variable)
+                );
+            }
+        }
+
+        // At this point we have values for all type parameters of List
+        // Let's make a type by substituting them: List<T> -> List<Foo>
+        JetType staticallyKnownSubtype = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT);
+
+        // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
+        // In this case, we can't guarantee anything, so the cast is considered to be erased
+        if (staticallyKnownSubtype == null) return true;
+
+        // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
+        // If not, it's wrong to use it
+        return !typeChecker.isSubtypeOf(staticallyKnownSubtype, subtype);
+    }
+
+    private static boolean allParametersReified(JetType subtype) {
+        for (TypeParameterDescriptor parameterDescriptor : subtype.getConstructor().getParameters()) {
+            if (!parameterDescriptor.isReified()) return false;
+        }
+        return true;
     }
 
     private CastDiagnosticsUtil() {}
