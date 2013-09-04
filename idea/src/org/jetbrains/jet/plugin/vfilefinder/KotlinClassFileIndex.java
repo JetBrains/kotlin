@@ -13,7 +13,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
@@ -60,8 +59,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
             try {
                 KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(inputData.getFile());
                 if (header.isKotlinCompiledFile()) {
-                    FqName fqName = header.getJvmClassName().getFqName();
-                    return Collections.singletonMap(fqName, null);
+                    return Collections.singletonMap(header.getFqName(), null);
                 }
             }
             catch (Throwable e) {

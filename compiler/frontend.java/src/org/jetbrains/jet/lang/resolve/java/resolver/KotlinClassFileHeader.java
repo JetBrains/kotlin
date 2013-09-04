@@ -13,6 +13,7 @@ import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.IOException;
@@ -102,10 +103,13 @@ public final class KotlinClassFileHeader {
         return type.isValidAnnotation() && isAbiVersionCompatible(version);
     }
 
+    /**
+     * @return FQ name for class header or package class FQ name for package header (e.g. <code>test.TestPackage</code>)
+     */
     @NotNull
-    public JvmClassName getJvmClassName() {
+    public FqName getFqName() {
         assert jvmClassName != null;
-        return jvmClassName;
+        return jvmClassName.getFqName();
     }
 
     public String[] getAnnotationData() {

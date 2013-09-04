@@ -69,7 +69,7 @@ public final class DecompiledDataFactory {
     }
 
     private JetDecompiledData build() {
-        FqName packageFqName = kotlinClassFileHeader.getJvmClassName().getFqName().parent();
+        FqName packageFqName = kotlinClassFileHeader.getFqName().parent();
         appendDecompiledTextAndPackageName(packageFqName);
         KotlinClassFileHeader.HeaderType type = kotlinClassFileHeader.getType();
         if (type == KotlinClassFileHeader.HeaderType.PACKAGE) {
@@ -87,8 +87,7 @@ public final class DecompiledDataFactory {
         }
         else {
             assert type == KotlinClassFileHeader.HeaderType.CLASS;
-            ClassDescriptor cd = javaDescriptorResolver.resolveClass(kotlinClassFileHeader.getJvmClassName().getFqName(),
-                                                                     INCLUDE_KOTLIN_SOURCES);
+            ClassDescriptor cd = javaDescriptorResolver.resolveClass(kotlinClassFileHeader.getFqName(), INCLUDE_KOTLIN_SOURCES);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
