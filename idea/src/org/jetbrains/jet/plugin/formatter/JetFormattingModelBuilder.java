@@ -36,11 +36,11 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
         PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(JetLanguage.INSTANCE);
         JetBlock block = new JetBlock(
-            containingFile.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
-            createSpacingBuilder(settings));
+                containingFile.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
+                createSpacingBuilder(settings));
 
         return FormattingModelProvider.createFormattingModelForPsiFile(
-            element.getContainingFile(), block, settings);
+                element.getContainingFile(), block, settings);
     }
 
     private static SpacingBuilder createSpacingBuilder(CodeStyleSettings settings) {
@@ -106,7 +106,15 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
 
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
-                .aroundInside(ARROW, WHEN_ENTRY).spaces(1)
+                .beforeInside(ARROW, FUNCTION_LITERAL).spaceIf(jetSettings.SPACE_BEFORE_LAMBDA_ARROW)
+
+                //when
+                .aroundInside(ARROW, WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
+                .beforeInside(LBRACE, WHEN).spacing(1, 1, 0, true, 0)          //omit blank lines before '{' in 'when' statement
+
+                .aroundInside(ARROW, FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
+
+                .betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spaces(1)
                 ;
     }
 
