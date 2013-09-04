@@ -867,6 +867,11 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoClosure2.kt");
         }
         
+        @TestMetadata("intoClosureWithParams1.kt")
+        public void testIntoClosureWithParams1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoClosureWithParams1.kt");
+        }
+        
         @TestMetadata("intoNestedClosure1.kt")
         public void testIntoNestedClosure1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosure1.kt");
@@ -875,6 +880,11 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         @TestMetadata("intoNestedClosure2.kt")
         public void testIntoNestedClosure2() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosure2.kt");
+        }
+        
+        @TestMetadata("intoNestedClosureWithParams1.kt")
+        public void testIntoNestedClosureWithParams1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosureWithParams1.kt");
         }
         
         @TestMetadata("lambda1.kt")
@@ -902,6 +912,11 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure2.kt");
         }
         
+        @TestMetadata("outOfClosureWithParams1.kt")
+        public void testOutOfClosureWithParams1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfClosureWithParams1.kt");
+        }
+        
         @TestMetadata("outOfNestedClosure1.kt")
         public void testOutOfNestedClosure1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosure1.kt");
@@ -910,6 +925,11 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         @TestMetadata("outOfNestedClosure2.kt")
         public void testOutOfNestedClosure2() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosure2.kt");
+        }
+        
+        @TestMetadata("outOfNestedClosureWithParams1.kt")
+        public void testOutOfNestedClosureWithParams1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosureWithParams1.kt");
         }
         
         @TestMetadata("when1.kt")
