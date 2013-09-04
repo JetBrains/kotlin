@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
@@ -78,7 +79,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         Project project = method.getPsi().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
-        originalToAltTypeParameters = SignaturesUtil.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
+        originalToAltTypeParameters = DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
 
         try {
             checkForSyntaxErrors(altFunDeclaration);
@@ -105,7 +106,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             @Nullable JetType returnType
     ) {
-        TypeSubstitutor substitutor = SignaturesUtil.createSubstitutorForTypeParameters(originalToAltTypeParameters);
+        TypeSubstitutor substitutor = DescriptorResolverUtils.createSubstitutorForTypeParameters(originalToAltTypeParameters);
 
         for (ValueParameterDescriptor parameter : valueParameters) {
             int index = parameter.getIndex();

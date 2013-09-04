@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
@@ -271,8 +270,8 @@ public class SingleAbstractMethodUtils {
             @Nullable DeclarationDescriptor newOwner
     ) {
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
-                SignaturesUtil.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
-        TypeSubstitutor typeParametersSubstitutor = SignaturesUtil.createSubstitutorForTypeParameters(traitToFunTypeParameters);
+                DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
+        TypeSubstitutor typeParametersSubstitutor = DescriptorResolverUtils.createSubstitutorForTypeParameters(traitToFunTypeParameters);
         for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> mapEntry : traitToFunTypeParameters.entrySet()) {
             TypeParameterDescriptor traitTypeParameter = mapEntry.getKey();
             TypeParameterDescriptorImpl funTypeParameter = mapEntry.getValue();

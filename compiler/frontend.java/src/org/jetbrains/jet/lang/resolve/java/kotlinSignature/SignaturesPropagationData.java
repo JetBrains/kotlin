@@ -78,7 +78,7 @@ public class SignaturesPropagationData {
         this.containingClass = containingClass;
         superFunctions = getSuperFunctionsForMethod(method, trace, containingClass);
 
-        autoTypeParameterToModified = SignaturesUtil.recreateTypeParametersAndReturnMapping(autoTypeParameters, null);
+        autoTypeParameterToModified = DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(autoTypeParameters, null);
 
         modifiedTypeParameters = modifyTypeParametersAccordingToSuperMethods(autoTypeParameters);
         modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType);
