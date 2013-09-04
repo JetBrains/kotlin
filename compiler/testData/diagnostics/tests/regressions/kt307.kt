@@ -6,6 +6,6 @@ open class AL {
 
 trait ALE<T> : AL {
 fun getOrNull(index: Int, value: T) : T {
-return get(index) as? T ?: value
+return <!UNCHECKED_CAST!>get(index) as? T<!> ?: value
 }
 }

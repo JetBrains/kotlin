@@ -29,7 +29,7 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
   <!UNRESOLVED_REFERENCE!>List<!><Int>
 
 
-  val <!UNUSED_VARIABLE!>o<!> = "sdf" <!CAST_NEVER_SUCCEEDS!>as<!> <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>
+  val <!UNUSED_VARIABLE!>o<!> = "sdf" as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>
 
   try {
     // ...

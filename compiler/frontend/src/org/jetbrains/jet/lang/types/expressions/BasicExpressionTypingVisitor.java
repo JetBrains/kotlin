@@ -221,21 +221,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (!CastDiagnosticsUtil.isCastPossible(actualType, targetType, platformToKotlinClassMap)) {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
         }
-
-        JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
-        if (!typeChecker.isSubtypeOf(targetType, actualType)) {
-            if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationReference()));
-            }
-        }
         else {
+            JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+            // Upcast?
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                context.trace.report(USELESS_CAST.on(expression.getOperationReference()));
-            }
-            else {
-                if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
-                    context.trace.report(Errors.UNCHECKED_CAST.on(expression, actualType, targetType));
+                if (!typeChecker.isSubtypeOf(targetType, actualType)) {
+                    // proper upcast: String as Any
+                    context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationReference()));
                 }
+                else {
+                    // cast to itself: String as String
+                    context.trace.report(USELESS_CAST.on(expression.getOperationReference()));
+                }
+            }
+            else if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
+                context.trace.report(Errors.UNCHECKED_CAST.on(expression, actualType, targetType));
             }
         }
     }
