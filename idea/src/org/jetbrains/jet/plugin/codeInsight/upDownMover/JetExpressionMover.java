@@ -400,13 +400,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         if (whiteSpaceTestSubject instanceof PsiWhiteSpace) {
-            Document doc = editor.getDocument();
-            TextRange spaceRange = whiteSpaceTestSubject.getTextRange();
-
-            int startLine = doc.getLineNumber(spaceRange.getStartOffset());
-            int endLine = doc.getLineNumber(spaceRange.getEndOffset());
-
-            if (endLine - startLine > 1) {
+            if (getElementLineCount(whiteSpaceTestSubject, editor) > 1) {
                 int nearLine = down ? sourceRange.endLine : sourceRange.startLine - 1;
 
                 info.toMove = sourceRange;

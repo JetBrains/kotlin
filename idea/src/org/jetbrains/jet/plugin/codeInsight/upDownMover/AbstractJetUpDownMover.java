@@ -99,7 +99,7 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         return sourceRange;
     }
 
-    private static int getElementLineCount(PsiElement element, Editor editor) {
+    protected static int getElementLineCount(PsiElement element, Editor editor) {
         Document doc = editor.getDocument();
         TextRange spaceRange = element.getTextRange();
 
