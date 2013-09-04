@@ -8,7 +8,6 @@
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml" />
     <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml" />
-    <buildFile url="file://$PROJECT_DIR$/bootstrap_compiler.xml" />
   </component>
 </project>
 
