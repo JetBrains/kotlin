@@ -34,10 +34,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
-import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
+import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class SignaturesPropagationData {

@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
@@ -35,7 +34,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.resolveOverrides;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.resolveOverrides;
 
 public final class JavaPropertyResolver {
     private JavaTypeTransformer typeTransformer;

@@ -43,7 +43,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.erasure;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.erasure;
 
 // This class contains heuristics for processing corner cases in propagation
 class PropagationHeuristics {

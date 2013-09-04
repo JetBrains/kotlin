@@ -41,8 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.java.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
-import static org.jetbrains.jet.lang.resolve.java.TypeUsage.UPPER_BOUND;
+import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
+import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.UPPER_BOUND;
 
 public class AlternativeMethodSignatureData extends ElementAlternativeSignatureData {
     private final JetNamedFunction altFunDeclaration;
