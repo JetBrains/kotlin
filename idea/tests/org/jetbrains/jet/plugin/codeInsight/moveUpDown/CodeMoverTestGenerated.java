@@ -777,6 +777,16 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/moveUpDown/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("closureBlockBoundary1.kt")
+        public void testClosureBlockBoundary1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureBlockBoundary1.kt");
+        }
+        
+        @TestMetadata("closureBlockBoundary2.kt")
+        public void testClosureBlockBoundary2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureBlockBoundary2.kt");
+        }
+        
         @TestMetadata("closureInDoWhile1.kt")
         public void testClosureInDoWhile1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureInDoWhile1.kt");
