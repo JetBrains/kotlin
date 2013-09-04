@@ -42,7 +42,7 @@ import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
-import org.jetbrains.jet.plugin.configuration.AbstractConfigureGradleProjectTest;
+import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
@@ -176,7 +176,8 @@ public class GenerateTests {
                 "LoadJavaTestGenerated",
                 AbstractLoadJavaTest.class,
                 testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", true, "java", "doTest"),
-                testModel("compiler/testData/loadJava/compiledJavaIncludeObjectMethods", true, "java", "doTestCompiledJavaIncludeObjectMethods"),
+                testModel("compiler/testData/loadJava/compiledJavaIncludeObjectMethods", true, "java",
+                          "doTestCompiledJavaIncludeObjectMethods"),
                 testModel("compiler/testData/loadJava/compiledJava", true, "java", "doTestCompiledJava"),
                 testModel("compiler/testData/loadJava/sourceJava", true, "java", "doTestSourceJava"),
                 testModel("compiler/testData/loadJava/javaAgainstKotlin", true, "txt", "doTestJavaAgainstKotlin")
@@ -316,7 +317,8 @@ public class GenerateTests {
                 "idea/tests/",
                 "QuickFixMultiFileTestGenerated",
                 AbstractQuickFixMultiFileTest.class,
-                new SimpleTestClassModel(new File("idea/testData/quickfix"), true, Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), "doTestWithExtraFile")
+                new SimpleTestClassModel(new File("idea/testData/quickfix"), true, Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"),
+                                         "doTestWithExtraFile")
         );
 
         generateTest(
@@ -459,10 +461,11 @@ public class GenerateTests {
 
         generateTest(
                 "idea/tests/",
-                "ConfigureGradleProjectTestGenerated",
-                AbstractConfigureGradleProjectTest.class,
+                "ConfigureProjectByChangingFileTestGenerated",
+                AbstractConfigureProjectByChangingFileTest.class,
                 new SimpleTestClassModel(new File("idea/testData/configuration/android-gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestAndroidGradle"),
-                new SimpleTestClassModel(new File("idea/testData/configuration/gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestGradle")
+                new SimpleTestClassModel(new File("idea/testData/configuration/gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestGradle"),
+                testModelWithDirectories("idea/testData/configuration/maven", "doTestWithMaven")
         );
     }
 
@@ -479,11 +482,15 @@ public class GenerateTests {
     }
 
     private static SimpleTestClassModel testModelWithDirectories(@NotNull String rootPath, @NotNull String methodName) {
-        return new SimpleTestClassModel(new File(rootPath), false,  Pattern.compile("^(.+)$"), methodName);
+        return new SimpleTestClassModel(new File(rootPath), false, Pattern.compile("^(.+)$"), methodName);
     }
 
-    private static SimpleTestClassModel testModelWithPattern(@NotNull String rootPath, @NotNull String pattern, @NotNull String methodName) {
-        return new SimpleTestClassModel(new File(rootPath), true,  Pattern.compile(pattern), methodName);
+    private static SimpleTestClassModel testModelWithPattern(
+            @NotNull String rootPath,
+            @NotNull String pattern,
+            @NotNull String methodName
+    ) {
+        return new SimpleTestClassModel(new File(rootPath), true, Pattern.compile(pattern), methodName);
     }
 
     private static SimpleTestClassModel testModel(
