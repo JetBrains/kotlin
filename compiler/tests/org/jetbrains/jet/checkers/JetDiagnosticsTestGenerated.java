@@ -954,6 +954,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/cast")
+        @InnerTestClasses({Cast.NeverSucceeds.class})
         public static class Cast extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInCast() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/cast"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1064,6 +1065,40 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/WhenWithExpression.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/cast/neverSucceeds")
+            public static class NeverSucceeds extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInNeverSucceeds() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/cast/neverSucceeds"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("MappedDirect.kt")
+                public void testMappedDirect() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/neverSucceeds/MappedDirect.kt");
+                }
+                
+                @TestMetadata("MappedSubtypes.kt")
+                public void testMappedSubtypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/neverSucceeds/MappedSubtypes.kt");
+                }
+                
+                @TestMetadata("NoGenericsRelated.kt")
+                public void testNoGenericsRelated() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/neverSucceeds/NoGenericsRelated.kt");
+                }
+                
+                @TestMetadata("NoGenericsUnrelated.kt")
+                public void testNoGenericsUnrelated() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/neverSucceeds/NoGenericsUnrelated.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Cast");
+                suite.addTestSuite(Cast.class);
+                suite.addTestSuite(NeverSucceeds.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/checkArguments")
@@ -5423,7 +5458,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Annotations.class);
             suite.addTestSuite(BackingField.class);
             suite.addTestSuite(CallableReference.class);
-            suite.addTestSuite(Cast.class);
+            suite.addTest(Cast.innerSuite());
             suite.addTestSuite(CheckArguments.class);
             suite.addTestSuite(ControlFlowAnalysis.class);
             suite.addTestSuite(ControlStructures.class);
