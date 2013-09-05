@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -223,14 +221,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsInvocation definePropertyDataDescriptor(@NotNull PropertyDescriptor descriptor,
-            @NotNull JsExpression value,
-            @NotNull TranslationContext context) {
-        return defineProperty(context.getNameForDescriptor(descriptor).getIdent(), createPropertyDataDescriptor(descriptor, value),
-                              context);
-    }
-
-    @NotNull
     public static JsInvocation defineProperty(
             @NotNull String name,
             @NotNull JsObjectLiteral value,
@@ -270,11 +260,6 @@ public final class JsAstUtils {
             dataDescriptor.getPropertyInitializers().add(ENUMERABLE);
         }
         return dataDescriptor;
-    }
-
-    @NotNull
-    public static JsObjectLiteral createPropertyDataDescriptor(@NotNull PropertyDescriptor descriptor, @NotNull JsExpression value) {
-        return createPropertyDataDescriptor(descriptor, descriptor.isVar() || descriptor.getModality() == Modality.OPEN, value);
     }
 
     @NotNull
