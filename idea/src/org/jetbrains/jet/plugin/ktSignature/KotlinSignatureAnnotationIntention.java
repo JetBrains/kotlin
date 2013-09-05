@@ -53,7 +53,7 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KO
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setShortNames(true)
-            .setModifiers(false)
+            .setModifiers()
             .setWithDefinedIn(false).build();
 
     @NotNull

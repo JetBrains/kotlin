@@ -5,10 +5,10 @@ trait Test {
 
 class SomeTest : Test {
     val hello = 12
-    public override fun test() {
+    override fun test() {
         throw UnsupportedOperationException()
     }
-    protected override val testProp: Int = 0
+    override val testProp: Int = 0
 
     /**
      * test

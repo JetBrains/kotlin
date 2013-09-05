@@ -199,7 +199,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
-            .setModifiers(false)
+            .setModifiers()
             .setValueParametersHandler(VALUE_PARAMETERS_HANDLER)
             .setTextFormat(DescriptorRenderer.TextFormat.HTML).build();
 

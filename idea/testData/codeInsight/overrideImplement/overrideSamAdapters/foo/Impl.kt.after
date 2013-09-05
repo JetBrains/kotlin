@@ -2,7 +2,7 @@ package foo
 
 class Impl: B() {
 
-    public override fun foo(r: Runnable?) {
+    override fun foo(r: Runnable?) {
         super<B>.foo(r)
     }
 }

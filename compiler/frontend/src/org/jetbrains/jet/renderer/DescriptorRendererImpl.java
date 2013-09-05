@@ -50,7 +50,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private final boolean shortNames;
     private final boolean withDefinedIn;
-    private final boolean modifiers;
+    private final Set<DescriptorRenderer.Modifier> modifiers;
     private final boolean startFromName;
     private final boolean debugMode;
     private final boolean classWithPrimaryConstructor;
@@ -72,7 +72,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     /* package */ DescriptorRendererImpl(
             boolean shortNames,
             boolean withDefinedIn,
-            boolean modifiers,
+            Set<DescriptorRenderer.Modifier> modifiers,
             boolean startFromName,
             boolean debugMode,
             boolean classWithPrimaryConstructor,
@@ -312,7 +312,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderAnnotations(@NotNull Annotated annotated, @NotNull StringBuilder builder) {
-        if (!modifiers) return;
+        if (!modifiers.contains(Modifier.ANNOTATIONS)) return;
         for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
             ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
             assert annotationClass != null;
@@ -328,7 +328,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderVisibility(@NotNull Visibility visibility, @NotNull StringBuilder builder) {
-        if (!modifiers) return;
+        if (!modifiers.contains(Modifier.VISIBILITY)) return;
         if (normalizedVisibilities) {
             visibility = visibility.normalize();
         }
@@ -337,13 +337,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderModality(@NotNull Modality modality, @NotNull StringBuilder builder) {
-        if (!modifiers) return;
+        if (!modifiers.contains(Modifier.MODALITY)) return;
         String keyword = modality.name().toLowerCase();
         builder.append(renderKeyword(keyword)).append(" ");
     }
 
     private void renderInner(boolean isInner, @NotNull StringBuilder builder) {
-        if (!modifiers) return;
+        if (!modifiers.contains(Modifier.INNER)) return;
         if (isInner) {
             builder.append(renderKeyword("inner")).append(" ");
         }
@@ -365,7 +365,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderOverride(@NotNull CallableMemberDescriptor callableMember, @NotNull StringBuilder builder) {
-        if (!modifiers) return;
+        if (!modifiers.contains(Modifier.OVERRIDE)) return;
         if (overridesSomething(callableMember)) {
             if (overrideRenderingPolicy != OverrideRenderingPolicy.RENDER_OPEN) {
                 builder.append("override ");
@@ -377,7 +377,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderMemberKind(CallableMemberDescriptor callableMember, StringBuilder builder) {
-        if (!modifiers) return;
+        if (!modifiers.contains(Modifier.MEMBER_KIND)) return;
         if (verbose && callableMember.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             builder.append("/*").append(callableMember.getKind().name().toLowerCase()).append("*/ ");
         }

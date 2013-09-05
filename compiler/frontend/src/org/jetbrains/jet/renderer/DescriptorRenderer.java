@@ -44,11 +44,11 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer COMPACT = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
-            .setModifiers(false).build();
+            .setModifiers().build();
 
     DescriptorRenderer STARTS_FROM_NAME = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
-            .setModifiers(false)
+            .setModifiers()
             .setStartFromName(true).build();
 
     DescriptorRenderer TEXT = new DescriptorRendererBuilder().build();
@@ -75,6 +75,10 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     enum OverrideRenderingPolicy {
         RENDER_OVERRIDE, RENDER_OPEN, RENDER_OPEN_OVERRIDE
+    }
+
+    enum Modifier {
+        VISIBILITY, MODALITY, OVERRIDE, ANNOTATIONS, INNER, MEMBER_KIND
     }
 
     /** @see DefaultValueParameterHandler */
