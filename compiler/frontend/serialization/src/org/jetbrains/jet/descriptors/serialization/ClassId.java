@@ -16,14 +16,6 @@ public final class ClassId {
 
     @NotNull
     public static ClassId fromFqNameAndContainingDeclaration(
-            @NotNull FqName fqName,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration
-    ) {
-        return fromFqNameAndContainingDeclaration(fqName.toUnsafe(), containingDeclaration);
-    }
-
-    @NotNull
-    public static ClassId fromFqNameAndContainingDeclaration(
             @NotNull FqNameUnsafe fqName,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {

@@ -340,7 +340,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
 
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
-        annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
         annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
 
         javaNamespaceResolver.setCache(traceBasedJavaResolverCache);

@@ -17,12 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
@@ -36,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
@@ -51,15 +48,13 @@ import java.util.*;
 
 import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.*;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.naiveKotlinFqName;
 
 public class AnnotationDescriptorDeserializer implements AnnotationDeserializer {
-    private PsiClassFinder psiClassFinder;
-
     private JavaClassResolver javaClassResolver;
 
     private VirtualFileFinder virtualFileFinder;
-
 
     // TODO: a single instance of StorageManager for all computations in resolve-java
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
@@ -78,11 +73,6 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                             }
                         }
                     }, StorageManager.ReferenceKind.STRONG);
-
-    @Inject
-    public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
-        this.psiClassFinder = psiClassFinder;
-    }
 
     @Inject
     public void setVirtualFileFinder(VirtualFileFinder virtualFileFinder) {
@@ -122,20 +112,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @NotNull
     private VirtualFile findVirtualFileByClass(@NotNull ClassDescriptor descriptor) {
         FqName fqName = kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor));
-        VirtualFile fileForKotlinFile = virtualFileFinder.find(fqName);
-        if (fileForKotlinFile != null) {
-            return fileForKotlinFile;
-        }
-        PsiClass psiClass = psiClassFinder.findPsiClass(fqName);
-        if (psiClass == null) {
-            throw new IllegalStateException("Psi class is not found for class: " + descriptor);
-        }
-        VirtualFile outerClassFile = psiClass.getContainingFile().getVirtualFile();
-        if (outerClassFile == null) {
-            throw new IllegalStateException("Outer class file is not found for class: " + descriptor);
-        }
-        ClassId id = ClassId.fromFqNameAndContainingDeclaration(fqName, (ClassOrNamespaceDescriptor) descriptor.getContainingDeclaration());
-        VirtualFile virtualFile = getVirtualFile(id, outerClassFile);
+        VirtualFile virtualFile = virtualFileFinder.find(fqName);
         if (virtualFile == null) {
             throw new IllegalStateException("Virtual file is not found for class: " + descriptor);
         }

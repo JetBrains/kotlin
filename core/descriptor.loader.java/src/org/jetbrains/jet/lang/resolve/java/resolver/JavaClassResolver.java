@@ -201,7 +201,7 @@ public final class JavaClassResolver {
             assert !unresolvedCache.contains(qualifiedName.toUnsafe())
                     : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
-            ClassId id = ClassId.fromFqNameAndContainingDeclaration(qualifiedName, containingDeclaration);
+            ClassId id = ClassId.fromFqNameAndContainingDeclaration(qualifiedName.toUnsafe(), containingDeclaration);
             ClassDescriptor deserializedDescriptor = deserializedDescriptorResolver.resolveClass(id, file);
             if (deserializedDescriptor != null) {
                 cache(javaClassToKotlinFqName(qualifiedName), deserializedDescriptor);

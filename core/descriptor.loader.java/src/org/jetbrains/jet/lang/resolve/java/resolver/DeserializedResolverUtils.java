@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -49,22 +46,6 @@ public class DeserializedResolverUtils {
             }
         }
         return FqName.fromSegments(correctedSegments);
-    }
-
-    @Nullable
-    public static VirtualFile getVirtualFile(@NotNull ClassId id, @NotNull VirtualFile outerClassFile) {
-        String fileExtension = outerClassFile.getExtension();
-        if (!"class".equals(fileExtension)) {
-            return null;
-        }
-        FqNameUnsafe relativeClassName = id.getRelativeClassName();
-        assert relativeClassName.isSafe() : "Relative class name " + relativeClassName.asString() + " should be safe at this point";
-        String classNameWithBucks = relativeClassName.asString().replace(".", "$") + ".class";
-        VirtualFile virtualFile = outerClassFile.getParent().findChild(classNameWithBucks);
-        if (virtualFile == null) {
-            throw new IllegalStateException("No virtual file for " + id.asSingleFqName().asString());
-        }
-        return virtualFile;
     }
 
     @NotNull
