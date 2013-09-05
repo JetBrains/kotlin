@@ -46,15 +46,14 @@ public class Slices {
     }
 
     public interface KeyNormalizer<K> {
-
         KeyNormalizer DO_NOTHING = new KeyNormalizer<Object>() {
             @Override
             public Object normalize(Object key) {
                 return key;
             }
         };
-        K normalize(K key);
 
+        K normalize(K key);
     }
 
     public static <K, V> SliceBuilder<K, V> sliceBuilder() {
@@ -83,7 +82,7 @@ public class Slices {
         private WritableSlice<? super V, ? super K> opposite = null;
         private KeyNormalizer<K> keyNormalizer = null;
 
-        private RewritePolicy rewritePolicy;
+        private final RewritePolicy rewritePolicy;
 
         private String debugName;
 
@@ -130,7 +129,7 @@ public class Slices {
                     @Override
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) return defaultValue;
-                        return super.computeValue(map, key, value, valueNotFound);
+                        return super.computeValue(map, key, value, false);
                     }
                 };
             }
@@ -147,7 +146,7 @@ public class Slices {
                             }
                             return defaultValue;
                         }
-                        return super.computeValue(map, key, value, valueNotFound);
+                        return super.computeValue(map, key, value, false);
                     }
                 };
             }
@@ -167,17 +166,7 @@ public class Slices {
 
     public static class SliceWithOpposite<K, V> extends BasicRemovableSlice<K, V> {
         private final WritableSlice<? super V, ? super K> opposite;
-
-
         private final KeyNormalizer<K> keyNormalizer;
-
-        public SliceWithOpposite(String debugName, RewritePolicy rewritePolicy) {
-            this(debugName, rewritePolicy, KeyNormalizer.DO_NOTHING);
-        }
-
-        public SliceWithOpposite(String debugName, RewritePolicy rewritePolicy, KeyNormalizer<K> keyNormalizer) {
-            this(rewritePolicy, null, keyNormalizer);
-        }
 
         public SliceWithOpposite(RewritePolicy rewritePolicy, WritableSlice<? super V, ? super K> opposite, KeyNormalizer<K> keyNormalizer) {
             super(rewritePolicy);
