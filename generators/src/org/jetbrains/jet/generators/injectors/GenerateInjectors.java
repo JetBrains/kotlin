@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -149,14 +149,14 @@ public class GenerateInjectors {
         generator.addParameter(BindingTrace.class);
 
         // Fields
-        generator.addField(JavaClassFinderImpl.class);
+        generator.addPublicField(JavaClassFinderImpl.class);
         generator.addField(TraceBasedExternalSignatureResolver.class);
         generator.addField(TraceBasedJavaResolverCache.class);
         generator.addField(TraceBasedErrorReporter.class);
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(JavaDescriptorResolver.class);
-        generator.addPublicField(PsiClassFinderImpl.class);
+        generator.addField(PsiClassFinderImpl.class);
         generator.addField(VirtualFileKotlinClassFinder.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression("com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));

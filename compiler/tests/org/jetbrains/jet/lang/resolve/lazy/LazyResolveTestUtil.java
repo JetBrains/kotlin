@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
@@ -28,28 +27,17 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
@@ -87,44 +75,14 @@ public class LazyResolveTestUtil {
         return module;
     }
 
-    public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment, final boolean addBuiltIns) {
+    public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment, boolean addBuiltIns) {
         JetTestUtils.newTrace(environment);
 
         Project project = environment.getProject();
-        BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
+        BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(project).getTrace();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, sharedTrace);
-        final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
-        final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
-        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
-        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
-            @Override
-            public boolean apply(FqName fqName) {
-                return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
-            }
-        });
-
-        ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
-            @Override
-            public void extendNamespaceScope(
-                    @NotNull NamespaceDescriptor namespaceDescriptor,
-                    @NotNull WritableScope namespaceMemberScope
-            ) {
-                FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-                if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName) && addBuiltIns) {
-                    namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
-                }
-                if (psiClassFinder.findPsiPackage(fqName) != null) {
-                    JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
-                    assert javaPackageScope != null;
-                    namespaceMemberScope.importScope(javaPackageScope);
-                }
-            }
-        };
-
-        ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
-        lazyModule.setModuleConfiguration(moduleConfiguration);
-        return new ResolveSession(project, storageManager, lazyModule, declarationProviderFactory, sharedTrace);
+        return AnalyzerFacadeForJVM.createLazyResolveSession(project, files, sharedTrace, injector, addBuiltIns);
     }
 
     public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
