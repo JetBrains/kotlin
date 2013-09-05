@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
@@ -58,7 +57,6 @@ public class InjectorForJavaDescriptorResolver {
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final JavaDescriptorResolver javaDescriptorResolver;
-    private final PsiClassFinderImpl psiClassFinder;
     private final VirtualFileFinder virtualFileFinder;
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
@@ -89,7 +87,6 @@ public class InjectorForJavaDescriptorResolver {
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.psiClassFinder = new PsiClassFinderImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
@@ -106,7 +103,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaPropertyResolver = new JavaPropertyResolver();
         this.javaSupertypeResolver = new JavaSupertypeResolver();
 
-        this.javaClassFinder.setPsiClassFinder(psiClassFinder);
+        this.javaClassFinder.setProject(project);
 
         traceBasedExternalSignatureResolver.setAnnotationResolver(javaAnnotationResolver);
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
@@ -122,8 +119,6 @@ public class InjectorForJavaDescriptorResolver {
 
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
-
-        psiClassFinder.setProject(project);
 
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
         javaAnnotationResolver.setClassResolver(javaClassResolver);
@@ -194,7 +189,7 @@ public class InjectorForJavaDescriptorResolver {
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
-        psiClassFinder.initialize();
+        javaClassFinder.initialize();
 
     }
     
