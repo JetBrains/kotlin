@@ -134,7 +134,7 @@ public class GenerateInjectors {
         generator.addParameter(BindingTrace.class);
 
         // Fields
-        generator.addField(JavaClassFinderImpl.class);
+        generator.addPublicField(JavaClassFinderImpl.class);
         generator.addField(TraceBasedExternalSignatureResolver.class);
         generator.addField(TraceBasedJavaResolverCache.class);
         generator.addField(FakeOverrideVisibilityResolverImpl.class);
@@ -142,7 +142,7 @@ public class GenerateInjectors {
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(JavaDescriptorResolver.class);
-        generator.addPublicField(PsiClassFinderImpl.class);
+        generator.addField(PsiClassFinderImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression("com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));
 

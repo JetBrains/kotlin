@@ -106,7 +106,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaPropertyResolver = new JavaPropertyResolver();
         this.javaSupertypeResolver = new JavaSupertypeResolver();
 
-        javaClassFinder.setPsiClassFinder(psiClassFinder);
+        this.javaClassFinder.setPsiClassFinder(psiClassFinder);
 
         traceBasedExternalSignatureResolver.setAnnotationResolver(javaAnnotationResolver);
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
@@ -123,7 +123,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
 
-        this.psiClassFinder.setProject(project);
+        psiClassFinder.setProject(project);
 
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
         javaAnnotationResolver.setClassResolver(javaClassResolver);
@@ -202,12 +202,12 @@ public class InjectorForJavaDescriptorResolver {
     public void destroy() {
     }
     
-    public JavaDescriptorResolver getJavaDescriptorResolver() {
-        return this.javaDescriptorResolver;
+    public JavaClassFinderImpl getJavaClassFinder() {
+        return this.javaClassFinder;
     }
     
-    public PsiClassFinderImpl getPsiClassFinder() {
-        return this.psiClassFinder;
+    public JavaDescriptorResolver getJavaDescriptorResolver() {
+        return this.javaDescriptorResolver;
     }
     
 }

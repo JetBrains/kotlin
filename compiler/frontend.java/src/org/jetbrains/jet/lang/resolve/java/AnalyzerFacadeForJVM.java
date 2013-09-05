@@ -81,22 +81,31 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace);
+        return createLazyResolveSession(fileProject, files, javaResolverTrace, injector, true);
+    }
 
-        final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
+    @NotNull
+    public static ResolveSession createLazyResolveSession(
+            @NotNull Project project,
+            @NotNull Collection<JetFile> files,
+            @NotNull BindingTrace trace,
+            @NotNull InjectorForJavaDescriptorResolver injector,
+            final boolean addBuiltIns
+    ) {
+        final JavaClassFinderImpl classFinder = injector.getJavaClassFinder();
 
         // TODO: Replace with stub declaration provider
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
-                return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
+                return classFinder.findPackage(fqName) != null || KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
             }
         });
 
         final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
-
             @Override
             public void extendNamespaceScope(
                     @NotNull BindingTrace trace,
@@ -104,10 +113,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     @NotNull WritableScope namespaceMemberScope
             ) {
                 FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-                if (new FqName("jet").equals(fqName)) {
+                if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName) && addBuiltIns) {
                     namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                 }
-                if (psiClassFinder.findPsiPackage(fqName) != null) {
+                if (classFinder.findPackage(fqName) != null) {
                     JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
                     assert javaPackageScope != null;
                     namespaceMemberScope.importScope(javaPackageScope);
@@ -118,7 +127,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         ModuleDescriptorImpl lazyModule = createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(moduleConfiguration);
 
-        return new ResolveSession(fileProject, storageManager, lazyModule, declarationProviderFactory, javaResolverTrace);
+        return new ResolveSession(project, storageManager, lazyModule, declarationProviderFactory, trace);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
