@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
+import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -42,7 +43,7 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -184,8 +185,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (ignoreAnnotation(desc)) return null;
 
         FqName annotationFqName = convertJvmDescriptorToFqName(desc);
-        final ClassDescriptor annotationClass = javaClassResolver.resolveClass(annotationFqName, IGNORE_KOTLIN_SOURCES);
-        assert annotationClass != null : "Annotation class is not found: " + desc;
+        final ClassDescriptor annotationClass = resolveAnnotationClass(annotationFqName);
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
@@ -194,22 +194,31 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @Override
             public void visit(String name, Object value) {
                 CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);
-                if (argument != null) {
-                    setArgumentValueByName(name, argument);
-                }
+                setArgumentValueByName(name, argument != null ? argument : new ErrorValue("Unsupported annotation argument: " + name));
             }
 
             @Override
             public void visitEnum(String name, String desc, String value) {
                 FqName fqName = convertJvmDescriptorToFqName(desc);
-                ClassDescriptor enumClass = javaClassResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
-                assert enumClass != null : "Enum class referenced in annotation is not found: " + desc;
-                JetScope scope = DescriptorUtils.getEnumEntriesScope(enumClass);
-                Collection<VariableDescriptor> properties = scope.getProperties(Name.identifier(value));
-                assert properties.size() == 1 : "Enum class should have exactly one property with the referenced name: " + value +
-                                                "\n" + properties + "\n" + enumClass;
-                EnumValue enumValue = new EnumValue((PropertyDescriptor) properties.iterator().next());
-                setArgumentValueByName(name, enumValue);
+                setArgumentValueByName(name, enumEntryValue(fqName, Name.identifier(value)));
+            }
+
+            @NotNull
+            private CompileTimeConstant<?> enumEntryValue(@NotNull FqName enumFqName, @NotNull Name name) {
+                ClassDescriptor enumClass = javaClassResolver.resolveClass(enumFqName, IGNORE_KOTLIN_SOURCES);
+                if (enumClass != null && enumClass.getKind() == ClassKind.ENUM_CLASS) {
+                    ClassDescriptor classObject = enumClass.getClassObjectDescriptor();
+                    if (classObject != null) {
+                        Collection<VariableDescriptor> properties = classObject.getDefaultType().getMemberScope().getProperties(name);
+                        if (properties.size() == 1) {
+                            VariableDescriptor property = properties.iterator().next();
+                            if (property instanceof PropertyDescriptor) {
+                                return new EnumValue((PropertyDescriptor) property);
+                            }
+                        }
+                    }
+                }
+                return new ErrorValue("Unresolved enum entry: " + enumFqName + "." + name);
             }
 
             @Override
@@ -225,6 +234,12 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                 }
             }
         };
+    }
+
+    @NotNull
+    private ClassDescriptor resolveAnnotationClass(@NotNull FqName fqName) {
+        ClassDescriptor annotationClass = javaClassResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
+        return annotationClass != null ? annotationClass : ErrorUtils.getErrorClass();
     }
 
     @NotNull

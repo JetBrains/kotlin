@@ -50,4 +50,9 @@ public class ErrorValue implements CompileTimeConstant<Void> {
     public String getMessage() {
         return message;
     }
+
+    @Override
+    public String toString() {
+        return message;
+    }
 }

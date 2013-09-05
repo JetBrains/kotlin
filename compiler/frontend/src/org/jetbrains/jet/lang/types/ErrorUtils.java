@@ -385,7 +385,8 @@ public class ErrorUtils {
         return createErrorType(value + " is not allowed here", value.getType().getMemberScope());
     }
 
-    public static ClassifierDescriptor getErrorClass() {
+    @NotNull
+    public static ClassDescriptor getErrorClass() {
         return ERROR_CLASS;
     }
 
