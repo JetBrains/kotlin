@@ -1,0 +1,13 @@
+// MOVE: down
+
+fun foo() {
+
+    println("foo=")
+    /*
+     *
+     */ <caret>val foo = 1
+    println(foo) /*
+    *
+    */
+
+}

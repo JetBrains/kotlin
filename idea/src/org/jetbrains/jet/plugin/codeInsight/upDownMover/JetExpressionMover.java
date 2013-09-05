@@ -476,7 +476,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
         if (sourceRange == null) return false;
 
-        PsiElement sibling = adjustSibling(editor, sourceRange, info, down);
+        PsiElement sibling = getLastNonWhiteSiblingInLine(adjustSibling(editor, sourceRange, info, down), editor, down);
 
         // Either reached last sibling, or jumped over multi-line whitespace
         if (sibling == null) return true;

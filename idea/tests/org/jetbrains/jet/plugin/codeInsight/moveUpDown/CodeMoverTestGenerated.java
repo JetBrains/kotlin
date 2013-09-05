@@ -912,6 +912,36 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/lambda3.kt");
         }
         
+        @TestMetadata("multilineComment1.kt")
+        public void testMultilineComment1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment1.kt");
+        }
+        
+        @TestMetadata("multilineComment2.kt")
+        public void testMultilineComment2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment2.kt");
+        }
+        
+        @TestMetadata("multilineComment3.kt")
+        public void testMultilineComment3() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment3.kt");
+        }
+        
+        @TestMetadata("multilineComment4.kt")
+        public void testMultilineComment4() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment4.kt");
+        }
+        
+        @TestMetadata("multilineComment5.kt")
+        public void testMultilineComment5() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment5.kt");
+        }
+        
+        @TestMetadata("multilineComment6.kt")
+        public void testMultilineComment6() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/multilineComment6.kt");
+        }
+        
         @TestMetadata("outOfClosure1.kt")
         public void testOutOfClosure1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfClosure1.kt");

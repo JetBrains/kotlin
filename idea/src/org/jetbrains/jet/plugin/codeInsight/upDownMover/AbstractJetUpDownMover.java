@@ -109,6 +109,33 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         return endLine - startLine;
     }
 
+    protected static int getElementLine(PsiElement element, Editor editor, boolean first) {
+        if (element == null) return -1;
+
+        Document doc = editor.getDocument();
+        TextRange spaceRange = element.getTextRange();
+
+        return first ? doc.getLineNumber(spaceRange.getStartOffset()) : doc.getLineNumber(spaceRange.getEndOffset());
+    }
+
+    protected static PsiElement getLastNonWhiteSiblingInLine(@Nullable PsiElement element, @NotNull Editor editor, boolean down) {
+        if (element == null) return null;
+
+        int line = getElementLine(element, editor, down);
+
+        PsiElement lastElement = element;
+        while (true) {
+            if (lastElement == null) return null;
+            PsiElement sibling = firstNonWhiteSibling(lastElement, down);
+            if (getElementLine(sibling, editor, down) == line) {
+                lastElement = sibling;
+            }
+            else break;
+        }
+
+        return lastElement;
+    }
+
     private static boolean checkCommentAtBlockBound(PsiElement blockElement, PsiElement comment, JetBlockExpression block) {
         return PsiTreeUtil.isAncestor(block, blockElement, true) && comment instanceof PsiComment;
     }
