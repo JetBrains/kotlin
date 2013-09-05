@@ -53,7 +53,7 @@ public final class InitializerUtils {
             JsExpression value = Translation.translateAsExpression(delegate, context);
             String name = property.getName();
             assert name != null: "Delegate property must have name";
-            return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value, context);
+            return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value);
         }
         return null;
     }

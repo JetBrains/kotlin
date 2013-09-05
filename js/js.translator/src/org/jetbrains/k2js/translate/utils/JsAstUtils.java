@@ -228,17 +228,8 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value, @NotNull TranslationContext context) {
-        if (context.isEcma5()) {
-            return defineProperty(name, createDataDescriptor(value, false, false), context).makeStmt();
-        } else {
-            return assignment(new JsNameRef(name, JsLiteral.THIS), value).makeStmt();
-        }
-    }
-
-    @NotNull
-    public static JsObjectLiteral createDataDescriptor(@NotNull JsExpression value) {
-        return createDataDescriptor(value, false, false);
+    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value) {
+        return assignment(new JsNameRef(name, JsLiteral.THIS), value).makeStmt();
     }
 
     @NotNull
