@@ -289,7 +289,23 @@ var Kotlin = Object.create(null);
         return KotlinNew.isType(object, type);
     };
 
+    function propertyToOldDescriptorConverter(propertyDescriptor) {
+        if (propertyDescriptor === null || propertyDescriptor === undefined) {
+            return propertyDescriptor;
+        }
+        for (var p in propertyDescriptor) {
+            if (propertyDescriptor.hasOwnProperty(p)) {
+                if ((typeof propertyDescriptor[p]) === "function") {
+                    propertyDescriptor[p] = {value: propertyDescriptor[p]};
+                }
+                propertyDescriptor[p].enumerable = true;
+            }
+        }
+        return propertyDescriptor;
+    }
+
     function propertyDescriptorConverter(propertyDescriptor) {
+        propertyDescriptor = propertyToOldDescriptorConverter(propertyDescriptor);
         var obj = {};
         if (propertyDescriptor === null || propertyDescriptor === undefined) {
             return obj;
@@ -318,11 +334,11 @@ var Kotlin = Object.create(null);
     };
 
     Kotlin.definePackage = function (initializer, members) {
-        return KotlinNew.definePackage(initializer, members);
+        return KotlinNew.definePackage(initializer, propertyToOldDescriptorConverter(members));
     };
 
     Kotlin.defineRootPackage = function (initializer, members) {
-        return KotlinNew.defineRootPackage(initializer, members);
+        return KotlinNew.defineRootPackage(initializer, propertyToOldDescriptorConverter(members));
     };
 
     Kotlin.defineModule = function (id, module) {

@@ -65,26 +65,11 @@ public final class InitializerUtils {
     ) {
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsExpression value = ClassTranslator.generateObjectLiteral(declaration, descriptor, context);
-        initializers.add(create(descriptor, !(descriptor.getContainingDeclaration() instanceof NamespaceDescriptor), value, context));
-    }
-
-    private static JsStatement create(DeclarationDescriptor descriptor, boolean enumerable, JsExpression value, TranslationContext context) {
-        JsExpression expression;
-        if (context.isEcma5()) {
-            expression = JsAstUtils.defineProperty(descriptor.getName().asString(), JsAstUtils.createDataDescriptor(value, false, enumerable), context);
-        }
-        else {
-            expression = assignment(new JsNameRef(descriptor.getName().asString(), JsLiteral.THIS), value);
-        }
-        return expression.makeStmt();
-    }
-
-
-    public static JsExpression toDataDescriptor(JsExpression value, TranslationContext context) {
-        return context.isEcma5() ? JsAstUtils.createDataDescriptor(value) : value;
+        JsExpression expression = assignment(new JsNameRef(descriptor.getName().asString(), JsLiteral.THIS), value);
+        initializers.add(expression.makeStmt());
     }
 
     public static JsPropertyInitializer createPropertyInitializer(Named named, JsExpression value, TranslationContext context) {
-        return new JsPropertyInitializer(context.nameToLiteral(named), toDataDescriptor(value, context));
+        return new JsPropertyInitializer(context.nameToLiteral(named), value);
     }
 }
