@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
 
-public abstract class AbstractCompileKotlinAgainstCustomJavaTest extends TestCaseWithTmpdir {
+public abstract class AbstractCompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     protected void doTest(String ktFilePath) throws Exception {
         Assert.assertTrue(ktFilePath.endsWith(".kt"));
 

@@ -197,9 +197,9 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
-                "CompileKotlinAgainstCustomJavaGenerated",
-                AbstractCompileKotlinAgainstCustomJavaTest.class,
-                testModel("compiler/testData/compileKotlinAgainstCustomJava")
+                "CompileKotlinAgainstCustomBinariesGenerated",
+                AbstractCompileKotlinAgainstCustomBinariesTest.class,
+                testModel("compiler/testData/compileKotlinAgainstCustomBinaries")
         );
 
         generateTest(
