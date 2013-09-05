@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +53,8 @@ import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverU
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.naiveKotlinFqName;
 
 public class AnnotationDescriptorDeserializer implements AnnotationDeserializer {
+    private static final Logger LOG = Logger.getInstance(AnnotationDescriptorDeserializer.class);
+
     private JavaClassResolver javaClassResolver;
 
     private VirtualFileFinder virtualFileFinder;
@@ -69,7 +72,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                                 return loadMemberAnnotationsFromFile(file);
                             }
                             catch (IOException e) {
-                                throw new RuntimeException(e);
+                                LOG.error("Error loading member annotations from file: " + file, e);
+                                return Collections.emptyMap();
                             }
                         }
                     }, StorageManager.ReferenceKind.STRONG);
@@ -88,15 +92,22 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @Override
     public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
         VirtualFile virtualFile = findVirtualFileByClass(descriptor);
+        if (virtualFile == null) {
+            // This means that the resource we're constructing the descriptor from is no longer present: VirtualFileFinder had found the
+            // file earlier, but it can't now
+            LOG.error("Virtual file for loading class annotations is not found: " + descriptor);
+            return Collections.emptyList();
+        }
         try {
             return loadClassAnnotationsFromFile(virtualFile);
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            LOG.error("Error loading member annotations from file: " + virtualFile, e);
+            return Collections.emptyList();
         }
     }
 
-    @NotNull
+    @Nullable
     private VirtualFile findVirtualFileByDescriptor(@NotNull ClassOrNamespaceDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             return findVirtualFileByClass((ClassDescriptor) descriptor);
@@ -109,24 +120,14 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         }
     }
 
-    @NotNull
+    @Nullable
     private VirtualFile findVirtualFileByClass(@NotNull ClassDescriptor descriptor) {
-        FqName fqName = kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor));
-        VirtualFile virtualFile = virtualFileFinder.find(fqName);
-        if (virtualFile == null) {
-            throw new IllegalStateException("Virtual file is not found for class: " + descriptor);
-        }
-        return virtualFile;
+        return virtualFileFinder.find(kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor)));
     }
 
-    @NotNull
+    @Nullable
     private VirtualFile findVirtualFileByPackage(@NotNull NamespaceDescriptor descriptor) {
-        FqName fqName = PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe());
-        VirtualFile virtualFile = virtualFileFinder.find(fqName);
-        if (virtualFile == null) {
-            throw new IllegalStateException("Virtual file is not found for package: " + descriptor);
-        }
-        return virtualFile;
+        return virtualFileFinder.find(PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe()));
     }
 
     @NotNull
@@ -231,12 +232,15 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (signature == null) return Collections.emptyList();
 
         VirtualFile file = getVirtualFileWithMemberAnnotations(container, proto, nameResolver);
+        if (file == null) {
+            LOG.error("Virtual file for loading member annotations is not found: " + container);
+        }
 
         List<AnnotationDescriptor> annotations = memberAnnotations.fun(file).get(signature);
         return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
     }
 
-    @NotNull
+    @Nullable
     private VirtualFile getVirtualFileWithMemberAnnotations(
             @NotNull ClassOrNamespaceDescriptor container,
             @NotNull ProtoBuf.Callable proto,
@@ -248,12 +252,14 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                 // To locate a package$src class, we first find the facade virtual file (*Package.class) and then look up the $src file in
                 // the same directory. This hack is needed because FileManager doesn't find classfiles for $src classes
                 VirtualFile facadeFile = findVirtualFileByPackage((NamespaceDescriptor) container);
-
-                VirtualFile srcFile = facadeFile.getParent().findChild(name + ".class");
-                if (srcFile != null) {
-                    return srcFile;
+                if (facadeFile != null) {
+                    VirtualFile srcFile = facadeFile.getParent().findChild(name + ".class");
+                    if (srcFile != null) {
+                        return srcFile;
+                    }
                 }
             }
+            return null;
         }
         else if (container instanceof ClassDescriptor && ((ClassDescriptor) container).getKind() == ClassKind.CLASS_OBJECT) {
             // Backing fields of properties of a class object are generated in the outer class
