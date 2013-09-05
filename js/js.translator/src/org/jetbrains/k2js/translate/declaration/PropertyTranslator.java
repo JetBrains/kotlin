@@ -58,11 +58,9 @@ public final class PropertyTranslator extends AbstractTranslator {
             @Nullable JetProperty declaration,
             @NotNull List<JsPropertyInitializer> result,
             @NotNull TranslationContext context) {
-        if (context.isEcma5() && !JsDescriptorUtils.isAsPrivate(descriptor)) {
-            return;
+        if (!JsDescriptorUtils.isSimpleProperty(descriptor)) {
+            new PropertyTranslator(descriptor, declaration, context).translate(result);
         }
-
-        new PropertyTranslator(descriptor, declaration, context).translate(result);
     }
 
     private PropertyTranslator(@NotNull PropertyDescriptor descriptor, @Nullable JetProperty declaration, @NotNull TranslationContext context) {

@@ -328,7 +328,7 @@ public final class StaticContext {
                     }
 
                     String name = descriptor.getName().asString();
-                    if (!isEcma5() || JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
+                    if (!isEcma5() || !JsDescriptorUtils.isSimpleProperty((PropertyDescriptor) descriptor)) {
                         name = Namer.getKotlinBackingFieldName(name);
                     }
 
