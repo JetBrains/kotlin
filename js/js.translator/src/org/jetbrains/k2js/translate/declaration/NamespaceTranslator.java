@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.LabelGenerator;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -104,7 +105,7 @@ final class NamespaceTranslator extends AbstractTranslator {
         else {
             initializer = visitor.initializer;
             if (!context().isEcma5()) {
-                initializers.add(new JsInvocation(new JsNameRef("call", initializer),
+                initializers.add(new JsInvocation(Namer.getFunctionCallRef(initializer),
                                                   context().getQualifiedReference(descriptor)).makeStmt());
             }
         }

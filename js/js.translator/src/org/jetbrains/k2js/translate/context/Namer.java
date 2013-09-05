@@ -36,6 +36,7 @@ public final class Namer {
     public static final String CALLEE_NAME = "$fun";
     public static final String OUTER_CLASS_NAME = "$outer";
 
+    private static final String CALL_FUNCTION = "call";
     private static final String INITIALIZE_METHOD_NAME = "initialize";
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
@@ -44,7 +45,7 @@ public final class Namer {
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
-    private static final String SUPER_METHOD_NAME = "super_init";
+    private static final String SUPER_METHOD_NAME = "baseInitializer";
     private static final String ROOT_NAMESPACE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String CLASSES_OBJECT_NAME = "_c";
@@ -80,8 +81,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static String superMethodName() {
-        return SUPER_METHOD_NAME;
+    public static JsNameRef superMethodNameRef(@NotNull JsName superClassJsName) {
+        return new JsNameRef(SUPER_METHOD_NAME, superClassJsName.makeRef());
     }
 
     @NotNull
@@ -141,6 +142,11 @@ public final class Namer {
     @NotNull
     private static String getNameWithPrefix(@NotNull String name, @NotNull String prefix) {
         return prefix + name;
+    }
+
+    @NotNull
+    public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
+        return new JsNameRef(CALL_FUNCTION, functionExpression);
     }
 
     @NotNull
