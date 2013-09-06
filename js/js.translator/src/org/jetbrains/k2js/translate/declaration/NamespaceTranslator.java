@@ -186,7 +186,7 @@ final class NamespaceTranslator extends AbstractTranslator {
 
         @Override
         public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, @NotNull TranslationContext context) {
-            InitializerUtils.generate(declaration, initializerStatements, context);
+            InitializerUtils.generateObjectInitializer(declaration, initializerStatements, context);
             return null;
         }
 

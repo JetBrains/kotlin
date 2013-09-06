@@ -58,7 +58,7 @@ public final class InitializerUtils {
         return null;
     }
 
-    public static void generate(
+    public static void generateObjectInitializer(
             @NotNull JetObjectDeclaration declaration,
             @NotNull List<JsStatement> initializers,
             @NotNull TranslationContext context
