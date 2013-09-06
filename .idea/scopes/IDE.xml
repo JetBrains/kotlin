@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="IDE" pattern="idea||file[idea]:*/" />
+</component>
