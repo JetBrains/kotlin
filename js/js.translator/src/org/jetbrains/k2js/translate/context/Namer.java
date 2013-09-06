@@ -37,7 +37,6 @@ public final class Namer {
     public static final String OUTER_CLASS_NAME = "$outer";
 
     private static final String CALL_FUNCTION = "call";
-    private static final String INITIALIZE_METHOD_NAME = "initialize";
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
@@ -73,11 +72,6 @@ public final class Namer {
     @NotNull
     public static String getRootNamespaceName() {
         return ROOT_NAMESPACE;
-    }
-
-    @NotNull
-    public static JsNameRef initializeMethodReference() {
-        return new JsNameRef(INITIALIZE_METHOD_NAME);
     }
 
     @NotNull
