@@ -265,14 +265,6 @@ public class TypeResolver {
         }
     }
 
-    private List<JetType> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements, BindingTrace trace, boolean checkBounds) {
-        List<JetType> arguments = new ArrayList<JetType>();
-        for (JetTypeReference argumentElement : argumentElements) {
-            arguments.add(resolveType(scope, argumentElement, trace, checkBounds));
-        }
-        return arguments;
-    }
-
     @NotNull
     private List<TypeProjection> resolveTypeProjections(
             TypeResolutionContext c,
