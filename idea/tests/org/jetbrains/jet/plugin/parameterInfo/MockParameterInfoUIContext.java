@@ -40,14 +40,17 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     }
     
     @Override
-    public void setupUIComponentPresentation(String text, int highlightStartOffset, int highlightEndOffset,
+    public String setupUIComponentPresentation(String text, int highlightStartOffset, int highlightEndOffset,
                                              boolean isDisabled, boolean strikeout,
                                              boolean isDisabledBeforeHighlight, Color background) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Text: (").append(text).append("), Disabled: ").append(isDisabled).
-                append(", Strikeout: ").append(strikeout).append(", Green: ").
-                append(background.equals(JetFunctionParameterInfoHandler.GREEN_BACKGROUND));
-        result.add(stringBuilder.toString());
+        String resultText = "Text: (" + text + "), " +
+                            "Disabled: " + isDisabled + ", " +
+                            "Strikeout: " + strikeout + ", " +
+                            "Green: " + background.equals(JetFunctionParameterInfoHandler.GREEN_BACKGROUND);
+        result.add(resultText);
+
+        // return value not used, just return something
+        return resultText;
     }
 
     @Override
