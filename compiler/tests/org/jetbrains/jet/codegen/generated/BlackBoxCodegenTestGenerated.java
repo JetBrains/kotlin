@@ -1299,6 +1299,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/controlStructures/continueInFor.kt");
         }
         
+        @TestMetadata("continueInForCondition.kt")
+        public void testContinueInForCondition() throws Exception {
+            doTest("compiler/testData/codegen/box/controlStructures/continueInForCondition.kt");
+        }
+        
         @TestMetadata("continueToLabelInFor.kt")
         public void testContinueToLabelInFor() throws Exception {
             doTest("compiler/testData/codegen/box/controlStructures/continueToLabelInFor.kt");
