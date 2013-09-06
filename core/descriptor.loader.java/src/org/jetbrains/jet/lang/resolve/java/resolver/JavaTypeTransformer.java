@@ -84,7 +84,7 @@ public class JavaTypeTransformer {
             JavaClassifierType classifierType = (JavaClassifierType) type;
             JetType jetType = transformClassifierType(classifierType, howThisTypeIsUsed, typeVariableResolver);
             if (jetType == null) {
-                return ErrorUtils.createErrorType("Unresolved java class: " + classifierType.getPresentableText());
+                return ErrorUtils.createErrorType("Unresolved java classifier: " + classifierType.getPresentableText());
             }
             return jetType;
         }
@@ -140,14 +140,15 @@ public class JavaTypeTransformer {
             return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
         }
 
-        TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
+        TypeParameterDescriptor descriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
+        if (descriptor == null) return null;
 
         // In Java: ArrayList<T>
         // In Kotlin: ArrayList<T>, not ArrayList<T?>
         // nullability will be taken care of in individual member signatures
         boolean nullable = !EnumSet.of(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT).contains(howThisTypeIsUsed);
 
-        return TypeUtils.makeNullableIfNeeded(typeParameterDescriptor.getDefaultType(), nullable);
+        return TypeUtils.makeNullableIfNeeded(descriptor.getDefaultType(), nullable);
     }
 
     @Nullable

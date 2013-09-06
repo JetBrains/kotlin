@@ -126,7 +126,7 @@ public final class JavaFunctionResolver {
         typeParameterInitializer.initialize();
         List<TypeParameterDescriptor> methodTypeParameters = typeParameterInitializer.getDescriptors();
 
-        TypeVariableResolver typeVariableResolver = new TypeVariableResolver(methodTypeParameters, functionDescriptorImpl);
+        TypeVariableResolver typeVariableResolver = new TypeVariableResolverImpl(methodTypeParameters, functionDescriptorImpl);
 
         List<ValueParameterDescriptor> valueParameters =
                 valueParameterResolver.resolveValueParameters(functionDescriptorImpl, method, typeVariableResolver);

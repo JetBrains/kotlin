@@ -118,7 +118,7 @@ public final class JavaConstructorResolver {
 
         List<ValueParameterDescriptor> valueParameters;
         if (isAnnotation) {
-            TypeVariableResolver typeVariableResolver = new TypeVariableResolver(typeParameters, containingClass);
+            TypeVariableResolver typeVariableResolver = new TypeVariableResolverImpl(typeParameters, containingClass);
             valueParameters = resolveAnnotationParameters(javaClass, constructorDescriptor, typeVariableResolver);
         }
         else {
@@ -202,7 +202,7 @@ public final class JavaConstructorResolver {
 
         List<ValueParameterDescriptor> valueParameters = valueParameterResolver.resolveValueParameters(
                 constructorDescriptor, constructor,
-                new TypeVariableResolver(typeParameters, classDescriptor)
+                new TypeVariableResolverImpl(typeParameters, classDescriptor)
         );
 
         ExternalSignatureResolver.AlternativeMethodSignature effectiveSignature = externalSignatureResolver

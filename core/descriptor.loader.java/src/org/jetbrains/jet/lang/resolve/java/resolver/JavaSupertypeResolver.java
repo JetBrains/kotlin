@@ -59,7 +59,7 @@ public final class JavaSupertypeResolver {
             @NotNull JavaClass javaClass,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
-        TypeVariableResolver typeVariableResolver = new TypeVariableResolver(typeParameters, classDescriptor);
+        TypeVariableResolver typeVariableResolver = new TypeVariableResolverImpl(typeParameters, classDescriptor);
 
         List<JetType> result = transformSupertypeList(javaClass.getSupertypes(), typeVariableResolver);
 

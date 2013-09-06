@@ -80,7 +80,7 @@ public final class JavaTypeParameterResolver {
         }
 
         public void initialize() {
-            TypeVariableResolver typeVariableResolver = new TypeVariableResolver(getDescriptors(), owner);
+            TypeVariableResolver typeVariableResolver = new TypeVariableResolverImpl(getDescriptors(), owner);
 
             Iterator<TypeParameterDescriptor> descriptorIterator = descriptors.iterator();
             Iterator<JavaTypeParameter> typeParameterIterator = javaTypeParameters.iterator();

@@ -109,7 +109,7 @@ public final class JavaPropertyResolver {
         propertyDescriptor.initialize(null, null);
 
         TypeVariableResolver typeVariableResolver =
-                new TypeVariableResolver(Collections.<TypeParameterDescriptor>emptyList(), propertyDescriptor);
+                new TypeVariableResolverImpl(Collections.<TypeParameterDescriptor>emptyList(), propertyDescriptor);
 
         JetType propertyType = getPropertyType(field, typeVariableResolver);
 

@@ -17,57 +17,19 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.List;
-
-/* package */ class TypeVariableResolver {
-    @NotNull
-    private final List<TypeParameterDescriptor> typeParameters;
-    @NotNull
-    private final DeclarationDescriptor owner;
-
-    public TypeVariableResolver(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull DeclarationDescriptor owner) {
-        this.typeParameters = typeParameters;
-        this.owner = owner;
-
-        assert parametersBelongToOwner() : "Type parameters should belong to owner: " + owner + "; " + typeParameters;
-    }
-
-    private boolean parametersBelongToOwner() {
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            if (typeParameter.getContainingDeclaration() != owner) {
-                return false;
-            }
+public interface TypeVariableResolver {
+    TypeVariableResolver EMPTY = new TypeVariableResolver() {
+        @Nullable
+        @Override
+        public TypeParameterDescriptor getTypeVariable(@NotNull Name name) {
+            return null;
         }
-        return true;
-    }
+    };
 
-    @NotNull
-    public TypeParameterDescriptor getTypeVariable(@NotNull Name name) {
-        return getTypeVariable(name, typeParameters, owner);
-    }
-
-    @NotNull
-    private static TypeParameterDescriptor getTypeVariable(
-            @NotNull Name name,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
-            @NotNull DeclarationDescriptor owner
-    ) {
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            if (typeParameter.getName().equals(name)) {
-                return typeParameter;
-            }
-        }
-
-        DeclarationDescriptor container = owner.getContainingDeclaration();
-        if (container instanceof ClassDescriptor) {
-            return getTypeVariable(name, ((ClassDescriptor) container).getTypeConstructor().getParameters(), container);
-        }
-
-        throw new IllegalStateException("Type parameter not found by name: " + name);
-    }
+    @Nullable
+    TypeParameterDescriptor getTypeVariable(@NotNull Name name);
 }
