@@ -1,0 +1,14 @@
+package test
+
+public open class ArithmeticExpressionInParam : java.lang.Object {
+    public constructor ArithmeticExpressionInParam()
+    
+    public final annotation class Anno : jet.Annotation {
+        public constructor Anno(/*0*/ value: jet.Int)
+        public abstract fun value(): jet.Int
+    }
+    
+    test.ArithmeticExpressionInParam.Anno(value = 42.toInt(): jet.Int) public open class Class : java.lang.Object {
+        public constructor Class()
+    }
+}

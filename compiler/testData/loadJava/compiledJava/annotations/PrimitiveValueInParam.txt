@@ -1,8 +1,8 @@
 package test
 
-public trait AnnotationWithPrimitiveValueInParam : java.lang.Object {
+public trait PrimitiveValueInParam : java.lang.Object {
     
-    test.AnnotationWithPrimitiveValueInParam.Ann(bool = true: jet.Boolean, d = 1.0.toDouble(): jet.Double, f = 1.0.toFloat(): jet.Float, i = 1.toInt(): jet.Int, l = 1.toLong(): jet.Long, str = "str": jet.String) public open class A : java.lang.Object {
+    test.PrimitiveValueInParam.Ann(bool = true: jet.Boolean, d = 1.0.toDouble(): jet.Double, f = 1.0.toFloat(): jet.Float, i = 1.toInt(): jet.Int, l = 1.toLong(): jet.Long, str = "str": jet.String) public open class A : java.lang.Object {
         public constructor A()
     }
     

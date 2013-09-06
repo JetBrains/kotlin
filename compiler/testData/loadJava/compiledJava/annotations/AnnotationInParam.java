@@ -1,6 +1,6 @@
 package test;
 
-public interface AnnotationWithAnnotationInParam {
+public interface AnnotationInParam {
 
     public @interface MyAnnotationWithParam {
         MyAnnotation value();

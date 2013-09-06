@@ -1,17 +1,17 @@
 package test
 
-public trait AnnotationWithStringConstantInParam : java.lang.Object {
+public trait StringConstantInParam : java.lang.Object {
     
     public final annotation class Anno : jet.Annotation {
         public constructor Anno(/*0*/ value: jet.String?)
         public abstract fun value(): jet.String?
     }
     
-    test.AnnotationWithStringConstantInParam.Anno(value = "hello": jet.String) public open class Class : java.lang.Object {
+    test.StringConstantInParam.Anno(value = "hello": jet.String) public open class Class : java.lang.Object {
         public constructor Class()
     }
 }
 
-package AnnotationWithStringConstantInParam {
+package StringConstantInParam {
     public val HEL: jet.String
 }

@@ -1,6 +1,6 @@
 package test;
 
-public class AnnotationWithArithmeticExpressionInParam {
+public class ArithmeticExpressionInParam {
     public @interface Anno {
         int value();
     }

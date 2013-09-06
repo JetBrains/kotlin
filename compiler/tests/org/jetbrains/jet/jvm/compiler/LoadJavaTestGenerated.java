@@ -1060,54 +1060,24 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), true);
             }
             
-            @TestMetadata("AnnotationWithAnnotationInParam.java")
-            public void testAnnotationWithAnnotationInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithAnnotationInParam.java");
+            @TestMetadata("AnnotationInParam.java")
+            public void testAnnotationInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationInParam.java");
             }
             
-            @TestMetadata("AnnotationWithArithmeticExpressionInParam.java")
-            public void testAnnotationWithArithmeticExpressionInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithArithmeticExpressionInParam.java");
+            @TestMetadata("ArithmeticExpressionInParam.java")
+            public void testArithmeticExpressionInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/ArithmeticExpressionInParam.java");
             }
             
-            @TestMetadata("AnnotationWithArrayOfEnumInParam.java")
-            public void testAnnotationWithArrayOfEnumInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithArrayOfEnumInParam.java");
+            @TestMetadata("ArrayOfEnumInParam.java")
+            public void testArrayOfEnumInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/ArrayOfEnumInParam.java");
             }
             
-            @TestMetadata("AnnotationWithArrayOfStringInParam.java")
-            public void testAnnotationWithArrayOfStringInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithArrayOfStringInParam.java");
-            }
-            
-            @TestMetadata("AnnotationWithEmptyArrayInParam.java")
-            public void testAnnotationWithEmptyArrayInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithEmptyArrayInParam.java");
-            }
-            
-            @TestMetadata("AnnotationWithEnumInParam.java")
-            public void testAnnotationWithEnumInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithEnumInParam.java");
-            }
-            
-            @TestMetadata("AnnotationWithPrimitiveValueInParam.java")
-            public void testAnnotationWithPrimitiveValueInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithPrimitiveValueInParam.java");
-            }
-            
-            @TestMetadata("AnnotationWithStringConcatenationInParam.java")
-            public void testAnnotationWithStringConcatenationInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithStringConcatenationInParam.java");
-            }
-            
-            @TestMetadata("AnnotationWithStringConstantInParam.java")
-            public void testAnnotationWithStringConstantInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithStringConstantInParam.java");
-            }
-            
-            @TestMetadata("AnnotationWithStringInParam.java")
-            public void testAnnotationWithStringInParam() throws Exception {
-                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/AnnotationWithStringInParam.java");
+            @TestMetadata("ArrayOfStringInParam.java")
+            public void testArrayOfStringInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/ArrayOfStringInParam.java");
             }
             
             @TestMetadata("CustomAnnotation.java")
@@ -1120,6 +1090,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotationWithDefaultParameter.java");
             }
             
+            @TestMetadata("EmptyArrayInParam.java")
+            public void testEmptyArrayInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/EmptyArrayInParam.java");
+            }
+            
+            @TestMetadata("EnumInParam.java")
+            public void testEnumInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");
+            }
+            
+            @TestMetadata("PrimitiveValueInParam.java")
+            public void testPrimitiveValueInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/PrimitiveValueInParam.java");
+            }
+            
             @TestMetadata("RecursiveAnnotation.java")
             public void testRecursiveAnnotation() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation.java");
@@ -1128,6 +1113,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("RecursiveAnnotation2.java")
             public void testRecursiveAnnotation2() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation2.java");
+            }
+            
+            @TestMetadata("StringConcatenationInParam.java")
+            public void testStringConcatenationInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/StringConcatenationInParam.java");
+            }
+            
+            @TestMetadata("StringConstantInParam.java")
+            public void testStringConstantInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/StringConstantInParam.java");
+            }
+            
+            @TestMetadata("StringInParam.java")
+            public void testStringInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/StringInParam.java");
             }
             
         }

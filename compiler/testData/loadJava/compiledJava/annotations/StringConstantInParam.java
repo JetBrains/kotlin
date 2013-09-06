@@ -1,6 +1,6 @@
 package test;
 
-public interface AnnotationWithStringConstantInParam {
+public interface StringConstantInParam {
     public static final String HEL = "hel";
 
     public @interface Anno {

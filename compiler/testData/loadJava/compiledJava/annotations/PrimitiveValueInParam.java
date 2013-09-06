@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 // TODO: remove comments when fix in idea will be accepted
-public interface AnnotationWithPrimitiveValueInParam {
+public interface PrimitiveValueInParam {
 
     public @interface Ann {
         int i();

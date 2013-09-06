@@ -1,6 +1,6 @@
 package test;
 
-public interface AnnotationWithStringConcatenationInParam {
+public interface StringConcatenationInParam {
     public @interface Anno {
         String value();
     }

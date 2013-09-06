@@ -1,8 +1,8 @@
 package test
 
-public trait AnnotationWithEmptyArrayInParam : java.lang.Object {
+public trait ArrayOfStringInParam : java.lang.Object {
     
-    test.AnnotationWithEmptyArrayInParam.MyAnnotation(value = []: jet.Array<jet.String>?) public open class A : java.lang.Object {
+    test.ArrayOfStringInParam.MyAnnotation(value = ["a", "b", "c"]: jet.Array<jet.String>?) public open class A : java.lang.Object {
         public constructor A()
     }
     

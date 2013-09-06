@@ -1,6 +1,6 @@
 package test;
 
-public interface AnnotationWithStringInParam {
+public interface StringInParam {
     public @interface Anno {
         String value();
     }

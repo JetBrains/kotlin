@@ -3,7 +3,7 @@ package test;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-public interface AnnotationWithArrayOfStringInParam {
+public interface ArrayOfStringInParam {
 
     public @interface MyAnnotation {
         String[] value();
