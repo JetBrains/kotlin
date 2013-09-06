@@ -173,6 +173,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name, boolean fresh) {
+        return staticContext.declarePropertyOrPropertyAccessorName(descriptor, name, fresh);
+    }
+
+    @NotNull
     public JsStringLiteral nameToLiteral(@NotNull Named named) {
         return program().getStringLiteral(named.getName().asString());
     }

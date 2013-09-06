@@ -84,6 +84,10 @@ public class RegressionMergeEcmaTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testBackendField() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testExtensionClass() throws Exception {
         checkFooBoxIsOk();
     }

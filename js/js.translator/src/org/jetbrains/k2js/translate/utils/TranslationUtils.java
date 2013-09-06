@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
+import static org.jetbrains.k2js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.createDataDescriptor;
@@ -154,6 +155,11 @@ public final class TranslationUtils {
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
             @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
+        if(!JsDescriptorUtils.isSimpleProperty(descriptor)) {
+            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor,
+                                                                             getKotlinBackingFieldName(backingFieldName.getIdent()),
+                                                                             false);
+        }
         return new JsNameRef(backingFieldName, JsLiteral.THIS);
     }
 
