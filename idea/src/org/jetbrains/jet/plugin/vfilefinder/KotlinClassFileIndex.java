@@ -63,7 +63,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
                 }
             }
             catch (Throwable e) {
-                LOG.error("Error while indexing file " + inputData.getFileName(), e);
+                LOG.warn("Error while indexing file " + inputData.getFileName(), e);
             }
             return Collections.emptyMap();
         }
