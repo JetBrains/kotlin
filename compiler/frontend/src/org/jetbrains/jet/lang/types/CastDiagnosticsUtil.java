@@ -121,24 +121,31 @@ public class CastDiagnosticsUtil {
         // Now, let's find a supertype of List<T> that is a Collection of something,
         // in this case it will be Collection<T>
         JetType supertypeWithVariables = TypeCheckingProcedure.findCorrespondingSupertype(subtypeWithVariables, supertype);
-        if (supertypeWithVariables == null) return true;
 
-        // Now, let's try to unify Collection<T> and Collection<Foo>
-        // solution is a map from T to Foo
         final List<TypeParameterDescriptor> variables = subtypeWithVariables.getConstructor().getParameters();
-        TypeUnifier.UnificationResult solution = TypeUnifier.unify(
-                new TypeProjection(supertype), new TypeProjection(supertypeWithVariables),
-                new Predicate<TypeConstructor>() {
-                    @Override
-                    public boolean apply(TypeConstructor typeConstructor) {
-                        ClassifierDescriptor descriptor = typeConstructor.getDeclarationDescriptor();
-                        return descriptor instanceof TypeParameterDescriptor && variables.contains(descriptor);
-                    }
-                });
+
+        Map<TypeConstructor, TypeProjection> substitution;
+        if (supertypeWithVariables != null) {
+            // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
+            TypeUnifier.UnificationResult solution = TypeUnifier.unify(
+                    new TypeProjection(supertype), new TypeProjection(supertypeWithVariables),
+                    new Predicate<TypeConstructor>() {
+                        @Override
+                        public boolean apply(TypeConstructor typeConstructor) {
+                            ClassifierDescriptor descriptor = typeConstructor.getDeclarationDescriptor();
+                            return descriptor instanceof TypeParameterDescriptor && variables.contains(descriptor);
+                        }
+                    });
+            substitution = Maps.newHashMap(solution.getSubstitution());
+        }
+        else {
+            // If there's no corresponding supertype, no variables are determined
+            // This may be OK, e.g. in case 'Any as List<*>'
+            substitution = Maps.newHashMapWithExpectedSize(variables.size());
+        }
 
         // If some of the parameters are not determined by unification, it means that these parameters are lost,
         // let's put stars instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
-        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap(solution.getSubstitution());
         for (TypeParameterDescriptor variable : variables) {
             TypeProjection value = substitution.get(variable.getTypeConstructor());
             if (value == null) {

@@ -1060,6 +1060,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowSameParameterParameter.kt");
             }
             
+            @TestMetadata("isErasedAnyAndStarred.kt")
+            public void testIsErasedAnyAndStarred() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/isErasedAnyAndStarred.kt");
+            }
+            
             @TestMetadata("IsErasedDisallowDifferentArgInvariantPosition.kt")
             public void testIsErasedDisallowDifferentArgInvariantPosition() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedDisallowDifferentArgInvariantPosition.kt");
@@ -1120,6 +1125,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedStar.kt");
             }
             
+            @TestMetadata("isErasedTAndStarred.kt")
+            public void testIsErasedTAndStarred() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/isErasedTAndStarred.kt");
+            }
+            
             @TestMetadata("IsErasedTasT.kt")
             public void testIsErasedTasT() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedTasT.kt");
@@ -1128,6 +1138,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("IsErasedToErrorType.kt")
             public void testIsErasedToErrorType() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedToErrorType.kt");
+            }
+            
+            @TestMetadata("isErasedUnrelatedAndStarred.kt")
+            public void testIsErasedUnrelatedAndStarred() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/isErasedUnrelatedAndStarred.kt");
             }
             
             @TestMetadata("IsRecursionSustainable.kt")
