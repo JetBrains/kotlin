@@ -51,18 +51,9 @@ import java.util.List;
 import java.util.Set;
 
 public class JetPsiChecker implements Annotator {
-    private static volatile boolean errorReportingEnabled = true;
     private static boolean namesHighlightingTest;
 
     private static final Logger LOG = Logger.getInstance(JetPsiChecker.class);
-
-    public static void setErrorReportingEnabled(boolean value) {
-        errorReportingEnabled = value;
-    }
-
-    public static boolean isErrorReportingEnabled() {
-        return errorReportingEnabled;
-    }
 
     @TestOnly
     public static void setNamesHighlightingTest(boolean namesHighlightingTest) {
@@ -115,7 +106,7 @@ public class JetPsiChecker implements Annotator {
             try {
                 BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
 
-                if (errorReportingEnabled && JetPluginUtil.isInSourceContent(element, false)) {
+                if (JetPluginUtil.isInSourceContent(element, false)) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
