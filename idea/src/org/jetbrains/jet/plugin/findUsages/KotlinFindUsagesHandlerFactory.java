@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindFunctionUsagesHandler;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
-import java.util.Collection;
+import java.util.List;
 
 public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     private final KotlinMethodFindUsagesOptions findMethodOptions;
@@ -61,13 +61,14 @@ public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
         }
         if (element instanceof JetNamedFunction) {
             if (!forHighlightUsages) {
-                Collection<? extends PsiElement> methods =
+                List<? extends PsiElement> methods =
                         JetRefactoringUtil.checkSuperMethods((JetDeclaration) element, null, "super.methods.action.key.find.usages");
 
                 if (methods == null || methods.isEmpty()) return FindUsagesHandler.NULL_HANDLER;
                 if (methods.size() > 1) {
                     return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, methods, this);
                 }
+                return new KotlinFindFunctionUsagesHandler((JetNamedFunction) methods.get(0), this);
             }
             
             return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, this);

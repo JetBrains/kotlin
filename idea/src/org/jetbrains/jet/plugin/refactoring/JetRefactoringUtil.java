@@ -25,6 +25,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.search.searches.DeepestSuperMethodsSearch;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.ui.components.JBList;
@@ -32,6 +33,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -112,43 +114,81 @@ public class JetRefactoringUtil {
         return markAsJava ? "[Java] " + description : description;
     }
 
+    private static PsiElement toJetDeclarationOrMethod(PsiMethod method) {
+        return (method instanceof JetClsMethod) ? ((JetClsMethod) method).getOrigin() : method;
+    }
+
+    @NotNull
+    private static List<? extends PsiElement> getFunctionSuperDeclarations(@NotNull JetNamedFunction function) {
+        PsiMethod lightMethod = LightClassUtil.getLightClassMethod(function);
+        if (lightMethod == null) return Collections.emptyList();
+
+        return ContainerUtil.map(
+                DeepestSuperMethodsSearch.search(lightMethod).findAll(),
+                new Function<PsiMethod, PsiElement>() {
+                    @Override
+                    public PsiElement fun(PsiMethod method) {
+                        return toJetDeclarationOrMethod(method);
+                    }
+                }
+        );
+    }
+
+    @NotNull
+    private static List<? extends PsiElement> getPropertySuperDeclarations(@NotNull JetProperty property) {
+        LightClassUtil.PropertyAccessorsPsiMethods lightMethods = LightClassUtil.getLightClassPropertyMethods(property);
+
+        Collection<PsiMethod> foundMethods = new HashSet<PsiMethod>();
+        if (lightMethods.getGetter() != null) {
+            foundMethods.addAll(DeepestSuperMethodsSearch.search(lightMethods.getGetter()).findAll());
+        }
+        if (lightMethods.getSetter() != null) {
+            foundMethods.addAll(DeepestSuperMethodsSearch.search(lightMethods.getSetter()).findAll());
+        }
+
+        Set<PsiElement> declarations = new HashSet<PsiElement>();
+        for (PsiMethod method : foundMethods) {
+            declarations.add(toJetDeclarationOrMethod(method));
+        }
+
+        return new ArrayList<PsiElement>(declarations);
+    }
+
+    @NotNull
+    private static List<? extends PsiElement> getSuperDeclarations(@NotNull JetDeclaration declaration) {
+        if (declaration instanceof JetNamedFunction) return getFunctionSuperDeclarations((JetNamedFunction) declaration);
+        if (declaration instanceof JetProperty) return getPropertySuperDeclarations((JetProperty) declaration);
+        return Collections.emptyList();
+    }
+
     @Nullable
-    public static Collection<? extends PsiElement> checkSuperMethods(
+    public static List<? extends PsiElement> checkSuperMethods(
             @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore, @NotNull String actionStringKey
     ) {
-        final BindingContext bindingContext =
+        BindingContext bindingContext =
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
 
         DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
         if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
 
         CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) declarationDescriptor;
-        Set<? extends CallableMemberDescriptor> overridenDescriptors = callableDescriptor.getOverriddenDescriptors();
 
-        Collection<? extends PsiElement> superMethods = ContainerUtil.map(
-                overridenDescriptors,
-                new Function<CallableMemberDescriptor, PsiElement>() {
-                    @Override
-                    public PsiElement fun(CallableMemberDescriptor descriptor) {
-                        return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-                    }
-                }
-        );
+        List<? extends PsiElement> superDeclarations = getSuperDeclarations(declaration);
         if (ignore != null) {
-            superMethods.removeAll(ignore);
+            superDeclarations.removeAll(ignore);
         }
 
-        if (superMethods.isEmpty()) return Collections.singletonList(declaration);
+        if (superDeclarations.isEmpty()) return Collections.singletonList(declaration);
 
-        java.util.List<String> superClasses = getClassDescriptions(bindingContext, superMethods);
-        return askUserForMethodsToSearch(declaration, callableDescriptor, superMethods, superClasses, actionStringKey);
+        java.util.List<String> superClasses = getClassDescriptions(bindingContext, superDeclarations);
+        return askUserForMethodsToSearch(declaration, callableDescriptor, superDeclarations, superClasses, actionStringKey);
     }
 
     @NotNull
-    private static Collection<? extends PsiElement> askUserForMethodsToSearch(
+    private static List<? extends PsiElement> askUserForMethodsToSearch(
             @NotNull JetDeclaration declaration,
             @NotNull CallableMemberDescriptor callableDescriptor,
-            @NotNull Collection<? extends PsiElement> superMethods,
+            @NotNull List<? extends PsiElement> superMethods,
             @NotNull List<String> superClasses,
             @NotNull String actionStringKey
     ) {
