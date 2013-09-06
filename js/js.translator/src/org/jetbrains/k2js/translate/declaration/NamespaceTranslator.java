@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.LabelGenerator;
-import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -98,18 +97,13 @@ final class NamespaceTranslator extends AbstractTranslator {
         return place;
     }
 
-    public void add(@NotNull Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation,
-            @NotNull List<JsStatement> initializers) {
+    public void add(@NotNull Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation) {
         JsExpression initializer;
         if (visitor.initializerStatements.isEmpty()) {
             initializer = null;
         }
         else {
             initializer = visitor.initializer;
-            if (!context().isEcma5()) {
-                initializers.add(new JsInvocation(Namer.getFunctionCallRef(initializer),
-                                                  context().getQualifiedReference(descriptor)).makeStmt());
-            }
         }
 
         DefineInvocation defineInvocation = descriptorToDefineInvocation.get(descriptor);

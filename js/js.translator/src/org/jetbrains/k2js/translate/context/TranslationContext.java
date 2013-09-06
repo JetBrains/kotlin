@@ -58,10 +58,6 @@ public class TranslationContext {
 
     private final HashMap<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
 
-    public boolean isEcma5() {
-        return staticContext.isEcma5();
-    }
-
     private TranslationContext(
             @NotNull StaticContext staticContext,
             @NotNull DynamicContext dynamicContext,

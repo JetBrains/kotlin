@@ -72,24 +72,16 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
             return Collections.emptyList();
         }
 
-        JsVars vars = new JsVars(true);
-        List<JsStatement> result;
-        if (context().isEcma5()) {
-            result = Collections.<JsStatement>singletonList(vars);
-        }
-        else {
-            result = new ArrayList<JsStatement>();
-            result.add(vars);
-        }
-
         context().classDeclarationTranslator().generateDeclarations();
         for (NamespaceTranslator translator : descriptorToTranslator.values()) {
-            translator.add(descriptorToDefineInvocation, result);
+            translator.add(descriptorToDefineInvocation);
         }
 
+        JsVars vars = new JsVars(true);
         vars.addIfHasInitializer(context().classDeclarationTranslator().getDeclaration());
         vars.addIfHasInitializer(getRootPackageDeclaration(descriptorToDefineInvocation.get(rootNamespaceDescriptor)));
-        return result;
+
+        return Collections.<JsStatement>singletonList(vars);
     }
 
     @NotNull

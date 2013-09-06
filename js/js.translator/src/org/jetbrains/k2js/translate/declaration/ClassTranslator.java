@@ -173,12 +173,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
         if (!isTrait()) {
             JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod();
-            if (context().isEcma5()) {
-                invocationArguments.add(initializer.getBody().getStatements().isEmpty() ? JsLiteral.NULL : initializer);
-            }
-            else {
-                properties.add(new JsPropertyInitializer(Namer.initializeMethodReference(), initializer));
-            }
+            invocationArguments.add(initializer.getBody().getStatements().isEmpty() ? JsLiteral.NULL : initializer);
         }
 
         translatePropertiesAsConstructorParameters(declarationContext, properties);
@@ -227,9 +222,7 @@ public final class ClassTranslator extends AbstractTranslator {
     private void addSuperclassReferences(@NotNull JsInvocation jsClassDeclaration) {
         List<JsExpression> superClassReferences = getSupertypesNameReferences();
         if (superClassReferences.isEmpty()) {
-            if (!isTrait() || context().isEcma5()) {
-                jsClassDeclaration.getArguments().add(JsLiteral.NULL);
-            }
+            jsClassDeclaration.getArguments().add(JsLiteral.NULL);
             return;
         }
 
