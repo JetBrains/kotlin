@@ -66,22 +66,30 @@ public class TypeResolver {
 
     @NotNull
     public JetType resolveType(@NotNull JetScope scope, @NotNull JetTypeReference typeReference, BindingTrace trace, boolean checkBounds) {
-        JetType cachedType = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
+        return resolveType(new TypeResolutionContext(scope, trace, checkBounds, false), typeReference);
+    }
+
+    @NotNull
+    public JetType resolveType(@NotNull TypeResolutionContext c, @NotNull JetTypeReference typeReference) {
+        JetType cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference);
         if (cachedType != null) return cachedType;
 
-        List<AnnotationDescriptor> annotations = annotationResolver.getResolvedAnnotations(typeReference.getAnnotations(), trace);
+        List<AnnotationDescriptor> annotations = annotationResolver.getResolvedAnnotations(typeReference.getAnnotations(), c.trace);
 
         JetTypeElement typeElement = typeReference.getTypeElement();
-        JetType type = resolveTypeElement(scope, annotations, typeElement, trace, checkBounds);
-        trace.record(BindingContext.TYPE, typeReference, type);
-        trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, scope);
+        JetType type = resolveTypeElement(c, annotations, typeElement);
+        c.trace.record(BindingContext.TYPE, typeReference, type);
+        c.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, c.scope);
 
         return type;
     }
 
     @NotNull
-    private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations,
-            JetTypeElement typeElement, final BindingTrace trace, final boolean checkBounds) {
+    private JetType resolveTypeElement(
+            final TypeResolutionContext c,
+            final List<AnnotationDescriptor> annotations,
+            JetTypeElement typeElement
+    ) {
 
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
@@ -94,18 +102,18 @@ public class TypeResolver {
                         return;
                     }
 
-                    ClassifierDescriptor classifierDescriptor = resolveClass(scope, type, trace);
+                    ClassifierDescriptor classifierDescriptor = resolveClass(c.scope, type, c.trace);
                     if (classifierDescriptor == null) {
-                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments(), trace, checkBounds);
+                        resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
                         return;
                     }
 
-                    trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
+                    c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
 
                     if (classifierDescriptor instanceof TypeParameterDescriptor) {
                         TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
 
-                        JetScope scopeForTypeParameter = getScopeForTypeParameter(typeParameterDescriptor, checkBounds);
+                        JetScope scopeForTypeParameter = getScopeForTypeParameter(c, typeParameterDescriptor);
                         if (scopeForTypeParameter instanceof ErrorUtils.ErrorScope) {
                             result[0] = ErrorUtils.createErrorType("?");
                         }
@@ -119,19 +127,19 @@ public class TypeResolver {
                             );
                         }
 
-                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments(), trace, checkBounds);
+                        resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
 
                         DeclarationDescriptor containing = typeParameterDescriptor.getContainingDeclaration();
                         if (containing instanceof ClassDescriptor) {
                             // Type parameter can't be inherited from member of parent class, so we can skip subclass check
-                            DescriptorResolver.checkHasOuterClassInstance(scope, trace, referenceExpression, (ClassDescriptor) containing, false);
+                            DescriptorResolver.checkHasOuterClassInstance(c.scope, c.trace, referenceExpression, (ClassDescriptor) containing, false);
                         }
                     }
                     else if (classifierDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
 
                         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
-                        List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments(), trace, checkBounds);
+                        List<TypeProjection> arguments = resolveTypeProjections(c, typeConstructor, type.getTypeArguments());
                         List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
@@ -142,14 +150,14 @@ public class TypeResolver {
                             if (actualArgumentCount != expectedArgumentCount) {
                                 if (actualArgumentCount == 0) {
                                     if (rhsOfIsExpression(type) || rhsOfIsPattern(type)) {
-                                        trace.report(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION.on(type, expectedArgumentCount, allStarProjectionsString(typeConstructor)));
+                                        c.trace.report(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION.on(type, expectedArgumentCount, allStarProjectionsString(typeConstructor)));
                                     }
                                     else {
-                                        trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
+                                        c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
                                     }
                                 }
                                 else {
-                                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
+                                    c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
                                 }
                             }
                             else {
@@ -160,7 +168,7 @@ public class TypeResolver {
                                         arguments,
                                         classDescriptor.getMemberScope(arguments)
                                 );
-                                if (checkBounds) {
+                                if (c.checkBounds) {
                                     TypeSubstitutor substitutor = TypeSubstitutor.create(result[0]);
                                     for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
                                         TypeParameterDescriptor parameter = parameters.get(i);
@@ -168,7 +176,7 @@ public class TypeResolver {
                                         JetTypeReference typeReference = type.getTypeArguments().get(i).getTypeReference();
 
                                         if (typeReference != null) {
-                                            descriptorResolver.checkBounds(typeReference, argument, parameter, substitutor, trace);
+                                            DescriptorResolver.checkBounds(typeReference, argument, parameter, substitutor, c.trace);
                                         }
                                     }
                                 }
@@ -179,12 +187,12 @@ public class TypeResolver {
 
                 @Override
                 public void visitNullableType(JetNullableType nullableType) {
-                    JetType baseType = resolveTypeElement(scope, annotations, nullableType.getInnerType(), trace, checkBounds);
+                    JetType baseType = resolveTypeElement(c, annotations, nullableType.getInnerType());
                     if (baseType.isNullable()) {
-                        trace.report(REDUNDANT_NULLABLE.on(nullableType));
+                        c.trace.report(REDUNDANT_NULLABLE.on(nullableType));
                     }
                     else if (TypeUtils.hasNullableSuperType(baseType)) {
-                        trace.report(BASE_WITH_NULLABLE_UPPER_BOUND.on(nullableType, baseType));
+                        c.trace.report(BASE_WITH_NULLABLE_UPPER_BOUND.on(nullableType, baseType));
                     }
                     result[0] = TypeUtils.makeNullable(baseType);
                 }
@@ -192,17 +200,17 @@ public class TypeResolver {
                 @Override
                 public void visitFunctionType(JetFunctionType type) {
                     JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
-                    JetType receiverType = receiverTypeRef == null ? null : resolveType(scope, receiverTypeRef, trace, checkBounds);
+                    JetType receiverType = receiverTypeRef == null ? null : resolveType(c, receiverTypeRef);
 
                     List<JetType> parameterTypes = new ArrayList<JetType>();
                     for (JetParameter parameter : type.getParameters()) {
-                        parameterTypes.add(resolveType(scope, parameter.getTypeReference(), trace, checkBounds));
+                        parameterTypes.add(resolveType(c, parameter.getTypeReference()));
                     }
 
                     JetTypeReference returnTypeRef = type.getReturnTypeRef();
                     JetType returnType;
                     if (returnTypeRef != null) {
-                        returnType = resolveType(scope, returnTypeRef, trace, checkBounds);
+                        returnType = resolveType(c, returnTypeRef);
                     }
                     else {
                         returnType = KotlinBuiltIns.getInstance().getUnitType();
@@ -212,8 +220,7 @@ public class TypeResolver {
 
                 @Override
                 public void visitJetElement(JetElement element) {
-                    trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"));
-//                    throw new IllegalArgumentException("Unsupported type: " + element);
+                    c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"));
                 }
             });
         }
@@ -244,8 +251,8 @@ public class TypeResolver {
         return type.getParent() == outerPattern.getTypeRef();
     }
 
-    private JetScope getScopeForTypeParameter(final TypeParameterDescriptor typeParameterDescriptor, boolean checkBounds) {
-        if (checkBounds) {
+    private JetScope getScopeForTypeParameter(TypeResolutionContext c, final TypeParameterDescriptor typeParameterDescriptor) {
+        if (c.checkBounds) {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
         else {
@@ -267,7 +274,11 @@ public class TypeResolver {
     }
 
     @NotNull
-    private List<TypeProjection> resolveTypeProjections(JetScope scope, TypeConstructor constructor, List<JetTypeProjection> argumentElements, BindingTrace trace, boolean checkBounds) {
+    private List<TypeProjection> resolveTypeProjections(
+            TypeResolutionContext c,
+            TypeConstructor constructor,
+            List<JetTypeProjection> argumentElements
+    ) {
         List<TypeProjection> arguments = new ArrayList<TypeProjection>();
         for (int i = 0, argumentElementsSize = argumentElements.size(); i < argumentElementsSize; i++) {
             JetTypeProjection argumentElement = argumentElements.get(i);
@@ -286,16 +297,16 @@ public class TypeResolver {
             }
             else {
                 // TODO : handle the Foo<in *> case
-                type = resolveType(scope, argumentElement.getTypeReference(), trace, checkBounds);
+                type = resolveType(c, argumentElement.getTypeReference());
                 Variance kind = resolveProjectionKind(projectionKind);
                 if (constructor.getParameters().size() > i) {
                     TypeParameterDescriptor parameterDescriptor = constructor.getParameters().get(i);
                     if (kind != INVARIANT && parameterDescriptor.getVariance() != INVARIANT) {
                         if (kind == parameterDescriptor.getVariance()) {
-                            trace.report(REDUNDANT_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()));
+                            c.trace.report(REDUNDANT_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()));
                         }
                         else {
-                            trace.report(CONFLICTING_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()));
+                            c.trace.report(CONFLICTING_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()));
                         }
                     }
                 }
