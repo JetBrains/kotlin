@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -76,9 +77,12 @@ import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.resolveSpecialConstructionAsCall;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
+
+    private static final TokenSet BARE_TYPES_ALLOWED = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS);
 
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
 
@@ -167,10 +171,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return JetTypeInfo.create(null, leftTypeInfo.getDataFlowInfo());
         }
 
-        JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
         IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
 
+        boolean allowBareTypes = BARE_TYPES_ALLOWED.contains(operationType);
+        TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, allowBareTypes);
+        PossiblyBareType possiblyBareTarget = context.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, right);
+
         if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
+            // We do not allow bare types on static assertions, because static assertions provide an expected type for their argument,
+            // thus causing a circularity in type dependencies
+            assert !possiblyBareTarget.isBare() : "Bare types should not be allowed for static assertions, because argument inference makes no sense there";
+            JetType targetType = possiblyBareTarget.getActualType();
 
             JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType.replaceExpectedType(targetType));
             checkBinaryWithTypeRHS(expression, context, targetType, typeInfo.getType());
@@ -180,15 +191,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
 
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
-        if (typeInfo.getType() != null) {
-            checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, typeInfo.getType());
+        JetType subjectType = typeInfo.getType();
+        JetType targetType;
+        if (subjectType != null) {
+            targetType = possiblyBareTarget.reconstruct(subjectType);
+
+            checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
             dataFlowInfo = typeInfo.getDataFlowInfo();
-            if (operationType == JetTokens.AS_KEYWORD) {
-                DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(left, typeInfo.getType(), context.trace.getBindingContext());
+            if (operationType == AS_KEYWORD) {
+                DataFlowValue value =
+                        DataFlowValueFactory.INSTANCE.createDataFlowValue(left, subjectType, context.trace.getBindingContext());
                 dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
             }
         }
-        JetType result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
+        else {
+            // Recovery: let's reconstruct as if we were casting from Any, to get some type there
+            targetType = possiblyBareTarget.reconstruct(KotlinBuiltIns.getInstance().getAnyType());
+        }
+        JetType result = operationType == AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
 

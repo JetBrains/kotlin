@@ -964,7 +964,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/cast")
-        @InnerTestClasses({Cast.NeverSucceeds.class})
+        @InnerTestClasses({Cast.Bare.class, Cast.NeverSucceeds.class})
         public static class Cast extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInCast() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/cast"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1185,6 +1185,84 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/WhenWithExpression.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/cast/bare")
+            public static class Bare extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInBare() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/cast/bare"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("AsNestedBare.kt")
+                public void testAsNestedBare() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/AsNestedBare.kt");
+                }
+                
+                @TestMetadata("AsNullable.kt")
+                public void testAsNullable() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/AsNullable.kt");
+                }
+                
+                @TestMetadata("EitherAs.kt")
+                public void testEitherAs() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/EitherAs.kt");
+                }
+                
+                @TestMetadata("EitherIs.kt")
+                public void testEitherIs() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/EitherIs.kt");
+                }
+                
+                @TestMetadata("EitherNotIs.kt")
+                public void testEitherNotIs() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/EitherNotIs.kt");
+                }
+                
+                @TestMetadata("EitherSafeAs.kt")
+                public void testEitherSafeAs() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/EitherSafeAs.kt");
+                }
+                
+                @TestMetadata("EitherWhen.kt")
+                public void testEitherWhen() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/EitherWhen.kt");
+                }
+                
+                @TestMetadata("ErrorsInSubstitution.kt")
+                public void testErrorsInSubstitution() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/ErrorsInSubstitution.kt");
+                }
+                
+                @TestMetadata("NullableAs.kt")
+                public void testNullableAs() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/NullableAs.kt");
+                }
+                
+                @TestMetadata("RedundantNullable.kt")
+                public void testRedundantNullable() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/RedundantNullable.kt");
+                }
+                
+                @TestMetadata("ToErrorType.kt")
+                public void testToErrorType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/ToErrorType.kt");
+                }
+                
+                @TestMetadata("UnrelatedAs.kt")
+                public void testUnrelatedAs() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/UnrelatedAs.kt");
+                }
+                
+                @TestMetadata("UnrelatedColon.kt")
+                public void testUnrelatedColon() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/UnrelatedColon.kt");
+                }
+                
+                @TestMetadata("UnrelatedIs.kt")
+                public void testUnrelatedIs() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/UnrelatedIs.kt");
+                }
+                
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/cast/neverSucceeds")
             public static class NeverSucceeds extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInNeverSucceeds() throws Exception {
@@ -1216,6 +1294,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Cast");
                 suite.addTestSuite(Cast.class);
+                suite.addTestSuite(Bare.class);
                 suite.addTestSuite(NeverSucceeds.class);
                 return suite;
             }

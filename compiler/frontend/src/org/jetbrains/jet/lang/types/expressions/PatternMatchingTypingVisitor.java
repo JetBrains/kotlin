@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.PossiblyBareType;
+import org.jetbrains.jet.lang.resolve.TypeResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
@@ -279,8 +281,12 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (typeReferenceAfterIs == null) {
             return noChange(context);
         }
-        JetType type = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReferenceAfterIs, context.trace,
-                                                                                      true);
+        TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true);
+        PossiblyBareType possiblyBareTarget = context.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
+        JetType type = possiblyBareTarget.reconstruct(subjectType);
+        if (possiblyBareTarget.isBare()) {
+            context.trace.record(BindingContext.TYPE, typeReferenceAfterIs, type);
+        }
         if (!subjectType.isNullable() && type.isNullable()) {
             JetTypeElement element = typeReferenceAfterIs.getTypeElement();
             assert element instanceof JetNullableType : "element must be instance of " + JetNullableType.class.getName();

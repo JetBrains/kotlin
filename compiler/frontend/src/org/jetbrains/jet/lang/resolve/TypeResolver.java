@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -35,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.PossiblyBareType.type;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
 public class TypeResolver {
@@ -60,32 +60,41 @@ public class TypeResolver {
 
     @NotNull
     public JetType resolveType(@NotNull JetScope scope, @NotNull JetTypeReference typeReference, BindingTrace trace, boolean checkBounds) {
-        return resolveType(new TypeResolutionContext(scope, trace, checkBounds), typeReference);
+        // bare types are not allowed
+        return resolveType(new TypeResolutionContext(scope, trace, checkBounds, false), typeReference);
     }
 
     @NotNull
     public JetType resolveType(@NotNull TypeResolutionContext c, @NotNull JetTypeReference typeReference) {
+        assert !c.allowBareTypes : "Use resolvePossiblyBareType() when bare types are allowed";
+        return resolvePossiblyBareType(c, typeReference).getActualType();
+    }
+
+    @NotNull
+    public PossiblyBareType resolvePossiblyBareType(@NotNull TypeResolutionContext c, @NotNull JetTypeReference typeReference) {
         JetType cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference);
-        if (cachedType != null) return cachedType;
+        if (cachedType != null) return type(cachedType);
 
         List<AnnotationDescriptor> annotations = annotationResolver.getResolvedAnnotations(typeReference.getAnnotations(), c.trace);
 
         JetTypeElement typeElement = typeReference.getTypeElement();
-        JetType type = resolveTypeElement(c, annotations, typeElement);
-        c.trace.record(BindingContext.TYPE, typeReference, type);
+        PossiblyBareType type = resolveTypeElement(c, annotations, typeElement);
+        if (!type.isBare()) {
+            c.trace.record(BindingContext.TYPE, typeReference, type.getActualType());
+        }
         c.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, c.scope);
 
         return type;
     }
 
     @NotNull
-    private JetType resolveTypeElement(
+    private PossiblyBareType resolveTypeElement(
             final TypeResolutionContext c,
             final List<AnnotationDescriptor> annotations,
             JetTypeElement typeElement
     ) {
 
-        final JetType[] result = new JetType[1];
+        final PossiblyBareType[] result = new PossiblyBareType[1];
         if (typeElement != null) {
             typeElement.accept(new JetVisitorVoid() {
                 @Override
@@ -109,16 +118,16 @@ public class TypeResolver {
 
                         JetScope scopeForTypeParameter = getScopeForTypeParameter(c, typeParameterDescriptor);
                         if (scopeForTypeParameter instanceof ErrorUtils.ErrorScope) {
-                            result[0] = ErrorUtils.createErrorType("?");
+                            result[0] = type(ErrorUtils.createErrorType("?"));
                         }
                         else {
-                            result[0] = new JetTypeImpl(
+                            result[0] = type(new JetTypeImpl(
                                     annotations,
                                     typeParameterDescriptor.getTypeConstructor(),
                                     TypeUtils.hasNullableLowerBound(typeParameterDescriptor),
                                     Collections.<TypeProjection>emptyList(),
                                     scopeForTypeParameter
-                            );
+                            ));
                         }
 
                         resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
@@ -138,32 +147,33 @@ public class TypeResolver {
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
                         if (ErrorUtils.isError(typeConstructor)) {
-                            result[0] = ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]");
+                            result[0] = type(ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]"));
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
                                 if (actualArgumentCount == 0) {
-                                    if (rhsOfIsExpression(type) || rhsOfIsPattern(type)) {
-                                        c.trace.report(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION.on(type, expectedArgumentCount, allStarProjectionsString(typeConstructor)));
+                                    // See docs for PossiblyBareType
+                                    if (c.allowBareTypes) {
+                                        result[0] = PossiblyBareType.bare(typeConstructor, false);
+                                        return;
                                     }
-                                    else {
-                                        c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
-                                    }
+                                    c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
                                 }
                                 else {
                                     c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
                                 }
                             }
                             else {
-                                result[0] = new JetTypeImpl(
+                                JetTypeImpl resultingType = new JetTypeImpl(
                                         annotations,
                                         typeConstructor,
                                         false,
                                         arguments,
                                         classDescriptor.getMemberScope(arguments)
                                 );
+                                result[0] = type(resultingType);
                                 if (c.checkBounds) {
-                                    TypeSubstitutor substitutor = TypeSubstitutor.create(result[0]);
+                                    TypeSubstitutor substitutor = TypeSubstitutor.create(resultingType);
                                     for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
                                         TypeParameterDescriptor parameter = parameters.get(i);
                                         JetType argument = arguments.get(i).getType();
@@ -181,35 +191,35 @@ public class TypeResolver {
 
                 @Override
                 public void visitNullableType(JetNullableType nullableType) {
-                    JetType baseType = resolveTypeElement(c, annotations, nullableType.getInnerType());
+                    PossiblyBareType baseType = resolveTypeElement(c, annotations, nullableType.getInnerType());
                     if (baseType.isNullable()) {
                         c.trace.report(REDUNDANT_NULLABLE.on(nullableType));
                     }
-                    else if (TypeUtils.hasNullableSuperType(baseType)) {
-                        c.trace.report(BASE_WITH_NULLABLE_UPPER_BOUND.on(nullableType, baseType));
+                    else if (!baseType.isBare() && TypeUtils.hasNullableSuperType(baseType.getActualType())) {
+                        c.trace.report(BASE_WITH_NULLABLE_UPPER_BOUND.on(nullableType, baseType.getActualType()));
                     }
-                    result[0] = TypeUtils.makeNullable(baseType);
+                    result[0] = baseType.makeNullable();
                 }
 
                 @Override
                 public void visitFunctionType(JetFunctionType type) {
                     JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
-                    JetType receiverType = receiverTypeRef == null ? null : resolveType(c, receiverTypeRef);
+                    JetType receiverType = receiverTypeRef == null ? null : resolveType(c.noBareTypes(), receiverTypeRef);
 
                     List<JetType> parameterTypes = new ArrayList<JetType>();
                     for (JetParameter parameter : type.getParameters()) {
-                        parameterTypes.add(resolveType(c, parameter.getTypeReference()));
+                        parameterTypes.add(resolveType(c.noBareTypes(), parameter.getTypeReference()));
                     }
 
                     JetTypeReference returnTypeRef = type.getReturnTypeRef();
                     JetType returnType;
                     if (returnTypeRef != null) {
-                        returnType = resolveType(c, returnTypeRef);
+                        returnType = resolveType(c.noBareTypes(), returnTypeRef);
                     }
                     else {
                         returnType = KotlinBuiltIns.getInstance().getUnitType();
                     }
-                    result[0] = KotlinBuiltIns.getInstance().getFunctionType(annotations, receiverType, parameterTypes, returnType);
+                    result[0] = type(KotlinBuiltIns.getInstance().getFunctionType(annotations, receiverType, parameterTypes, returnType));
                 }
 
                 @Override
@@ -219,30 +229,9 @@ public class TypeResolver {
             });
         }
         if (result[0] == null) {
-            return ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText());
+            return type(ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText()));
         }
         return result[0];
-    }
-
-    private static boolean rhsOfIsExpression(@NotNull JetUserType type) {
-        // Look for the FIRST expression containing this type
-        JetExpression outerExpression = PsiTreeUtil.getParentOfType(type, JetExpression.class);
-        if (outerExpression instanceof JetIsExpression) {
-            JetIsExpression isExpression = (JetIsExpression) outerExpression;
-            // If this expression is JetIsExpression, and the type is the outermost on the RHS
-            if (type.getParent() == isExpression.getTypeRef()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean rhsOfIsPattern(@NotNull JetUserType type) {
-        // Look for the is-pattern containing this type
-        JetWhenConditionIsPattern outerPattern = PsiTreeUtil.getParentOfType(type, JetWhenConditionIsPattern.class, false, JetExpression.class);
-        if (outerPattern == null) return false;
-        // We are interested only in the outermost type on the RHS
-        return type.getParent() == outerPattern.getTypeRef();
     }
 
     private JetScope getScopeForTypeParameter(TypeResolutionContext c, final TypeParameterDescriptor typeParameterDescriptor) {
@@ -283,7 +272,7 @@ public class TypeResolver {
             }
             else {
                 // TODO : handle the Foo<in *> case
-                type = resolveType(c, argumentElement.getTypeReference());
+                type = resolveType(c.noBareTypes(), argumentElement.getTypeReference());
                 Variance kind = resolveProjectionKind(projectionKind);
                 if (constructor.getParameters().size() > i) {
                     TypeParameterDescriptor parameterDescriptor = constructor.getParameters().get(i);
@@ -332,16 +321,5 @@ public class TypeResolver {
             }
         }
         return null;
-    }
-
-    @NotNull
-    private static String allStarProjectionsString(@NotNull TypeConstructor constructor) {
-        int size = constructor.getParameters().size();
-        assert size != 0 : "No projections possible for a nilary type constructor" + constructor;
-        ClassifierDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
-        assert declarationDescriptor != null : "No declaration descriptor for type constructor " + constructor;
-        String name = declarationDescriptor.getName().asString();
-
-        return TypeUtils.getTypeNameAndStarProjectionsString(name, size);
     }
 }

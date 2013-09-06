@@ -112,11 +112,41 @@ public class CastDiagnosticsUtil {
         // NOTE: this does not account for 'as Array<List<T>>'
         if (allParametersReified(subtype)) return false;
 
+        JetType staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype.getConstructor());
+
+        // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
+        // In this case, we can't guarantee anything, so the cast is considered to be erased
+        if (staticallyKnownSubtype == null) return true;
+
+        // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
+        // If not, it's wrong to use it
+        return !typeChecker.isSubtypeOf(staticallyKnownSubtype, subtype);
+    }
+
+    /**
+     * Remember that we are trying to cast something of type {@code supertype} to {@code subtype}.
+     *
+     * Since at runtime we can only check the class (type constructor), the rest of the subtype should be known statically, from supertype.
+     * This method reconstructs all static information that can be obtained from supertype.
+     *
+     * Example 1:
+     *  supertype = Collection<String>
+     *  subtype = List<...>
+     *  result = List<String>
+     *
+     * Example 2:
+     *  supertype = Any
+     *  subtype = List<...>
+     *  result = List<*>
+     */
+    public static JetType findStaticallyKnownSubtype(@NotNull JetType supertype, @NotNull TypeConstructor subtypeConstructor) {
+        assert !supertype.isNullable() : "This method only makes sense for non-nullable types";
+
         // Assume we are casting an expression of type Collection<Foo> to List<Bar>
         // First, let's make List<T>, where T is a type variable
-        JetType subtypeWithVariables = TypeUtils.makeUnsubstitutedType(
-                subtype.getConstructor(),
-                ErrorUtils.createErrorScope("Scope for intermediate type. This type shouldn't be used outside isCastErased()", true));
+        ClassifierDescriptor descriptor = subtypeConstructor.getDeclarationDescriptor();
+        assert descriptor != null : "Can't create default type for " + subtypeConstructor;
+        JetType subtypeWithVariables = descriptor.getDefaultType();
 
         // Now, let's find a supertype of List<T> that is a Collection of something,
         // in this case it will be Collection<T>
@@ -158,15 +188,7 @@ public class CastDiagnosticsUtil {
 
         // At this point we have values for all type parameters of List
         // Let's make a type by substituting them: List<T> -> List<Foo>
-        JetType staticallyKnownSubtype = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT);
-
-        // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
-        // In this case, we can't guarantee anything, so the cast is considered to be erased
-        if (staticallyKnownSubtype == null) return true;
-
-        // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
-        // If not, it's wrong to use it
-        return !typeChecker.isSubtypeOf(staticallyKnownSubtype, subtype);
+        return TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT);
     }
 
     private static boolean allParametersReified(JetType subtype) {
