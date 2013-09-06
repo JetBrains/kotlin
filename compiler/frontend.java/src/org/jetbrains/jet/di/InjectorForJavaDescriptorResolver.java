@@ -131,6 +131,7 @@ public class InjectorForJavaDescriptorResolver {
 
         javaAnnotationArgumentResolver.setAnnotationResolver(javaAnnotationResolver);
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
+        javaAnnotationArgumentResolver.setTypeTransformer(javaTypeTransformer);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setCache(traceBasedJavaResolverCache);

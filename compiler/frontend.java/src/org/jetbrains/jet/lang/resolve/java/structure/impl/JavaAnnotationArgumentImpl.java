@@ -47,6 +47,9 @@ public abstract class JavaAnnotationArgumentImpl<Psi extends PsiAnnotationMember
         else if (argument instanceof PsiAnnotation) {
             return new JavaAnnotationAsAnnotationArgumentImpl((PsiAnnotation) argument, name);
         }
+        else if (argument instanceof PsiClassObjectAccessExpression) {
+            return new JavaClassObjectAnnotationArgumentImpl((PsiClassObjectAccessExpression) argument, name);
+        }
         else {
             throw new UnsupportedOperationException("Unsupported annotation argument type: " + argument);
         }

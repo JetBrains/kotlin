@@ -1,0 +1,14 @@
+package test
+
+public open class ClassObjectArrayInParam : java.lang.Object {
+    public constructor ClassObjectArrayInParam()
+    
+    public final annotation class Anno : jet.Annotation {
+        public constructor Anno(/*0*/ vararg value: java.lang.Class<out jet.Any?>? /*jet.Array<java.lang.Class<out jet.Any?>>?*/)
+        public abstract fun value(): jet.Array<java.lang.Class<out jet.Any?>>?
+    }
+    
+    test.ClassObjectArrayInParam.Anno(value = [ClassObjectArrayInParam?.class, Nested?.class, String?.class]: jet.Array<java.lang.Class<out jet.Any?>>?) public open class Nested : java.lang.Object {
+        public constructor Nested()
+    }
+}

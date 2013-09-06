@@ -1080,6 +1080,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/ArrayOfStringInParam.java");
             }
             
+            @TestMetadata("ClassObjectArrayInParam.java")
+            public void testClassObjectArrayInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/ClassObjectArrayInParam.java");
+            }
+            
+            @TestMetadata("ClassObjectInParam.java")
+            public void testClassObjectInParam() throws Exception {
+                doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParam.java");
+            }
+            
             @TestMetadata("CustomAnnotation.java")
             public void testCustomAnnotation() throws Exception {
                 doTestCompiledJava("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotation.java");

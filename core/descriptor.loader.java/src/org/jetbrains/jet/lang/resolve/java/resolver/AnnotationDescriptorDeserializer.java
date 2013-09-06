@@ -168,7 +168,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
         return new AnnotationVisitor(Opcodes.ASM4) {
-            // TODO: arrays, annotations
+            // TODO: arrays, annotations, java.lang.Class
             @Override
             public void visit(String name, Object value) {
                 CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);

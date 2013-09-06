@@ -29,19 +29,26 @@ import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeImpl;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaAnnotationArgumentResolver {
+    public static final FqName JL_CLASS_FQ_NAME = new FqName("java.lang.Class");
+
     private JavaAnnotationResolver annotationResolver;
     private JavaClassResolver classResolver;
+    private JavaTypeTransformer typeTransformer;
 
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
@@ -51,6 +58,11 @@ public final class JavaAnnotationArgumentResolver {
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
+    }
+
+    @Inject
+    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
     }
 
     @Nullable
@@ -79,6 +91,10 @@ public final class JavaAnnotationArgumentResolver {
         // Annotation
         else if (argument instanceof JavaAnnotationAsAnnotationArgument) {
             return resolveFromAnnotation(((JavaAnnotationAsAnnotationArgument) argument).getAnnotation(), postponedTasks);
+        }
+        // Class<?>
+        else if (argument instanceof JavaClassObjectAnnotationArgument) {
+            return resolveFromJavaClassObjectType(((JavaClassObjectAnnotationArgument) argument).getReferencedType());
         }
 
         return null;
@@ -133,6 +149,25 @@ public final class JavaAnnotationArgumentResolver {
         }
 
         return null;
+    }
+
+    @Nullable
+    private CompileTimeConstant<?> resolveFromJavaClassObjectType(@NotNull JavaType javaType) {
+        JetType type = typeTransformer.transformToType(javaType, TypeVariableResolver.EMPTY);
+
+        ClassDescriptor jlClass = classResolver.resolveClass(JL_CLASS_FQ_NAME, IGNORE_KOTLIN_SOURCES);
+        if (jlClass == null) return null;
+
+        List<TypeProjection> arguments = Collections.singletonList(new TypeProjection(type));
+        JetTypeImpl javaClassType = new JetTypeImpl(
+                jlClass.getAnnotations(),
+                jlClass.getTypeConstructor(),
+                false,
+                arguments,
+                jlClass.getMemberScope(arguments)
+        );
+
+        return new JavaClassValue(javaClassType);
     }
 
     @Nullable
