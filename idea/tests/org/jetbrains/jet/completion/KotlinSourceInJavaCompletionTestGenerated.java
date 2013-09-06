@@ -47,6 +47,11 @@ public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSou
         doTest("idea/testData/completion/injava/ClassMembers.java");
     }
     
+    @TestMetadata("ClassObject.java")
+    public void testClassObject() throws Exception {
+        doTest("idea/testData/completion/injava/ClassObject.java");
+    }
+    
     @TestMetadata("ClassesFromNamespace.java")
     public void testClassesFromNamespace() throws Exception {
         doTest("idea/testData/completion/injava/ClassesFromNamespace.java");
@@ -55,6 +60,16 @@ public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSou
     @TestMetadata("EnumConstants.java")
     public void testEnumConstants() throws Exception {
         doTest("idea/testData/completion/injava/EnumConstants.java");
+    }
+    
+    @TestMetadata("Nested.java")
+    public void testNested() throws Exception {
+        doTest("idea/testData/completion/injava/Nested.java");
+    }
+    
+    @TestMetadata("NestedObjectInstance.java")
+    public void testNestedObjectInstance() throws Exception {
+        doTest("idea/testData/completion/injava/NestedObjectInstance.java");
     }
     
     @TestMetadata("ObjectInstance.java")

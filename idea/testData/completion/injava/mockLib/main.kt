@@ -3,6 +3,15 @@ package mockLib.foo
 public class LibClass {
     public fun foo() {
     }
+
+    class object {
+        fun classObjectFun() {
+        }
+
+        public object NestedObject
+    }
+
+    public class Nested
 }
 
 public trait LibTrait {
