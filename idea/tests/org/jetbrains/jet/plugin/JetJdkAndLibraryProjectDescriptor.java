@@ -34,7 +34,7 @@ import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import java.io.File;
 
 public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor {
-    private static final String LIBRARY_NAME = "myLibrary";
+    public static final String LIBRARY_NAME = "myLibrary";
 
     private final File libraryFile;
     private final OrderRootType libraryRootType;

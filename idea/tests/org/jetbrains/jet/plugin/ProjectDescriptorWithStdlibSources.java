@@ -34,7 +34,7 @@ public class ProjectDescriptorWithStdlibSources extends JetWithJdkAndRuntimeLigh
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
         super.configureModule(module, model, contentEntry);
 
-        Library library = model.getModuleLibraryTable().getLibraryByName("myLibrary");
+        Library library = model.getModuleLibraryTable().getLibraryByName(LIBRARY_NAME);
         assert library != null;
         Library.ModifiableModel modifiableModel = library.getModifiableModel();
         modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("libraries/stdlib/src")), OrderRootType.SOURCES);
