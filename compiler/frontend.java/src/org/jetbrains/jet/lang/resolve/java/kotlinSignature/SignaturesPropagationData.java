@@ -525,7 +525,7 @@ public class SignaturesPropagationData {
         // #0 of Foo ->  A (mapped to itself)
         // #1 of Foo ->  B (mapped to itself)
         Multimap<TypeConstructor, TypeProjection> substitution = SubstitutionUtils.buildDeepSubstitutionMultimap(
-                TypeUtils.makeUnsubstitutedType(klass, JetScope.EMPTY));
+                TypeUtils.makeUnsubstitutedType(klass, ErrorUtils.createErrorScope("Do not access this scope", true)));
 
         // for each parameter of klass, hold arguments in corresponding supertypes
         List<List<TypeProjectionAndVariance>> parameterToArgumentsFromSuper = Lists.newArrayList();
