@@ -25,10 +25,10 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -44,10 +44,10 @@ public class InjectorForMacros {
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final TypeResolver typeResolver;
-    private final DescriptorResolver descriptorResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final CandidateResolver candidateResolver;
     private final CallExpressionResolver callExpressionResolver;
+    private final DescriptorResolver descriptorResolver;
     
     public InjectorForMacros(
         @NotNull Project project,
@@ -62,10 +62,10 @@ public class InjectorForMacros {
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.typeResolver = new TypeResolver();
-        this.descriptorResolver = new DescriptorResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.candidateResolver = new CandidateResolver();
         this.callExpressionResolver = new CallExpressionResolver();
+        this.descriptorResolver = new DescriptorResolver();
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
@@ -88,17 +88,16 @@ public class InjectorForMacros {
         argumentTypeResolver.setTypeResolver(typeResolver);
 
         typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleDescriptor(moduleDescriptor);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
-
-        descriptorResolver.setAnnotationResolver(annotationResolver);
-        descriptorResolver.setExpressionTypingServices(expressionTypingServices);
-        descriptorResolver.setTypeResolver(typeResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
+
+        descriptorResolver.setAnnotationResolver(annotationResolver);
+        descriptorResolver.setExpressionTypingServices(expressionTypingServices);
+        descriptorResolver.setTypeResolver(typeResolver);
 
     }
     

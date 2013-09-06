@@ -40,14 +40,8 @@ import static org.jetbrains.jet.lang.types.Variance.*;
 public class TypeResolver {
 
     private AnnotationResolver annotationResolver;
-    private DescriptorResolver descriptorResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private ModuleDescriptor moduleDescriptor;
-
-    @Inject
-    public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
-        this.descriptorResolver = descriptorResolver;
-    }
 
     @Inject
     public void setAnnotationResolver(AnnotationResolver annotationResolver) {
@@ -66,7 +60,7 @@ public class TypeResolver {
 
     @NotNull
     public JetType resolveType(@NotNull JetScope scope, @NotNull JetTypeReference typeReference, BindingTrace trace, boolean checkBounds) {
-        return resolveType(new TypeResolutionContext(scope, trace, checkBounds, false), typeReference);
+        return resolveType(new TypeResolutionContext(scope, trace, checkBounds), typeReference);
     }
 
     @NotNull

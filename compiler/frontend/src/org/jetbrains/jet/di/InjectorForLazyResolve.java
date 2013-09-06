@@ -90,7 +90,6 @@ public class InjectorForLazyResolve {
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
         this.typeResolver.setAnnotationResolver(annotationResolver);
-        this.typeResolver.setDescriptorResolver(descriptorResolver);
         this.typeResolver.setModuleDescriptor(moduleDescriptor);
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 

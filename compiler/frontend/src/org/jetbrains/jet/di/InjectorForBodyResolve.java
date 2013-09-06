@@ -132,7 +132,6 @@ public class InjectorForBodyResolve {
         descriptorResolver.setTypeResolver(typeResolver);
 
         typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleDescriptor(moduleDescriptor);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
