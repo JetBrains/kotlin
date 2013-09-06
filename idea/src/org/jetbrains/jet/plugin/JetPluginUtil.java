@@ -101,6 +101,18 @@ public class JetPluginUtil {
         return ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInSourceContent(virtualFile);
     }
 
+    public static boolean isInSource(@NotNull PsiElement element) {
+        PsiFile containingFile = element.getContainingFile();
+        if (containingFile == null) {
+            return false;
+        }
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        if (virtualFile == null) {
+            return false;
+        }
+        return ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInSource(virtualFile);
+    }
+
     @NotNull
     public static String getPluginVersion() {
         IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"));

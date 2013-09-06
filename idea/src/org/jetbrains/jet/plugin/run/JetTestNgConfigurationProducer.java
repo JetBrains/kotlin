@@ -34,6 +34,7 @@ import com.theoryinpractice.testng.util.TestNGUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 
 public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer {
     @Override
@@ -50,6 +51,10 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
 
         Project project = context.getProject();
         PsiElement leaf = location.getPsiElement();
+
+        if (!JetPluginUtil.isInSource(leaf)) {
+            return false;
+        }
 
         if (!(leaf.getContainingFile() instanceof JetFile)) {
             return false;
