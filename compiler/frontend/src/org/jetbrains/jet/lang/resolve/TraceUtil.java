@@ -62,6 +62,7 @@ public class TraceUtil {
     };
 
     public final static BindingContext BINDING_CONTEXT_STUB = new BindingContext() {
+        @NotNull
         @Override
         public Collection<Diagnostic> getDiagnostics() {
             throw new IllegalStateException();

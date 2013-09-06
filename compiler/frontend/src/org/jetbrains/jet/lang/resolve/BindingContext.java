@@ -44,6 +44,7 @@ import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
 public interface BindingContext {
     BindingContext EMPTY = new BindingContext() {
+        @NotNull
         @Override
         public Collection<Diagnostic> getDiagnostics() {
             return Collections.emptyList();
@@ -263,6 +264,7 @@ public interface BindingContext {
     @Deprecated // This field is needed only for the side effects of its initializer
             Void _static_initializer = BasicWritableSlice.initSliceDebugNames(BindingContext.class);
 
+    @NotNull
     Collection<Diagnostic> getDiagnostics();
 
     @Nullable
