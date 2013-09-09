@@ -171,14 +171,14 @@ public class TaskPrioritizer {
         List<Collection<ResolutionCandidate<D>>> nonlocalsList = Lists.newArrayList();
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
 
-            Collection<ResolutionCandidate<D>> functions =
+            Collection<ResolutionCandidate<D>> members =
                     convertWithImpliedThis(c.scope, Collections.singletonList(NO_RECEIVER), callableDescriptorCollector
                             .getNonExtensionsByName(c.scope, c.name));
 
             List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
             List<ResolutionCandidate<D>> locals = Lists.newArrayList();
             //noinspection unchecked,RedundantTypeArguments
-            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, c.scope.getContainingDeclaration(), locals, nonlocals);
+            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(members, c.scope.getContainingDeclaration(), locals, nonlocals);
 
             localsList.add(locals);
             nonlocalsList.add(nonlocals);
