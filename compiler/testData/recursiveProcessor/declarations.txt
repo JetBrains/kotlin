@@ -8,7 +8,7 @@
 <class-object-for-NestedClass>.nestedClassObjFunc:SimpleFunctionDescriptor
 <class-object-for-NestedClass>.this:ReceiverParameterDescriptor
 <class-object-for-NestedClass>:ClassDescriptor
-<set-?>:MutableValueParameterDescriptor
+<set-?>:ValueParameterDescriptor
 Class.<get-classProp>:PropertyGetterDescriptor
 Class.<init>():ConstructorDescriptor
 Class.classFunc:SimpleFunctionDescriptor
@@ -38,7 +38,7 @@ Trait.this:ReceiverParameterDescriptor
 Trait.traitFunc:SimpleFunctionDescriptor
 Trait.traitProp:PropertyDescriptor
 Trait:ClassDescriptor
-a:MutableValueParameterDescriptor
+a:ValueParameterDescriptor
 fake Class.<get-traitProp>:PropertyGetterDescriptor
 fake Class.traitFunc:SimpleFunctionDescriptor
 fake Class.traitProp:PropertyDescriptor

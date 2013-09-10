@@ -17,14 +17,18 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-public interface NamespaceDescriptor extends Annotated, Named, FqNamed, ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
+public interface NamespaceDescriptor extends ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
     @NotNull
     JetScope getMemberScope();
 
+    @Override
     @NotNull
     NamespaceDescriptorParent getContainingDeclaration();
+
+    @NotNull
+    FqName getFqName();
 }
