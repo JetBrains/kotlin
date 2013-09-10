@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -30,6 +29,8 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
@@ -62,9 +63,10 @@ public class ArrayIterator implements IntrinsicMethod {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
                 ClassDescriptor arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType);
                 if (containingDeclaration.equals(arrayClass)) {
-                    String methodSignature = "([" + jvmPrimitiveType.getJvmLetter() + ")" + jvmPrimitiveType.getIterator().getDescriptor();
+                    JvmClassName iterator = JvmClassName.byFqNameWithoutInnerClasses("jet." + primitiveType.getTypeName() + "Iterator");
+                    String methodSignature = "([" + jvmPrimitiveType.getAsmType() + ")" + iterator.getDescriptor();
                     v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
-                    return StackValue.onStack(jvmPrimitiveType.getIterator().getAsmType());
+                    return StackValue.onStack(iterator.getAsmType());
                 }
             }
             throw new UnsupportedOperationException(containingDeclaration.toString());

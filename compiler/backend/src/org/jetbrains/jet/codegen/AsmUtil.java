@@ -82,16 +82,37 @@ public class AsmUtil {
     private static final String STUB_EXCEPTION = "java/lang/RuntimeException";
     private static final String STUB_EXCEPTION_MESSAGE = "Stubs are for compiler only, do not add them to runtime classpath";
 
+    private static final ImmutableMap<Integer, JvmPrimitiveType> primitiveTypeByAsmSort;
+    private static final ImmutableMap<Type, JvmPrimitiveType> primitiveTypeByBoxedType;
+
+    static {
+        ImmutableMap.Builder<Integer, JvmPrimitiveType> typeBySortBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<Type, JvmPrimitiveType> typeByWrapperBuilder = ImmutableMap.builder();
+        for (JvmPrimitiveType type : JvmPrimitiveType.values()) {
+            typeBySortBuilder.put(type.getAsmType().getSort(), type);
+            typeByWrapperBuilder.put(type.getWrapper().getAsmType(), type);
+        }
+        primitiveTypeByAsmSort = typeBySortBuilder.build();
+        primitiveTypeByBoxedType = typeByWrapperBuilder.build();
+    }
+
     private AsmUtil() {
     }
 
-    public static Type boxType(Type asmType) {
-        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByAsmType(asmType);
+    @NotNull
+    public static Type boxType(@NotNull Type type) {
+        JvmPrimitiveType jvmPrimitiveType = primitiveTypeByAsmSort.get(type.getSort());
+        return jvmPrimitiveType != null ? jvmPrimitiveType.getWrapper().getAsmType() : type;
+    }
+
+    @NotNull
+    public static Type unboxType(@NotNull Type type) {
+        JvmPrimitiveType jvmPrimitiveType = primitiveTypeByBoxedType.get(type);
         if (jvmPrimitiveType != null) {
-            return jvmPrimitiveType.getWrapper().getAsmType();
+            return jvmPrimitiveType.getAsmType();
         }
         else {
-            return asmType;
+            throw new UnsupportedOperationException("Unboxing: " + type);
         }
     }
 
@@ -118,16 +139,6 @@ public class AsmUtil {
         String internalName = type.getInternalName();
         assert internalName.charAt(0) == '[';
         return Type.getType(internalName.substring(1));
-    }
-
-    public static Type unboxType(Type type) {
-        JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByWrapperAsmType(type);
-        if (jvmPrimitiveType != null) {
-            return jvmPrimitiveType.getAsmType();
-        }
-        else {
-            throw new UnsupportedOperationException("Unboxing: " + type);
-        }
     }
 
     public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {

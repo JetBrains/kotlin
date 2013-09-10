@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.RangeCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -150,16 +151,17 @@ public class IntrinsicMethods {
         registerStaticField(getFQName(KotlinBuiltIns.getInstance().getUnit()).toSafe(), Name.identifier("VALUE"));
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-            registerStaticField(type.getRangeClassName(), Name.identifier("EMPTY"));
-        }
+            FqName rangeClassFqName = RangeCodegenUtil.getRangeClassFqName(type);
+            FqName progressionClassFqName = RangeCodegenUtil.getProgressionClassFqName(type);
 
-        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-            registerRangeOrProgressionProperty(type.getRangeClassName(), Name.identifier("start"));
-            registerRangeOrProgressionProperty(type.getRangeClassName(), Name.identifier("end"));
+            registerStaticField(rangeClassFqName, Name.identifier("EMPTY"));
 
-            registerRangeOrProgressionProperty(type.getProgressionClassName(), Name.identifier("start"));
-            registerRangeOrProgressionProperty(type.getProgressionClassName(), Name.identifier("end"));
-            registerRangeOrProgressionProperty(type.getProgressionClassName(), Name.identifier("increment"));
+            registerRangeOrProgressionProperty(rangeClassFqName, Name.identifier("start"));
+            registerRangeOrProgressionProperty(rangeClassFqName, Name.identifier("end"));
+
+            registerRangeOrProgressionProperty(progressionClassFqName, Name.identifier("start"));
+            registerRangeOrProgressionProperty(progressionClassFqName, Name.identifier("end"));
+            registerRangeOrProgressionProperty(progressionClassFqName, Name.identifier("increment"));
         }
 
         declareArrayMethods();
