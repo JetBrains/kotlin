@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.HashMap;
@@ -52,15 +53,16 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     }
 
     private void initPrimitives() {
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            FqName className = jvmPrimitiveType.getPrimitiveType().getClassName();
-
-            register(className, jvmPrimitiveType.getAsmType());
-            registerNullable(className, jvmPrimitiveType.getWrapper().getAsmType());
-        }
+        FqName builtInsFqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            register(primitiveType.getArrayClassName(), jvmPrimitiveType.getAsmArrayType());
+            Type asmType = jvmPrimitiveType.getAsmType();
+            FqName fqName = builtInsFqName.child(primitiveType.getTypeName());
+
+            register(fqName, asmType);
+            registerNullable(fqName, jvmPrimitiveType.getWrapper().getAsmType());
+
+            register(builtInsFqName.child(primitiveType.getArrayTypeName()), Type.getType("[" + asmType.getDescriptor()));
         }
     }
 

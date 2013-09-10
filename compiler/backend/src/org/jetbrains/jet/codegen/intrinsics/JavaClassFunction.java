@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -30,10 +29,13 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 
 public class JavaClassFunction implements IntrinsicMethod {
     @Override
@@ -49,9 +51,8 @@ public class JavaClassFunction implements IntrinsicMethod {
         JetType returnType = resultingDescriptor.getReturnType();
         assert returnType != null;
         Type type = state.getTypeMapper().mapType(returnType.getArguments().get(0).getType());
-        JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(type);
-        if (primitiveType != null) {
-            v.getstatic(primitiveType.getWrapper().getAsmType().getInternalName(), "TYPE", "Ljava/lang/Class;");
+        if (isPrimitive(type)) {
+            v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
         }
         else {
             v.aconst(type);

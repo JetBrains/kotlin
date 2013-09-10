@@ -54,7 +54,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -673,12 +672,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         // This method consumes range/progression from stack
         // The result is stored to local variable
         protected void generateRangeOrProgressionProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
-            JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(elementType);
-            assert primitiveType != null : elementType;
-            Type asmWrapperType = primitiveType.getWrapper().getAsmType();
-
-            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + asmWrapperType.getDescriptor());
-            StackValue.coerce(asmWrapperType, elementType, v);
+            Type boxedType = boxType(elementType);
+            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor());
+            StackValue.coerce(boxedType, elementType, v);
             v.store(varToStore, elementType);
         }
     }

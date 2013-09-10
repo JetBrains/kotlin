@@ -18,11 +18,9 @@ package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public enum PrimitiveType {
-
     BOOLEAN("Boolean"),
     CHAR("Char"),
     BYTE("Byte"),
@@ -34,24 +32,13 @@ public enum PrimitiveType {
     ;
 
     public static final ImmutableSet<PrimitiveType> NUMBER_TYPES = ImmutableSet.of(CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE);
-    
+
     private final Name typeName;
     private final Name arrayTypeName;
-    private final Name rangeTypeName;
-    private final FqName className;
-    private final FqName arrayClassName;
-    private final FqName rangeClassName;
-    private final FqName progressionClassName;
 
     private PrimitiveType(String typeName) {
         this.typeName = Name.identifier(typeName);
         this.arrayTypeName = Name.identifier(typeName + "Array");
-        this.rangeTypeName = Name.identifier(typeName + "Range");
-        FqName builtInsPackageFqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
-        this.className = builtInsPackageFqName.child(this.typeName);
-        this.arrayClassName = builtInsPackageFqName.child(this.arrayTypeName);
-        this.rangeClassName = builtInsPackageFqName.child(this.rangeTypeName);
-        this.progressionClassName = builtInsPackageFqName.child(Name.identifier(typeName + "Progression"));
     }
 
     @NotNull
@@ -62,30 +49,5 @@ public enum PrimitiveType {
     @NotNull
     public Name getArrayTypeName() {
         return arrayTypeName;
-    }
-
-    @NotNull
-    public Name getRangeTypeName() {
-        return rangeTypeName;
-    }
-
-    @NotNull
-    public FqName getClassName() {
-        return className;
-    }
-
-    @NotNull
-    public FqName getArrayClassName() {
-        return arrayClassName;
-    }
-
-    @NotNull
-    public FqName getRangeClassName() {
-        return rangeClassName;
-    }
-
-    @NotNull
-    public FqName getProgressionClassName() {
-        return progressionClassName;
     }
 }

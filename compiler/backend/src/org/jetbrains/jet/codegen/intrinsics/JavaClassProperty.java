@@ -21,14 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 
 public class JavaClassProperty implements IntrinsicMethod {
     @Override
@@ -41,12 +43,12 @@ public class JavaClassProperty implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(receiver.type);
-        if (primitiveType != null) {
-            v.getstatic(primitiveType.getWrapper().getAsmType().getInternalName(), "TYPE", "Ljava/lang/Class;");
+        Type type = receiver.type;
+        if (isPrimitive(type)) {
+            v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
         }
         else {
-            receiver.put(receiver.type, v);
+            receiver.put(type, v);
             v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;");
         }
         return StackValue.onStack(AsmTypeConstants.getType(Class.class));

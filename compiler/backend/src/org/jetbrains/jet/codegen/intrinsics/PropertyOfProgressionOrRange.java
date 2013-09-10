@@ -25,13 +25,13 @@ import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 
 public class PropertyOfProgressionOrRange implements IntrinsicMethod {
     private final FqName ownerClass;
@@ -53,12 +53,12 @@ public class PropertyOfProgressionOrRange implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         String ownerInternalName = JvmClassName.byFqNameWithoutInnerClasses(this.ownerClass).getInternalName();
-        JvmClassName wrapperClass = JvmPrimitiveType.getByAsmType(expectedType).getWrapper();
+        Type boxedType = boxType(expectedType);
         String getterName = PropertyCodegen.getterName(propertyName);
 
         receiver.put(receiver.type, v);
-        v.invokevirtual(ownerInternalName, getterName, "()" + wrapperClass.getDescriptor());
-        StackValue.coerce(wrapperClass.getAsmType(), expectedType, v);
+        v.invokevirtual(ownerInternalName, getterName, "()" + boxedType.getDescriptor());
+        StackValue.coerce(boxedType, expectedType, v);
         return StackValue.onStack(expectedType);
     }
 }
