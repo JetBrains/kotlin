@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
-public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, ModuleDescriptor {
+public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ModuleDescriptor {
     private NamespaceDescriptor rootNamepsace;
     private ModuleConfiguration moduleConfiguration;
     private final List<ImportPath> defaultImports;

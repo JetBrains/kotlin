@@ -18,13 +18,12 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Set;
 
-public interface ValueParameterDescriptor extends VariableDescriptor, Annotated {
+public interface ValueParameterDescriptor extends VariableDescriptor {
     /**
      * Returns the 0-based index of the value parameter in the parameter list of its containing function.
      *

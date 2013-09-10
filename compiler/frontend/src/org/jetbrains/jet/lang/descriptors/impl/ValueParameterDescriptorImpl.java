@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements MutableValueParameterDescriptor {
+public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
     private Boolean hasDefaultValue;
     private final boolean declaresDefaultValue;
 
@@ -72,7 +72,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         this.varargElementType = varargElementType;
     }
 
-    @Override
     public void setType(@NotNull JetType type) {
         setOutType(type);
     }

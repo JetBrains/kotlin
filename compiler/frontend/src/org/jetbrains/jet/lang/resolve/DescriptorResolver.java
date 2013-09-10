@@ -493,7 +493,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public MutableValueParameterDescriptor resolveValueParameterDescriptor(
+    public ValueParameterDescriptorImpl resolveValueParameterDescriptor(
             JetScope scope, DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace
     ) {
@@ -502,7 +502,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public MutableValueParameterDescriptor resolveValueParameterDescriptorWithAnnotationArguments(
+    public ValueParameterDescriptorImpl resolveValueParameterDescriptorWithAnnotationArguments(
             JetScope scope, DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace
     ) {
@@ -511,7 +511,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private MutableValueParameterDescriptor resolveValueParameterDescriptor(
+    private static ValueParameterDescriptorImpl resolveValueParameterDescriptor(
             DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace,
             List<AnnotationDescriptor> annotations
@@ -522,7 +522,7 @@ public class DescriptorResolver {
             varargElementType = type;
             variableType = DescriptorUtils.getVarargParameterType(type);
         }
-        MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
+        ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
                 index,
                 annotations,
@@ -1166,7 +1166,7 @@ public class DescriptorResolver {
                     }
                 }
 
-                MutableValueParameterDescriptor valueParameterDescriptor =
+                ValueParameterDescriptorImpl valueParameterDescriptor =
                         resolveValueParameterDescriptor(scope, setterDescriptor, parameter, 0, type, trace);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
