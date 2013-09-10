@@ -51,7 +51,8 @@ public class DescriptorDeserializer {
             @NotNull AnnotationDeserializer annotationDeserializer
     ) {
         return new DescriptorDeserializer(storageManager,
-                new TypeDeserializer(storageManager, null, nameResolver, descriptorFinder, "Deserializer for " + containingDeclaration, NONE),
+                new TypeDeserializer(storageManager, null, nameResolver, descriptorFinder,
+                                     "Deserializer for " + containingDeclaration.getName(), NONE),
                 containingDeclaration, nameResolver, annotationDeserializer);
     }
 
@@ -105,7 +106,7 @@ public class DescriptorDeserializer {
     ) {
         TypeDeserializer childTypeDeserializer = new TypeDeserializer(
                 storageManager,
-                typeDeserializer, "Child deserializer for " + descriptor,
+                typeDeserializer, "Child deserializer for " + descriptor.getName(),
                 new TypeDeserializer.TypeParameterResolver() {
                     @NotNull
                     @Override
