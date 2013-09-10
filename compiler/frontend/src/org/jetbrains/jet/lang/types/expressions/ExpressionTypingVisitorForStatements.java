@@ -22,12 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.ModifiersChecker;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -121,6 +119,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         if (delegateExpression != null) {
             context.expressionTypingServices.getTypeInfo(delegateExpression, context);
             context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.getDelegate()));
+        }
+
+        for (JetTypeParameter typeParameter : property.getTypeParameters()) {
+            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, context.trace);
         }
 
         VariableDescriptor propertyDescriptor = context.expressionTypingServices.getDescriptorResolver().

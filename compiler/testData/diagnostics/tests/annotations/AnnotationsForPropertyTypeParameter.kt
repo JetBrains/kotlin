@@ -5,4 +5,8 @@ val <<!UNSUPPORTED!>A1<!> <!UNSUPPORTED!>A2(3)<!> <!UNSUPPORTED!>A2<!> <!UNSUPPO
 
 class SomeClass {
     val <<!UNSUPPORTED!>A1<!> <!UNSUPPORTED!>A2(3)<!> <!UNSUPPORTED!>A2<!> <!UNSUPPORTED!>A1(12)<!> <!UNSUPPORTED!>A2("Test")<!> T> field = 12
+
+    fun foo() {
+        val <<!UNSUPPORTED!>A1<!> <!UNSUPPORTED!>A2(3)<!> <!UNSUPPORTED!>A2<!> <!UNSUPPORTED!>A1(12)<!> <!UNSUPPORTED!>A2("Test")<!> T> <!UNUSED_VARIABLE!>localVal<!> = 12
+    }
 }
