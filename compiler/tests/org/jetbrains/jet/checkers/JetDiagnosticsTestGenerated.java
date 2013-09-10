@@ -545,6 +545,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotatedConstructorParams.kt");
             }
             
+            @TestMetadata("AnnotationForClassTypeParameter.kt")
+            public void testAnnotationForClassTypeParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter.kt");
+            }
+            
+            @TestMetadata("AnnotationForFunctionTypeParameter.kt")
+            public void testAnnotationForFunctionTypeParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/AnnotationForFunctionTypeParameter.kt");
+            }
+            
             @TestMetadata("AnnotationForObject.kt")
             public void testAnnotationForObject() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotationForObject.kt");
@@ -558,6 +568,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("AnnotationsForClasses.kt")
             public void testAnnotationsForClasses() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotationsForClasses.kt");
+            }
+            
+            @TestMetadata("AnnotationsForPropertyTypeParameter.kt")
+            public void testAnnotationsForPropertyTypeParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/AnnotationsForPropertyTypeParameter.kt");
             }
             
             @TestMetadata("BasicAnnotations.kt")

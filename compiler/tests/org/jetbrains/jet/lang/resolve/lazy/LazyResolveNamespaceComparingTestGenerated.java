@@ -2394,6 +2394,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/simpleClass.kt");
         }
         
+        @TestMetadata("UnresolvedAnnotationOnObject.kt")
+        public void testUnresolvedAnnotationOnObject() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/UnresolvedAnnotationOnObject.kt");
+        }
+        
         @TestMetadata("varargIterator.kt")
         public void testVarargIterator() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/varargIterator.kt");

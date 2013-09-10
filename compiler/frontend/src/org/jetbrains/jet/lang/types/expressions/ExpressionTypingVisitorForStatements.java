@@ -93,7 +93,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
             VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver()
-                    .resolveObjectDeclaration(scope.getContainingDeclaration(), declaration, classDescriptor, context.trace);
+                    .resolveObjectDeclaration(scope, scope.getContainingDeclaration(), declaration, classDescriptor, context.trace);
             scope.addVariableDescriptor(variableDescriptor);
         }
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);

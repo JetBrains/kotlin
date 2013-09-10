@@ -94,12 +94,17 @@ public class AnnotationResolver {
         if (annotationEntryElements.isEmpty()) return Collections.emptyList();
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
-            AnnotationDescriptor descriptor = new AnnotationDescriptor();
-            resolveAnnotationStub(scope, entryElement, descriptor, trace);
-            trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
+            AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
+            if (descriptor == null) {
+                descriptor = new AnnotationDescriptor();
+                resolveAnnotationStub(scope, entryElement, descriptor, trace);
+                trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
+            }
+
             if (shouldResolveArguments) {
                 resolveAnnotationArguments(entryElement, scope, trace);
             }
+
             result.add(descriptor);
         }
         return result;
@@ -360,15 +365,21 @@ public class AnnotationResolver {
         for (JetAnnotationEntry annotation : annotations) {
             AnnotationDescriptor annotationDescriptor = trace.get(BindingContext.ANNOTATION, annotation);
             if (annotationDescriptor == null) {
-                // TODO: Unresolved annotation
-                annotationDescriptor = new AnnotationDescriptor();
-                annotationDescriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type"));
-
-                trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
+                throw new IllegalStateException("Annotation for annotation should have been resolved: " + annotation);
             }
 
             result.add(annotationDescriptor);
         }
+
         return result;
+    }
+
+    public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetModifierListOwner modifierListOwner, BindingTrace trace) {
+        JetModifierList modifierList = modifierListOwner.getModifierList();
+        if (modifierList == null) return;
+
+        for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+            trace.report(Errors.UNSUPPORTED.on(annotationEntry, "Annotations for type parameters are not supported yet"));
+        }
     }
 }

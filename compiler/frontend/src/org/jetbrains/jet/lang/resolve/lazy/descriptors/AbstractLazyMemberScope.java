@@ -205,8 +205,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 if (classifier == null) {
                     throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
                 }
+
+                JetScope scope = getScopeForMemberDeclarationResolution(classOrObjectDeclaration);
+
                 VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                        .resolveObjectDeclaration(thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
+                        .resolveObjectDeclaration(scope, thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
                 result.add(propertyDescriptor);
             }
         }

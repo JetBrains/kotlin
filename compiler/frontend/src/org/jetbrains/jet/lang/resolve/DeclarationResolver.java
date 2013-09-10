@@ -227,7 +227,7 @@ public class DeclarationResolver {
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(
-                            namespaceLike.getOwnerForChildren(), declaration, context.getObjects().get(declaration), trace);
+                            scopeForFunctions, namespaceLike.getOwnerForChildren(), declaration, context.getObjects().get(declaration), trace);
 
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                 }
@@ -239,7 +239,7 @@ public class DeclarationResolver {
                             ((MutableClassDescriptorLite)namespaceLike.getOwnerForChildren()).getClassObjectDescriptor();
                     assert classObjectDescriptor != null;
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(
-                            classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry), trace);
+                            scopeForFunctions, classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry), trace);
                     classObjectDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
                 }
             });
