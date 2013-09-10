@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -84,12 +83,18 @@ public class CallableDescriptorCollectors {
         @NotNull
         @Override
         public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, Name name) {
-            VariableDescriptor descriptor = scope.getLocalVariable(name);
-            if (descriptor == null) {
-                descriptor = DescriptorUtils.filterNonExtensionProperty(scope.getProperties(name));
+            VariableDescriptor localVariable = scope.getLocalVariable(name);
+            if (localVariable != null) {
+                return Collections.singleton(localVariable);
             }
-            if (descriptor == null) return Collections.emptyList();
-            return Collections.singleton(descriptor);
+
+            LinkedHashSet<VariableDescriptor> variables = Sets.newLinkedHashSet();
+            for (VariableDescriptor variable : scope.getProperties(name)) {
+                if (variable.getReceiverParameter() == null) {
+                    variables.add(variable);
+                }
+            }
+            return variables;
         }
 
         @NotNull
