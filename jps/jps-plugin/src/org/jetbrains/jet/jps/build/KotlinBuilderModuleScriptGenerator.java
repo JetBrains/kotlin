@@ -31,8 +31,10 @@ import org.jetbrains.jps.model.JpsDummyElement;
 import org.jetbrains.jps.model.java.*;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
+import org.jetbrains.jps.model.library.sdk.JpsSdkType;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
+import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsSdkDependency;
 
 import java.io.File;
@@ -109,7 +111,8 @@ public class KotlinBuilderModuleScriptGenerator {
     private static List<File> findAnnotationRoots(@NotNull ModuleBuildTarget target) {
         List<File> annotationRootFiles = ContainerUtil.newArrayList();
 
-        JpsSdk<JpsDummyElement> sdk = target.getModule().getSdk(JpsJavaSdkType.INSTANCE);
+        JpsModule module = target.getModule();
+        JpsSdk sdk = module.getSdk(getSdkType(module));
         if (sdk != null) {
             annotationRootFiles.addAll(sdk.getParent().getFiles(JpsAnnotationRootType.INSTANCE));
         }
@@ -129,6 +132,16 @@ public class KotlinBuilderModuleScriptGenerator {
         }
 
         return annotationRootFiles;
+    }
+
+    @NotNull
+    private static JpsSdkType getSdkType(@NotNull JpsModule module) {
+        for (JpsDependencyElement dependency : module.getDependenciesList().getDependencies()) {
+            if (dependency instanceof JpsSdkDependency) {
+                return ((JpsSdkDependency) dependency).getSdkType();
+            }
+        }
+        return JpsJavaSdkType.INSTANCE;
     }
 
     @NotNull
