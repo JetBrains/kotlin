@@ -1,0 +1,14 @@
+package test
+
+test.A(a = 12.toInt(): jet.Int, c = "Hello": jet.String) internal val SomeObject: test.SomeObject
+
+internal final annotation class A : jet.Annotation {
+    /*primary*/ public constructor A(/*0*/ a: jet.Int = ..., /*1*/ b: jet.String = ..., /*2*/ c: jet.String)
+    internal final val a: jet.Int
+    internal final val b: jet.String
+    internal final val c: jet.String
+}
+
+test.A(a = 12.toInt(): jet.Int, c = "Hello": jet.String) internal object SomeObject {
+    /*primary*/ private constructor SomeObject()
+}
