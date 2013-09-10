@@ -40,11 +40,10 @@ public class CallableDescriptorCollectors {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getNonExtensionsByName(JetScope scope, Name name) {
-            Set<FunctionDescriptor> functions = Sets.newLinkedHashSet(scope.getFunctions(name));
-            for (Iterator<FunctionDescriptor> iterator = functions.iterator(); iterator.hasNext(); ) {
-                FunctionDescriptor functionDescriptor = iterator.next();
-                if (functionDescriptor.getReceiverParameter() != null) {
-                    iterator.remove();
+            Set<FunctionDescriptor> functions = Sets.newLinkedHashSet();
+            for (FunctionDescriptor function : scope.getFunctions(name)) {
+                if (function.getReceiverParameter() == null) {
+                    functions.add(function);
                 }
             }
             addConstructors(scope, name, functions);
