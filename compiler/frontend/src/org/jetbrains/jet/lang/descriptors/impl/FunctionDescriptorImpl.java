@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -68,7 +69,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.kind = kind;
     }
 
-    protected FunctionDescriptorImpl initialize(
+    @NotNull
+    public FunctionDescriptorImpl initialize(
             @Nullable JetType receiverParameterType,
             @Nullable ReceiverParameterDescriptor expectedThisObject,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
@@ -209,12 +211,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             }
         }
 
-        List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);
+        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);
         if (substitutedValueParameters == null) {
             return null;
         }
 
-        JetType substitutedReturnType = FunctionDescriptorUtil.getSubstitutedReturnType(this, substitutor);
+        JetType substitutedReturnType = substitutor.substitute(getReturnType(), Variance.OUT_VARIANCE);
         if (substitutedReturnType == null) {
             return null;
         }
@@ -241,5 +243,26 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitFunctionDescriptor(this, data);
+    }
+
+    @Nullable
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, @NotNull TypeSubstitutor substitutor) {
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
+        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getValueParameters();
+        for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
+            // TODO : Lazy?
+            JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
+            JetType varargElementType = unsubstitutedValueParameter.getVarargElementType();
+            JetType substituteVarargElementType = varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
+            if (substitutedType == null) return null;
+            result.add(new ValueParameterDescriptorImpl(
+                    substitutedDescriptor,
+                    unsubstitutedValueParameter,
+                    unsubstitutedValueParameter.getAnnotations(),
+                    substitutedType,
+                    substituteVarargElementType
+            ));
+        }
+        return result;
     }
 }

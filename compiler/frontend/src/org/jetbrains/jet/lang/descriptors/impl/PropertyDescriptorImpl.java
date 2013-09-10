@@ -251,7 +251,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
                 substitutedDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), false),
                 convertVisibility(setter.getVisibility(), newVisibility), setter.hasBody(), setter.isDefault(), kind, setter.getOriginal());
         if (newSetter != null) {
-            List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(newSetter, setter, substitutor);
+            List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(newSetter, setter, substitutor);
             if (substitutedValueParameters == null) {
                 return null;
             }

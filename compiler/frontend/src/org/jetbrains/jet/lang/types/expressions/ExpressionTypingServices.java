@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -48,9 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.UNIT_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ExpressionTypingServices {

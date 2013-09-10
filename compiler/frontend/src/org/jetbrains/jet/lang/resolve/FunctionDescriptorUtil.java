@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors.impl;
+package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
+import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -65,38 +67,6 @@ public class FunctionDescriptorUtil {
             result.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjection(typeArgument));
         }
         return result;
-    }
-
-    @Nullable
-    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, @NotNull TypeSubstitutor substitutor) {
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getValueParameters();
-        for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
-            // TODO : Lazy?
-            JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
-            JetType varargElementType = unsubstitutedValueParameter.getVarargElementType();
-            JetType substituteVarargElementType = varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
-            if (substitutedType == null) return null;
-            result.add(new ValueParameterDescriptorImpl(
-                    substitutedDescriptor,
-                    unsubstitutedValueParameter,
-                    unsubstitutedValueParameter.getAnnotations(),
-                    substitutedType,
-                    substituteVarargElementType
-            ));
-        }
-        return result;
-    }
-
-    @Nullable
-    public static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
-        return substitutor.substitute(functionDescriptor.getReturnType(), Variance.OUT_VARIANCE);
-    }
-
-    @Nullable
-    public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<JetType> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
-        Map<TypeConstructor, TypeProjection> substitutionContext = createSubstitutionContext(functionDescriptor, typeArguments);
-        return functionDescriptor.substitute(TypeSubstitutor.create(substitutionContext));
     }
 
     @NotNull
