@@ -20,16 +20,14 @@ import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetSuperExpression;
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -73,6 +71,12 @@ public class DebugInfoUtil {
             }
             else if (factory == Errors.EXPRESSION_EXPECTED_NAMESPACE_FOUND) {
                 markedWithErrorElements.put((JetSimpleNameExpression) diagnostic.getPsiElement(), factory);
+            }
+            else if (factory == Errors.UNSUPPORTED) {
+                for (JetReferenceExpression reference : PsiTreeUtil.findChildrenOfType(diagnostic.getPsiElement(),
+                                                                                       JetReferenceExpression.class)) {
+                    markedWithErrorElements.put(reference, factory);
+                }
             }
         }
 
