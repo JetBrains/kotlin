@@ -186,7 +186,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         namespaceDescriptor.initialize(scope);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         //
-        moduleDescriptor.getModuleConfiguration().extendNamespaceScope(trace, namespaceDescriptor, scope);
+        moduleDescriptor.getModuleConfiguration().extendNamespaceScope(namespaceDescriptor, scope);
         owner.addNamespace(namespaceDescriptor);
         if (expression != null) {
             trace.record(BindingContext.NAMESPACE, expression, namespaceDescriptor);

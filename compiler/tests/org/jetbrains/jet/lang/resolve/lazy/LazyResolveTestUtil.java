@@ -105,10 +105,8 @@ public class LazyResolveTestUtil {
         });
 
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
-
             @Override
             public void extendNamespaceScope(
-                    @NotNull BindingTrace trace,
                     @NotNull NamespaceDescriptor namespaceDescriptor,
                     @NotNull WritableScope namespaceMemberScope
             ) {
