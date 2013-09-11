@@ -91,7 +91,7 @@ public class JetPsiChecker implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!JetPluginUtil.isInSourceContent(element) ||
+        if (!JetPluginUtil.isInSource(element) ||
                 JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
             return;
         }
@@ -106,7 +106,7 @@ public class JetPsiChecker implements Annotator {
             try {
                 BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
 
-                if (JetPluginUtil.isInSourceContent(element, false)) {
+                if (JetPluginUtil.isInSourceContent(element, /* includeLibrarySources = */ false)) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
