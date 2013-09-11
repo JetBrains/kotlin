@@ -16,6 +16,8 @@
   <property name="kotlin.plugin.dir" value="${basedir}"/>
   <property name="kannotator.plugin.dir" value="${basedir}"/>
 
+  <property name="verifier.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/88722:id/plugin-verifier.jar"/>
+
   <condition property="download.eap">
     <isset property="eap"/>
   </condition>
@@ -98,8 +100,7 @@
 
     <!-- Get plugin verifier -->
     <delete file="plugin-verifier.jar" failonerror="false"/>
-    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/88722:id/plugin-verifier.jar"
-         dest="${verify.dir}/plugin-verifier.jar"/>
+    <get src="${verifier.url}" dest="${verify.dir}/plugin-verifier.jar"/>
 
     <!-- Get kotlin plugin -->
     <pathconvert property="kotlin.plugin.path">
