@@ -106,7 +106,7 @@ public class JetPsiChecker implements Annotator {
             try {
                 BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
 
-                if (JetPluginUtil.isInSourceContent(element, /* includeLibrarySources = */ false)) {
+                if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false)) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {

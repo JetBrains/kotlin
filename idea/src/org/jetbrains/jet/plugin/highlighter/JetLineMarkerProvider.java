@@ -364,7 +364,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
         if (elements.isEmpty() ||
             DumbService.getInstance(elements.get(0).getProject()).isDumb() ||
-            !JetPluginUtil.isInSourceContent(elements.get(0)) ||
+            !JetPluginUtil.isInSource(elements.get(0)) ||
             JetPluginUtil.isKtFileInGradleProjectInWrongFolder(elements.get(0))) {
             return;
         }

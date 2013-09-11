@@ -87,11 +87,11 @@ public class JetPluginUtil {
         return libraryScope == ((NamespaceDescriptor) declaration).getMemberScope();
     }
 
-    public static boolean isInSourceContent(@NotNull PsiElement element) {
-        return isInSourceContent(element, true);
+    public static boolean isInSource(@NotNull PsiElement element) {
+        return isInSource(element, true);
     }
 
-    public static boolean isInSourceContent(@NotNull PsiElement element, boolean includeLibrarySources) {
+    public static boolean isInSource(@NotNull PsiElement element, boolean includeLibrarySources) {
         PsiFile containingFile = element.getContainingFile();
         if (containingFile == null) {
             return false;
