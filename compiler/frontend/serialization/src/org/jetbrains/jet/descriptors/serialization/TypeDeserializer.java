@@ -263,7 +263,7 @@ public class TypeDeserializer {
 
         @Override
         public String toString() {
-            return TypeUtils.toString(this);
+            return JetTypeUtil.toString(this);
         }
 
         @Override

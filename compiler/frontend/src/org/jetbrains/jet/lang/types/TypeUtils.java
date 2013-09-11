@@ -26,7 +26,10 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
@@ -195,24 +198,6 @@ public class TypeUtils {
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
                 new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
-    }
-
-    @NotNull
-    public static String toString(@NotNull JetType type) {
-        List<TypeProjection> arguments = type.getArguments();
-        return type.getConstructor() + (arguments.isEmpty() ? "" : "<" + argumentsToString(arguments) + ">") + (type.isNullable() ? "?" : "");
-    }
-
-    private static StringBuilder argumentsToString(List<TypeProjection> arguments) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Iterator<TypeProjection> iterator = arguments.iterator(); iterator.hasNext();) {
-            TypeProjection argument = iterator.next();
-            stringBuilder.append(argument);
-            if (iterator.hasNext()) {
-                stringBuilder.append(", ");
-            }
-        }
-        return stringBuilder;
     }
 
     private static class TypeUnifier {

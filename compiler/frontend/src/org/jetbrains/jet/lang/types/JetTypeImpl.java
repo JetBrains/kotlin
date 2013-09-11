@@ -83,7 +83,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
     @Override
     public String toString() {
-        return TypeUtils.toString(this);
+        return JetTypeUtil.toString(this);
     }
 
     @Override
