@@ -185,7 +185,7 @@ public class CandidateResolver {
 
     private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
-        if (context.call.getExplicitReceiver().exists()) return true;
+        if (context.call.getExplicitReceiver().exists() || context.call.getThisObject().exists()) return true;
 
         ClassDescriptor candidateThis = getDeclaringClass(context.candidateCall.getCandidateDescriptor());
         if (candidateThis == null || candidateThis.getKind().isObject()) return true;

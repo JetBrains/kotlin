@@ -4975,6 +4975,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/resolve/invoke/kt3772.kt");
                 }
                 
+                @TestMetadata("kt3833-invokeInsideNestedClass.kt")
+                public void testKt3833_invokeInsideNestedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/kt3833-invokeInsideNestedClass.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls")
