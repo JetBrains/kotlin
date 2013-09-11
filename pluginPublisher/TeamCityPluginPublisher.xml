@@ -98,7 +98,7 @@
 
     <!-- Get plugin verifier -->
     <delete file="plugin-verifier.jar" failonerror="false"/>
-    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar"
+    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/88722:id/plugin-verifier.jar"
          dest="${verify.dir}/plugin-verifier.jar"/>
 
     <!-- Get kotlin plugin -->
@@ -143,7 +143,7 @@
     <echo message="Kannotator Plugin version is ${kannotator.plugin.version} located ${kannotator.plugin.path}"/>
 
     <!-- Verify both plugins -->
-    <verifyPlugin verifier.jar="${verify.dir}/plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kotlin.plugin.path}" />
+    <!-- <verifyPlugin verifier.jar="${verify.dir}/plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kotlin.plugin.path}" /> -->
     <verifyPlugin verifier.jar="${verify.dir}/plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kannotator.plugin.path}" />
 
     <!-- Everything is ok, publish plugin and xml descriptor -->
