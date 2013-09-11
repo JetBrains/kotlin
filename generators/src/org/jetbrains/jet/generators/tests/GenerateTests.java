@@ -395,7 +395,9 @@ public class GenerateTests {
                 AbstractHierarchyTest.class,
                 testModelWithDirectories("idea/testData/hierarchy/class/type", "doTypeClassHierarchyTest"),
                 testModelWithDirectories("idea/testData/hierarchy/class/super", "doSuperClassHierarchyTest"),
-                testModelWithDirectories("idea/testData/hierarchy/class/sub", "doSubClassHierarchyTest")
+                testModelWithDirectories("idea/testData/hierarchy/class/sub", "doSubClassHierarchyTest"),
+                testModelWithDirectories("idea/testData/hierarchy/calls/callers", "doCallerHierarchyTest"),
+                testModelWithDirectories("idea/testData/hierarchy/calls/callees", "doCalleeHierarchyTest")
         );
 
         generateTest(

@@ -1021,4 +1021,12 @@ public class JetPsiUtil {
             }
         }
     }
+
+    @Nullable
+    public static String getPackageName(@NotNull JetElement element) {
+        JetFile file = (JetFile) element.getContainingFile();
+        JetNamespaceHeader header = PsiTreeUtil.findChildOfType(file, JetNamespaceHeader.class);
+
+        return header != null ? header.getQualifiedName() : null;
+    }
 }

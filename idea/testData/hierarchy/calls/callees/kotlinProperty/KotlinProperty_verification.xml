@@ -1,0 +1,11 @@
+<node text="KClient.bar" base="true">
+  <node text="KA(4 usages)"/>
+  <node text="KA.name(2 usages)"/>
+  <node text="KA.foo(String)(2 usages)"/>
+  <node text="JA.JA()(4 usages)"/>
+  <node text="JA.foo(String)(2 usages)">
+    <node text="PrintStream.println(String)  (java.io)"/>
+  </node>
+  <node text="packageVal"/>
+  <node text="packageFun(String)"/>
+</node>
