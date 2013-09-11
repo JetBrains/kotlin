@@ -11,7 +11,7 @@
   <property name="expected.branch" value="master"/>
   <property name="teamcity.build.branch" value="master"/>
 
-  <property name="verify.dir" value="${basedir}/verify"/>
+  <property name="verify.dir" value="${basedir}"/>
 
   <property name="kotlin.plugin.dir" value="${basedir}"/>
   <property name="kannotator.plugin.dir" value="${basedir}"/>
