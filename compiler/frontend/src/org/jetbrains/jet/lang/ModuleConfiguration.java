@@ -18,14 +18,12 @@ package org.jetbrains.jet.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 public interface ModuleConfiguration {
     ModuleConfiguration EMPTY = new ModuleConfiguration() {
-
         @Override
-        public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
+        public void extendNamespaceScope(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         }
 
         @Override
@@ -38,5 +36,5 @@ public interface ModuleConfiguration {
      * This method is called every time a namespace descriptor is created. Use it to add extra descriptors to the namespace, e.g. merge a
      * Java package with a Kotlin one
      */
-    void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
+    void extendNamespaceScope(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
 }

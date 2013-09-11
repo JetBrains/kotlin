@@ -108,7 +108,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
             @Override
             public void extendNamespaceScope(
-                    @NotNull BindingTrace trace,
                     @NotNull NamespaceDescriptor namespaceDescriptor,
                     @NotNull WritableScope namespaceMemberScope
             ) {
@@ -154,9 +153,9 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely
     ) {
         for (JetFile file : files) {
-            AnalyzingUtils.checkForSyntacticErrors(file); 
+            AnalyzingUtils.checkForSyntacticErrors(file);
         }
-       
+
         AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
                 project, files, scriptParameters, filesToAnalyzeCompletely, false);
 
