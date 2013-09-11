@@ -32,29 +32,21 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
-import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
-import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
+import org.jetbrains.jet.plugin.completion.handlers.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
 
+import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.EMPTY_FUNCTION_HANDLER;
+import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.PARAMS_BRACES_FUNCTION_HANDLER;
+import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.PARAMS_PARENTHESIS_FUNCTION_HANDLER;
+
 public final class DescriptorLookupConverter {
-
-    private final static JetFunctionInsertHandler EMPTY_FUNCTION_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
-
-    private final static JetFunctionInsertHandler PARAMS_PARENTHESIS_FUNCTION_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
-
-    private final static JetFunctionInsertHandler PARAMS_BRACES_FUNCTION_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.IN_BRACKETS, JetFunctionInsertHandler.BracketType.BRACES);
-
     private DescriptorLookupConverter() {}
 
     @NotNull
@@ -118,9 +110,8 @@ public final class DescriptorLookupConverter {
                 return EMPTY_FUNCTION_HANDLER;
             }
 
-            if (functionDescriptor.getValueParameters().size() == 1
-                    && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
-                    functionDescriptor.getValueParameters().get(0).getType())) {
+            if (functionDescriptor.getValueParameters().size() == 1 &&
+                KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
                 return PARAMS_BRACES_FUNCTION_HANDLER;
             }
 
@@ -138,14 +129,14 @@ public final class DescriptorLookupConverter {
     private static LookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
         if (declaration instanceof PsiClass) {
             PsiClass psiClass = (PsiClass) declaration;
-            if (!DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
+            if (!JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
                 return setCustomInsertHandler(new JavaPsiClassReferenceElement(psiClass));
             }
         }
 
         if (declaration instanceof PsiMember) {
             PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
-            if (containingClass != null && !DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(containingClass)) {
+            if (containingClass != null && !JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(containingClass)) {
                 if (declaration instanceof PsiMethod) {
                     InsertHandler<LookupElement> handler = getInsertHandler(descriptor);
                     assert handler != null: "Special kotlin handler is expected for function: " + declaration.getText() + " and descriptor" + DescriptorRenderer.TEXT.render(descriptor);

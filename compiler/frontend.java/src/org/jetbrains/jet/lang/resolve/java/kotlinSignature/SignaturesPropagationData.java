@@ -20,7 +20,6 @@ import com.google.common.collect.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
@@ -35,9 +34,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -48,14 +51,14 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
-import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
+import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class SignaturesPropagationData {
     private static final Logger LOG = Logger.getInstance(SignaturesPropagationData.class);
 
     private final List<TypeParameterDescriptor> modifiedTypeParameters;
-    private final JavaDescriptorResolver.ValueParameterDescriptors modifiedValueParameters;
+    private final ValueParameters modifiedValueParameters;
     private final JetType modifiedReturnType;
 
     private final List<String> signatureErrors = Lists.newArrayList();
@@ -66,27 +69,32 @@ public class SignaturesPropagationData {
     public SignaturesPropagationData(
             @NotNull ClassDescriptor containingClass,
             @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
-            @NotNull JavaDescriptorResolver.ValueParameterDescriptors autoValueParameters, // descriptors built by parameters resolver
+            @Nullable JetType receiverType,
+            @NotNull List<ValueParameterDescriptor> autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethodImpl method,
             @NotNull BindingTrace trace
     ) {
         this.containingClass = containingClass;
         superFunctions = getSuperFunctionsForMethod(method, trace, containingClass);
 
-        autoTypeParameterToModified = SignaturesUtil.recreateTypeParametersAndReturnMapping(autoTypeParameters, null);
+        autoTypeParameterToModified = DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(autoTypeParameters, null);
 
         modifiedTypeParameters = modifyTypeParametersAccordingToSuperMethods(autoTypeParameters);
         modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType);
-        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters);
+        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(receiverType, autoValueParameters);
     }
 
     public List<TypeParameterDescriptor> getModifiedTypeParameters() {
         return modifiedTypeParameters;
     }
 
-    public JavaDescriptorResolver.ValueParameterDescriptors getModifiedValueParameters() {
-        return modifiedValueParameters;
+    public JetType getModifiedReceiverType() {
+        return modifiedValueParameters.receiverType;
+    }
+
+    public List<ValueParameterDescriptor> getModifiedValueParameters() {
+        return modifiedValueParameters.descriptors;
     }
 
     public JetType getModifiedReturnType() {
@@ -154,19 +162,20 @@ public class SignaturesPropagationData {
         return result;
     }
 
-    private JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
-            @NotNull JavaDescriptorResolver.ValueParameterDescriptors parameters // descriptors built by parameters resolver
+    private ValueParameters modifyValueParametersAccordingToSuperMethods(
+            @Nullable JetType receiverType,
+            @NotNull List<ValueParameterDescriptor> parameters // descriptors built by parameters resolver
     ) {
-        assert parameters.getReceiverType() == null : "Parameters before propagation have receiver type," +
-                                                      " but propagation should be disabled for functions compiled from Kotlin in class: " +
-                                                      DescriptorUtils.getFQName(containingClass);
+        assert receiverType == null : "Parameters before propagation have receiver type," +
+                                      " but propagation should be disabled for functions compiled from Kotlin in class: " +
+                                      DescriptorUtils.getFQName(containingClass);
 
-        JetType receiverType = null;
+        JetType resultReceiverType = null;
         List<ValueParameterDescriptor> resultParameters = Lists.newArrayList();
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
 
-        for (ValueParameterDescriptor originalParam : parameters.getDescriptors()) {
+        for (ValueParameterDescriptor originalParam : parameters) {
             final int originalIndex = originalParam.getIndex();
             List<TypeAndVariance> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                     new Function<FunctionDescriptor, TypeAndVariance>() {
@@ -187,7 +196,7 @@ public class SignaturesPropagationData {
             JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, MEMBER_SIGNATURE_CONTRAVARIANT);
 
             if (shouldBeExtension && originalIndex == 0) {
-                receiverType = altType;
+                resultReceiverType = altType;
             }
             else {
                 resultParameters.add(new ValueParameterDescriptorImpl(
@@ -202,11 +211,11 @@ public class SignaturesPropagationData {
             }
         }
 
-        return new JavaDescriptorResolver.ValueParameterDescriptors(receiverType, resultParameters);
+        return new ValueParameters(resultReceiverType, resultParameters);
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
-            @NotNull PsiMethodWrapper method,
+            @NotNull JavaMethodImpl method,
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor containingClass
     ) {
@@ -214,25 +223,23 @@ public class SignaturesPropagationData {
 
         Map<ClassDescriptor, JetType> superclassToSupertype = getSuperclassToSupertypeMap(containingClass);
 
-        Multimap<FqName, Pair<FunctionDescriptor, PsiMethod>> superclassToFunctions =
+        Multimap<FqName, Pair<FunctionDescriptor, JavaMethodImpl>> superclassToFunctions =
                 getSuperclassToFunctionsMultimap(method, trace.getBindingContext(), containingClass);
 
-        for (PsiMethod superMethod : PropagationHeuristics.getSuperMethods(method.getPsiMethod())) {
-            PsiClass psiClass = superMethod.getContainingClass();
-            assert psiClass != null;
-            String classFqNameString = psiClass.getQualifiedName();
-            assert classFqNameString != null;
-            FqName classFqName = new FqName(classFqNameString);
+        for (JavaMethodImpl superMethod : PropagationHeuristics.getSuperMethods(method)) {
+            JavaClass javaClass = superMethod.getContainingClass();
+            FqName classFqName = javaClass.getFqName();
+            assert classFqName != null : "Class FQ name should not be null: " + javaClass;
 
             if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(classFqName).isEmpty()) {
-                for (FunctionDescriptor superFun : JavaToKotlinMethodMap.INSTANCE.getFunctions(superMethod, containingClass)) {
+                for (FunctionDescriptor superFun : JavaToKotlinMethodMap.INSTANCE.getFunctions(superMethod, classFqName, containingClass)) {
                     superFunctions.add(substituteSuperFunction(superclassToSupertype, superFun));
                 }
                 continue;
             }
 
-            DeclarationDescriptor superFun = superMethod instanceof JetClsMethod
-                                             ? trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ((JetClsMethod) superMethod).getOrigin())
+            DeclarationDescriptor superFun = superMethod.getPsi() instanceof JetClsMethod
+                                             ? trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ((JetClsMethod) superMethod.getPsi()).getOrigin())
                                              : findSuperFunction(superclassToFunctions.get(classFqName), superMethod);
             if (superFun == null) {
                 // Super methods which are Object methods in interfaces are not loaded by JDR.
@@ -261,15 +268,15 @@ public class SignaturesPropagationData {
     }
 
     @NotNull
-    private static Multimap<FqName, Pair<FunctionDescriptor, PsiMethod>> getSuperclassToFunctionsMultimap(
-            @NotNull PsiMethodWrapper method,
+    private static Multimap<FqName, Pair<FunctionDescriptor, JavaMethodImpl>> getSuperclassToFunctionsMultimap(
+            @NotNull JavaMethod method,
             @NotNull BindingContext bindingContext,
             @NotNull ClassDescriptor containingClass
     ) {
-        Multimap<FqName, Pair<FunctionDescriptor, PsiMethod>> result = HashMultimap.create();
+        Multimap<FqName, Pair<FunctionDescriptor, JavaMethodImpl>> result = HashMultimap.create();
 
-        Name functionName = Name.identifier(method.getName());
-        int parameterCount = method.getParameters().size();
+        Name functionName = method.getName();
+        int parameterCount = method.getValueParameters().size();
 
         for (JetType supertype : TypeUtils.getAllSupertypes(containingClass.getDefaultType())) {
             ClassifierDescriptor klass = supertype.getConstructor().getDeclarationDescriptor();
@@ -282,7 +289,7 @@ public class SignaturesPropagationData {
                     fun.getValueParameters().size() + (fun.getReceiverParameter() != null ? 1 : 0) == parameterCount) {
                     PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, fun);
                     if (declaration instanceof PsiMethod) {
-                        result.put(fqName, Pair.create(fun, (PsiMethod) declaration));
+                        result.put(fqName, Pair.create(fun, new JavaMethodImpl((PsiMethod) declaration)));
                     } // else declaration is null or JetNamedFunction: both cases are processed later
                 }
             }
@@ -292,12 +299,12 @@ public class SignaturesPropagationData {
 
     @Nullable
     private static DeclarationDescriptor findSuperFunction(
-            @NotNull Collection<Pair<FunctionDescriptor, PsiMethod>> superFunctionCandidates,
-            @NotNull PsiMethod superMethod
+            @NotNull Collection<Pair<FunctionDescriptor, JavaMethodImpl>> superFunctionCandidates,
+            @NotNull JavaMethodImpl superMethod
     ) {
-        PsiManager psiManager = PsiManager.getInstance(superMethod.getProject());
-        for (Pair<FunctionDescriptor, PsiMethod> candidate : superFunctionCandidates) {
-            if (psiManager.areElementsEquivalent(candidate.second, superMethod)) {
+        PsiManager psiManager = PsiManager.getInstance(superMethod.getPsi().getProject());
+        for (Pair<FunctionDescriptor, JavaMethodImpl> candidate : superFunctionCandidates) {
+            if (psiManager.areElementsEquivalent(candidate.second.getPsi(), superMethod.getPsi())) {
                 return candidate.first;
             }
         }
@@ -690,9 +697,8 @@ public class SignaturesPropagationData {
         return builtIns.isArray(type) || builtIns.isPrimitiveArray(type);
     }
 
-    private static void reportCantFindSuperFunction(PsiMethodWrapper method) {
-        String errorMessage = "Can't find super function for " + method.getPsiMethod() +
-                              " defined in " + method.getPsiMethod().getContainingClass();
+    private static void reportCantFindSuperFunction(@NotNull JavaMethod javaMethod) {
+        String errorMessage = "Can't find super function for " + javaMethod + " defined in " + javaMethod.getContainingClass();
         if (SystemInfo.isMac) {
             LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
         }
@@ -736,6 +742,16 @@ public class SignaturesPropagationData {
 
         public String toString() {
             return type.toString();
+        }
+    }
+
+    private static class ValueParameters {
+        private final JetType receiverType;
+        private final List<ValueParameterDescriptor> descriptors;
+
+        public ValueParameters(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
+            this.receiverType = receiverType;
+            this.descriptors = descriptors;
         }
     }
 }

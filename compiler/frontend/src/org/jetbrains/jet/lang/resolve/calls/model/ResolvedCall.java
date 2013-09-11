@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -63,7 +64,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     Map<TypeParameterDescriptor, JetType> getTypeArguments();
 
     @NotNull
-    DataFlowInfo getDataFlowInfo();
+    DataFlowInfoForArguments getDataFlowInfoForArguments();
 
     boolean isSafeCall();
 }

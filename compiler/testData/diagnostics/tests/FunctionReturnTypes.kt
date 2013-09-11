@@ -64,7 +64,7 @@ fun blockAndAndMismatch5() : Int {
   <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) || (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
 }
 fun blockReturnValueTypeMatch1() : Int {
-  return if (1 > 2) <!ERROR_COMPILE_TIME_VALUE!>1.0<!> else <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+  return if (1 > 2) <!TYPE_MISMATCH!>1.0<!> else <!TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch2() : Int {
   return <!TYPE_MISMATCH!>if (1 > 2) 1<!>
@@ -143,14 +143,14 @@ fun illegalConstantBlock(): String {
     return <!ERROR_COMPILE_TIME_VALUE!>1<!>
 }
 fun illegalIfBody(): Int =
-    if (1 < 2) <!ERROR_COMPILE_TIME_VALUE!>'a'<!> else { <!ERROR_COMPILE_TIME_VALUE!>1.0<!> }
+    if (1 < 2) <!TYPE_MISMATCH!>'a'<!> else { <!TYPE_MISMATCH!>1.0<!> }
 fun illegalIfBlock(): Boolean {
     if (1 < 2)
         return false
     else { return <!ERROR_COMPILE_TIME_VALUE!>1<!> }
 }
 fun illegalReturnIf(): Char {
-    return if (1 < 2) 'a' else { <!ERROR_COMPILE_TIME_VALUE!>1<!> }
+    return if (1 < 2) 'a' else { <!TYPE_MISMATCH!>1<!> }
 }
 
 fun returnNothing(): Nothing {

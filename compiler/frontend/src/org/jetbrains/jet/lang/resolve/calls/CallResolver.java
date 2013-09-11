@@ -29,9 +29,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
-import org.jetbrains.jet.lang.resolve.calls.results.*;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.tasks.*;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
@@ -43,6 +47,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -138,8 +143,8 @@ public class CallResolver {
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         return resolveFunctionCall(BasicCallResolutionContext.create(
-                trace, scope, call, expectedType, dataFlowInfo, ResolveMode.TOP_LEVEL_CALL, CheckValueArgumentsMode.ENABLED,
-                ExpressionPosition.FREE, ResolutionResultsCache.create()));
+                trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null));
     }
 
     @NotNull
@@ -206,7 +211,7 @@ public class CallResolver {
                     }
                     Collection<ResolutionCandidate<CallableDescriptor>> candidates = TaskPrioritizer.<CallableDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverValue>singletonList(NO_RECEIVER), constructors);
                     prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
-                            context, functionReference, candidates);
+                            context, functionReference, candidates, null);
                 }
                 else {
                     context.trace.report(NOT_A_CLASS.on(calleeExpression));
@@ -266,6 +271,24 @@ public class CallResolver {
                                                CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
     }
 
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(
+            @NotNull Call call,
+            @Nullable TracingStrategy tracing,
+            @NotNull JetReferenceExpression reference,
+            @NotNull ResolutionContext<?> context,
+            @NotNull ResolutionCandidate<CallableDescriptor> candidate,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
+    ) {
+        BasicCallResolutionContext basicCallResolutionContext =
+                BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED, dataFlowInfoForArguments);
+
+        List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
+                TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
+                        basicCallResolutionContext, reference, Collections.singleton(candidate), tracing);
+        return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE, basicCallResolutionContext, tasks,
+                                               CallTransformer.FUNCTION_CALL_TRANSFORMER, reference);
+    }
+
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallOrGetCachedResults(
             @NotNull ResolutionResultsCache.MemberType<F> memberType,
             @NotNull BasicCallResolutionContext context,
@@ -298,9 +321,7 @@ public class CallResolver {
         }
         traceToResolveCall.commit();
 
-        if (prioritizedTasks.isEmpty() || context.resolveMode == ResolveMode.NESTED_CALL) {
-            //do nothing
-        } else {
+        if (!prioritizedTasks.isEmpty() && context.contextDependency == ContextDependency.INDEPENDENT) {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
         }
 
@@ -405,6 +426,10 @@ public class CallResolver {
 
         debugInfo.set(ResolutionDebugInfo.TASKS, prioritizedTasks);
 
+        if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
+            argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
+        }
+
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
         OverloadResolutionResultsImpl<F> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D, F> task : prioritizedTasks) {
@@ -488,7 +513,7 @@ public class CallResolver {
         ImmutableSet<OverloadResolutionResults.Code> someFailed = ImmutableSet.of(MANY_FAILED_CANDIDATES,
                                                                         SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
         if (someFailed.contains(results.getResultCode()) && !task.call.getFunctionLiteralArguments().isEmpty()
-                && task.resolveMode == ResolveMode.TOP_LEVEL_CALL) { //For nested calls there are no such cases
+                && task.contextDependency == ContextDependency.INDEPENDENT) { //For nested calls there are no such cases
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps

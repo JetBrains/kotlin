@@ -47,8 +47,9 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
     }
 
-    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, boolean isSafeCall) {
-        return create(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, isSafeCall);
+    /* 'null' for isSafeCall parameter if it should be set later (with 'setSafeCall') */
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @Nullable Boolean isSafeCall) {
+        return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, isSafeCall);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ReceiverValue thisObject,

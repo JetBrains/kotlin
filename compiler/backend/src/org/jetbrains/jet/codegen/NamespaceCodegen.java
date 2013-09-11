@@ -137,6 +137,10 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull MemberMap members) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
+            return;
+        }
+
         for (JetFile file : files) {
             if (file.isScript()) return;
         }

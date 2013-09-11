@@ -39,10 +39,10 @@ fun main(args : Array<String>) {
 
     joinG(1, "2")
     joinG(<!NON_VARARG_SPREAD!>*<!>1, "2")
-    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>joinG<!>(1, *"2")
+    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>joinG<!>(1, *<!TYPE_MISMATCH!>"2"<!>)
     joinG(x = 1, a = *a)
-    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>joinG<!>(x = 1, a = "2")
-    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>joinG<!>(x = <!NON_VARARG_SPREAD!>*<!>1, a = *"2")
+    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>joinG<!>(x = 1, a = <!TYPE_MISMATCH!>"2"<!>)
+    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>joinG<!>(x = <!NON_VARARG_SPREAD!>*<!>1, a = *<!TYPE_MISMATCH!>"2"<!>)
     joinG(1, *a)
     joinG(1, *a, "3")
     joinG(1, "4", *a, "3")

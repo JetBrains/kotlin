@@ -22,15 +22,21 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class ErrorUtils {
 
@@ -248,25 +254,7 @@ public class ErrorUtils {
         }
     }
 
-    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Name.special("<ERROR CLASS>")) {
-        @NotNull
-        @Override
-        public Collection<ConstructorDescriptor> getConstructors() {
-            return ERROR_CONSTRUCTOR_GROUP;
-        }
-
-        @NotNull
-        @Override
-        public Modality getModality() {
-            return Modality.OPEN;
-        }
-
-        @NotNull
-        @Override
-        public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-            return ERROR_CLASS;
-        }
-    };
+    private static final ErrorClassDescriptor ERROR_CLASS = new ErrorClassDescriptor("");
 
     private static final class ErrorTypeConstructor extends TypeConstructorImpl {
         private ErrorTypeConstructor(
@@ -282,12 +270,19 @@ public class ErrorUtils {
     }
 
     private static final Set<ConstructorDescriptor> ERROR_CONSTRUCTOR_GROUP = Collections.singleton(createErrorConstructor(0, Collections.<JetType>emptyList()));
+
     private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
 
     static {
-        ERROR_CLASS.initialize(
-            true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), createErrorScope("ERROR_CLASS"), ERROR_CONSTRUCTOR_GROUP,
-            ERROR_CONSTRUCTOR, false);
+        ERROR_CLASS.initializeErrorClass();
+    }
+    @NotNull
+    public static Set<ConstructorDescriptor> getErrorConstructorGroup() {
+        return ERROR_CONSTRUCTOR_GROUP;
+    }
+
+    public static ConstructorDescriptor getErrorConstructor() {
+        return ERROR_CONSTRUCTOR;
     }
 
     public static JetScope createErrorScope(String debugMessage) {
@@ -383,7 +378,8 @@ public class ErrorUtils {
         return createErrorType(value + " is not allowed here", value.getType().getMemberScope());
     }
 
-    public static ClassifierDescriptor getErrorClass() {
+    @NotNull
+    public static ClassDescriptor getErrorClass() {
         return ERROR_CLASS;
     }
 
@@ -392,7 +388,7 @@ public class ErrorUtils {
     }
 
     public static boolean isErrorType(@NotNull JetType type) {
-        return type != TypeUtils.NO_EXPECTED_TYPE && !(type instanceof NamespaceType) &&
+        return !noExpectedType(type) && !(type instanceof NamespaceType) &&
                (
                     (type instanceof DeferredType && (((DeferredType) type).getActualType() == null
                                                       || isErrorType(((DeferredType) type).getActualType()))) ||
@@ -412,7 +408,18 @@ public class ErrorUtils {
     }
 
     public static boolean isError(@NotNull DeclarationDescriptor candidate) {
-        return candidate == getErrorClass() || candidate.getContainingDeclaration() == getErrorClass() || candidate == ERROR_MODULE;
+        return isErrorClass(candidate) || isErrorClass(candidate.getContainingDeclaration()) || candidate == ERROR_MODULE;
+    }
+
+    private static boolean isErrorClass(@Nullable DeclarationDescriptor candidate) {
+        return candidate instanceof ErrorClassDescriptor;
+    }
+
+    @NotNull
+    public static ErrorClassDescriptor createErrorClass(@NotNull String debugMessage) {
+        ErrorClassDescriptor result = new ErrorClassDescriptor(debugMessage);
+        result.initializeErrorClass();
+        return result;
     }
 
     private static class ErrorTypeImpl implements JetType {

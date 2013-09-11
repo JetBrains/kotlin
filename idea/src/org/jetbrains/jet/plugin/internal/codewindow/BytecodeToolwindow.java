@@ -28,6 +28,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -257,7 +258,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         new WriteCommandAction(myProject) {
             @Override
             protected void run(Result result) throws Throwable {
-                myEditor.getDocument().setText(resultText);
+                myEditor.getDocument().setText(StringUtil.convertLineSeparators(resultText));
             }
         }.execute();
     }

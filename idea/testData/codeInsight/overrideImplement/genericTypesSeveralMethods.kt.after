@@ -2,7 +2,7 @@
 
 class MyClass<A: Comparable<A>> : Iterable<A> {
 
-    public override fun iterator(): Iterator<A> {
+    override fun iterator(): Iterator<A> {
         throw UnsupportedOperationException()
     }
 }

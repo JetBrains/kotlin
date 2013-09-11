@@ -20,6 +20,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -38,6 +39,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +47,15 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
+
+    private static final DescriptorRenderer OVERRIDE_RENDERER = new DescriptorRendererBuilder()
+            .setModifiers(DescriptorRenderer.Modifier.OVERRIDE)
+            .setWithDefinedIn(false)
+            .setShortNames(false)
+            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
+            .setUnitReturnType(false).build();
+
+    private static final Logger LOG = Logger.getInstance(OverrideImplementMethodsHandler.class.getCanonicalName());
 
     public static List<DescriptorClassMember> membersFromDescriptors(
             JetFile file, Iterable<CallableMemberDescriptor> missingImplementations,
@@ -54,9 +65,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
 
             PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor, bindingContext);
-            assert declaration != null : "Can not find declaration for descriptor " + memberDescriptor;
-            DescriptorClassMember member = new DescriptorClassMember(declaration, memberDescriptor);
-            members.add(member);
+            if (declaration == null) {
+                LOG.error("Can not find declaration for descriptor " + memberDescriptor);
+            } else {
+                DescriptorClassMember member = new DescriptorClassMember(declaration, memberDescriptor);
+                members.add(member);
+            }
         }
         return members;
     }
@@ -147,7 +161,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             bodyBuilder.append(" = ?");
         }
-        return JetPsiFactory.createProperty(project, DescriptorRenderer.SOURCE_CODE.render(newDescriptor) + bodyBuilder.toString());
+        return JetPsiFactory.createProperty(project, OVERRIDE_RENDERER.render(newDescriptor) + bodyBuilder.toString());
     }
 
     @NotNull
@@ -186,7 +200,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
         String body = "{" + (returnsNotUnit && !isAbstractFun ? "return " : "") + delegationBuilder.toString() + "}";
 
-        return JetPsiFactory.createFunction(project, DescriptorRenderer.SOURCE_CODE.render(newDescriptor) + body);
+        return JetPsiFactory.createFunction(project, OVERRIDE_RENDERER.render(newDescriptor) + body);
     }
 
     @NotNull

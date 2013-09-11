@@ -34,6 +34,11 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = true;
     public boolean ALIGN_IN_COLUMNS_CASE_BRANCH = false;
 
+    public boolean SPACE_AROUND_FUNCTION_TYPE_ARROW = true;
+
+    public boolean SPACE_AROUND_WHEN_ARROW = true;
+    public boolean SPACE_BEFORE_LAMBDA_ARROW = true;
+
     public static JetCodeStyleSettings getInstance(Project project) {
         return CodeStyleSettingsManager.getSettings(project).getCustomSettings(JetCodeStyleSettings.class);
     }

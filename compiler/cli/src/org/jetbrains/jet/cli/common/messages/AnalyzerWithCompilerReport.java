@@ -35,9 +35,9 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 
 import java.util.Collection;
 import java.util.List;
@@ -143,9 +143,10 @@ public final class AnalyzerWithCompilerReport {
         assert analyzeExhaust != null;
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
-        Collection<AbiVersionUtil.AbiVersionErrorLocation> errorLocations = bindingContext.getKeys(AbiVersionUtil.ABI_VERSION_ERRORS);
-        for (AbiVersionUtil.AbiVersionErrorLocation abiVersionErrorLocation : errorLocations) {
-            Integer abiVersion = bindingContext.get(AbiVersionUtil.ABI_VERSION_ERRORS, abiVersionErrorLocation);
+        Collection<TraceBasedErrorReporter.AbiVersionErrorLocation> errorLocations =
+                bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
+        for (TraceBasedErrorReporter.AbiVersionErrorLocation abiVersionErrorLocation : errorLocations) {
+            Integer abiVersion = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, abiVersionErrorLocation);
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
                                            "Class '" + abiVersionErrorLocation.getClassFqName().asString() +
                                            "' was compiled with an incompatible version of Kotlin. " +

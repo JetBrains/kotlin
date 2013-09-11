@@ -2,6 +2,7 @@ package org.jetbrains.jet.plugin.codeInsight.upDownMover;
 
 import com.google.common.base.Predicate;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
@@ -213,6 +214,13 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             if (parent instanceof JetFunctionLiteral) {
                 //noinspection ConstantConditions
                 newBlock = findClosestBlock(((JetFunctionLiteral) parent).getBodyExpression(), down, false);
+
+                if (!down) {
+                    ASTNode arrow = ((JetFunctionLiteral) parent).getArrowNode();
+                    if (arrow != null) {
+                        end = arrow.getPsi();
+                    }
+                }
             } else {
                 newBlock = findClosestBlock(sibling, down, true);
             }
@@ -254,6 +262,12 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             if (blockLikeElement != null) {
                 if (down) {
                     end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
+                    if (blockLikeElement instanceof JetFunctionLiteral) {
+                        ASTNode arrow = ((JetFunctionLiteral) blockLikeElement).getArrowNode();
+                        if (arrow != null) {
+                            end = arrow.getPsi();
+                        }
+                    }
                 }
                 else {
                     start = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.RBRACE);
@@ -386,13 +400,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         if (whiteSpaceTestSubject instanceof PsiWhiteSpace) {
-            Document doc = editor.getDocument();
-            TextRange spaceRange = whiteSpaceTestSubject.getTextRange();
-
-            int startLine = doc.getLineNumber(spaceRange.getStartOffset());
-            int endLine = doc.getLineNumber(spaceRange.getEndOffset());
-
-            if (endLine - startLine > 1) {
+            if (getElementLineCount(whiteSpaceTestSubject, editor) > 1) {
                 int nearLine = down ? sourceRange.endLine : sourceRange.startLine - 1;
 
                 info.toMove = sourceRange;
@@ -468,7 +476,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         LineRange sourceRange = getSourceRange(firstElement, lastElement, editor, oldRange);
         if (sourceRange == null) return false;
 
-        PsiElement sibling = adjustSibling(editor, sourceRange, info, down);
+        PsiElement sibling = getLastNonWhiteSiblingInLine(adjustSibling(editor, sourceRange, info, down), editor, down);
 
         // Either reached last sibling, or jumped over multi-line whitespace
         if (sibling == null) return true;

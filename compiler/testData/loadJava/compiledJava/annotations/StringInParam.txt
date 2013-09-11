@@ -1,0 +1,13 @@
+package test
+
+public trait StringInParam : java.lang.Object {
+    
+    public final annotation class Anno : jet.Annotation {
+        public constructor Anno(/*0*/ value: jet.String?)
+        public abstract fun value(): jet.String?
+    }
+    
+    test.StringInParam.Anno(value = "hello": jet.String) public open class Class : java.lang.Object {
+        public constructor Class()
+    }
+}

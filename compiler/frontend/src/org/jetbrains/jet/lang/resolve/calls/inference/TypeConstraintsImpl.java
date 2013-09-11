@@ -16,11 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.Collection;
 import java.util.Set;
 
 public class TypeConstraintsImpl implements TypeConstraints {
@@ -85,5 +88,19 @@ public class TypeConstraintsImpl implements TypeConstraints {
 
     public static enum BoundKind {
         LOWER_BOUND, UPPER_BOUND, EXACT_BOUND
+    }
+
+    public Collection<Pair<BoundKind, JetType>> getAllBounds() {
+        Collection<Pair<BoundKind, JetType>> result = Lists.newArrayList();
+        for (JetType exactBound : exactBounds) {
+            result.add(Pair.create(BoundKind.EXACT_BOUND, exactBound));
+        }
+        for (JetType exactBound : upperBounds) {
+            result.add(Pair.create(BoundKind.UPPER_BOUND, exactBound));
+        }
+        for (JetType exactBound : lowerBounds) {
+            result.add(Pair.create(BoundKind.LOWER_BOUND, exactBound));
+        }
+        return result;
     }
 }

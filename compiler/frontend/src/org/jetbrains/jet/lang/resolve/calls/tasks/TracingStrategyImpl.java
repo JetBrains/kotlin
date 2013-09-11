@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
@@ -44,6 +43,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class TracingStrategyImpl implements TracingStrategy {
     private final JetReferenceExpression reference;
@@ -143,7 +143,7 @@ public class TracingStrategyImpl implements TracingStrategy {
 
     @Override
     public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {
-        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(call.getCallElement(), descriptors));
+        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(reference, descriptors));
     }
 
     @Override
@@ -228,8 +228,8 @@ public class TracingStrategyImpl implements TracingStrategy {
             JetType substitutedReturnType = constraintSystem.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
             assert substitutedReturnType != null; //todo
 
-            assert data.expectedType != TypeUtils.NO_EXPECTED_TYPE : "Expected type doesn't exist, but there is an expected type mismatch error";
-            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, substitutedReturnType, data.expectedType));
+            assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
+            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, data.expectedType, substitutedReturnType));
         }
         else if (constraintSystem.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));

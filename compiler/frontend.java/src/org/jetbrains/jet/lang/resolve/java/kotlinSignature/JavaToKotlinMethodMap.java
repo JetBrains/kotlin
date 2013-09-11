@@ -16,15 +16,18 @@
 
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiSubstitutor;
-import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaSignatureFormatter;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -33,8 +36,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.intellij.psi.util.PsiFormatUtilBase.*;
 
 public class JavaToKotlinMethodMap {
     public static final JavaToKotlinMethodMap INSTANCE = new JavaToKotlinMethodMap();
@@ -45,24 +46,26 @@ public class JavaToKotlinMethodMap {
     }
 
     @NotNull
-    public List<FunctionDescriptor> getFunctions(@NotNull PsiMethod psiMethod, @NotNull ClassDescriptor containingClass) {
-        ImmutableCollection<ClassData> classDatas = mapContainer.map.get(psiMethod.getContainingClass().getQualifiedName());
+    public List<FunctionDescriptor> getFunctions(
+            @NotNull JavaMethod javaMethod,
+            @NotNull FqName classFqName,
+            @NotNull ClassDescriptor containingClass
+    ) {
+        ImmutableCollection<ClassData> classDatas = mapContainer.map.get(classFqName.asString());
 
         List<FunctionDescriptor> result = Lists.newArrayList();
 
         Set<ClassDescriptor> allSuperClasses = DescriptorUtils.getAllSuperClasses(containingClass);
 
-        String serializedPsiMethod = serializePsiMethod(psiMethod);
+        String serializedMethod = JavaSignatureFormatter.getInstance().formatMethod(javaMethod);
         for (ClassData classData : classDatas) {
-            String expectedSerializedFunction = classData.method2Function.get(serializedPsiMethod);
+            String expectedSerializedFunction = classData.method2Function.get(serializedMethod);
             if (expectedSerializedFunction == null) continue;
 
             ClassDescriptor kotlinClass = classData.kotlinClass;
             if (!allSuperClasses.contains(kotlinClass)) continue;
 
-
-            Collection<FunctionDescriptor> functions =
-                    kotlinClass.getDefaultType().getMemberScope().getFunctions(Name.identifier(psiMethod.getName()));
+            Collection<FunctionDescriptor> functions = kotlinClass.getDefaultType().getMemberScope().getFunctions(javaMethod.getName());
 
             for (FunctionDescriptor function : functions) {
                 if (expectedSerializedFunction.equals(serializeFunction(function))) {
@@ -72,12 +75,6 @@ public class JavaToKotlinMethodMap {
         }
 
         return result;
-    }
-
-    @NotNull
-    public static String serializePsiMethod(@NotNull PsiMethod psiMethod) {
-        return PsiFormatUtil.formatMethod(
-                psiMethod, PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS, SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
     }
 
     @NotNull

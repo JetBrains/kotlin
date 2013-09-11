@@ -27,7 +27,7 @@ fun test(<warning>l</warning> : List<Int>) {
   <error>List</error><Int>
 
 
-  val <warning>o</warning> = "sdf" <warning>as</warning> <warning>Object</warning>
+  val <warning>o</warning> = "sdf" as <warning>Object</warning>
 
   try {
     // ...

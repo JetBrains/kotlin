@@ -25,8 +25,9 @@
     <dirset id="compilerSources.dirset" dir="${basedir}/">
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend/serialization/src"/>
+        <include name="core/descriptor.loader.java/src"/>
         <include name="compiler/frontend.java/src"/>
-        <include name="compiler/frontend.java/serialization.java/src"/>
+        <include name="core/serialization.java/src"/>
         <include name="compiler/backend/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
@@ -43,7 +44,9 @@
     <patternset id="compilerClassesFromIDEA.fileset">
         <include name="frontend/**"/>
         <include name="serialization/**"/>
+        <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
+        <include name="serialization.java/**"/>
         <include name="backend/**"/>
         <include name="cli/**"/>
         <include name="cli-common/**"/>
@@ -127,6 +130,7 @@
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
             <fileset dir="compiler/frontend/src"/>
+            <fileset dir="core/descriptor.loader.java/src"/>
             <fileset dir="compiler/frontend.java/src"/>
             <fileset dir="compiler/backend/src"/>
             <fileset dir="compiler/cli/src"/>
@@ -272,6 +276,7 @@
           <jar jarfile="@{jarfile}" compress="@{compress}">
               <fileset dir="${output}/classes/compiler"/>
               <fileset dir="${basedir}/compiler/frontend/builtins" includes="jet/**"/>
+              <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
   
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>

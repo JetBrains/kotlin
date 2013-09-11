@@ -34,6 +34,8 @@ public interface TypeConstructor extends Annotated {
 
     boolean isSealed();
 
+    boolean isDenotable();
+
     @Nullable
     ClassifierDescriptor getDeclarationDescriptor();
 }

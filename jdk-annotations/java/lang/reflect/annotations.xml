@@ -143,6 +143,9 @@
     <item name="java.lang.reflect.Array void setShort(java.lang.Object, int, short) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name='java.lang.reflect.Constructor T newInstance(java.lang.Object...)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name="java.lang.reflect.Constructor T getAnnotation(java.lang.Class&lt;T&gt;) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>

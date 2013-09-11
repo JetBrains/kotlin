@@ -51,12 +51,14 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class ExpressionTypingUtils {
 
@@ -78,7 +80,9 @@ public class ExpressionTypingUtils {
 
     @NotNull
     protected static ExpressionReceiver safeGetExpressionReceiver(@NotNull ExpressionTypingFacade facade, @NotNull JetExpression expression, ExpressionTypingContext context) {
-        return new ExpressionReceiver(expression, facade.safeGetTypeInfo(expression, context).getType());
+        JetType type = facade.safeGetTypeInfo(expression, context).getType();
+        assert type != null : "safeGetTypeInfo should return @NotNull type";
+        return new ExpressionReceiver(expression, type);
     }
 
     @NotNull
@@ -406,7 +410,7 @@ public class ExpressionTypingUtils {
             if (results.isSuccess()) {
                 context.trace.record(COMPONENT_RESOLVED_CALL, entry, results.getResultingCall());
                 componentType = results.getResultingDescriptor().getReturnType();
-                if (componentType != null && expectedType != TypeUtils.NO_EXPECTED_TYPE
+                if (componentType != null && !noExpectedType(expectedType)
                        && !JetTypeChecker.INSTANCE.isSubtypeOf(componentType, expectedType)) {
 
                     context.trace.report(
@@ -480,5 +484,12 @@ public class ExpressionTypingUtils {
         return expression != null
                ? facade.getTypeInfo(expression, context)
                : JetTypeInfo.create(null, context.dataFlowInfo);
+    }
+
+    @SuppressWarnings("SuspiciousMethodCalls")
+    public static boolean isBinaryExpressionDependentOnExpectedType(@NotNull JetBinaryExpression expression) {
+        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+        return (operationType == JetTokens.IDENTIFIER || OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)
+                || operationType == JetTokens.ELVIS);
     }
 }

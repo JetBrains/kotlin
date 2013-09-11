@@ -23,7 +23,7 @@ class MyProperty<R, T> {
 
     public fun get(thisRef: R, desc: PropertyMetadata): T {
         println("get $thisRef ${desc.name}")
-        return null <!CAST_NEVER_SUCCEEDS!>as<!> T
+        return null as T
     }
 
     public fun set(thisRef: R, desc: PropertyMetadata, value: T) {

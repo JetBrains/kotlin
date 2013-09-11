@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
@@ -36,6 +37,9 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class DataFlowUtils {
     private DataFlowUtils() {
@@ -135,30 +139,48 @@ public class DataFlowUtils {
         return JetTypeInfo.create(checkType(expressionType, expression, context), dataFlowInfo);
     }
 
+    @NotNull
+    public static JetTypeInfo checkType(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
+        JetType type = checkType(typeInfo.getType(), expression, context);
+        if (type == typeInfo.getType()) {
+            return typeInfo;
+        }
+        return JetTypeInfo.create(type, typeInfo.getDataFlowInfo());
+    }
+
     @Nullable
     public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
-        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE) {
-            context.trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, context.expectedType);
+        return checkType(expressionType, expression, context.expectedType, context.dataFlowInfo, context.trace);
+    }
+
+    @Nullable
+    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression possiblyWrappedInBlockExpression,
+            @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace
+    ) {
+        // non-block 'if' branches are wrapped in a block, but here genuine expressions (not wrappers) should be checked
+        JetExpression expression = JetPsiUtil.unwrapFromBlock(possiblyWrappedInBlockExpression);
+        if (!noExpectedType(expectedType)) {
+            trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, expectedType);
         }
 
-        if (expressionType == null || context.expectedType == null || context.expectedType == TypeUtils.NO_EXPECTED_TYPE ||
-            JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, context.expectedType)) {
+        if (expressionType == null || noExpectedType(expectedType) ||
+            JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, expectedType)) {
             return expressionType;
         }
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, expressionType, context.trace.getBindingContext());
-        for (JetType possibleType : context.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, context.expectedType)) {
+        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, expressionType, trace.getBindingContext());
+        for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
                 if (dataFlowValue.isStableIdentifier()) {
-                    context.trace.record(AUTOCAST, expression, possibleType);
+                    trace.record(AUTOCAST, expression, possibleType);
                 }
                 else {
-                    context.trace.report(AUTOCAST_IMPOSSIBLE.on(expression, possibleType, expression.getText()));
+                    trace.report(AUTOCAST_IMPOSSIBLE.on(expression, possibleType, expression.getText()));
                 }
                 return possibleType;
             }
         }
-        context.trace.report(TYPE_MISMATCH.on(expression, context.expectedType, expressionType));
+        trace.report(TYPE_MISMATCH.on(expression, expectedType, expressionType));
         return expressionType;
     }
 
@@ -169,7 +191,7 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ResolutionContext context) {
-        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !KotlinBuiltIns.getInstance().isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
+        if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.getInstance().isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
@@ -183,17 +205,17 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, boolean isStatement) {
-        if (expressionType != null && context.expectedType == TypeUtils.NO_EXPECTED_TYPE && !isStatement &&
-            (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isAny(expressionType))) {
+        if (expressionType != null && context.expectedType == NO_EXPECTED_TYPE && context.contextDependency == INDEPENDENT && !isStatement
+                && (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isAny(expressionType))) {
             context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
-
         }
         return expressionType;
     }
 
     @NotNull
     public static JetTypeInfo illegalStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
-        facade.checkStatementType(expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
+        facade.checkStatementType(
+                expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }

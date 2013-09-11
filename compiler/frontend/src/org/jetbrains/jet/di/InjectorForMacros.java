@@ -18,6 +18,7 @@ package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -36,6 +37,7 @@ public class InjectorForMacros {
     
     private final ExpressionTypingServices expressionTypingServices;
     private final NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
     private final CallExpressionResolver callExpressionResolver;
@@ -53,6 +55,7 @@ public class InjectorForMacros {
     ) {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
         this.callExpressionResolver = new CallExpressionResolver();
@@ -67,6 +70,7 @@ public class InjectorForMacros {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 

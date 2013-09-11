@@ -16,6 +16,7 @@
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="library" name="jline" level="project" />
     <orderEntry type="module" module-name="cli-common" exported="" />
+    <orderEntry type="module" module-name="descriptor.loader.java" />
   </component>
 </module>
 

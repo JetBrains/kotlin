@@ -24,7 +24,6 @@ import com.intellij.psi.impl.compiled.ClsFieldImpl;
 import com.intellij.psi.impl.java.stubs.*;
 import com.intellij.psi.stubs.StubBase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.wrappers.JetClsMethodImpl;
 
 class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<PsiElement> ORIGIN_ELEMENT = Key.create("ORIGIN_ELEMENT");

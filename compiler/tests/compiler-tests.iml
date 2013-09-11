@@ -18,6 +18,7 @@
     <orderEntry type="library" name="dx-android" level="project" />
     <orderEntry type="module" module-name="serialization" />
     <orderEntry type="module" module-name="serialization.java" />
+    <orderEntry type="module" module-name="descriptor.loader.java" />
   </component>
 </module>
 

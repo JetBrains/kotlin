@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -99,12 +98,6 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
 
     @NotNull
     @Override
-    public DataFlowInfo getDataFlowInfo() {
-        return functionCall.getDataFlowInfo();
-    }
-
-    @NotNull
-    @Override
     public ResolutionStatus getStatus() {
         if (variableCall.getStatus() == ResolutionStatus.SUCCESS) {
             return functionCall.getStatus();
@@ -137,5 +130,11 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     @Override
     public ResolvedCallImpl<FunctionDescriptor> getCallToCompleteTypeArgumentInference() {
         return functionCall.getCallToCompleteTypeArgumentInference();
+    }
+
+    @NotNull
+    @Override
+    public DataFlowInfoForArguments getDataFlowInfoForArguments() {
+        return functionCall.getDataFlowInfoForArguments();
     }
 }

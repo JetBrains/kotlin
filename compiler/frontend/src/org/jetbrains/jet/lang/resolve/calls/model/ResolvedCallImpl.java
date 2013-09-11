@@ -22,17 +22,15 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
-import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
@@ -61,9 +59,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     };
 
     @NotNull
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace,
-            @NotNull TracingStrategy tracing) {
-        return new ResolvedCallImpl<D>(candidate, trace, tracing);
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(
+            @NotNull ResolutionCandidate<D> candidate,
+            @NotNull DelegatingBindingTrace trace,
+            @NotNull TracingStrategy tracing,
+            @NotNull MutableDataFlowInfoForArguments dataFlowInfoForArguments
+    ) {
+        return new ResolvedCallImpl<D>(candidate, trace, tracing, dataFlowInfoForArguments);
     }
 
     private final D candidateDescriptor;
@@ -75,16 +77,22 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
+    private final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
     private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
+
     private boolean someArgumentHasNoType = false;
     private final DelegatingBindingTrace trace;
     private final TracingStrategy tracing;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
-    private DataFlowInfo dataFlowInfo;
 
-    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace, @NotNull TracingStrategy tracing) {
+    private ResolvedCallImpl(
+            @NotNull ResolutionCandidate<D> candidate,
+            @NotNull DelegatingBindingTrace trace,
+            @NotNull TracingStrategy tracing,
+            @NotNull MutableDataFlowInfoForArguments dataFlowInfoForArguments
+    ) {
         this.candidateDescriptor = candidate.getDescriptor();
         this.thisObject = candidate.getThisObject();
         this.receiverArgument = candidate.getReceiverArgument();
@@ -92,6 +100,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         this.isSafeCall = candidate.isSafeCall();
         this.trace = trace;
         this.tracing = tracing;
+        this.dataFlowInfoForArguments = dataFlowInfoForArguments;
     }
 
     @Override
@@ -257,20 +266,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return isSafeCall;
     }
 
+    public void setInitialDataFlowInfo(@NotNull DataFlowInfo info) {
+        dataFlowInfoForArguments.setInitialDataFlowInfo(info);
+    }
+
     @NotNull
     @Override
-    public DataFlowInfo getDataFlowInfo() {
-        return dataFlowInfo;
-    }
-
-    public void setInitialDataFlowInfo(@NotNull DataFlowInfo info) {
-        assert dataFlowInfo == null;
-        dataFlowInfo = info;
-    }
-
-    public void addDataFlowInfo(@NotNull DataFlowInfo info) {
-        assert dataFlowInfo != null;
-        dataFlowInfo = dataFlowInfo.and(info);
+    public MutableDataFlowInfoForArguments getDataFlowInfoForArguments() {
+        return dataFlowInfoForArguments;
     }
 
     @NotNull

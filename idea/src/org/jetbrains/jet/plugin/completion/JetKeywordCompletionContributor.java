@@ -40,7 +40,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetTemplateInsertHandler;
 
@@ -49,6 +48,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.EMPTY_FUNCTION_HANDLER;
 
 /**
  * A keyword contributor for Kotlin
@@ -56,8 +56,6 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
-    private final static InsertHandler<LookupElement> FUNCTION_INSERT_HANDLER = new JetFunctionInsertHandler(
-            JetFunctionInsertHandler.CaretPosition.AFTER_BRACKETS, JetFunctionInsertHandler.BracketType.PARENTHESIS);
 
     private final static ElementFilter GENERAL_FILTER = new NotFilter(new OrFilter(
             new CommentFilter(), // or
@@ -250,7 +248,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                         return lookupElementBuilder.withInsertHandler(KEYWORDS_INSERT_HANDLER);
                     }
 
-                    return lookupElementBuilder.withInsertHandler(FUNCTION_INSERT_HANDLER);
+                    return lookupElementBuilder.withInsertHandler(EMPTY_FUNCTION_HANDLER);
                 }
             });
         }

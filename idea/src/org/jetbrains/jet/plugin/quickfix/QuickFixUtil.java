@@ -36,6 +36,8 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
+import java.util.List;
+
 public class QuickFixUtil {
     private QuickFixUtil() {
     }
@@ -132,6 +134,7 @@ public class QuickFixUtil {
         JetCallExpression callExpression = (JetCallExpression) valueArgumentList.getParent();
         JetParameterList parameterList = getParameterListOfCallee(callExpression);
         if (parameterList == null) return null;
+        List<JetParameter> parameters = parameterList.getParameters();
         int position = valueArgumentList.getArguments().indexOf(valueArgument);
         if (position == -1) return null;
 
@@ -141,7 +144,7 @@ public class QuickFixUtil {
             String valueArgumentNameAsString = referenceExpression == null ? null : referenceExpression.getReferencedName();
             if (valueArgumentNameAsString == null) return null;
 
-            for (JetParameter parameter: parameterList.getParameters()) {
+            for (JetParameter parameter: parameters) {
                 if (valueArgumentNameAsString.equals(parameter.getName())) {
                     return parameter;
                 }
@@ -149,7 +152,8 @@ public class QuickFixUtil {
             return null;
         }
         else {
-            return parameterList.getParameters().get(position);
+            if (position >= parameters.size()) return null;
+            return parameters.get(position);
         }
     }
 

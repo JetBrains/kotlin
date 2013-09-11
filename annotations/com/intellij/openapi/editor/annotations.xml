@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.openapi.editor.Document java.lang.String getText()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

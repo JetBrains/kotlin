@@ -25,15 +25,15 @@ fun test() {
     1e5: Double
     1e-5: Float
 
-    <!TYPE_MISMATCH!>1<!>: Double
-    <!TYPE_MISMATCH!>1<!>: Float
+    <!ERROR_COMPILE_TIME_VALUE!>1<!>: Double
+    <!ERROR_COMPILE_TIME_VALUE!>1<!>: Float
     
     1 <!USELESS_CAST!>as<!> Byte
     1 <!USELESS_CAST!>as<!> Int
     0xff <!USELESS_CAST!>as<!> Long
     
     <!ERROR_COMPILE_TIME_VALUE!>1.1<!> <!CAST_NEVER_SUCCEEDS!>as<!> Int
-    <!TYPE_MISMATCH!>1.1<!>: Int
+    <!ERROR_COMPILE_TIME_VALUE!>1.1<!>: Int
 
     varargByte(0x77, 1, 3, <!ERROR_COMPILE_TIME_VALUE!>200<!>, 0b111)
     varargShort(0x777, 1, 2, 3, <!ERROR_COMPILE_TIME_VALUE!>200000<!>, 0b111)

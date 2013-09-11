@@ -113,4 +113,9 @@ public class DiagnosticMessageTest extends JetLiteFixture {
     public void testInvisibleMember() throws Exception {
         doTest("invisibleMember", 3, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER);
     }
+
+    public void testNumberValueTypes() throws Exception {
+        doTest("numberValueTypes", 4, Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, Errors.TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
+               Errors.TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS);
+    }
 }

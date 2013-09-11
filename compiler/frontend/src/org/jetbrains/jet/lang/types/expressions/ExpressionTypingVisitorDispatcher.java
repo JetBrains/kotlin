@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -38,13 +39,16 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @NotNull
-    public static ExpressionTypingFacade create() {
-        return new ExpressionTypingVisitorDispatcher(null);
+    public static ExpressionTypingFacade create(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+        return new ExpressionTypingVisitorDispatcher(platformToKotlinClassMap, null);
     }
 
     @NotNull
-    public static ExpressionTypingInternals createForBlock(WritableScope writableScope) {
-        return new ExpressionTypingVisitorDispatcher(writableScope);
+    public static ExpressionTypingInternals createForBlock(
+            @NotNull PlatformToKotlinClassMap platformToKotlinClassMap,
+            @NotNull WritableScope writableScope
+    ) {
+        return new ExpressionTypingVisitorDispatcher(platformToKotlinClassMap, writableScope);
     }
 
     private final BasicExpressionTypingVisitor basic;
@@ -53,8 +57,8 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private final ControlStructureTypingVisitor controlStructures = new ControlStructureTypingVisitor(this);
     private final PatternMatchingTypingVisitor patterns = new PatternMatchingTypingVisitor(this);
 
-    private ExpressionTypingVisitorDispatcher(WritableScope writableScope) {
-        this.basic = new BasicExpressionTypingVisitor(this);
+    private ExpressionTypingVisitorDispatcher(PlatformToKotlinClassMap platformToKotlinClassMap, WritableScope writableScope) {
+        this.basic = new BasicExpressionTypingVisitor(this, platformToKotlinClassMap);
         if (writableScope != null) {
             this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns);
         }

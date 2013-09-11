@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
@@ -89,7 +90,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName)),
                 new JetTestUtils.TestFileFactory<File>() {
                     @Override
-                    public File create(String fileName, String text) {
+                    public File create(String fileName, String text, Map<String, String> directives) {
                         File targetFile = new File(srcDir, fileName);
                         try {
                             FileUtil.writeToFile(targetFile, text);

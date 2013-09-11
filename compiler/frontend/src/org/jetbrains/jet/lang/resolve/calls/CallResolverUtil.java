@@ -41,8 +41,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
-
 public class CallResolverUtil {
 
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
@@ -61,7 +59,7 @@ public class CallResolverUtil {
                                                                       call.getReceiverArgument(), call.getExplicitReceiverKind(),
                                                                       call.isSafeCall());
 
-        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, TraceUtil.DELEGATING_TRACE_STUB, call.getTracing());
+        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, TraceUtil.DELEGATING_TRACE_STUB, call.getTracing(), call.getDataFlowInfoForArguments());
         context.trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);
 
         copy.addStatus(call.getStatus());
@@ -76,7 +74,6 @@ public class CallResolverUtil {
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
             copy.recordValueArgument(entry.getKey(), entry.getValue());
         }
-        copy.setInitialDataFlowInfo(call.getDataFlowInfo());
         return copy;
     }
 

@@ -1,0 +1,6 @@
+package test
+
+internal val inn3r: testing.Outer.Inner
+internal val nested: testing.Outer.Nested
+internal val outer: testing.Outer
+internal val testObjectProperty: testing.TopLevelObject

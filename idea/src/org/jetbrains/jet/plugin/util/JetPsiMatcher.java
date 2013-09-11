@@ -239,7 +239,7 @@ public class JetPsiMatcher {
 
     private static JetElement unwrap(JetElement e) {
         if (e instanceof JetExpression) {
-            return JetPsiUtil.deparenthesizeWithNoTypeResolution((JetExpression) e);
+            return JetPsiUtil.deparenthesize((JetExpression) e);
         }
         return e;
     }

@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -30,7 +31,9 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -46,12 +49,14 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.makeTraceInterceptingTypeMismatch;
+import static org.jetbrains.jet.lang.types.TypeUtils.UNIT_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ExpressionTypingServices {
 
-    private final ExpressionTypingFacade expressionTypingFacade = ExpressionTypingVisitorDispatcher.create();
-
+    @NotNull
+    private ExpressionTypingFacade expressionTypingFacade;
     @NotNull
     private Project project;
     @NotNull
@@ -62,8 +67,8 @@ public class ExpressionTypingServices {
     private DescriptorResolver descriptorResolver;
     @NotNull
     private TypeResolver typeResolver;
-
-
+    @NotNull
+    private PlatformToKotlinClassMap platformToKotlinClassMap;
 
     @NotNull
     public Project getProject() {
@@ -115,6 +120,17 @@ public class ExpressionTypingServices {
         this.typeResolver = typeResolver;
     }
 
+    @Inject
+    public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+        this.platformToKotlinClassMap = platformToKotlinClassMap;
+        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(platformToKotlinClassMap);
+    }
+
+    @NotNull
+    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+        return platformToKotlinClassMap;
+    }
+
     @NotNull
     public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
@@ -132,15 +148,14 @@ public class ExpressionTypingServices {
         return expressionTypingFacade.getTypeInfo(expression, context);
     }
 
+    @NotNull
+    public JetTypeInfo getTypeInfo(@NotNull JetExpression expression, @NotNull ResolutionContext resolutionContext) {
+        return expressionTypingFacade.getTypeInfo(expression, ExpressionTypingContext.newContext(this, resolutionContext));
+    }
+
     @Nullable
     public JetType getType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace).getType();
-    }
-
-    public JetTypeInfo getTypeInfoWithNamespaces(@NotNull JetExpression expression, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                this, trace, scope, dataFlowInfo, expectedType, ExpressionPosition.LHS_OF_DOT);
-        return expressionTypingFacade.getTypeInfo(expression, context);
     }
 
     /////////////////////////////////////////////////////////
@@ -244,7 +259,7 @@ public class ExpressionTypingServices {
             return JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
         }
 
-        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(scope);
+        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(platformToKotlinClassMap, scope);
         ExpressionTypingContext newContext = createContext(context, trace, scope, context.dataFlowInfo, NO_EXPECTED_TYPE);
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
@@ -255,84 +270,77 @@ public class ExpressionTypingServices {
             }
             trace.record(STATEMENT, statement);
             JetExpression statementExpression = (JetExpression) statement;
-            //TODO constructor assert context.expectedType != FORBIDDEN : ""
             if (!iterator.hasNext()) {
-                if (context.expectedType != NO_EXPECTED_TYPE) {
-                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType)) {
-                        // This implements coercion to Unit
-                        TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace, "trace to resolve coercion to unit with expected type");
-                        boolean[] mismatch = new boolean[1];
-                        ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
-                        newContext = createContext(newContext, errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType);
-                        result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
-                        if (mismatch[0]) {
-                            TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace, "trace to resolve coercion to unit without expected type");
-                            mismatch[0] = false;
-                            ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
-                            newContext = createContext(newContext, interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE);
-                            result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
-                            if (mismatch[0]) {
-                                temporaryTraceExpectingUnit.commit();
-                            }
-                            else {
-                                temporaryTraceNoExpectedType.commit();
-                            }
-                        }
-                        else {
-                            temporaryTraceExpectingUnit.commit();
-                        }
-                    }
-                    else {
-                        newContext = createContext(newContext, trace, scope, newContext.dataFlowInfo, context.expectedType);
-                        result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
-                    }
-                }
-                else {
-                    result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
-                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT) {
-                        boolean mightBeUnit = false;
-                        if (statementExpression instanceof JetDeclaration) {
-                            mightBeUnit = true;
-                        }
-                        if (statementExpression instanceof JetBinaryExpression) {
-                            JetBinaryExpression binaryExpression = (JetBinaryExpression) statementExpression;
-                            IElementType operationType = binaryExpression.getOperationToken();
-                            //noinspection SuspiciousMethodCalls
-                            if (operationType == JetTokens.EQ || OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
-                                mightBeUnit = true;
-                            }
-                        }
-                        if (mightBeUnit) {
-                            // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
-                            assert result.getType() == null || KotlinBuiltIns.getInstance().isUnit(result.getType());
-                            result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), newContext.dataFlowInfo);
-                        }
-                    }
-                }
+                result = getTypeOfLastExpressionInBlock(
+                        statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
+                        blockLevelVisitor);
             }
             else {
-                result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
+                result = blockLevelVisitor.getTypeInfo(statementExpression, newContext.replaceContextDependency(ContextDependency.INDEPENDENT), true);
             }
 
             DataFlowInfo newDataFlowInfo = result.getDataFlowInfo();
             if (newDataFlowInfo != context.dataFlowInfo) {
-                newContext = createContext(newContext, trace, scope, newDataFlowInfo, NO_EXPECTED_TYPE);
+                newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
             }
-            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(scope);
+            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(platformToKotlinClassMap, scope);
+        }
+        return result;
+    }
+
+    private JetTypeInfo getTypeOfLastExpressionInBlock(
+            @NotNull JetExpression statementExpression,
+            @NotNull ExpressionTypingContext context,
+            @NotNull CoercionStrategy coercionStrategyForLastExpression,
+            @NotNull ExpressionTypingInternals blockLevelVisitor
+    ) {
+        if (!noExpectedType(context.expectedType) || context.expectedType == UNIT_EXPECTED_TYPE) {
+            JetType expectedType;
+            if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
+                (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType))) {
+                expectedType = UNIT_EXPECTED_TYPE;
+            }
+            else {
+                expectedType = context.expectedType;
+            }
+
+            return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
+        }
+        JetTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
+        if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
+            boolean mightBeUnit = false;
+            if (statementExpression instanceof JetDeclaration) {
+                mightBeUnit = true;
+            }
+            if (statementExpression instanceof JetBinaryExpression) {
+                JetBinaryExpression binaryExpression = (JetBinaryExpression) statementExpression;
+                IElementType operationType = binaryExpression.getOperationToken();
+                //noinspection SuspiciousMethodCalls
+                if (operationType == JetTokens.EQ || OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
+                    mightBeUnit = true;
+                }
+            }
+            if (mightBeUnit) {
+                // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
+                assert result.getType() == null || KotlinBuiltIns.getInstance().isUnit(result.getType());
+                result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
+            }
         }
         return result;
     }
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
-        return ExpressionTypingContext.newContext(
-                this, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, oldContext.expressionPosition);
+        return ExpressionTypingContext.newContext(this, trace, scope, dataFlowInfo, expectedType, oldContext.expressionPosition,
+                                                  oldContext.contextDependency, oldContext.resolutionResultsCache, oldContext.labelResolver
+        );
     }
 
     @Nullable
-    public JetExpression deparenthesize(
-            @NotNull JetExpression expression,
-            @NotNull final ExpressionTypingContext context) {
-        return JetPsiUtil.deparenthesizeWithResolutionStrategy(expression, new Function<JetTypeReference, Void>() {
+    public JetExpression deparenthesizeWithTypeResolution(
+            @Nullable JetExpression expression,
+            @NotNull final ExpressionTypingContext context
+    ) {
+        return JetPsiUtil.deparenthesizeWithResolutionStrategy(expression, true, new Function<JetTypeReference, Void>() {
             @Override
             public Void apply(JetTypeReference reference) {
                 getTypeResolver().resolveType(context.scope, reference, context.trace, true);

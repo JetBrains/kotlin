@@ -2309,6 +2309,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/lazyResolve/namespaceComparator"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("AnnotationOnObject.kt")
+        public void testAnnotationOnObject() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/AnnotationOnObject.kt");
+        }
+        
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/ClassObject.kt");
@@ -2392,6 +2397,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/simpleClass.kt");
+        }
+        
+        @TestMetadata("UnresolvedAnnotationOnObject.kt")
+        public void testUnresolvedAnnotationOnObject() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/UnresolvedAnnotationOnObject.kt");
         }
         
         @TestMetadata("varargIterator.kt")

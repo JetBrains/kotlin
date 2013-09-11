@@ -540,11 +540,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/createFromUsage/get/beforeCreateGetFromUsage5.kt");
             }
             
-            @TestMetadata("beforeCreateGetFromUsage6.kt")
-            public void testCreateGetFromUsage6() throws Exception {
-                doTest("idea/testData/quickfix/createFromUsage/get/beforeCreateGetFromUsage6.kt");
-            }
-            
             @TestMetadata("beforeCreateGetFromUsage7.kt")
             public void testCreateGetFromUsage7() throws Exception {
                 doTest("idea/testData/quickfix/createFromUsage/get/beforeCreateGetFromUsage7.kt");
@@ -1537,6 +1532,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeReturnTypeMismatch.kt")
         public void testReturnTypeMismatch() throws Exception {
             doTest("idea/testData/quickfix/typeMismatch/beforeReturnTypeMismatch.kt");
+        }
+        
+        @TestMetadata("beforeTooManyArgumentsException.kt")
+        public void testTooManyArgumentsException() throws Exception {
+            doTest("idea/testData/quickfix/typeMismatch/beforeTooManyArgumentsException.kt");
         }
         
         @TestMetadata("idea/testData/quickfix/typeMismatch/casts")

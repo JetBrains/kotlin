@@ -34,6 +34,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private final JetReferenceExpression reference;
     private final BasicCallResolutionContext basicCallResolutionContext;
     private final PriorityProvider<ResolutionCandidate<D>> priorityProvider;
+    private final TracingStrategy tracing;
     private final boolean isSafeCall;
 
     private final Collection<Collection<ResolutionCandidate<D>>> candidatesList = Lists.newArrayList();
@@ -42,11 +43,13 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
 
     public ResolutionTaskHolder(@NotNull JetReferenceExpression reference,
             @NotNull BasicCallResolutionContext basicCallResolutionContext,
-            @NotNull PriorityProvider<ResolutionCandidate<D>> priorityProvider
+            @NotNull PriorityProvider<ResolutionCandidate<D>> priorityProvider,
+            @Nullable TracingStrategy tracing
     ) {
         this.reference = reference;
         this.basicCallResolutionContext = basicCallResolutionContext;
         this.priorityProvider = priorityProvider;
+        this.tracing = tracing;
         this.isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call);
     }
 
@@ -83,7 +86,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
                         }
                     });
                     if (!filteredCandidates.isEmpty()) {
-                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicCallResolutionContext));
+                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicCallResolutionContext, tracing));
                     }
                 }
             }

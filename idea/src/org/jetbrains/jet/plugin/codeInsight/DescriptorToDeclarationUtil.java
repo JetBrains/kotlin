@@ -18,35 +18,55 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public final class DescriptorToDeclarationUtil {
     private DescriptorToDeclarationUtil() {
     }
 
+    @Nullable
     public static PsiElement getDeclaration(JetFile file, DeclarationDescriptor descriptor, BindingContext bindingContext) {
         return getDeclaration(file.getProject(), descriptor, bindingContext);
     }
 
+    @Nullable
     public static PsiElement getDeclaration(Project project, DeclarationDescriptor descriptor, BindingContext bindingContext) {
         Collection<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
-
         if (elements.isEmpty()) {
-            BuiltInsReferenceResolver libraryReferenceResolver =
-                    project.getComponent(BuiltInsReferenceResolver.class);
-            elements = libraryReferenceResolver.resolveBuiltInSymbol(descriptor);
+            elements = findDeclarationsForDescriptorWithoutTrace(project, descriptor);
         }
-
         if (!elements.isEmpty()) {
             return elements.iterator().next();
         }
-
         return null;
+    }
+
+    @NotNull
+    public static Collection<PsiElement> findDeclarationsForDescriptorWithoutTrace(
+            @NotNull Project project,
+            @NotNull DeclarationDescriptor descriptor
+    ) {
+        BuiltInsReferenceResolver libraryReferenceResolver = project.getComponent(BuiltInsReferenceResolver.class);
+        Collection<PsiElement> elements = libraryReferenceResolver.resolveBuiltInSymbol(descriptor);
+        if (!elements.isEmpty()) {
+            return elements;
+        }
+
+        JetDeclaration decompiledDeclaration = DecompiledNavigationUtils.findDeclarationForReference(project, descriptor);
+        if (decompiledDeclaration != null) {
+            return Collections.<PsiElement>singleton(decompiledDeclaration);
+        }
+        return Collections.emptySet();
     }
 }

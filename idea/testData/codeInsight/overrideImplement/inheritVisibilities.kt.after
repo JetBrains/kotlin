@@ -16,12 +16,12 @@ class C : A(), B {
         super<A>.internalFun()
     }
     override val internalProperty: Int = 0
-    protected override fun protectedFun() {
+    override fun protectedFun() {
         super<A>.protectedFun()
     }
-    protected override val protectedProperty: Int = 0
-    public override fun publicFun() {
+    override val protectedProperty: Int = 0
+    override fun publicFun() {
         super<A>.publicFun()
     }
-    public override val publicProperty: Int = 0
+    override val publicProperty: Int = 0
 }

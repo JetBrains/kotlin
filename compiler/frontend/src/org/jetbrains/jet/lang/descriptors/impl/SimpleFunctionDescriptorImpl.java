@@ -30,29 +30,13 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     private boolean isInline = false;
 
-    private final SimpleFunctionDescriptor originalOfSynthesized; // TODO replace with user data
-
     public SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Name name,
             @NotNull Kind kind
     ) {
-        this(containingDeclaration, annotations, name, kind, null);
-    }
-
-    public SimpleFunctionDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull Name name,
-            @NotNull Kind kind,
-            @Nullable SimpleFunctionDescriptor originalOfSynthesized
-    ) {
         super(containingDeclaration, annotations, name, kind);
-        this.originalOfSynthesized = originalOfSynthesized;
-        if (originalOfSynthesized != null) {
-            assert kind == Kind.SYNTHESIZED;
-        }
     }
 
     private SimpleFunctionDescriptorImpl(
@@ -62,7 +46,6 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull Name name,
             @NotNull Kind kind) {
         super(containingDeclaration, original, annotations, name, kind);
-        originalOfSynthesized = null;
     }
 
     public SimpleFunctionDescriptorImpl initialize(
@@ -117,11 +100,5 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     @Override
     public boolean isInline() {
         return isInline;
-    }
-
-    // TODO replace with user data
-    @Nullable
-    public SimpleFunctionDescriptor getOriginalOfSynthesized() {
-        return originalOfSynthesized;
     }
 }

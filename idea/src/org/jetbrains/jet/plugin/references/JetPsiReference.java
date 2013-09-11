@@ -25,13 +25,11 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
-import org.jetbrains.jet.lang.resolve.java.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
@@ -40,6 +38,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
+import static org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil.findDeclarationsForDescriptorWithoutTrace;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
 
@@ -107,7 +106,6 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     @Nullable
     protected PsiElement doResolve() {
         BindingContext context = AnalyzerFacadeWithCache.getContextForElement(myExpression);
-
         List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(context, myExpression);
         if (psiElements.size() == 1) {
             return psiElements.iterator().next();
@@ -116,18 +114,13 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
             return null;
         }
         DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, myExpression);
-        if (referencedDescriptor != null) {
-            JetDeclaration declarationInDecompiledFile =
-                    DecompiledNavigationUtils.findDeclarationForReference(myExpression.getProject(), referencedDescriptor);
-            if (declarationInDecompiledFile != null) {
-                return declarationInDecompiledFile;
-            }
+        if (referencedDescriptor == null) {
+            return null;
         }
-        Collection<PsiElement> stdlibSymbols = resolveStandardLibrarySymbol(context);
-        if (stdlibSymbols.size() == 1) {
-            return stdlibSymbols.iterator().next();
+        Collection<PsiElement> elements = findDeclarationsForDescriptorWithoutTrace(myExpression.getProject(), referencedDescriptor);
+        if (elements.size() == 1) {
+            return elements.iterator().next();
         }
-        
         return null;
     }
 

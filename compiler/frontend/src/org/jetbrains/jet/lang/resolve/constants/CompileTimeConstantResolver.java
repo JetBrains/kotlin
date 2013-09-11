@@ -17,13 +17,15 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import com.google.common.base.Function;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetEscapeStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetLiteralStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -39,13 +41,47 @@ public class CompileTimeConstantResolver {
     }
 
     @NotNull
-    public CompileTimeConstant<?> getIntegerValue(@NotNull String text, @NotNull JetType expectedType) {
-        if (noExpectedType(expectedType)) {
-            Long value = parseLongValue(text);
-            if (value == null) {
-                return OUT_OF_RANGE;
-            }
+    public CompileTimeConstant<?> getCompileTimeConstant(
+            @NotNull JetConstantExpression expression,
+            @NotNull JetType expectedType
+    ) {
+        IElementType elementType = expression.getNode().getElementType();
+        String text = expression.getNode().getText();
 
+        CompileTimeConstant<?> value;
+        if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
+            value = getIntegerValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
+            value = getFloatValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
+            value = getBooleanValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
+            value = getCharValue(text, expectedType);
+        }
+        else if (elementType == JetNodeTypes.NULL) {
+            value = getNullValue(expectedType);
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported constant: " + expression);
+        }
+        return value;
+    }
+
+
+    @NotNull
+    public CompileTimeConstant<?> getIntegerValue(@NotNull String text, @NotNull JetType expectedType) {
+        return getIntegerValue(parseLongValue(text), expectedType);
+    }
+
+    @NotNull
+    public CompileTimeConstant<?> getIntegerValue(@Nullable Long value, @NotNull JetType expectedType) {
+        if (value == null) {
+            return OUT_OF_RANGE;
+        }
+        if (noExpectedType(expectedType)) {
             if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
                 return new IntValue(value.intValue());
             }
@@ -80,16 +116,15 @@ public class CompileTimeConstantResolver {
             JetType intType = builtIns.getIntType();
             JetType longType = builtIns.getLongType();
             if (typeChecker.isSubtypeOf(intType, expectedType)) {
-                return getIntegerValue(text, intType);
+                return getIntegerValue(value, intType);
             }
             else if (typeChecker.isSubtypeOf(longType, expectedType)) {
-                return getIntegerValue(text, longType);
+                return getIntegerValue(value, longType);
             }
             else {
                 return new ErrorValue("An integer literal does not conform to the expected type " + expectedType);
             }
         }
-        Long value = parseLongValue(text);
 
         if (value != null && lowerBound <= value && value <= upperBound) {
             return create.apply(value);
@@ -98,7 +133,7 @@ public class CompileTimeConstantResolver {
     }
 
     @Nullable
-    private static Long parseLongValue(String text) {
+    public static Long parseLongValue(String text) {
         try {
             long value;
             if (text.startsWith("0x") || text.startsWith("0X")) {
@@ -113,6 +148,16 @@ public class CompileTimeConstantResolver {
                 value = Long.parseLong(text);
             }
             return value;
+        }
+        catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Double parseDoubleValue(String text) {
+        try {
+            return Double.parseDouble(text);
         }
         catch (NumberFormatException e) {
             return null;
@@ -309,7 +354,7 @@ public class CompileTimeConstantResolver {
     }
 
     private boolean noExpectedType(JetType expectedType) {
-        return expectedType == TypeUtils.NO_EXPECTED_TYPE || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
+        return TypeUtils.noExpectedType(expectedType) || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
     }
 
 }

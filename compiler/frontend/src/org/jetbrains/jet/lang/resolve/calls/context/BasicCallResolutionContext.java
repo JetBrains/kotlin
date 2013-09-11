@@ -17,11 +17,14 @@
 package org.jetbrains.jet.lang.resolve.calls.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public class BasicCallResolutionContext extends CallResolutionContext<BasicCallResolutionContext> {
     @NotNull
@@ -31,27 +34,43 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache);
+        return new BasicCallResolutionContext(
+                trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
+                resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
     }
+
     @NotNull
     public static BasicCallResolutionContext create(
-            @NotNull ResolutionContext context, @NotNull Call call, @NotNull ResolveMode resolveMode,
-            @NotNull CheckValueArgumentsMode checkArguments, @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckValueArgumentsMode checkArguments,
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, resolveMode, checkArguments, context.expressionPosition, resolutionResultsCache);
+        return create(
+                context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
+                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, dataFlowInfoForArguments);
+    }
+
+    @NotNull
+    public static BasicCallResolutionContext create(
+            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckValueArgumentsMode checkArguments
+    ) {
+        return create(context, call, checkArguments, null);
     }
 
     private BasicCallResolutionContext(
             BindingTrace trace, JetScope scope, Call call, JetType expectedType,
-            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, CheckValueArgumentsMode checkArguments,
-            ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache
+            DataFlowInfo dataFlowInfo, ContextDependency contextDependency, CheckValueArgumentsMode checkArguments,
+            ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache,
+            LabelResolver labelResolver, MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache);
+        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
+              labelResolver, dataFlowInfoForArguments);
     }
 
     @Override
@@ -60,9 +79,13 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition
+            @NotNull ExpressionPosition expressionPosition,
+            @NotNull ContextDependency contextDependency,
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver
     ) {
-        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, checkArguments, expressionPosition, resolutionResultsCache);
+        return create(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
+                      resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
     }
 
     @Override

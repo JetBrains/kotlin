@@ -479,6 +479,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         }
 
         @Override
+        public boolean isDenotable() {
+            return true;
+        }
+
+        @Override
         public ClassifierDescriptor getDeclarationDescriptor() {
             return LazyClassDescriptor.this;
         }

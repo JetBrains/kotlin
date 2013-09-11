@@ -23,23 +23,30 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler;
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindFunctionUsagesHandler;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
-import java.util.Collection;
+import java.util.List;
 
 public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     private final KotlinMethodFindUsagesOptions findMethodOptions;
+    private final KotlinClassFindUsagesOptions findClassOptions;
 
     public KotlinFindUsagesHandlerFactory(@NotNull Project project) {
         findMethodOptions = new KotlinMethodFindUsagesOptions(project);
+        findClassOptions = new KotlinClassFindUsagesOptions(project);
     }
 
     public final KotlinMethodFindUsagesOptions getFindMethodOptions() {
         return findMethodOptions;
+    }
+
+    public KotlinClassFindUsagesOptions getFindClassOptions() {
+        return findClassOptions;
     }
 
     @Override
@@ -54,13 +61,14 @@ public class KotlinFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
         }
         if (element instanceof JetNamedFunction) {
             if (!forHighlightUsages) {
-                Collection<? extends PsiElement> methods =
+                List<? extends PsiElement> methods =
                         JetRefactoringUtil.checkSuperMethods((JetDeclaration) element, null, "super.methods.action.key.find.usages");
 
                 if (methods == null || methods.isEmpty()) return FindUsagesHandler.NULL_HANDLER;
                 if (methods.size() > 1) {
                     return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, methods, this);
                 }
+                return new KotlinFindFunctionUsagesHandler((JetNamedFunction) methods.get(0), this);
             }
             
             return new KotlinFindFunctionUsagesHandler((JetNamedFunction) element, this);

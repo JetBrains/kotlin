@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.newWritableScopeImpl;
 
 public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
@@ -44,7 +46,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitIsExpression(JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetExpression leftHandSide = expression.getLeftHandSide();
         JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
         JetType knownType = typeInfo.getType();
@@ -64,7 +66,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         // TODO :change scope according to the bound value in the when header
         JetExpression subjectExpression = expression.getSubjectExpression();
 
@@ -127,9 +129,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
             JetExpression bodyExpression = whenEntry.getExpression();
             if (bodyExpression != null) {
-                ExpressionTypingContext newContext = contextWithExpectedType.replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo);
+                ExpressionTypingContext newContext = contextWithExpectedType
+                        .replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo).replaceContextDependency(INDEPENDENT);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-                JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
+                JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+                        scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
                 JetType type = typeInfo.getType();
                 if (type != null) {
                     expressionTypes.add(type);
@@ -281,7 +285,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(nullableType));
         }
         checkTypeCompatibility(context, type, subjectType, typeReferenceAfterIs);
-        if (BasicExpressionTypingVisitor.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
+        if (CastDiagnosticsUtil.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, type));
         }
         return new DataFlowInfos(context.dataFlowInfo.establishSubtyping(subjectDataFlowValue, type), context.dataFlowInfo);
@@ -304,7 +308,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (type == null) {
             return;
         }
-        if (TypeUtils.isIntersectionEmpty(type, subjectType)) {
+        if (isIntersectionEmpty(type, subjectType)) {
             context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
             return;
         }

@@ -508,6 +508,9 @@
   <item name="java.lang.Enum T valueOf(java.lang.Class&lt;T&gt;, java.lang.String) 0">
     <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name='java.lang.Enum T valueOf(java.lang.Class&lt;T&gt;, java.lang.String) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name="java.lang.Enum int compareTo(E) 0">
     <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>

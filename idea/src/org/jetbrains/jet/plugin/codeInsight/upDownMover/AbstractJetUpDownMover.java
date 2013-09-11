@@ -2,14 +2,19 @@ package org.jetbrains.jet.plugin.codeInsight.upDownMover;
 
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 
 public abstract class AbstractJetUpDownMover extends LineMover {
     protected AbstractJetUpDownMover() {
@@ -31,6 +36,40 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         }
 
         PsiElement parent = PsiTreeUtil.findCommonParent(firstElement, lastElement);
+
+        int topExtension = 0;
+        int bottomExtension = 0;
+
+        if (parent instanceof JetFunctionLiteral) {
+            JetBlockExpression block = ((JetFunctionLiteral) parent).getBodyExpression();
+            if (block != null) {
+                PsiElement comment = null;
+
+                boolean extendDown = false;
+                if (checkCommentAtBlockBound(firstElement, lastElement, block)) {
+                    comment = lastElement;
+                    extendDown = true;
+                    lastElement = block.getLastChild();
+                } else if (checkCommentAtBlockBound(lastElement, firstElement, block)) {
+                    comment = firstElement;
+                    firstElement = block.getFirstChild();
+                }
+
+                if (comment != null) {
+                    int extension = getElementLineCount(comment, editor);
+                    if (extendDown) {
+                        bottomExtension = extension;
+                    }
+                    else {
+                        topExtension = extension;
+                    }
+                }
+
+
+                parent = PsiTreeUtil.findCommonParent(firstElement, lastElement);
+            }
+        }
+
         if (parent == null) return null;
 
         Pair<PsiElement, PsiElement> combinedRange = getElementRange(parent, firstElement, lastElement);
@@ -49,7 +88,7 @@ public abstract class AbstractJetUpDownMover extends LineMover {
 
         LineRange parentLineRange = getElementSourceLineRange(parent, editor, oldRange);
 
-        LineRange sourceRange = new LineRange(lineRange1.startLine, lineRange2.endLine);
+        LineRange sourceRange = new LineRange(lineRange1.startLine - topExtension, lineRange2.endLine + bottomExtension);
         if (parentLineRange != null && sourceRange.contains(parentLineRange)) {
             sourceRange.firstElement = sourceRange.lastElement = parent;
         } else {
@@ -58,6 +97,47 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         }
 
         return sourceRange;
+    }
+
+    protected static int getElementLineCount(PsiElement element, Editor editor) {
+        Document doc = editor.getDocument();
+        TextRange spaceRange = element.getTextRange();
+
+        int startLine = doc.getLineNumber(spaceRange.getStartOffset());
+        int endLine = doc.getLineNumber(spaceRange.getEndOffset());
+
+        return endLine - startLine;
+    }
+
+    protected static int getElementLine(PsiElement element, Editor editor, boolean first) {
+        if (element == null) return -1;
+
+        Document doc = editor.getDocument();
+        TextRange spaceRange = element.getTextRange();
+
+        return first ? doc.getLineNumber(spaceRange.getStartOffset()) : doc.getLineNumber(spaceRange.getEndOffset());
+    }
+
+    protected static PsiElement getLastNonWhiteSiblingInLine(@Nullable PsiElement element, @NotNull Editor editor, boolean down) {
+        if (element == null) return null;
+
+        int line = getElementLine(element, editor, down);
+
+        PsiElement lastElement = element;
+        while (true) {
+            if (lastElement == null) return null;
+            PsiElement sibling = firstNonWhiteSibling(lastElement, down);
+            if (getElementLine(sibling, editor, down) == line) {
+                lastElement = sibling;
+            }
+            else break;
+        }
+
+        return lastElement;
+    }
+
+    private static boolean checkCommentAtBlockBound(PsiElement blockElement, PsiElement comment, JetBlockExpression block) {
+        return PsiTreeUtil.isAncestor(block, blockElement, true) && comment instanceof PsiComment;
     }
 
     @Nullable

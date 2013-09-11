@@ -215,7 +215,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             // build descriptors for such class objects.
             final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
             if (classObjectInfo != null) {
-                final Name name = DescriptorUtils.getClassObjectName(parentClassDescriptor.getName().asString());
+                final Name name = DescriptorUtils.getClassObjectName(parentClassDescriptor.getName());
                 return storageManager.compute(new Computable<LazyClassDescriptor>() {
                     @Override
                     public LazyClassDescriptor compute() {

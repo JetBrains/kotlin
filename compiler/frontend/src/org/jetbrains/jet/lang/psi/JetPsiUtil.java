@@ -65,17 +65,26 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetExpression deparenthesizeWithNoTypeResolution(@NotNull JetExpression expression) {
-        return deparenthesizeWithResolutionStrategy(expression, null);
+    public static JetExpression deparenthesize(@NotNull JetExpression expression) {
+        return deparenthesize(expression, true);
     }
 
     @Nullable
-    @Deprecated //Use JetPsiUtil.deparenthesizeWithNoTypeResolution() or ExpressionTypingServices.deparenthesize()
-    public static JetExpression deparenthesizeWithResolutionStrategy(
+    public static JetExpression deparenthesize(
             @NotNull JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS
+    ) {
+        return deparenthesizeWithResolutionStrategy(expression, deparenthesizeBinaryExpressionWithTypeRHS, null);
+    }
+
+    @Nullable
+    @Deprecated //Use JetPsiUtil.deparenthesize() or ExpressionTypingServices.deparenthesize()
+    public static JetExpression deparenthesizeWithResolutionStrategy(
+            @Nullable JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS,
             @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
     ) {
-        if (expression instanceof JetBinaryExpressionWithTypeRHS) {
+        if (deparenthesizeBinaryExpressionWithTypeRHS && expression instanceof JetBinaryExpressionWithTypeRHS) {
             JetBinaryExpressionWithTypeRHS binaryExpression = (JetBinaryExpressionWithTypeRHS) expression;
             JetSimpleNameExpression operationSign = binaryExpression.getOperationReference();
             if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
@@ -87,18 +96,25 @@ public class JetPsiUtil {
             }
         }
         else if (expression instanceof JetPrefixExpression) {
-            if (JetTokens.LABELS.contains(((JetPrefixExpression) expression).getOperationReference().getReferencedNameElementType())) {
-                JetExpression baseExpression = ((JetPrefixExpression) expression).getBaseExpression();
-                if (baseExpression != null) {
-                    expression = baseExpression;
-                }
+            JetExpression baseExpression = getBaseExpressionIfLabeledExpression((JetPrefixExpression) expression);
+            if (baseExpression != null) {
+                expression = baseExpression;
             }
         }
         if (expression instanceof JetParenthesizedExpression) {
             JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
-            return innerExpression != null ? deparenthesizeWithResolutionStrategy(innerExpression, typeResolutionStrategy) : null;
+            return innerExpression != null ? deparenthesizeWithResolutionStrategy(
+                    innerExpression, deparenthesizeBinaryExpressionWithTypeRHS, typeResolutionStrategy) : null;
         }
         return expression;
+    }
+
+    @Nullable
+    public static JetExpression getBaseExpressionIfLabeledExpression(@NotNull JetPrefixExpression expression) {
+        if (JetTokens.LABELS.contains(expression.getOperationReference().getReferencedNameElementType())) {
+            return expression.getBaseExpression();
+        }
+        return null;
     }
 
     @NotNull
@@ -488,7 +504,7 @@ public class JetPsiUtil {
     }
 
     public static boolean isNullConstant(@NotNull JetExpression expression) {
-        JetExpression deparenthesized = deparenthesizeWithNoTypeResolution(expression);
+        JetExpression deparenthesized = deparenthesize(expression);
         return deparenthesized instanceof JetConstantExpression && deparenthesized.getNode().getElementType() == JetNodeTypes.NULL;
     }
 
@@ -545,6 +561,21 @@ public class JetPsiUtil {
         if (blockExpression == null) return null;
         List<JetElement> statements = blockExpression.getStatements();
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
+    }
+
+    @NotNull
+    public static JetExpression unwrapFromBlock(@NotNull JetExpression expression) {
+        //used for 'if' branches that are wrapped in a block
+        if (expression instanceof JetBlockExpression) {
+            List<JetElement> statements = ((JetBlockExpression) expression).getStatements();
+            if (statements.size() == 1) {
+                JetElement lastStatement = getLastStatementInABlock((JetBlockExpression) expression);
+                if (lastStatement instanceof JetExpression) {
+                    return (JetExpression) lastStatement;
+                }
+            }
+        }
+        return expression;
     }
 
     public static boolean isLocalClass(@NotNull JetClassOrObject classOrObject) {

@@ -21,7 +21,7 @@ class MyIterator {
 class MyElement
 
 fun test1(collection: MyCollection) {
-    collection.<!OVERLOAD_RESOLUTION_AMBIGUITY!>iterator()<!>
+    collection.<!OVERLOAD_RESOLUTION_AMBIGUITY!>iterator<!>()
     for (element in <!ITERATOR_AMBIGUITY!>collection<!>) {
     }
 }

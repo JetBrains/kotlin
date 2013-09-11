@@ -1,0 +1,18 @@
+package test
+
+public trait PrimitiveValueInParam : java.lang.Object {
+    
+    test.PrimitiveValueInParam.Ann(bool = true: jet.Boolean, d = 1.0.toDouble(): jet.Double, f = 1.0.toFloat(): jet.Float, i = 1.toInt(): jet.Int, l = 1.toLong(): jet.Long, str = "str": jet.String) public open class A : java.lang.Object {
+        public constructor A()
+    }
+    
+    public final annotation class Ann : jet.Annotation {
+        public constructor Ann(/*0*/ i: jet.Int, /*1*/ l: jet.Long, /*2*/ d: jet.Double, /*3*/ f: jet.Float, /*4*/ bool: jet.Boolean, /*5*/ str: jet.String?)
+        public abstract fun bool(): jet.Boolean
+        public abstract fun d(): jet.Double
+        public abstract fun f(): jet.Float
+        public abstract fun i(): jet.Int
+        public abstract fun l(): jet.Long
+        public abstract fun str(): jet.String?
+    }
+}

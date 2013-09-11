@@ -1,3 +1,0 @@
-package test
-
-internal val testObjectProperty: testing.TopLevelObject

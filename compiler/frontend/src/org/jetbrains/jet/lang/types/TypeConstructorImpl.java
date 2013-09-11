@@ -75,6 +75,11 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
     }
 
     @Override
+    public boolean isDenotable() {
+        return true;
+    }
+
+    @Override
     @Nullable
     public ClassifierDescriptor getDeclarationDescriptor() {
         return classifierDescriptor;

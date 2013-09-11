@@ -366,12 +366,7 @@ public class DescriptorUtils {
 
     @NotNull
     public static Name getClassObjectName(@NotNull Name className) {
-        return getClassObjectName(className.asString());
-    }
-
-    @NotNull
-    public static Name getClassObjectName(@NotNull String className) {
-        return Name.special("<class-object-for-" + className + ">");
+        return Name.special("<class-object-for-" + className.asString() + ">");
     }
 
     public static boolean isEnumClassObject(@NotNull DeclarationDescriptor descriptor) {

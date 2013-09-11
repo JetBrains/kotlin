@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="idea-full">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/lib" />
     </CLASSES>

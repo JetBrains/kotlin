@@ -54,6 +54,11 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
     }
 
     @Override
+    public boolean isDenotable() {
+        return false;
+    }
+
+    @Override
     public ClassifierDescriptor getDeclarationDescriptor() {
         return null;
     }

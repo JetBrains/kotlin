@@ -16,12 +16,16 @@
 
 package org.jetbrains.jet.checkers;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.intellij.lang.java.JavaLanguage;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
@@ -29,19 +33,34 @@ import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.ExceptionUtils;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
+
+    public static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
+    public static final Pattern DIAGNOSTICS_PATTERN = Pattern.compile("([\\+\\-!])(\\w+)\\s*");
+    public static final ImmutableSet<AbstractDiagnosticFactory> DIAGNOSTICS_TO_INCLUDE_ANYWAY =
+            ImmutableSet.of(
+                    Errors.UNRESOLVED_REFERENCE,
+                    Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
+                    CheckerTestUtil.SyntaxErrorDiagnosticFactory.INSTANCE,
+                    CheckerTestUtil.DebugInfoDiagnosticFactory.ELEMENT_WITH_ERROR_TYPE,
+                    CheckerTestUtil.DebugInfoDiagnosticFactory.MISSING_UNRESOLVED,
+                    CheckerTestUtil.DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET
+            );
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -83,18 +102,22 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         List<TestFile> testFiles =
                 JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
                     @Override
-                    public TestFile create(String fileName, String text) {
+                    public TestFile create(String fileName, String text, Map<String, String> directives) {
                         if (fileName.endsWith(".java")) {
                             writeJavaFile(fileName, text, javaFilesDir);
                         }
-                        return new TestFile(fileName, text);
+                        return new TestFile(fileName, text, parseDiagnosticFilterDirective(directives));
                     }
                 });
 
         analyzeAndCheck(file, expectedText, testFiles);
     }
 
-    protected abstract void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files);
+    protected abstract void analyzeAndCheck(
+            File testDataFile,
+            String expectedText,
+            List<TestFile> files
+    );
 
     protected static List<JetFile> getJetFiles(List<TestFile> testFiles) {
         List<JetFile> jetFiles = Lists.newArrayList();
@@ -106,13 +129,81 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         return jetFiles;
     }
 
+    public static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> diagnostics) {
+        String directives = diagnostics.get(DIAGNOSTICS_DIRECTIVE);
+        if (directives == null) {
+            return Conditions.alwaysTrue();
+        }
+        Condition<Diagnostic> condition = Conditions.alwaysTrue();
+        Matcher matcher = DIAGNOSTICS_PATTERN.matcher(directives);
+        if (!matcher.find()) {
+            Assert.fail("Wrong syntax in the '// DIAGNOSTICS: ...' directive:\n" +
+                        "found: '" + directives + "'\n" +
+                        "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
+                        "where '+' means 'include'\n" +
+                        "      '-' means 'exclude'\n" +
+                        "      '!' means 'exclude everything but this'\n" +
+                        "directives are applied in the order of appearance, i.e. !FOO +BAR means inluce only FOO and BAR");
+        }
+        boolean first = true;
+        do {
+            String operation = matcher.group(1);
+            final String name = matcher.group(2);
+
+            Condition<Diagnostic> newCondition;
+            if (ImmutableSet.of("ERROR", "WARNING", "INFO").contains(name)) {
+                final Severity severity = Severity.valueOf(name);
+                newCondition = new Condition<Diagnostic>() {
+                    @Override
+                    public boolean value(Diagnostic diagnostic) {
+                        return diagnostic.getSeverity() == severity;
+                    }
+                };
+            }
+            else {
+                newCondition = new Condition<Diagnostic>() {
+                    @Override
+                    public boolean value(Diagnostic diagnostic) {
+                        return name.equals(diagnostic.getFactory().getName());
+                    }
+                };
+            }
+            if ("!".equals(operation)) {
+                if (!first) {
+                    Assert.fail("'" + operation + name + "' appears in a position rather than the first one, " +
+                                "which effectively cancels all the previous filters in this directive");
+                }
+                condition = newCondition;
+            }
+            else if ("+".equals(operation)) {
+                condition = Conditions.or(condition, newCondition);
+            }
+            else if ("-".equals(operation)) {
+                condition = Conditions.and(condition, Conditions.not(newCondition));
+            }
+            first = false;
+        }
+        while (matcher.find());
+        // We always include UNRESOLVED_REFERENCE and SYNTAX_ERROR because they are too likely to indicate erroneous test data
+        return Conditions.or(
+                condition,
+                new Condition<Diagnostic>() {
+                    @Override
+                    public boolean value(Diagnostic diagnostic) {
+                        return DIAGNOSTICS_TO_INCLUDE_ANYWAY.contains(diagnostic.getFactory());
+                    }
+                });
+    }
+
     protected class TestFile {
         private final List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
         private final String expectedText;
         private final String clearText;
         private final JetFile jetFile;
+        private final Condition<Diagnostic> whatDiagnosticsToConsider;
 
-        public TestFile(String fileName, String textWithMarkers) {
+        public TestFile(String fileName, String textWithMarkers, Condition<Diagnostic> whatDiagnosticsToConsider) {
+            this.whatDiagnosticsToConsider = whatDiagnosticsToConsider;
             if (fileName.endsWith(".java")) {
                 PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
                 // TODO: check there's not syntax errors
@@ -142,7 +233,10 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
             }
 
             final boolean[] ok = { true };
-            List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile);
+            List<Diagnostic> diagnostics = ContainerUtil.filter(
+                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile),
+                    whatDiagnosticsToConsider
+            );
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {
 
                 @Override

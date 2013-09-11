@@ -24,12 +24,12 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -184,21 +184,16 @@ public class CallExpressionResolver {
     @Nullable
     public ResolvedCallWithTrace<FunctionDescriptor> getResolvedCallForFunction(
             @NotNull Call call, @NotNull JetExpression callExpression,
-            @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode,
-            @NotNull CheckValueArgumentsMode checkArguments, @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull ResolutionContext context, @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull boolean[] result
     ) {
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         OverloadResolutionResultsImpl<FunctionDescriptor> results = callResolver.resolveFunctionCall(
-                BasicCallResolutionContext.create(context, call, resolveMode, checkArguments, resolutionResultsCache));
+                BasicCallResolutionContext.create(context, call, checkArguments));
         if (!results.isNothing()) {
             checkSuper(call.getExplicitReceiver(), results, context.trace, callExpression);
             result[0] = true;
-            if (results.isSingleResult() && resolveMode == ResolveMode.TOP_LEVEL_CALL) {
-                if (!CallResolverUtil.hasInferredReturnType(results.getResultingCall())) return null;
-            }
-
-            return results.isSingleResult() ? results.getResultingCall() : null;
+            return OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency);
         }
         result[0] = false;
         return null;
@@ -208,15 +203,16 @@ public class CallExpressionResolver {
     private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull boolean[] result
     ) {
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve as local variable or property", nameExpression);
+        TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
+                context, "trace to resolve as local variable or property", nameExpression);
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
-        OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(
-                BasicCallResolutionContext.create(context.replaceBindingTrace(traceForVariable), call, ResolveMode.TOP_LEVEL_CALL,
-                                                  CheckValueArgumentsMode.ENABLED, ResolutionResultsCache.create()));
+        BasicCallResolutionContext contextForVariable = BasicCallResolutionContext.create(
+                context.replaceTraceAndCache(temporaryForVariable),
+                call, CheckValueArgumentsMode.ENABLED);
+        OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
         if (!resolutionResult.isNothing()) {
-            traceForVariable.commit();
+            temporaryForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);
             result[0] = true;
             return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
@@ -225,11 +221,11 @@ public class CallExpressionResolver {
         ResolutionContext newContext = receiver.exists()
                                              ? context.replaceScope(receiver.getType().getMemberScope())
                                              : context;
-        TemporaryBindingTrace traceForNamespaceOrClassObject = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve as namespace or class object", nameExpression);
-        JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceBindingTrace(traceForNamespaceOrClassObject));
+        TemporaryTraceAndCache temporaryForNamespaceOrClassObject = TemporaryTraceAndCache.create(
+                context, "trace to resolve as namespace or class object", nameExpression);
+        JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceTraceAndCache(temporaryForNamespaceOrClassObject));
         if (jetType != null) {
-            traceForNamespaceOrClassObject.commit();
+            temporaryForNamespaceOrClassObject.commit();
 
             // Uncommitted changes in temp context
             context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);
@@ -239,6 +235,7 @@ public class CallExpressionResolver {
             result[0] = true;
             return jetType;
         }
+        temporaryForVariable.commit();
         result[0] = false;
         return null;
     }
@@ -249,10 +246,11 @@ public class CallExpressionResolver {
     ) {
         boolean[] result = new boolean[1];
 
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace, "trace to resolve as variable", nameExpression);
-        JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceBindingTrace(traceForVariable), result);
+        TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
+                context, "trace to resolve as variable", nameExpression);
+        JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
         if (result[0]) {
-            traceForVariable.commit();
+            temporaryForVariable.commit();
             if (type instanceof NamespaceType && context.expressionPosition == ExpressionPosition.FREE) {
                 type = null;
             }
@@ -260,33 +258,33 @@ public class CallExpressionResolver {
         }
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", nameExpression);
+        TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
+                context, "trace to resolve as function", nameExpression);
+        ResolutionContext newContext = context.replaceTraceAndCache(temporaryForFunction);
         ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
-                call, nameExpression, context, ResolveMode.TOP_LEVEL_CALL, CheckValueArgumentsMode.ENABLED,
-                ResolutionResultsCache.create(), result);
+                call, nameExpression, newContext, CheckValueArgumentsMode.ENABLED, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            traceForFunction.commit();
+            temporaryForFunction.commit();
             boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
             context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
             type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
 
-        traceForVariable.commit();
+        temporaryForVariable.commit();
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
-                callExpression, receiver, callOperationNode, context, resolveMode, resolutionResultsCache);
-        if (resolveMode == ResolveMode.TOP_LEVEL_CALL) {
-            DataFlowUtils.checkType(typeInfo.getType(), callExpression, context, typeInfo.getDataFlowInfo());
+                callExpression, receiver, callOperationNode, context);
+        if (context.contextDependency == ContextDependency.INDEPENDENT) {
+            DataFlowUtils.checkType(typeInfo, callExpression, context);
         }
         return typeInfo;
     }
@@ -294,19 +292,19 @@ public class CallExpressionResolver {
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
     ) {
         boolean[] result = new boolean[1];
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
 
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call", callExpression);
+        TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
+                context, "trace to resolve as function call", callExpression);
         ResolvedCallWithTrace<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
-                call, callExpression, context.replaceBindingTrace(traceForFunction), resolveMode, CheckValueArgumentsMode.ENABLED,
-                resolutionResultsCache, result);
+                call, callExpression, context.replaceTraceAndCache(temporaryForFunction),
+                CheckValueArgumentsMode.ENABLED, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            traceForFunction.commit();
+            temporaryForFunction.commit();
             if (callExpression.getValueArgumentList() == null && callExpression.getFunctionLiteralArguments().isEmpty()) {
                 // there are only type arguments
                 boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
@@ -317,23 +315,23 @@ public class CallExpressionResolver {
             }
             JetType type = functionDescriptor.getReturnType();
 
-            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfo());
+            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression instanceof JetSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
-            TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
-                    context.trace, "trace to resolve as variable with 'invoke' call", callExpression);
+            TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
+                    context, "trace to resolve as variable with 'invoke' call", callExpression);
             JetType type = getVariableType((JetSimpleNameExpression) calleeExpression, receiver, callOperationNode,
-                                           context.replaceBindingTrace(traceForVariable), result);
+                                           context.replaceTraceAndCache(temporaryForVariable), result);
             if (result[0]) {
-                traceForVariable.commit();
+                temporaryForVariable.commit();
                 context.trace.report(FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
                 return JetTypeInfo.create(null, context.dataFlowInfo);
             }
         }
-        traceForFunction.commit();
+        temporaryForFunction.commit();
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
@@ -355,31 +353,14 @@ public class CallExpressionResolver {
             @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode,
             @NotNull JetExpression selectorExpression,
-            @NotNull ResolutionContext context,
-            @NotNull ResolveMode resolveMode,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionContext context
     ) {
         if (selectorExpression instanceof JetCallExpression) {
             return getCallExpressionTypeInfoWithoutFinalTypeCheck((JetCallExpression) selectorExpression, receiver,
-                                                                  callOperationNode, context, resolveMode, resolutionResultsCache);
+                                                                  callOperationNode, context);
         }
         else if (selectorExpression instanceof JetSimpleNameExpression) {
             return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
-        }
-        else if (selectorExpression instanceof JetQualifiedExpression) {
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;
-            JetExpression newReceiverExpression = qualifiedExpression.getReceiverExpression();
-            JetTypeInfo newReceiverTypeInfo = getSelectorReturnTypeInfo(
-                    receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE), resolveMode, resolutionResultsCache);
-            JetType newReceiverType = newReceiverTypeInfo.getType();
-            DataFlowInfo newReceiverDataFlowInfo = newReceiverTypeInfo.getDataFlowInfo();
-            JetExpression newSelectorExpression = qualifiedExpression.getSelectorExpression();
-            if (newReceiverType != null && newSelectorExpression != null) {
-                ExpressionReceiver expressionReceiver = new ExpressionReceiver(newReceiverExpression, newReceiverType);
-                return getSelectorReturnTypeInfo(
-                        expressionReceiver, qualifiedExpression.getOperationTokenNode(),
-                        newSelectorExpression, context.replaceDataFlowInfo(newReceiverDataFlowInfo), resolveMode, resolutionResultsCache);
-            }
         }
         else {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
@@ -389,14 +370,15 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getQualifiedExpressionTypeInfo(
-            @NotNull JetQualifiedExpression expression, @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull JetQualifiedExpression expression, @NotNull ResolutionContext context
     ) {
         // TODO : functions as values
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
-        JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfoWithNamespaces(
-                receiverExpression, context.scope, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+        ResolutionContext contextForReceiver = context
+                .replaceExpectedType(NO_EXPECTED_TYPE).replaceExpressionPosition(ExpressionPosition.LHS_OF_DOT)
+                .replaceContextDependency(ContextDependency.INDEPENDENT);
+        JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
         JetType receiverType = receiverTypeInfo.getType();
         if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
@@ -409,7 +391,7 @@ public class CallExpressionResolver {
 
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 new ExpressionReceiver(receiverExpression, receiverType),
-                expression.getOperationTokenNode(), selectorExpression, context, resolveMode, resolutionResultsCache);
+                expression.getOperationTokenNode(), selectorExpression, context);
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
         //TODO move further
@@ -426,8 +408,8 @@ public class CallExpressionResolver {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
-        if (resolveMode == ResolveMode.TOP_LEVEL_CALL) {
-            DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
+        if (context.contextDependency == ContextDependency.INDEPENDENT) {
+            DataFlowUtils.checkType(typeInfo, expression, context);
         }
         return typeInfo;
     }

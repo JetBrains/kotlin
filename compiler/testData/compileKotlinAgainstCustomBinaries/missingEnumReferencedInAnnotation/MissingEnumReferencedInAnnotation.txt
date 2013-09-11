@@ -1,0 +1,14 @@
+package test
+
+internal final annotation class Anno : jet.Annotation {
+    public constructor Anno(/*0*/ e: [ERROR : test.E])
+    internal final val e: [ERROR : test.E]
+}
+
+test.Anno(e = Unresolved enum entry: test.E.ENTRY: [ERROR : Unresolved enum entry: test.E.ENTRY]) internal open class Class {
+    public constructor Class()
+}
+
+internal final class Subclass : test.Class {
+    public constructor Subclass()
+}

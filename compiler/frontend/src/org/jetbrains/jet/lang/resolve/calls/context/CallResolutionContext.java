@@ -17,17 +17,21 @@
 package org.jetbrains.jet.lang.resolve.calls.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.DataFlowInfoForArgumentsImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     public final Call call;
-    public final ResolveMode resolveMode;
     public final CheckValueArgumentsMode checkArguments;
-    public final ResolutionResultsCache resolutionResultsCache;
+    @NotNull
+    public final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
 
     protected CallResolutionContext(
             @NotNull BindingTrace trace,
@@ -35,19 +39,29 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ResolveMode resolveMode,
+            @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ExpressionPosition expressionPosition,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull LabelResolver labelResolver,
+            @SuppressWarnings("NullableProblems")
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
         this.call = call;
-        this.resolveMode = resolveMode;
         this.checkArguments = checkArguments;
-        this.resolutionResultsCache = resolutionResultsCache;
+        if (dataFlowInfoForArguments != null) {
+            this.dataFlowInfoForArguments = dataFlowInfoForArguments;
+        }
+        else if (checkArguments == CheckValueArgumentsMode.ENABLED) {
+            this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
+        }
+        else {
+            this.dataFlowInfoForArguments = MutableDataFlowInfoForArguments.WITHOUT_ARGUMENTS_CHECK;
+        }
     }
 
     public BasicCallResolutionContext toBasic() {
-        return BasicCallResolutionContext.create(this, call, resolveMode, checkArguments, resolutionResultsCache);
+        return BasicCallResolutionContext.create(this, call, checkArguments);
     }
 }

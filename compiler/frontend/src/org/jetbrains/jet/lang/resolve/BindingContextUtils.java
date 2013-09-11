@@ -28,9 +28,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 
@@ -170,8 +170,12 @@ public class BindingContextUtils {
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable);
-            return source != null ? descriptorToDeclaration(context, source) : null;
+            CallableMemberDescriptor original = callable.getOriginal();
+            if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
+                DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
+                return descriptorToDeclaration(context, base);
+            }
+            return null;
         }
 
         if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
@@ -191,8 +195,12 @@ public class BindingContextUtils {
     @NotNull
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            DeclarationDescriptor source = context.get(BindingContext.SOURCE_DESCRIPTOR_FOR_SYNTHESIZED, callable.getOriginal());
-            return source != null ? descriptorToDeclarations(context, source) : Collections.<PsiElement>emptyList();
+            CallableMemberDescriptor original = callable.getOriginal();
+            if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
+                DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
+                return descriptorToDeclarations(context, base);
+            }
+            return Collections.emptyList();
         }
 
         if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
@@ -274,21 +282,20 @@ public class BindingContextUtils {
         trace.report(AMBIGUOUS_LABEL.on(targetLabel));
     }
 
-    public static void recordExpressionType(
-            @NotNull JetExpression expression, @NotNull BindingTrace trace,
-            @NotNull JetScope resolutionScope, @NotNull JetTypeInfo result
+    @Nullable
+    public static JetType updateRecordedType(
+            @Nullable JetType type,
+            @NotNull JetExpression expression,
+            @NotNull BindingTrace trace,
+            boolean shouldBeMadeNullable
     ) {
-        JetType type = result.getType();
-        if (type != null) {
-            trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
+        if (type == null) return null;
+        if (shouldBeMadeNullable) {
+            type = TypeUtils.makeNullable(type);
         }
+        trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
         trace.record(BindingContext.PROCESSED, expression);
-        if (result.getDataFlowInfo() != DataFlowInfo.EMPTY) {
-            trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
-        }
-        if (!isExpressionWithValidReference(expression, trace.getBindingContext())) {
-            trace.record(BindingContext.RESOLUTION_SCOPE, expression, resolutionScope);
-        }
+        return type;
     }
 
     @Nullable

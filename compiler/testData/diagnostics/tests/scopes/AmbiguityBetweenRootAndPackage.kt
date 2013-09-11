@@ -1,7 +1,7 @@
 // FILE: checkAmbiguityBetweenRootAndPackage.kt
 package test
 
-val t = <!OVERLOAD_RESOLUTION_AMBIGUITY!>testFun()<!>
+val t = <!OVERLOAD_RESOLUTION_AMBIGUITY!>testFun<!>()
 
 // FILE: checkAmbiguityBetweenRootAndPackageRoot.kt
 fun testFun() = 12

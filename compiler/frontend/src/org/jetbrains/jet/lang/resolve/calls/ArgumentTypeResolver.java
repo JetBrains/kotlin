@@ -24,20 +24,17 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.context.*;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -49,7 +46,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordExpressionType;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
@@ -72,14 +68,14 @@ public class ArgumentTypeResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
-    public static boolean isSubtypeOfForArgumentType(@NotNull JetType subtype, @NotNull JetType supertype) {
-        if (subtype == PLACEHOLDER_FUNCTION_TYPE) {
-            return isFunctionOrErrorType(supertype) || KotlinBuiltIns.getInstance().isAny(supertype); //todo function type extends
+    public static boolean isSubtypeOfForArgumentType(
+            @NotNull JetType actualType,
+            @NotNull JetType expectedType
+    ) {
+        if (actualType == PLACEHOLDER_FUNCTION_TYPE) {
+            return isFunctionOrErrorType(expectedType) || KotlinBuiltIns.getInstance().isAny(expectedType); //todo function type extends
         }
-        if (supertype == PLACEHOLDER_FUNCTION_TYPE) {
-            return isFunctionOrErrorType(subtype); //todo extends function type
-        }
-        return JetTypeChecker.INSTANCE.isSubtypeOf(subtype, supertype);
+        return JetTypeChecker.INSTANCE.isSubtypeOf(actualType, expectedType);
     }
 
     private static boolean isFunctionOrErrorType(@NotNull JetType supertype) {
@@ -96,7 +92,7 @@ public class ArgumentTypeResolver {
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && !(argumentExpression instanceof JetFunctionLiteralExpression)) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+                checkArgumentType(context, argumentExpression);
             }
         }
 
@@ -121,12 +117,12 @@ public class ArgumentTypeResolver {
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && (argumentExpression instanceof JetFunctionLiteralExpression)) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+                checkArgumentType(context, argumentExpression);
             }
         }
 
         for (JetExpression expression : context.call.getFunctionLiteralArguments()) {
-            expressionTypingServices.getType(context.scope, expression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+            checkArgumentType(context, expression);
         }
     }
 
@@ -134,9 +130,14 @@ public class ArgumentTypeResolver {
         for (ValueArgument valueArgument : unmappedArguments) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+                checkArgumentType(context, argumentExpression);
             }
         }
+    }
+
+    private void checkArgumentType(CallResolutionContext<?> context, JetExpression argumentExpression) {
+        expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
+        updateResultArgumentTypeIfNotDenotable(context, argumentExpression);
     }
 
     public <D extends CallableDescriptor> void checkTypesForFunctionArguments(CallResolutionContext<?> context, ResolvedCallImpl<D> resolvedCall) {
@@ -166,46 +167,28 @@ public class ArgumentTypeResolver {
     public JetTypeInfo getArgumentTypeInfo(
             @Nullable JetExpression expression,
             @NotNull CallResolutionContext<?> context,
-            @NotNull ResolveArgumentsMode resolveArgumentsMode,
-            @Nullable TemporaryBindingTrace traceToCommitForCall
+            @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (expression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        if (expression instanceof JetFunctionLiteralExpression) {
-            return getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) expression, context, resolveArgumentsMode);
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(JetPsiUtil.unwrapFromBlock(expression), false);
+        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
+            return getFunctionLiteralTypeInfo(expression, (JetFunctionLiteralExpression) deparenthesizedExpression, context, resolveArgumentsMode);
         }
         JetTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
-        //todo deparenthesize
-        CallExpressionResolver callExpressionResolver = expressionTypingServices.getCallExpressionResolver();
-        if (!(expression instanceof JetCallExpression) && !(expression instanceof JetQualifiedExpression)) {
-            return expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace);
-        }
+        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+                .replaceContextDependency(ContextDependency.DEPENDENT).replaceExpressionPosition(ExpressionPosition.FREE);
 
-        JetTypeInfo result;
-        if (expression instanceof JetCallExpression) {
-            result = callExpressionResolver.getCallExpressionTypeInfo(
-                    (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null,
-                    context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL, context.resolutionResultsCache);
-        }
-        else { // expression instanceof JetQualifiedExpression
-            result = callExpressionResolver.getQualifiedExpressionTypeInfo(
-                    (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE),
-                    ResolveMode.NESTED_CALL, context.resolutionResultsCache);
-        }
-
-        recordExpressionType(expression, context.trace, context.scope, result);
-        if (traceToCommitForCall != null) {
-            traceToCommitForCall.commit();
-        }
-        return result;
+        return expressionTypingServices.getTypeInfo(expression, newContext);
     }
 
     @NotNull
     public JetTypeInfo getFunctionLiteralTypeInfo(
+            @NotNull JetExpression expression,
             @NotNull JetFunctionLiteralExpression functionLiteralExpression,
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
@@ -214,19 +197,19 @@ public class ArgumentTypeResolver {
             JetType type = getFunctionLiteralType(functionLiteralExpression, context.scope, context.trace);
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
-        return expressionTypingServices.getTypeInfo(context.scope, functionLiteralExpression, context.expectedType, context.dataFlowInfo, context.trace);
+        return expressionTypingServices.getTypeInfo(expression, context);
     }
 
     @Nullable
-    private JetType getFunctionLiteralType(
+    public JetType getFunctionLiteralType(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull JetScope scope,
             @NotNull BindingTrace trace
     ) {
-        List<JetParameter> valueParameters = expression.getValueParameters();
-        if (valueParameters.isEmpty()) {
+        if (expression.getFunctionLiteral().getValueParameterList() == null) {
             return PLACEHOLDER_FUNCTION_TYPE;
         }
+        List<JetParameter> valueParameters = expression.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
         List<JetType> parameterTypes = Lists.newArrayList();
@@ -237,7 +220,8 @@ public class ArgumentTypeResolver {
         JetType returnType = resolveTypeRefWithDefault(functionLiteral.getReturnTypeRef(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
         JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeRef(), scope, temporaryTrace, null);
-        return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiverType, parameterTypes, returnType);
+        return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiverType, parameterTypes,
+                                                            returnType);
     }
 
     @Nullable
@@ -251,5 +235,67 @@ public class ArgumentTypeResolver {
             return expressionTypingServices.getTypeResolver().resolveType(scope, returnTypeRef, trace, true);
         }
         return defaultValue;
+    }
+
+    public <D extends CallableDescriptor> void analyzeArgumentsAndRecordTypes(
+            @NotNull CallResolutionContext<?> context
+    ) {
+        MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
+        infoForArguments.setInitialDataFlowInfo(context.dataFlowInfo);
+
+        for (ValueArgument argument : context.call.getValueArguments()) {
+            JetExpression expression = argument.getArgumentExpression();
+            if (expression == null) continue;
+
+            CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
+            JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SKIP_FUNCTION_ARGUMENTS);
+            infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
+        }
+    }
+
+    @Nullable
+    public <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
+            @NotNull ResolutionContext context,
+            @NotNull JetExpression expression
+    ) {
+        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+        if (type != null && !type.getConstructor().isDenotable()) {
+            if (type.getConstructor() instanceof NumberValueTypeConstructor) {
+                NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
+                JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
+                updateNumberType(primitiveType, expression, context);
+                return primitiveType;
+            }
+        }
+        return type;
+    }
+
+    private <D extends CallableDescriptor> void updateNumberType(
+            @NotNull JetType numberType,
+            @Nullable JetExpression expression,
+            @NotNull ResolutionContext context
+    ) {
+        if (expression == null) return;
+        BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
+
+        if (!(expression instanceof JetConstantExpression)) {
+            JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression, false);
+            if (deparenthesized != expression) {
+                updateNumberType(numberType, deparenthesized, context);
+            }
+            if (deparenthesized instanceof JetBlockExpression) {
+                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesized);
+                if (lastStatement instanceof JetExpression) {
+                    updateNumberType(numberType, (JetExpression) lastStatement, context);
+                }
+            }
+            return;
+        }
+        CompileTimeConstant<?> constant =
+                new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, numberType);
+
+        if (!(constant instanceof ErrorValue)) {
+            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, constant);
+        }
     }
 }
