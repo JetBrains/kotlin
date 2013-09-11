@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -85,7 +85,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
 
         // TODO: Replace with stub declaration provider
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
