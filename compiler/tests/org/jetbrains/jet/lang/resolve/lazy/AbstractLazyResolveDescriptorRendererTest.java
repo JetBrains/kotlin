@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -56,7 +56,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
 
         ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.setModuleConfiguration(injectorForTopDownAnalyzer.getModuleDescriptor().getModuleConfiguration());
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
         final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule,
                                                                  new FileBasedDeclarationProviderFactory(storageManager, files));
 

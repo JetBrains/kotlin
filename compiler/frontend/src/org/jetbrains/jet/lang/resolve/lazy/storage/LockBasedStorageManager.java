@@ -16,29 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.storage;
 
-import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.WrappedValues;
 
-import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class LockBasedStorageManager implements StorageManager {
 
-    private final Object lock = new Object() {
+    protected final Object lock = new Object() {
         @Override
         public String toString() {
             return "LockBasedStorageManager centralized lock";
@@ -101,14 +93,6 @@ public class LockBasedStorageManager implements StorageManager {
                 postCompute.consume(value);
             }
         };
-    }
-
-    @NotNull
-    @Override
-    public BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace) {
-        // It seems safe to have a separate lock for traces:
-        // no other locks will be acquired inside the trace operations
-        return new LockProtectedTrace(lock, originalTrace);
     }
 
     @Override
@@ -228,101 +212,4 @@ public class LockBasedStorageManager implements StorageManager {
             return result;
         }
     }
-
-    private static class LockProtectedContext implements BindingContext {
-        private final Object lock;
-        private final BindingContext context;
-
-        private LockProtectedContext(Object lock, BindingContext context) {
-            this.lock = lock;
-            this.context = context;
-        }
-
-        @Override
-        public Collection<Diagnostic> getDiagnostics() {
-            synchronized (lock) {
-                return context.getDiagnostics();
-            }
-        }
-
-        @Nullable
-        @Override
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            synchronized (lock) {
-                return context.get(slice, key);
-            }
-        }
-
-        @NotNull
-        @Override
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            synchronized (lock) {
-                return context.getKeys(slice);
-            }
-        }
-
-        @NotNull
-        @Override
-        @TestOnly
-        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-            synchronized (lock) {
-                return context.getSliceContents(slice);
-            }
-        }
-    }
-
-    private static class LockProtectedTrace implements BindingTrace {
-        private final Object lock;
-        private final BindingTrace trace;
-        private final BindingContext context;
-
-        public LockProtectedTrace(@NotNull Object lock, @NotNull BindingTrace trace) {
-            this.lock = lock;
-            this.trace = trace;
-            this.context = new LockProtectedContext(lock, trace.getBindingContext());
-        }
-
-        @Override
-        public BindingContext getBindingContext() {
-            return context;
-        }
-
-        @Override
-        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-            synchronized (lock) {
-                trace.record(slice, key, value);
-            }
-        }
-
-        @Override
-        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-            synchronized (lock) {
-                trace.record(slice, key);
-            }
-        }
-
-        @Override
-        @Nullable
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            synchronized (lock) {
-                return trace.get(slice, key);
-            }
-        }
-
-        @Override
-        @NotNull
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            synchronized (lock) {
-                return trace.getKeys(slice);
-            }
-        }
-
-        @Override
-        public void report(@NotNull Diagnostic diagnostic) {
-            synchronized (lock) {
-                trace.report(diagnostic);
-            }
-        }
-    }
-
 }

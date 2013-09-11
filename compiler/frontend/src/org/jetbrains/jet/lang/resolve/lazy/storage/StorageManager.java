@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 
 public interface StorageManager {
     /**
@@ -55,9 +54,6 @@ public interface StorageManager {
      */
     @NotNull
     <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
-
-    @NotNull
-    BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);
 
     <T> T compute(@NotNull Computable<T> computable);
 

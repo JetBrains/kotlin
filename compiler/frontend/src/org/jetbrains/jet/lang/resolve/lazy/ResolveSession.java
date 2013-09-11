@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -57,7 +57,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         }
     };
 
-    private final StorageManager storageManager;
+    private final LazyResolveStorageManager storageManager;
 
     private final ModuleDescriptor module;
     private final LazyPackageDescriptor rootPackage;
@@ -74,7 +74,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     public ResolveSession(
             @NotNull Project project,
-            @NotNull StorageManager storageManager,
+            @NotNull LazyResolveStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
@@ -85,7 +85,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     public ResolveSession(
             @NotNull Project project,
-            @NotNull StorageManager storageManager,
+            @NotNull LazyResolveStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
@@ -102,7 +102,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @Deprecated // Internal use only
     public ResolveSession(
             @NotNull Project project,
-            @NotNull StorageManager storageManager,
+            @NotNull LazyResolveStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
@@ -138,7 +138,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    public StorageManager getStorageManager() {
+    public LazyResolveStorageManager getStorageManager() {
         return storageManager;
     }
 
