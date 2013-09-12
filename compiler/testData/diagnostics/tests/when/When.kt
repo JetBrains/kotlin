@@ -24,7 +24,7 @@ fun test() {
   val x = 1;
   val s = "";
 
-  <!NO_ELSE_IN_WHEN!>when<!> (x) {
+  when (x) {
     <!INCOMPATIBLE_TYPES!>s<!> -> 1
     <!INCOMPATIBLE_TYPES!>""<!> -> 1
     x -> 1

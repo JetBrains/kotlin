@@ -42,6 +42,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.UNIT_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class DataFlowUtils {
@@ -162,9 +163,7 @@ public class DataFlowUtils {
     ) {
         // non-block 'if' branches are wrapped in a block, but here genuine expressions (not wrappers) should be checked
         JetExpression expression = JetPsiUtil.unwrapFromBlock(possiblyWrappedInBlockExpression);
-        if (!noExpectedType(expectedType)) {
-            trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, expectedType);
-        }
+        recordExpectedType(trace, expression, expectedType);
 
         if (expressionType == null || noExpectedType(expectedType) ||
             JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, expectedType)) {
@@ -194,6 +193,13 @@ public class DataFlowUtils {
         }
         trace.report(TYPE_MISMATCH.on(expression, expectedType, expressionType));
         return expressionType;
+    }
+
+    public static void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {
+        if (expectedType != NO_EXPECTED_TYPE) {
+            JetType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? KotlinBuiltIns.getInstance().getUnitType() : expectedType;
+            trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, normalizeExpectedType);
+        }
     }
 
     @NotNull

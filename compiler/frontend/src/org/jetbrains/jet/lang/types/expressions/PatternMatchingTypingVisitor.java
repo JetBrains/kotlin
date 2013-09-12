@@ -66,6 +66,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+        DataFlowUtils.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType);
+
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         // TODO :change scope according to the bound value in the when header
         JetExpression subjectExpression = expression.getSubjectExpression();
@@ -277,7 +279,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (typeReferenceAfterIs == null) {
             return noChange(context);
         }
-        JetType type = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReferenceAfterIs, context.trace, true);
+        JetType type = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReferenceAfterIs, context.trace,
+                                                                                      true);
         if (!subjectType.isNullable() && type.isNullable()) {
             JetTypeElement element = typeReferenceAfterIs.getTypeElement();
             assert element instanceof JetNullableType : "element must be instance of " + JetNullableType.class.getName();

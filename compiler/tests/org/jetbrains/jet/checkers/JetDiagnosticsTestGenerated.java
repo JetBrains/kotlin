@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class})
 public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEagerResolve {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.ThisAndSuper.class, Tests.Varargs.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.ThisAndSuper.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractDiagnosticsTestWithEagerResolve {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -522,11 +522,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         @TestMetadata("Variance.kt")
         public void testVariance() throws Exception {
             doTest("compiler/testData/diagnostics/tests/Variance.kt");
-        }
-        
-        @TestMetadata("When.kt")
-        public void testWhen() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/When.kt");
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/annotations")
@@ -5587,6 +5582,54 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/when")
+        public static class When extends AbstractDiagnosticsTestWithEagerResolve {
+            public void testAllFilesPresentInWhen() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/when"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("NoElseExpectedUnit.kt")
+            public void testNoElseExpectedUnit() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/NoElseExpectedUnit.kt");
+            }
+            
+            @TestMetadata("NoElseNoExpectedType.kt")
+            public void testNoElseNoExpectedType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/NoElseNoExpectedType.kt");
+            }
+            
+            @TestMetadata("NoElseReturnedCoercionToUnit.kt")
+            public void testNoElseReturnedCoercionToUnit() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/NoElseReturnedCoercionToUnit.kt");
+            }
+            
+            @TestMetadata("NoElseReturnedFromLambdaExpectedInt.kt")
+            public void testNoElseReturnedFromLambdaExpectedInt() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/NoElseReturnedFromLambdaExpectedInt.kt");
+            }
+            
+            @TestMetadata("NoElseReturnedNonUnit.kt")
+            public void testNoElseReturnedNonUnit() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/NoElseReturnedNonUnit.kt");
+            }
+            
+            @TestMetadata("NoElseReturnedUnit.kt")
+            public void testNoElseReturnedUnit() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/NoElseReturnedUnit.kt");
+            }
+            
+            @TestMetadata("NoElseWhenStatement.kt")
+            public void testNoElseWhenStatement() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt");
+            }
+            
+            @TestMetadata("When.kt")
+            public void testWhen() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/When.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Tests");
             suite.addTestSuite(Tests.class);
@@ -5633,6 +5676,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Subtyping.class);
             suite.addTestSuite(ThisAndSuper.class);
             suite.addTestSuite(Varargs.class);
+            suite.addTestSuite(When.class);
             return suite;
         }
     }

@@ -4282,6 +4282,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/when/matchNotNullAgainstNullable.kt");
         }
         
+        @TestMetadata("noElseAssigned.kt")
+        public void testNoElseAssigned() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseAssigned.kt");
+        }
+        
+        @TestMetadata("noElseInRetunedExpression.kt")
+        public void testNoElseInRetunedExpression() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseInRetunedExpression.kt");
+        }
+        
+        @TestMetadata("noElseInStatement.kt")
+        public void testNoElseInStatement() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseInStatement.kt");
+        }
+        
         @TestMetadata("nullableWhen.kt")
         public void testNullableWhen() throws Exception {
             doTest("compiler/testData/codegen/box/when/nullableWhen.kt");

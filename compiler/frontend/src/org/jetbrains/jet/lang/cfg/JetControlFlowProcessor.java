@@ -837,8 +837,7 @@ public class JetControlFlowProcessor {
                 }
             }
             builder.bindLabel(doneLabel);
-            boolean isWhenExhaust = WhenChecker.isWhenExhaustive(expression, trace);
-            if (!hasElseOrIrrefutableBranch && !isWhenExhaust) {
+            if (!hasElseOrIrrefutableBranch && WhenChecker.mustHaveElse(expression, trace)) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
         }
