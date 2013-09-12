@@ -68,6 +68,8 @@ public class ExpressionTypingServices {
     @NotNull
     private TypeResolver typeResolver;
     @NotNull
+    private AnnotationResolver annotationResolver;
+    @NotNull
     private PlatformToKotlinClassMap platformToKotlinClassMap;
 
     @NotNull
@@ -118,6 +120,16 @@ public class ExpressionTypingServices {
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
+    }
+
+    @NotNull
+    public AnnotationResolver getAnnotationResolver() {
+        return annotationResolver;
+    }
+
+    @Inject
+    public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
     }
 
     @Inject
