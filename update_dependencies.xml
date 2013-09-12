@@ -111,6 +111,13 @@
         <!-- dx.jar -->
         <get-maven-library prefix="com/google/android/tools" lib="dx" version="1.7" target.jar.name.base="dx"/>
 
+        <!-- jflex 1.4 -->
+        <mkdir dir="dependencies/jflex"/>
+        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/jflex-1.4/lib/JFlex.jar"
+             dest="dependencies/jflex/JFlex.jar" usetimestamp="true" />
+        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
+             dest="dependencies/jflex/idea-flex.skeleton" usetimestamp="true" />
+
         <!-- jline -->
         <get-maven-library prefix="jline" lib="jline" version="2.9" target.jar.name.base="jline"/>
 

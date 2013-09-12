@@ -1,22 +1,12 @@
 <project name="JetLexer" default="lexer">
     <property name="home" value="${basedir}"/>
-<!--
-    This script relies on a custom JFlex that is available in the sources of IntelliJ IDEA Community Edition
-    put the idea.properties file to the root directory of the frontend module, and put the following property there:
-
-       idea.home=../../../idea/src
-
-    where "../../../idea/src" is the relative location of the sources of IntelliJ IDEA Community
--->
-    <property file="${home}/idea.properties"/>
-
-    <property name="flex.base" value="${idea.home}/tools/lexer/jflex-1.4"/>
+    <property name="flex.base" value="${home}/../../dependencies/jflex"/>
     <property name="out.dir" value="${basedir}/tmpout"/>
 
     <macrodef name="flex">
       <attribute name="flexfile"/>
       <attribute name="destdir"/>
-      <attribute name="skeleton" default="${idea.home}/tools/lexer/idea-flex.skeleton"/>
+      <attribute name="skeleton" default="${flex.base}/idea-flex.skeleton"/>
       <sequential>
         <delete dir="${out.dir}"/>
         <mkdir dir="${out.dir}"/>
@@ -31,7 +21,7 @@
           <arg value="${out.dir}"/>
           <arg value="@{flexfile}"/>
           <classpath>
-            <pathelement location="${flex.base}/lib/JFlex.jar"/>
+            <pathelement location="${flex.base}/JFlex.jar"/>
           </classpath>
         </java>
         <move todir="@{destdir}">
@@ -44,7 +34,6 @@
     </macrodef>
 
     <target name="lexer">
-        <echo message="${flex.base}"/>
         <flex flexfile="${home}/src/org/jetbrains/jet/lexer/Jet.flex"
               destdir="${home}/src/org/jetbrains/jet/lexer/"/>
         <flex flexfile="${home}/src/org/jetbrains/jet/kdoc/lexer/KDoc.flex"
