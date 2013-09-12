@@ -81,7 +81,7 @@ public class CompileTimeConstantResolver {
         if (value == null) {
             return OUT_OF_RANGE;
         }
-        if (noExpectedType(expectedType)) {
+        if (noExpectedTypeOrUnitOrError(expectedType)) {
             if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
                 return new IntValue(value.intValue());
             }
@@ -166,7 +166,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getFloatValue(@NotNull String text, @NotNull JetType expectedType) {
-        if (noExpectedType(expectedType)
+        if (noExpectedTypeOrUnitOrError(expectedType)
             || JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getDoubleType(), expectedType)) {
             try {
                 return new DoubleValue(Double.parseDouble(text));
@@ -190,7 +190,7 @@ public class CompileTimeConstantResolver {
 
     @Nullable
     private CompileTimeConstant<?> checkNativeType(String text, JetType expectedType, String title, JetType nativeType) {
-        if (!noExpectedType(expectedType)
+        if (!noExpectedTypeOrUnitOrError(expectedType)
             && !JetTypeChecker.INSTANCE.isSubtypeOf(nativeType, expectedType)) {
             return new ErrorValue("A " + title + " literal " + text + " does not conform to the expected type " + expectedType);
         }
@@ -300,13 +300,13 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getNullValue(@NotNull JetType expectedType) {
-        if (noExpectedType(expectedType) || expectedType.isNullable()) {
+        if (noExpectedTypeOrUnitOrError(expectedType) || expectedType.isNullable()) {
             return NullValue.NULL;
         }
         return new ErrorValue("Null can not be a value of a non-null type " + expectedType);
     }
 
-    private boolean noExpectedType(JetType expectedType) {
+    private static boolean noExpectedTypeOrUnitOrError(JetType expectedType) {
         return TypeUtils.noExpectedType(expectedType) || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
     }
 }
