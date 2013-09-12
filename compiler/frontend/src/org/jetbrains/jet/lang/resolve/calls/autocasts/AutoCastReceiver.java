@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.AbstractReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValueVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 
 public class AutoCastReceiver extends AbstractReceiverValue {
@@ -39,11 +38,6 @@ public class AutoCastReceiver extends AbstractReceiverValue {
     @NotNull
     public ReceiverValue getOriginal() {
         return original;
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
-        return original.accept(visitor, data);
     }
 
     @Override

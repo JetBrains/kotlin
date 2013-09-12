@@ -29,11 +29,6 @@ public class TransientReceiver extends AbstractReceiverValue {
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
-        return visitor.visitTransientReceiver(this, data);
-    }
-
-    @Override
     public String toString() {
         return "{Transient} : " + getType();
     }
