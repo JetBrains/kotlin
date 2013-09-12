@@ -185,7 +185,10 @@ public final class AnalyzerFacadeWithCache {
             VirtualFile virtualFile = fileToCache.getVirtualFile();
             if (LightClassUtil.belongsToKotlinBuiltIns(fileToCache) ||
                 virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, fileToCache.getProject()) != null) {
-            /* For library sources we should resolve it, not only project files (as KotlinCacheManager do) */
+                // Library sources:
+                // Mark file to skip
+                fileToCache.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true);
+                // Resolve this file, not only project files (as KotlinCacheManager do)
                 return AnalyzerFacadeForJVM.INSTANCE.analyzeFiles(
                         fileToCache.getProject(),
                         Collections.singleton(fileToCache),

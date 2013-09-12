@@ -195,16 +195,6 @@ public class DescriptorUtils {
         return false;
     }
 
-    @Nullable
-    public static VariableDescriptor filterNonExtensionProperty(Collection<VariableDescriptor> variables) {
-        for (VariableDescriptor variable : variables) {
-            if (variable.getReceiverParameter() == null) {
-                return variable;
-            }
-        }
-        return null;
-    }
-
     @NotNull
     public static JetType getFunctionExpectedReturnType(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
         JetType expectedType;

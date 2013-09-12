@@ -5034,6 +5034,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/scopes/AmbiguityBetweenRootAndPackage.kt");
             }
             
+            @TestMetadata("AmbiguousNonExtensions.kt")
+            public void testAmbiguousNonExtensions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/scopes/AmbiguousNonExtensions.kt");
+            }
+            
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")
             public void testImportFromCurrentWithDifferentName() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/scopes/ImportFromCurrentWithDifferentName.kt");

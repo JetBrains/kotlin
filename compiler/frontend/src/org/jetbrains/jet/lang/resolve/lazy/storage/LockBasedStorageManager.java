@@ -238,6 +238,7 @@ public class LockBasedStorageManager implements StorageManager {
             this.context = context;
         }
 
+        @NotNull
         @Override
         public Collection<Diagnostic> getDiagnostics() {
             synchronized (lock) {

@@ -16,7 +16,6 @@
     <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinVersion.java.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
 
-    <property name="plugin.verifier" value="${basedir}/dependencies/plugin-verifier.jar"/>
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip" />
 
     <macrodef name="echoprop">
@@ -105,22 +104,7 @@
         <delete dir="${artifact.output.path}/Kotlin" quiet="true"/>
     </target>
 
-    <target name="verifyPlugin">
-        <!--
-            disabled plugin-verifier for now, waiting
-            for better plugin dependencies handling in it
-        -->
-        <!--
-        <java fork="true" failonerror="${fail.on.plugin.verifier.error}" jar="${plugin.verifier}">
-            <arg value="-r" />
-            <arg value="${jdk16.home}" />
-            <arg value="${plugin.zip}" />
-            <arg value="${basedir}/ideaSDK" />
-        </java>
-        -->
-    </target>
-
-    <target name="post_build" depends="zipArtifact, revertTemplateFiles, verifyPlugin"/>
+    <target name="post_build" depends="zipArtifact, revertTemplateFiles"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>

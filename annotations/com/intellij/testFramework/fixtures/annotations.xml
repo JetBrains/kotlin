@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase com.intellij.psi.PsiManager getPsiManager()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

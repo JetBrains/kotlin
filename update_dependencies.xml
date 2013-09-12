@@ -92,11 +92,6 @@
         <get src="http://jarjar.googlecode.com/files/jarjar-1.2.jar" dest="dependencies/download/jarjar-1.2.jar" usetimestamp="true"/>
         <copy file="dependencies/download/jarjar-1.2.jar" tofile="dependencies/jarjar.jar" overwrite="true"/>
 
-        <!-- PluginVerifier -->
-        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar"
-             dest="dependencies/download/plugin-verifier-1.0-SNAPSHOT.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/plugin-verifier-1.0-SNAPSHOT.jar" tofile="dependencies/plugin-verifier.jar" overwrite="true"/>
-
         <!-- ant 1.7.0 -->
         <get src="http://archive.apache.org/dist/ant/binaries/apache-ant-1.7.0-bin.tar.gz"
              dest="dependencies/download/apache-ant-1.7.0-bin.tar.gz" usetimestamp="true"/>

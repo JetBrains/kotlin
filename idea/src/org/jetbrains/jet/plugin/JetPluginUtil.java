@@ -23,8 +23,6 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -89,19 +87,11 @@ public class JetPluginUtil {
         return libraryScope == ((NamespaceDescriptor) declaration).getMemberScope();
     }
 
-    public static boolean isInSourceContent(@NotNull PsiElement element) {
-        PsiFile containingFile = element.getContainingFile();
-        if (containingFile == null) {
-            return false;
-        }
-        VirtualFile virtualFile = containingFile.getVirtualFile();
-        if (virtualFile == null) {
-            return false;
-        }
-        return ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInSourceContent(virtualFile);
+    public static boolean isInSource(@NotNull PsiElement element) {
+        return isInSource(element, true);
     }
 
-    public static boolean isInSource(@NotNull PsiElement element) {
+    public static boolean isInSource(@NotNull PsiElement element, boolean includeLibrarySources) {
         PsiFile containingFile = element.getContainingFile();
         if (containingFile == null) {
             return false;
@@ -110,7 +100,8 @@ public class JetPluginUtil {
         if (virtualFile == null) {
             return false;
         }
-        return ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInSource(virtualFile);
+        ProjectFileIndex index = ProjectFileIndex.SERVICE.getInstance(element.getProject());
+        return includeLibrarySources ? index.isInSource(virtualFile) : index.isInSourceContent(virtualFile);
     }
 
     @NotNull

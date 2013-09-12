@@ -61,7 +61,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         }
 
         JetFile file = getStartClassFile(location);
-        if (file == null || !JetPluginUtil.isInSource(file)) {
+        if (file == null || !JetPluginUtil.isInSource(file, true)) {
             return null;
         }
 

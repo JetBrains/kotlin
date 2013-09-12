@@ -64,11 +64,6 @@
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
-    <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
-            text="Error Reporting Enabled">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
-      <add-to-group group-id="CodeMenu" anchor="last"/>
-    </action>
 
     <group id="EditorGutterKotlinPopupMenu">
       <action id="ShowKotlinSignatures" class="org.jetbrains.jet.plugin.ktSignature.ShowKotlinSignaturesAction"/>

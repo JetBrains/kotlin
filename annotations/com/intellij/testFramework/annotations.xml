@@ -1,0 +1,10 @@
+<root>
+  <item
+      name='com.intellij.testFramework.LightProjectDescriptor void configureModule(com.intellij.openapi.module.Module, com.intellij.openapi.roots.ModifiableRootModel, com.intellij.openapi.roots.ContentEntry) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.testFramework.LightProjectDescriptor void configureModule(com.intellij.openapi.module.Module, com.intellij.openapi.roots.ModifiableRootModel, com.intellij.openapi.roots.ContentEntry) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

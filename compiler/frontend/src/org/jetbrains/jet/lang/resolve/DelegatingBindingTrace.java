@@ -38,6 +38,7 @@ public class DelegatingBindingTrace implements BindingTrace {
     private final String name;
 
     private final BindingContext bindingContext = new BindingContext() {
+        @NotNull
         @Override
         public Collection<Diagnostic> getDiagnostics() {
             ArrayList<Diagnostic> mergedDiagnostics = new ArrayList<Diagnostic>(diagnostics);

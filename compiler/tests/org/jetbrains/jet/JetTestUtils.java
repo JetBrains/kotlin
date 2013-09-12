@@ -103,6 +103,7 @@ public class JetTestUtils {
         public BindingContext getBindingContext() {
             return new BindingContext() {
 
+                @NotNull
                 @Override
                 public Collection<Diagnostic> getDiagnostics() {
                     throw new UnsupportedOperationException(); // TODO
@@ -161,6 +162,7 @@ public class JetTestUtils {
         @Override
         public BindingContext getBindingContext() {
             return new BindingContext() {
+                @NotNull
                 @Override
                 public Collection<Diagnostic> getDiagnostics() {
                     throw new UnsupportedOperationException();

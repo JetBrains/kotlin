@@ -37,6 +37,7 @@ public class BindingTraceContext implements BindingTrace {
 
     private final BindingContext bindingContext = new BindingContext() {
 
+        @NotNull
         @Override
         public Collection<Diagnostic> getDiagnostics() {
             return diagnostics;

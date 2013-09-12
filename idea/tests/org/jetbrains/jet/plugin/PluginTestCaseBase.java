@@ -26,6 +26,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 
+import java.io.File;
+
 public class PluginTestCaseBase {
 
     public static final String TEST_DATA_PROJECT_RELATIVE = "/idea/testData";
@@ -37,8 +39,8 @@ public class PluginTestCaseBase {
         return JetTestCaseBuilder.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
-    public static Sdk jdkFromIdeaHome() {
-        Sdk sdk = new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK/jre", true);
+    private static Sdk getSdk(String sdkHome) {
+        Sdk sdk = new JavaSdkImpl().createJdk("JDK", sdkHome, true);
         SdkModificator modificator = sdk.getSdkModificator();
         VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(ForTestPackJdkAnnotations.jdkAnnotationsForTests());
         assert file != null;
@@ -46,4 +48,15 @@ public class PluginTestCaseBase {
         modificator.commitChanges();
         return sdk;
     }
+
+    public static Sdk jdkFromIdeaHome() {
+        return getSdk("compiler/testData/mockJDK/jre");
+    }
+
+    public static Sdk fullJdk() {
+        String javaHome = System.getProperty("java.home");
+        assert new File(javaHome).isDirectory();
+        return getSdk(javaHome);
+    }
+
 }

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.LibrarySourceHacks;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -41,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class TaskPrioritizer {
@@ -130,7 +131,8 @@ public class TaskPrioritizer {
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
             Collection<ResolutionCandidate<D>> members = Lists.newArrayList();
             for (ReceiverValue variant : variantsForExplicitReceiver) {
-                Collection<? extends D> membersForThisVariant = callableDescriptorCollector.getMembersByName(variant.getType(), c.name);
+                Collection<? extends D> membersForThisVariant =
+                        callableDescriptorCollector.getMembersByName(variant.getType(), c.name, c.context.trace);
                 convertWithReceivers(membersForThisVariant, Collections.singletonList(variant),
                                      Collections.singletonList(NO_RECEIVER), members, resolveInvoke);
             }
@@ -144,9 +146,9 @@ public class TaskPrioritizer {
                                              callableDescriptorCollector, c, resolveInvoke);
             }
             //extensions
-            Collection<ResolutionCandidate<D>> extensionFunctions = convertWithImpliedThis(
-                    c.scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(c.scope, c.name));
-            c.result.addCandidates(extensionFunctions);
+            Collection<ResolutionCandidate<D>> extensions = convertWithImpliedThis(
+                    c.scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(c.scope, c.name, c.context.trace));
+            c.result.addCandidates(extensions);
         }
     }
 
@@ -157,7 +159,7 @@ public class TaskPrioritizer {
             boolean resolveInvoke
     ) {
         Collection<? extends D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
-                implicitReceiver.getType().getMemberScope(), c.name);
+                implicitReceiver.getType().getMemberScope(), c.name, c.context.trace);
         List<ReceiverValue> variantsForImplicitReceiver = c.autoCastService.getVariantsForReceiver(implicitReceiver);
         c.result.addCandidates(convertWithReceivers(memberExtensions, variantsForImplicitReceiver,
                                                   variantsForExplicitReceiver, resolveInvoke));
@@ -171,14 +173,14 @@ public class TaskPrioritizer {
         List<Collection<ResolutionCandidate<D>>> nonlocalsList = Lists.newArrayList();
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
 
-            Collection<ResolutionCandidate<D>> functions =
+            Collection<ResolutionCandidate<D>> members =
                     convertWithImpliedThis(c.scope, Collections.singletonList(NO_RECEIVER), callableDescriptorCollector
-                            .getNonExtensionsByName(c.scope, c.name));
+                            .getNonExtensionsByName(c.scope, c.name, c.context.trace));
 
             List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
             List<ResolutionCandidate<D>> locals = Lists.newArrayList();
             //noinspection unchecked,RedundantTypeArguments
-            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, c.scope.getContainingDeclaration(), locals, nonlocals);
+            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(members, c.scope.getContainingDeclaration(), locals, nonlocals);
 
             localsList.add(locals);
             nonlocalsList.add(nonlocals);

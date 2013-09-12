@@ -40,8 +40,8 @@ public class DebugInfoAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (!isDebugInfoEnabled() || !JetPsiChecker.isErrorReportingEnabled() ||
-                !JetPluginUtil.isInSourceContent(element) ||
+        if (!isDebugInfoEnabled() ||
+                !JetPluginUtil.isInSource(element) ||
                 JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
             return;
         }
