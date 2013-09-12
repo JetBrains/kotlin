@@ -79,17 +79,19 @@ public class PossiblyBareType {
     }
 
     @NotNull
-    public JetType reconstruct(@NotNull JetType subjectType) {
-        if (!isBare()) return getActualType();
+    public TypeReconstructionResult reconstruct(@NotNull JetType subjectType) {
+        if (!isBare()) return new TypeReconstructionResult(getActualType(), true);
 
-        JetType type = CastDiagnosticsUtil.findStaticallyKnownSubtype(
+        TypeReconstructionResult reconstructionResult = CastDiagnosticsUtil.findStaticallyKnownSubtype(
                 TypeUtils.makeNotNullable(subjectType),
                 getBareTypeConstructor()
         );
+        JetType type = reconstructionResult.getResultingType();
         // No need to make an absent type nullable
-        if (type == null) return type;
+        if (type == null) return reconstructionResult;
 
-        return TypeUtils.makeNullableAsSpecified(type, isBareTypeNullable());
+        JetType resultingType = TypeUtils.makeNullableAsSpecified(type, isBareTypeNullable());
+        return new TypeReconstructionResult(resultingType, reconstructionResult.isAllArgumentsInferred());
     }
 
     @Override

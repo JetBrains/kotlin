@@ -283,10 +283,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true);
         PossiblyBareType possiblyBareTarget = context.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
-        JetType type = possiblyBareTarget.reconstruct(subjectType);
-        if (possiblyBareTarget.isBare()) {
-            context.trace.record(BindingContext.TYPE, typeReferenceAfterIs, type);
-        }
+        JetType type = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace);
         if (!subjectType.isNullable() && type.isNullable()) {
             JetTypeElement element = typeReferenceAfterIs.getTypeElement();
             assert element instanceof JetNullableType : "element must be instance of " + JetNullableType.class.getName();

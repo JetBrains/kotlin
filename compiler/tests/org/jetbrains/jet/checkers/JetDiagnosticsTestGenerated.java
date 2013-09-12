@@ -1201,6 +1201,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/cast/bare/AsNullable.kt");
                 }
                 
+                @TestMetadata("AsNullableNotEnough.kt")
+                public void testAsNullableNotEnough() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/AsNullableNotEnough.kt");
+                }
+                
                 @TestMetadata("EitherAs.kt")
                 public void testEitherAs() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/cast/bare/EitherAs.kt");
@@ -1231,9 +1236,29 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/cast/bare/ErrorsInSubstitution.kt");
                 }
                 
+                @TestMetadata("FromErrorType.kt")
+                public void testFromErrorType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/FromErrorType.kt");
+                }
+                
                 @TestMetadata("NullableAs.kt")
                 public void testNullableAs() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/cast/bare/NullableAs.kt");
+                }
+                
+                @TestMetadata("NullableAsNotEnough.kt")
+                public void testNullableAsNotEnough() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/NullableAsNotEnough.kt");
+                }
+                
+                @TestMetadata("NullableAsNullable.kt")
+                public void testNullableAsNullable() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/NullableAsNullable.kt");
+                }
+                
+                @TestMetadata("NullableAsNullableNotEnough.kt")
+                public void testNullableAsNullableNotEnough() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/cast/bare/NullableAsNullableNotEnough.kt");
                 }
                 
                 @TestMetadata("RedundantNullable.kt")

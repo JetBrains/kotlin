@@ -112,7 +112,7 @@ public class CastDiagnosticsUtil {
         // NOTE: this does not account for 'as Array<List<T>>'
         if (allParametersReified(subtype)) return false;
 
-        JetType staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype.getConstructor());
+        JetType staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype.getConstructor()).getResultingType();
 
         // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
         // In this case, we can't guarantee anything, so the cast is considered to be erased
@@ -132,14 +132,14 @@ public class CastDiagnosticsUtil {
      * Example 1:
      *  supertype = Collection<String>
      *  subtype = List<...>
-     *  result = List<String>
+     *  result = List<String>, all arguments are inferred
      *
      * Example 2:
      *  supertype = Any
      *  subtype = List<...>
-     *  result = List<*>
+     *  result = List<*>, some arguments were not inferred, replaced with '*'
      */
-    public static JetType findStaticallyKnownSubtype(@NotNull JetType supertype, @NotNull TypeConstructor subtypeConstructor) {
+    public static TypeReconstructionResult findStaticallyKnownSubtype(@NotNull JetType supertype, @NotNull TypeConstructor subtypeConstructor) {
         assert !supertype.isNullable() : "This method only makes sense for non-nullable types";
 
         // Assume we are casting an expression of type Collection<Foo> to List<Bar>
@@ -176,6 +176,7 @@ public class CastDiagnosticsUtil {
 
         // If some of the parameters are not determined by unification, it means that these parameters are lost,
         // let's put stars instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
+        boolean allArgumentsInferred = true;
         for (TypeParameterDescriptor variable : variables) {
             TypeProjection value = substitution.get(variable.getTypeConstructor());
             if (value == null) {
@@ -183,12 +184,15 @@ public class CastDiagnosticsUtil {
                         variable.getTypeConstructor(),
                         SubstitutionUtils.makeStarProjection(variable)
                 );
+                allArgumentsInferred = false;
             }
         }
 
         // At this point we have values for all type parameters of List
         // Let's make a type by substituting them: List<T> -> List<Foo>
-        return TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT);
+        JetType substituted = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT);
+
+        return new TypeReconstructionResult(substituted, allArgumentsInferred);
     }
 
     private static boolean allParametersReified(JetType subtype) {

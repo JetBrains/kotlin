@@ -62,7 +62,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.utils.ThrowingList;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -77,12 +79,14 @@ import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.resolveSpecialConstructionAsCall;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
-import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil.reconstructBareType;
+import static org.jetbrains.jet.lexer.JetTokens.AS_KEYWORD;
+import static org.jetbrains.jet.lexer.JetTokens.AS_SAFE;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
-    private static final TokenSet BARE_TYPES_ALLOWED = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS);
+    private static final TokenSet BARE_TYPES_ALLOWED = TokenSet.create(AS_KEYWORD, AS_SAFE);
 
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
 
@@ -192,10 +196,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         JetType subjectType = typeInfo.getType();
-        JetType targetType;
-        if (subjectType != null) {
-            targetType = possiblyBareTarget.reconstruct(subjectType);
+        JetType targetType = reconstructBareType(right, possiblyBareTarget, subjectType, context.trace);
 
+        if (subjectType != null) {
             checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
             dataFlowInfo = typeInfo.getDataFlowInfo();
             if (operationType == AS_KEYWORD) {
@@ -204,10 +207,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
             }
         }
-        else {
-            // Recovery: let's reconstruct as if we were casting from Any, to get some type there
-            targetType = possiblyBareTarget.reconstruct(KotlinBuiltIns.getInstance().getAnyType());
-        }
+
         JetType result = operationType == AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
