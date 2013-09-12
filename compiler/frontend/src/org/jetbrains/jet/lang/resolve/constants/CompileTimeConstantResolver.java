@@ -109,7 +109,7 @@ public class CompileTimeConstantResolver {
         if (value == null) {
             return ErrorValue.create(INT_LITERAL_OUT_OF_RANGE.on(expression));
         }
-        if (noExpectedTypeOrUnitOrError(expectedType)) {
+        if (noExpectedTypeOrError(expectedType)) {
             if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
                 return new IntValue(value.intValue());
             }
@@ -198,7 +198,7 @@ public class CompileTimeConstantResolver {
     ) {
         String text = expression.getText();
         try {
-            if (noExpectedTypeOrUnitOrError(expectedType)
+            if (noExpectedTypeOrError(expectedType)
                 || JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getDoubleType(), expectedType)) {
                 return new DoubleValue(Double.parseDouble(text));
             }
@@ -221,7 +221,7 @@ public class CompileTimeConstantResolver {
             JetType nativeType,
             JetConstantExpression expression
     ) {
-        if (!noExpectedTypeOrUnitOrError(expectedType)
+        if (!noExpectedTypeOrError(expectedType)
             && !JetTypeChecker.INSTANCE.isSubtypeOf(nativeType, expectedType)) {
 
             return ErrorValue.create(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, title, expectedType));
@@ -346,13 +346,13 @@ public class CompileTimeConstantResolver {
     public CompileTimeConstant<?> getNullValue(
             @NotNull JetConstantExpression expression, @NotNull JetType expectedType
     ) {
-        if (noExpectedTypeOrUnitOrError(expectedType) || expectedType.isNullable()) {
+        if (noExpectedTypeOrError(expectedType) || expectedType.isNullable()) {
             return NullValue.NULL;
         }
         return ErrorValue.create(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
     }
 
-    private static boolean noExpectedTypeOrUnitOrError(JetType expectedType) {
-        return TypeUtils.noExpectedType(expectedType) || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
+    private static boolean noExpectedTypeOrError(JetType expectedType) {
+        return TypeUtils.noExpectedType(expectedType) || ErrorUtils.isErrorType(expectedType);
     }
 }

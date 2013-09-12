@@ -3,7 +3,7 @@ fun none() {}
 fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
-fun unitIntReturn() : Unit {return <!TYPE_MISMATCH!>1<!>}
+fun unitIntReturn() : Unit {return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>}
 fun unitUnitReturn() : Unit {return Unit.VALUE}
 fun test1() : Any = {<!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return<!>}
 fun test2() : Any = @a {<!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@a 1<!>}
@@ -13,7 +13,7 @@ fun test5(): Any = @{ <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return
 fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return 1<!>}
 
 fun bbb() {
-  return <!TYPE_MISMATCH!>1<!>
+  return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 
 fun foo(<!UNUSED_PARAMETER!>expr<!>: StringBuilder): Int {
@@ -26,8 +26,8 @@ fun foo(<!UNUSED_PARAMETER!>expr<!>: StringBuilder): Int {
 
 
 fun unitShort() : Unit = Unit.VALUE
-fun unitShortConv() : Unit = <!TYPE_MISMATCH!>1<!>
-fun unitShortNull() : Unit = <!TYPE_MISMATCH!>null<!>
+fun unitShortConv() : Unit = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
+fun unitShortNull() : Unit = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
 fun intEmpty() : Int {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun intShortInfer() = 1
@@ -40,7 +40,7 @@ fun intString(): Int = <!TYPE_MISMATCH!>"s"<!>
 fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>
 
 fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
-fun blockReturnValueTypeMismatch() : Int {return <!ERROR_COMPILE_TIME_VALUE!>3.4<!>}
+fun blockReturnValueTypeMismatch() : Int {return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>3.4<!>}
 fun blockReturnValueTypeMatch() : Int {return 1}
 fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit.VALUE<!>}
 
@@ -51,7 +51,7 @@ fun blockAndAndMismatch1() : Int {
   return <!TYPE_MISMATCH!>true && false<!>
 }
 fun blockAndAndMismatch2() : Int {
-  <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) && (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
+  <!UNREACHABLE_CODE!>(return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) && (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)<!>
 }
 
 fun blockAndAndMismatch3() : Int {
@@ -61,10 +61,10 @@ fun blockAndAndMismatch4() : Int {
   return <!TYPE_MISMATCH!>true || false<!>
 }
 fun blockAndAndMismatch5() : Int {
-  <!UNREACHABLE_CODE!>(return <!ERROR_COMPILE_TIME_VALUE!>true<!>) || (return <!ERROR_COMPILE_TIME_VALUE!>false<!>)<!>
+  <!UNREACHABLE_CODE!>(return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) || (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)<!>
 }
 fun blockReturnValueTypeMatch1() : Int {
-  return if (1 > 2) <!TYPE_MISMATCH!>1.0<!> else <!TYPE_MISMATCH!>2.0<!>
+  return if (1 > 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch2() : Int {
   return <!TYPE_MISMATCH!>if (1 > 2) 1<!>
@@ -74,18 +74,18 @@ fun blockReturnValueTypeMatch3() : Int {
 }
 fun blockReturnValueTypeMatch4() : Int {
   if (1 > 2)
-    return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
-  else return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
+  else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch5() : Int {
   if (1 > 2)
-    return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
-  return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
+  return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch6() : Int {
   if (1 > 2)
-    else return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
-  return <!ERROR_COMPILE_TIME_VALUE!>2.0<!>
+    else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
+  return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch7() : Int {
   if (1 > 2)
@@ -113,7 +113,7 @@ fun blockReturnValueTypeMatch11() : Int {
 fun blockReturnValueTypeMatch12() : Int {
   if (1 > 2)
     return 1
-  else return <!ERROR_COMPILE_TIME_VALUE!>1.0<!>
+  else return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>
 }
 fun blockNoReturnIfValDeclaration(): Int {
   val <!UNUSED_VARIABLE!>x<!> = 1
@@ -140,21 +140,21 @@ class A() {
 }
 fun illegalConstantBody(): Int = <!TYPE_MISMATCH!>"s"<!>
 fun illegalConstantBlock(): String {
-    return <!ERROR_COMPILE_TIME_VALUE!>1<!>
+    return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 fun illegalIfBody(): Int =
-    if (1 < 2) <!TYPE_MISMATCH!>'a'<!> else { <!TYPE_MISMATCH!>1.0<!> }
+    if (1 < 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!> else { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }
 fun illegalIfBlock(): Boolean {
     if (1 < 2)
         return false
-    else { return <!ERROR_COMPILE_TIME_VALUE!>1<!> }
+    else { return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }
 }
 fun illegalReturnIf(): Char {
-    return if (1 < 2) 'a' else { <!TYPE_MISMATCH!>1<!> }
+    return if (1 < 2) 'a' else { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }
 }
 
 fun returnNothing(): Nothing {
-    throw <!ERROR_COMPILE_TIME_VALUE!>1<!>
+    throw <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
