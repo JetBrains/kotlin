@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
@@ -68,16 +67,6 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
                 !isOneLine(textRange, document)) {
             descriptors.add(new FoldingDescriptor(node, textRange));
         }
-        else if (node.getElementType() == JetTokens.IDE_TEMPLATE_START) {
-            ASTNode next = node.getTreeNext();
-            if (next != null) {
-                ASTNode nextNext = next.getTreeNext();
-                if (nextNext != null && nextNext.getElementType() == JetTokens.IDE_TEMPLATE_END) {
-                    TextRange range = new TextRange(node.getStartOffset(), nextNext.getStartOffset() + nextNext.getTextLength());
-                    descriptors.add(new FoldingDescriptor(next, range, null, Collections.<Object>emptySet(), true));
-                }
-            }
-        }
         ASTNode child = node.getFirstChildNode();
         while (child != null) {
           appendDescriptors(child, document, descriptors);
@@ -91,12 +80,6 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
 
     @Override
     public String getPlaceholderText(@NotNull ASTNode node) {
-        ASTNode prev = node.getTreePrev();
-        ASTNode next = node.getTreeNext();
-        if (prev != null && next != null && prev.getElementType() == JetTokens.IDE_TEMPLATE_START
-            && next.getElementType() == JetTokens.IDE_TEMPLATE_END) {
-            return node.getText();
-        }
         if (node.getElementType() == JetTokens.BLOCK_COMMENT) {
             return "/.../";
         }
