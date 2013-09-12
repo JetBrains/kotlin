@@ -200,8 +200,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
             dataFlowInfo = typeInfo.getDataFlowInfo();
             if (operationType == AS_KEYWORD) {
-                DataFlowValue value =
-                        DataFlowValueFactory.INSTANCE.createDataFlowValue(left, subjectType, context.trace.getBindingContext());
+                DataFlowValue value = DataFlowValueFactory.createDataFlowValue(left, subjectType, context.trace.getBindingContext());
                 dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
             }
         }
@@ -709,7 +708,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, baseType));
         }
         else {
-            DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
+            DataFlowValue value = DataFlowValueFactory.createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
         return JetTypeInfo.create(TypeUtils.makeNotNullable(baseType), dataFlowInfo);
@@ -737,7 +736,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, JetType jetType, ExpressionTypingContext context) {
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, jetType, context.trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, jetType, context.trace.getBindingContext());
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
@@ -1016,7 +1015,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType type = facade.getTypeInfo(expr, context).getType();
         if (type == null || ErrorUtils.isErrorType(type)) return;
 
-        DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(expr, type, context.trace.getBindingContext());
+        DataFlowValue value = DataFlowValueFactory.createDataFlowValue(expr, type, context.trace.getBindingContext());
         Nullability nullability = context.dataFlowInfo.getNullability(value);
 
         boolean expressionIsAlways;

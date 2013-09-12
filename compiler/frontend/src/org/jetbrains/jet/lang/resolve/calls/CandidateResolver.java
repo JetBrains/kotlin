@@ -665,7 +665,7 @@ public class CandidateResolver {
     ) {
         if (argumentExpression == null || type == null) return type;
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
                 JetPsiUtil.unwrapFromBlock(argumentExpression), type, trace.getBindingContext());
         Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;
@@ -858,7 +858,7 @@ public class CandidateResolver {
             context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
             return UNSAFE_CALL_ERROR;
         }
-        DataFlowValue receiverValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiverArgument, bindingContext);
+        DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext);
         if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {
             context.tracing.unnecessarySafeCall(trace, receiverArgumentType);
         }

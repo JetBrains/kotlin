@@ -24,11 +24,10 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -91,8 +90,8 @@ public class DataFlowUtils {
                     if (rhsType == null) return;
 
                     BindingContext bindingContext = context.trace.getBindingContext();
-                    DataFlowValue leftValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(left, lhsType, bindingContext);
-                    DataFlowValue rightValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(right, rhsType, bindingContext);
+                    DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, lhsType, bindingContext);
+                    DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rhsType, bindingContext);
 
                     Boolean equals = null;
                     if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EQEQEQ) {
@@ -179,7 +178,7 @@ public class DataFlowUtils {
             return expressionType;
         }
 
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, expressionType, trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, trace.getBindingContext());
         for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
                 if (dataFlowValue.isStableIdentifier()) {
