@@ -24,7 +24,7 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
   Collections.<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 
   Collections.singleton<Int>(1) : Set<Int>?
-  Collections.singleton<Int>(<!ERROR_COMPILE_TIME_VALUE!>1.0<!>)
+  Collections.singleton<Int>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>)
 
   <!UNRESOLVED_REFERENCE!>List<!><Int>
 

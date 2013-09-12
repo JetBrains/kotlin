@@ -292,7 +292,15 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS, "Class object upper bounds of {0} have empty intersection", NAME);
 
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", DescriptorRenderer.TEXT);
-        MAP.put(ERROR_COMPILE_TIME_VALUE, "{0}", TO_STRING);
+
+        MAP.put(CONSTANT_EXPECTED_TYPE_MISMATCH, "An {0} literal does not conform to the expected type {1}", TO_STRING, RENDER_TYPE);
+        MAP.put(INT_LITERAL_OUT_OF_RANGE, "The value is out of range");
+        MAP.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range");
+        MAP.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal");
+        MAP.put(EMPTY_CHARACTER_LITERAL, "Empty character literal");
+        MAP.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal ''{0}''", ELEMENT_TEXT);
+        MAP.put(ILLEGAL_ESCAPE, "Illegal escape: ''{0}''", ELEMENT_TEXT);
+        MAP.put(NULL_FOR_NONNULL_TYPE, "Null can not be a value of a non-null type {0}", RENDER_TYPE);
 
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
 

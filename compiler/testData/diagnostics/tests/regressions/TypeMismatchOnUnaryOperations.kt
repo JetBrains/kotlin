@@ -8,9 +8,9 @@ fun main(args : Array<String>) {
     val <!UNUSED_VARIABLE!>h<!> : String = <!TYPE_MISMATCH!>v--<!>;
     val <!UNUSED_VARIABLE!>h1<!> : String = <!TYPE_MISMATCH!>--v<!>;
     val <!UNUSED_VARIABLE!>i<!> : String = <!TYPE_MISMATCH!>!true<!>;
-    val <!UNUSED_VARIABLE!>j<!> : String = <!TYPE_MISMATCH!>@foo <!ERROR_COMPILE_TIME_VALUE!>true<!><!>;
-    val <!UNUSED_VARIABLE!>j1<!> : String = <!TYPE_MISMATCH!>@ <!ERROR_COMPILE_TIME_VALUE!>true<!><!>;
-    val <!UNUSED_VARIABLE!>j2<!> : String = <!TYPE_MISMATCH!>@@ <!ERROR_COMPILE_TIME_VALUE!>true<!><!>;
+    val <!UNUSED_VARIABLE!>j<!> : String = <!TYPE_MISMATCH!>@foo <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!><!>;
+    val <!UNUSED_VARIABLE!>j1<!> : String = <!TYPE_MISMATCH!>@ <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!><!>;
+    val <!UNUSED_VARIABLE!>j2<!> : String = <!TYPE_MISMATCH!>@@ <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!><!>;
     val <!UNUSED_VARIABLE!>k<!> : String = <!TYPE_MISMATCH!>-1<!>;
     val <!UNUSED_VARIABLE!>l<!> : String = <!TYPE_MISMATCH!>+1<!>;
 }

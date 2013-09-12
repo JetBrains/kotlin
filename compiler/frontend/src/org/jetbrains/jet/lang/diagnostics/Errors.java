@@ -462,7 +462,14 @@ public interface Errors {
 
     // Compile-time values
 
-    DiagnosticFactory1<PsiElement, String> ERROR_COMPILE_TIME_VALUE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<JetConstantExpression> INT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetConstantExpression> FLOAT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<JetConstantExpression, String, JetType> CONSTANT_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<JetConstantExpression> INCORRECT_CHARACTER_LITERAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetConstantExpression> EMPTY_CHARACTER_LITERAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<JetConstantExpression, JetConstantExpression> TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetElement, JetElement> ILLEGAL_ESCAPE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetConstantExpression, JetType> NULL_FOR_NONNULL_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetEscapeStringTemplateEntry> ILLEGAL_ESCAPE_SEQUENCE = DiagnosticFactory0.create(ERROR);
 
     // Casts and is-checks

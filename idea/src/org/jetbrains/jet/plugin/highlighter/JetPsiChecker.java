@@ -164,7 +164,7 @@ public class JetPsiChecker implements Annotator {
                 return;
             }
 
-            if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE_SEQUENCE) {
+            if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE) {
                 for (TextRange textRange : diagnostic.getTextRanges()) {
                     Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
                     annotation.setTooltip(getMessage(diagnostic));

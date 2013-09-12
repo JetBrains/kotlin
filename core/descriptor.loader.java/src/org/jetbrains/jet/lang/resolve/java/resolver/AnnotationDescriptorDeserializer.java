@@ -172,7 +172,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @Override
             public void visit(String name, Object value) {
                 CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);
-                setArgumentValueByName(name, argument != null ? argument : new ErrorValue("Unsupported annotation argument: " + name));
+                setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
             }
 
             @Override
@@ -196,7 +196,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                         }
                     }
                 }
-                return new ErrorValue("Unresolved enum entry: " + enumFqName + "." + name);
+                return ErrorValue.create("Unresolved enum entry: " + enumFqName + "." + name);
             }
 
             @Override

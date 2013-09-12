@@ -17,11 +17,15 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetConstantExpression;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -29,15 +33,34 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.List;
+import java.util.Set;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.constants.ErrorValue.ErrorValueWithDiagnostic;
 
 public class CompileTimeConstantResolver {
-    public static final ErrorValue OUT_OF_RANGE = new ErrorValue("The value is out of range");
-
     private final KotlinBuiltIns builtIns;
 
     public CompileTimeConstantResolver() {
         this.builtIns = KotlinBuiltIns.getInstance();
+    }
+
+    @Nullable
+    public Diagnostic checkConstantExpressionType(
+            @NotNull JetConstantExpression expression,
+            @NotNull JetType expectedType
+    ) {
+        CompileTimeConstant<?> compileTimeConstant = getCompileTimeConstant(expression, expectedType);
+        Set<AbstractDiagnosticFactory> errorsThatDependOnExpectedType =
+                Sets.<AbstractDiagnosticFactory>newHashSet(CONSTANT_EXPECTED_TYPE_MISMATCH, NULL_FOR_NONNULL_TYPE);
+
+        if (compileTimeConstant instanceof ErrorValueWithDiagnostic) {
+            Diagnostic diagnostic = ((ErrorValueWithDiagnostic) compileTimeConstant).getDiagnostic();
+            if (errorsThatDependOnExpectedType.contains(diagnostic.getFactory())) {
+                return diagnostic;
+            }
+        }
+        return null;
     }
 
     @NotNull
@@ -46,23 +69,22 @@ public class CompileTimeConstantResolver {
             @NotNull JetType expectedType
     ) {
         IElementType elementType = expression.getNode().getElementType();
-        String text = expression.getNode().getText();
 
         CompileTimeConstant<?> value;
         if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-            value = getIntegerValue(text, expectedType);
+            value = getIntegerValue(expression, expectedType);
         }
         else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
-            value = getFloatValue(text, expectedType);
+            value = getFloatValue(expression, expectedType);
         }
         else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
-            value = getBooleanValue(text, expectedType);
+            value = getBooleanValue(expression, expectedType);
         }
         else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
-            value = getCharValue(text, expectedType);
+            value = getCharValue(expression, expectedType);
         }
         else if (elementType == JetNodeTypes.NULL) {
-            value = getNullValue(expectedType);
+            value = getNullValue(expression, expectedType);
         }
         else {
             throw new IllegalArgumentException("Unsupported constant: " + expression);
@@ -70,16 +92,22 @@ public class CompileTimeConstantResolver {
         return value;
     }
 
-
     @NotNull
-    public CompileTimeConstant<?> getIntegerValue(@NotNull String text, @NotNull JetType expectedType) {
-        return getIntegerValue(parseLongValue(text), expectedType);
+    public CompileTimeConstant<?> getIntegerValue(
+            @NotNull JetConstantExpression expression, @NotNull JetType expectedType
+    ) {
+        String text = expression.getText();
+        return getIntegerValue(parseLongValue(text), expectedType, expression);
     }
 
     @NotNull
-    public CompileTimeConstant<?> getIntegerValue(@Nullable Long value, @NotNull JetType expectedType) {
+    public CompileTimeConstant<?> getIntegerValue(
+            @Nullable Long value,
+            @NotNull JetType expectedType,
+            @NotNull JetConstantExpression expression
+    ) {
         if (value == null) {
-            return OUT_OF_RANGE;
+            return ErrorValue.create(INT_LITERAL_OUT_OF_RANGE.on(expression));
         }
         if (noExpectedTypeOrUnitOrError(expectedType)) {
             if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
@@ -116,20 +144,20 @@ public class CompileTimeConstantResolver {
             JetType intType = builtIns.getIntType();
             JetType longType = builtIns.getLongType();
             if (typeChecker.isSubtypeOf(intType, expectedType)) {
-                return getIntegerValue(value, intType);
+                return getIntegerValue(value, intType, expression);
             }
             else if (typeChecker.isSubtypeOf(longType, expectedType)) {
-                return getIntegerValue(value, longType);
+                return getIntegerValue(value, longType, expression);
             }
             else {
-                return new ErrorValue("An integer literal does not conform to the expected type " + expectedType);
+                return ErrorValue.create(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "integer", expectedType));
             }
         }
 
         if (value != null && lowerBound <= value && value <= upperBound) {
             return create.apply(value);
         }
-        return new ErrorValue("An integer literal does not conform to the expected type " + expectedType);
+        return ErrorValue.create(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "integer", expectedType));
     }
 
     @Nullable
@@ -165,41 +193,48 @@ public class CompileTimeConstantResolver {
     }
 
     @NotNull
-    public CompileTimeConstant<?> getFloatValue(@NotNull String text, @NotNull JetType expectedType) {
-        if (noExpectedTypeOrUnitOrError(expectedType)
-            || JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getDoubleType(), expectedType)) {
-            try {
+    public CompileTimeConstant<?> getFloatValue(
+            @NotNull JetConstantExpression expression, @NotNull JetType expectedType
+    ) {
+        String text = expression.getText();
+        try {
+            if (noExpectedTypeOrUnitOrError(expectedType)
+                || JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getDoubleType(), expectedType)) {
                 return new DoubleValue(Double.parseDouble(text));
             }
-            catch (NumberFormatException e) {
-                return OUT_OF_RANGE;
-            }
-        }
-        else if (JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getFloatType(), expectedType)) {
-            try {
+            else if (JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getFloatType(), expectedType)) {
                 return new FloatValue(Float.parseFloat(text));
             }
-            catch (NumberFormatException e) {
-                return OUT_OF_RANGE;
+            else {
+                return ErrorValue.create(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "floating-point", expectedType));
             }
         }
-        else {
-            return new ErrorValue("A floating-point literal does not conform to the expected type " + expectedType);
+        catch (NumberFormatException e) {
+            return ErrorValue.create(FLOAT_LITERAL_OUT_OF_RANGE.on(expression));
         }
     }
 
     @Nullable
-    private CompileTimeConstant<?> checkNativeType(String text, JetType expectedType, String title, JetType nativeType) {
+    private CompileTimeConstant<?> checkNativeType(
+            JetType expectedType,
+            String title,
+            JetType nativeType,
+            JetConstantExpression expression
+    ) {
         if (!noExpectedTypeOrUnitOrError(expectedType)
             && !JetTypeChecker.INSTANCE.isSubtypeOf(nativeType, expectedType)) {
-            return new ErrorValue("A " + title + " literal " + text + " does not conform to the expected type " + expectedType);
+
+            return ErrorValue.create(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, title, expectedType));
         }
         return null;
     }
 
     @NotNull
-    public CompileTimeConstant<?> getBooleanValue(@NotNull String text, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "boolean", builtIns.getBooleanType());
+    public CompileTimeConstant<?> getBooleanValue(
+            @NotNull JetConstantExpression expression, @NotNull JetType expectedType
+    ) {
+        String text = expression.getText();
+        CompileTimeConstant<?> error = checkNativeType(expectedType, "boolean", builtIns.getBooleanType(), expression);
         if (error != null) {
             return error;
         }
@@ -213,20 +248,23 @@ public class CompileTimeConstantResolver {
     }
 
     @NotNull
-    public CompileTimeConstant<?> getCharValue(@NotNull String text, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "character", builtIns.getCharType());
+    public CompileTimeConstant<?> getCharValue(
+            @NotNull JetConstantExpression expression, @NotNull JetType expectedType
+    ) {
+        String text = expression.getText();
+        CompileTimeConstant<?> error = checkNativeType(expectedType, "character", builtIns.getCharType(), expression);
         if (error != null) {
             return error;
         }
 
         // Strip the quotes
         if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
-            return new ErrorValue("Incorrect character literal");
+            return ErrorValue.create(INCORRECT_CHARACTER_LITERAL.on(expression));
         }
         text = text.substring(1, text.length() - 1); // now there're no quotes
 
         if (text.length() == 0) {
-            return new ErrorValue("Empty character literal");            
+            return ErrorValue.create(EMPTY_CHARACTER_LITERAL.on(expression));
         }
 
         if (text.charAt(0) != '\\') {
@@ -234,13 +272,16 @@ public class CompileTimeConstantResolver {
             if (text.length() == 1) {
                 return new CharValue(text.charAt(0));
             }
-            return new ErrorValue("Too many characters in a character literal '" + text + "'");
+            return ErrorValue.create(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
         }
-        return escapedStringToCharValue(text);
+        return escapedStringToCharValue(text, expression);
     }
 
     @NotNull
-    public static CompileTimeConstant<?> escapedStringToCharValue(@NotNull String text) {
+    public static CompileTimeConstant<?> escapedStringToCharValue(
+            @NotNull String text,
+            @NotNull JetElement expression
+    ) {
         assert text.length() > 0 && text.charAt(0) == '\\' : "Only escaped sequences must be passed to this routine: " + text;
 
         // Escape
@@ -248,12 +289,12 @@ public class CompileTimeConstantResolver {
         switch (escape.length()) {
             case 0:
                 // bare slash
-                return illegalEscape(text);
+                return illegalEscape(expression);
             case 1:
                 // one-char escape
                 Character escaped = translateEscape(escape.charAt(0));
                 if (escaped == null) {
-                    return illegalEscape(text);
+                    return illegalEscape(expression);
                 }
                 return new CharValue(escaped);
             case 5:
@@ -268,11 +309,14 @@ public class CompileTimeConstantResolver {
                 }
                 break;
         }
-        return illegalEscape(text);
+        return illegalEscape(expression);
     }
 
-    private static ErrorValue illegalEscape(String text) {
-        return new ErrorValue("Illegal escape: " + text);
+    @NotNull
+    private static CompileTimeConstant<?> illegalEscape(
+            @NotNull JetElement expression
+    ) {
+        return ErrorValue.create(ILLEGAL_ESCAPE.on(expression, expression));
     }
 
     @Nullable
@@ -299,11 +343,13 @@ public class CompileTimeConstantResolver {
     }
 
     @NotNull
-    public CompileTimeConstant<?> getNullValue(@NotNull JetType expectedType) {
+    public CompileTimeConstant<?> getNullValue(
+            @NotNull JetConstantExpression expression, @NotNull JetType expectedType
+    ) {
         if (noExpectedTypeOrUnitOrError(expectedType) || expectedType.isNullable()) {
             return NullValue.NULL;
         }
-        return new ErrorValue("Null can not be a value of a non-null type " + expectedType);
+        return ErrorValue.create(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
     }
 
     private static boolean noExpectedTypeOrUnitOrError(JetType expectedType) {

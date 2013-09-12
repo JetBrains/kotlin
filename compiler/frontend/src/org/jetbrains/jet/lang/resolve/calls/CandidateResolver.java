@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
-import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -441,14 +440,6 @@ public class CandidateResolver {
         JetExpression expression = argument.getArgumentExpression();
         if (expression == null) return;
 
-        if (expression instanceof JetConstantExpression && !KotlinBuiltIns.getInstance().isUnit(context.expectedType)) {
-            CompileTimeConstant<?> value =
-                    new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, context.expectedType);
-            if (value instanceof ErrorValue) {
-                context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
-            }
-            return;
-        }
         DataFlowInfo dataFlowInfoForValueArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(argument);
         ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType).replaceDataFlowInfo(dataFlowInfoForValueArgument);
         DataFlowUtils.checkType(type, expression, newContext);
