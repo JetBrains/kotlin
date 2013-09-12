@@ -6,7 +6,7 @@ package kt234_kt973
 class Pair<A, B>(a: A, b: B)
 
 fun test(t : Pair<Int, Int>) : Int {
-    <!NO_ELSE_IN_WHEN!>when<!> (t) {
+    when (t) {
         Pair(10, 10) -> return 1
     }
     return 0 // unreachable code

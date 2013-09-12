@@ -17,7 +17,7 @@ fun testUnresolved() {
     foo1(<!UNRESOLVED_REFERENCE!>i<!>)
     s.<!UNRESOLVED_REFERENCE!>foo<!>()
 
-    <!NO_ELSE_IN_WHEN!>when<!>(<!UNRESOLVED_REFERENCE!>a<!>) {
+    when(<!UNRESOLVED_REFERENCE!>a<!>) {
         is Int -> <!UNRESOLVED_REFERENCE!>a<!>
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }

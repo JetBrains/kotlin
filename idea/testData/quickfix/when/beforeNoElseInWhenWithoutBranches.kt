@@ -1,6 +1,6 @@
 // "Add else branch" "true"
 fun test() {
     val a = 12
-    wh<caret>en (a) {
+    val x = wh<caret>en (a) {
     }
 }

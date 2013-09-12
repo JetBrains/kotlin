@@ -146,7 +146,7 @@ fun illegalWhenBody(a: Any): Int = <!NO_ELSE_IN_WHEN!>when<!>(a) {
     is String -> <!TYPE_MISMATCH!>a<!>
 }
 fun illegalWhenBlock(a: Any): Int {
-    <!NO_ELSE_IN_WHEN!>when<!>(a) {
+    when(a) {
         is Int -> return a
         is String -> return <!TYPE_MISMATCH!>a<!>
     }
@@ -188,7 +188,7 @@ fun mergeAutocasts(a: Any?) {
   if (a is Int || a is String) {
     a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
-  <!NO_ELSE_IN_WHEN!>when<!> (a) {
+  when (a) {
     is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
   if (a is String && a is Any) {
