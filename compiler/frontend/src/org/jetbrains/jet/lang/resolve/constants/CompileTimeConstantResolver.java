@@ -299,53 +299,6 @@ public class CompileTimeConstantResolver {
     }
 
     @NotNull
-    public CompileTimeConstant<?> getRawStringValue(@NotNull String unescapedText, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType("\"\"\"...\"\"\"", expectedType, "string", builtIns.getStringType());
-        if (error != null) {
-            return error;
-        }
-
-        return new StringValue(unescapedText.substring(3, unescapedText.length() - 3));
-    }
-
-    @NotNull
-    public CompileTimeConstant<?> getEscapedStringValue(@NotNull List<JetStringTemplateEntry> entries, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType("\"...\"", expectedType, "string", builtIns.getStringType());
-        if (error != null) {
-            return error;
-        }
-        final StringBuilder builder = new StringBuilder();
-        final CompileTimeConstant<?>[] result = new CompileTimeConstant<?>[1];
-        for (JetStringTemplateEntry entry : entries) {
-            entry.accept(new JetVisitorVoid() {
-                @Override
-                public void visitStringTemplateEntry(JetStringTemplateEntry entry) {
-                    result[0] =  new ErrorValue("String templates are not allowed in compile-time constants");
-                }
-
-                @Override
-                public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
-                    builder.append(entry.getText());
-                }
-
-                @Override
-                public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
-                    String text = entry.getText();
-                    assert text.length() == 2 && text.charAt(0) == '\\';
-                    Character character = translateEscape(text.charAt(1));
-                    if (character != null) {
-                        builder.append(character);
-                    }
-                }
-            });
-            if (result[0] != null) {
-                return result[0];
-            }
-        }
-        return new StringValue(builder.toString());
-    }
-
-    @NotNull
     public CompileTimeConstant<?> getNullValue(@NotNull JetType expectedType) {
         if (noExpectedType(expectedType) || expectedType.isNullable()) {
             return NullValue.NULL;
@@ -356,5 +309,4 @@ public class CompileTimeConstantResolver {
     private boolean noExpectedType(JetType expectedType) {
         return TypeUtils.noExpectedType(expectedType) || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
     }
-
 }
