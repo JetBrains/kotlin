@@ -30,18 +30,18 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.List;
-
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 public class DataFlowValueFactory {
-    public static final DataFlowValueFactory INSTANCE = new DataFlowValueFactory();
-
     private DataFlowValueFactory() {}
 
     @NotNull
-    public DataFlowValue createDataFlowValue(@NotNull JetExpression expression, @NotNull JetType type, @NotNull BindingContext bindingContext) {
+    public static DataFlowValue createDataFlowValue(
+            @NotNull JetExpression expression,
+            @NotNull JetType type,
+            @NotNull BindingContext bindingContext
+    ) {
         if (expression instanceof JetConstantExpression) {
             JetConstantExpression constantExpression = (JetConstantExpression) expression;
             if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) return DataFlowValue.NULL;
@@ -52,19 +52,13 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    public DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
+    public static DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
         JetType type = receiver.getType();
         return new DataFlowValue(receiver, type, true, getImmanentNullability(type));
     }
 
     @NotNull
-    public DataFlowValue createDataFlowValue(@NotNull VariableDescriptor variableDescriptor) {
-        JetType type = variableDescriptor.getType();
-        return new DataFlowValue(variableDescriptor, type, isStableVariable(variableDescriptor), getImmanentNullability(type));
-    }
-
-    @NotNull
-    public DataFlowValue createDataFlowValue(@NotNull ReceiverValue receiverValue, @NotNull BindingContext bindingContext) {
+    public static DataFlowValue createDataFlowValue(@NotNull ReceiverValue receiverValue, @NotNull BindingContext bindingContext) {
         return receiverValue.accept(new ReceiverValueVisitor<DataFlowValue, BindingContext>() {
             @Override
             public DataFlowValue visitNoReceiver(ReceiverValue noReceiver, BindingContext data) {
@@ -105,7 +99,8 @@ public class DataFlowValueFactory {
         }, bindingContext);
     }
 
-    private Nullability getImmanentNullability(JetType type) {
+    @NotNull
+    private static Nullability getImmanentNullability(@NotNull JetType type) {
         return type.isNullable() || TypeUtils.hasNullableSuperType(type) ? Nullability.UNKNOWN : Nullability.NOT_NULL;
     }
 

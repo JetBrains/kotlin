@@ -35,8 +35,9 @@ import java.util.Collections;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.*;
-import static org.jetbrains.jet.lang.types.TypeUtils.*;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.isIntersectionEmpty;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.newWritableScopeImpl;
 
 public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
@@ -52,7 +53,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         JetType knownType = typeInfo.getType();
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
         if (expression.getTypeRef() != null) {
-            DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext());
+            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType,
+                                                                                   context.trace.getBindingContext());
             DataFlowInfo conditionInfo = checkTypeForIs(context, knownType, expression.getTypeRef(), dataFlowValue).thenInfo;
             DataFlowInfo newDataFlowInfo = conditionInfo.and(dataFlowInfo);
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
@@ -80,7 +82,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
         DataFlowValue subjectDataFlowValue = subjectExpression != null
-                ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext())
+                ? DataFlowValueFactory.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext())
                 : DataFlowValue.NULL;
 
         // TODO : exhaustive patterns
@@ -259,7 +261,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         checkTypeCompatibility(context, type, subjectType, expression);
         DataFlowValue expressionDataFlowValue =
-                DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext());
+                DataFlowValueFactory.createDataFlowValue(expression, type, context.trace.getBindingContext());
         DataFlowInfos result = noChange(context);
         result = new DataFlowInfos(
                 result.thenInfo.equate(subjectDataFlowValue, expressionDataFlowValue),

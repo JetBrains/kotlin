@@ -69,8 +69,8 @@ public class AutoCastUtils {
 
             @Override
             public List<ReceiverValue> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
-                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(), receiver.getType(),
-                                                                                                bindingContext);
+                DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver.getExpression(), receiver.getType(),
+                                                                                       bindingContext);
                 List<ReceiverValue> result = Lists.newArrayList();
                 for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
                     result.add(new AutoCastReceiver(receiver, possibleType, dataFlowValue.isStableIdentifier()));
@@ -83,7 +83,7 @@ public class AutoCastUtils {
     private static List<ReceiverValue> castThis(@NotNull DataFlowInfo dataFlowInfo, @NotNull ThisReceiver receiver) {
         assert receiver.exists();
         List<ReceiverValue> result = Lists.newArrayList();
-        for (JetType possibleType : dataFlowInfo.getPossibleTypes(DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver))) {
+        for (JetType possibleType : dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiver))) {
             result.add(new AutoCastReceiver(receiver, possibleType, true));
         }
         return result;
