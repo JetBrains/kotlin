@@ -24,6 +24,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -430,6 +431,21 @@ public class PositioningStrategies {
                 return markElement(valueParameterList);
             }
             return markNode(functionLiteral.getOpenBraceNode());
+        }
+    };
+
+    public static final PositioningStrategy<JetElement> CUT_CHAR_QUOTES = new PositioningStrategy<JetElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetElement element) {
+            if (element instanceof JetConstantExpression) {
+                if (element.getNode().getElementType() == JetNodeTypes.CHARACTER_CONSTANT) {
+                    TextRange elementTextRange = element.getTextRange();
+                    return Collections.singletonList(
+                            TextRange.create(elementTextRange.getStartOffset() + 1, elementTextRange.getEndOffset() - 1));
+                }
+            }
+            return super.mark(element);
         }
     };
 
