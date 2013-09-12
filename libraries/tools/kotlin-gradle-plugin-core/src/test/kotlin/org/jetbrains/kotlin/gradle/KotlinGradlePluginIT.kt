@@ -20,6 +20,7 @@ class BasicKotlinGradleIT {
         workingDir = Files.createTempDir()
         workingDir.mkdirs()
         copyRecursively(File("src/test/resources/testProject/alfa"), workingDir)
+        copyRecursively(File("src/test/resources/testProject/beta"), workingDir)
     }
 
 
@@ -86,6 +87,37 @@ class BasicKotlinGradleIT {
         assertTrue(up2dateBuildOutput.contains(":compileTestKotlin UP-TO-DATE"), "Should contain ':compileTestKotlin UP-TO-DATE'")
         assertTrue(up2dateBuildOutput.contains(":compileDeployKotlin UP-TO-DATE"), "Should contain ':compileDeployKotlin UP-TO-DATE'")
         assertTrue(up2dateBuildOutput.contains(":compileJava UP-TO-DATE"), "Should contain ':compileJava UP-TO-DATE'")
+    }
+
+    Test fun testKotlinCustomDirectory() {
+            val projectDir = File(workingDir, "beta")
+
+            val pathToKotlinPlugin = "-PpathToKotlinPlugin=${File("local-repo").getAbsolutePath()}"
+            val version = "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT"
+            val cmd = if (SystemInfo.isWindows)
+                listOf("cmd", "/C", "gradlew.bat", "build", pathToKotlinPlugin, version, "--no-daemon", "--debug")
+            else
+                listOf("/bin/bash", "./gradlew", "build", pathToKotlinPlugin, version,  "--no-daemon", "--debug")
+
+            val builder = ProcessBuilder(cmd)
+            builder.directory(projectDir)
+            builder.redirectErrorStream(true)
+            val process = builder.start()
+
+            val s = Scanner(process.getInputStream()!!)
+            val text = StringBuilder()
+            while (s.hasNextLine()) {
+                text append s.nextLine()
+                text append "\n"
+            }
+            s.close()
+
+            val result = process.waitFor()
+            val buildOutput = text.toString()
+
+            println(buildOutput)
+
+            assertEquals(result, 0)
     }
 
 

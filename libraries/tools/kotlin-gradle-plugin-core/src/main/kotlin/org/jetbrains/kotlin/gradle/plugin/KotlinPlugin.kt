@@ -61,9 +61,10 @@ open class KotlinPlugin: Plugin<Project> {
                                            javaPluginConvention: JavaPluginConvention) {
         javaPluginConvention.getSourceSets()?.all(object : Action<SourceSet> {
             override fun execute(sourceSet: SourceSet?) {
-                if (sourceSet is ExtensionAware) {
+                if (sourceSet is HasConvention) {
                     val sourceSetName = sourceSet.getName()
-                    val kotlinSourceSet = sourceSet.getExtensions().create("kotlin", javaClass<KotlinSourceSetImpl>(), sourceSetName, project.getFileResolver())!!
+                    val kotlinSourceSet = KotlinSourceSetImpl( sourceSetName, project.getFileResolver())
+                    sourceSet.getConvention().getPlugins().put("kotlin", kotlinSourceSet)
 
                     val kotlinDirSet = kotlinSourceSet.getKotlin()
                     kotlinDirSet.srcDir(project.file("src/${sourceSetName}/kotlin"))
