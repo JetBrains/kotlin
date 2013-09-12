@@ -59,44 +59,26 @@ public class DataFlowValueFactory {
 
     @NotNull
     public static DataFlowValue createDataFlowValue(@NotNull ReceiverValue receiverValue, @NotNull BindingContext bindingContext) {
-        return receiverValue.accept(new ReceiverValueVisitor<DataFlowValue, BindingContext>() {
-            @Override
-            public DataFlowValue visitNoReceiver(ReceiverValue noReceiver, BindingContext data) {
-                throw new IllegalArgumentException("No DataFlowValue exists for ReceiverValue.NO_RECEIVER");
-            }
-
-            @Override
-            public DataFlowValue visitExtensionReceiver(ExtensionReceiver receiver, BindingContext data) {
-                return createDataFlowValue(receiver);
-            }
-
-            @Override
-            public DataFlowValue visitExpressionReceiver(ExpressionReceiver receiver, BindingContext bindingContext) {
-                return createDataFlowValue(receiver.getExpression(), receiver.getType(), bindingContext);
-            }
-
-            @Override
-            public DataFlowValue visitClassReceiver(ClassReceiver receiver, BindingContext data) {
-                return createDataFlowValue(receiver);
-            }
-
-            @Override
-            public DataFlowValue visitTransientReceiver(TransientReceiver receiver, BindingContext data) {
-                return createTransientDataFlowValue(receiver);
-            }
-
-            @Override
-            public DataFlowValue visitScriptReceiver(ScriptReceiver receiver, BindingContext data) {
-                return createTransientDataFlowValue(receiver);
-            }
-
-            @NotNull
-            private DataFlowValue createTransientDataFlowValue(ReceiverValue receiver) {
-                JetType type = receiver.getType();
-                boolean nullable = type.isNullable() || TypeUtils.hasNullableSuperType(type);
-                return new DataFlowValue(receiver, type, nullable, Nullability.NOT_NULL);
-            }
-        }, bindingContext);
+        if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
+            JetType type = receiverValue.getType();
+            boolean nullable = type.isNullable() || TypeUtils.hasNullableSuperType(type);
+            return new DataFlowValue(receiverValue, type, nullable, Nullability.NOT_NULL);
+        }
+        else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
+            return createDataFlowValue((ThisReceiver) receiverValue);
+        }
+        else if (receiverValue instanceof ExpressionReceiver) {
+            return createDataFlowValue(((ExpressionReceiver) receiverValue).getExpression(), receiverValue.getType(), bindingContext);
+        }
+        else if (receiverValue instanceof AutoCastReceiver) {
+            return createDataFlowValue(((AutoCastReceiver) receiverValue).getOriginal(), bindingContext);
+        }
+        else if (receiverValue == ReceiverValue.NO_RECEIVER) {
+            throw new IllegalArgumentException("No DataFlowValue exists for ReceiverValue.NO_RECEIVER");
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue.getClass().getName());
+        }
     }
 
     @NotNull
@@ -203,46 +185,19 @@ public class DataFlowValueFactory {
     }
 
     @Nullable
-    private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable final JetExpression expression) {
-        return receiverValue.accept(new ReceiverValueVisitor<IdentifierInfo, Void>() {
-
-            @Override
-            public IdentifierInfo visitNoReceiver(ReceiverValue noReceiver, Void data) {
-                return null;
-            }
-
-            @Override
-            public IdentifierInfo visitTransientReceiver(TransientReceiver receiver, Void data) {
-                assert false: "Transient receiver is implicit for an explicit expression: " + expression + ". Receiver: " + receiver;
-                return null;
-            }
-
-            @Override
-            public IdentifierInfo visitExtensionReceiver(ExtensionReceiver receiver, Void data) {
-                return getIdForThisReceiver(receiver);
-            }
-
-            @Override
-            public IdentifierInfo visitExpressionReceiver(ExpressionReceiver receiver, Void data) {
-                // there is an explicit "this" expression and it was analyzed earlier
-                return null;
-            }
-
-            @Override
-            public IdentifierInfo visitClassReceiver(ClassReceiver receiver, Void data) {
-                return getIdForThisReceiver(receiver);
-            }
-
-            @Override
-            public IdentifierInfo visitScriptReceiver(ScriptReceiver receiver, Void data) {
-                return getIdForThisReceiver(receiver);
-            }
-        }, null);
-    }
-
-    @NotNull
-    private static IdentifierInfo getIdForThisReceiver(@NotNull ThisReceiver thisReceiver) {
-        return getIdForThisReceiver(thisReceiver.getDeclarationDescriptor());
+    private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable JetExpression expression) {
+        if (receiverValue instanceof ThisReceiver) {
+            return getIdForThisReceiver(((ThisReceiver) receiverValue).getDeclarationDescriptor());
+        }
+        else if (receiverValue instanceof AutoCastReceiver) {
+            return getIdForImplicitReceiver(((AutoCastReceiver) receiverValue).getOriginal(), expression);
+        }
+        else {
+            assert !(receiverValue instanceof TransientReceiver)
+                    : "Transient receiver is implicit for an explicit expression: " + expression + ". Receiver: " + receiverValue;
+            // For ExpressionReceiver there is an explicit "this" expression and it was analyzed earlier
+            return null;
+        }
     }
 
     @NotNull

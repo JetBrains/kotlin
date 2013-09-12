@@ -46,11 +46,6 @@ public class ClassReceiver implements ThisReceiver {
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
-        return visitor.visitClassReceiver(this, data);
-    }
-
-    @Override
     public String toString() {
         return "Class{" + getType() + "}";
     }

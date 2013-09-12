@@ -48,9 +48,4 @@ public class ScriptReceiver implements ThisReceiver {
     public boolean exists() {
         return true;
     }
-
-    @Override
-    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
-        return visitor.visitScriptReceiver(this, data);
-    }
 }

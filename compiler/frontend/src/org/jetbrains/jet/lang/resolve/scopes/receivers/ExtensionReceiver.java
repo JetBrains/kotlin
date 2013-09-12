@@ -37,11 +37,6 @@ public class ExtensionReceiver extends AbstractReceiverValue implements ThisRece
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
-        return visitor.visitExtensionReceiver(this, data);
-    }
-
-    @Override
     public String toString() {
         return getType() + "Ext{" + descriptor + "}";
     }

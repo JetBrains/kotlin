@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 
 public interface ReceiverValue {
-
     ReceiverValue NO_RECEIVER = new ReceiverValue() {
         @NotNull
         @Override
@@ -34,11 +33,6 @@ public interface ReceiverValue {
         }
 
         @Override
-        public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
-            return visitor.visitNoReceiver(this, data);
-        }
-
-        @Override
         public String toString() {
             return "NO_RECEIVER";
         }
@@ -48,6 +42,4 @@ public interface ReceiverValue {
     JetType getType();
 
     boolean exists();
-
-    <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data);
 }
