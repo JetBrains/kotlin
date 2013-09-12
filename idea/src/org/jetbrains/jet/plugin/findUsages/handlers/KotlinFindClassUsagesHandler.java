@@ -67,39 +67,41 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
 
     @Override
     protected boolean searchReferences(
-            @NotNull PsiElement element, @NotNull Processor<UsageInfo> processor, @NotNull FindUsagesOptions options
+            @NotNull final PsiElement element, @NotNull final Processor<UsageInfo> processor, @NotNull final FindUsagesOptions options
     ) {
-        KotlinClassFindUsagesOptions kotlinOptions = (KotlinClassFindUsagesOptions)options;
-        JetClass jetClass = (JetClass) element;
+        return ApplicationManager.getApplication().runReadAction(
+                new Computable<Boolean>() {
+                    @Override
+                    public Boolean compute() {
+                        KotlinClassFindUsagesOptions kotlinOptions = (KotlinClassFindUsagesOptions)options;
+                        JetClass jetClass = (JetClass) element;
 
-        PsiClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
-            @Override
-            public PsiClass compute() {
-                return LightClassUtil.getPsiClass(getElement());
-            }
-        });
-        if (lightClass == null) return true;
+                        PsiClass lightClass = LightClassUtil.getPsiClass(getElement());
+                        if (lightClass == null) return true;
 
-        if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
-            Collection<PsiReference> references = ReferencesSearch.search(
-                    new ReferencesSearch.SearchParameters(jetClass, kotlinOptions.searchScope, false)
-            ).findAll();
-            for (PsiReference ref : references) {
-                boolean constructorUsage = isConstructorUsage(ref.getElement(), jetClass);
-                if ((constructorUsage && !kotlinOptions.searchConstructorUsages)
-                    || (!constructorUsage && !kotlinOptions.isUsages)) continue;
+                        if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
+                            Collection<PsiReference> references = ReferencesSearch.search(
+                                    new ReferencesSearch.SearchParameters(jetClass, kotlinOptions.searchScope, false)
+                            ).findAll();
+                            for (PsiReference ref : references) {
+                                boolean constructorUsage = isConstructorUsage(ref.getElement(), jetClass);
+                                if ((constructorUsage && !kotlinOptions.searchConstructorUsages)
+                                    || (!constructorUsage && !kotlinOptions.isUsages)) continue;
 
-                TextRange rangeInElement = ref.getRangeInElement();
-                processor.process(
-                        new UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false)
-                );
-            }
-        }
+                                TextRange rangeInElement = ref.getRangeInElement();
+                                processor.process(
+                                        new UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false)
+                                );
+                            }
+                        }
 
-        if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
-        if (!processDeclarationsUsages(jetClass, processor, kotlinOptions)) return false;
+                        if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
+                        if (!processDeclarationsUsages(jetClass, processor, kotlinOptions)) return false;
 
-        return true;
+                        return true;
+                    }
+                }
+        );
     }
 
     private static boolean processDeclarationsUsages(
@@ -123,7 +125,7 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
         return true;
     }
 
-    private static ClassInheritorsSearch.InheritanceChecker INHERITANCE_CHECKER = new ClassInheritorsSearch.InheritanceChecker() {
+    private static final ClassInheritorsSearch.InheritanceChecker INHERITANCE_CHECKER = new ClassInheritorsSearch.InheritanceChecker() {
         @Override
         public boolean checkInheritance(@NotNull PsiClass subClass, @NotNull PsiClass parentClass) {
             return true;
