@@ -796,7 +796,6 @@ public class JetControlFlowProcessor {
             Label doneLabel = builder.createUnboundLabel();
 
             Label nextLabel = null;
-            Collection<Label> allowDeadLabels = Lists.newArrayList();
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
                 JetWhenEntry whenEntry = iterator.next();
 
