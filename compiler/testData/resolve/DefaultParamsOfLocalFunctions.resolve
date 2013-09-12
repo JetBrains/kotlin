@@ -1,0 +1,23 @@
+package m
+
+~zzz~annotation class zzz
+
+~y~val y = 23
+
+~bar~fun bar() = 354
+~baz~fun baz(i: Int) = i
+
+fun test() {
+    ~x~val x = 2
+
+    [`zzz`zzz] fun local(
+            `zzz`zzz i: Int = `x`x,
+            j: Int = 3,
+            s: String = "$`x`x",
+            k: Int = `y`y,
+            l: Int = `bar`bar(),
+            m: Int = `baz`baz(`x`x)
+    ) {
+
+    }
+}

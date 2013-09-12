@@ -392,8 +392,8 @@ public class BodyResolver {
                     parameterScope.addVariableDescriptor(valueParameterDescriptor);
                 }
                 parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
-                resolveValueParameter(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
-                                      parameterScope);
+                expressionTypingServices.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
+                                       parameterScope, context.getOuterDataFlowInfo(), trace);
             }
         }
     }
@@ -682,44 +682,9 @@ public class BodyResolver {
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
-        resolveValueParameter(valueParameters, valueParameterDescriptors, functionInnerScope);
+        expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, functionInnerScope, context.getOuterDataFlowInfo(), trace);
 
         assert functionDescriptor.getReturnType() != null;
-    }
-
-    private void resolveValueParameter(
-            @NotNull List<JetParameter> valueParameters,
-            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
-            @NotNull JetScope declaringScope
-    ) {
-        for (int i = 0; i < valueParameters.size(); i++) {
-            ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
-            JetParameter jetParameter = valueParameters.get(i);
-
-            resolveAnnotationArguments(declaringScope, jetParameter);
-
-            resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter);
-        }
-    }
-
-    private void resolveDefaultValue(
-            @NotNull JetScope declaringScope,
-            @NotNull ValueParameterDescriptor valueParameterDescriptor,
-            @NotNull JetParameter jetParameter
-    ) {
-        if (valueParameterDescriptor.hasDefaultValue()) {
-            JetExpression defaultValue = jetParameter.getDefaultValue();
-            if (defaultValue != null) {
-                expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), context.getOuterDataFlowInfo(), trace);
-                if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
-                    CompileTimeConstant<?> constant =
-                            annotationResolver.resolveExpressionToCompileTimeValue(defaultValue, valueParameterDescriptor.getType(), trace);
-                    if (constant != null) {
-                        trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
-                    }
-                }
-            }
-        }
     }
 
     private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {

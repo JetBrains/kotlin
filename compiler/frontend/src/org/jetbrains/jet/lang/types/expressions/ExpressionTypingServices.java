@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -34,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -359,5 +361,44 @@ public class ExpressionTypingServices {
                 return null;
             }
         });
+    }
+
+    public void resolveValueParameters(
+            @NotNull List<JetParameter> valueParameters,
+            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
+            @NotNull JetScope declaringScope,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
+        for (int i = 0; i < valueParameters.size(); i++) {
+            ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
+            JetParameter jetParameter = valueParameters.get(i);
+
+            annotationResolver.resolveAnnotationsArguments(declaringScope, jetParameter.getModifierList(), trace);
+
+            resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter, dataFlowInfo, trace);
+        }
+    }
+
+    private void resolveDefaultValue(
+            @NotNull JetScope declaringScope,
+            @NotNull ValueParameterDescriptor valueParameterDescriptor,
+            @NotNull JetParameter jetParameter,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
+        if (valueParameterDescriptor.hasDefaultValue()) {
+            JetExpression defaultValue = jetParameter.getDefaultValue();
+            if (defaultValue != null) {
+                getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), dataFlowInfo, trace);
+                if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
+                    CompileTimeConstant<?> constant =
+                            annotationResolver.resolveExpressionToCompileTimeValue(defaultValue, valueParameterDescriptor.getType(), trace);
+                    if (constant != null) {
+                        trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
+                    }
+                }
+            }
+        }
     }
 }

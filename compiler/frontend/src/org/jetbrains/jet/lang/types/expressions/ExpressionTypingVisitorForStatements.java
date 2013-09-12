@@ -171,6 +171,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         scope.addFunctionDescriptor(functionDescriptor);
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         context.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
+
+        context.expressionTypingServices.resolveValueParameters(
+                function.getValueParameters(), functionDescriptor.getValueParameters(), scope, context.dataFlowInfo, context.trace);
+
         ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(function);
         return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
     }
