@@ -185,7 +185,7 @@ public class CallResolver {
             JetValueArgumentList valueArgumentList = context.call.getValueArgumentList();
             PsiElement reportAbsenceOn = valueArgumentList == null ? context.call.getCallElement() : valueArgumentList;
             if (calleeExpression instanceof JetConstructorCalleeExpression) {
-                assert !context.call.getExplicitReceiver().exists();
+                assert context.call.getExplicitReceiver() == null;
 
                 JetConstructorCalleeExpression expression = (JetConstructorCalleeExpression) calleeExpression;
                 functionReference = expression.getConstructorReferenceExpression();

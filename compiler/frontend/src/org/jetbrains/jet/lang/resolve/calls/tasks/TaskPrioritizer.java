@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class TaskPrioritizer {
@@ -63,7 +63,7 @@ public class TaskPrioritizer {
     }
 
     @Nullable
-    public static JetSuperExpression getReceiverSuper(@NotNull ReceiverValue receiver) {
+    public static JetSuperExpression getReceiverSuper(@Nullable ReceiverValue receiver) {
         if (receiver instanceof ExpressionReceiver) {
             ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiver;
             JetExpression expression = expressionReceiver.getExpression();
@@ -83,10 +83,10 @@ public class TaskPrioritizer {
     ) {
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
         JetScope scope;
-        if (explicitReceiver.exists() && explicitReceiver.getType() instanceof NamespaceType) {
+        if (explicitReceiver != null && explicitReceiver.getType() instanceof NamespaceType) {
             // Receiver is a namespace
             scope = explicitReceiver.getType().getMemberScope();
-            explicitReceiver = NO_RECEIVER;
+            explicitReceiver = null;
         }
         else {
             scope = context.scope;
@@ -99,18 +99,18 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void doComputeTasks(
-            @NotNull ReceiverValue receiver,
+            @Nullable ReceiverValue receiver,
             @NotNull TaskPrioritizerContext<D, F> c
     ) {
         ProgressIndicatorProvider.checkCanceled();
 
-        boolean resolveInvoke = c.context.call.getThisObject().exists();
+        boolean resolveInvoke = c.context.call.getThisObject() != null;
         if (resolveInvoke) {
             addCandidatesForInvoke(receiver, c);
             return;
         }
         List<ReceiverValue> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope);
-        if (receiver.exists()) {
+        if (receiver != null) {
             addCandidatesForExplicitReceiver(receiver, implicitReceivers, c, /*resolveInvoke=*/false);
             return;
         }
@@ -197,7 +197,7 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForInvoke(
-            @NotNull ReceiverValue explicitReceiver,
+            @Nullable ReceiverValue explicitReceiver,
             @NotNull TaskPrioritizerContext<D, F> c
     ) {
         List<ReceiverValue> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope);
@@ -205,14 +205,14 @@ public class TaskPrioritizer {
         // For 'a.foo()' where foo has function type,
         // a is explicitReceiver, foo is variableReceiver.
         ReceiverValue variableReceiver = c.context.call.getThisObject();
-        assert variableReceiver.exists() : "'Invoke' call hasn't got variable receiver";
+        assert variableReceiver != null : "'Invoke' call hasn't got variable receiver";
 
         // For invocation a.foo() explicit receiver 'a'
         // can be a receiver for 'foo' variable
         // or for 'invoke' function.
 
         // (1) a.foo + foo.invoke()
-        if (!explicitReceiver.exists()) {
+        if (explicitReceiver == null) {
             addCandidatesForExplicitReceiver(variableReceiver, implicitReceivers, c, /*resolveInvoke=*/true);
         }
 
@@ -222,7 +222,7 @@ public class TaskPrioritizer {
         //trait A
         //trait Foo { fun A.invoke() }
 
-        if (explicitReceiver.exists()) {
+        if (explicitReceiver != null) {
             //a.foo()
             addCandidatesWhenInvokeIsMemberExtensionToExplicitReceiver(variableReceiver, explicitReceiver, c);
             return;
@@ -292,13 +292,13 @@ public class TaskPrioritizer {
                 ResolutionCandidate<D> candidate = ResolutionCandidate.create(descriptor);
                 candidate.setReceiverArgument(receiverParameter);
                 candidate.setExplicitReceiverKind(
-                        receiverParameter.exists() ? ExplicitReceiverKind.RECEIVER_ARGUMENT : ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
+                        receiverParameter != null ? ExplicitReceiverKind.RECEIVER_ARGUMENT : ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
                 if (setImpliedThis(scope, candidate)) {
                     result.add(candidate);
                 }
             }
         }
-        if (receiverParameters.size() == 1 && !receiverParameters.iterator().next().exists()) {
+        if (receiverParameters.size() == 1 && receiverParameters.iterator().next() == null) {
             for (D descriptor : descriptors) {
                 if (descriptor.getExpectedThisObject() != null && descriptor.getReceiverParameter() == null) {
                     DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();

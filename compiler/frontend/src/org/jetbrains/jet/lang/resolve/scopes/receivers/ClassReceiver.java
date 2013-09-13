@@ -28,11 +28,6 @@ public class ClassReceiver implements ThisReceiver {
         this.classDescriptor = classDescriptor;
     }
 
-    @Override
-    public boolean exists() {
-        return true;
-    }
-
     @NotNull
     @Override
     public JetType getType() {

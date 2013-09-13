@@ -276,29 +276,17 @@ public class ExpressionTypingUtils {
             return false;
         }
 
-        if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
+        if (checkReceiverResolution(type, callableDescriptor)) return true;
         if (type.isNullable()) {
             JetType notNullableType = TypeUtils.makeNotNullable(type);
-            if (checkReceiverResolution(receiverArgument, notNullableType, callableDescriptor)) return true;
+            if (checkReceiverResolution(notNullableType, callableDescriptor)) return true;
         }
         return false;
     }
 
-    private static boolean checkReceiverResolution (
-            @NotNull ReceiverValue receiverArgument,
-            @NotNull JetType receiverType,
-            @NotNull CallableDescriptor callableDescriptor
-    ) {
+    private static boolean checkReceiverResolution(@NotNull JetType receiverType, @NotNull CallableDescriptor callableDescriptor) {
         ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
-
-        if (!receiverArgument.exists() && receiverParameter == null) {
-            // Both receivers do not exist
-            return true;
-        }
-
-        if (!(receiverArgument.exists() && receiverParameter != null)) {
-            return false;
-        }
+        if (receiverParameter == null) return false;
 
         Set<Name> typeNamesInReceiver = collectUsedTypeNames(receiverParameter.getType());
 
@@ -331,7 +319,7 @@ public class ExpressionTypingUtils {
     @NotNull
     public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
             @NotNull ExpressionTypingContext context,
-            @NotNull ReceiverValue receiver,
+            @Nullable ReceiverValue receiver,
             @NotNull Name name,
             @NotNull JetType... argumentTypes
     ) {
@@ -368,7 +356,7 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static Pair<Call, OverloadResolutionResults<FunctionDescriptor>> makeAndResolveFakeCall(
-            @NotNull ReceiverValue receiver,
+            @Nullable ReceiverValue receiver,
             @NotNull ExpressionTypingContext context,
             @NotNull List<JetExpression> valueArguments,
             @NotNull Name name

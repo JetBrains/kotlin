@@ -30,10 +30,10 @@ public interface Call {
     @Nullable
     ASTNode getCallOperationNode();
 
-    @NotNull
+    @Nullable
     ReceiverValue getExplicitReceiver();
 
-    @NotNull
+    @Nullable
     ReceiverValue getThisObject();
 
     @Nullable

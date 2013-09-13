@@ -338,16 +338,20 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         builder.append(">");
     }
 
-    private static void renderReceiver(ReceiverValue receiverArgument, ReceiverValue thisObject, StringBuilder builder) {
-        if (receiverArgument.exists()) {
+    private static void renderReceiver(
+            @Nullable ReceiverValue receiverArgument,
+            @Nullable ReceiverValue thisObject,
+            @NotNull StringBuilder builder
+    ) {
+        if (receiverArgument != null) {
             builder.append("/").append(receiverArgument);
         }
 
-        if (thisObject.exists()) {
+        if (thisObject != null) {
             builder.append("/this=").append(thisObject);
         }
 
-        if (thisObject.exists() || receiverArgument.exists()) {
+        if (thisObject != null || receiverArgument != null) {
             builder.append("/.");
         }
     }

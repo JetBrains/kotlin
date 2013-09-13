@@ -20,26 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 
 public interface ReceiverValue {
-    ReceiverValue NO_RECEIVER = new ReceiverValue() {
-        @NotNull
-        @Override
-        public JetType getType() {
-            throw new UnsupportedOperationException("NO_RECEIVER.getType()");
-        }
-
-        @Override
-        public boolean exists() {
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "NO_RECEIVER";
-        }
-    };
+    // This field exists for better readability of the client code
+    ReceiverValue NO_RECEIVER = null;
 
     @NotNull
     JetType getType();
-
-    boolean exists();
 }

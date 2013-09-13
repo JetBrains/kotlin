@@ -65,7 +65,7 @@ public final class CallParametersResolver {
         this.descriptor = descriptor;
         this.context = context;
         this.resolvedCall = call;
-        this.isExtensionCall = resolvedCall.getReceiverArgument().exists();
+        this.isExtensionCall = resolvedCall.getReceiverArgument() != null;
     }
 
     @NotNull
@@ -95,7 +95,7 @@ public final class CallParametersResolver {
         }
 
         ReceiverValue thisObject = resolvedCall.getThisObject();
-        if (!thisObject.exists()) {
+        if (thisObject == null) {
             return null;
         }
 
@@ -107,7 +107,7 @@ public final class CallParametersResolver {
             return context.getAliasForDescriptor(getDeclarationDescriptorForReceiver(thisObject));
         }
 
-        return resolvedCall.getReceiverArgument().exists() && resolvedCall.getExplicitReceiverKind().isThisObject() ? JsLiteral.THIS : null;
+        return resolvedCall.getReceiverArgument() != null && resolvedCall.getExplicitReceiverKind().isThisObject() ? JsLiteral.THIS : null;
     }
 
     @NotNull
@@ -115,6 +115,8 @@ public final class CallParametersResolver {
         if (qualifier != null) {
             return qualifier;
         }
-        return context.getThisObject(((ThisReceiver) resolvedCall.getReceiverArgument()).getDeclarationDescriptor());
+        ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
+        assert receiverArgument instanceof ThisReceiver : "Receiver argument should exist: " + receiverArgument;
+        return context.getThisObject(((ThisReceiver) receiverArgument).getDeclarationDescriptor());
     }
 }

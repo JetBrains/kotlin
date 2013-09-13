@@ -200,13 +200,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     }
 
     @Override
-    @NotNull
+    @Nullable
     public ReceiverValue getReceiverArgument() {
         return receiverArgument;
     }
 
     @Override
-    @NotNull
+    @Nullable
     public ReceiverValue getThisObject() {
         return thisObject;
     }

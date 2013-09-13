@@ -179,13 +179,13 @@ public class ControlStructureTypingUtils {
                 return expression.getNode();
             }
 
-            @NotNull
+            @Nullable
             @Override
             public ReceiverValue getExplicitReceiver() {
                 return ReceiverValue.NO_RECEIVER;
             }
 
-            @NotNull
+            @Nullable
             @Override
             public ReceiverValue getThisObject() {
                 return ReceiverValue.NO_RECEIVER;

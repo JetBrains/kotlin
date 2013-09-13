@@ -31,9 +31,4 @@ public abstract class AbstractReceiverValue implements ReceiverValue {
     public JetType getType() {
         return receiverType;
     }
-
-    @Override
-    public boolean exists() {
-        return true;
-    }
 }

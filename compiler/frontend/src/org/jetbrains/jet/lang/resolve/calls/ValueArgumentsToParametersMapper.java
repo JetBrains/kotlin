@@ -25,14 +25,19 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
@@ -198,7 +203,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             reportUnmappedParameters();
             checkReceiverArgument();
 
-            assert (candidateCall.getThisObject().exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
+            assert (candidateCall.getThisObject() != null) == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null)
                     : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
         }
 
@@ -263,11 +268,11 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
             ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
             ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
-            if (receiverParameter != null &&!receiverArgument.exists()) {
+            if (receiverParameter != null && receiverArgument == null) {
                 tracing.missingReceiver(candidateCall.getTrace(), receiverParameter);
                 setStatus(ERROR);
             }
-            if (receiverParameter == null && receiverArgument.exists()) {
+            else if (receiverParameter == null && receiverArgument != null) {
                 tracing.noReceiverAllowed(candidateCall.getTrace());
                 if (call.getCalleeExpression() instanceof JetSimpleNameExpression) {
                     setStatus(STRONG_ERROR);

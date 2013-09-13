@@ -200,7 +200,7 @@ public class CallExpressionResolver {
     }
 
     @Nullable
-    private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+    private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @Nullable ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull boolean[] result
     ) {
         TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
@@ -218,9 +218,7 @@ public class CallExpressionResolver {
             return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
         }
 
-        ResolutionContext newContext = receiver.exists()
-                                             ? context.replaceScope(receiver.getType().getMemberScope())
-                                             : context;
+        ResolutionContext newContext = receiver == null ? context : context.replaceScope(receiver.getType().getMemberScope());
         TemporaryTraceAndCache temporaryForNamespaceOrClassObject = TemporaryTraceAndCache.create(
                 context, "trace to resolve as namespace or class object", nameExpression);
         JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceTraceAndCache(temporaryForNamespaceOrClassObject));
@@ -241,7 +239,7 @@ public class CallExpressionResolver {
     }
 
     @NotNull
-    public JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+    public JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @Nullable ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
     ) {
         boolean[] result = new boolean[1];
@@ -278,7 +276,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(
-            @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @NotNull JetCallExpression callExpression, @Nullable ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
@@ -291,7 +289,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @NotNull JetCallExpression callExpression, @Nullable ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
     ) {
         boolean[] result = new boolean[1];
@@ -335,8 +333,10 @@ public class CallExpressionResolver {
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
-    private void checkSuper(@NotNull ReceiverValue receiverValue, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
-            @NotNull BindingTrace trace, @NotNull JetExpression expression) {
+    private static void checkSuper(
+            @Nullable ReceiverValue receiverValue, @NotNull OverloadResolutionResults<?> results,
+            @NotNull BindingTrace trace, @NotNull JetExpression expression
+    ) {
         if (!results.isSingleResult()) return;
         if (!(receiverValue instanceof ExpressionReceiver)) return;
         JetExpression receiver = ((ExpressionReceiver) receiverValue).getExpression();

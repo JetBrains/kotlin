@@ -43,9 +43,4 @@ public class ScriptReceiver implements ThisReceiver {
         // not sure
         return KotlinBuiltIns.getInstance().getAnyType();
     }
-
-    @Override
-    public boolean exists() {
-        return true;
-    }
 }

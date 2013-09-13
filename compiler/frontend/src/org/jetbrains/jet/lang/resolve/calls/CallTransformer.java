@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -101,7 +102,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             assert candidate.getDescriptor() instanceof VariableDescriptor;
 
-            boolean hasReceiver = candidate.getReceiverArgument().exists();
+            boolean hasReceiver = candidate.getReceiverArgument() != null;
             Call variableCall = stripCallArguments(task);
             if (!hasReceiver) {
                 CallCandidateResolutionContext<CallableDescriptor> context = CallCandidateResolutionContext.create(
@@ -165,7 +166,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         private Call stripReceiver(@NotNull Call variableCall) {
             return new DelegatingCall(variableCall) {
-                @NotNull
+                @Nullable
                 @Override
                 public ReceiverValue getExplicitReceiver() {
                     return ReceiverValue.NO_RECEIVER;
@@ -224,7 +225,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             this.receiverFromVariable = new ExpressionReceiver(task.reference, returnType);
             this.invokeExpression = (JetSimpleNameExpression) JetPsiFactory.createExpression(task.call.getCallElement().getProject(), "invoke");
         }
-        @NotNull
+        @Nullable
         @Override
         public ReceiverValue getExplicitReceiver() {
             return context.receiverForVariableAsFunctionSecondCall;

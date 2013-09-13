@@ -34,7 +34,7 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     private ExplicitReceiverKind explicitReceiverKind;
     private Boolean isSafeCall;
 
-    private ResolutionCandidate(@NotNull D descriptor, @NotNull ReceiverValue thisObject, @NotNull ReceiverValue receiverArgument,
+    private ResolutionCandidate(@NotNull D descriptor, @Nullable ReceiverValue thisObject, @Nullable ReceiverValue receiverArgument,
             @NotNull ExplicitReceiverKind explicitReceiverKind, @Nullable Boolean isSafeCall) {
         this.candidateDescriptor = descriptor;
         this.thisObject = thisObject;
@@ -52,8 +52,8 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, isSafeCall);
     }
 
-    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ReceiverValue thisObject,
-            @NotNull ReceiverValue receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind, boolean isSafeCall) {
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @Nullable ReceiverValue thisObject,
+            @Nullable ReceiverValue receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind, boolean isSafeCall) {
         return new ResolutionCandidate<D>(descriptor, thisObject, receiverArgument, explicitReceiverKind, isSafeCall);
     }
 
@@ -61,7 +61,7 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         this.thisObject = thisObject;
     }
 
-    public void setReceiverArgument(@NotNull ReceiverValue receiverArgument) {
+    public void setReceiverArgument(@Nullable ReceiverValue receiverArgument) {
         this.receiverArgument = receiverArgument;
     }
 
@@ -74,12 +74,12 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         return candidateDescriptor;
     }
 
-    @NotNull
+    @Nullable
     public ReceiverValue getThisObject() {
         return thisObject;
     }
 
-    @NotNull
+    @Nullable
     public ReceiverValue getReceiverArgument() {
         return receiverArgument;
     }

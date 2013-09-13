@@ -184,7 +184,7 @@ public class CandidateResolver {
 
     private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
-        if (context.call.getExplicitReceiver().exists()) return true;
+        if (context.call.getExplicitReceiver() != null) return true;
 
         ClassDescriptor candidateThis = getDeclaringClass(context.candidateCall.getCandidateDescriptor());
         if (candidateThis == null || candidateThis.getKind().isObject()) return true;
@@ -306,7 +306,8 @@ public class CandidateResolver {
         completeNestedCallsInference(context);
         List<JetType> argumentTypes = checkValueArgumentTypes(
                 context, resolvedCall, context.trace, RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
-        JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
+        ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
+        JetType receiverType = receiverArgument != null ? receiverArgument.getType() : null;
         InferenceErrorData.ExtendedInferenceErrorData errorData = InferenceErrorData
                 .create(resolvedCall.getCandidateDescriptor(), constraintSystem, argumentTypes, receiverType, context.expectedType);
 
@@ -573,7 +574,7 @@ public class CandidateResolver {
         // Error is already reported if something is missing
         ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
         ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
-        if (receiverArgument.exists() && receiverParameter != null) {
+        if (receiverArgument != null && receiverParameter != null) {
             JetType receiverType =
                     context.candidateCall.isSafeCall()
                     ? TypeUtils.makeNotNullable(receiverArgument.getType())
@@ -783,15 +784,18 @@ public class CandidateResolver {
 
         ReceiverParameterDescriptor receiverDescriptor = candidateDescriptor.getReceiverParameter();
         ReceiverParameterDescriptor expectedThisObjectDescriptor = candidateDescriptor.getExpectedThisObject();
+        ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
+        ReceiverValue thisObject = candidateCall.getThisObject();
+
         ReceiverParameterDescriptor receiverParameterDescriptor;
         JetType receiverArgumentType;
-        if (receiverDescriptor != null && candidateCall.getReceiverArgument().exists()) {
+        if (receiverDescriptor != null && receiverArgument != null) {
             receiverParameterDescriptor = receiverDescriptor;
-            receiverArgumentType = candidateCall.getReceiverArgument().getType();
+            receiverArgumentType = receiverArgument.getType();
         }
-        else if (expectedThisObjectDescriptor != null && candidateCall.getThisObject().exists()) {
+        else if (expectedThisObjectDescriptor != null && thisObject != null) {
             receiverParameterDescriptor = expectedThisObjectDescriptor;
-            receiverArgumentType = candidateCall.getThisObject().getType();
+            receiverArgumentType = thisObject.getType();
         }
         else {
             return SUCCESS;
@@ -811,11 +815,11 @@ public class CandidateResolver {
             @NotNull ResolvedCall<D> candidateCall,
             @NotNull BindingTrace trace,
             @Nullable ReceiverParameterDescriptor receiverParameter,
-            @NotNull ReceiverValue receiverArgument,
+            @Nullable ReceiverValue receiverArgument,
             boolean isExplicitReceiver,
             boolean implicitInvokeCheck
     ) {
-        if (receiverParameter == null || !receiverArgument.exists()) return SUCCESS;
+        if (receiverParameter == null || receiverArgument == null) return SUCCESS;
 
         JetType receiverArgumentType = receiverArgument.getType();
         JetType effectiveReceiverArgumentType = TypeUtils.makeNotNullable(receiverArgumentType);

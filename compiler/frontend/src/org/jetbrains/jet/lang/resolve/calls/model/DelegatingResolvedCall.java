@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -46,13 +47,13 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
         return resolvedCall.getResultingDescriptor();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverValue getReceiverArgument() {
         return resolvedCall.getReceiverArgument();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverValue getThisObject() {
         return resolvedCall.getThisObject();

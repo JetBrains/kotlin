@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -48,7 +49,6 @@ public class AutoCastUtils {
     ) {
         if (receiverToCast instanceof ThisReceiver) {
             ThisReceiver receiver = (ThisReceiver) receiverToCast;
-            assert receiver.exists();
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver);
             return collectAutoCastReceiverValues(dataFlowInfo, receiver, dataFlowValue);
         }
@@ -78,7 +78,7 @@ public class AutoCastUtils {
         return result;
     }
 
-    public static void recordAutoCastIfNecessary(ReceiverValue receiver, @NotNull BindingTrace trace) {
+    public static void recordAutoCastIfNecessary(@Nullable ReceiverValue receiver, @NotNull BindingTrace trace) {
         if (receiver instanceof AutoCastReceiver) {
             AutoCastReceiver autoCastReceiver = (AutoCastReceiver) receiver;
             ReceiverValue original = autoCastReceiver.getOriginal();

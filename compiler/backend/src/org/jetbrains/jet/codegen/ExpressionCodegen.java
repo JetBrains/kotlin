@@ -2485,16 +2485,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         computeAndSaveArguments(codegen.myFrameMap, fakeArguments, codegen);
 
                         ResolvedCall<CallableDescriptor> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {
-                            @NotNull
+                            @Nullable
                             @Override
                             public ReceiverValue getReceiverArgument() {
-                                return resolvedCall.getExplicitReceiverKind() == RECEIVER_ARGUMENT ? receiverValue : NO_RECEIVER;
+                                return resolvedCall.getExplicitReceiverKind() == RECEIVER_ARGUMENT ? receiverValue : null;
                             }
 
-                            @NotNull
+                            @Nullable
                             @Override
                             public ReceiverValue getThisObject() {
-                                return resolvedCall.getExplicitReceiverKind() == THIS_OBJECT ? receiverValue : NO_RECEIVER;
+                                return resolvedCall.getExplicitReceiverKind() == THIS_OBJECT ? receiverValue : null;
                             }
 
                             @NotNull
@@ -2559,7 +2559,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         }
                     }
 
-                    @NotNull
+                    @Nullable
                     private ReceiverValue computeAndSaveReceiver(
                             @NotNull JvmMethodSignature signature,
                             @NotNull ExpressionCodegen codegen
@@ -2574,7 +2574,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         ReceiverParameterDescriptor receiver = receiverParameter != null ? receiverParameter : expectedThisObject;
 
                         if (receiver == null) {
-                            return NO_RECEIVER;
+                            return null;
                         }
 
                         JetExpression receiverExpression = JetPsiFactory.createExpression(state.getProject(),
@@ -3284,7 +3284,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //Resolved call to local class constructor doesn't have resolvedCall.getThisObject() and resolvedCall.getReceiverArgument()
         //so we need generate closure on stack
         //See StackValue.receiver for more info
-        pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists());
+        pushClosureOnStack(closure, resolvedCall.getThisObject() != null || resolvedCall.getReceiverArgument() != null);
 
         ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructorDescriptor);
         CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructorDescriptor : originalOfSamAdapter);

@@ -108,8 +108,8 @@ public final class CallBuilder {
     private CallTranslator finish() {
         if (resolvedCall == null) {
             assert descriptor != null;
-            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, safeGetValue(descriptor.getExpectedThisObject()),
-                                                                              safeGetValue(descriptor.getReceiverParameter()),
+            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, receiverValue(descriptor.getExpectedThisObject()),
+                                                                              receiverValue(descriptor.getReceiverParameter()),
                                                                               ExplicitReceiverKind.THIS_OBJECT, false),
                                                    TemporaryBindingTrace.create(new BindingTraceContext(), "trace to resolve call (in js)"),
                                                    TracingStrategy.EMPTY,
@@ -122,8 +122,8 @@ public final class CallBuilder {
         return new CallTranslator(receiver, callee, args, resolvedCall, descriptor, callType, context);
     }
 
-    @NotNull
-    private static ReceiverValue safeGetValue(@Nullable ReceiverParameterDescriptor descriptor) {
+    @Nullable
+    private static ReceiverValue receiverValue(@Nullable ReceiverParameterDescriptor descriptor) {
         return descriptor == null ? ReceiverValue.NO_RECEIVER : descriptor.getValue();
     }
 

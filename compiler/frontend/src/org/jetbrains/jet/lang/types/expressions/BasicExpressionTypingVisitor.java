@@ -546,7 +546,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Nullable
     private static FunctionDescriptor resolveCallableNotCheckingArguments(
             @NotNull JetSimpleNameExpression reference,
-            @NotNull ReceiverValue receiver,
+            @Nullable ReceiverValue receiver,
             @NotNull ExpressionTypingContext context,
             @NotNull boolean[] result
     ) {

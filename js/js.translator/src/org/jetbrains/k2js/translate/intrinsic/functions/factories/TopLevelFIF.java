@@ -162,7 +162,7 @@ public final class TopLevelFIF extends CompositeFIF {
                     if (thisExpression == null) {
                         return new JsInvocation(functionReference, arguments);
                     }
-                    else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
+                    else if (callTranslator.getResolvedCall().getReceiverArgument() != null) {
                         return callTranslator.extensionFunctionCall(false);
                     }
                     else {

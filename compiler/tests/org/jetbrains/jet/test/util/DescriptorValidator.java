@@ -318,10 +318,6 @@ public class DescriptorValidator {
                 ReceiverParameterDescriptor descriptor, DiagnosticCollector collector
         ) {
             validateType(descriptor, descriptor.getType(), collector);
-
-            if (!descriptor.getValue().exists()) {
-                report(collector, descriptor, "Receiver value does not exist: " + descriptor.getValue());
-            }
             return true;
         }
 

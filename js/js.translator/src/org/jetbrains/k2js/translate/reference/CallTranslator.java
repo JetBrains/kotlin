@@ -87,7 +87,7 @@ public final class CallTranslator extends AbstractTranslator {
         if (isConstructor()) {
             return createConstructorCallExpression(translateAsFunctionWithNoThisObject(descriptor));
         }
-        if (resolvedCall.getReceiverArgument().exists()) {
+        if (resolvedCall.getReceiverArgument() != null) {
             if (AnnotationsUtils.isNativeObject(descriptor)) {
                 return nativeExtensionCall();
             }

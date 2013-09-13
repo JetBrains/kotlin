@@ -73,9 +73,6 @@ public class DataFlowValueFactory {
         else if (receiverValue instanceof AutoCastReceiver) {
             return createDataFlowValue(((AutoCastReceiver) receiverValue).getOriginal(), bindingContext);
         }
-        else if (receiverValue == ReceiverValue.NO_RECEIVER) {
-            throw new IllegalArgumentException("No DataFlowValue exists for ReceiverValue.NO_RECEIVER");
-        }
         else {
             throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue.getClass().getName());
         }
@@ -185,7 +182,7 @@ public class DataFlowValueFactory {
     }
 
     @Nullable
-    private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable JetExpression expression) {
+    private static IdentifierInfo getIdForImplicitReceiver(@Nullable ReceiverValue receiverValue, @Nullable JetExpression expression) {
         if (receiverValue instanceof ThisReceiver) {
             return getIdForThisReceiver(((ThisReceiver) receiverValue).getDeclarationDescriptor());
         }
