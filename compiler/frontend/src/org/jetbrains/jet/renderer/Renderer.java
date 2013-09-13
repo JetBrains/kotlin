@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics.rendering;
+package org.jetbrains.jet.renderer;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.renderer.Renderer;
 
 import java.util.HashMap;
 import java.util.Map;

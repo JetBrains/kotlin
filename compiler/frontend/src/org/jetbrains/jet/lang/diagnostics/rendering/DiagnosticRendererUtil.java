@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.renderer.Renderer;
 
 public class DiagnosticRendererUtil {
     private DiagnosticRendererUtil() {
