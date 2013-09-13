@@ -42,6 +42,7 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetTemplateInsertHandler;
+import org.jetbrains.jet.plugin.completion.weigher.WeigherPackage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +55,6 @@ import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHand
  * A keyword contributor for Kotlin
  */
 public class JetKeywordCompletionContributor extends CompletionContributor {
-
     private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
 
     private final static ElementFilter GENERAL_FILTER = new NotFilter(new OrFilter(
@@ -256,7 +256,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                       @NotNull CompletionResultSet result) {
-            result.withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements);
+            //noinspection StaticMethodReferencedViaSubclass
+            WeigherPackage.addJetSorting(result, parameters)
+                    .withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix()))
+                    .addAllElements(elements);
         }
 
         @Override

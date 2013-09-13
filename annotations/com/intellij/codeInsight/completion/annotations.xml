@@ -1,4 +1,12 @@
 <root>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionSorter com.intellij.codeInsight.completion.CompletionSorter weighAfter(java.lang.String, com.intellij.codeInsight.lookup.LookupElementWeigher...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.CompletionSorter com.intellij.codeInsight.completion.CompletionSorter weighBefore(java.lang.String, com.intellij.codeInsight.lookup.LookupElementWeigher...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.codeInsight.completion.InsertionContext com.intellij.openapi.project.Project getProject()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

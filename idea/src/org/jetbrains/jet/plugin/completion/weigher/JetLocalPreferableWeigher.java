@@ -20,9 +20,9 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementWeigher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
 
 class JetLocalPreferableWeigher extends LookupElementWeigher {
@@ -31,8 +31,8 @@ class JetLocalPreferableWeigher extends LookupElementWeigher {
     }
 
     private enum MyResult {
-        probableKeyword,
         localOrParameter,
+        probableKeyword,
         normal,
         packages
     }
@@ -52,10 +52,16 @@ class JetLocalPreferableWeigher extends LookupElementWeigher {
                     return MyResult.packages;
                 }
             }
-        } else if (object instanceof String) {
+        }
+        else if (object instanceof String) {
              return MyResult.probableKeyword;
         }
 
         return MyResult.normal;
+    }
+
+    @Override
+    public boolean isPrefixDependent() {
+        return false;
     }
 }

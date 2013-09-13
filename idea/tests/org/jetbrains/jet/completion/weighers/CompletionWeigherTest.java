@@ -27,12 +27,24 @@ public class CompletionWeigherTest extends CompletionAutoPopupTestCase {
         doTest("init", "initLocal", "initParam", "initGlobal");
     }
 
-    public void testTemplatesAndKeywordsFirst() {
-        doTest("va", "val ... = ...", "var ... = ...", "vararg", "values", "variables");
+    public void testTemplatesAndKeywordsLast() {
+        doTest("va", "values", "variables", "val ... = ...", "var ... = ...", "vararg");
     }
 
     public void testDeprecatedFun() {
         doTest("foo", "foo1", "foo3", "foo2");
+    }
+
+    public void testLocalsBeforeKeywords() {
+        doTest("a", "a", "as");
+    }
+
+    public void testParametersBeforeKeywords() {
+        doTest("fo", "fo", "for (... in ...) {...}");
+    }
+
+    public void testLocalsPropertiesKeywords() {
+        doTest("a", "fals", "falt", "false");
     }
 
     public void doTest(String type, @NonNls String... expected) {

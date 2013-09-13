@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
+import org.jetbrains.jet.plugin.completion.weigher.WeigherPackage;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
@@ -66,8 +66,9 @@ public class CompletionSession {
 
         inDescriptor = scope != null ? scope.getContainingDeclaration() : null;
 
+        //noinspection StaticMethodReferencedViaSubclass
         this.jetResult = new JetCompletionResultSet(
-                JetCompletionSorting.addJetSorting(parameters, result),
+                WeigherPackage.addJetSorting(result, parameters),
                 resolveSession,
                 expressionBindingContext, new Condition<DeclarationDescriptor>() {
             @Override
