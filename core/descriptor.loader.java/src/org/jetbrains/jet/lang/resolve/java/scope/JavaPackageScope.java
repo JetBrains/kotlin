@@ -89,6 +89,19 @@ public final class JavaPackageScope extends JavaBaseScope {
         Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
 
         for (JavaPackage subPackage : javaPackage.getSubPackages()) {
+            // This hack is only for tests in IDEA 12 branch:
+            // CoreLocalVirtualFile.getPath() returns path with back slashes on Windows, which is a bug. It produces PsiPackage with
+            // FQ name like ...:\Users\..blah-blah.
+            // In IDEA 13 this bug is is already fixed, so we'll just leave this hack here in idea12 branch.
+            // We skip the package, which is okay, because it affects only getAllDescriptors(), which now has two use cases:
+            // - completion: will work fine because CoreLocalVirtualFiles are not used
+            // - serializing package for protobuf annotation: will work fine, because we choose only top-level callables, not sub-packages
+
+            // TODO this hack can be removed when new version of 12.* is released (after 12.1.5 EAP 129.1237)
+            if (subPackage.getFqName().asString().startsWith(".")) {
+                continue;
+            }
+
             NamespaceDescriptor childNs = memberResolver.resolveNamespace(subPackage.getFqName(), IGNORE_KOTLIN_SOURCES);
             if (childNs != null) {
                 result.add(childNs);
