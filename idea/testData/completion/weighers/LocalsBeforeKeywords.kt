@@ -1,4 +1,6 @@
 fun test() {
     val a = 12
-    <caret>
+    a<caret>
 }
+
+// ORDER: a, as

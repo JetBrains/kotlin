@@ -1,4 +1,6 @@
 fun main(variables: Array<String>) {
     val values = ""
-    <caret>
+    va<caret>
 }
+
+// ORDER: values, variables, val ... = ..., var ... = ..., vararg

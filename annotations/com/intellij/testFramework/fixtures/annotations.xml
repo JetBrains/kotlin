@@ -2,4 +2,9 @@
   <item name='com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase com.intellij.psi.PsiManager getPsiManager()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.testFramework.fixtures.CodeInsightTestFixture void assertPreferredCompletionItems(int, java.lang.String...)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun assertPreferredCompletionItems(selected: Int, vararg expected: String)&quot;"/>
+    </annotation>
+  </item>
 </root>

@@ -31,6 +31,7 @@ import org.jetbrains.jet.completion.AbstractJavaCompletionTest;
 import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
 import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
 import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
+import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest;
 import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest;
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
@@ -458,6 +459,13 @@ public class GenerateTests {
                 "JetFindUsagesTest",
                 AbstractJetFindUsagesTest.class,
                 testModelWithPattern("idea/testData/findUsages", "^(.+).0.kt$", "doTest")
+        );
+
+        generateTest(
+                "idea/tests",
+                "CompletionWeigherTestGenerated",
+                AbstractCompletionWeigherTest.class,
+                testModel("idea/testData/completion/weighers", true, "doTest")
         );
 
         generateTest(

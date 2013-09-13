@@ -45,12 +45,12 @@ public final class InTextDirectivesUtils {
     }
 
     @NotNull
-    public static String[] findArrayWithPrefixes(String fileText, String... prefixes) {
+    public static String[] findArrayWithPrefixes(@NotNull String fileText, @NotNull String... prefixes) {
         return ArrayUtil.toStringArray(findListWithPrefixes(fileText, prefixes));
     }
 
     @NotNull
-    public static List<String> findListWithPrefixes(String fileText, String... prefixes) {
+    public static List<String> findListWithPrefixes(@NotNull String fileText, @NotNull String... prefixes) {
         List<String> result = new ArrayList<String>();
 
         for (String line : findLinesWithPrefixesRemoved(fileText, prefixes)) {
