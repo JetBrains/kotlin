@@ -41,6 +41,11 @@ public class CompletionWeigherTestGenerated extends AbstractCompletionWeigherTes
         doTest("idea/testData/completion/weighers/DeprecatedFun.kt");
     }
     
+    @TestMetadata("KeywordsLast.kt")
+    public void testKeywordsLast() throws Exception {
+        doTest("idea/testData/completion/weighers/KeywordsLast.kt");
+    }
+    
     @TestMetadata("LocalFileBeforeImported.kt")
     public void testLocalFileBeforeImported() throws Exception {
         doTest("idea/testData/completion/weighers/LocalFileBeforeImported.kt");
@@ -69,11 +74,6 @@ public class CompletionWeigherTestGenerated extends AbstractCompletionWeigherTes
     @TestMetadata("PropertiesBeforeKeywords.kt")
     public void testPropertiesBeforeKeywords() throws Exception {
         doTest("idea/testData/completion/weighers/PropertiesBeforeKeywords.kt");
-    }
-    
-    @TestMetadata("TemplatesAndKeywordsLast.kt")
-    public void testTemplatesAndKeywordsLast() throws Exception {
-        doTest("idea/testData/completion/weighers/TemplatesAndKeywordsLast.kt");
     }
     
 }

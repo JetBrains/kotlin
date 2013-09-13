@@ -2,4 +2,4 @@ fun bar(fop: Int) {
     fo<caret>
 }
 
-// ORDER: fop, for (... in ...) {...}
+// ORDER: fop, for

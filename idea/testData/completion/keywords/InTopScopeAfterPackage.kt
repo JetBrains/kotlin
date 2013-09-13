@@ -2,8 +2,8 @@ package Test
 
 <caret>
 
-// EXIST:  enum class ... {...}
-// EXIST:  trait ... {...}
-// EXIST:  class ... {...}
-// EXIST:  fun ...(...) : ... {...}
+// EXIST:  enum
+// EXIST:  trait
+// EXIST:  class
+// EXIST:  fun
 

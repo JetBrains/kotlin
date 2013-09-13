@@ -2,4 +2,4 @@ class Test {
     class <caret>
 }
 
-// EXIST: object {...}
+// EXIST: object
