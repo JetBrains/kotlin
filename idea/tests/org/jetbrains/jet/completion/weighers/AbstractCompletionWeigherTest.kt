@@ -22,19 +22,31 @@ import java.io.File
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.testng.Assert
+import com.intellij.openapi.util.io.FileUtil
 
 public abstract class AbstractCompletionWeigherTest() : LightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
         val fixture = myFixture!!
 
-        fixture.configureByFile(path)
+        val testFile = File(path)
+
+        val dataFileName = FileUtil.getNameWithoutExtension(testFile) + ".Data.kt"
+        val dataFile = File(testFile.getParent(), dataFileName)
+
+        if (dataFile.exists()) {
+            fixture.configureByFiles(path, FileUtil.toSystemIndependentName(dataFile.getPath()))
+        }
+        else {
+            fixture.configureByFile(path)
+        }
+
         val text = fixture.getEditor()!!.getDocument().getText()
 
         val items = InTextDirectivesUtils.findArrayWithPrefixes(text, "// ORDER:")
         Assert.assertTrue(!items.isEmpty(), """Some items should be defined with "// ORDER:" directive""")
 
-        fixture.complete(CompletionType.BASIC, 1)
-        fixture.assertPreferredCompletionItems(0, *items)
+        fixture.complete(CompletionType.BASIC, InTextDirectivesUtils.getPrefixedInt(text, "// NUMBER:") ?: 1)
+        fixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
     }
 
     protected override fun getTestDataPath() : String? {

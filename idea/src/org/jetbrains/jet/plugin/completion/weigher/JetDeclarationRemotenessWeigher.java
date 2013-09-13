@@ -18,6 +18,8 @@ package org.jetbrains.jet.plugin.completion.weigher;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementWeigher;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -28,22 +30,21 @@ import org.jetbrains.jet.plugin.completion.JetLookupObject;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-// class ExplicitlyImportedWeigher extends ProximityWeigher {
-public class JetExplicitlyImportedWeigher extends LookupElementWeigher {
+public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
     private final JetFile file;
 
-    protected JetExplicitlyImportedWeigher(JetFile file) {
-        super("JetExplicitlyWeigher");
+    protected JetDeclarationRemotenessWeigher(JetFile file) {
+        super(JetDeclarationRemotenessWeigher.class.getSimpleName());
         this.file = file;
     }
 
     private enum MyResult {
         kotlinDefaultImport,
+        thisFile,
         imported,
+        normal,
         notImported,
-        normal
     }
-
 
     @NotNull
     @Override
@@ -51,6 +52,15 @@ public class JetExplicitlyImportedWeigher extends LookupElementWeigher {
         Object object = element.getObject();
         if (object instanceof JetLookupObject) {
             JetLookupObject lookupObject = (JetLookupObject) object;
+
+            PsiElement psiElement = lookupObject.getPsiElement();
+            if (psiElement != null) {
+                PsiFile elementFile = psiElement.getContainingFile();
+                if (elementFile instanceof JetFile && elementFile.getOriginalFile() == file) {
+                    return MyResult.thisFile;
+                }
+            }
+
             DeclarationDescriptor descriptor = lookupObject.getDescriptor();
             if (descriptor != null) {
                 FqNameUnsafe fqName = DescriptorUtils.getFQName(descriptor);

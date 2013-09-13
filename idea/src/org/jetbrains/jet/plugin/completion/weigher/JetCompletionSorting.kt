@@ -28,7 +28,7 @@ public fun CompletionResultSet.addJetSorting(parameters : CompletionParameters) 
 
     sorter = sorter.weighAfter(
             "stats",
-            JetExplicitlyImportedWeigher(parameters.getOriginalFile() as JetFile),
+            JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
             JetAccessibleWeigher())
 
     return withRelevanceSorter(sorter)

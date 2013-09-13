@@ -465,7 +465,7 @@ public class GenerateTests {
                 "idea/tests",
                 "CompletionWeigherTestGenerated",
                 AbstractCompletionWeigherTest.class,
-                testModel("idea/testData/completion/weighers", true, "doTest")
+                testModelWithPattern("idea/testData/completion/weighers", "^([^\\.]+).kt$", "doTest")
         );
 
         generateTest(
