@@ -44,7 +44,7 @@ public class JavaToKotlinTranslator {
         }
     };
 
-    private static final ProjectRootModificationTracker NEVER_CHANGED = new ProjectRootModificationTracker() {
+    /*package*/ static final ProjectRootModificationTracker NEVER_CHANGED = new ProjectRootModificationTracker() {
         @Override
         public long getModificationCount() {
             return 0;
