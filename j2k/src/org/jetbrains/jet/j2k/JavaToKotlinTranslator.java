@@ -20,6 +20,7 @@ import com.intellij.core.JavaCoreProjectEnvironment;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -40,6 +41,13 @@ public class JavaToKotlinTranslator {
     private static final Disposable DISPOSABLE = new Disposable() {
         @Override
         public void dispose() {
+        }
+    };
+
+    private static final ProjectRootModificationTracker NEVER_CHANGED = new ProjectRootModificationTracker() {
+        @Override
+        public long getModificationCount() {
+            return 0;
         }
     };
 
@@ -65,6 +73,8 @@ public class JavaToKotlinTranslator {
     static JavaCoreProjectEnvironment setUpJavaCoreEnvironment() {
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(DISPOSABLE);
         JavaCoreProjectEnvironment javaCoreEnvironment = new JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment);
+
+        javaCoreEnvironment.getProject().registerService(ProjectRootModificationTracker.class, NEVER_CHANGED);
 
         javaCoreEnvironment.addJarToClassPath(PathUtil.findRtJar());
         File annotations = findAnnotations();
