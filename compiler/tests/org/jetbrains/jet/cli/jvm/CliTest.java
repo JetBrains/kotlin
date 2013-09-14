@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.cli.jvm;
 
-import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
@@ -35,7 +34,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -64,37 +65,13 @@ public class CliTest {
     }
 
     private void executeCompilerCompareOutput(@NotNull String[] args) {
-        try {
-            String actual = normalize(executeCompilerGrabOutput(args))
-                    .replace(new File("compiler/testData/cli/").getAbsolutePath(), "$TESTDATA_DIR$")
-                    .replace("\\", "/");
+        String actual = executeCompilerGrabOutput(args)
+                .replace(new File("compiler/testData/cli/").getAbsolutePath(), "$TESTDATA_DIR$")
+                .replace("\\", "/");
 
-            String expected = normalize(FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out")));
-
-            Assert.assertEquals(expected, actual);
-        }
-        catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
-        }
+        JetTestUtils.assertEqualsToFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out"), actual);
     }
 
-    @NotNull
-    private String normalize(String input) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new StringReader(input));
-            while (true) {
-                String line = reader.readLine();
-                if (line == null) {
-                    return sb.toString();
-                }
-                sb.append(line + "\n");
-            }
-        }
-        catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
-        }
-    }
 
     @Test
     public void simple() throws Exception {
