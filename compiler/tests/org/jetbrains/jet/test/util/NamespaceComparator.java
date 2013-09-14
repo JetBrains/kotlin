@@ -20,11 +20,10 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -38,7 +37,6 @@ import org.jetbrains.jet.utils.Printer;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -224,21 +222,7 @@ public class NamespaceComparator {
         }
 
         if (txtFile != null) {
-            try {
-                if (!txtFile.exists()) {
-                    FileUtil.writeToFile(txtFile, actualSerialized);
-                    Assert.fail("Expected data file did not exist. Generating: " + txtFile);
-                }
-                String expected = FileUtil.loadFile(txtFile, true);
-
-                // compare with hard copy: make sure nothing is lost in output
-                Assert.assertEquals("Expected and actual namespaces differ from " + txtFile.getName(),
-                                    StringUtil.convertLineSeparators(expected),
-                                    StringUtil.convertLineSeparators(actualSerialized));
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            JetTestUtils.assertEqualsToFile(txtFile, actualSerialized);
         }
     }
 

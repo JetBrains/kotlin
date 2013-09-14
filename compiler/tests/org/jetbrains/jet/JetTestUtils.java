@@ -375,6 +375,24 @@ public class JetTestUtils {
         return files;
     }
 
+    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {
+        try {
+            if (!expectedFile.exists()) {
+                FileUtil.writeToFile(expectedFile, actual);
+                Assert.fail("Expected data file did not exist. Generating: " + expectedFile);
+            }
+            String expected = FileUtil.loadFile(expectedFile, true);
+
+            // compare with hard copy: make sure nothing is lost in output
+            Assert.assertEquals("Expected and actual namespaces differ from " + expectedFile.getName(),
+                                StringUtil.convertLineSeparators(expected),
+                                StringUtil.convertLineSeparators(actual));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public interface TestFileFactory<F> {
         F create(String fileName, String text, Map<String, String> directives);
     }
