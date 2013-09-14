@@ -2,6 +2,7 @@
   <library name="intellij-core">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/core" />
+      <root url="jar://$PROJECT_DIR$/dependencies/cli-parser-1.1.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -249,6 +250,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/testFramework/java-production" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/testFramework-java/java-production" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/jps-standalone-builder/java-production" />
+      <root url="jar://$PROJECT_DIR$/dependencies/cli-parser-1.1.1-sources.jar!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/core" recursive="false" />
   </library>
