@@ -374,6 +374,11 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getSuppressAnnotationClass() {
+        return getBuiltInClassByName("suppress");
+    }
+
+    @NotNull
     public ClassDescriptor getVolatileAnnotationClass() {
         return getBuiltInClassByName("volatile");
     }
