@@ -397,7 +397,7 @@ public class SignaturesPropagationData {
             @NotNull List<TypeAndVariance> typesFromSuper,
             @NotNull TypeUsage howThisTypeIsUsed
     ) {
-        if (ErrorUtils.isErrorType(autoType)) {
+        if (autoType.isError()) {
             return autoType;
         }
 

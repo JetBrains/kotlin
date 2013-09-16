@@ -652,7 +652,7 @@ public class CandidateResolver {
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         if (isErrorType != null) {
-            isErrorType[0] = type == null || ErrorUtils.isErrorType(type);
+            isErrorType[0] = type == null || type.isError();
         }
     }
 
@@ -756,7 +756,7 @@ public class CandidateResolver {
                 JetType type = typeInfoForCall.getType();
                 infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
 
-                if (type == null || (ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE)) {
+                if (type == null || (type.isError() && type != PLACEHOLDER_FUNCTION_TYPE)) {
                     candidateCall.argumentHasNoType();
                     argumentTypes.add(type);
                 }

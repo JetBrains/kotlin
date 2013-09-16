@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -262,7 +261,7 @@ public class DeclarationResolver {
     private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
         int parameterIndex = 0;
         for (ValueParameterDescriptor parameter : constructorDescriptor.getValueParameters()) {
-            if (!ErrorUtils.isErrorType(parameter.getType())) {
+            if (!parameter.getType().isError()) {
                 PropertyDescriptor property = trace.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
                 if (property != null) {
                     ++parameterIndex;

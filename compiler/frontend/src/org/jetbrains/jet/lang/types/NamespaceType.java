@@ -43,6 +43,11 @@ public class NamespaceType implements JetType {
         return memberScope;
     }
 
+    @Override
+    public boolean isError() {
+        return false;
+    }
+
     @NotNull
     @Override
     public TypeConstructor getConstructor() {

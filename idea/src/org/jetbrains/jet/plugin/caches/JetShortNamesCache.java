@@ -45,7 +45,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport;
@@ -301,7 +300,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
         JetScope scope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
 
-        if (expressionType == null || scope == null || ErrorUtils.isErrorType(expressionType)) {
+        if (expressionType == null || scope == null || expressionType.isError()) {
             return Collections.emptyList();
         }
 

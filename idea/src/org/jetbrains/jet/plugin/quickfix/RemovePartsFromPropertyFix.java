@@ -25,7 +25,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
@@ -86,7 +85,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         JetType type = QuickFixUtil.getDeclarationReturnType(element);
-        return super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type);
+        return super.isAvailable(project, editor, file) && type != null && !type.isError();
     }
 
     @Override

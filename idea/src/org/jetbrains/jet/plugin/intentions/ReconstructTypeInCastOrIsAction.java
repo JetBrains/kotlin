@@ -24,7 +24,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
@@ -71,8 +70,7 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
         }
 
         JetType type = getReconstructedType(typeRef);
-        if (type == null) return false;
-        if (ErrorUtils.isErrorType(type)) return false;
+        if (type == null || type.isError()) return false;
 
         // No type parameters expected => nothing to reconstruct
         if (type.getConstructor().getParameters().isEmpty()) return false;

@@ -26,7 +26,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeConstructorImpl;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -189,7 +192,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
 
     public void addSupertype(@NotNull JetType supertype) {
-        assert !ErrorUtils.isErrorType(supertype) : "Error types must be filtered out in DescriptorResolver";
+        assert !supertype.isError() : "Error types must be filtered out in DescriptorResolver";
         if (TypeUtils.getClassDescriptor(supertype) != null) {
             // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT
             supertypes.add(supertype);

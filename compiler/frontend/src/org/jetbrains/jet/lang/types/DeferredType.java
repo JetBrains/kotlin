@@ -58,6 +58,11 @@ public class DeferredType implements JetType {
     }
 
     @Override
+    public boolean isError() {
+        return getActualType().isError();
+    }
+
+    @Override
     @NotNull
     public TypeConstructor getConstructor() {
         return getActualType().getConstructor();

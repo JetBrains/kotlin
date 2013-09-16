@@ -156,7 +156,7 @@ public class TypeCheckingProcedure {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-        if (ErrorUtils.isErrorType(subtype) || ErrorUtils.isErrorType(supertype)) {
+        if (subtype.isError() || supertype.isError()) {
             return true;
         }
         if (!supertype.isNullable() && subtype.isNullable()) {
@@ -194,7 +194,7 @@ public class TypeCheckingProcedure {
             JetType superIn = getInType(parameter, superArgument);
             JetType superOut = getOutType(parameter, superArgument);
 
-            boolean argumentIsErrorType = ErrorUtils.isErrorType(subArgument.getType()) || ErrorUtils.isErrorType(superArgument.getType());
+            boolean argumentIsErrorType = subArgument.getType().isError() || superArgument.getType().isError();
             if (!argumentIsErrorType && parameter.getVariance() == INVARIANT
                     && subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
                 if (!constraints.assertEqualTypes(subArgument.getType(), superArgument.getType(), this)) return false;

@@ -26,9 +26,13 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -70,6 +74,11 @@ public class TypeUtils {
         }
 
         @Override
+        public boolean isError() {
+            return false;
+        }
+
+        @Override
         public List<AnnotationDescriptor> getAnnotations() {
             throw new IllegalStateException(name);
         }
@@ -103,7 +112,7 @@ public class TypeUtils {
         if (type.isNullable() == nullable) {
             return type;
         }
-        if (ErrorUtils.isErrorType(type)) {
+        if (type.isError()) {
             return type;
         }
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
@@ -624,7 +633,7 @@ public class TypeUtils {
             @NotNull NumberValueTypeConstructor numberValueTypeConstructor,
             @NotNull JetType expectedType
     ) {
-        if (noExpectedType(expectedType) || ErrorUtils.isErrorType(expectedType)) {
+        if (noExpectedType(expectedType) || expectedType.isError()) {
             return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
         }
         for (JetType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {

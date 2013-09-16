@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -70,6 +69,6 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
             assert false : "Couldn't find property or function";
         }
 
-        return !ErrorUtils.isErrorType(getTypeForDeclaration(declaration));
+        return !getTypeForDeclaration(declaration).isError();
     }
 }

@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetConstantExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -353,6 +352,6 @@ public class CompileTimeConstantResolver {
     }
 
     private static boolean noExpectedTypeOrError(JetType expectedType) {
-        return TypeUtils.noExpectedType(expectedType) || ErrorUtils.isErrorType(expectedType);
+        return TypeUtils.noExpectedType(expectedType) || expectedType.isError();
     }
 }

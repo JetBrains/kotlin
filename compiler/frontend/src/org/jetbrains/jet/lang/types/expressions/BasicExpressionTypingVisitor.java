@@ -360,7 +360,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
 
             boolean validClassifier = classifierCandidate != null && !ErrorUtils.isError(classifierCandidate);
-            boolean validType = supertype != null && !ErrorUtils.isErrorType(supertype);
+            boolean validType = supertype != null && !supertype.isError();
             if (result == null && (validClassifier || validType)) {
                 context.trace.report(NOT_A_SUPERTYPE.on(superTypeQualifier));
             }
@@ -704,7 +704,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return baseTypeInfo;
         }
         DataFlowInfo dataFlowInfo = baseTypeInfo.getDataFlowInfo();
-        if (isKnownToBeNotNull(baseExpression, context) && !ErrorUtils.isErrorType(baseType)) {
+        if (isKnownToBeNotNull(baseExpression, context) && !baseType.isError()) {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, baseType));
         }
         else {
@@ -870,7 +870,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
         JetType compareToReturnType = typeInfo.getType();
         JetType type = null;
-        if (compareToReturnType != null && !ErrorUtils.isErrorType(compareToReturnType)) {
+        if (compareToReturnType != null && !compareToReturnType.isError()) {
             TypeConstructor constructor = compareToReturnType.getConstructor();
             KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
             TypeConstructor intTypeConstructor = builtIns.getInt().getTypeConstructor();
@@ -1013,7 +1013,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         JetType type = facade.getTypeInfo(expr, context).getType();
-        if (type == null || ErrorUtils.isErrorType(type)) return;
+        if (type == null || type.isError()) return;
 
         DataFlowValue value = DataFlowValueFactory.createDataFlowValue(expr, type, context.trace.getBindingContext());
         Nullability nullability = context.dataFlowInfo.getNullability(value);

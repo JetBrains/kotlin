@@ -36,8 +36,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
-
 public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE;
@@ -387,20 +385,10 @@ public class ErrorUtils {
         return typeConstructor == ERROR_CLASS.getTypeConstructor() || typeConstructor instanceof ErrorTypeConstructor;
     }
 
-    public static boolean isErrorType(@NotNull JetType type) {
-        return !noExpectedType(type) && !(type instanceof NamespaceType) &&
-               (
-                    (type instanceof DeferredType && (((DeferredType) type).getActualType() == null
-                                                      || isErrorType(((DeferredType) type).getActualType()))) ||
-                    type instanceof ErrorTypeImpl ||
-                    isError(type.getConstructor())
-               );
-    }
-
     public static boolean containsErrorType(@Nullable JetType type) {
         if (type == null) return false;
         if (type instanceof NamespaceType) return false;
-        if (isErrorType(type)) return true;
+        if (type.isError()) return true;
         for (TypeProjection projection : type.getArguments()) {
             if (containsErrorType(projection.getType())) return true;
         }
@@ -453,6 +441,11 @@ public class ErrorUtils {
         @Override
         public JetScope getMemberScope() {
             return memberScope;
+        }
+
+        @Override
+        public boolean isError() {
+            return true;
         }
 
         @Override

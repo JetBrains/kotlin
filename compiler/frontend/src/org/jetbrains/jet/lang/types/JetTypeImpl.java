@@ -37,7 +37,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
         super(annotations);
 
         if (memberScope instanceof ErrorUtils.ErrorScope) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("JetTypeImpl should not be created for error type: " + memberScope + "\n" + constructor);
         }
 
         this.constructor = constructor;
@@ -82,6 +82,11 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     }
 
     @Override
+    public boolean isError() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return TypeUtils.toString(this);
     }
@@ -98,7 +103,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
     @Override
     public int hashCode() {
-        int result = constructor != null ? constructor.hashCode() : 0;
+        int result = constructor.hashCode();
         result = 31 * result + arguments.hashCode();
         result = 31 * result + (nullable ? 1 : 0);
         return result;

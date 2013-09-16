@@ -189,7 +189,7 @@ public class OverridingUtil {
                 JetType superValueParameter = superValueParameters.get(i);
                 JetType subValueParameter = subValueParameters.get(i);
 
-                boolean bothErrors = ErrorUtils.isErrorType(superValueParameter) && ErrorUtils.isErrorType(subValueParameter);
+                boolean bothErrors = superValueParameter.isError() && subValueParameter.isError();
                 if (!bothErrors && !JetTypeChecker.INSTANCE.equalTypes(superValueParameter, subValueParameter, axioms)) {
                     return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, OverrideCompatibilityInfo.Result.INCOMPATIBLE);
                 }

@@ -144,7 +144,7 @@ public class TypeSubstitutor {
         assertRecursionDepth(recursionDepth, originalProjection, substitution);
         // The type is within the substitution range, i.e. T or T?
         JetType type = originalProjection.getType();
-        if (KotlinBuiltIns.getInstance().isNothing(type) || ErrorUtils.isErrorType(type)) return originalProjection;
+        if (KotlinBuiltIns.getInstance().isNothing(type) || type.isError()) return originalProjection;
 
         TypeProjection replacement = substitution.get(type.getConstructor());
 

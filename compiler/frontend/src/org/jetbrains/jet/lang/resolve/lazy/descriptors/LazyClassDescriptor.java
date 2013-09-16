@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -62,7 +61,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
         @Override
         public boolean apply(JetType type) {
-            assert !ErrorUtils.isErrorType(type) : "Error types must be filtered out in DescriptorResolver";
+            assert !type.isError() : "Error types must be filtered out in DescriptorResolver";
             return TypeUtils.getClassDescriptor(type) != null;
         }
     };

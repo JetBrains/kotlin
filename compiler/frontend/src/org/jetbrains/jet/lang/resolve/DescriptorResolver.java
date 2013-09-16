@@ -154,7 +154,7 @@ public class DescriptorResolver {
     }
 
     private static void addValidSupertype(List<JetType> supertypes, JetType declaredSupertype) {
-        if (!ErrorUtils.isErrorType(declaredSupertype)) {
+        if (!declaredSupertype.isError()) {
             supertypes.add(declaredSupertype);
         }
     }
@@ -1320,7 +1320,7 @@ public class DescriptorResolver {
     }
 
     public static void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, BindingTrace trace) {
-        if (ErrorUtils.isErrorType(type)) return;
+        if (type.isError()) return;
 
         JetTypeElement typeElement = typeReference.getTypeElement();
         if (typeElement == null) return;

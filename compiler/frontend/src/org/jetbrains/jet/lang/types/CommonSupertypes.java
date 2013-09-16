@@ -61,7 +61,7 @@ public class CommonSupertypes {
             if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
-            if (ErrorUtils.isErrorType(type)) {
+            if (type.isError()) {
                 return ErrorUtils.createErrorType("Supertype of error type " + type);
             }
             nullable |= type.isNullable();

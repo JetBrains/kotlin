@@ -267,7 +267,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return true;
         }
 
-        if (type == null || ((ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE))) {
+        if (type == null || (type.isError() && type != PLACEHOLDER_FUNCTION_TYPE)) {
             hasErrorInConstrainingTypes = true;
             return true;
         }

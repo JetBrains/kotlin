@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.io.PrintStream;
@@ -90,7 +89,7 @@ public class DescriptorValidator {
                 return;
             }
 
-            if (!allowErrorTypes && ErrorUtils.isErrorType(type)) {
+            if (!allowErrorTypes && type.isError()) {
                 report(collector, descriptor, "Error type: " + type);
                 return;
             }
@@ -155,7 +154,7 @@ public class DescriptorValidator {
                 JetType expected,
                 JetType actual
         ) {
-            if (ErrorUtils.isErrorType(expected) && ErrorUtils.isErrorType(actual)) {
+            if (expected.isError() && actual.isError()) {
                 assertEquals(descriptor, collector, name, expected.toString(), actual.toString());
             }
             else if (!expected.equals(actual)) {

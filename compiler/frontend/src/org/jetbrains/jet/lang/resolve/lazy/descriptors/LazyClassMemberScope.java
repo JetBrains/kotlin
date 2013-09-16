@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
@@ -166,7 +165,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         int parameterIndex = 0;
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            if (ErrorUtils.isErrorType(parameter.getType())) continue;
+            if (parameter.getType().isError()) continue;
             Set<VariableDescriptor> properties = getProperties(parameter.getName());
             if (properties.isEmpty()) continue;
             assert properties.size() == 1 : "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;

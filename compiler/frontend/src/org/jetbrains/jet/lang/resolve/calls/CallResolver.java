@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.JetFakeReference;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -196,7 +195,7 @@ public class CallResolver {
                 assert typeReference != null;
                 JetType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
 
-                if (ErrorUtils.isErrorType(constructedType)) {
+                if (constructedType.isError()) {
                     return checkArgumentTypesAndFail(context);
                 }
 
@@ -240,7 +239,7 @@ public class CallResolver {
 
                 if (!KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(calleeType)) {
 //                    checkTypesWithNoCallee(trace, scope, call);
-                    if (!ErrorUtils.isErrorType(calleeType)) {
+                    if (!calleeType.isError()) {
                         context.trace.report(CALLEE_NOT_A_FUNCTION.on(calleeExpression, calleeType));
                     }
                     return checkArgumentTypesAndFail(context);

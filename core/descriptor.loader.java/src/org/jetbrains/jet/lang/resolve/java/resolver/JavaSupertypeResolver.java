@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -102,7 +101,7 @@ public final class JavaSupertypeResolver {
             }
 
             JetType transformed = typeTransformer.transformToType(type, TypeUsage.SUPERTYPE, typeVariableResolver);
-            if (ErrorUtils.isErrorType(transformed)) {
+            if (transformed.isError()) {
                 // TODO: report INCOMPLETE_HIERARCHY
             }
             else {

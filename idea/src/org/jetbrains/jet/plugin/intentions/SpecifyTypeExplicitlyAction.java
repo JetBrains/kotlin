@@ -135,7 +135,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             return false;
         }
 
-        if (ErrorUtils.isErrorType(getTypeForDeclaration(declaration))) {
+        if (getTypeForDeclaration(declaration).isError()) {
             return false;
         }
         return !hasPublicMemberDiagnostic(declaration);
@@ -217,7 +217,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             @NotNull PsiElement anchor,
             @NotNull JetType exprType
     ) {
-        assert !ErrorUtils.isErrorType(exprType) : "Unexpected error type: " + namedDeclaration.getText();
+        assert !exprType.isError() : "Unexpected error type: " + namedDeclaration.getText();
 
         ClassifierDescriptor descriptor = exprType.getConstructor().getDeclarationDescriptor();
         boolean isAnonymous = descriptor != null && DescriptorUtils.isAnonymous(descriptor);

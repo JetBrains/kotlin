@@ -28,11 +28,15 @@ import java.util.List;
  */
 public interface JetType extends Annotated {
     @NotNull TypeConstructor getConstructor();
+
     @NotNull List<TypeProjection> getArguments();
+
     boolean isNullable();
 
     @NotNull
     JetScope getMemberScope();
+
+    boolean isError();
 
     @Override
     boolean equals(Object other);

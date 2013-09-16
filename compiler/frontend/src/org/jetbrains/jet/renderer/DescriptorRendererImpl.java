@@ -221,7 +221,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type == ExpressionTypingUtils.CANT_INFER_LAMBDA_PARAM_TYPE || type == CallResolverUtil.CANT_INFER_TYPE_PARAMETER) {
             return "???";
         }
-        if (ErrorUtils.isErrorType(type)) {
+        if (type.isError()) {
             return type.toString();
         }
         if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type) && prettyFunctionTypes) {
