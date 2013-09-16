@@ -3104,6 +3104,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/typeInferenceExpectedTypeMismatch.kt");
             }
             
+            @TestMetadata("useFunctionLiteralsToInferType.kt")
+            public void testUseFunctionLiteralsToInferType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/inference/nestedCalls")
             public static class NestedCalls extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInNestedCalls() throws Exception {
