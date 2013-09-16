@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -34,7 +33,10 @@ import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class ErrorUtils {
 
@@ -75,10 +77,9 @@ public class ErrorUtils {
 
 
     public static class ErrorScope implements JetScope {
-
         private final String debugMessage;
 
-        private ErrorScope(String debugMessage) {
+        private ErrorScope(@NotNull String debugMessage) {
             this.debugMessage = debugMessage;
         }
 
@@ -134,7 +135,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+        public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
             return Collections.emptyList();
         }
 
@@ -164,7 +165,7 @@ public class ErrorUtils {
     private static class ThrowingScope implements JetScope {
         private final String debugMessage;
 
-        private ThrowingScope(String message) {
+        private ThrowingScope(@NotNull String message) {
             debugMessage = message;
         }
 
@@ -267,27 +268,31 @@ public class ErrorUtils {
         }
     }
 
-    private static final Set<ConstructorDescriptor> ERROR_CONSTRUCTOR_GROUP = Collections.singleton(createErrorConstructor(0, Collections.<JetType>emptyList()));
+    private static final Set<ConstructorDescriptor> ERROR_CONSTRUCTOR_GROUP = Collections.singleton(createErrorConstructor());
 
     private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
 
     static {
         ERROR_CLASS.initializeErrorClass();
     }
+
     @NotNull
     public static Set<ConstructorDescriptor> getErrorConstructorGroup() {
         return ERROR_CONSTRUCTOR_GROUP;
     }
 
+    @NotNull
     public static ConstructorDescriptor getErrorConstructor() {
         return ERROR_CONSTRUCTOR;
     }
 
-    public static JetScope createErrorScope(String debugMessage) {
+    @NotNull
+    public static JetScope createErrorScope(@NotNull String debugMessage) {
         return createErrorScope(debugMessage, false);
     }
 
-    public static JetScope createErrorScope(String debugMessage, boolean throwExceptions) {
+    @NotNull
+    public static JetScope createErrorScope(@NotNull String debugMessage, boolean throwExceptions) {
         if (throwExceptions) {
             return new ThrowingScope(debugMessage);
         }
@@ -308,7 +313,8 @@ public class ErrorUtils {
             CallableMemberDescriptor.Kind.DECLARATION);
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
-    private static SimpleFunctionDescriptor createErrorFunction(ErrorScope ownerScope) {
+    @NotNull
+    private static SimpleFunctionDescriptor createErrorFunction(@NotNull ErrorScope ownerScope) {
         ErrorSimpleFunctionDescriptorImpl function = new ErrorSimpleFunctionDescriptorImpl(ownerScope);
         function.initialize(
                 null,
@@ -323,7 +329,8 @@ public class ErrorUtils {
         return function;
     }
 
-    public static ConstructorDescriptor createErrorConstructor(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
+    @NotNull
+    private static ConstructorDescriptor createErrorConstructor() {
         ConstructorDescriptorImpl r = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false);
         r.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
@@ -334,46 +341,23 @@ public class ErrorUtils {
         return r;
     }
 
-    private static final JetType ERROR_PARAMETER_TYPE = createErrorType("<ERROR VALUE_PARAMETER TYPE>");
-    private static List<ValueParameterDescriptor> getValueParameters(FunctionDescriptor functionDescriptor, List<JetType> argumentTypes) {
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        for (int i = 0, argumentTypesSize = argumentTypes.size(); i < argumentTypesSize; i++) {
-            result.add(new ValueParameterDescriptorImpl(
-                    functionDescriptor,
-                    i,
-                    Collections.<AnnotationDescriptor>emptyList(),
-                    Name.special("<ERROR VALUE_PARAMETER>"),
-                    ERROR_PARAMETER_TYPE,
-                    false,
-                    null));
-        }
-        return result;
+    @NotNull
+    public static JetType createErrorType(@NotNull String debugMessage) {
+        return createErrorTypeWithCustomDebugName(createErrorScope(debugMessage), "[ERROR : " + debugMessage + "]");
     }
 
     @NotNull
-    public static JetType createErrorType(String debugMessage) {
-        return createErrorType(debugMessage, createErrorScope(debugMessage));
-    }
-
-    private static JetType createErrorType(String debugMessage, JetScope memberScope) {
-        return createErrorTypeWithCustomDebugName(memberScope, "[ERROR : " + debugMessage + "]");
-    }
-
-    @NotNull
-    public static JetType createErrorTypeWithCustomDebugName(String debugName) {
+    public static JetType createErrorTypeWithCustomDebugName(@NotNull String debugName) {
         return createErrorTypeWithCustomDebugName(createErrorScope(debugName), debugName);
     }
 
-    private static JetType createErrorTypeWithCustomDebugName(JetScope memberScope, String debugName) {
+    @NotNull
+    private static JetType createErrorTypeWithCustomDebugName(@NotNull JetScope memberScope, @NotNull String debugName) {
         TypeConstructorImpl constructor =
                 new ErrorTypeConstructor(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName,
                                         Collections.<TypeParameterDescriptorImpl>emptyList(),
                                         Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
         return new ErrorTypeImpl(constructor, memberScope);
-    }
-
-    public static JetType createWrongVarianceErrorType(TypeProjection value) {
-        return createErrorType(value + " is not allowed here", value.getType().getMemberScope());
     }
 
     @NotNull
@@ -411,11 +395,10 @@ public class ErrorUtils {
     }
 
     private static class ErrorTypeImpl implements JetType {
-
         private final TypeConstructor constructor;
-
         private final JetScope memberScope;
-        private ErrorTypeImpl(TypeConstructor constructor, JetScope memberScope) {
+
+        private ErrorTypeImpl(@NotNull TypeConstructor constructor, @NotNull JetScope memberScope) {
             this.constructor = constructor;
             this.memberScope = memberScope;
         }
@@ -459,6 +442,7 @@ public class ErrorUtils {
         }
     }
 
+    @NotNull
     public static ModuleDescriptor getErrorModule() {
         return ERROR_MODULE;
     }
