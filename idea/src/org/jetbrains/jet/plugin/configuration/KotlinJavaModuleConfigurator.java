@@ -51,7 +51,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @NotNull
     @Override
     public String getPresentableText() {
-        return "As Java project";
+        return "Java";
     }
 
     @NotNull

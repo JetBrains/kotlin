@@ -29,7 +29,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @NotNull
     @Override
     public String getPresentableText() {
-        return "As JavaScript project";
+        return "JavaScript";
     }
 
     @Override

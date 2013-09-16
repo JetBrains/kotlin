@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.configuration;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
+import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
@@ -90,6 +91,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
             GroovyFile file = getBuildGradleFile(project, gradleFilePath);
             if (file != null && canConfigureFile(file)) {
                 changeGradleFile(file, dialog.getKotlinVersion());
+                OpenFileAction.openFile(gradleFilePath, project);
             }
             else {
                 showErrorMessage(project, "Cannot find build.gradle file for module " + module.getName());

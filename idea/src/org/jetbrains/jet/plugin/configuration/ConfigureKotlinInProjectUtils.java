@@ -89,32 +89,49 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     private static void showConfigureKotlinNotification(final Project project) {
-        Collection<KotlinProjectConfigurator> configurators = getApplicableConfigurators(project);
-
-        String links = StringUtil.join(configurators, new Function<KotlinProjectConfigurator, String>() {
-            @Override
-            public String fun(KotlinProjectConfigurator configurator) {
-                return getLink(configurator);
-            }
-        }, "  ");
-
         Notifications.Bus.notify(
                 new Notification("Configure Kotlin",
                                  "Kotlin file(s) found in your project.",
-                                 "Configure Kotlin:\n" + links,
-                                 NotificationType.ERROR, new NotificationListener() {
-            @Override
-            public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    KotlinProjectConfigurator configurator = getConfiguratorByName(event.getDescription());
-                    if (configurator == null) {
-                        throw new AssertionError("Missed action: " + event.getDescription());
+                                 getNotificationString(project),
+                                 NotificationType.WARNING, new NotificationListener() {
+                    @Override
+                    public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+                        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                            KotlinProjectConfigurator configurator = getConfiguratorByName(event.getDescription());
+                            if (configurator == null) {
+                                throw new AssertionError("Missed action: " + event.getDescription());
+                            }
+                            configurator.configure(project);
+                            notification.expire();
+                        }
                     }
-                    configurator.configure(project);
-                    notification.expire();
-                }
+                }), project);
+    }
+
+    private static String getNotificationString(Project project) {
+        StringBuilder builder = new StringBuilder("Configure ");
+
+        Collection<Module> modules = getModulesWithKotlinFiles(project);
+        final boolean isOnlyOneModule = modules.size() == 1;
+        if (isOnlyOneModule) {
+            builder.append("'").append(modules.iterator().next().getName()).append("' module");
+        }
+        else {
+            builder.append("modules");
+        }
+
+        builder.append(" in '").append(project.getName()).append("' project");
+        builder.append("\n");
+
+        String links = StringUtil.join(getApplicableConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
+            @Override
+            public String fun(KotlinProjectConfigurator configurator) {
+                return getLink(configurator, isOnlyOneModule);
             }
-        }), project);
+        }, "  ");
+        builder.append(links);
+
+        return builder.toString();
     }
 
     @NotNull
@@ -162,8 +179,11 @@ public class ConfigureKotlinInProjectUtils {
         return result;
     }
     @NotNull
-    public static String getLink(@NotNull KotlinProjectConfigurator configurator) {
-        return StringUtil.join("<a href=\"", configurator.getName(), "\">", configurator.getPresentableText(), "</a>");
+    public static String getLink(@NotNull KotlinProjectConfigurator configurator, boolean isOnlyOneModule) {
+        return StringUtil.join("<a href=\"", configurator.getName(), "\">as Kotlin (",
+                               configurator.getPresentableText(),
+                               isOnlyOneModule ? ") module" : ") modules",
+                               "</a>");
     }
 
     private ConfigureKotlinInProjectUtils() {

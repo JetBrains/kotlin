@@ -20,7 +20,7 @@ public class KotlinAndroidGradleModuleConfigurator extends KotlinWithGradleConfi
     @NotNull
     @Override
     public String getPresentableText() {
-        return "As Android project with Gradle";
+        return "Android with Gradle";
     }
 
     @Override

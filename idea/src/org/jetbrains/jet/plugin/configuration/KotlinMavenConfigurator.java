@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.configuration;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
+import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -84,6 +85,7 @@ public class KotlinMavenConfigurator implements KotlinProjectConfigurator {
             PsiFile file = findModulePomFile(module);
             if (file != null && canConfigureFile(file)) {
                 changePomFile(module, file, dialog.getKotlinVersion());
+                OpenFileAction.openFile(file.getVirtualFile(), project);
             }
             else {
                 showErrorMessage(project, "Cannot find pom.xml for module " + module.getName());
@@ -254,7 +256,7 @@ public class KotlinMavenConfigurator implements KotlinProjectConfigurator {
     @NotNull
     @Override
     public String getPresentableText() {
-        return "As Maven project";
+        return "Maven";
     }
 
     @NotNull
