@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
+import org.jetbrains.jet.parsing.AbstractJetParsingTest;
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
@@ -97,6 +98,13 @@ public class GenerateTests {
                 "JetResolveTestGenerated",
                 AbstractResolveTest.class,
                 testModel("compiler/testData/resolve", true, "resolve", "doTest")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "JetParsingTestGenerated",
+                AbstractJetParsingTest.class,
+                testModel("compiler/testData/psi", true, "jet", "doParsingTest")
         );
 
         GenerateRangesCodegenTestData.main(args);
