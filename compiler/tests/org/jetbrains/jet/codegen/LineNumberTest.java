@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.*;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
@@ -31,7 +32,6 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
@@ -51,7 +51,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private static String getTestDataPath() {
-        return JetParsingTest.getTestDataDir() + "/lineNumber";
+        return JetTestCaseBuilder.getTestDataPathBase() + "/lineNumber";
     }
 
     @NotNull
