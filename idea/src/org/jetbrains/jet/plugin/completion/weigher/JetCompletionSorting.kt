@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 public fun CompletionResultSet.addJetSorting(parameters : CompletionParameters) : CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
 
-    sorter = sorter.weighBefore("stats", JetLocalPreferableWeigher())
+    sorter = sorter.weighBefore("stats", JetKindWeigher())
 
     sorter = sorter.weighAfter(
             "stats",

@@ -21,17 +21,19 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
 
-class JetLocalPreferableWeigher extends LookupElementWeigher {
-    JetLocalPreferableWeigher() {
-        super("JetLocalElementWeigher");
+class JetKindWeigher extends LookupElementWeigher {
+    JetKindWeigher() {
+        super(JetKindWeigher.class.getSimpleName());
     }
 
     private enum MyResult {
         localOrParameter,
+        property,
         probableKeyword,
         normal,
         packages
@@ -48,7 +50,10 @@ class JetLocalPreferableWeigher extends LookupElementWeigher {
                 if (descriptor instanceof LocalVariableDescriptor || descriptor instanceof ValueParameterDescriptor) {
                     return MyResult.localOrParameter;
                 }
-                if (descriptor instanceof NamespaceDescriptor) {
+                else if (descriptor instanceof PropertyDescriptor) {
+                    return MyResult.property;
+                }
+                else if (descriptor instanceof NamespaceDescriptor) {
                     return MyResult.packages;
                 }
             }

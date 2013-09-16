@@ -66,6 +66,11 @@ public class CompletionWeigherTestGenerated extends AbstractCompletionWeigherTes
         doTest("idea/testData/completion/weighers/ParametersBeforeKeywords.kt");
     }
     
+    @TestMetadata("PropertiesBeforeKeywords.kt")
+    public void testPropertiesBeforeKeywords() throws Exception {
+        doTest("idea/testData/completion/weighers/PropertiesBeforeKeywords.kt");
+    }
+    
     @TestMetadata("TemplatesAndKeywordsLast.kt")
     public void testTemplatesAndKeywordsLast() throws Exception {
         doTest("idea/testData/completion/weighers/TemplatesAndKeywordsLast.kt");
