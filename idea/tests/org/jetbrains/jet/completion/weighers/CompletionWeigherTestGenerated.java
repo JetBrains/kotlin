@@ -33,7 +33,7 @@ import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest;
 @TestMetadata("idea/testData/completion/weighers")
 public class CompletionWeigherTestGenerated extends AbstractCompletionWeigherTest {
     public void testAllFilesPresentInWeighers() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/completion/weighers"), Pattern.compile("^([^\\.]+).kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/completion/weighers"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
     @TestMetadata("DeprecatedFun.kt")

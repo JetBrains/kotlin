@@ -458,14 +458,14 @@ public class GenerateTests {
                 "idea/tests/",
                 "JetFindUsagesTest",
                 AbstractJetFindUsagesTest.class,
-                testModelWithPattern("idea/testData/findUsages", "^(.+).0.kt$", "doTest")
+                testModelWithPattern("idea/testData/findUsages", "^(.+)\\.0\\.kt$", "doTest")
         );
 
         generateTest(
                 "idea/tests",
                 "CompletionWeigherTestGenerated",
                 AbstractCompletionWeigherTest.class,
-                testModelWithPattern("idea/testData/completion/weighers", "^([^\\.]+).kt$", "doTest")
+                testModelWithPattern("idea/testData/completion/weighers", "^([^\\.]+)\\.kt$", "doTest")
         );
 
         generateTest(
