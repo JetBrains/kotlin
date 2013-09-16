@@ -57,6 +57,7 @@ import org.jetbrains.jet.plugin.refactoring.inline.AbstractInlineTest;
 import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.resolve.AbstractResolveBaseTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
+import org.jetbrains.jet.resolve.AbstractResolveWithLibTest;
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest;
 import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel;
 import org.jetbrains.jet.generators.tests.generator.TestClassModel;
@@ -463,6 +464,13 @@ public class GenerateTests {
                 "ReferenceResolveTestGenerated",
                 AbstractResolveBaseTest.class,
                 testModel("idea/testData/resolve/references", true, "doTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "ReferenceResolveWithLibTestGenerated",
+                AbstractResolveWithLibTest.class,
+                testModel("idea/testData/resolve/referenceWithLib", false, "doTest")
         );
 
         generateTest(
