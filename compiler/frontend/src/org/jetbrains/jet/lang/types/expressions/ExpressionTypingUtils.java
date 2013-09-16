@@ -462,7 +462,7 @@ public class ExpressionTypingUtils {
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
                 AbstractDiagnosticFactory factory = diagnostic.getFactory();
-                if ((factory == TYPE_MISMATCH || factory == CONSTANT_EXPECTED_TYPE_MISMATCH)
+                if ((factory == TYPE_MISMATCH || factory == CONSTANT_EXPECTED_TYPE_MISMATCH || factory == NULL_FOR_NONNULL_TYPE)
                         && diagnostic.getPsiElement() == expressionToWatch) {
                     mismatchFound[0] = true;
                 }
