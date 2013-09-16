@@ -49,7 +49,6 @@ import java.util.Set;
 public class JetPsiUtil {
 
     public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
-    public static final Name ROOT_NAMESPACE_NAME = Name.special("<root namespace>");
 
     private JetPsiUtil() {
     }

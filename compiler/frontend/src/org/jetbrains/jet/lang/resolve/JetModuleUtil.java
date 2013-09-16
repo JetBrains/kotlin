@@ -17,13 +17,12 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.NamespaceType;
 
 public class JetModuleUtil {
     public static NamespaceType getRootNamespaceType(JetElement expression) {
         // TODO: this is a stub: at least the modules' root namespaces must be indexed here
-        return new NamespaceType(JetPsiUtil.ROOT_NAMESPACE_NAME, JetScope.EMPTY);
+        return new NamespaceType(DescriptorUtils.ROOT_NAMESPACE_NAME, JetScope.EMPTY);
     }
 }

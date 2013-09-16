@@ -40,6 +40,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 public class DescriptorUtils {
+    public static final Name ROOT_NAMESPACE_NAME = Name.special("<root namespace>");
+
     private DescriptorUtils() {
     }
 
