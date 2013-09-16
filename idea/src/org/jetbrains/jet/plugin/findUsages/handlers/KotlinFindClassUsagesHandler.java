@@ -30,21 +30,16 @@ import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.plugin.findUsages.FindUsagesUtils;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
 
@@ -84,7 +79,7 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                                     new ReferencesSearch.SearchParameters(jetClass, kotlinOptions.searchScope, false)
                             ).findAll();
                             for (PsiReference ref : references) {
-                                boolean constructorUsage = isConstructorUsage(ref.getElement(), jetClass);
+                                boolean constructorUsage = FindUsagesUtils.isConstructorUsage(ref.getElement(), jetClass);
                                 if ((constructorUsage && !kotlinOptions.searchConstructorUsages)
                                     || (!constructorUsage && !kotlinOptions.isUsages)) continue;
 
@@ -155,47 +150,6 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                         }
                 )
         );
-    }
-
-    private static DeclarationDescriptor getCallDescriptor(PsiElement element, BindingContext bindingContext) {
-        JetConstructorCalleeExpression constructorCalleeExpression =
-                PsiTreeUtil.getParentOfType(element, JetConstructorCalleeExpression.class);
-        if (constructorCalleeExpression != null) {
-            JetReferenceExpression classReference = constructorCalleeExpression.getConstructorReferenceExpression();
-            return bindingContext.get(BindingContext.REFERENCE_TARGET, classReference);
-        }
-
-        JetCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JetCallExpression.class);
-        if (callExpression != null) {
-            JetExpression callee = callExpression.getCalleeExpression();
-            if (callee instanceof JetReferenceExpression) {
-                return bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) callee);
-            }
-        }
-
-        return null;
-    }
-
-    private static boolean isConstructorUsage(PsiElement element, JetClass jetClass) {
-        PsiConstructorCall constructorCall = PsiTreeUtil.getParentOfType(element, PsiConstructorCall.class);
-        if (constructorCall != null && constructorCall == element.getParent()) {
-            PsiMethod constructor = constructorCall.resolveConstructor();
-            if (constructor == null) return false;
-
-            PsiClass constructorClass = constructor.getContainingClass();
-            return constructorClass != null && constructorClass.getNavigationElement() == jetClass;
-        }
-        if (!(element instanceof JetElement)) return false;
-
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-
-       DeclarationDescriptor descriptor = getCallDescriptor(element, bindingContext);
-       if (!(descriptor instanceof ConstructorDescriptor)) return false;
-
-       DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
-       return containingDescriptor != null
-              && BindingContextUtils.descriptorToDeclaration(bindingContext, containingDescriptor) == jetClass;
     }
 
     @Override
