@@ -20,7 +20,11 @@ import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -55,10 +59,17 @@ public class IncorrectSourceRootNameNotification extends EditorNotifications.Pro
             return null;
         }
 
+        Module module = ModuleUtilCore.findModuleForFile(file, project);
+        if (module == null) return null;
+
         EditorNotificationPanel panel = new EditorNotificationPanel();
         panel.setText("Kotlin file in Gradle Project should be under source root with name 'kotlin'");
-        for (final VirtualFile root : ProjectRootManager.getInstance(project).getContentSourceRoots()) {
-            if (root.getName().equals("kotlin")) {
+
+        ModuleRootManager moduleManager = ModuleRootManager.getInstance(module);
+        boolean isInTestSourceRoot = moduleManager.getFileIndex().isInTestSourceContent(file);
+
+        for (final VirtualFile root : moduleManager.getSourceRoots(isInTestSourceRoot)) {
+            if (root.getName().equals("kotlin") && moduleManager.getFileIndex().isInTestSourceContent(root) == isInTestSourceRoot) {
                 VirtualFile sourceRootForFile = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(file);
                 assert sourceRootForFile != null : "Notification Panel should appear only for files under source root " +
                                                    file.getCanonicalPath();
