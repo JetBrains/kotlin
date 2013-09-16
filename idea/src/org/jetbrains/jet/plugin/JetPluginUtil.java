@@ -128,7 +128,7 @@ public class JetPluginUtil {
         Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
         if (module == null) return false;
 
-        if (!isAndroidGradleModule(module)) {
+        if (!isAndroidGradleModule(module) && !isGradleModule(module)) {
             return false;
         }
 
