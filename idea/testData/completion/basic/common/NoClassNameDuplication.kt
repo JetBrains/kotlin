@@ -9,4 +9,4 @@ fun firstFun() {
 
 // TIME: 1
 // EXIST: Testing
-// NUMBER: 1
+// INVOCATION_COUNT: 1

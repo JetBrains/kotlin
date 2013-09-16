@@ -45,7 +45,7 @@ public abstract class AbstractCompletionWeigherTest() : LightCodeInsightFixtureT
         val items = InTextDirectivesUtils.findArrayWithPrefixes(text, "// ORDER:")
         Assert.assertTrue(!items.isEmpty(), """Some items should be defined with "// ORDER:" directive""")
 
-        fixture.complete(CompletionType.BASIC, InTextDirectivesUtils.getPrefixedInt(text, "// NUMBER:") ?: 1)
+        fixture.complete(CompletionType.BASIC, InTextDirectivesUtils.getPrefixedInt(text, "// INVOCATION_COUNT:") ?: 1)
         fixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
     }
 

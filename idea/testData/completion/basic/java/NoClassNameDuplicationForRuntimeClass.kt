@@ -2,4 +2,4 @@ val x = LineIterator<caret>
 
 // TIME: 1
 // EXIST: LineIterator~(kotlin.io)
-// NUMBER: 1
+// INVOCATION_COUNT: 1

@@ -5,4 +5,4 @@ fun anyfun() {
 }
 
 // TIME: 1
-// NUMBER: 0
+// INVOCATION_COUNT: 0

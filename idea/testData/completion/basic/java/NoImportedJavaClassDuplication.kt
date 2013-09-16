@@ -4,4 +4,4 @@ val x = InputStreamReader<caret>
 
 // TIME: 1
 // EXIST: InputStreamReader~(java.io)
-// NUMBER: 1
+// INVOCATION_COUNT: 1

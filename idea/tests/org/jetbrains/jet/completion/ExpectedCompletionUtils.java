@@ -104,9 +104,9 @@ public class ExpectedCompletionUtils {
     private static final String EXIST_JAVA_ONLY_LINE_PREFIX = "EXIST_JAVA_ONLY:";
     private static final String EXIST_JS_ONLY_LINE_PREFIX = "EXIST_JS_ONLY:";
 
-    private static final String NUMBER_LINE_PREFIX = "NUMBER:";
-    private static final String NUMBER_JS_LINE_PREFIX = "NUMBER_JS:";
-    private static final String NUMBER_JAVA_LINE_PREFIX = "NUMBER_JAVA:";
+    private static final String NUMBER_LINE_PREFIX = "INVOCATION_COUNT:";
+    private static final String NUMBER_JS_LINE_PREFIX = "INVOCATION_COUNT_JS:";
+    private static final String NUMBER_JAVA_LINE_PREFIX = "INVOCATION_COUNT_JAVA:";
 
     private static final String EXECUTION_TIME_PREFIX = "TIME:";
     private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";

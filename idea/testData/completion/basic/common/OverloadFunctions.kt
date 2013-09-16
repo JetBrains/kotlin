@@ -21,4 +21,4 @@ fun testMy() {
 }
 
 // EXIST: testOther
-// NUMBER: 3
+// INVOCATION_COUNT: 3

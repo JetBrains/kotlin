@@ -6,4 +6,4 @@ public class Testing {
 
 // EXIST: ClassFromJet
 // EXIST: SomePackage
-// NUMBER: 2
+// INVOCATION_COUNT: 2
