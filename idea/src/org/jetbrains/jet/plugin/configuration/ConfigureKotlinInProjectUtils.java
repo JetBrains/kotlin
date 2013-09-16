@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.configuration;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;

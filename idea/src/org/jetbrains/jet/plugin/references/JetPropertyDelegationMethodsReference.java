@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.references;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
