@@ -52,8 +52,14 @@ public final class Name implements Comparable<Name> {
 
     @NotNull
     public static Name identifier(@NotNull String name) {
-        NameUtils.requireIdentifier(name);
+        if (!isValidIdentifier(name)) {
+            throw new IllegalArgumentException("invalid identifier: " + name);
+        }
         return new Name(name, false);
+    }
+
+    public static boolean isValidIdentifier(@NotNull String name) {
+        return !name.isEmpty() && !name.startsWith("<") && !name.contains(".") && !name.contains("/");
     }
 
     /** Must be validated by caller */

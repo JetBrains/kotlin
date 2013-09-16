@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.NameUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -178,7 +177,7 @@ public class ResolveElementCache {
             }
 
             Name name = packageNameExpression.getReferencedNameAsName();
-            if (NameUtils.isValidIdentified(name.asString())) {
+            if (Name.isValidIdentifier(name.asString())) {
                 if (trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, packageNameExpression) == null) {
                     FqName fqName = header.getParentFqName(packageNameExpression).child(name);
                     NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
