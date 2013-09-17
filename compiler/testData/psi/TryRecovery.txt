@@ -1,4 +1,4 @@
-JetFile: TryRecovery.jet
+JetFile: TryRecovery.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

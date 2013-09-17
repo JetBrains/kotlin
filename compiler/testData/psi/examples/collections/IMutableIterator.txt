@@ -1,4 +1,4 @@
-JetFile: IMutableIterator.jet
+JetFile: IMutableIterator.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

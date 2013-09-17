@@ -1,4 +1,4 @@
-JetFile: ModifierAsSelector.jet
+JetFile: ModifierAsSelector.kt
   PsiComment(EOL_COMMENT)('// JET-1')
   PsiWhiteSpace('\n\n')
   NAMESPACE_HEADER

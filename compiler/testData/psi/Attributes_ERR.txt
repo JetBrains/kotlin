@@ -1,4 +1,4 @@
-JetFile: Attributes_ERR.jet
+JetFile: Attributes_ERR.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

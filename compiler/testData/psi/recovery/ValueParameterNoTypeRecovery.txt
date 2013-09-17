@@ -1,4 +1,4 @@
-JetFile: ValueParameterNoTypeRecovery.jet
+JetFile: ValueParameterNoTypeRecovery.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

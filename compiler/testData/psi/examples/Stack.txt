@@ -1,4 +1,4 @@
-JetFile: Stack.jet
+JetFile: Stack.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

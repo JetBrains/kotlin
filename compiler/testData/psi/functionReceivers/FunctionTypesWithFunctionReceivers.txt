@@ -1,4 +1,4 @@
-JetFile: FunctionTypesWithFunctionReceivers.jet
+JetFile: FunctionTypesWithFunctionReceivers.kt
   NAMESPACE_HEADER
     <empty list>
   TYPEDEF

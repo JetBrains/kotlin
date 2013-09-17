@@ -1,4 +1,4 @@
-JetFile: EOLsOnRollback.jet
+JetFile: EOLsOnRollback.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

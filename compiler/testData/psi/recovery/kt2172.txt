@@ -1,4 +1,4 @@
-JetFile: kt2172.jet
+JetFile: kt2172.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

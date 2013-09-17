@@ -1,4 +1,4 @@
-JetFile: AssertNotNull.jet
+JetFile: AssertNotNull.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

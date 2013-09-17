@@ -1,4 +1,4 @@
-JetFile: When.jet
+JetFile: When.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

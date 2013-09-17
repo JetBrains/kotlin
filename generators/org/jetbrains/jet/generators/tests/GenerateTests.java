@@ -104,7 +104,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "JetParsingTestGenerated",
                 AbstractJetParsingTest.class,
-                testModel("compiler/testData/psi", true, "jet", "doParsingTest")
+                testModel("compiler/testData/psi", true, "kt", "doParsingTest")
         );
 
         GenerateRangesCodegenTestData.main(args);

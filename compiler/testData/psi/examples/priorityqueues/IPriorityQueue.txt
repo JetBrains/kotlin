@@ -1,4 +1,4 @@
-JetFile: IPriorityQueue.jet
+JetFile: IPriorityQueue.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

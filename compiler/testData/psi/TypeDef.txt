@@ -1,4 +1,4 @@
-JetFile: TypeDef.jet
+JetFile: TypeDef.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

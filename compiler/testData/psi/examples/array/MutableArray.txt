@@ -1,4 +1,4 @@
-JetFile: MutableArray.jet
+JetFile: MutableArray.kt
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n  ')

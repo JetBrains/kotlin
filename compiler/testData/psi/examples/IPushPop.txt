@@ -1,4 +1,4 @@
-JetFile: IPushPop.jet
+JetFile: IPushPop.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

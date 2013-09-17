@@ -1,4 +1,4 @@
-JetFile: Properties_ERR.jet
+JetFile: Properties_ERR.kt
   NAMESPACE_HEADER
     <empty list>
   PROPERTY

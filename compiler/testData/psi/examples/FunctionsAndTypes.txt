@@ -1,4 +1,4 @@
-JetFile: FunctionsAndTypes.jet
+JetFile: FunctionsAndTypes.kt
   NAMESPACE_HEADER
     <empty list>
   TYPEDEF

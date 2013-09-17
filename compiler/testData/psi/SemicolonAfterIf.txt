@@ -1,4 +1,4 @@
-JetFile: SemicolonAfterIf.jet
+JetFile: SemicolonAfterIf.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

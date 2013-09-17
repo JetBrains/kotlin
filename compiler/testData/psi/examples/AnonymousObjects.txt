@@ -1,4 +1,4 @@
-JetFile: AnonymousObjects.jet
+JetFile: AnonymousObjects.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

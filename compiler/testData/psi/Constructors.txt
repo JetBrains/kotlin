@@ -1,4 +1,4 @@
-JetFile: Constructors.jet
+JetFile: Constructors.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

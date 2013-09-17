@@ -1,4 +1,4 @@
-JetFile: TypeParametersBeforeName.jet
+JetFile: TypeParametersBeforeName.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

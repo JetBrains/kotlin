@@ -1,4 +1,4 @@
-JetFile: IComparable.jet
+JetFile: IComparable.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

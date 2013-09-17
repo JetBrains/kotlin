@@ -1,4 +1,4 @@
-JetFile: QuotedIdentifiers.jet
+JetFile: QuotedIdentifiers.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

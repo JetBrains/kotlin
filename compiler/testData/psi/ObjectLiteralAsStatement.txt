@@ -1,4 +1,4 @@
-JetFile: ObjectLiteralAsStatement.jet
+JetFile: ObjectLiteralAsStatement.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

@@ -1,4 +1,4 @@
-JetFile: functionTypes.jet
+JetFile: functionTypes.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

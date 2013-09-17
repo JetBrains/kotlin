@@ -44,7 +44,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
     }
 
     public AbstractJetParsingTest() {
-        super(".", "jet", new JetParserDefinition());
+        super(".", "kt", new JetParserDefinition());
     }
 
     private static void checkPsiGetters(JetElement elem) throws Throwable {
@@ -88,6 +88,6 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
             }
         });
 
-        doCheckResult(myFullDataPath, filePath.replace(".jet", ".txt"), toParseTreeText(myFile, false, false).trim());
+        doCheckResult(myFullDataPath, filePath.replace(".kt", ".txt"), toParseTreeText(myFile, false, false).trim());
     }
 }

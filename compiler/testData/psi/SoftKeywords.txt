@@ -1,4 +1,4 @@
-JetFile: SoftKeywords.jet
+JetFile: SoftKeywords.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

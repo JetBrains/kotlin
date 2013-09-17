@@ -1,4 +1,4 @@
-JetFile: DocCommentAtBeginningOfFile3.jet
+JetFile: DocCommentAtBeginningOfFile3.kt
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n\n')

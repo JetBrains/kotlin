@@ -1,4 +1,4 @@
-JetFile: HashMap.jet
+JetFile: HashMap.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

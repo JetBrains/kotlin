@@ -1,4 +1,4 @@
-JetFile: ImportRecovery.jet
+JetFile: ImportRecovery.kt
   NAMESPACE_HEADER
     <empty list>
   IMPORT_DIRECTIVE

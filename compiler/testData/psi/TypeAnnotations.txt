@@ -1,4 +1,4 @@
-JetFile: TypeAnnotations.jet
+JetFile: TypeAnnotations.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

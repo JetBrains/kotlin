@@ -1,4 +1,4 @@
-JetFile: PropertiesWithFunctionReceivers.jet
+JetFile: PropertiesWithFunctionReceivers.kt
   NAMESPACE_HEADER
     <empty list>
   PROPERTY

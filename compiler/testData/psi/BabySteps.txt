@@ -1,4 +1,4 @@
-JetFile: BabySteps.jet
+JetFile: BabySteps.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

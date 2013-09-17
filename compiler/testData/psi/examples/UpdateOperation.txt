@@ -1,4 +1,4 @@
-JetFile: UpdateOperation.jet
+JetFile: UpdateOperation.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

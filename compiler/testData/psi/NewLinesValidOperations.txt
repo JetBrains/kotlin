@@ -1,4 +1,4 @@
-JetFile: NewLinesValidOperations.jet
+JetFile: NewLinesValidOperations.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

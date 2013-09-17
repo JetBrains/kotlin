@@ -1,4 +1,4 @@
-JetFile: NewlinesInParentheses.jet
+JetFile: NewlinesInParentheses.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

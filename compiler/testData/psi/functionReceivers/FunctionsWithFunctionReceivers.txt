@@ -1,4 +1,4 @@
-JetFile: FunctionsWithFunctionReceivers.jet
+JetFile: FunctionsWithFunctionReceivers.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

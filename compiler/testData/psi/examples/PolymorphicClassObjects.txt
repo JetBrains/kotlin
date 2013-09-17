@@ -1,4 +1,4 @@
-JetFile: PolymorphicClassObjects.jet
+JetFile: PolymorphicClassObjects.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

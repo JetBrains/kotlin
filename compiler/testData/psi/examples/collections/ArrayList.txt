@@ -1,4 +1,4 @@
-JetFile: ArrayList.jet
+JetFile: ArrayList.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

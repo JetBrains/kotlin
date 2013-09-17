@@ -1,4 +1,4 @@
-JetFile: ExtensionsWithQNReceiver.jet
+JetFile: ExtensionsWithQNReceiver.kt
   NAMESPACE_HEADER
     <empty list>
   PROPERTY
