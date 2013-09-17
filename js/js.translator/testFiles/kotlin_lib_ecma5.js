@@ -72,7 +72,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var KotlinNew = {};
+var Kotlin = {};
 
 (function () {
 
@@ -103,7 +103,7 @@ var KotlinNew = {};
 
     function getClass(basesArray) {
         for (var i = 0; i < basesArray.length; i++) {
-            if (isNativeClass(basesArray[i]) || basesArray[i].$metadata$.type === KotlinNew.TYPE.CLASS) {
+            if (isNativeClass(basesArray[i]) || basesArray[i].$metadata$.type === Kotlin.TYPE.CLASS) {
                 return basesArray[i];
             }
         }
@@ -112,16 +112,16 @@ var KotlinNew = {};
 
     var emptyFunction = function() {};
 
-    KotlinNew.TYPE = {
+    Kotlin.TYPE = {
         CLASS: "class",
         TRAIT: "trait",
         OBJECT: "object"
     };
 
-    KotlinNew.classCount = 0;
-    KotlinNew.newClassIndex = function() {
-        var tmp = KotlinNew.classCount;
-        KotlinNew.classCount++;
+    Kotlin.classCount = 0;
+    Kotlin.newClassIndex = function() {
+        var tmp = Kotlin.classCount;
+        Kotlin.classCount++;
         return tmp;
     };
 
@@ -150,7 +150,7 @@ var KotlinNew = {};
 
         metadata.baseClasses = toArray(bases);
         metadata.baseClass = getClass(metadata.baseClasses);
-        metadata.classIndex = KotlinNew.newClassIndex();
+        metadata.classIndex = Kotlin.newClassIndex();
         metadata.functions = {};
         metadata.properties = {};
 
@@ -194,12 +194,12 @@ var KotlinNew = {};
         };
     }
 
-    KotlinNew.createClass = function (bases, initializer, properties, staticProperties) {
+    Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
         var constructor = createConstructor();
         copyProperties(constructor, staticProperties);
 
         var metadata = computeMetadata(bases, properties);
-        metadata.type = KotlinNew.TYPE.CLASS;
+        metadata.type = Kotlin.TYPE.CLASS;
 
         var prototypeObj;
         if (metadata.baseClass !== null) {
@@ -228,27 +228,27 @@ var KotlinNew = {};
         return constructor;
     };
 
-    KotlinNew.createObject = function (bases, initializer, functions) {
-        var noNameClass = KotlinNew.createClass(bases, initializer, functions);
+    Kotlin.createObject = function (bases, initializer, functions) {
+        var noNameClass = Kotlin.createClass(bases, initializer, functions);
         var obj = new noNameClass();
         obj.$metadata$ = {
-            type: KotlinNew.TYPE.OBJECT
+            type: Kotlin.TYPE.OBJECT
         };
         return  obj;
     };
 
-    KotlinNew.createTrait = function (bases, properties, staticProperties) {
+    Kotlin.createTrait = function (bases, properties, staticProperties) {
         var obj = function () {};
         copyProperties(obj, staticProperties);
 
         obj.$metadata$ = computeMetadata(bases, properties);
-        obj.$metadata$.type = KotlinNew.TYPE.TRAIT;
+        obj.$metadata$.type = Kotlin.TYPE.TRAIT;
         return obj;
     };
 
-    KotlinNew.keys = Object.keys; // TODO drop
+    Kotlin.keys = Object.keys; // TODO drop
 
-    KotlinNew.isType = function (object, klass) {
+    Kotlin.isType = function (object, klass) {
         if (object == null || klass == null) {
             return false;
         } else {
@@ -288,7 +288,7 @@ var KotlinNew = {};
         return definition;
     }
 
-    KotlinNew.definePackage = function (initializer, members) {
+    Kotlin.definePackage = function (initializer, members) {
         var definition = createDefinition(members);
         if (initializer === null) {
             return {value: definition};
@@ -299,7 +299,7 @@ var KotlinNew = {};
         }
     };
 
-    KotlinNew.defineRootPackage = function (initializer, members) {
+    Kotlin.defineRootPackage = function (initializer, members) {
         var definition = createDefinition(members);
 
         if (initializer === null) {
@@ -310,63 +310,12 @@ var KotlinNew = {};
         return definition;
       };
 
-    KotlinNew.defineModule = function (id, module) {
+    Kotlin.defineModule = function (id, module) {
         if (id in Kotlin.modules) {
             throw new Kotlin.IllegalArgumentException();
         }
         module.$initializer$.call(module); // TODO: temporary hack
         Object.defineProperty(Kotlin.modules, id, {value: module});
-    };
-
-})();
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-// Be aware — Google Chrome has serious issue — you can rewrite READ-ONLY property (if it is defined in prototype). Firefox and Safari work correct.
-// Always test property access issues in Firefox, but not in Chrome.
-var Kotlin = Object.create(null);
-
-(function () {
-    "use strict";
-
-    Kotlin.keys = KotlinNew.keys;
-
-    Kotlin.isType = function (object, type) {
-        return KotlinNew.isType(object, type);
-    };
-
-    Kotlin.createTrait = function (bases, properties, staticProperties) {
-        return KotlinNew.createTrait(bases, properties, staticProperties);
-    };
-
-    Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
-        return KotlinNew.createClass(bases, initializer, properties, staticProperties);
-    };
-
-
-    Kotlin.createObject = function (bases, initializer, properties) {
-        return KotlinNew.createObject(bases, initializer, properties)
-    };
-
-    Kotlin.definePackage = function (initializer, members) {
-        return KotlinNew.definePackage(initializer, members);
-    };
-
-    Kotlin.defineRootPackage = function (initializer, members) {
-        return KotlinNew.defineRootPackage(initializer, members);
-    };
-
-    Kotlin.defineModule = function (id, module) {
-        KotlinNew.defineModule(id, module);
     };
 
 })();

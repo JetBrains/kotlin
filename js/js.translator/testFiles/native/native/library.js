@@ -17,7 +17,7 @@
 (function () {
     var c = 0;
 
-    Kotlin.A = KotlinNew.createClass(null,
+    Kotlin.A = Kotlin.createClass(null,
             function () {
                 this.f = function(i) {
                     if (i === undefined && c === 0) {
