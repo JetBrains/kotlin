@@ -53,6 +53,10 @@ public class JetPsiUtil {
     private JetPsiUtil() {
     }
 
+    public interface JetExpressionWrapper {
+        JetExpression getBaseExpression();
+    }
+
     public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetTreeVisitor<D> visitor, D data) {
         PsiElement child = element.getFirstChild();
         while (child != null) {
@@ -63,14 +67,20 @@ public class JetPsiUtil {
         }
     }
 
+    @NotNull
+    public static JetExpression safeDeparenthesize(@NotNull JetExpression expression, boolean deparenthesizeBinaryExpressionWithTypeRHS) {
+        JetExpression deparenthesized = deparenthesize(expression, deparenthesizeBinaryExpressionWithTypeRHS);
+        return deparenthesized != null ? deparenthesized : expression;
+    }
+
     @Nullable
-    public static JetExpression deparenthesize(@NotNull JetExpression expression) {
+    public static JetExpression deparenthesize(@Nullable JetExpression expression) {
         return deparenthesize(expression, true);
     }
 
     @Nullable
     public static JetExpression deparenthesize(
-            @NotNull JetExpression expression,
+            @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS
     ) {
         return deparenthesizeWithResolutionStrategy(expression, deparenthesizeBinaryExpressionWithTypeRHS, null);
@@ -99,6 +109,9 @@ public class JetPsiUtil {
             if (baseExpression != null) {
                 expression = baseExpression;
             }
+        }
+        else if (expression instanceof JetExpressionWrapper) {
+            expression = ((JetExpressionWrapper) expression).getBaseExpression();
         }
         if (expression instanceof JetParenthesizedExpression) {
             JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
@@ -562,21 +575,6 @@ public class JetPsiUtil {
         if (blockExpression == null) return null;
         List<JetElement> statements = blockExpression.getStatements();
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
-    }
-
-    @NotNull
-    public static JetExpression unwrapFromBlock(@NotNull JetExpression expression) {
-        //used for 'if' branches that are wrapped in a block
-        if (expression instanceof JetBlockExpression) {
-            List<JetElement> statements = ((JetBlockExpression) expression).getStatements();
-            if (statements.size() == 1) {
-                JetElement lastStatement = getLastStatementInABlock((JetBlockExpression) expression);
-                if (lastStatement instanceof JetExpression) {
-                    return (JetExpression) lastStatement;
-                }
-            }
-        }
-        return expression;
     }
 
     public static boolean isLocalClass(@NotNull JetClassOrObject classOrObject) {

@@ -174,7 +174,7 @@ public class ArgumentTypeResolver {
         if (expression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(JetPsiUtil.unwrapFromBlock(expression), false);
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
         if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
             return getFunctionLiteralTypeInfo(expression, (JetFunctionLiteralExpression) deparenthesizedExpression, context, resolveArgumentsMode);
         }

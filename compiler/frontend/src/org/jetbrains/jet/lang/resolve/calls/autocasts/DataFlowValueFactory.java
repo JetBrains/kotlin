@@ -131,13 +131,13 @@ public class DataFlowValueFactory {
             @Nullable JetExpression expression,
             @NotNull BindingContext bindingContext
     ) {
-        if (expression instanceof JetParenthesizedExpression) {
-            JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) expression;
-            JetExpression innerExpression = parenthesizedExpression.getExpression();
-
-            return getIdForStableIdentifier(innerExpression, bindingContext);
+        if (expression != null) {
+            JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
+            if (expression != deparenthesized) {
+                return getIdForStableIdentifier(deparenthesized, bindingContext);
+            }
         }
-        else if (expression instanceof JetQualifiedExpression) {
+        if (expression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
             JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
             JetExpression selectorExpression = qualifiedExpression.getSelectorExpression();

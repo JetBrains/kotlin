@@ -2485,6 +2485,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/deparenthesize/ArrayAccessAssignment.kt");
             }
             
+            @TestMetadata("checkDeparenthesizedType.kt")
+            public void testCheckDeparenthesizedType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/deparenthesize/checkDeparenthesizedType.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/enum")

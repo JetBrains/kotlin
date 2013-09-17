@@ -470,8 +470,7 @@ public class CandidateResolver {
     ) {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         if (argumentExpression == null) return;
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(
-                JetPsiUtil.unwrapFromBlock(argumentExpression), false);
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(argumentExpression, false);
         if (!(deparenthesizedExpression instanceof JetFunctionLiteralExpression)) return;
         JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) deparenthesizedExpression;
 
@@ -640,7 +639,7 @@ public class CandidateResolver {
         if (argumentExpression == null || type == null) return type;
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                JetPsiUtil.unwrapFromBlock(argumentExpression), type, trace.getBindingContext());
+                argumentExpression, type, trace.getBindingContext());
         if (!dataFlowValue.isStableIdentifier()) return type;
 
         Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
@@ -763,7 +762,7 @@ public class CandidateResolver {
             @NotNull JetType actualType,
             @NotNull ResolutionContext<?> context
     ) {
-        ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.unwrapFromBlock(expression), actualType);
+        ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType);
         List<ReceiverValue> variants =
                 AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (ReceiverValue receiverValue : variants) {

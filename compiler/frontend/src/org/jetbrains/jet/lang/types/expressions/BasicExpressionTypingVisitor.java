@@ -114,8 +114,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (innerExpression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetTypeInfo typeInfo = facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
-        return DataFlowUtils.checkType(typeInfo, expression, context);
+        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
     }
 
     private static JetTypeInfo createNumberValueTypeInfo(
@@ -727,7 +726,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // TODO : Some processing for the label?
         JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
         context.labelResolver.exitLabeledElement(baseExpression);
-        return DataFlowUtils.checkType(typeInfo, expression, context);
+        return typeInfo;
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
