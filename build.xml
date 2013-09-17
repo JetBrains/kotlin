@@ -105,8 +105,8 @@
         <cleandir dir="${output}/classes/generators"/>
         <javac destdir="${output}/classes/generators" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src path="injector-generator/src"/>
-            <src path="generators/org/jetbrains/jet/generators/injectors"/>
-            <src path="generators/org/jetbrains/jet/generators/jvm"/>
+            <src path="generators/src/org/jetbrains/jet/generators/injectors"/>
+            <src path="generators/src/org/jetbrains/jet/generators/jvm"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
         </javac>
