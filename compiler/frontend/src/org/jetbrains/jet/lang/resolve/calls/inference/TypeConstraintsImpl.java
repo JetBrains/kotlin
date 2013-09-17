@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
@@ -152,7 +151,7 @@ public class TypeConstraintsImpl implements TypeConstraints {
         Collection<JetType> generalLowerBounds = pair.getFirst();
         Collection<JetType> numberLowerBounds = pair.getSecond();
 
-        JetType superTypeOfLowerBounds = commonSupertype(generalLowerBounds);
+        JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(generalLowerBounds);
         if (trySuggestion(superTypeOfLowerBounds)) {
             return Collections.singleton(superTypeOfLowerBounds);
         }
@@ -170,14 +169,15 @@ public class TypeConstraintsImpl implements TypeConstraints {
 
         values.addAll(withoutErrorTypes.getUpperBounds());
 
-        JetType superTypeOfNumberLowerBounds = commonSupertypeForNumberTypes(numberLowerBounds);
+        JetType superTypeOfNumberLowerBounds = TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds);
         if (trySuggestion(superTypeOfNumberLowerBounds)) {
             return Collections.singleton(superTypeOfNumberLowerBounds);
         }
         ContainerUtil.addIfNotNull(superTypeOfNumberLowerBounds, values);
 
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
-            JetType superTypeOfAllLowerBounds = commonSupertype(Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
+            JetType superTypeOfAllLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(
+                    Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
             if (trySuggestion(superTypeOfAllLowerBounds)) {
                 return Collections.singleton(superTypeOfAllLowerBounds);
             }
@@ -227,23 +227,5 @@ public class TypeConstraintsImpl implements TypeConstraints {
             }
         }
         return typeConstraintsWithoutErrorType;
-    }
-
-    @Nullable
-    private static JetType commonSupertype(@NotNull Collection<JetType> lowerBounds) {
-        if (lowerBounds.isEmpty()) return null;
-        if (lowerBounds.size() == 1) {
-            JetType type = lowerBounds.iterator().next();
-            if (type.getConstructor() instanceof IntersectionTypeConstructor) {
-                return commonSupertype(type.getConstructor().getSupertypes());
-            }
-        }
-        return CommonSupertypes.commonSupertype(lowerBounds);
-    }
-
-    @Nullable
-    private static JetType commonSupertypeForNumberTypes(@NotNull Collection<JetType> numberLowerBounds) {
-        if (numberLowerBounds.isEmpty()) return null;
-        return TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds);
     }
 }

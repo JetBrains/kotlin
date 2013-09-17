@@ -566,8 +566,9 @@ public class TypeUtils {
         return builder.toString();
     }
 
-    @NotNull
+    @Nullable
     public static JetType commonSupertypeForNumberTypes(@NotNull Collection<JetType> numberLowerBounds) {
+        if (numberLowerBounds.isEmpty()) return null;
         assert !numberLowerBounds.isEmpty();
         Set<JetType> intersectionOfSupertypes = getIntersectionOfSupertypes(numberLowerBounds);
         JetType primitiveNumberType = getDefaultPrimitiveNumberType(intersectionOfSupertypes);

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -33,6 +34,18 @@ import java.util.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
 public class CommonSupertypes {
+    @Nullable
+    public static JetType commonSupertypeForNonDenotableTypes(@NotNull Collection<JetType> types) {
+        if (types.isEmpty()) return null;
+        if (types.size() == 1) {
+            JetType type = types.iterator().next();
+            if (type.getConstructor() instanceof IntersectionTypeConstructor) {
+                return commonSupertypeForNonDenotableTypes(type.getConstructor().getSupertypes());
+            }
+        }
+        return commonSupertype(types);
+    }
+
     @NotNull
     public static JetType commonSupertype(@NotNull Collection<JetType> types) {
         assert !types.isEmpty();
