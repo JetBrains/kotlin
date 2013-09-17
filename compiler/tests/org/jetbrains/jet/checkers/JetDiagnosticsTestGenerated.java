@@ -194,6 +194,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/DelegationToJavaIface.kt");
         }
         
+        @TestMetadata("Delegation_ClashingFunctions.kt")
+        public void testDelegation_ClashingFunctions() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/Delegation_ClashingFunctions.kt");
+        }
+        
         @TestMetadata("Delegation_Hierarchy.kt")
         public void testDelegation_Hierarchy() throws Exception {
             doTest("compiler/testData/diagnostics/tests/Delegation_Hierarchy.kt");
