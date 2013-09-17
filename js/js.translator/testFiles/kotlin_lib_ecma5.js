@@ -1,7 +1,5 @@
 
-
-var KotlinNew = {};
-
+// TODO drop this:
 (function () {
     'use strict';
 
@@ -70,15 +68,17 @@ var KotlinNew = {};
             };
         }
     }
+})();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+var KotlinNew = {};
 
-    var Util = {};
+(function () {
 
-    Util.toArray = function(obj) {
+    function toArray(obj) {
         var array;
-        if (nullOrUndefined(obj)) {
+        if (obj == null) {
             array = [];
         }
         else if(!Array.isArray(obj)) {
@@ -88,58 +88,93 @@ var KotlinNew = {};
             array = obj;
         }
         return array;
-    };
+    }
 
-    Util.copyProperties = function(to, from) {
-        if (nullOrUndefined(to) || nullOrUndefined(from)) {
+    function copyProperties(to, from) {
+        if (to == null || from == null) {
             return;
         }
         for (var p in from) {
             if (from.hasOwnProperty(p)) {
-                Object.defineProperty(to, p, Object.getOwnPropertyDescriptor(from, p));
-                //to[p] = from[p];
+                to[p] = from[p];
             }
         }
-    };
-
-    function nullOrUndefined(o) {
-        return o === null || o === undefined;
     }
 
-    var emptyFunction = function() {};
-
-    Util.getClass = function (bases) {
-        var basesArray = Util.toArray(bases);
+    function getClass(basesArray) {
         for (var i = 0; i < basesArray.length; i++) {
-            if (basesArray[i].$isClass === true) {
+            if (isNativeClass(basesArray[i]) || basesArray[i].$metadata$.type === KotlinNew.TYPE.CLASS) {
                 return basesArray[i];
             }
         }
         return null;
+    }
+
+    var emptyFunction = function() {};
+
+    KotlinNew.TYPE = {
+        CLASS: "class",
+        TRAIT: "trait",
+        OBJECT: "object"
     };
 
-    KotlinNew.Util = Util;
+    KotlinNew.classCount = 0;
+    KotlinNew.newClassIndex = function() {
+        var tmp = KotlinNew.classCount;
+        KotlinNew.classCount++;
+        return tmp;
+    };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function isNativeClass(obj) {
+        return !(obj == null) && obj.$metadata$ == null;
+    }
 
-    function computePrototype(bases, functions, obj)  {
-        if (nullOrUndefined(obj)) {
-            obj = {};
-        }
-        var basesArray = Util.toArray(bases);
-        Util.copyProperties(obj, functions);
-
-        for (var i = 0; i < basesArray.length; i++) {
-            var basePrototype = basesArray[i].prototype;
-            for (var p in basePrototype) {
-                if (basePrototype.hasOwnProperty(p)) {
-                    if (!obj.hasOwnProperty(p)) {
-                        Object.defineProperty(obj, p, Object.getOwnPropertyDescriptor(basePrototype, p));
+    function applyExtension(current, bases, baseGetter) {
+        for (var i = 0; i < bases.length; i++) {
+            if (isNativeClass(bases[i])) {
+                continue;
+            }
+            var base = baseGetter(bases[i]);
+            for (var p in  base) {
+                if (base.hasOwnProperty(p)) {
+                    if(!current.hasOwnProperty(p) || current[p].$classIndex$ < base[p].$classIndex$) {
+                        current[p] = base[p];
                     }
                 }
             }
         }
-        return obj;
+    }
+
+    function computeMetadata(bases, properties) {
+        var metadata = {};
+
+        metadata.baseClasses = toArray(bases);
+        metadata.baseClass = getClass(metadata.baseClasses);
+        metadata.classIndex = KotlinNew.newClassIndex();
+        metadata.functions = {};
+        metadata.properties = {};
+
+        if (!(properties == null)) {
+            for (var p in properties) {
+                if (properties.hasOwnProperty(p)) {
+                    var property = properties[p];
+                    property.$classIndex$ = metadata.classIndex;
+                    if (typeof property === "function") {
+                        metadata.functions[p] = property;
+                    } else {
+                        metadata.properties[p] = property;
+                    }
+                }
+            }
+        }
+        applyExtension(metadata.functions, metadata.baseClasses, function (it) {
+            return it.$metadata$.functions
+        });
+        applyExtension(metadata.properties, metadata.baseClasses, function (it) {
+            return it.$metadata$.properties
+        });
+
+        return metadata;
     }
 
     function class_object() {
@@ -149,77 +184,80 @@ var KotlinNew = {};
         return this.$object$;
     }
 
-    // as separated function to reduce scope
+    // as separated function to reduce scope // TODO: drop this
     function createConstructor() {
         return function $fun() {
-            var initializer = $fun.$initializer;
+            var initializer = $fun.$metadata$.initializer;
             if (initializer != null) {
                 initializer.apply(this, arguments);
             }
         };
     }
 
-    // bases - array, @Nullable, baseClass - _.foo.B, @Nullable
-    KotlinNew.createClass = function (bases, initializer, functions, staticProperties) {
-        var baseClass = KotlinNew.Util.getClass(bases);
-        var constr = createConstructor();
-        var basePrototypeObj;
-        var baseInitializer;
-        if (!nullOrUndefined(baseClass)) {
-            baseInitializer = baseClass.$initializer;
-            basePrototypeObj = Object.create(baseClass.prototype);
-        }
+    KotlinNew.createClass = function (bases, initializer, properties, staticProperties) {
+        var constructor = createConstructor();
+        copyProperties(constructor, staticProperties);
 
-        Util.copyProperties(constr, staticProperties);
-        constr.prototype = computePrototype(bases, functions, basePrototypeObj);
-        if (!nullOrUndefined(initializer)) {
-            constr.$initializer = initializer;
-            constr.$initializer.baseInitializer = baseInitializer;
+        var metadata = computeMetadata(bases, properties);
+        metadata.type = KotlinNew.TYPE.CLASS;
+
+        var prototypeObj;
+        if (metadata.baseClass !== null) {
+            prototypeObj = Object.create(metadata.baseClass.prototype);
         } else {
-            constr.$initializer = emptyFunction;
+            prototypeObj = {};
         }
-        constr.$isClass = true;
+        Object.defineProperties(prototypeObj, metadata.properties);
+        copyProperties(prototypeObj, metadata.functions);
 
-        //Object.defineProperty(constr, "$object", {get: class_object}); // TODO: check & fix call $object()
-        constr.object$ = class_object;
-        return constr;
+        var baseInitializer;
+        if (metadata.baseClass !== null && !isNativeClass(metadata.baseClass)) {
+            baseInitializer = metadata.baseClass.$metadata$.initializer; // TODO: native superClass
+        }
+        if (!(initializer == null)) {
+            metadata.initializer = initializer;
+            metadata.initializer.baseInitializer = baseInitializer;
+        } else {
+            metadata.initializer = emptyFunction;
+        }
+
+        constructor.$metadata$ = metadata;
+        constructor.prototype = prototypeObj;
+        //Object.defineProperty(constructor, "$object", {get: class_object}); // TODO: check & fix call $object()
+        constructor.object$ = class_object;
+        return constructor;
     };
 
     KotlinNew.createObject = function (bases, initializer, functions) {
-        var baseClass = KotlinNew.Util.getClass(bases);
-        var basePrototypeObj;
-        var baseInitializer;
-        if (!nullOrUndefined(baseClass)) {
-            baseInitializer = baseClass.$initializer;
-            basePrototypeObj = Object.create(baseClass.prototype);
-        }
-        var obj = Object.create(computePrototype(bases, functions, basePrototypeObj));
-        if (!nullOrUndefined(initializer)) {
-            initializer.baseInitializer = baseInitializer;
-            initializer.call(obj);
-        }
-        obj.$isClass = false;
-        return obj;
+        var noNameClass = KotlinNew.createClass(bases, initializer, functions);
+        var obj = new noNameClass();
+        obj.$metadata$ = {
+            type: KotlinNew.TYPE.OBJECT
+        };
+        return  obj;
     };
 
-    KotlinNew.createTrait = function (bases, functions, staticProperties) {
+    KotlinNew.createTrait = function (bases, properties, staticProperties) {
         var obj = function () {};
-        obj.prototype = computePrototype(bases, functions);
-        Util.copyProperties(obj, staticProperties);
-        obj.$isClass = false;
+        copyProperties(obj, staticProperties);
+
+        obj.$metadata$ = computeMetadata(bases, properties);
+        obj.$metadata$.type = KotlinNew.TYPE.TRAIT;
         return obj;
     };
 
-    KotlinNew.keys = Object.keys;
+    KotlinNew.keys = Object.keys; // TODO drop
 
     KotlinNew.isType = function (object, klass) {
-        if (nullOrUndefined(object) || nullOrUndefined(klass)) {
+        if (object == null || klass == null) {
             return false;
         } else {
             return object instanceof klass; // TODO trait support
         }
     };
 
+
+////////////////////////////////// packages & modules //////////////////////////////
 
     function createPackageGetter(instance, initializer) {
         return function () {
@@ -233,8 +271,25 @@ var KotlinNew = {};
         };
     }
 
+    function createDefinition(members) {
+        var definition = {};
+        if (members == null) {
+            return definition;
+        }
+        for (var p in members) {
+            if (members.hasOwnProperty(p)) {
+                if ((typeof members[p]) === "function") {
+                    definition[p] = members[p];
+                } else {
+                    Object.defineProperty(definition, p, members[p]);
+                }
+            }
+        }
+        return definition;
+    }
+
     KotlinNew.definePackage = function (initializer, members) {
-        var definition = Object.create(null, members === null ? undefined : members);
+        var definition = createDefinition(members);
         if (initializer === null) {
             return {value: definition};
         }
@@ -245,12 +300,12 @@ var KotlinNew = {};
     };
 
     KotlinNew.defineRootPackage = function (initializer, members) {
-        var definition = Object.create(null, members === null ? undefined : members);
+        var definition = createDefinition(members);
 
         if (initializer === null) {
-            definition.$initializer = emptyFunction;
+            definition.$initializer$ = emptyFunction;
         } else {
-            definition.$initializer = initializer;
+            definition.$initializer$ = initializer;
         }
         return definition;
       };
@@ -259,7 +314,7 @@ var KotlinNew = {};
         if (id in Kotlin.modules) {
             throw new Kotlin.IllegalArgumentException();
         }
-        module.$initializer.call(module);
+        module.$initializer$.call(module); // TODO: temporary hack
         Object.defineProperty(Kotlin.modules, id, {value: module});
     };
 
@@ -289,56 +344,25 @@ var Kotlin = Object.create(null);
         return KotlinNew.isType(object, type);
     };
 
-    function propertyToOldDescriptorConverter(propertyDescriptor) {
-        if (propertyDescriptor === null || propertyDescriptor === undefined) {
-            return propertyDescriptor;
-        }
-        for (var p in propertyDescriptor) {
-            if (propertyDescriptor.hasOwnProperty(p)) {
-                if ((typeof propertyDescriptor[p]) === "function") {
-                    propertyDescriptor[p] = {value: propertyDescriptor[p]};
-                }
-                propertyDescriptor[p].enumerable = true;
-            }
-        }
-        return propertyDescriptor;
-    }
-
-    function propertyDescriptorConverter(propertyDescriptor) {
-        propertyDescriptor = propertyToOldDescriptorConverter(propertyDescriptor);
-        var obj = {};
-        if (propertyDescriptor === null || propertyDescriptor === undefined) {
-            return obj;
-        }
-        for (var p in propertyDescriptor) {
-            if (propertyDescriptor.hasOwnProperty(p)) {
-                propertyDescriptor[p].enumerable = true;
-            }
-        }
-        Object.defineProperties(obj, propertyDescriptor);
-        return obj;
-    }
-
-
     Kotlin.createTrait = function (bases, properties, staticProperties) {
-        return KotlinNew.createTrait(bases, propertyDescriptorConverter(properties), propertyDescriptorConverter(staticProperties));
+        return KotlinNew.createTrait(bases, properties, staticProperties);
     };
 
     Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
-        return KotlinNew.createClass(bases, initializer, propertyDescriptorConverter(properties), propertyDescriptorConverter(staticProperties));
+        return KotlinNew.createClass(bases, initializer, properties, staticProperties);
     };
 
 
     Kotlin.createObject = function (bases, initializer, properties) {
-        return KotlinNew.createObject(bases, initializer, propertyDescriptorConverter(properties))
+        return KotlinNew.createObject(bases, initializer, properties)
     };
 
     Kotlin.definePackage = function (initializer, members) {
-        return KotlinNew.definePackage(initializer, propertyToOldDescriptorConverter(members));
+        return KotlinNew.definePackage(initializer, members);
     };
 
     Kotlin.defineRootPackage = function (initializer, members) {
-        return KotlinNew.defineRootPackage(initializer, propertyToOldDescriptorConverter(members));
+        return KotlinNew.defineRootPackage(initializer, members);
     };
 
     Kotlin.defineModule = function (id, module) {

@@ -63,8 +63,7 @@ public class RegressionMergeEcmaTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    //TODO
-    public void TestCrazyExtension() throws Exception {
+    public void testCrazyExtension() throws Exception {
         checkFooBoxIsOk();
     }
 
