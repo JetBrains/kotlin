@@ -35,12 +35,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind.*;
-import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ConstraintSystemImpl implements ConstraintSystem {
 

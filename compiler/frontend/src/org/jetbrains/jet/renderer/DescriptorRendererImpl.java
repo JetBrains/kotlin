@@ -25,15 +25,16 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_TYPE_PARAMETER;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean shortNames;
@@ -206,7 +207,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private String renderTypeWithoutEscape(@NotNull JetType type) {
-        if (type == ExpressionTypingUtils.CANT_INFER_LAMBDA_PARAM_TYPE || type == CallResolverUtil.CANT_INFER_TYPE_PARAMETER) {
+        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == CANT_INFER_TYPE_PARAMETER) {
             return "???";
         }
         if (type.isError()) {

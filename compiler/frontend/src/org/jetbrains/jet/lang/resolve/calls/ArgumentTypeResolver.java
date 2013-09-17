@@ -48,10 +48,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ArgumentTypeResolver {
 
