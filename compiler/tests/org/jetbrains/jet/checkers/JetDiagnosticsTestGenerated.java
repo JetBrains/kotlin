@@ -4350,6 +4350,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/override/DefaultParameterValues-NoErrorsWhenInheritingFromOneTypeTwice.kt");
             }
             
+            @TestMetadata("Delegation.kt")
+            public void testDelegation() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/Delegation.kt");
+            }
+            
             @TestMetadata("DelegationFun.kt")
             public void testDelegationFun() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/DelegationFun.kt");
