@@ -27,7 +27,7 @@
             </constraints>
             <properties>
               <selected value="true"/>
-              <text value="&amp;Make local copy of library (could be stored in VCS) "/>
+              <text value="&amp;Make a local copy of the library (could be stored in VCS) "/>
             </properties>
           </component>
           <grid id="e47d8" binding="copyIntoPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
