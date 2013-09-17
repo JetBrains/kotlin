@@ -44,9 +44,12 @@ from 'libraries' directory after building the compiler.
 
 The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IDEA project, you can just open it in IDEA.
 
-**Note** though that you need a recent IDEA build (e.g. [12 EAP](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP)) which should **not** contain the Kotlin plugin!
+Since Kotlin project contains code written in Kotlin itself, you will also need a Kotlin plugin to build the project in IntelliJ IDEA.
+To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](http://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
+you should install the according to the [instructions below](#plugin-for-contributors).
 
-If you want to have an IDEA installation without the Kotlin plugin which is separate to your default IDEA installation which has the Kotlin plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have mutliple IDEA installs using different configurations and plugin directories.
+If you want to have an IDEA installation without the Kotlin plugin which is separate to your default IDEA installation which has the Kotlin
+plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have mutliple IDEA installs using different configurations and plugin directories.
 
 From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest greatest IDEA plugin
 
@@ -55,19 +58,33 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * a child IDEA with the Kotlin plugin will then startup
 * you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries) to then work with the various kotlin libraries etc.
 
-### Using a pre-built Kotlin IDEA plugin
+### <a id="pre-built-plugin"></a>Using a pre-built Kotlin IDEA plugin
 
-You can download the latest Kotlin IDEA Plugin from the [IDEA Plugin and Tests CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
+There are several options for getting Kotlin plugin. A stable version can be obtained as any other plugin for Intellij IDEA:
 
-Or in a recent [IDEA 12 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) install the Kotlin plugin:
+    Preferences -> Plugins -> Browse Repositories -> Search with "Kotlin" string
 
-Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
+The most recent version of the plugin can be downloaded from the
+[IDEA Plugin and Tests CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview). When downloading is
+finished you can install it with "Install plugin from disk...":
 
- * [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml](http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml)
+    Preferences -> Plugins -> Install plugin from disk...
 
-You can now open any Kotlin based projects. Its advisable you don't open the [root kotlin project](https://github.com/JetBrains/kotlin) as that's intended to be used to
-build the kotlin compiler and plugin itself; instead open the [kotlin libraries project](https://github.com/JetBrains/tree/master/kotlin/libraries)
+You can now open any Kotlin based projects.
 
+<a id="plugin-for-contributors"></a>
+**Note for contributors**: If you are planning to contribute to Kotlin project you probably want to have locally the same version of plugin that build server is using for building.
+As this version is constantly moving, the best way to always be updated is to let IDEA notify you when it is time to renew you plugin.
+
+Open 
+
+    Preferences -> Plugins -> Browse Repositories -> Manage Repositories...
+
+and add the following URL to your repositories:
+
+    http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/updatePlugins.xml
+
+Then update the list of plugins in "Browse Repositories", you'll see two versions of Kotlin there, install the one with the higher version number.
 
 # Contributing
 
@@ -88,8 +105,8 @@ Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/maste
 
 The Kotlin compiler is currently all written in Java (we plan to port it to Kotlin later). So the easiest way to work on the compiler or IDEA plugin is
 
-* download a clean [IDEA 12 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP)
-* don't install the Kotlin plugin
+* download a clean [IDEA 13 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+13+EAP)
+* [install the Kotlin plugin](#pre-built-plugin)
 * open the [root kotlin project](https://github.com/JetBrains/kotlin) in IDEA (opening the kotlin directory)
 
 You can now run the various Run/Debug Configurations such as
@@ -101,9 +118,8 @@ You can now run the various Run/Debug Configurations such as
 
 ## If you want to work on the Kotlin libraries
 
-* download a clean [IDEA 12 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP)
-* Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
-* [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml](http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml)
+* download a clean [IDEA 13 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+13+EAP)
+* [install the Kotlin plugin](#pre-built-plugin)
 * open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries)
 
 Then build via
