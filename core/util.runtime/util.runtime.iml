@@ -7,11 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="frontend" />
-    <orderEntry type="library" name="intellij-core" level="project" />
-    <orderEntry type="library" name="javax.inject" level="project" />
-    <orderEntry type="module" module-name="backend" />
-    <orderEntry type="module" module-name="util" />
+    <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
   </component>
 </module>
 

@@ -32,6 +32,7 @@
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/util/src"/>
+        <include name="core/util.runtime/src"/>
         <!--<include name="j2k/src"/>-->
         <include name="compiler/jet.as.java.psi/src"/>
 
@@ -51,6 +52,7 @@
         <include name="cli/**"/>
         <include name="cli-common/**"/>
         <include name="util/**"/>
+        <include name="util.runtime/**"/>
         <include name="jet.as.java.psi/**"/>
 
         <include name="runtime/**"/>
@@ -136,6 +138,7 @@
             <fileset dir="compiler/cli/src"/>
             <fileset dir="j2k/src"/>
             <fileset dir="compiler/util/src"/>
+            <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/jet.as.java.psi/src"/>
             <fileset dir="runtime/src"/>
             <fileset dir="js/js.translator/src"/>

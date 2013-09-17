@@ -13,7 +13,7 @@
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="library" name="trove4j" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
-    <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="util.runtime" />
   </component>
 </module>
 

@@ -20,6 +20,7 @@
     <orderEntry type="module" module-name="descriptor.loader.java" scope="TEST" />
     <orderEntry type="module" module-name="js.tests" scope="TEST" />
     <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
+    <orderEntry type="module" module-name="util" scope="TEST" />
   </component>
 </module>
 
