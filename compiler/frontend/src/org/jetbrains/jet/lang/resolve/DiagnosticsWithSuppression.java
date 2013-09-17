@@ -47,7 +47,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         return ContainerUtil.filter(diagnostics, new Condition<Diagnostic>() {
             @Override
             public boolean value(Diagnostic diagnostic) {
-                return isSuppressed(diagnostic);
+                return !isSuppressed(diagnostic);
             }
         });
     }
@@ -100,7 +100,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
                 List<CompileTimeConstant<?>> values = arrayValue.getValue();
 
                 if (isSuppressedByStrings(diagnostic, strings(values))) {
-
+                    return true;
                 }
             }
 
