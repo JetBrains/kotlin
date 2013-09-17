@@ -38,4 +38,10 @@ public interface TypeConstraints {
     Variance getVarianceOfPosition();
 
     boolean isEmpty();
+
+    @Nullable
+    JetType getValue();
+
+    @NotNull
+    Collection<JetType> getValues();
 }

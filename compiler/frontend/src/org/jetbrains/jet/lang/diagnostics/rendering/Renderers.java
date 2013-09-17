@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraints;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -277,7 +278,7 @@ public class Renderers {
                 .table(newTable().
                         descriptor(inferenceErrorData.descriptor));
 
-        JetType inferredValueForTypeParameter = ConstraintsUtil.getValue(inferenceErrorData.constraintSystem.getTypeConstraints(typeParameterDescriptor));
+        JetType inferredValueForTypeParameter = inferenceErrorData.constraintSystem.getTypeConstraints(typeParameterDescriptor).getValue();
         assert inferredValueForTypeParameter != null;
         JetType upperBound = typeParameterDescriptor.getUpperBoundsAsType();
         JetType upperBoundWithSubstitutedInferredTypes = inferenceErrorData.constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);

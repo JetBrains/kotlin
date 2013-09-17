@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraints;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -115,7 +116,7 @@ public class CallResolverUtil {
         if (returnType == null) return false;
 
         for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
-            JetType inferredValueForTypeVariable = ConstraintsUtil.getValue(constraintSystem.getTypeConstraints(typeVariable));
+            JetType inferredValueForTypeVariable = constraintSystem.getTypeConstraints(typeVariable).getValue();
             if (inferredValueForTypeVariable == null) {
                 if (TypeUtils.dependsOnTypeParameters(returnType, Collections.singleton(typeVariable))) {
                     return true;

@@ -64,7 +64,7 @@ public interface ConstraintSystem {
      * Returns the resulting type constraints of solving the constraint system for specific type variable. <p/>
      * Returns null if the type variable was not registered.
      */
-    @Nullable
+    @NotNull
     TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeVariable);
 
     /**

@@ -72,7 +72,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         public boolean hasConflictingConstraints() {
             for (TypeParameterDescriptor typeParameter : typeParameterConstraints.keySet()) {
                 TypeConstraints typeConstraints = getTypeConstraints(typeParameter);
-                if (typeConstraints != null && ConstraintsUtil.getValues(typeConstraints).size() > 1) return true;
+                if (typeConstraints.getValues().size() > 1) return true;
             }
             return false;
         }
@@ -133,11 +133,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 if (declarationDescriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
 
-                    JetType value = ConstraintsUtil.getValue(getTypeConstraints(descriptor));
-                    if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, DONT_CARE)) {
-                        return new TypeProjection(value);
-                    }
                     if (typeParameterConstraints.containsKey(descriptor)) {
+                        JetType value = getTypeConstraints(descriptor).getValue();
+                        if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, DONT_CARE)) {
+                            return new TypeProjection(value);
+                        }
                         return defaultTypeProjection;
                     }
                 }
@@ -363,9 +363,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
-    @Nullable
+    @NotNull
     public TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeVariable) {
-        return typeParameterConstraints.get(typeVariable);
+        TypeConstraintsImpl typeConstraints = typeParameterConstraints.get(typeVariable);
+        assert typeConstraints != null : "TypeParameterDescriptor is not a type variable for constraint system: " + typeVariable;
+        return typeConstraints;
     }
 
     @Nullable
