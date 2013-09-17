@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -27,15 +28,14 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorByExpressionSpecifier;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
-import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.*;
+import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 public class DelegationResolver {
 
@@ -43,48 +43,75 @@ public class DelegationResolver {
     }
 
     @NotNull
-    public static Collection<CallableMemberDescriptor> generateDelegatedMembers(
+    public static <T extends CallableMemberDescriptor> Collection<T> generateDelegatedMembers(
+            @NotNull JetClassOrObject classOrObject,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull Collection<? extends CallableDescriptor> existingMembers,
             @NotNull BindingTrace trace,
-            @NotNull JetClassOrObject jetClass,
-            @NotNull MutableClassDescriptor classDescriptor
+            @NotNull Callback<T> callback
     ) {
-        Collection<CallableMemberDescriptor> delegatedMembers = new HashSet<CallableMemberDescriptor>();
-        for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+        Collection<T> delegatedMembers = new HashSet<T>();
+        for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
             if (!(delegationSpecifier instanceof JetDelegatorByExpressionSpecifier)) {
                 continue;
             }
             JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
-            JetType type = trace.get(BindingContext.TYPE, specifier.getTypeReference());
-            if (type == null) {
+            JetTypeReference typeReference = specifier.getTypeReference();
+            if (typeReference == null) {
                 continue;
             }
-            Collection<CallableMemberDescriptor> candidates =
-                    generateDelegationCandidates(classDescriptor, type, extractCallableMembers(type));
-            for (CallableMemberDescriptor candidate : candidates) {
-                if (existingMemberOverridesDelegatedMember(classDescriptor, candidate)) {
-                    continue;
-                }
-                //only leave the first delegated member
-                if (checkClashWithOtherDelegatedMember(trace, jetClass, delegatedMembers, candidate)) {
-                    continue;
-                }
-
-                delegatedMembers.add(candidate);
+            JetType delegatedTraitType = callback.getTypeByTypeReference(typeReference);
+            if (delegatedTraitType == null) {
+                continue;
             }
+            Collection<T> delegatesForTrait = generateDelegatesForOneTrait(classOrObject, classDescriptor, existingMembers,
+                                                            trace, callback, delegatedMembers, delegatedTraitType);
+            delegatedMembers.addAll(delegatesForTrait);
         }
         return delegatedMembers;
     }
 
-    private static boolean checkClashWithOtherDelegatedMember(
+    @NotNull
+    private static <T extends CallableMemberDescriptor> Collection<T> generateDelegatesForOneTrait(
+            @NotNull JetClassOrObject classOrObject,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull Collection<? extends CallableDescriptor> existingMembers,
             @NotNull BindingTrace trace,
-            @NotNull JetClassOrObject jetClass,
-            @NotNull Collection<CallableMemberDescriptor> delegatedMembers,
-            @NotNull CallableMemberDescriptor candidate
+            @NotNull Callback<T> callback,
+            @NotNull Collection<T> existingDelegates,
+            @NotNull JetType delegatedTraitType
+    ) {
+        Collection<T> result = new HashSet<T>();
+        Collection<T> candidates = generateDelegationCandidates(classDescriptor, delegatedTraitType, callback);
+        for (T candidate : candidates) {
+            if (existingMemberOverridesDelegatedMember(candidate, existingMembers)) {
+                continue;
+            }
+            //only leave the first delegated member
+            if (checkClashWithOtherDelegatedMember(trace, classOrObject, existingDelegates, candidate)) {
+                continue;
+            }
+
+            result.add(candidate);
+        }
+        return result;
+    }
+
+    private static <T extends CallableMemberDescriptor> boolean checkClashWithOtherDelegatedMember(
+            @NotNull BindingTrace trace,
+            @Nullable JetClassOrObject jetClass,
+            @NotNull Collection<T> delegatedMembers,
+            @NotNull T candidate
     ) {
         for (CallableMemberDescriptor alreadyDelegatedMember : delegatedMembers) {
             if (haveSameSignatures(alreadyDelegatedMember, candidate)) {
                 //trying to delegate to many traits with the same methods
-                trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(jetClass.getNameIdentifier(), jetClass, alreadyDelegatedMember));
+                if (jetClass != null) {
+                    PsiElement nameIdentifier = jetClass.getNameIdentifier();
+                    if (nameIdentifier != null) {
+                        trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, jetClass, alreadyDelegatedMember));
+                    }
+                }
                 return true;
             }
         }
@@ -92,10 +119,10 @@ public class DelegationResolver {
     }
 
     private static boolean existingMemberOverridesDelegatedMember(
-            MutableClassDescriptor classDescriptor,
-            CallableMemberDescriptor candidate
+            @NotNull CallableMemberDescriptor candidate,
+            @NotNull Collection<? extends CallableDescriptor> existingMembers
     ) {
-        for (CallableMemberDescriptor existingDescriptor : classDescriptor.getAllCallableMembers()) {
+        for (CallableDescriptor existingDescriptor : existingMembers) {
             if (haveSameSignatures(existingDescriptor, candidate)) {
                 return true;
             }
@@ -104,12 +131,13 @@ public class DelegationResolver {
     }
 
     @NotNull
-    public static <T extends CallableMemberDescriptor> Collection<T> generateDelegationCandidates(
+    private static <T extends CallableMemberDescriptor> Collection<T> generateDelegationCandidates(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull JetType delegatedTraitType,
-            @NotNull Collection<T> membersFromTrait
+            @NotNull Callback<T> callback
     ) {
-        Collection<T> descriptorsToDelegate = filterMembersFromSuperClassOfDelegatedTrait(delegatedTraitType, membersFromTrait);
+        Collection<T> membersFromTrait = callback.getMembersByType(delegatedTraitType);
+        Collection<T> descriptorsToDelegate = filterMembersFromSuperClassOfDelegatedTrait(delegatedTraitType, membersFromTrait, callback);
         Collection<T> result = Lists.newArrayList();
         for (T memberDescriptor : descriptorsToDelegate) {
             if (memberDescriptor.getModality().isOverridable()) {
@@ -126,9 +154,10 @@ public class DelegationResolver {
     @NotNull
     private static <T extends CallableMemberDescriptor> Collection<T> filterMembersFromSuperClassOfDelegatedTrait(
             @NotNull JetType delegatedTraitType,
-            @NotNull Collection<T> membersFromTrait
+            @NotNull Collection<T> membersFromTrait,
+            @NotNull Callback<T> callback
     ) {
-        final Collection<CallableMemberDescriptor> membersToSkip = getMembersFromClassSupertypeOfTrait(delegatedTraitType);
+        final Collection<T> membersToSkip = getMembersFromClassSupertypeOfTrait(delegatedTraitType, callback);
         return Collections2.filter(
                 membersFromTrait,
                 new Predicate<CallableMemberDescriptor>() {
@@ -149,7 +178,10 @@ public class DelegationResolver {
     }
 
     @NotNull
-    private static Collection<CallableMemberDescriptor> getMembersFromClassSupertypeOfTrait(@NotNull JetType delegateTraitType) {
+    private static <T extends CallableMemberDescriptor> Collection<T> getMembersFromClassSupertypeOfTrait(
+            @NotNull JetType delegateTraitType,
+            @NotNull Callback<T> callback
+    ) {
         JetType classSupertype = null;
         for (JetType supertype : TypeUtils.getAllSupertypes(delegateTraitType)) {
             if (isNotTrait(supertype.getConstructor().getDeclarationDescriptor())) {
@@ -157,14 +189,7 @@ public class DelegationResolver {
                 break;
             }
         }
-
-        return classSupertype != null ? extractCallableMembers(classSupertype) : Collections.<CallableMemberDescriptor>emptyList();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Collection<CallableMemberDescriptor> extractCallableMembers(JetType type) {
-        return (Collection) Collections2.filter(type.getMemberScope().getAllDescriptors(),
-                                                Predicates.instanceOf(CallableMemberDescriptor.class));
+        return classSupertype != null ? callback.getMembersByType(classSupertype) : Collections.<T>emptyList();
     }
 
     private static boolean isNotTrait(DeclarationDescriptor descriptor) {
@@ -177,10 +202,28 @@ public class DelegationResolver {
 
     public static void generateDelegatesInAClass(
             @NotNull MutableClassDescriptor classDescriptor,
-            @NotNull BindingTrace trace,
+            @NotNull final BindingTrace trace,
             @NotNull JetClassOrObject jetClassOrObject
     ) {
-        for (CallableMemberDescriptor descriptor : generateDelegatedMembers(trace, jetClassOrObject, classDescriptor)) {
+        Callback<CallableMemberDescriptor> eagerResolveCallback = new Callback<CallableMemberDescriptor>() {
+            @Nullable
+            @Override
+            public JetType getTypeByTypeReference(@NotNull JetTypeReference reference) {
+                return trace.get(BindingContext.TYPE, reference);
+            }
+
+            @NotNull
+            @Override
+            public Collection<CallableMemberDescriptor> getMembersByType(@NotNull JetType type) {
+                //noinspection unchecked
+                return (Collection) Collections2.filter(type.getMemberScope().getAllDescriptors(),
+                                                        Predicates.instanceOf(CallableMemberDescriptor.class));
+            }
+        };
+        Set<CallableMemberDescriptor> existingMembers = classDescriptor.getAllCallableMembers();
+        Collection<CallableMemberDescriptor> delegatedMembers =
+                generateDelegatedMembers(jetClassOrObject, classDescriptor, existingMembers, trace, eagerResolveCallback);
+        for (CallableMemberDescriptor descriptor : delegatedMembers) {
             if (descriptor instanceof PropertyDescriptor) {
                 PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                 classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
@@ -190,5 +233,13 @@ public class DelegationResolver {
                 classDescriptor.getBuilder().addFunctionDescriptor(functionDescriptor);
             }
         }
+    }
+
+    public interface Callback<T extends CallableMemberDescriptor> {
+        @Nullable
+        JetType getTypeByTypeReference(@NotNull JetTypeReference reference);
+
+        @NotNull
+        Collection<T> getMembersByType(@NotNull JetType type);
     }
 }

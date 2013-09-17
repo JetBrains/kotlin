@@ -42,7 +42,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegationCandidates;
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+import static org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers;
 
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
 
@@ -140,7 +142,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // TODO: this should be handled by lazy function descriptors
         Set<FunctionDescriptor> functions = super.getFunctions(name);
         for (FunctionDescriptor functionDescriptor : functions) {
-            if (functionDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            if (functionDescriptor.getKind() != FAKE_OVERRIDE && functionDescriptor.getKind() != DELEGATION) {
                 OverrideResolver.resolveUnknownVisibilityForMember(functionDescriptor, resolveSession.getTrace());
             }
         }
@@ -153,7 +155,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
         }
-        generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result);
+        result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result));
         generateEnumClassObjectMethods(result, name);
         generateDataClassMethods(result, name);
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
@@ -213,9 +215,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         Set<VariableDescriptor> properties = super.getProperties(name);
         for (VariableDescriptor variableDescriptor : properties) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                OverrideResolver.resolveUnknownVisibilityForMember(propertyDescriptor, resolveSession.getTrace());
-            }
+            if (propertyDescriptor.getKind() == FAKE_OVERRIDE || propertyDescriptor.getKind() == DELEGATION) continue;
+            OverrideResolver.resolveUnknownVisibilityForMember(propertyDescriptor, resolveSession.getTrace());
         }
         return properties;
     }
@@ -251,29 +252,40 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
         }
-        generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result);
+        result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result));
         generateFakeOverrides(name, fromSupertypes, (Set) result, PropertyDescriptor.class);
     }
 
-    private <T extends CallableMemberDescriptor> void generateDelegatingDescriptors(
-            @NotNull Name name,
-            @NotNull MemberExtractor<T> extractor,
-            @NotNull Set<? super T> result
+    @NotNull
+    private <T extends CallableMemberDescriptor> Collection<T> generateDelegatingDescriptors(
+            @NotNull final Name name,
+            @NotNull final MemberExtractor<T> extractor,
+            @NotNull Collection<? extends CallableDescriptor> existingDescriptors
     ) {
-        for (JetDelegationSpecifier delegationSpecifier : declarationProvider.getOwnerInfo().getDelegationSpecifiers()) {
-            if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
-                JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
-                JetTypeReference typeReference = specifier.getTypeReference();
-                if (typeReference != null) {
-                    JetType supertype = resolveSession.getInjector().getTypeResolver().resolveType(
-                            thisDescriptor.getScopeForClassHeaderResolution(),
-                            typeReference,
-                            resolveSession.getTrace(),
-                            false);
-                    result.addAll(generateDelegationCandidates(thisDescriptor, supertype, extractor.extract(supertype, name)));
-                }
-            }
+        //class objects do not have delegated members
+        if (thisDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            return Collections.emptySet();
         }
+        DelegationResolver.Callback<T> lazyResolveCallback = new DelegationResolver.Callback<T>() {
+            @Nullable
+            @Override
+            public JetType getTypeByTypeReference(@NotNull JetTypeReference reference) {
+                return resolveSession.getInjector().getTypeResolver().resolveType(
+                        thisDescriptor.getScopeForClassHeaderResolution(),
+                        reference,
+                        resolveSession.getTrace(),
+                        false);
+            }
+
+            @NotNull
+            @Override
+            public Collection<T> getMembersByType(@NotNull JetType type) {
+                return extractor.extract(type, name);
+            }
+        };
+        JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+        assert classOrObject != null : "Should not be null for non class object class.";
+        return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, resolveSession.getTrace(), lazyResolveCallback);
     }
 
     @Override
