@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.descriptors;
+package org.jetbrains.jet.lang.descriptors.impl;
 
 import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
 
 import java.util.Collection;
 import java.util.Collections;
