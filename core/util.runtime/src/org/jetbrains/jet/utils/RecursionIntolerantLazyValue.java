@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.util.lazy;
+package org.jetbrains.jet.utils;
 
 public abstract class RecursionIntolerantLazyValue<T> {
 

@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.util.CommonSuppliers;
+import org.jetbrains.jet.utils.CommonSuppliers;
 
 import java.util.Collection;
 import java.util.HashMap;

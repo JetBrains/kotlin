@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
 
 public class LazyScopeAdapter extends AbstractScopeAdapter {
 

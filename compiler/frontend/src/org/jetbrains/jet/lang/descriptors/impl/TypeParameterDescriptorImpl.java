@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
 
 import java.util.Collections;
 import java.util.List;

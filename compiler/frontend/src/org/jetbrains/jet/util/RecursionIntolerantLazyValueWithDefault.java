@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.util.lazy;
+package org.jetbrains.jet.util;
 
-public class ReenteringLazyValueComputationException extends RuntimeException {
-    public ReenteringLazyValueComputationException() {
+import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+
+public abstract class RecursionIntolerantLazyValueWithDefault<T> extends RecursionIntolerantLazyValue<T> {
+    private final T defaultValue;
+
+    protected RecursionIntolerantLazyValueWithDefault(T defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override
-    public synchronized Throwable fillInStackTrace() {
-        return this;
+    protected T getValueOnErrorReentry() {
+        return defaultValue;
     }
 }

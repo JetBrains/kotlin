@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.util.CommonSuppliers;
+import org.jetbrains.jet.utils.CommonSuppliers;
 
 import java.util.*;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.util;
+package org.jetbrains.jet.utils;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.*;

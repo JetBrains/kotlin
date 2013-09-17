@@ -42,8 +42,8 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValueWithDefault;
+import org.jetbrains.jet.util.RecursionIntolerantLazyValueWithDefault;
+import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
 
 import javax.inject.Inject;
 import java.util.*;

@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 

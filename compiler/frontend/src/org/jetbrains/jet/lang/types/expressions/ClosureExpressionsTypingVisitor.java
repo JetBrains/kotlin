@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValueWithDefault;
+import org.jetbrains.jet.util.RecursionIntolerantLazyValueWithDefault;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
