@@ -43,7 +43,7 @@ public class DelegatingBindingTrace implements BindingTrace {
         public Diagnostics getDiagnostics() {
             ArrayList<Diagnostic> mergedDiagnostics = new ArrayList<Diagnostic>(diagnostics);
             mergedDiagnostics.addAll(parentContext.getDiagnostics().noSuppression().all());
-            return new SimpleDiagnostics(mergedDiagnostics);
+            return new DiagnosticsWithSuppression(this, mergedDiagnostics);
         }
 
         @Override

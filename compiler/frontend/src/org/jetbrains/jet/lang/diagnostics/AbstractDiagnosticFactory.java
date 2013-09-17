@@ -16,14 +16,17 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class AbstractDiagnosticFactory {
 
     private String name = null;
     
-    /*package*/ void setName(String name) {
+    /*package*/ void setName(@NotNull String name) {
         this.name = name;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }

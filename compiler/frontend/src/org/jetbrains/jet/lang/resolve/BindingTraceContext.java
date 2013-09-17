@@ -71,7 +71,7 @@ public class BindingTraceContext implements BindingTrace {
 
     private BindingTraceContext(@NotNull MutableSlicedMap map) {
         this.map = map;
-        this.diagnostics = new SimpleDiagnostics(diagnosticList);
+        this.diagnostics = new DiagnosticsWithSuppression(getBindingContext(), diagnosticList);
     }
 
     @TestOnly
