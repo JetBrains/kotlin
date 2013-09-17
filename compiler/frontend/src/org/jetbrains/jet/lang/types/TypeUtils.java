@@ -28,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemWithPriorities;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -231,7 +228,6 @@ public class TypeUtils {
         }
 
         private static boolean unify(JetType withParameters, JetType expected) {
-            ConstraintSystemWithPriorities constraintSystem = new ConstraintSystemWithPriorities(ConstraintResolutionListener.DO_NOTHING);
             // T -> how T is used
             final Map<TypeParameterDescriptor, Variance> parameters = Maps.newHashMap();
             Processor<TypeParameterUsage> processor = new Processor<TypeParameterUsage>() {
@@ -248,13 +244,13 @@ public class TypeUtils {
             };
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);
+            ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
             for (Map.Entry<TypeParameterDescriptor, Variance> entry : parameters.entrySet()) {
                 constraintSystem.registerTypeVariable(entry.getKey(), entry.getValue());
             }
-            constraintSystem.addSubtypingConstraint(ConstraintType.VALUE_ARGUMENT.assertSubtyping(withParameters, expected));
+            constraintSystem.addSubtypeConstraint(withParameters, expected, ConstraintPosition.SPECIAL);
 
-            ConstraintSystemSolution solution = constraintSystem.solve();
-            return solution.getStatus().isSuccessful();
+            return constraintSystem.isSuccessful();
         }
 
         private static void processAllTypeParameters(JetType type, Variance howThiTypeIsUsed, Processor<TypeParameterUsage> result) {

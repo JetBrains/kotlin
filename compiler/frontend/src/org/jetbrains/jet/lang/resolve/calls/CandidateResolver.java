@@ -40,8 +40,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -537,7 +535,7 @@ public class CandidateResolver {
             constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
         }
 
-        TypeSubstitutor substituteDontCare = ConstraintSystemWithPriorities
+        TypeSubstitutor substituteDontCare = ConstraintsUtil
                 .makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
 
         // Value parameters
