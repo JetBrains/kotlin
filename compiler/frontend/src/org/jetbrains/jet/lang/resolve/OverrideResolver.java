@@ -114,9 +114,9 @@ public class OverrideResolver {
             }
         }
 
-        PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-        DelegationResolver.addDelegatedMembers(trace, (JetClassOrObject) declaration, classDescriptor);
-
+        JetClassOrObject classOrObject = (JetClassOrObject) BindingContextUtils
+                .classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+        DelegationResolver.generateDelegatesInAClass(classDescriptor, trace, classOrObject);
         generateOverridesInAClass(classDescriptor);
     }
 

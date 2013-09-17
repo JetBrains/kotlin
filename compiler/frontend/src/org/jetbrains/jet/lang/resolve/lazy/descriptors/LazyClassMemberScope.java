@@ -42,6 +42,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegationCandidates;
+
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
 
     @NotNull
@@ -268,9 +270,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                             typeReference,
                             resolveSession.getTrace(),
                             false);
-                    Collection<T> descriptors =
-                            DelegationResolver.generateDelegatedMembers(thisDescriptor, extractor.extract(supertype, name));
-                    result.addAll(descriptors);
+                    result.addAll(generateDelegationCandidates(thisDescriptor, supertype, extractor.extract(supertype, name)));
                 }
             }
         }

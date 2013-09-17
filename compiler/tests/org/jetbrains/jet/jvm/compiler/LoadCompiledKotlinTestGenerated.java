@@ -645,6 +645,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/fun/InheritValsDifferentTypes.kt");
         }
         
+        @TestMetadata("NoDelegationForFunctionInheritedFromTraitSuperClass.kt")
+        public void testNoDelegationForFunctionInheritedFromTraitSuperClass() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/fun/NoDelegationForFunctionInheritedFromTraitSuperClass.kt");
+        }
+        
         @TestMetadata("NoSamAdapter.kt")
         public void testNoSamAdapter() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/fun/NoSamAdapter.kt");
