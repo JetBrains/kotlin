@@ -74,8 +74,7 @@ public final class MetaInfServices {
                                 InputStream stream = loadClasspathResource(line);
                                 if (stream != null) {
                                     String text = FileUtil.loadTextAndClose(stream);
-                                    JetFile file = JetFileUtils.createPsiFile(line, text, project);
-                                    libFiles.add(file);
+                                    libFiles.add(JetFileUtils.createJetFile(line, text, project));
                                 }
                             }
                         }

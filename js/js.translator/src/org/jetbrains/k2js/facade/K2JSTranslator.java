@@ -75,7 +75,7 @@ public final class K2JSTranslator {
     @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) throws TranslationException {
-        JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
+        JetFile file = JetFileUtils.createJetFile("test", programText, getProject());
         String programCode = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString))) + "\n";
         return FLUSH_SYSTEM_OUT + programCode + GET_SYSTEM_OUT;
     }

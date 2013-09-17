@@ -35,13 +35,9 @@ import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.List;
-
-import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
 
 //TODO: use method object
 public final class TranslationUtils {
@@ -103,14 +99,14 @@ public final class TranslationUtils {
             @NotNull String outputFile,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull EcmaVersion version, TestConfigFactory configFactory) throws Exception {
-        List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
+        List<JetFile> jetFiles = createJetFileList(project, inputFiles, null);
         K2JSTranslator translator = new K2JSTranslator(getConfig(project, version, configFactory));
-        FileUtil.writeToFile(new File(outputFile), translator.generateProgramCode(psiFiles, mainCallParameters));
+        FileUtil.writeToFile(new File(outputFile), translator.generateProgramCode(jetFiles, mainCallParameters));
     }
 
     @NotNull
     private static List<JetFile> initLibFiles(@NotNull Project project) {
-        return getLibFiles(project, Config.LIB_FILE_NAMES);
+        return createJetFileList(project, Config.LIB_FILE_NAMES, Config.LIBRARIES_LOCATION);
     }
 
     @NotNull
@@ -124,28 +120,21 @@ public final class TranslationUtils {
         return result;
     }
 
-    @NotNull
-    private static List<JetFile> getLibFiles(@NotNull Project project, @NotNull List<String> list) {
+    private static List<JetFile> createJetFileList(@NotNull Project project, @NotNull List<String> list, @Nullable String root) {
         List<JetFile> libFiles = Lists.newArrayList();
         for (String libFileName : list) {
-            JetFile file = null;
             try {
-                @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-                InputStream stream = new FileInputStream(Config.LIBRARIES_LOCATION + libFileName);
-                try {
-                    String text = FileUtil.loadTextAndClose(stream);
-                    file = JetFileUtils.createPsiFile(libFileName, text, project);
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-                libFiles.add(file);
+                String path = root == null ? libFileName : (root + libFileName);
+                String text = FileUtil.loadFile(new File(path));
+                JetFile jetFile = JetFileUtils.createJetFile(path, text, project);
+                libFiles.add(jetFile);
             }
-            catch (Exception e) {
+            catch (IOException e) {
                 //TODO: throw generic exception
                 throw new IllegalStateException(e);
             }
         }
         return libFiles;
+
     }
 }
