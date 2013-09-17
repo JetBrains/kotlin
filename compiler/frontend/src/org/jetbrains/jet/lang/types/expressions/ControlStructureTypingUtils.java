@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -337,12 +338,13 @@ public class ControlStructureTypingUtils {
                     @NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data
             ) {
                 ConstraintSystem constraintSystem = data.constraintSystem;
-                assert !constraintSystem.isSuccessful() : "Report error only for not successful constraint system";
+                ConstraintSystemStatus status = constraintSystem.getStatus();
+                assert !status.isSuccessful() : "Report error only for not successful constraint system";
 
-                if (constraintSystem.hasErrorInConstrainingTypes()) {
+                if (status.hasErrorInConstrainingTypes()) {
                     return;
                 }
-                if (constraintSystem.hasOnlyExpectedTypeMismatch() || constraintSystem.hasConflictingConstraints()) {
+                if (status.hasOnlyExpectedTypeMismatch() || status.hasConflictingConstraints()) {
                     JetExpression expression = call.getCalleeExpression();
                     if (expression != null) {
                         expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));

@@ -310,7 +310,7 @@ public class ExpressionTypingUtils {
         }
 
         constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
-        return constraintSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true);
+        return constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true);
     }
 
     private static Set<Name> collectUsedTypeNames(@NotNull JetType jetType) {

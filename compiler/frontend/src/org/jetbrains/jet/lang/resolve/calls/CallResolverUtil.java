@@ -131,7 +131,7 @@ public class CallResolverUtil {
 
         // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
         ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
-        if (constraintSystem != null && constraintSystem.hasOnlyExpectedTypeMismatch()) return false;
+        if (constraintSystem != null && constraintSystem.getStatus().hasOnlyExpectedTypeMismatch()) return false;
         return true;
     }
 

@@ -57,6 +57,69 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @Nullable
     private ConstraintSystem systemWithoutExpectedTypeConstraint;
 
+    private final ConstraintSystemStatus constraintSystemStatus = new ConstraintSystemStatus() {
+        @Override
+        public boolean isSuccessful() {
+            return !hasContradiction() && !hasUnknownParameters();
+        }
+
+        @Override
+        public boolean hasContradiction() {
+            return hasTypeConstructorMismatch() || hasConflictingConstraints();
+        }
+
+        @Override
+        public boolean hasConflictingConstraints() {
+            for (TypeParameterDescriptor typeParameter : typeParameterConstraints.keySet()) {
+                TypeConstraints typeConstraints = getTypeConstraints(typeParameter);
+                if (typeConstraints != null && ConstraintsUtil.getValues(typeConstraints).size() > 1) return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean hasUnknownParameters() {
+            for (TypeConstraintsImpl constraints : typeParameterConstraints.values()) {
+                if (constraints.isEmpty()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean hasTypeConstructorMismatch() {
+            return !errorConstraintPositions.isEmpty();
+        }
+
+        @Override
+        public boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition) {
+            return errorConstraintPositions.contains(constraintPosition);
+        }
+
+        @Override
+        public boolean hasOnlyExpectedTypeMismatch() {
+            if (systemWithoutExpectedTypeConstraint == null) {
+                // the expected type constraint isn't added, there can't be an error with it
+                return false;
+            }
+            if (!isSuccessful() && systemWithoutExpectedTypeConstraint.getStatus().isSuccessful()) {
+                return true;
+            }
+            if (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION)) {
+                // if systemWithoutExpectedTypeConstraint has unknown type parameters, it's not successful,
+                // but there can be expected type mismatch after expected type is added
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean hasErrorInConstrainingTypes() {
+            return hasErrorInConstrainingTypes;
+        }
+    };
+
     public ConstraintSystemImpl() {
         this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(CANT_INFER_TYPE_PARAMETER));
         this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(DONT_CARE));
@@ -93,36 +156,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         });
     }
 
+    @NotNull
     @Override
-    public boolean hasTypeConstructorMismatch() {
-        return !errorConstraintPositions.isEmpty();
-    }
-
-    @Override
-    public boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition) {
-        return errorConstraintPositions.contains(constraintPosition);
-    }
-
-    @Override
-    public boolean hasOnlyExpectedTypeMismatch() {
-        if (systemWithoutExpectedTypeConstraint == null) {
-            // the expected type constraint isn't added, there can't be an error with it
-            return false;
-        }
-        if (!isSuccessful() && systemWithoutExpectedTypeConstraint.isSuccessful()) {
-            return true;
-        }
-        if (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION)) {
-            // if systemWithoutExpectedTypeConstraint has unknown type parameters, it's not successful,
-            // but there can be expected type mismatch after expected type is added
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean hasErrorInConstrainingTypes() {
-        return hasErrorInConstrainingTypes;
+    public ConstraintSystemStatus getStatus() {
+        return constraintSystemStatus;
     }
 
     @Override
@@ -345,39 +382,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         return descriptor instanceof TypeParameterDescriptor && typeParameterConstraints.get(descriptor) != null;
     }
 
-    @Override
-    public boolean isSuccessful() {
-        return !hasContradiction() && !hasUnknownParameters();
-    }
-
-    @Override
-    public boolean hasContradiction() {
-        return hasTypeConstructorMismatch() || hasConflictingConstraints();
-    }
-
-    @Override
-    public boolean hasConflictingConstraints() {
-        for (TypeParameterDescriptor typeParameter : typeParameterConstraints.keySet()) {
-            TypeConstraints typeConstraints = getTypeConstraints(typeParameter);
-            if (typeConstraints != null && ConstraintsUtil.getValues(typeConstraints).size() > 1) return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean hasUnknownParameters() {
-        for (TypeConstraintsImpl constraints : typeParameterConstraints.values()) {
-            if (constraints.isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @NotNull
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
-        if (hasOnlyExpectedTypeMismatch()) {
+        if (getStatus().hasOnlyExpectedTypeMismatch()) {
             assert systemWithoutExpectedTypeConstraint != null;
             return systemWithoutExpectedTypeConstraint.getResultingSubstitutor();
         }

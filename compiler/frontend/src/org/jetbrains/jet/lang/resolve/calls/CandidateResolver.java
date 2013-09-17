@@ -235,13 +235,13 @@ public class CandidateResolver {
 
         updateSystemWithConstraintSystemCompleter(context, resolvedCall);
 
-        if (resolvedCall.getConstraintSystem().hasContradiction()) {
+        if (resolvedCall.getConstraintSystem().getStatus().hasContradiction()) {
             return reportInferenceError(context);
         }
         updateSystemIfExpectedTypeIsUnit(context, resolvedCall);
 
         boolean boundsAreSatisfied = updateSystemCheckingBounds(resolvedCall);
-        if (!resolvedCall.getConstraintSystem().isSuccessful()) {
+        if (!resolvedCall.getConstraintSystem().getStatus().isSuccessful()) {
             return reportInferenceError(context);
         }
         if (!boundsAreSatisfied) {
@@ -283,8 +283,8 @@ public class CandidateResolver {
 
         //todo improve error reporting with errors in constraints from completer
         constraintSystemCompleter.completeConstraintSystem(constraintSystem, resolvedCall);
-        if (constraintSystem.hasTypeConstructorMismatchAt(ConstraintPosition.FROM_COMPLETER) ||
-            (constraintSystem.hasContradiction() && !backup.hasContradiction())) {
+        if (constraintSystem.getStatus().hasTypeConstructorMismatchAt(ConstraintPosition.FROM_COMPLETER) ||
+            (constraintSystem.getStatus().hasContradiction() && !backup.getStatus().hasContradiction())) {
 
             resolvedCall.setConstraintSystem(backup);
         }
@@ -299,11 +299,11 @@ public class CandidateResolver {
         JetType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
         if (returnType == null) return;
 
-        if (!constraintSystem.isSuccessful() && context.expectedType == TypeUtils.UNIT_EXPECTED_TYPE) {
+        if (!constraintSystem.getStatus().isSuccessful() && context.expectedType == TypeUtils.UNIT_EXPECTED_TYPE) {
             ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
 
             copy.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, ConstraintPosition.EXPECTED_TYPE_POSITION);
-            if (copy.isSuccessful()) {
+            if (copy.getStatus().isSuccessful()) {
                 constraintSystem = copy;
                 resolvedCall.setConstraintSystem(constraintSystem);
             }
@@ -317,12 +317,12 @@ public class CandidateResolver {
         assert constraintSystem != null;
 
         if (ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true)
-                && !constraintSystem.hasUnknownParameters()) {
+                && !constraintSystem.getStatus().hasUnknownParameters()) {
             return true;
         }
         ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
         copy.processDeclaredBoundConstraints();
-        if (copy.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true)) {
+        if (copy.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true)) {
             resolvedCall.setConstraintSystem(copy);
             return true;
         }
@@ -618,7 +618,7 @@ public class CandidateResolver {
 
 
         // Solution
-        boolean hasContradiction = constraintSystem.hasContradiction();
+        boolean hasContradiction = constraintSystem.getStatus().hasContradiction();
         boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/false);
         candidateCall.setHasUnknownTypeParameters(true);
         if (!hasContradiction && boundsAreSatisfied) {

@@ -250,7 +250,7 @@ public class TypeUtils {
             }
             constraintSystem.addSubtypeConstraint(withParameters, expected, ConstraintPosition.SPECIAL);
 
-            return constraintSystem.isSuccessful();
+            return constraintSystem.getStatus().isSuccessful();
         }
 
         private static void processAllTypeParameters(JetType type, Variance howThiTypeIsUsed, Processor<TypeParameterUsage> result) {

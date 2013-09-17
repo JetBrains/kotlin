@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.Collection;
 import java.util.Set;
 
 public interface TypeConstraints {

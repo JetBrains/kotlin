@@ -168,7 +168,7 @@ public class Renderers {
 
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(ExtendedInferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
-        assert inferenceErrorData.constraintSystem.hasConflictingConstraints();
+        assert inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints();
 
         Collection<CallableDescriptor> substitutedDescriptors = Lists.newArrayList();
         Collection<TypeSubstitutor> substitutors = ConstraintsUtil.getSubstitutorsForConflictingParameters(
@@ -231,7 +231,7 @@ public class Renderers {
             @Override
             public boolean apply(@Nullable ConstraintPosition constraintPosition) {
                 assert constraintPosition != null;
-                return inferenceErrorData.constraintSystem.hasTypeConstructorMismatchAt(constraintPosition);
+                return inferenceErrorData.constraintSystem.getStatus().hasTypeConstructorMismatchAt(constraintPosition);
             }
         };
         return renderer.table(TabledDescriptorRenderer.newTable()

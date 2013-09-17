@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.Collection;
 import java.util.Set;
 
 public interface ConstraintSystem {
@@ -56,61 +57,8 @@ public interface ConstraintSystem {
      */
     void addSupertypeConstraint(@Nullable JetType constrainingType, @NotNull JetType subjectType, @NotNull ConstraintPosition constraintPosition);
 
-    /**
-     * Returns <tt>true</tt> if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).
-     */
-    boolean isSuccessful();
-
-    /**
-     * Return <tt>true</tt> if constraint system has no contradiction (it can be not successful because of the lack of information for a type variable).
-     */
-    boolean hasContradiction();
-
-    /**
-     * Returns <tt>true</tt> if type constraints for some type variable are contradicting. <p/>
-     *
-     * For example, for <pre>fun &lt;R&gt; foo(r: R, t: java.util.List&lt;R&gt;) {}</pre> in invocation <tt>foo(1, arrayList("s"))</tt>
-     * type variable <tt>R</tt> has two conflicting constraints: <p/>
-     * - <tt>"R is a supertype of Int"</tt> <p/>
-     * - <tt>"List&lt;R&gt; is a supertype of List&lt;String&gt;"</tt> which leads to <tt>"R is equal to String"</tt>
-     */
-    boolean hasConflictingConstraints();
-
-    /**
-     * Returns <tt>true</tt> if there is no information for some registered type variable.
-     *
-     * For example, for <pre>fun &lt;E&gt; newList()</pre> in invocation <tt>"val nl = newList()"</tt>
-     * there is no information to infer type variable <tt>E</tt>.
-     */
-    boolean hasUnknownParameters();
-
-    /**
-     * Returns <tt>true</tt> if some constraint cannot be processed because of type constructor mismatch.
-     *
-     * For example, for <pre>fun &lt;R&gt; foo(t: List&lt;R&gt;) {}</pre> in invocation <tt>foo(hashSet("s"))</tt>
-     * there is type constructor mismatch: <tt>"HashSet&lt;String&gt; cannot be a subtype of List&lt;R&gt;"</tt>.
-     */
-    boolean hasTypeConstructorMismatch();
-
-    /**
-     * Returns <tt>true</tt> if there is type constructor mismatch error at a specific {@code constraintPosition}.
-     *
-     * For example, for <pre>fun &lt;R&gt; foo(t: List&lt;R&gt;) {}</pre> in invocation <tt>foo(hashSet("s"))</tt>
-     * there is type constructor mismatch: <tt>"HashSet&lt;String&gt; cannot be a subtype of List&lt;R&gt;"</tt>
-     * at a constraint position {@code ConstraintPosition.getValueParameterPosition(0)}.
-     */
-    boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition);
-
-    /**
-     * Returns <tt>true</tt> if there is type constructor mismatch only in {@link ConstraintPosition.EXPECTED_TYPE_POSITION}.
-     */
-    boolean hasOnlyExpectedTypeMismatch();
-
-    /**
-     * Returns <tt>true</tt> if there is an error in constraining types. <p/>
-     * Is used not to generate type inference error if there was one in argument types.
-     */
-    boolean hasErrorInConstrainingTypes();
+    @NotNull
+    ConstraintSystemStatus getStatus();
 
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type variable. <p/>
