@@ -1260,7 +1260,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 else {
                     assert descriptor instanceof CallableDescriptor;
                     if (context.getCallableDescriptorWithReceiver() != descriptor) {
-                        context.lookupInContext(descriptor, null, state, false);
+                        context.lookupInContext(descriptor, null, state, true);
                     }
                 }
             }
