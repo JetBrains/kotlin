@@ -58,7 +58,7 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * a child IDEA with the Kotlin plugin will then startup
 * you can now open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries) to then work with the various kotlin libraries etc.
 
-### <a id="pre-built-plugin"></a>Using a pre-built Kotlin IDEA plugin
+### <a name="pre-built-plugin"></a>Using a pre-built Kotlin IDEA plugin
 
 There are several options for getting Kotlin plugin. A stable version can be obtained as any other plugin for Intellij IDEA:
 
@@ -72,7 +72,7 @@ finished you can install it with "Install plugin from disk...":
 
 You can now open any Kotlin based projects.
 
-<a id="plugin-for-contributors"></a>
+<a name="plugin-for-contributors"></a>
 **Note for contributors**: If you are planning to contribute to Kotlin project you probably want to have locally the same version of plugin that build server is using for building.
 As this version is constantly moving, the best way to always be updated is to let IDEA notify you when it is time to renew you plugin.
 
