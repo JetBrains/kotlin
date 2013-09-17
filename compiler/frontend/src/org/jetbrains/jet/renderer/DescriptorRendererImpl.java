@@ -19,7 +19,6 @@ package org.jetbrains.jet.renderer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -33,21 +32,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
-    private static final Set<String> KEYWORDS = Sets.newHashSet();
-    static {
-        for (IElementType elementType : JetTokens.KEYWORDS.getTypes()) {
-            assert elementType instanceof JetKeywordToken;
-            assert !((JetKeywordToken) elementType).isSoft();
-            KEYWORDS.add(((JetKeywordToken) elementType).getValue());
-        }
-    }
-
     private final boolean shortNames;
     private final boolean withDefinedIn;
     private final Set<DescriptorRenderer.Modifier> modifiers;
@@ -161,7 +149,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     private String renderName(@NotNull Name identifier) {
         String asString = identifier.toString();
-        return escape(KEYWORDS.contains(asString) ? '`' + asString + '`' : asString);
+        return escape(KeywordStringsGenerated.KEYWORDS.contains(asString) ? '`' + asString + '`' : asString);
     }
 
     private void renderName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
@@ -692,7 +680,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderNamespace(@NotNull NamespaceDescriptor namespace, @NotNull StringBuilder builder) {
-        builder.append(renderKeyword(JetTokens.PACKAGE_KEYWORD.getValue())).append(" ");
+        builder.append(renderKeyword("package")).append(" ");
         renderName(namespace, builder);
     }
 
