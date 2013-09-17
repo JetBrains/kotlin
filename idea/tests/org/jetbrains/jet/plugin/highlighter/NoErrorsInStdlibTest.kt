@@ -47,7 +47,7 @@ public class NoErrorsInStdlibTest: LightCodeInsightFixtureTestCase() {
                 val psiFile = psiManager.findFile(file)
                 if (psiFile is JetFile) {
                     var bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(psiFile).getBindingContext()
-                    val errors = bindingContext.getDiagnostics().filter { it.getSeverity() == Severity.ERROR }
+                    val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }
 
                     if (!errors.isEmpty()) {
                         System.err.println("${psiFile.getName()}: ${errors.size()} errors")

@@ -103,7 +103,7 @@ public class IdeRenderers {
                 private Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<? extends CallableDescriptor> call) {
                     Set<ValueParameterDescriptor> parameters = new HashSet<ValueParameterDescriptor>();
                     if (call instanceof ResolvedCallImpl) {
-                        Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
+                        Iterable<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
                         for (Diagnostic diagnostic : diagnostics) {
                             if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
                                 parameters.add(null);

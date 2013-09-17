@@ -52,6 +52,7 @@ import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -101,7 +102,7 @@ public class JetTestUtils {
 
                 @NotNull
                 @Override
-                public Collection<Diagnostic> getDiagnostics() {
+                public Diagnostics getDiagnostics() {
                     throw new UnsupportedOperationException(); // TODO
                 }
 
@@ -160,7 +161,7 @@ public class JetTestUtils {
             return new BindingContext() {
                 @NotNull
                 @Override
-                public Collection<Diagnostic> getDiagnostics() {
+                public Diagnostics getDiagnostics() {
                     throw new UnsupportedOperationException();
                 }
 

@@ -47,7 +47,7 @@ public class QuickFixActionsUtils {
 
         AnalyzeExhaust exhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
 
-        Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics();
+        Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics().all();
         Collection<Diagnostic> errorDiagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {
             @Override
             public boolean apply(@Nullable Diagnostic diagnostic) {

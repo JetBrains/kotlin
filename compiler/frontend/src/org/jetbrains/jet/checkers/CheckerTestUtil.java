@@ -70,7 +70,7 @@ public class CheckerTestUtil {
 
     public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(BindingContext bindingContext, final PsiElement root) {
         ArrayList<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
-        diagnostics.addAll(Collections2.filter(bindingContext.getDiagnostics(),
+        diagnostics.addAll(Collections2.filter(bindingContext.getDiagnostics().all(),
                                                new Predicate<Diagnostic>() {
                                                    @Override
                                                    public boolean apply(Diagnostic diagnostic) {

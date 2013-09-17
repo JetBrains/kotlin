@@ -56,7 +56,7 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
         final Set<AbstractDiagnosticFactory> factoriesSet = Sets.newHashSet(diagnosticFactories);
-        List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics(), new Condition<Diagnostic>() {
+        List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
             @Override
             public boolean value(Diagnostic diagnostic) {
                 return factoriesSet.contains(diagnostic.getFactory());

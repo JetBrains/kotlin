@@ -153,7 +153,7 @@ public final class AnalyzerWithCompilerReport {
 
     public static boolean reportDiagnostics(@NotNull BindingContext bindingContext, @NotNull MessageCollector messageCollector) {
         boolean hasErrors = false;
-        for (Diagnostic diagnostic : sortedDiagnostics(bindingContext.getDiagnostics())) {
+        for (Diagnostic diagnostic : sortedDiagnostics(bindingContext.getDiagnostics().all())) {
             hasErrors |= reportDiagnostic(diagnostic, messageCollector);
         }
         return hasErrors;

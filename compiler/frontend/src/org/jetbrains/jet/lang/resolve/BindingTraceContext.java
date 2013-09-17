@@ -27,7 +27,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class BindingTraceContext implements BindingTrace {
-    private final List<Diagnostic> diagnostics = Lists.newArrayList();
+    private final List<Diagnostic> diagnosticList = Lists.newArrayList();
+    private final Diagnostics diagnostics;
 
     // These flags are used for debugging of "Rewrite at slice..." exceptions
     /* package */ final static boolean TRACK_REWRITES = false;
@@ -39,7 +40,7 @@ public class BindingTraceContext implements BindingTrace {
 
         @NotNull
         @Override
-        public Collection<Diagnostic> getDiagnostics() {
+        public Diagnostics getDiagnostics() {
             return diagnostics;
         }
 
@@ -64,12 +65,13 @@ public class BindingTraceContext implements BindingTrace {
 
     public BindingTraceContext() {
         //noinspection ConstantConditions
-        this.map = TRACK_REWRITES ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create();
+        this(TRACK_REWRITES ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : SlicedMapImpl.create());
     }
 
 
-    private BindingTraceContext(MutableSlicedMap map) {
+    private BindingTraceContext(@NotNull MutableSlicedMap map) {
         this.map = map;
+        this.diagnostics = new SimpleDiagnostics(diagnosticList);
     }
 
     @TestOnly
@@ -79,11 +81,11 @@ public class BindingTraceContext implements BindingTrace {
 
     @Override
     public void report(@NotNull Diagnostic diagnostic) {
-        diagnostics.add(diagnostic);
+        diagnosticList.add(diagnostic);
     }
 
     public void clearDiagnostics() {
-        diagnostics.clear();
+        diagnosticList.clear();
     }
 
     @Override
