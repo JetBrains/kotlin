@@ -121,14 +121,14 @@ public class ConfigureKotlinInProjectUtils {
         }
 
         builder.append(" in '").append(project.getName()).append("' project");
-        builder.append("\n");
+        builder.append("<br/>");
 
         String links = StringUtil.join(getApplicableConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
             @Override
             public String fun(KotlinProjectConfigurator configurator) {
                 return getLink(configurator, isOnlyOneModule);
             }
-        }, "  ");
+        }, "<br/>");
         builder.append(links);
 
         return builder.toString();
