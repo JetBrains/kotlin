@@ -34,7 +34,6 @@ public abstract class CreateJavaScriptLibraryDialogBase extends DialogWrapper im
 
     protected JPanel contentPane;
     protected JCheckBox copyJarCheckbox;
-    protected JCheckBox copyJsFilesCheckbox;
     protected JPanel copyJsFilesPanelPlace;
     protected JPanel copyJarFilePanelPlace;
     protected JLabel compilerTextLabel;
@@ -77,24 +76,20 @@ public abstract class CreateJavaScriptLibraryDialogBase extends DialogWrapper im
 
         if (!showPathToJsFilePanel) {
             copyJsFilesPanelPlace.setVisible(false);
-            copyJsFilesCheckbox.setVisible(false);
         }
 
-        ActionListener updateComponentsListener = new ActionListener() {
+        copyJarCheckbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(@NotNull ActionEvent e) {
                 updateComponents();
             }
-        };
-
-        copyJarCheckbox.addActionListener(updateComponentsListener);
-        copyJsFilesCheckbox.addActionListener(updateComponentsListener);
+        });
     }
 
     @Override
     @Nullable
     public String getCopyJsIntoPath() {
-        if (!copyJsFilesCheckbox.isSelected()) return null;
+        if (!copyJsFilesPanelPlace.isVisible()) return null;
         return copyJsFilesPanel.getPath();
     }
 
@@ -106,7 +101,6 @@ public abstract class CreateJavaScriptLibraryDialogBase extends DialogWrapper im
 
     protected void updateComponents() {
         copyJarPanel.setEnabled(copyJarCheckbox.isSelected());
-        copyJsFilesPanel.setEnabled(copyJsFilesCheckbox.isSelected());
 
         setOKActionEnabled(!copyJsFilesPanel.hasErrors() && !copyJarPanel.hasErrors());
     }
