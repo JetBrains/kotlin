@@ -153,11 +153,6 @@ public class CliTest {
     }
 
     @Test
-    public void ideTemplates() {
-        executeCompilerCompareOutput(new String[]{ "-src", "compiler/testData/cli/ideTemplates.kt", "-output", tmpdir.getTmpDir().getPath()});
-    }
-
-    @Test
     public void wrongArgument() {
         executeCompilerCompareOutput(new String[] { "-wrongArgument" });
     }

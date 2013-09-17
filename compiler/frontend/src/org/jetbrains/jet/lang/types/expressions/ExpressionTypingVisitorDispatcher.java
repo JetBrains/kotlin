@@ -33,11 +33,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
 
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
-    @Override
-    public JetTypeInfo visitIdeTemplate(JetIdeTemplate expression, ExpressionTypingContext data) {
-        return basic.visitIdeTemplate(expression, data);
-    }
-
     @NotNull
     public static ExpressionTypingFacade create(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
         return new ExpressionTypingVisitorDispatcher(platformToKotlinClassMap, null);

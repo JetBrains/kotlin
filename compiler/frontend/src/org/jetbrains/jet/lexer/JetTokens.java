@@ -132,9 +132,6 @@ public interface JetTokens {
     JetToken AT          = new JetToken("AT");
     JetToken ATAT          = new JetToken("ATAT");
 
-    JetToken IDE_TEMPLATE_START = new JetToken("IDE_TEMPLATE_START");
-    JetToken IDE_TEMPLATE_END = new JetToken("IDE_TEMPLATE_END");
-
     TokenSet LABELS = TokenSet.create(AT, ATAT, LABEL_IDENTIFIER);
 
     JetToken COMMA       = new JetToken("COMMA");

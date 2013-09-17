@@ -17,16 +17,13 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.psi.JetIdeTemplate;
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -106,8 +106,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             IDENTIFIER, // SimpleName
             FIELD_IDENTIFIER, // Field reference
 
-            PACKAGE_KEYWORD, // for absolute qualified names
-            IDE_TEMPLATE_START
+            PACKAGE_KEYWORD // for absolute qualified names
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
@@ -125,7 +124,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     );
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
-            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET, IDE_TEMPLATE_END
+            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -532,9 +531,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(LPAR)) {
             parseParenthesizedExpression();
         }
-        else if (at(IDE_TEMPLATE_START)) {
-            myJetParsing.parseIdeTemplate();
-        }
         else if (at(HASH)) {
             parseTupleExpression();
         }
@@ -820,14 +816,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * : whenCondition{","} "->" element SEMI
      */
     private void parseWhenEntryNotElse() {
-        if (!myJetParsing.parseIdeTemplate()) {
-            while (true) {
-                while (at(COMMA)) errorAndAdvance("Expecting a when-condition");
-                parseWhenCondition();
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-            }
+        while (true) {
+            while (at(COMMA)) errorAndAdvance("Expecting a when-condition");
+            parseWhenCondition();
+            if (!at(COMMA)) break;
+            advance(); // COMMA
         }
+
         expect(ARROW, "Expecting '->' or 'when'", WHEN_CONDITION_RECOVERY_SET);
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
             error("Expecting an element");
@@ -1359,9 +1354,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parameter.done(MULTI_VARIABLE_DECLARATION);
         }
         else {
-            if (!myJetParsing.parseIdeTemplate()) {
-                expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
-            }
+            expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
+
             if (at(COLON)) {
                 advance(); // COLON
                 myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));

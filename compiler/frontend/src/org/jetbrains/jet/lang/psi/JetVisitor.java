@@ -273,10 +273,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitIdeTemplate(JetIdeTemplate expression, D data) {
-        return null;
-    }
-
     public R visitCatchSection(JetCatchClause catchClause, D data) {
         return visitJetElement(catchClause, data);
     }

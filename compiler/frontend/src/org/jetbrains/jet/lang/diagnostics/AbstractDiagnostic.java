@@ -71,7 +71,6 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     @Override
     public boolean isValid() {
         if (!getFactory().isValid(this)) return false;
-        if (psiElement.getNode().findChildByType(JetNodeTypes.IDE_TEMPLATE_EXPRESSION) != null) return false;
         return true;
     }
 }

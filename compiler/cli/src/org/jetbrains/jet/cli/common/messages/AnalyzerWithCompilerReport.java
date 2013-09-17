@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetIdeTemplate;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -62,9 +61,6 @@ public final class AnalyzerWithCompilerReport {
 
     @NotNull
     private static final DiagnosticFactory0<PsiErrorElement> SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create(Severity.ERROR);
-    @NotNull
-    private static final DiagnosticFactory0<JetIdeTemplate> UNRESOLVED_IDE_TEMPLATE_ERROR_FACTORY
-            = DiagnosticFactory0.create(Severity.ERROR);
 
     private boolean hasErrors = false;
     @NotNull
@@ -199,13 +195,6 @@ public final class AnalyzerWithCompilerReport {
                     onlyErrorAtEof = !hasErrors;
                 }
                 hasErrors = true;
-            }
-
-            @Override
-            public void visitIdeTemplate(JetIdeTemplate expression) {
-                String placeholderText = expression.getPlaceholderText();
-                reportDiagnostic(expression, UNRESOLVED_IDE_TEMPLATE_ERROR_FACTORY,
-                                 "Unresolved IDE template" + (StringUtil.isEmpty(placeholderText) ? "" : ": " + placeholderText));
             }
 
             @Override
