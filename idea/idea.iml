@@ -17,7 +17,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="js.tests" scope="TEST" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
@@ -33,7 +32,6 @@
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="ide-compiler-runner" />
     <orderEntry type="module" module-name="cli-common" />
-    <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
     <orderEntry type="library" scope="PROVIDED" name="properties" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
