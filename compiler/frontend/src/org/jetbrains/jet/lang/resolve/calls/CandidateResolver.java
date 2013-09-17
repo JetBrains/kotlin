@@ -225,55 +225,30 @@ public class CandidateResolver {
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         assert resolvedCall.hasIncompleteTypeParameters();
-        D descriptor = resolvedCall.getCandidateDescriptor();
-        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
-        assert constraintSystem != null;
+        assert resolvedCall.getConstraintSystem() != null;
 
-        constraintSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(), ConstraintPosition.EXPECTED_TYPE_POSITION);
-
-        ConstraintSystemCompleter constraintSystemCompleter = context.trace.get(
-                BindingContext.CONSTRAINT_SYSTEM_COMPLETER, context.call.getCalleeExpression());
-        if (constraintSystemCompleter != null) {
-            ConstraintSystemImpl backup = (ConstraintSystemImpl) constraintSystem.copy();
-
-            //todo improve error reporting with errors in constraints from completer
-            constraintSystemCompleter.completeConstraintSystem(constraintSystem, resolvedCall);
-            if (constraintSystem.hasTypeConstructorMismatchAt(ConstraintPosition.FROM_COMPLETER) ||
-                (constraintSystem.hasContradiction() && !backup.hasContradiction())) {
-
-                constraintSystem = backup;
-                resolvedCall.setConstraintSystem(backup);
-            }
+        JetType unsubstitutedReturnType = resolvedCall.getCandidateDescriptor().getReturnType();
+        if (unsubstitutedReturnType != null) {
+            resolvedCall.getConstraintSystem().addSupertypeConstraint(
+                    context.expectedType, unsubstitutedReturnType, ConstraintPosition.EXPECTED_TYPE_POSITION);
         }
 
-        if (constraintSystem.hasContradiction()) {
+        updateSystemWithConstraintSystemCompleter(context, resolvedCall);
+
+        if (resolvedCall.getConstraintSystem().hasContradiction()) {
             return reportInferenceError(context);
         }
-        if (!constraintSystem.isSuccessful() && context.expectedType == TypeUtils.UNIT_EXPECTED_TYPE) {
-            ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
-            copy.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), descriptor.getReturnType(), ConstraintPosition.EXPECTED_TYPE_POSITION);
-            if (copy.isSuccessful()) {
-                constraintSystem = copy;
-                resolvedCall.setConstraintSystem(constraintSystem);
-            }
-        }
-        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true);
-        if (!boundsAreSatisfied || constraintSystem.hasUnknownParameters()) {
-            ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
-            copy.processDeclaredBoundConstraints();
-            boundsAreSatisfied = copy.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true);
-            if (boundsAreSatisfied) {
-                constraintSystem = copy;
-                resolvedCall.setConstraintSystem(constraintSystem);
-            }
-        }
-        if (!constraintSystem.isSuccessful()) {
+        updateSystemIfExpectedTypeIsUnit(context, resolvedCall);
+
+        boolean boundsAreSatisfied = updateSystemCheckingBounds(resolvedCall);
+        if (!resolvedCall.getConstraintSystem().isSuccessful()) {
             return reportInferenceError(context);
         }
         if (!boundsAreSatisfied) {
-            context.tracing.upperBoundViolated(context.trace, InferenceErrorData.create(resolvedCall.getCandidateDescriptor(), constraintSystem));
+            context.tracing.upperBoundViolated(context.trace, InferenceErrorData.create(
+                    resolvedCall.getCandidateDescriptor(), resolvedCall.getConstraintSystem()));
         }
-        resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
+        resolvedCall.setResultingSubstitutor(resolvedCall.getConstraintSystem().getResultingSubstitutor());
 
         completeNestedCallsInference(context);
         // Here we type check the arguments with inferred types expected
@@ -292,6 +267,66 @@ public class CandidateResolver {
             }
         }
         return returnType;
+    }
+
+    private static <D extends CallableDescriptor> void updateSystemWithConstraintSystemCompleter(
+            @NotNull CallCandidateResolutionContext<D> context,
+            @NotNull ResolvedCallImpl<D> resolvedCall
+    ) {
+        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
+        assert constraintSystem != null;
+        ConstraintSystemCompleter constraintSystemCompleter = context.trace.get(
+                BindingContext.CONSTRAINT_SYSTEM_COMPLETER, context.call.getCalleeExpression());
+        if (constraintSystemCompleter == null) return;
+
+        ConstraintSystemImpl backup = (ConstraintSystemImpl) constraintSystem.copy();
+
+        //todo improve error reporting with errors in constraints from completer
+        constraintSystemCompleter.completeConstraintSystem(constraintSystem, resolvedCall);
+        if (constraintSystem.hasTypeConstructorMismatchAt(ConstraintPosition.FROM_COMPLETER) ||
+            (constraintSystem.hasContradiction() && !backup.hasContradiction())) {
+
+            resolvedCall.setConstraintSystem(backup);
+        }
+    }
+
+    private static <D extends CallableDescriptor> void updateSystemIfExpectedTypeIsUnit(
+            @NotNull CallCandidateResolutionContext<D> context,
+            @NotNull ResolvedCallImpl<D> resolvedCall
+    ) {
+        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
+        assert constraintSystem != null;
+        JetType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
+        if (returnType == null) return;
+
+        if (!constraintSystem.isSuccessful() && context.expectedType == TypeUtils.UNIT_EXPECTED_TYPE) {
+            ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
+
+            copy.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, ConstraintPosition.EXPECTED_TYPE_POSITION);
+            if (copy.isSuccessful()) {
+                constraintSystem = copy;
+                resolvedCall.setConstraintSystem(constraintSystem);
+            }
+        }
+    }
+
+    private static <D extends CallableDescriptor> boolean updateSystemCheckingBounds(
+            @NotNull ResolvedCallImpl<D> resolvedCall
+    ) {
+        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
+        assert constraintSystem != null;
+
+        if (ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true)
+                && !constraintSystem.hasUnknownParameters()) {
+            return true;
+        }
+        ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
+        copy.processDeclaredBoundConstraints();
+        if (copy.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true)) {
+            resolvedCall.setConstraintSystem(copy);
+            return true;
+        }
+        return false;
     }
 
     private <D extends CallableDescriptor> JetType reportInferenceError(
