@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
@@ -82,7 +81,7 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements M
         return moduleConfiguration;
     }
 
-    @Inject
+    @NotNull
     public ModuleDescriptorImpl setModuleConfiguration(@NotNull ModuleConfiguration moduleConfiguration) {
         assert this.moduleConfiguration == null : "Trying to set module configuration twice for " + this;
         this.moduleConfiguration = moduleConfiguration;
