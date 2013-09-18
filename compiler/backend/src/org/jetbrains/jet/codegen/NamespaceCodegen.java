@@ -31,8 +31,8 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -155,7 +155,7 @@ public class NamespaceCodegen extends MemberCodegen {
         AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor(), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
+        for (String string : BitEncoding.encodeBytes(data.toBytes())) {
             array.visit(null, string);
         }
         array.visitEnd();

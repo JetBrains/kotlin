@@ -21,11 +21,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-import static org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil.decodeBytes;
-import static org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil.encodeBytes;
+import static org.jetbrains.jet.descriptors.serialization.BitEncoding.decodeBytes;
+import static org.jetbrains.jet.descriptors.serialization.BitEncoding.encodeBytes;
 import static org.junit.Assert.assertArrayEquals;
 
-public class JavaProtoBufUtilTest extends UsefulTestCase {
+public class BitEncodingTest extends UsefulTestCase {
     private static final int[] BIG_LENGTHS = new int[]
             {1000, 32000, 33000, 65000, 65534, 65535, 65536, 65537, 100000, 131074, 239017, 314159, 1000000};
 
