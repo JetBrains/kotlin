@@ -67,12 +67,12 @@ public abstract class CreateJavaScriptLibraryDialogBase extends DialogWrapper im
 
         copyJsFilesPanel = new CopyIntoPanel(project, defaultPathToJsFile, "Copy &runtime files to:");
         copyJsFilesPanel.addValidityListener(validityListener);
-        copyJsFilesPanel.setLabelWight(110);
+        copyJsFilesPanel.setLabelWidth(110);
         copyJsFilesPlace.add(copyJsFilesPanel.getContentPane(), BorderLayout.CENTER);
 
         copyLibraryFilePanel = new CopyIntoPanel(project, defaultPathToJar, "Copy &headers to:");
         copyLibraryFilePanel.addValidityListener(validityListener);
-        copyLibraryFilePanel.setLabelWight(110);
+        copyLibraryFilePanel.setLabelWidth(110);
         copyLibraryPlace.add(copyLibraryFilePanel.getContentPane(), BorderLayout.CENTER);
 
         if (!showPathToJarPanel) {

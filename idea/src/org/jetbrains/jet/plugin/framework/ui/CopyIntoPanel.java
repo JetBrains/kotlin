@@ -111,7 +111,7 @@ public class CopyIntoPanel {
         return hasErrorsState;
     }
 
-    public void setLabelWight(int wight) {
-        copyIntoLabel.setPreferredSize(new Dimension(wight, -1));
+    public void setLabelWidth(int width) {
+        copyIntoLabel.setPreferredSize(new Dimension(width, -1));
     }
 }
