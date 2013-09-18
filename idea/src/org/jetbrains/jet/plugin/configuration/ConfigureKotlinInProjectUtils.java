@@ -91,7 +91,7 @@ public class ConfigureKotlinInProjectUtils {
     private static void showConfigureKotlinNotification(final Project project) {
         Notifications.Bus.notify(
                 new Notification("Configure Kotlin",
-                                 "Kotlin file(s) found in your project.",
+                                 "Kotlin files found in your project.",
                                  getNotificationString(project),
                                  NotificationType.WARNING, new NotificationListener() {
                     @Override
