@@ -26,6 +26,9 @@ import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class GenerateKeywordStrings {
     public static final File DEST_FILE = new File("compiler/frontend/src/org/jetbrains/jet/renderer/KeywordStringsGenerated.java");
@@ -50,12 +53,19 @@ public class GenerateKeywordStrings {
         p.println("public static final Set<String> KEYWORDS = new HashSet<String>(Arrays.asList(");
         p.pushIndent();
 
-        IElementType[] types = JetTokens.KEYWORDS.getTypes();
-        for (int i = 0, length = types.length; i < length; i++) {
-            assert types[i] instanceof JetKeywordToken : "Not a keyword in JetTokens.KEYWORDS: " + types[i];
-            JetKeywordToken keyword = (JetKeywordToken) types[i];
+        List<String> strings = new ArrayList<String>();
+        for (IElementType type : JetTokens.KEYWORDS.getTypes()) {
+            assert type instanceof JetKeywordToken : "Not a keyword in JetTokens.KEYWORDS: " + type;
+            JetKeywordToken keyword = (JetKeywordToken) type;
             assert !keyword.isSoft() : "Soft keyword in JetTokens.KEYWORDS: " + keyword.getValue();
-            p.println("\"" + keyword.getValue() + "\""+ (i + 1 < length ? "," : ""));
+            if (keyword != JetTokens.AS_SAFE && keyword != JetTokens.NOT_IN && keyword != JetTokens.NOT_IS) {
+                strings.add(keyword.getValue());
+            }
+        }
+
+        for (Iterator<String> iterator = strings.iterator(); iterator.hasNext(); ) {
+            String string = iterator.next();
+            p.println("\"" + string + "\"" + (iterator.hasNext() ? "," : ""));
         }
 
         p.popIndent();

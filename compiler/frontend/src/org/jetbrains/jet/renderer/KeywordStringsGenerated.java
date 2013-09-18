@@ -52,9 +52,6 @@ public class KeywordStringsGenerated {
         "do",
         "when",
         "trait",
-        "This",
-        "AS_SAFE",
-        "NOT_IN",
-        "NOT_IS"
+        "This"
     ));
 }
