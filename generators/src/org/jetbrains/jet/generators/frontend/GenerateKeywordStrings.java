@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GenerateKeywordStrings {
-    public static final File DEST_FILE = new File("compiler/frontend/src/org/jetbrains/jet/renderer/KeywordStringsGenerated.java");
+    public static final File DEST_FILE = new File("core/descriptors/src/org/jetbrains/jet/renderer/KeywordStringsGenerated.java");
 
     @NotNull
     public static String generate() throws IOException {

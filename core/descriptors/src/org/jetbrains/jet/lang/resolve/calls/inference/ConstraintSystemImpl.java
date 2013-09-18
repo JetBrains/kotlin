@@ -120,8 +120,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     };
 
     public ConstraintSystemImpl() {
-        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(CANT_INFER_TYPE_PARAMETER));
-        this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(DONT_CARE));
+        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(
+                TypeUtils.CANT_INFER_TYPE_PARAMETER));
+        this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(TypeUtils.DONT_CARE));
     }
 
     private TypeSubstitutor createTypeSubstitutorWithDefaultForUnknownTypeParameter(@Nullable final TypeProjection defaultTypeProjection) {
@@ -134,7 +135,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
                     if (typeParameterConstraints.containsKey(descriptor)) {
                         JetType value = getTypeConstraints(descriptor).getValue();
-                        if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, DONT_CARE)) {
+                        if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, TypeUtils.DONT_CARE)) {
                             return new TypeProjection(value);
                         }
                         return defaultTypeProjection;
@@ -202,7 +203,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull JetType subjectType,
             @NotNull ConstraintPosition constraintPosition
     ) {
-        if (constrainingType != null && noExpectedType(constrainingType)) return;
+        if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return;
 
         if (constraintPosition == ConstraintPosition.EXPECTED_TYPE_POSITION) {
             systemWithoutExpectedTypeConstraint = copy();
@@ -262,11 +263,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private boolean isErrorOrSpecialType(@Nullable JetType type) {
-        if (type == DONT_CARE || type == CANT_INFER_TYPE_PARAMETER) {
+        if (type == TypeUtils.DONT_CARE || type == TypeUtils.CANT_INFER_TYPE_PARAMETER) {
             return true;
         }
 
-        if (type == null || (type.isError() && type != PLACEHOLDER_FUNCTION_TYPE)) {
+        if (type == null || (type.isError() && type != TypeUtils.PLACEHOLDER_FUNCTION_TYPE)) {
             hasErrorInConstrainingTypes = true;
             return true;
         }
@@ -284,10 +285,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         if (isErrorOrSpecialType(subType) || isErrorOrSpecialType(superType)) return;
         assert subType != null && superType != null;
 
-        assert superType != PLACEHOLDER_FUNCTION_TYPE : "The type for " + constraintPosition + " shouldn't be a placeholder for function type";
+        assert superType != TypeUtils.PLACEHOLDER_FUNCTION_TYPE : "The type for " + constraintPosition + " shouldn't be a placeholder for function type";
 
         KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
-        if (subType == PLACEHOLDER_FUNCTION_TYPE) {
+        if (subType == TypeUtils.PLACEHOLDER_FUNCTION_TYPE) {
             if (!kotlinBuiltIns.isFunctionOrExtensionFunctionType(superType)) {
                 if (isMyTypeVariable(superType)) {
                     // a constraint binds type parameter and any function type, so there is no new info and no error
@@ -303,7 +304,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         // can be considered as extension function if one is expected
         // (special type constructor for function/ extension function should be introduced like PLACEHOLDER_FUNCTION_TYPE)
         if (constraintKind == SUB_TYPE && kotlinBuiltIns.isFunctionType(subType) && kotlinBuiltIns.isExtensionFunctionType(superType)) {
-            subType = createCorrespondingExtensionFunctionType(subType, DONT_CARE);
+            subType = createCorrespondingExtensionFunctionType(subType, TypeUtils.DONT_CARE);
         }
 
         // can be equal for the recursive invocations:

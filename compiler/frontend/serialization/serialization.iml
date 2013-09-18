@@ -14,6 +14,7 @@
     <orderEntry type="library" name="trove4j" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="util.runtime" />
+    <orderEntry type="module" module-name="descriptors" />
   </component>
 </module>
 
