@@ -16,34 +16,60 @@
 
 package org.jetbrains.jet.plugin.refactoring.rename;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiCompiledElement;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiCompiledElement
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.refactoring.rename.RenamePsiElementProcessor
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.asJava.LightClassUtil
+import org.jetbrains.jet.lang.psi.JetNamedFunction
+import com.intellij.openapi.util.Computable
+import com.intellij.psi.PsiMirrorElement
+import com.intellij.psi.SyntheticElement
+import com.intellij.refactoring.util.RefactoringUtil
+import com.intellij.refactoring.rename.RenameProcessor
+import com.intellij.refactoring.rename.RenameJavaMethodProcessor
+import com.intellij.psi.PsiNamedElement
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
+import kotlin.properties.Delegates
 
-import java.util.Map;
+public class RenameKotlinFunctionProcessor : RenamePsiElementProcessor() {
+    private val javaMethodProcessorInstance by Delegates.lazy {
+        // KT-4250
+        // RenamePsiElementProcessor.EP_NAME.findExtension(javaClass<RenameJavaMethodProcessor>())!!
 
-public class RenameKotlinFunctionProcessor extends RenamePsiElementProcessor {
-    @Override
-    public boolean canProcessElement(@NotNull PsiElement element) {
-        if (element instanceof PsiMethod && ((PsiMethod) element).getContainingClass() instanceof KotlinLightClass) {
-            return true;
-        }
-        return element instanceof JetFunction;
+        RenameJavaMethodProcessor()
     }
 
-    @Override
-    public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
-        if (element instanceof PsiMethod && element instanceof PsiCompiledElement &&
-            ((PsiMethod) element).getContainingClass() instanceof KotlinLightClass) {
-            return ((PsiCompiledElement) element).getMirror();
+    override fun canProcessElement(element: PsiElement): Boolean {
+        return element is JetNamedFunction || element is KotlinLightMethod
+    }
+
+    override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
+        val wrappedMethod = wrapPsiMethod(element)
+        if (wrappedMethod == null) {
+            // Cancel rename
+            return null
         }
-        return super.substituteElementToRename(element, editor);
+
+        // Use java dialog to ask we should rename function with the base element
+        return unwrapPsiMethod(javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor))
+    }
+
+    override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+        javaMethodProcessorInstance.prepareRenaming(wrapPsiMethod(element), newName, allRenames, scope)
+    }
+
+    private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
+        is KotlinLightMethod -> element
+        is JetNamedFunction -> ApplicationManager.getApplication()!!.runReadAction(Computable { LightClassUtil.getLightClassMethod(element) })
+        else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+    }
+
+    private fun unwrapPsiMethod(element: PsiElement?): JetNamedFunction? {
+        return (element as? KotlinLightMethod)?.getOrigin() as? JetNamedFunction
     }
 }
