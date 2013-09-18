@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface DependencyClassByQualifiedNameResolver {
-
     @Nullable
     ClassDescriptor resolveClass(@NotNull FqName qualifiedName);
 }
