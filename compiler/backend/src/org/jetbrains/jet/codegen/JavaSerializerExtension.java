@@ -18,14 +18,15 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
-import org.jetbrains.jet.descriptors.serialization.NameTable;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
+import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+
+import java.util.Arrays;
 
 public class JavaSerializerExtension extends SerializerExtension {
     private final MemberMap memberMap;
@@ -52,7 +53,7 @@ public class JavaSerializerExtension extends SerializerExtension {
         if (callable instanceof FunctionDescriptor) {
             Method method = memberMap.getMethodOfDescriptor((FunctionDescriptor) callable);
             if (method != null) {
-                JavaProtoBufUtil.saveMethodSignature(proto, method, nameTable);
+                proto.setExtension(JavaProtoBuf.methodSignature, new SignatureSerializer(nameTable).methodSignature(method));
             }
         }
         else if (callable instanceof PropertyDescriptor) {
@@ -81,8 +82,9 @@ public class JavaSerializerExtension extends SerializerExtension {
                 syntheticMethodName = memberMap.getSyntheticMethodNameOfProperty(property);
             }
 
-            JavaProtoBufUtil.savePropertySignature(proto, fieldType, fieldName, isStaticInOuter, syntheticMethodName, getterMethod,
-                                                   setterMethod, nameTable);
+            JavaProtoBuf.JavaPropertySignature signature = new SignatureSerializer(nameTable)
+                            .propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethodName, getterMethod, setterMethod);
+            proto.setExtension(JavaProtoBuf.propertySignature, signature);
         }
     }
 
@@ -93,7 +95,101 @@ public class JavaSerializerExtension extends SerializerExtension {
     ) {
         Name name = memberMap.getSrcClassNameOfCallable(callable);
         if (name != null) {
-            JavaProtoBufUtil.saveSrcClassName(proto, name, nameTable);
+            proto.setExtension(JavaProtoBuf.srcClassName, nameTable.getSimpleNameIndex(name));
+        }
+    }
+
+    private static class SignatureSerializer {
+        private final NameTable nameTable;
+
+        public SignatureSerializer(@NotNull NameTable nameTable) {
+            this.nameTable = nameTable;
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaMethodSignature methodSignature(@NotNull Method method) {
+            JavaProtoBuf.JavaMethodSignature.Builder signature = JavaProtoBuf.JavaMethodSignature.newBuilder();
+
+            signature.setName(nameTable.getSimpleNameIndex(Name.guess(method.getName())));
+
+            signature.setReturnType(type(method.getReturnType()));
+
+            for (Type type : method.getArgumentTypes()) {
+                signature.addParameterType(type(type));
+            }
+
+            return signature.build();
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaPropertySignature propertySignature(
+                @Nullable Type fieldType,
+                @Nullable String fieldName,
+                boolean isStaticInOuter,
+                @Nullable String syntheticMethodName,
+                @Nullable Method getter,
+                @Nullable Method setter
+        ) {
+            JavaProtoBuf.JavaPropertySignature.Builder signature = JavaProtoBuf.JavaPropertySignature.newBuilder();
+
+            if (fieldType != null) {
+                assert fieldName != null : "Field name shouldn't be null when there's a field type: " + fieldType;
+                signature.setField(fieldSignature(fieldType, fieldName, isStaticInOuter));
+            }
+
+            if (syntheticMethodName != null) {
+                signature.setSyntheticMethodName(nameTable.getSimpleNameIndex(Name.guess(syntheticMethodName)));
+            }
+
+            if (getter != null) {
+                signature.setGetter(methodSignature(getter));
+            }
+            if (setter != null) {
+                signature.setSetter(methodSignature(setter));
+            }
+
+            return signature.build();
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaFieldSignature fieldSignature(@NotNull Type type, @NotNull String name, boolean isStaticInOuter) {
+            JavaProtoBuf.JavaFieldSignature.Builder signature = JavaProtoBuf.JavaFieldSignature.newBuilder();
+            signature.setName(nameTable.getSimpleNameIndex(Name.guess(name)));
+            signature.setType(type(type));
+            if (isStaticInOuter) {
+                signature.setIsStaticInOuter(true);
+            }
+            return signature.build();
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaType type(@NotNull Type givenType) {
+            JavaProtoBuf.JavaType.Builder builder = JavaProtoBuf.JavaType.newBuilder();
+
+            int arrayDimension = 0;
+            Type type = givenType;
+            while (type.getSort() == Type.ARRAY) {
+                arrayDimension++;
+                type = type.getElementType();
+            }
+            if (arrayDimension != 0) {
+                builder.setArrayDimension(arrayDimension);
+            }
+
+            if (type.getSort() == Type.OBJECT) {
+                FqName fqName = internalNameToFqName(type.getInternalName());
+                builder.setClassFqName(nameTable.getFqNameIndex(fqName));
+            }
+            else {
+                builder.setPrimitiveType(JavaProtoBuf.JavaType.PrimitiveType.valueOf(type.getSort()));
+            }
+
+            return builder.build();
+        }
+
+        @NotNull
+        private static FqName internalNameToFqName(@NotNull String internalName) {
+            return FqName.fromSegments(Arrays.asList(internalName.split("/")));
         }
     }
 }

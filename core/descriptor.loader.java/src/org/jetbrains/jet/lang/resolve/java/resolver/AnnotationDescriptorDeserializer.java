@@ -21,8 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
-import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
@@ -48,6 +47,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.asm4.ClassReader.*;
+import static org.jetbrains.asm4.Type.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.naiveKotlinFqName;
@@ -247,7 +247,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @NotNull NameResolver nameResolver
     ) {
         if (container instanceof NamespaceDescriptor) {
-            Name name = JavaProtoBufUtil.loadSrcClassName(proto, nameResolver);
+            Name name = loadSrcClassName(proto, nameResolver);
             if (name != null) {
                 // To locate a package$src class, we first find the facade virtual file (*Package.class) and then look up the $src file in
                 // the same directory. This hack is needed because FileManager doesn't find classfiles for $src classes
@@ -263,12 +263,23 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         }
         else if (container instanceof ClassDescriptor && ((ClassDescriptor) container).getKind() == ClassKind.CLASS_OBJECT) {
             // Backing fields of properties of a class object are generated in the outer class
-            if (JavaProtoBufUtil.isStaticFieldInOuter(proto)) {
+            if (isStaticFieldInOuter(proto)) {
                 return findVirtualFileByDescriptor((ClassOrNamespaceDescriptor) container.getContainingDeclaration());
             }
         }
 
         return findVirtualFileByDescriptor(container);
+    }
+
+    @Nullable
+    private static Name loadSrcClassName(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+        return proto.hasExtension(JavaProtoBuf.srcClassName) ? nameResolver.getName(proto.getExtension(JavaProtoBuf.srcClassName)) : null;
+    }
+
+    private static boolean isStaticFieldInOuter(@NotNull ProtoBuf.Callable proto) {
+        if (!proto.hasExtension(JavaProtoBuf.propertySignature)) return false;
+        JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+        return propertySignature.hasField() && propertySignature.getField().getIsStaticInOuter();
     }
 
     @Nullable
@@ -279,18 +290,41 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     ) {
         switch (kind) {
             case FUNCTION:
-                return MemberSignature.fromMethod(JavaProtoBufUtil.loadMethodSignature(proto, nameResolver));
+                if (proto.hasExtension(JavaProtoBuf.methodSignature)) {
+                    JavaProtoBuf.JavaMethodSignature signature = proto.getExtension(JavaProtoBuf.methodSignature);
+                    return new SignatureDeserializer(nameResolver).methodSignature(signature);
+                }
+                break;
             case PROPERTY_GETTER:
-                return MemberSignature.fromMethod(JavaProtoBufUtil.loadPropertyGetterSignature(proto, nameResolver));
+                if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
+                    JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+                    return new SignatureDeserializer(nameResolver).methodSignature(propertySignature.getGetter());
+                }
+                break;
             case PROPERTY_SETTER:
-                return MemberSignature.fromMethod(JavaProtoBufUtil.loadPropertySetterSignature(proto, nameResolver));
+                if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
+                    JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+                    return new SignatureDeserializer(nameResolver).methodSignature(propertySignature.getSetter());
+                }
+                break;
             case PROPERTY:
-                JavaProtoBufUtil.PropertyData data = JavaProtoBufUtil.loadPropertyData(proto, nameResolver);
-                return data == null ? null :
-                       MemberSignature.fromPropertyData(data.getFieldType(), data.getFieldName(), data.getSyntheticMethodName());
-            default:
-                return null;
+                if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
+                    JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
+
+                    if (propertySignature.hasField()) {
+                        JavaProtoBuf.JavaFieldSignature field = propertySignature.getField();
+                        Type type = new SignatureDeserializer(nameResolver).type(field.getType());
+                        Name name = nameResolver.getName(field.getName());
+                        return MemberSignature.fromFieldNameAndDesc(name.asString(), type.getDescriptor());
+                    }
+                    else if (propertySignature.hasSyntheticMethodName()) {
+                        Name name = nameResolver.getName(propertySignature.getSyntheticMethodName());
+                        return MemberSignature.fromMethodNameAndDesc(name.asString(), JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);
+                    }
+                }
+                break;
         }
+        return null;
     }
 
     @NotNull
@@ -352,28 +386,6 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             this.signature = signature;
         }
 
-        @Nullable
-        public static MemberSignature fromPropertyData(
-                @Nullable Type fieldType,
-                @Nullable String fieldName,
-                @Nullable String syntheticMethodName
-        ) {
-            if (fieldName != null && fieldType != null) {
-                return fromFieldNameAndDesc(fieldName, fieldType.getDescriptor());
-            }
-            else if (syntheticMethodName != null) {
-                return fromMethodNameAndDesc(syntheticMethodName, JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);
-            }
-            else {
-                return null;
-            }
-        }
-
-        @Nullable
-        public static MemberSignature fromMethod(@Nullable Method method) {
-            return method == null ? null : fromMethodNameAndDesc(method.getName(), method.getDescriptor());
-        }
-
         @NotNull
         public static MemberSignature fromMethodNameAndDesc(@NotNull String name, @NotNull String desc) {
             return new MemberSignature(name + desc);
@@ -397,6 +409,56 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         @Override
         public String toString() {
             return signature;
+        }
+    }
+
+    private static class SignatureDeserializer {
+        // These types are ordered according to their sorts, this is significant for deserialization
+        private static final Type[] PRIMITIVE_TYPES = new Type[]
+                { VOID_TYPE, BOOLEAN_TYPE, CHAR_TYPE, BYTE_TYPE, SHORT_TYPE, INT_TYPE, FLOAT_TYPE, LONG_TYPE, DOUBLE_TYPE };
+
+        private final NameResolver nameResolver;
+
+        public SignatureDeserializer(@NotNull NameResolver nameResolver) {
+            this.nameResolver = nameResolver;
+        }
+
+        @NotNull
+        public MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+            String name = nameResolver.getName(signature.getName()).asString();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append('(');
+            for (int i = 0, length = signature.getParameterTypeCount(); i < length; i++) {
+                sb.append(type(signature.getParameterType(i)).getDescriptor());
+            }
+            sb.append(')');
+            sb.append(type(signature.getReturnType()).getDescriptor());
+
+            return MemberSignature.fromMethodNameAndDesc(name, sb.toString());
+        }
+
+        @NotNull
+        public Type type(@NotNull JavaProtoBuf.JavaType type) {
+            Type result;
+            if (type.hasPrimitiveType()) {
+                result = PRIMITIVE_TYPES[type.getPrimitiveType().ordinal()];
+            }
+            else {
+                result = Type.getObjectType(fqNameToInternalName(nameResolver.getFqName(type.getClassFqName())));
+            }
+
+            StringBuilder brackets = new StringBuilder(type.getArrayDimension());
+            for (int i = 0; i < type.getArrayDimension(); i++) {
+                brackets.append('[');
+            }
+
+            return Type.getType(brackets + result.getDescriptor());
+        }
+
+        @NotNull
+        private static String fqNameToInternalName(@NotNull FqName fqName) {
+            return fqName.asString().replace('.', '/');
         }
     }
 
