@@ -47,8 +47,6 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         chooseModulePanel = new ChooseModulePanel(project, modules);
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
-        chooseModulePanel.showSeparator();
-
         for (String version : kotlinVersions) {
             kotlinVersionComboBox.addItem(version);
         }

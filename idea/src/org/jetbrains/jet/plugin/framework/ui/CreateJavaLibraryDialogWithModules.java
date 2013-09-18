@@ -40,13 +40,7 @@ public class CreateJavaLibraryDialogWithModules extends CreateJavaLibraryDialogB
         chooseModulePanel = new ChooseModulePanel(project, modules);
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
-        if (!showPathPanel) {
-            copyIntoPanelPlace.setVisible(false);
-            copyLibraryCheckbox.setVisible(false);
-        }
-        else {
-            chooseModulePanel.showSeparator();
-        }
+        chooseLibraryPathPlace.setVisible(showPathPanel);
 
         updateComponents();
     }

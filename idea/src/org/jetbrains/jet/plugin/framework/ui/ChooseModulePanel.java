@@ -35,7 +35,6 @@ public class ChooseModulePanel {
     private JRadioButton allModulesWithKtRadioButton;
     private JRadioButton singleModuleRadioButton;
     private JComboBox singleModuleComboBox;
-    private JSeparator separator;
     private JTextField allModulesNames;
 
     @NotNull private final Project project;
@@ -79,13 +78,7 @@ public class ChooseModulePanel {
         modulesGroup.add(singleModuleRadioButton);
         allModulesWithKtRadioButton.setSelected(true);
 
-        separator.setVisible(false);
-
         updateComponents();
-    }
-
-    public void showSeparator() {
-        separator.setVisible(true);
     }
 
     public JComponent getContentPane() {

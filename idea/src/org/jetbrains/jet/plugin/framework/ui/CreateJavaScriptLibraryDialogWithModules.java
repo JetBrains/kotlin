@@ -39,11 +39,7 @@ public class CreateJavaScriptLibraryDialogWithModules extends CreateJavaScriptLi
         super(project, defaultPathToJar, defaultPathToJsFile, showPathToJarPanel, showPathToJsFilePanel);
 
         chooseModulePanel = new ChooseModulePanel(project, modules);
-        chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
-
-        if (showPathToJarPanel || showPathToJsFilePanel) {
-            chooseModulePanel.showSeparator();
-        }
+        chooseModulesPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
         updateComponents();
     }

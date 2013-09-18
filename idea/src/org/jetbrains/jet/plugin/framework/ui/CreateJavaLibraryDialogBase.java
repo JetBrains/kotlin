@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.framework.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.SeparatorWithText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
@@ -28,13 +29,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public abstract class CreateJavaLibraryDialogBase extends DialogWrapper {
-    protected final CopyIntoPanel copyIntoPanel;
-
     protected JPanel contentPane;
-    protected JCheckBox copyLibraryCheckbox;
-    protected JPanel copyIntoPanelPlace;
     protected JLabel compilerTextLabel;
     protected JPanel chooseModulesPanelPlace;
+    protected SeparatorWithText modulesSeparator;
+    protected JPanel chooseLibraryPathPlace;
+
+    protected final ChooseLibraryPathPanel pathPanel;
 
     public CreateJavaLibraryDialogBase(
             @Nullable Project project,
@@ -48,32 +49,31 @@ public abstract class CreateJavaLibraryDialogBase extends DialogWrapper {
 
         compilerTextLabel.setText(compilerTextLabel.getText() + " - " + JetPluginUtil.getPluginVersion());
 
-        copyIntoPanel = new CopyIntoPanel(project, defaultPath);
-        copyIntoPanel.addValidityListener(new ValidityListener() {
+        pathPanel = new ChooseLibraryPathPanel(defaultPath);
+        pathPanel.addValidityListener(new ValidityListener() {
             @Override
             public void validityChanged(boolean isValid) {
                 updateComponents();
             }
         });
-
-        copyIntoPanelPlace.add(copyIntoPanel.getContentPane(), BorderLayout.CENTER);
-
-        copyLibraryCheckbox.addActionListener(new ActionListener() {
+        pathPanel.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 updateComponents();
             }
         });
+        chooseLibraryPathPlace.add(pathPanel.getContentPane(), BorderLayout.CENTER);
+
+        modulesSeparator.setCaption("Kotlin Java Runtime Library");
     }
 
     protected void updateComponents() {
-        copyIntoPanel.setEnabled(copyLibraryCheckbox.isSelected());
-        setOKActionEnabled(!copyIntoPanel.hasErrors());
+        setOKActionEnabled(!pathPanel.hasErrors());
     }
 
     @Nullable
     public String getCopyIntoPath() {
-        return copyLibraryCheckbox.isSelected() ? copyIntoPanel.getPath() : null;
+        return pathPanel.getPath();
     }
 
     @Nullable
