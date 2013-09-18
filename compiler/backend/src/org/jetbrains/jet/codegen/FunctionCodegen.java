@@ -51,6 +51,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -533,10 +534,16 @@ public class FunctionCodegen extends GenerationStateAware {
         if (contextClass instanceof NamespaceDescriptor) {
             ownerInternalName = state.getTypeMapper().getOwner(functionDescriptor, kind, true);
         }
-        else {
+        else if (contextClass instanceof ClassDescriptor) {
             ownerInternalName = JvmClassName.byType(state.getTypeMapper()
                                                             .mapType(((ClassDescriptor) contextClass).getDefaultType(),
                                                                      JetTypeMapperMode.IMPL));
+        }
+        else if (isLocalNamedFun(functionDescriptor)) {
+            ownerInternalName = classNameForAnonymousClass(state.getBindingContext(), functionDescriptor);
+        }
+        else {
+            throw new IllegalStateException("Couldn't obtain owner name for " + functionDescriptor);
         }
 
         String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
@@ -552,7 +559,7 @@ public class FunctionCodegen extends GenerationStateAware {
             genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generateDefaultImpl(owner, state, signature, functionDescriptor, kind, isStatic, mv, loadStrategy);
+            generateDefaultImpl(owner, state, signature, functionDescriptor, isStatic, mv, loadStrategy);
         }
     }
 
@@ -561,7 +568,6 @@ public class FunctionCodegen extends GenerationStateAware {
             @NotNull GenerationState state,
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull OwnerKind kind,
             boolean aStatic,
             @NotNull MethodVisitor mv,
             @NotNull DefaultParameterValueLoader loadStrategy
@@ -637,7 +643,6 @@ public class FunctionCodegen extends GenerationStateAware {
         iv.areturn(jvmSignature.getReturnType());
 
         endVisit(mv, "default method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
-        mv.visitEnd();
     }
 
 

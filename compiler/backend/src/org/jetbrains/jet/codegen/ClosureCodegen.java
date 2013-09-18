@@ -132,6 +132,10 @@ public class ClosureCodegen extends GenerationStateAware {
 
         genClosureFields(closure, cv, typeMapper);
 
+        FunctionCodegen.generateDefaultIfNeeded(context.intoFunction(funDescriptor), state, cv,
+                                                typeMapper.mapSignature(Name.identifier("invoke"), funDescriptor), funDescriptor,
+                                                context.getContextKind(), DefaultParameterValueLoader.DEFAULT);
+
         cv.done();
     }
 

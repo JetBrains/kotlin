@@ -2418,9 +2418,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("kt3978.kt")
+            public void testKt3978() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/localFunctions/kt3978.kt");
+            }
+            
             @TestMetadata("localFunctionInConstructor.kt")
             public void testLocalFunctionInConstructor() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/localFunctions/localFunctionInConstructor.kt");
+            }
+            
+            @TestMetadata("localWithDefault.kt")
+            public void testLocalWithDefault() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/localFunctions/localWithDefault.kt");
             }
             
         }
