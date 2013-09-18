@@ -20,11 +20,14 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.lang.psi.JetFunction;
+
+import java.util.Map;
 
 public class RenameKotlinFunctionProcessor extends RenamePsiElementProcessor {
     @Override
