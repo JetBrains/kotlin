@@ -17,17 +17,22 @@
 package org.jetbrains.jet.plugin.conversion.copy;
 
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
 
-class ConvertedCode implements TextBlockTransferableData {
+class CopiedCode implements TextBlockTransferableData {
     @NotNull
     public static final DataFlavor DATA_FLAVOR = new DataFlavor(JavaCopyPastePostProcessor.class, "class: JavaCopyPastePostProcessor");
-    private final String data;
+    private final PsiFile file;
+    private final int[] startOffsets;
+    private final int[] endOffsets;
 
-    ConvertedCode(String data) {
-        this.data = data;
+    public CopiedCode(PsiFile file, int[] startOffsets, int[] endOffsets) {
+        this.file = file;
+        this.startOffsets = startOffsets;
+        this.endOffsets = endOffsets;
     }
 
     @NotNull
@@ -51,7 +56,15 @@ class ConvertedCode implements TextBlockTransferableData {
         return index;
     }
 
-    public String getData() {
-        return data;
+    public PsiFile getFile() {
+        return file;
+    }
+
+    public int[] getStartOffsets() {
+        return startOffsets;
+    }
+
+    public int[] getEndOffsets() {
+        return endOffsets;
     }
 }
