@@ -2095,22 +2095,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private boolean isCallAsFunctionObject(FunctionDescriptor fd) {
-        if (fd.getContainingDeclaration() instanceof ScriptDescriptor) {
-            JetNamedFunction psi = (JetNamedFunction) descriptorToDeclaration(bindingContext, fd);
-            assert psi != null;
-            return !JetPsiUtil.isScriptDeclaration(psi);
+        if (fd instanceof ExpressionAsFunctionDescriptor) {
+            JetExpression deparenthesize = JetPsiUtil.deparenthesize(((ExpressionAsFunctionDescriptor) fd).getExpression());
+            return !(deparenthesize instanceof JetCallableReferenceExpression || deparenthesize instanceof JetFunctionLiteralExpression);
         }
-        else if (fd instanceof ExpressionAsFunctionDescriptor) {
-            return true;
-        }
-        else if (fd instanceof SimpleFunctionDescriptor &&
-                 (fd.getContainingDeclaration() instanceof FunctionDescriptor ||
-                  fd.getContainingDeclaration() instanceof ScriptDescriptor)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return false;
     }
 
 
@@ -2134,9 +2123,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
             receiver.put(receiver.type, v);
-            if (calleeType != null) {
-                StackValue.onStack(receiver.type).put(boxType(receiver.type), v);
-            }
         }
 
         pushArgumentsAndInvoke(resolvedCall, callableMethod);
@@ -3037,7 +3023,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
         int functionLocalIndex = lookupLocalIndex(op);
         if (functionLocalIndex >= 0) {
-            stackValueForLocal(op, functionLocalIndex).put(getFunctionImplClassName(op).getAsmType(), v);
+            stackValueForLocal(op, functionLocalIndex).put(callable.getOwner().getAsmType(), v);
         }
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());

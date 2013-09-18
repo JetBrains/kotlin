@@ -31,13 +31,12 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -55,6 +54,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionTraitClassName;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 
 public class JetTypeMapper extends BindingTraceAware {
 
@@ -487,7 +487,25 @@ public class JetTypeMapper extends BindingTraceAware {
         JvmClassName ownerForDefaultParam;
         int invokeOpcode;
         JvmClassName thisClass;
-        if (functionParent instanceof NamespaceDescriptor) {
+        Type calleeType = null;
+
+        if (isLocalNamedFun(functionDescriptor) || functionDescriptor instanceof ExpressionAsFunctionDescriptor) {
+            if (functionDescriptor instanceof ExpressionAsFunctionDescriptor) {
+                JetExpression expression = JetPsiUtil.deparenthesize(((ExpressionAsFunctionDescriptor) functionDescriptor).getExpression());
+                if (expression instanceof JetFunctionLiteralExpression) {
+                    expression = ((JetFunctionLiteralExpression) expression).getFunctionLiteral();
+                }
+                functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
+            }
+            functionDescriptor = functionDescriptor.getOriginal();
+
+            owner = classNameForAnonymousClass(bindingContext, functionDescriptor);
+            ownerForDefaultImpl = ownerForDefaultParam = thisClass = owner;
+            invokeOpcode = INVOKEVIRTUAL;
+            descriptor = mapSignature("invoke", functionDescriptor, true, kind);
+            calleeType = owner.getAsmType();
+        }
+        else if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
             owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent, functionDescriptor, isInsideModule);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
@@ -571,7 +589,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
         return new CallableMethod(
                 owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode,
-                thisClass, receiverParameterType, null);
+                thisClass, receiverParameterType, calleeType);
     }
 
     public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {

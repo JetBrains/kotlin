@@ -26,6 +26,7 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -507,13 +508,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 receiverParameter != null
         );
 
-        ExpressionAsFunctionDescriptor functionDescriptor = new ExpressionAsFunctionDescriptor(
+        AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(),
-                Name.special("<callable-reference>")
-        );
+                Collections.<AnnotationDescriptor>emptyList(),
+                CallableMemberDescriptor.Kind.DECLARATION);
+
         FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);
 
         context.trace.record(CALLABLE_REFERENCE, expression, functionDescriptor);
+        context.trace.record(FUNCTION, expression, functionDescriptor);
 
         return type;
     }
