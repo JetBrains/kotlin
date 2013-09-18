@@ -146,7 +146,7 @@ public class TypeResolver {
                         List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
-                        if (ErrorUtils.isError(typeConstructor)) {
+                        if (ErrorUtils.isError(classDescriptor)) {
                             result[0] = type(ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]"));
                         }
                         else {

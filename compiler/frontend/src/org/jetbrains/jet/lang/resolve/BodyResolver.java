@@ -264,7 +264,7 @@ public class BodyResolver {
                 ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                 if (classDescriptor == null) return;
                 if (descriptor.getKind() != ClassKind.TRAIT && !classDescriptor.getConstructors().isEmpty() &&
-                    !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
+                    !ErrorUtils.isError(classDescriptor) && classDescriptor.getKind() != ClassKind.TRAIT) {
                     trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
                 }
             }

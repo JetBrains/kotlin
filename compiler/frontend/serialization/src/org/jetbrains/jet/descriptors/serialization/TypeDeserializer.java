@@ -259,7 +259,8 @@ public class TypeDeserializer {
 
         @Override
         public boolean isError() {
-            return ErrorUtils.isError(getConstructor());
+            ClassifierDescriptor descriptor = getConstructor().getDeclarationDescriptor();
+            return descriptor != null && ErrorUtils.isError(descriptor);
         }
 
         @Override

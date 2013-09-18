@@ -255,19 +255,6 @@ public class ErrorUtils {
 
     private static final ErrorClassDescriptor ERROR_CLASS = new ErrorClassDescriptor("");
 
-    private static final class ErrorTypeConstructor extends TypeConstructorImpl {
-        private ErrorTypeConstructor(
-                @Nullable ClassifierDescriptor classifierDescriptor,
-                @NotNull List<AnnotationDescriptor> annotations,
-                boolean sealed,
-                @NotNull String debugName,
-                @NotNull List<? extends TypeParameterDescriptor> parameters,
-                @NotNull Collection<JetType> supertypes
-        ) {
-            super(classifierDescriptor, annotations, sealed, debugName, parameters, supertypes);
-        }
-    }
-
     private static final Set<ConstructorDescriptor> ERROR_CONSTRUCTOR_GROUP = Collections.singleton(createErrorConstructor());
 
     private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
@@ -343,30 +330,29 @@ public class ErrorUtils {
 
     @NotNull
     public static JetType createErrorType(@NotNull String debugMessage) {
-        return createErrorTypeWithCustomDebugName(createErrorScope(debugMessage), "[ERROR : " + debugMessage + "]");
+        return new ErrorTypeImpl(createErrorTypeConstructor(debugMessage), createErrorScope(debugMessage));
     }
 
     @NotNull
     public static JetType createErrorTypeWithCustomDebugName(@NotNull String debugName) {
-        return createErrorTypeWithCustomDebugName(createErrorScope(debugName), debugName);
+        return new ErrorTypeImpl(createErrorTypeConstructorWithCustomDebugName(debugName), createErrorScope(debugName));
     }
 
     @NotNull
-    private static JetType createErrorTypeWithCustomDebugName(@NotNull JetScope memberScope, @NotNull String debugName) {
-        TypeConstructorImpl constructor =
-                new ErrorTypeConstructor(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName,
-                                        Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
-        return new ErrorTypeImpl(constructor, memberScope);
+    public static TypeConstructor createErrorTypeConstructor(@NotNull String debugMessage) {
+        return createErrorTypeConstructorWithCustomDebugName("[ERROR : " + debugMessage + "]");
+    }
+
+    @NotNull
+    private static TypeConstructor createErrorTypeConstructorWithCustomDebugName(@NotNull String debugName) {
+        return new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, debugName,
+                                Collections.<TypeParameterDescriptorImpl>emptyList(),
+                                Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
     }
 
     @NotNull
     public static ClassDescriptor getErrorClass() {
         return ERROR_CLASS;
-    }
-
-    public static boolean isError(@NotNull TypeConstructor typeConstructor) {
-        return typeConstructor == ERROR_CLASS.getTypeConstructor() || typeConstructor instanceof ErrorTypeConstructor;
     }
 
     public static boolean containsErrorType(@Nullable JetType type) {

@@ -72,9 +72,8 @@ public class CallableDescriptorCollectors {
 
         private static void addConstructors(JetScope scope, Name name, Collection<FunctionDescriptor> functions) {
             ClassifierDescriptor classifier = scope.getClassifier(name);
-            if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier.getTypeConstructor())) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-                functions.addAll(classDescriptor.getConstructors());
+            if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier)) {
+                functions.addAll(((ClassDescriptor) classifier).getConstructors());
             }
         }
 
