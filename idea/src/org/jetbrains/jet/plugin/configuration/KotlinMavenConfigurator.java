@@ -43,6 +43,7 @@ import org.jetbrains.idea.maven.dom.MavenDomUtil;
 import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.framework.ui.ConfigureDialogWithModulesAndVersion;
 
 import java.util.List;
@@ -64,6 +65,10 @@ public class KotlinMavenConfigurator implements KotlinProjectConfigurator {
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
+        if (KotlinFrameworkDetector.isJavaKotlinModule(module)) {
+            return true;
+        }
+
         PsiFile pomFile = findModulePomFile(module);
         if (pomFile == null) return false;
         String text = pomFile.getText();
