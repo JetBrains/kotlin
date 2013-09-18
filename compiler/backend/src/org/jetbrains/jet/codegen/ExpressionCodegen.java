@@ -2426,7 +2426,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitCallableReferenceExpression(JetCallableReferenceExpression expression, StackValue data) {
         // TODO: properties
-        final FunctionDescriptor functionDescriptor = bindingContext.get(CALLABLE_REFERENCE, expression);
+        final FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         assert functionDescriptor != null : "Callable reference is not resolved to descriptor: " + expression.getText();
 
         final ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(RESOLVED_CALL, expression.getCallableReference());

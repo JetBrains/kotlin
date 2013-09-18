@@ -515,7 +515,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);
 
-        context.trace.record(CALLABLE_REFERENCE, expression, functionDescriptor);
         context.trace.record(FUNCTION, expression, functionDescriptor);
 
         return type;

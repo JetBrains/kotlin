@@ -260,7 +260,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitCallableReferenceExpression(JetCallableReferenceExpression expression) {
-        FunctionDescriptor functionDescriptor = bindingContext.get(CALLABLE_REFERENCE, expression);
+        FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
