@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.asm4.ClassReader.*;
-import static org.jetbrains.asm4.Type.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.naiveKotlinFqName;
@@ -313,9 +312,9 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
                     if (propertySignature.hasField()) {
                         JavaProtoBuf.JavaFieldSignature field = propertySignature.getField();
-                        Type type = new SignatureDeserializer(nameResolver).type(field.getType());
+                        String type = new SignatureDeserializer(nameResolver).typeDescriptor(field.getType());
                         Name name = nameResolver.getName(field.getName());
-                        return MemberSignature.fromFieldNameAndDesc(name.asString(), type.getDescriptor());
+                        return MemberSignature.fromFieldNameAndDesc(name.asString(), type);
                     }
                     else if (propertySignature.hasSyntheticMethodName()) {
                         Name name = nameResolver.getName(propertySignature.getSyntheticMethodName());
@@ -414,8 +413,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     private static class SignatureDeserializer {
         // These types are ordered according to their sorts, this is significant for deserialization
-        private static final Type[] PRIMITIVE_TYPES = new Type[]
-                { VOID_TYPE, BOOLEAN_TYPE, CHAR_TYPE, BYTE_TYPE, SHORT_TYPE, INT_TYPE, FLOAT_TYPE, LONG_TYPE, DOUBLE_TYPE };
+        private static final char[] PRIMITIVE_TYPES = new char[] { 'V', 'Z', 'C', 'B', 'S', 'I', 'F', 'J', 'D' };
 
         private final NameResolver nameResolver;
 
@@ -430,30 +428,35 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             StringBuilder sb = new StringBuilder();
             sb.append('(');
             for (int i = 0, length = signature.getParameterTypeCount(); i < length; i++) {
-                sb.append(type(signature.getParameterType(i)).getDescriptor());
+                typeDescriptor(signature.getParameterType(i), sb);
             }
             sb.append(')');
-            sb.append(type(signature.getReturnType()).getDescriptor());
+            typeDescriptor(signature.getReturnType(), sb);
 
             return MemberSignature.fromMethodNameAndDesc(name, sb.toString());
         }
 
         @NotNull
-        public Type type(@NotNull JavaProtoBuf.JavaType type) {
-            Type result;
+        public String typeDescriptor(@NotNull JavaProtoBuf.JavaType type) {
+            return typeDescriptor(type, new StringBuilder()).toString();
+        }
+
+        @NotNull
+        private StringBuilder typeDescriptor(@NotNull JavaProtoBuf.JavaType type, @NotNull StringBuilder sb) {
+            for (int i = 0; i < type.getArrayDimension(); i++) {
+                sb.append('[');
+            }
+
             if (type.hasPrimitiveType()) {
-                result = PRIMITIVE_TYPES[type.getPrimitiveType().ordinal()];
+                sb.append(PRIMITIVE_TYPES[type.getPrimitiveType().ordinal()]);
             }
             else {
-                result = Type.getObjectType(fqNameToInternalName(nameResolver.getFqName(type.getClassFqName())));
+                sb.append("L");
+                sb.append(fqNameToInternalName(nameResolver.getFqName(type.getClassFqName())));
+                sb.append(";");
             }
 
-            StringBuilder brackets = new StringBuilder(type.getArrayDimension());
-            for (int i = 0; i < type.getArrayDimension(); i++) {
-                brackets.append('[');
-            }
-
-            return Type.getType(brackets + result.getDescriptor());
+            return sb;
         }
 
         @NotNull
