@@ -110,7 +110,9 @@ var Kotlin = {};
         return null;
     }
 
-    var emptyFunction = function() {};
+    var emptyFunction = function() {
+        return function() {};
+    };
 
     Kotlin.TYPE = {
         CLASS: "class",
@@ -184,18 +186,10 @@ var Kotlin = {};
         return this.$object$;
     }
 
-    // as separated function to reduce scope // TODO: drop this
-    function createConstructor() {
-        return function $fun() {
-            var initializer = $fun.$metadata$.initializer;
-            if (initializer != null) {
-                initializer.apply(this, arguments);
-            }
-        };
-    }
-
-    Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
-        var constructor = createConstructor();
+    Kotlin.createClass = function (bases, constructor, properties, staticProperties) {
+        if (constructor == null) {
+            constructor = emptyFunction();
+        }
         copyProperties(constructor, staticProperties);
 
         var metadata = computeMetadata(bases, properties);
@@ -210,15 +204,8 @@ var Kotlin = {};
         Object.defineProperties(prototypeObj, metadata.properties);
         copyProperties(prototypeObj, metadata.functions);
 
-        var baseInitializer;
-        if (metadata.baseClass !== null && !isNativeClass(metadata.baseClass)) {
-            baseInitializer = metadata.baseClass.$metadata$.initializer; // TODO: native superClass
-        }
-        if (!(initializer == null)) {
-            metadata.initializer = initializer;
-            metadata.initializer.baseInitializer = baseInitializer;
-        } else {
-            metadata.initializer = emptyFunction;
+        if (metadata.baseClass != null) {
+            constructor.baseInitializer = metadata.baseClass;
         }
 
         constructor.$metadata$ = metadata;
@@ -228,8 +215,8 @@ var Kotlin = {};
         return constructor;
     };
 
-    Kotlin.createObject = function (bases, initializer, functions) {
-        var noNameClass = Kotlin.createClass(bases, initializer, functions);
+    Kotlin.createObject = function (bases, constructor, functions) {
+        var noNameClass = Kotlin.createClass(bases, constructor, functions);
         var obj = new noNameClass();
         obj.$metadata$ = {
             type: Kotlin.TYPE.OBJECT
@@ -303,7 +290,7 @@ var Kotlin = {};
         var definition = createDefinition(members);
 
         if (initializer === null) {
-            definition.$initializer$ = emptyFunction;
+            definition.$initializer$ = emptyFunction();
         } else {
             definition.$initializer$ = initializer;
         }
