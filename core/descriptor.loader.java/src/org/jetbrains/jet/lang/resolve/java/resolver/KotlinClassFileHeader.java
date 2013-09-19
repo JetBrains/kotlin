@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -7,9 +8,6 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.descriptors.serialization.ClassData;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
-import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -23,6 +21,8 @@ import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 
 public final class KotlinClassFileHeader {
+    private static final Logger LOG = Logger.getInstance(KotlinClassFileHeader.class);
+
     @NotNull
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull VirtualFile virtualFile) {
         try {
@@ -48,16 +48,16 @@ public final class KotlinClassFileHeader {
         @Nullable
         private final JvmClassName correspondingAnnotation;
 
-        HeaderType(@Nullable JvmClassName annotation) {
+        private HeaderType(@Nullable JvmClassName annotation) {
             correspondingAnnotation = annotation;
         }
 
-        boolean isValidAnnotation() {
+        private boolean isValidAnnotation() {
             return this == CLASS || this == PACKAGE;
         }
 
         @NotNull
-        public static HeaderType byDescriptor(@NotNull String desc) {
+        private static HeaderType byDescriptor(@NotNull String desc) {
             for (HeaderType headerType : HeaderType.values()) {
                 JvmClassName annotation = headerType.correspondingAnnotation;
                 if (annotation == null) {
@@ -76,9 +76,9 @@ public final class KotlinClassFileHeader {
     @Nullable
     private String[] annotationData = null;
     @NotNull
-    HeaderType type = HeaderType.NONE;
+    private HeaderType type = HeaderType.NONE;
     @Nullable
-    JvmClassName jvmClassName = null;
+    private JvmClassName jvmClassName = null;
 
     public int getVersion() {
         return version;
@@ -89,10 +89,10 @@ public final class KotlinClassFileHeader {
         return type;
     }
 
-    /*
-        Checks that this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE.
+    /**
+     * @return true if this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE
      */
-    public boolean isKotlinCompiledFile() {
+    public boolean isCompatibleKotlinCompiledFile() {
         return type.isValidAnnotation() && isAbiVersionCompatible(version);
     }
 
@@ -105,27 +105,12 @@ public final class KotlinClassFileHeader {
         return jvmClassName.getFqName();
     }
 
+    @Nullable
     public String[] getAnnotationData() {
-        assertDataRead();
-        return annotationData;
-    }
-
-    private void assertDataRead() {
         if (annotationData == null && type != HeaderType.NONE) {
-            throw new IllegalStateException("Data for annotations " + type.correspondingAnnotation + " was not read.");
+            LOG.error("Data for annotations " + type.correspondingAnnotation + " was not read.");
         }
-    }
-
-    @NotNull
-    public ClassData readClassData() {
-        assert type == HeaderType.CLASS;
-        return JavaProtoBufUtil.readClassDataFrom(getAnnotationData());
-    }
-
-    @NotNull
-    public PackageData readPackageData() {
-        assert type == HeaderType.PACKAGE;
-        return JavaProtoBufUtil.readPackageDataFrom(getAnnotationData());
+        return annotationData;
     }
 
     private class ReadDataFromAnnotationVisitor extends ClassVisitor {
