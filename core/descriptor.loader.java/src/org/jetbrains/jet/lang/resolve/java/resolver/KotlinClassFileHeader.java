@@ -26,11 +26,10 @@ public final class KotlinClassFileHeader {
     @NotNull
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull VirtualFile virtualFile) {
         try {
-            byte[] bytes = virtualFile.contentsToByteArray();
-            ClassReader reader = new ClassReader(bytes);
-            KotlinClassFileHeader classFileData = new KotlinClassFileHeader();
-            reader.accept(classFileData.new ReadDataFromAnnotationVisitor(), SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-            return classFileData;
+            ClassReader reader = new ClassReader(virtualFile.contentsToByteArray());
+            ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
+            reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
+            return new KotlinClassFileHeader(visitor.version, visitor.annotationData, visitor.type, visitor.fqName);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -70,14 +69,20 @@ public final class KotlinClassFileHeader {
         }
     }
 
-    private int version = AbiVersionUtil.INVALID_VERSION;
+    private final int version;
+    @Nullable
+    private final String[] annotationData;
+    @Nullable
+    private final HeaderType type;
+    @Nullable
+    private final FqName fqName;
 
-    @Nullable
-    private String[] annotationData = null;
-    @Nullable
-    private HeaderType type = null;
-    @Nullable
-    private JvmClassName jvmClassName = null;
+    private KotlinClassFileHeader(int version, @Nullable String[] annotationData, @Nullable HeaderType type, @Nullable FqName fqName) {
+        this.version = version;
+        this.annotationData = annotationData;
+        this.type = type;
+        this.fqName = fqName;
+    }
 
     public int getVersion() {
         return version;
@@ -100,8 +105,8 @@ public final class KotlinClassFileHeader {
      */
     @NotNull
     public FqName getFqName() {
-        assert jvmClassName != null;
-        return jvmClassName.getFqName();
+        assert fqName != null;
+        return fqName;
     }
 
     @Nullable
@@ -112,7 +117,14 @@ public final class KotlinClassFileHeader {
         return annotationData;
     }
 
-    private class ReadDataFromAnnotationVisitor extends ClassVisitor {
+    private static class ReadDataFromAnnotationVisitor extends ClassVisitor {
+        private int version = AbiVersionUtil.INVALID_VERSION;
+        @Nullable
+        private String[] annotationData = null;
+        @Nullable
+        private HeaderType type = null;
+        @Nullable
+        private FqName fqName = null;
 
         public ReadDataFromAnnotationVisitor() {
             super(Opcodes.ASM4);
@@ -120,7 +132,7 @@ public final class KotlinClassFileHeader {
 
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            jvmClassName = JvmClassName.byInternalName(name);
+            fqName = JvmClassName.byInternalName(name).getFqName();
         }
 
         @Override
@@ -184,8 +196,5 @@ public final class KotlinClassFileHeader {
                 }
             };
         }
-    }
-
-    private KotlinClassFileHeader() {
     }
 }
