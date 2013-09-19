@@ -29,7 +29,15 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
     }
 
     public void testMethodOverride() throws Exception {
-        fooBoxTest();
+        checkFooBoxIsOk();
+    }
+
+    public void testBaseCall() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testCrazyInheritance() throws Exception {
+        checkFooBoxIsOk();
     }
 
     public void testValOverride() throws Exception {

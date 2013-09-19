@@ -18,22 +18,20 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-public final class NameClashesTest extends SingleFileTranslationTest {
-
-
-    public NameClashesTest() {
-        super("nameClashes/");
+public class InitializerTest extends SingleFileTranslationTest {
+    public InitializerTest() {
+        super("initialize/");
     }
 
-    public void testMethodOverload() throws Exception {
-        fooBoxTest();
-    }
-
-    public void testOverloadExtension() throws Exception {
+    public void testRootValInit() throws Exception {
         checkFooBoxIsOk();
     }
 
-    public void testDifferenceInCapitalization() throws Exception {
+    public void testRootPackageValInit() throws Exception {
+        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, getTestName(true) + ".kt", "_", "box", "OK");
+    }
+
+    public void testClassInitializer() throws Exception {
         checkFooBoxIsOk();
     }
 }

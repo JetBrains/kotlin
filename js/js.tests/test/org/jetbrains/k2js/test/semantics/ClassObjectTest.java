@@ -5,7 +5,7 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest;
 public final class ClassObjectTest extends SingleFileTranslationTest {
 
     public ClassObjectTest() {
-        super("class_object/");
+        super("classObject/");
     }
 
     public void testSimple() throws Exception {

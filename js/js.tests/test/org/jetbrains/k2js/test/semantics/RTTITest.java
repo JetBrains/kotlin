@@ -24,6 +24,10 @@ public class RTTITest extends SingleFileTranslationTest {
         super("rtti/");
     }
 
+    public void testRttiForClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testIsSameClass() throws Exception {
         fooBoxTest();
     }
