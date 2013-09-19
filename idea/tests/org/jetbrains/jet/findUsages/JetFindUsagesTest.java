@@ -191,6 +191,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findMethodUsages/kotlinOverloadAndExtensionUsages.0.kt");
         }
         
+        @TestMetadata("kotlinTopLevelMethodUsages.0.kt")
+        public void testKotlinTopLevelMethodUsages() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinTopLevelMethodUsages.0.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/findUsages/findObjectUsages")
