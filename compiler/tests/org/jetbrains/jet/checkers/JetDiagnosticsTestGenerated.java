@@ -3038,7 +3038,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/inference")
-        @InnerTestClasses({Inference.NestedCalls.class, Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.UpperBounds.class, Inference.Varargs.class})
+        @InnerTestClasses({Inference.Constraints.class, Inference.NestedCalls.class, Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.UpperBounds.class, Inference.Varargs.class})
         public static class Inference extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInInference() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3154,6 +3154,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/noInformationForParameter.kt");
             }
             
+            @TestMetadata("nullableUpperBound.kt")
+            public void testNullableUpperBound() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/nullableUpperBound.kt");
+            }
+            
             @TestMetadata("opposite.kt")
             public void testOpposite() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/opposite.kt");
@@ -3177,6 +3182,34 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("useFunctionLiteralsToInferType.kt")
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/constraints")
+            public static class Constraints extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInConstraints() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/constraints"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("equalityConstraintOnNullableType.kt")
+                public void testEqualityConstraintOnNullableType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/constraints/equalityConstraintOnNullableType.kt");
+                }
+                
+                @TestMetadata("notNullConstraintOnNullableType.kt")
+                public void testNotNullConstraintOnNullableType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/constraints/notNullConstraintOnNullableType.kt");
+                }
+                
+                @TestMetadata("subtypeConstraintOnNullableType.kt")
+                public void testSubtypeConstraintOnNullableType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/constraints/subtypeConstraintOnNullableType.kt");
+                }
+                
+                @TestMetadata("supertypeConstraintOnNullableType.kt")
+                public void testSupertypeConstraintOnNullableType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/constraints/supertypeConstraintOnNullableType.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/inference/nestedCalls")
@@ -3537,6 +3570,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Inference");
                 suite.addTestSuite(Inference.class);
+                suite.addTestSuite(Constraints.class);
                 suite.addTestSuite(NestedCalls.class);
                 suite.addTestSuite(Regressions.class);
                 suite.addTestSuite(ReportingImprovements.class);
