@@ -194,6 +194,8 @@ public class NamespaceCodegen extends MemberCodegen {
         );
         builder.visitSource(file.getName(), null);
 
+        writeKotlinPackageFragmentAnnotation(builder);
+
         FieldOwnerContext nameSpaceContext = CodegenContext.STATIC.intoNamespace(descriptor);
 
         FieldOwnerContext nameSpacePart = CodegenContext.STATIC.intoNamespacePart(className, descriptor);
@@ -210,6 +212,12 @@ public class NamespaceCodegen extends MemberCodegen {
         builder.done();
 
         return builder;
+    }
+
+    private static void writeKotlinPackageFragmentAnnotation(@NotNull ClassBuilder builder) {
+        AnnotationVisitor av = builder.newAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT.getDescriptor(), true);
+        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        av.visitEnd();
     }
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
