@@ -16,54 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve.java.header;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 
 public abstract class KotlinClassFileHeader {
-    private static final Logger LOG = Logger.getInstance(KotlinClassFileHeader.class);
-
     @Nullable
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull VirtualFile virtualFile) {
         try {
             ClassReader reader = new ClassReader(virtualFile.contentsToByteArray());
-            ReadDataFromAnnotationVisitor v = new ReadDataFromAnnotationVisitor();
-            reader.accept(v, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-            if (v.foundType == null) {
-                return null;
-            }
-            if (v.fqName == null) {
-                LOG.error("File doesn't have a class name: " + virtualFile);
-                return null;
-            }
-
-            switch (v.foundType) {
-                case CLASS:
-                    return SerializedDataHeader.create(v.version, v.annotationData, SerializedDataHeader.Kind.CLASS, v.fqName);
-                case PACKAGE:
-                    return SerializedDataHeader.create(v.version, v.annotationData, SerializedDataHeader.Kind.PACKAGE, v.fqName);
-                case OLD_CLASS:
-                case OLD_PACKAGE:
-                    return new OldAnnotationHeader(v.fqName);
-                default:
-                    throw new UnsupportedOperationException("Unknown HeaderType: " + v.foundType);
-            }
+            ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
+            reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
+            return visitor.createHeader(virtualFile);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -95,115 +66,5 @@ public abstract class KotlinClassFileHeader {
      */
     public boolean isCompatibleKotlinCompiledFile() {
         return isAbiVersionCompatible(version);
-    }
-
-    private static class ReadDataFromAnnotationVisitor extends ClassVisitor {
-        @SuppressWarnings("deprecation")
-        private enum HeaderType {
-            CLASS(JvmAnnotationNames.KOTLIN_CLASS),
-            PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
-            OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
-            OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION);
-
-            @NotNull
-            private final JvmClassName annotation;
-
-            private HeaderType(@NotNull JvmClassName annotation) {
-                this.annotation = annotation;
-            }
-
-            @Nullable
-            private static HeaderType byDescriptor(@NotNull String desc) {
-                for (HeaderType headerType : HeaderType.values()) {
-                    if (desc.equals(headerType.annotation.getDescriptor())) {
-                        return headerType;
-                    }
-                }
-                return null;
-            }
-        }
-
-        private int version = AbiVersionUtil.INVALID_VERSION;
-        @Nullable
-        private String[] annotationData = null;
-        @Nullable
-        private HeaderType foundType = null;
-        @Nullable
-        private FqName fqName = null;
-
-        public ReadDataFromAnnotationVisitor() {
-            super(Opcodes.ASM4);
-        }
-
-        @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            fqName = JvmClassName.byInternalName(name).getFqName();
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-            HeaderType newType = HeaderType.byDescriptor(desc);
-            if (newType == null) return null;
-
-            if (foundType != null) {
-                LOG.error("Both annotations are present for compiled Kotlin file: " + foundType + " and " + newType);
-                return null;
-            }
-
-            foundType = newType;
-
-            if (newType == HeaderType.CLASS || newType == HeaderType.PACKAGE) {
-                return kotlinClassOrPackageVisitor(desc);
-            }
-
-            return null;
-        }
-
-        @NotNull
-        private AnnotationVisitor kotlinClassOrPackageVisitor(final String desc) {
-            return new AnnotationVisitor(Opcodes.ASM4) {
-                @Override
-                public void visit(String name, Object value) {
-                    if (name.equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
-                        version = (Integer) value;
-                    }
-                    else if (isAbiVersionCompatible(version)) {
-                        throw new IllegalStateException("Unexpected argument " + name + " for annotation " + desc);
-                    }
-                }
-
-                @Override
-                public AnnotationVisitor visitArray(String name) {
-                    if (name.equals(JvmAnnotationNames.DATA_FIELD_NAME)) {
-                        return stringArrayVisitor();
-                    }
-                    else if (isAbiVersionCompatible(version)) {
-                        throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + desc);
-                    }
-
-                    return super.visitArray(name);
-                }
-
-                @NotNull
-                private AnnotationVisitor stringArrayVisitor() {
-                    final List<String> strings = new ArrayList<String>(1);
-                    return new AnnotationVisitor(Opcodes.ASM4) {
-                        @Override
-                        public void visit(String name, Object value) {
-                            if (!(value instanceof String)) {
-                                throw new IllegalStateException("Unexpected argument value: " + value);
-                            }
-
-                            strings.add((String) value);
-                        }
-
-                        @Override
-                        public void visitEnd() {
-                            annotationData = strings.toArray(new String[strings.size()]);
-                        }
-                    };
-                }
-            };
-        }
     }
 }
