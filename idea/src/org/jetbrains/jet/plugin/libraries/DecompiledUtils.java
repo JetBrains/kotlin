@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.libraries;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.java.header.KotlinClassFileHeader;
 
 public final class DecompiledUtils {
 
