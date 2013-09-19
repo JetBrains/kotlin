@@ -79,7 +79,7 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
                 return null;
             }
             //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
-            if (KotlinClassFileHeader.readKotlinHeaderFromClassFile(vFile).getType() != null) {
+            if (KotlinClassFileHeader.readKotlinHeaderFromClassFile(vFile) != null) {
                 return vFile;
             }
         }

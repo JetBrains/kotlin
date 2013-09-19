@@ -60,7 +60,10 @@ public final class DecompiledDataFactory {
         InjectorForJavaDescriptorResolver injector =
                 new InjectorForJavaDescriptorResolver(project, new BindingTraceContext());
         this.javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        this.kotlinClassFileHeader = KotlinClassFileHeader.readKotlinHeaderFromClassFile(classFile);
+
+        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(classFile);
+        assert header != null : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
+        this.kotlinClassFileHeader = header;
     }
 
     @NotNull

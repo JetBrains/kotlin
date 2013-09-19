@@ -58,7 +58,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
         public Map<FqName, Void> map(FileContent inputData) {
             try {
                 KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(inputData.getFile());
-                if (header.isCompatibleKotlinCompiledFile()) {
+                if (header != null && header.isCompatibleKotlinCompiledFile()) {
                     return Collections.singletonMap(header.getFqName(), null);
                 }
             }

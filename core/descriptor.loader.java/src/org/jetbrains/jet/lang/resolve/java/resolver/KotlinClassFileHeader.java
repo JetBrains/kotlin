@@ -23,12 +23,19 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
 public final class KotlinClassFileHeader {
     private static final Logger LOG = Logger.getInstance(KotlinClassFileHeader.class);
 
-    @NotNull
+    @Nullable
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull VirtualFile virtualFile) {
         try {
             ClassReader reader = new ClassReader(virtualFile.contentsToByteArray());
             ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
             reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
+            if (visitor.type == null) {
+                return null;
+            }
+            if (visitor.fqName == null) {
+                LOG.error("File doesn't have a class name: " + virtualFile);
+                return null;
+            }
             return new KotlinClassFileHeader(visitor.version, visitor.annotationData, visitor.type, visitor.fqName);
         }
         catch (IOException e) {
@@ -70,14 +77,11 @@ public final class KotlinClassFileHeader {
     }
 
     private final int version;
-    @Nullable
     private final String[] annotationData;
-    @Nullable
     private final HeaderType type;
-    @Nullable
     private final FqName fqName;
 
-    private KotlinClassFileHeader(int version, @Nullable String[] annotationData, @Nullable HeaderType type, @Nullable FqName fqName) {
+    private KotlinClassFileHeader(int version, @Nullable String[] annotationData, @NotNull HeaderType type, @NotNull FqName fqName) {
         this.version = version;
         this.annotationData = annotationData;
         this.type = type;
@@ -89,15 +93,17 @@ public final class KotlinClassFileHeader {
     }
 
     @Nullable
-    public HeaderType getType() {
-        return type;
+    public String[] getAnnotationData() {
+        if (isCompatibleKotlinCompiledFile() && annotationData == null) {
+            LOG.error("Kotlin annotation " + type + " is incorrect for class: " + fqName);
+            return null;
+        }
+        return annotationData;
     }
 
-    /**
-     * @return true if this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE
-     */
-    public boolean isCompatibleKotlinCompiledFile() {
-        return type != null && type.isValidAnnotation() && isAbiVersionCompatible(version);
+    @NotNull
+    public HeaderType getType() {
+        return type;
     }
 
     /**
@@ -105,16 +111,14 @@ public final class KotlinClassFileHeader {
      */
     @NotNull
     public FqName getFqName() {
-        assert fqName != null;
         return fqName;
     }
 
-    @Nullable
-    public String[] getAnnotationData() {
-        if (annotationData == null && type != null) {
-            LOG.error("Data for annotations " + type.correspondingAnnotation + " was not read.");
-        }
-        return annotationData;
+    /**
+     * @return true if this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE
+     */
+    public boolean isCompatibleKotlinCompiledFile() {
+        return type.isValidAnnotation() && isAbiVersionCompatible(version);
     }
 
     private static class ReadDataFromAnnotationVisitor extends ClassVisitor {
