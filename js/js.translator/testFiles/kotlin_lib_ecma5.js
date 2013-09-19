@@ -180,10 +180,9 @@ var Kotlin = {};
     }
 
     function class_object() {
-        if (typeof this.$object$ === "undefined") {
-            this.$object$ = this.object_initializer$();
-        }
-        return this.$object$;
+        var object = this.object_initializer$();
+        Object.defineProperty(this, "object", {value: object});
+        return object;
     }
 
     Kotlin.createClass = function (bases, constructor, properties, staticProperties) {
@@ -210,8 +209,7 @@ var Kotlin = {};
 
         constructor.$metadata$ = metadata;
         constructor.prototype = prototypeObj;
-        //Object.defineProperty(constructor, "$object", {get: class_object}); // TODO: check & fix call $object()
-        constructor.object$ = class_object;
+        Object.defineProperty(constructor, "object", {get: class_object, configurable: true});
         return constructor;
     };
 

@@ -49,7 +49,7 @@ public final class Namer {
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String CLASSES_OBJECT_NAME = "_c";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
-    private static final String CLASS_OBJECT_GETTER = "object$";
+    private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
 
 
@@ -115,7 +115,7 @@ public final class Namer {
 
     @NotNull
     public static JsExpression getClassObjectAccessor(@NotNull JsExpression referenceToClass) {
-        return new JsInvocation(new JsNameRef(CLASS_OBJECT_GETTER, referenceToClass));
+        return new JsNameRef(CLASS_OBJECT_GETTER, referenceToClass);
     }
 
     @NotNull
