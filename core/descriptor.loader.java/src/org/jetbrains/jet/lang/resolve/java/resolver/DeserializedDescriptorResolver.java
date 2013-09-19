@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.java.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -34,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import javax.inject.Inject;
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
@@ -127,14 +127,13 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     private String[] readData(@NotNull VirtualFile virtualFile) {
         KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
-        if (header == null) {
-            return null;
+        if (header instanceof SerializedDataHeader && header.isCompatibleKotlinCompiledFile()) {
+            return ((SerializedDataHeader) header).getAnnotationData();
         }
-        int version = header.getVersion();
-        if (!isAbiVersionCompatible(version)) {
-            errorReporter.reportIncompatibleAbiVersion(header.getFqName(), virtualFile, version);
-            return null;
+
+        if (header != null) {
+            errorReporter.reportIncompatibleAbiVersion(header.getFqName(), virtualFile, header.getVersion());
         }
-        return header.getAnnotationData();
+        return null;
     }
 }

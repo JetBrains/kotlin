@@ -30,6 +30,7 @@ import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.java.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.java.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -104,8 +105,8 @@ public class JetFromJavaDescriptorHelper {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile != null) {
             KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
-            if (header != null) {
-                String[] data = header.getAnnotationData();
+            if (header instanceof SerializedDataHeader) {
+                String[] data = ((SerializedDataHeader) header).getAnnotationData();
                 if (data != null) {
                     return JavaProtoBufUtil.readClassDataFrom(data);
                 }
@@ -119,8 +120,8 @@ public class JetFromJavaDescriptorHelper {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile != null) {
             KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
-            if (header != null) {
-                String[] data = header.getAnnotationData();
+            if (header instanceof SerializedDataHeader) {
+                String[] data = ((SerializedDataHeader) header).getAnnotationData();
                 if (data != null) {
                     return JavaProtoBufUtil.readPackageDataFrom(data);
                 }

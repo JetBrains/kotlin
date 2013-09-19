@@ -36,82 +36,50 @@ import java.util.List;
 import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 
-public final class KotlinClassFileHeader {
+public abstract class KotlinClassFileHeader {
     private static final Logger LOG = Logger.getInstance(KotlinClassFileHeader.class);
 
     @Nullable
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull VirtualFile virtualFile) {
         try {
             ClassReader reader = new ClassReader(virtualFile.contentsToByteArray());
-            ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
-            reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-            if (visitor.foundType == null) {
+            ReadDataFromAnnotationVisitor v = new ReadDataFromAnnotationVisitor();
+            reader.accept(v, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
+            if (v.foundType == null) {
                 return null;
             }
-            if (visitor.fqName == null) {
+            if (v.fqName == null) {
                 LOG.error("File doesn't have a class name: " + virtualFile);
                 return null;
             }
-            return new KotlinClassFileHeader(visitor.version, visitor.annotationData, visitor.foundType, visitor.fqName);
+
+            switch (v.foundType) {
+                case CLASS:
+                    return SerializedDataHeader.create(v.version, v.annotationData, SerializedDataHeader.Kind.CLASS, v.fqName);
+                case PACKAGE:
+                    return SerializedDataHeader.create(v.version, v.annotationData, SerializedDataHeader.Kind.PACKAGE, v.fqName);
+                case OLD_CLASS:
+                case OLD_PACKAGE:
+                    return new OldAnnotationHeader(v.fqName);
+                default:
+                    throw new UnsupportedOperationException("Unknown HeaderType: " + v.foundType);
+            }
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @SuppressWarnings("deprecation")
-    public enum HeaderType {
-        CLASS(JvmAnnotationNames.KOTLIN_CLASS),
-        PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
-        OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
-        OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION);
-
-        @NotNull
-        private final JvmClassName annotation;
-
-        private HeaderType(@NotNull JvmClassName annotation) {
-            this.annotation = annotation;
-        }
-
-        @Nullable
-        private static HeaderType byDescriptor(@NotNull String desc) {
-            for (HeaderType headerType : HeaderType.values()) {
-                if (desc.equals(headerType.annotation.getDescriptor())) {
-                    return headerType;
-                }
-            }
-            return null;
-        }
-    }
-
     private final int version;
-    private final String[] annotationData;
-    private final HeaderType type;
     private final FqName fqName;
 
-    private KotlinClassFileHeader(int version, @Nullable String[] annotationData, @NotNull HeaderType type, @NotNull FqName fqName) {
+    protected KotlinClassFileHeader(int version, @NotNull FqName fqName) {
         this.version = version;
-        this.annotationData = annotationData;
-        this.type = type;
         this.fqName = fqName;
     }
 
     public int getVersion() {
         return version;
-    }
-
-    @Nullable
-    public String[] getAnnotationData() {
-        if (isCompatibleKotlinCompiledFile() && annotationData == null) {
-            LOG.error("Kotlin annotation " + type + " is incorrect for class: " + fqName);
-            return null;
-        }
-        return annotationData;
-    }
-
-    @NotNull
-    public HeaderType getType() {
-        return type;
     }
 
     /**
@@ -126,10 +94,35 @@ public final class KotlinClassFileHeader {
      * @return true if this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE
      */
     public boolean isCompatibleKotlinCompiledFile() {
-        return (type == HeaderType.CLASS || type == HeaderType.PACKAGE) && isAbiVersionCompatible(version);
+        return isAbiVersionCompatible(version);
     }
 
     private static class ReadDataFromAnnotationVisitor extends ClassVisitor {
+        @SuppressWarnings("deprecation")
+        private enum HeaderType {
+            CLASS(JvmAnnotationNames.KOTLIN_CLASS),
+            PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
+            OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
+            OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION);
+
+            @NotNull
+            private final JvmClassName annotation;
+
+            private HeaderType(@NotNull JvmClassName annotation) {
+                this.annotation = annotation;
+            }
+
+            @Nullable
+            private static HeaderType byDescriptor(@NotNull String desc) {
+                for (HeaderType headerType : HeaderType.values()) {
+                    if (desc.equals(headerType.annotation.getDescriptor())) {
+                        return headerType;
+                    }
+                }
+                return null;
+            }
+        }
+
         private int version = AbiVersionUtil.INVALID_VERSION;
         @Nullable
         private String[] annotationData = null;
