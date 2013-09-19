@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -29,14 +45,14 @@ public final class KotlinClassFileHeader {
             ClassReader reader = new ClassReader(virtualFile.contentsToByteArray());
             ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
             reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-            if (visitor.type == null) {
+            if (visitor.foundType == null) {
                 return null;
             }
             if (visitor.fqName == null) {
                 LOG.error("File doesn't have a class name: " + virtualFile);
                 return null;
             }
-            return new KotlinClassFileHeader(visitor.version, visitor.annotationData, visitor.type, visitor.fqName);
+            return new KotlinClassFileHeader(visitor.version, visitor.annotationData, visitor.foundType, visitor.fqName);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -50,25 +66,17 @@ public final class KotlinClassFileHeader {
         OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
         OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION);
 
-        @Nullable
-        private final JvmClassName correspondingAnnotation;
+        @NotNull
+        private final JvmClassName annotation;
 
-        private HeaderType(@Nullable JvmClassName annotation) {
-            correspondingAnnotation = annotation;
-        }
-
-        private boolean isValidAnnotation() {
-            return this == CLASS || this == PACKAGE;
+        private HeaderType(@NotNull JvmClassName annotation) {
+            this.annotation = annotation;
         }
 
         @Nullable
         private static HeaderType byDescriptor(@NotNull String desc) {
             for (HeaderType headerType : HeaderType.values()) {
-                JvmClassName annotation = headerType.correspondingAnnotation;
-                if (annotation == null) {
-                    continue;
-                }
-                if (desc.equals(annotation.getDescriptor())) {
+                if (desc.equals(headerType.annotation.getDescriptor())) {
                     return headerType;
                 }
             }
@@ -118,7 +126,7 @@ public final class KotlinClassFileHeader {
      * @return true if this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE
      */
     public boolean isCompatibleKotlinCompiledFile() {
-        return type.isValidAnnotation() && isAbiVersionCompatible(version);
+        return (type == HeaderType.CLASS || type == HeaderType.PACKAGE) && isAbiVersionCompatible(version);
     }
 
     private static class ReadDataFromAnnotationVisitor extends ClassVisitor {
@@ -126,7 +134,7 @@ public final class KotlinClassFileHeader {
         @Nullable
         private String[] annotationData = null;
         @Nullable
-        private HeaderType type = null;
+        private HeaderType foundType = null;
         @Nullable
         private FqName fqName = null;
 
@@ -140,22 +148,26 @@ public final class KotlinClassFileHeader {
         }
 
         @Override
-        public AnnotationVisitor visitAnnotation(final String desc, boolean visible) {
-            HeaderType headerTypeByAnnotation = HeaderType.byDescriptor(desc);
-            if (headerTypeByAnnotation == null) {
+        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+            HeaderType newType = HeaderType.byDescriptor(desc);
+            if (newType == null) return null;
+
+            if (foundType != null) {
+                LOG.error("Both annotations are present for compiled Kotlin file: " + foundType + " and " + newType);
                 return null;
             }
-            boolean alreadyFoundValid = type != null && type.isValidAnnotation();
-            if (headerTypeByAnnotation.isValidAnnotation() && alreadyFoundValid) {
-                throw new IllegalStateException("Both " + type.correspondingAnnotation + " and "
-                                                 + headerTypeByAnnotation.correspondingAnnotation + " present!");
+
+            foundType = newType;
+
+            if (newType == HeaderType.CLASS || newType == HeaderType.PACKAGE) {
+                return kotlinClassOrPackageVisitor(desc);
             }
-            if (!alreadyFoundValid) {
-                type = headerTypeByAnnotation;
-            }
-            if (!headerTypeByAnnotation.isValidAnnotation()) {
-                return null;
-            }
+
+            return null;
+        }
+
+        @NotNull
+        private AnnotationVisitor kotlinClassOrPackageVisitor(final String desc) {
             return new AnnotationVisitor(Opcodes.ASM4) {
                 @Override
                 public void visit(String name, Object value) {
