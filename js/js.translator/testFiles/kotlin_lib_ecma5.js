@@ -231,8 +231,6 @@ var Kotlin = {};
         return obj;
     };
 
-    Kotlin.keys = Object.keys; // TODO drop
-
     Kotlin.isType = function (object, klass) {
         if (object == null || klass == null) {
             return false;

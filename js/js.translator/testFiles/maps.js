@@ -416,7 +416,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             this.map = map;
         }, {
             iterator: function () {
-                return new PrimitiveHashMapValuesIterator(this.map.map, Kotlin.keys(this.map.map));
+                return new PrimitiveHashMapValuesIterator(this.map.map, Object.keys(this.map.map));
             },
             isEmpty: function () {
                 return this.map.$size === 0;
@@ -538,7 +538,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClass(Kotlin.AbstractCollection,
             this.map = {};
         },
         toArray: function () {
-            return Kotlin.keys(this.map);
+            return Object.keys(this.map);
         }
 });
 
