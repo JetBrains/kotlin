@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.header.KotlinClassFileHeader;
@@ -31,14 +30,6 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
 
     public CliVirtualFileFinder(@NotNull ClassPath path) {
         classPath = path;
-    }
-
-
-    @Nullable
-    @Override
-    public VirtualFile find(@NotNull FqName className, @NotNull GlobalSearchScope scope) {
-        //TODO: use scope
-        return find(className);
     }
 
     @Nullable
