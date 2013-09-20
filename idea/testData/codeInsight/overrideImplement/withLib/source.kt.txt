@@ -1,0 +1,7 @@
+package dependency
+
+// To regenerate this test, compile this file into jar
+
+public open class A {
+    public open fun foo() {}
+}

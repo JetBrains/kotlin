@@ -1,0 +1,8 @@
+package test
+
+// To regenerate this test:
+// 1. Compile this file
+// 2. Delete test/Lol.class
+// 3. Pack test/ into broken.jar
+
+public object Lol
