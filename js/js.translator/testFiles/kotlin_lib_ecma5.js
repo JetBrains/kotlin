@@ -310,12 +310,12 @@ var Kotlin = {};
         return definition;
       };
 
-    Kotlin.defineModule = function (id, module) {
+    Kotlin.defineModule = function (id, declaration) {
         if (id in Kotlin.modules) {
-            throw new Kotlin.IllegalArgumentException();
+            throw new Error("Module " + id + " is already defined");
         }
-        module.$initializer$.call(module); // TODO: temporary hack
-        Object.defineProperty(Kotlin.modules, id, {value: module});
+        declaration.$initializer$.call(declaration); // TODO: temporary hack
+        Object.defineProperty(Kotlin.modules, id, {value: declaration});
     };
 
 })();
