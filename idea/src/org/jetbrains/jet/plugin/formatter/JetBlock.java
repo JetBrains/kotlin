@@ -264,7 +264,7 @@ public class JetBlock extends AbstractBlock {
 
         return new ASTAlignmentStrategy() {
             @Override
-            public Alignment getAlignment(ASTNode node) {
+            public Alignment getAlignment(@NotNull ASTNode node) {
                 IElementType childNodeType = node.getElementType();
 
                 ASTNode prev = getPrevWithoutWhitespace(node);
@@ -327,7 +327,7 @@ public class JetBlock extends AbstractBlock {
 
             ASTIndentStrategy.forNode("Indent for parts")
                     .in(PROPERTY, FUN)
-                    .notForType(BLOCK)
+                    .notForType(BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD)
                     .set(Indent.getContinuationWithoutFirstIndent()),
 
             ASTIndentStrategy.forNode("KDoc comment indent")

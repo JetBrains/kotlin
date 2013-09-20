@@ -1,0 +1,4 @@
+public
+foo() fun foo() {
+}
+

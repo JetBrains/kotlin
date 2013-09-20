@@ -1,0 +1,4 @@
+private
+fun foo() {
+}
+
