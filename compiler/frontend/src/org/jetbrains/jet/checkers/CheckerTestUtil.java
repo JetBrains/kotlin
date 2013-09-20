@@ -375,7 +375,9 @@ public class CheckerTestUtil {
     public static class SyntaxErrorDiagnosticFactory extends DiagnosticFactory {
         public static final SyntaxErrorDiagnosticFactory INSTANCE = new SyntaxErrorDiagnosticFactory();
 
-        private SyntaxErrorDiagnosticFactory() {}
+        private SyntaxErrorDiagnosticFactory() {
+            super(Severity.ERROR);
+        }
 
         @NotNull
         @Override
@@ -397,6 +399,7 @@ public class CheckerTestUtil {
 
         private final String name;
         private DebugInfoDiagnosticFactory(String name) {
+            super(Severity.ERROR);
             this.name = name;
         }
 

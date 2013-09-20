@@ -23,7 +23,7 @@ public class DiagnosticFactory2<E extends PsiElement, A, B> extends DiagnosticFa
 
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b) {
-        return new DiagnosticWithParameters2<E, A, B>(element, a, b, this, severity);
+        return new DiagnosticWithParameters2<E, A, B>(element, a, b, this, getSeverity());
     }
 
     private DiagnosticFactory2(Severity severity, PositioningStrategy<? super E> positioningStrategy) {

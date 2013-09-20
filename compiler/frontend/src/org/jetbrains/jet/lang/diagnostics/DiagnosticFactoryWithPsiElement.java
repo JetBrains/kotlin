@@ -22,11 +22,10 @@ import com.intellij.psi.PsiElement;
 import java.util.List;
 
 public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement> extends DiagnosticFactory {
-    protected final Severity severity;
     protected final PositioningStrategy<? super E> positioningStrategy;
 
     public DiagnosticFactoryWithPsiElement(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
-        this.severity = severity;
+        super(severity);
         this.positioningStrategy = positioningStrategy;
     }
 

@@ -21,7 +21,12 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DiagnosticFactory {
 
     private String name = null;
-    
+    private final Severity severity;
+
+    protected DiagnosticFactory(@NotNull Severity severity) {
+        this.severity = severity;
+    }
+
     /*package*/ void setName(@NotNull String name) {
         this.name = name;
     }
@@ -29,6 +34,11 @@ public abstract class DiagnosticFactory {
     @NotNull
     public String getName() {
         return name;
+    }
+
+    @NotNull
+    public Severity getSeverity() {
+        return severity;
     }
 
     @Override
