@@ -27,6 +27,6 @@ public class GenerateKeywordStringsTest extends UsefulTestCase {
         String text = GenerateKeywordStrings.generate();
         assertEquals("Contents differ. Regenerate " + GenerateKeywordStrings.class.getName(),
                      StringUtil.convertLineSeparators(text),
-                     FileUtil.loadFile(GenerateKeywordStrings.DEST_FILE));
+                     FileUtil.loadFile(GenerateKeywordStrings.DEST_FILE, true));
     }
 }
