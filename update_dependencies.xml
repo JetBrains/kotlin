@@ -5,6 +5,8 @@
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
+    <property name="continuous.idea.version" value="unknown"/>
+
     <target name="update" depends="fetch-third-party">
         <execute_update
             base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
@@ -16,6 +18,13 @@
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
+        />
+    </target>
+
+    <target name="jb_update_continuous_local" depends="fetch-third-party">
+        <execute_update
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/IDEA_Trunk_Installers/${continuous.idea.version}"
+            build.zip="ideaIC-${continuous.idea.version}.win.zip"
         />
     </target>
 
