@@ -20,6 +20,10 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -240,11 +244,4 @@ public final class JsAstUtils {
     public static JsObjectLiteral wrapValue(@NotNull JsExpression label, @NotNull JsExpression value) {
         return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(label, value)));
     }
-
-    @NotNull
-    public static <T extends JsNode> T source(@NotNull T jsNode, @NotNull JetElement ktElement) {
-        jsNode.setSourceInfo(ktElement);
-        return jsNode;
-    }
-
 }

@@ -16,7 +16,9 @@
 
 package org.jetbrains.k2js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -37,7 +39,6 @@ import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompa
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.source;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
@@ -49,14 +50,14 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     public static JsExpression translate(@NotNull JetBinaryExpression expression,
             @NotNull TranslationContext context) {
         JsExpression jsExpression = new BinaryOperationTranslator(expression, context).translate();
-        return source(jsExpression, expression);
+        return jsExpression.source(expression);
     }
 
     @NotNull
     /*package*/ static JsExpression translateAsOverloadedCall(@NotNull JetBinaryExpression expression,
             @NotNull TranslationContext context) {
         JsExpression jsExpression = (new BinaryOperationTranslator(expression, context)).translateAsOverloadedBinaryOperation();
-        return source(jsExpression, expression);
+        return jsExpression.source(expression);
     }
 
     @NotNull

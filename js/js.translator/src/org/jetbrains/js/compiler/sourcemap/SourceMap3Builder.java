@@ -113,7 +113,10 @@ public class SourceMap3Builder implements SourceMapBuilder {
             out.append(',');
         }
 
-        Base64VLQ.encode(out, textOutput.getColumn() - previousGeneratedColumn);
+        int columnDiff = textOutput.getColumn() - previousGeneratedColumn;
+        // TODO fix sections overlapping
+        // assert columnDiff != 0;
+        Base64VLQ.encode(out, columnDiff);
         previousGeneratedColumn = textOutput.getColumn();
         int sourceIndex = getSourceIndex(source);
         Base64VLQ.encode(out, sourceIndex - previousSourceIndex);

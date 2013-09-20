@@ -38,7 +38,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 
 //TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
@@ -83,7 +82,7 @@ public final class CallTranslator extends AbstractTranslator {
         if (result != null) {
             return result;
         }
-        if (isConstructor()) {
+        if ((descriptor instanceof ConstructorDescriptor)) {
             return createConstructorCallExpression(translateAsFunctionWithNoThisObject(descriptor));
         }
         if (resolvedCall.getReceiverArgument().exists()) {
@@ -122,10 +121,6 @@ public final class CallTranslator extends AbstractTranslator {
             }
         }
         return null;
-    }
-
-    private boolean isConstructor() {
-        return isConstructorDescriptor(descriptor);
     }
 
     @NotNull
