@@ -140,7 +140,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
         }
     }
 
-    @Nullable
+    @NotNull
     private static String getPathToJar(@NotNull FileState runtimeState, @NotNull String jarFromDist, @NotNull String jarFromTemp) {
         switch (runtimeState) {
             case EXISTS:
@@ -148,9 +148,9 @@ public class ConfigureKotlinTest extends PlatformTestCase {
             case COPY:
                 return jarFromTemp;
             case DO_NOT_COPY:
-                return null;
+                return jarFromDist;
         }
-        return null;
+        return jarFromDist;
     }
 
     private static void configure(@NotNull Module module, @NotNull FileState jarState, @NotNull LibraryState libraryState, @NotNull KotlinProjectConfigurator configurator) {
