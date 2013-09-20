@@ -67,10 +67,11 @@ public class LibrarySourcesConfig extends Config {
             return Collections.emptyList();
         }
 
-        final List<JetFile> jetFiles = new ArrayList<JetFile>();
+        List<JetFile> jetFiles = new ArrayList<JetFile>();
         String moduleName = UNKNOWN_EXTERNAL_MODULE_NAME;
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
-        final PsiManager psiManager = PsiManager.getInstance(getProject());
+        PsiManager psiManager = PsiManager.getInstance(getProject());
+
         for (String path : files) {
             if (path.charAt(0) == '@') {
                 moduleName = path.substring(1);
@@ -85,22 +86,15 @@ public class LibrarySourcesConfig extends Config {
             }
             else {
                 VirtualFile file = fileSystem.findFileByPath(path);
-                assert file != null;
-                if (file.isDirectory()) {
-                    final String currentModuleName = moduleName;
-                    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
-                        @Override
-                        public boolean visitFile(@NotNull VirtualFile file) {
-                            if (file.getName().endsWith(".kt")) {
-                                addJetFile(jetFiles, currentModuleName, psiManager, file);
-                                return false;
-                            }
-                            return true;
-                        }
-                    });
+                if (file == null) {
+                    LOG.error("File '" + path + "not found.'");
+                }
+                else if (file.isDirectory()) {
+                    JetFileCollector jetFileCollector = new JetFileCollector(jetFiles, moduleName, psiManager);
+                    VfsUtilCore.visitChildrenRecursively(file, jetFileCollector);
                 }
                 else {
-                    addJetFile(jetFiles, moduleName, psiManager, file);
+                    jetFiles.add(getJetFileByVirtualFile(file, moduleName, psiManager));
                 }
             }
         }
@@ -135,10 +129,31 @@ public class LibrarySourcesConfig extends Config {
         return result;
     }
 
-    private static void addJetFile(List<JetFile> jetFiles, String moduleName, PsiManager psiManager, VirtualFile file) {
+    private static JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
         PsiFile psiFile = psiManager.findFile(file);
         assert psiFile != null;
         psiFile.putUserData(EXTERNAL_MODULE_NAME, moduleName);
-        jetFiles.add((JetFile) psiFile);
+        return (JetFile) psiFile;
+    }
+
+    private static class JetFileCollector extends VirtualFileVisitor {
+        private final List<JetFile> jetFiles;
+        private final String moduleName;
+        private final PsiManager psiManager;
+
+        private JetFileCollector(List<JetFile> files, String name, PsiManager manager) {
+            moduleName = name;
+            psiManager = manager;
+            jetFiles = files;
+        }
+
+        @Override
+        public boolean visitFile(@NotNull VirtualFile file) {
+            if (file.getName().endsWith(".kt")) {
+                jetFiles.add(getJetFileByVirtualFile(file, moduleName, psiManager));
+                return false;
+            }
+            return true;
+        }
     }
 }
