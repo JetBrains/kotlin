@@ -26,12 +26,12 @@ import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureCheck
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
-import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
