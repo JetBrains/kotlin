@@ -40,6 +40,7 @@ import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.k2js.translate.reference.CallArgumentTranslator.translateSingleArgument;
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionForDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
@@ -154,14 +155,9 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     private JsExpression translateArgument(@NotNull ValueParameterDescriptor parameterDescriptor,
                                            @NotNull ResolvedValueArgument actualArgument) {
         List<JsExpression> result = new SmartList<JsExpression>();
-        translateSingleArgument(actualArgument, parameterDescriptor, result);
+        translateSingleArgument(actualArgument, parameterDescriptor, result, context(), true);
         assert result.size() == 1 : "We always wrap varargs in kotlin calls.";
         return result.get(0);
-    }
-
-    @Override
-    public boolean shouldWrapVarargInArray() {
-        return true;
     }
 
     private static final class InlineFunctionMutator implements Mutator {
