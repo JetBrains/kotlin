@@ -40,6 +40,7 @@ public class JetValueArgumentList extends JetElementImpl {
         return visitor.visitValueArgumentList(this, data);
     }
 
+    @NotNull
     public List<JetValueArgument> getArguments() {
         return findChildrenByType(JetNodeTypes.VALUE_ARGUMENT);
     }

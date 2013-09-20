@@ -80,6 +80,7 @@ public final class AnalyzerFacadeWithCache {
         }
     }
 
+    @NotNull
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
         CancelableResolveSession cancelableResolveSession = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
         return cancelableResolveSession.resolveToElement(jetElement);

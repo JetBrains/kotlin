@@ -58,6 +58,7 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
         this.resolveElementCache = new ResolveElementCache(resolveSession, project);
     }
 
+    @NotNull
     public BindingContext resolveToElement(final JetElement element) {
         return computableWithProcessingCancel(new Computable<BindingContext>() {
             @Override

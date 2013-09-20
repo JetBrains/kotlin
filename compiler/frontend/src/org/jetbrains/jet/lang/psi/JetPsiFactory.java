@@ -55,6 +55,7 @@ public class JetPsiFactory {
         return property.getInitializer();
     }
 
+    @NotNull
     public static JetValueArgumentList createCallArguments(Project project, String text) {
         JetProperty property = createProperty(project, "val x = foo" + text);
         JetExpression initializer = property.getInitializer();
@@ -121,6 +122,7 @@ public class JetPsiFactory {
         return Pair.create(functionType.findElementAt(2), functionType.findElementAt(3));
     }
 
+    @NotNull
     public static PsiElement createWhiteSpace(Project project) {
         return createWhiteSpace(project, " ");
     }
@@ -130,6 +132,7 @@ public class JetPsiFactory {
         return property.findElementAt(3);
     }
 
+    @NotNull
     public static PsiElement createNewLine(Project project) {
         return createWhiteSpace(project, "\n");
     }
