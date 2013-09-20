@@ -33,7 +33,7 @@ var JsTests = (function () {
         }
         catch (fail) {
             if (fail != failedTest) {
-                reporter.reportError("Unexpected exception " + fail);
+                reporter.reportError("Unexpected exception " + fail + "\n" + fail.stack);
             }
             reporter.testFail(testName);
             return;
