@@ -35,6 +35,7 @@ import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest;
 import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest;
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
+import org.jetbrains.jet.formatter.AbstractJetFormatterTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -483,6 +484,13 @@ public class GenerateTests {
                 new SimpleTestClassModel(new File("idea/testData/configuration/android-gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestAndroidGradle"),
                 new SimpleTestClassModel(new File("idea/testData/configuration/gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestGradle"),
                 testModelWithDirectories("idea/testData/configuration/maven", "doTestWithMaven")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "JetFormatterTestGenerated",
+                AbstractJetFormatterTest.class,
+                testModelWithPattern("idea/testData/formatter", "^([^\\.]+)\\.kt$", "doTest")
         );
     }
 

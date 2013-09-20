@@ -19,7 +19,6 @@ package org.jetbrains.jet.formatter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
 import com.intellij.openapi.util.TextRange;
@@ -32,7 +31,9 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.SettingsConfigurator;
 
 import java.io.File;
 import java.util.EnumMap;
@@ -76,23 +77,11 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         LanguageLevelProjectExtension.getInstance(getProject()).setLanguageLevel(LanguageLevel.HIGHEST);
     }
 
-    public void doTest() throws Exception {
-        doTest(getTestName(false) + ".kt", getTestName(false) + "_after.kt");
+    public void doTextTest(@NonNls String text, File fileAfter) throws IncorrectOperationException {
+        doTextTest(Action.REFORMAT, text, fileAfter);
     }
 
-    public void doTest(@NonNls String fileNameBefore, @NonNls String fileNameAfter) throws Exception {
-        doTextTest(Action.REFORMAT, loadFile(fileNameBefore), loadFile(fileNameAfter), "");
-    }
-
-    public void doTextTest(@NonNls String text, @NonNls String textAfter, String commentToTextCompare) throws IncorrectOperationException {
-        doTextTest(Action.REFORMAT, text, textAfter, commentToTextCompare);
-    }
-
-    public void doIndentTextTest(@NonNls String text, @NonNls String textAfter) throws IncorrectOperationException {
-        doTextTest(Action.INDENT, text, textAfter, "");
-    }
-
-    public void doTextTest(final Action action, final String text, String textAfter, String commentToTextCompare) throws IncorrectOperationException {
+    public void doTextTest(final Action action, final String text, File fileAfter) throws IncorrectOperationException {
         final PsiFile file = createFile("A.kt", text);
 
         if (myLineRange != null) {
@@ -132,39 +121,31 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
             fail("Don't expect the document to be null");
             return;
         }
-        assertEquals(commentToTextCompare, prepareText(textAfter), prepareText(document.getText()));
+        JetTestUtils.assertEqualsToFile(fileAfter, document.getText());
         manager.commitDocument(document);
-        assertEquals(commentToTextCompare, prepareText(textAfter), prepareText(file.getText()));
-    }
-
-    private static String prepareText(String actual) {
-        if (actual.startsWith("\n")) {
-            actual = actual.substring(1);
-        }
-        if (actual.startsWith("\n")) {
-            actual = actual.substring(1);
-        }
-
-        // Strip trailing spaces
-        final Document doc = EditorFactory.getInstance().createDocument(actual);
-        CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
-            @Override
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((DocumentImpl)doc).stripTrailingSpaces();
-                    }
-                });
-            }
-        }, "formatting", null);
-
-        return doc.getText();
+        JetTestUtils.assertEqualsToFile(fileAfter, file.getText());
     }
 
     protected static String loadFile(String name) throws Exception {
         String text = FileUtil.loadFile(new File(BASE_PATH, name));
         text = StringUtil.convertLineSeparators(text);
         return text;
+    }
+
+    public void doTest(String testFileNameWithExtension) throws Exception {
+        String testFileName = FileUtil.getNameWithoutExtension(testFileNameWithExtension);
+        String originalFileText = FileUtil.loadFile(new File(testFileName + ".kt"), true);
+        SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, JetFormatSettingsUtil.getSettings());
+
+        configurator.configureSettings();
+        doTextTest(originalFileText, new File(testFileName + ".after.kt"));
+
+        String afterInvertedFileName = testFileName + ".after_inv.kt";
+        if (new File(afterInvertedFileName).exists()) {
+            configurator.configureInvertedSettings();
+            doTextTest(originalFileText, new File(afterInvertedFileName));
+        }
+
+        JetFormatSettingsUtil.getSettings().clearCodeStyleSettings();
     }
 }
