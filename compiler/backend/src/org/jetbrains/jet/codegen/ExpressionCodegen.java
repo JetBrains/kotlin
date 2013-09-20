@@ -1822,7 +1822,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (!skipPropertyAccessors) {
-            if (couldUseDirectAccessToProperty(propertyDescriptor, true, isInsideClass, isDelegatedProperty)) {
+            if (couldUseDirectAccessToProperty(propertyDescriptor, true, isInsideClass, isDelegatedProperty, context)) {
                 callableGetter = null;
             }
             else {
@@ -1846,7 +1846,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (propertyDescriptor.isVar()) {
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                 if (setter != null) {
-                    if (couldUseDirectAccessToProperty(propertyDescriptor, false, isInsideClass, isDelegatedProperty)) {
+                    if (couldUseDirectAccessToProperty(propertyDescriptor, false, isInsideClass, isDelegatedProperty, context)) {
                         callableSetter = null;
                     }
                     else {
