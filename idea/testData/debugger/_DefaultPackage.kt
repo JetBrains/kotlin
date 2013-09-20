@@ -1,3 +1,3 @@
 fun foo() {
-    ""   // _DefaultPackage$src$_DefaultPackage$
+    ""   // _DefaultPackage-_DefaultPackage-
 }

@@ -321,7 +321,7 @@ public class NamespaceCodegen extends MemberCodegen {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // path hashCode to prevent same name / different path collision
-        String srcName = facadeFqName.shortName().asString() + "$src$" + replaceSpecialSymbols(fileName) + "$" + Integer.toHexString(
+        String srcName = facadeFqName.shortName().asString() + "-" + replaceSpecialSymbols(fileName) + "-" + Integer.toHexString(
                 CodegenUtil.getPathHashCode(file));
 
         FqName srcFqName = facadeFqName.parent().child(Name.identifier(srcName));

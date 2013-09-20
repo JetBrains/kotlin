@@ -1,5 +1,5 @@
 package test
 
 fun baz() {
-    "" // test/TestPackage$src$a$
+    "" // test/TestPackage-a-
 }
