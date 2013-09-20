@@ -202,6 +202,7 @@ var Kotlin = {};
         }
         Object.defineProperties(prototypeObj, metadata.properties);
         copyProperties(prototypeObj, metadata.functions);
+        prototypeObj.constructor = constructor;
 
         if (metadata.baseClass != null) {
             constructor.baseInitializer = metadata.baseClass;
@@ -231,11 +232,38 @@ var Kotlin = {};
         return obj;
     };
 
+    function isInheritanceFromTrait (objConstructor, trait) {
+        if (isNativeClass(objConstructor) || objConstructor.$metadata$.classIndex < trait.$metadata$.classIndex) {
+            return false;
+        }
+        var baseClasses = objConstructor.$metadata$.baseClasses;
+        var i;
+        for (i = 0; i < baseClasses.length; i++) {
+            if (baseClasses[i] === trait) {
+                return true;
+            }
+        }
+        for (i = 0; i < baseClasses.length; i++) {
+            if (isInheritanceFromTrait(baseClasses[i], trait)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     Kotlin.isType = function (object, klass) {
         if (object == null || klass == null) {
             return false;
         } else {
-            return object instanceof klass; // TODO trait support
+            if (object instanceof klass) {
+                return true;
+            }
+            else if (isNativeClass(klass) || klass.$metadata$.type == Kotlin.TYPE.CLASS) {
+                return false;
+            }
+            else {
+                return isInheritanceFromTrait(object.constructor, klass);
+            }
         }
     };
 
