@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractDiagnosticFactory {
+public abstract class DiagnosticFactory {
 
     private String name = null;
     

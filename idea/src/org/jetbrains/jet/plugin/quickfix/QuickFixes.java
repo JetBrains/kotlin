@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 
@@ -30,14 +30,14 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class QuickFixes {
 
-    private static final Multimap<AbstractDiagnosticFactory, JetIntentionActionsFactory> factories = HashMultimap.create();
-    private static final Multimap<AbstractDiagnosticFactory, IntentionAction> actions = HashMultimap.create();
+    private static final Multimap<DiagnosticFactory, JetIntentionActionsFactory> factories = HashMultimap.create();
+    private static final Multimap<DiagnosticFactory, IntentionAction> actions = HashMultimap.create();
 
-    public static Collection<JetIntentionActionsFactory> getActionsFactories(AbstractDiagnosticFactory diagnosticFactory) {
+    public static Collection<JetIntentionActionsFactory> getActionsFactories(DiagnosticFactory diagnosticFactory) {
         return factories.get(diagnosticFactory);
     }
 
-    public static Collection<IntentionAction> getActions(AbstractDiagnosticFactory diagnosticFactory) {
+    public static Collection<IntentionAction> getActions(DiagnosticFactory diagnosticFactory) {
         return actions.get(diagnosticFactory);
     }
 

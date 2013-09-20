@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -474,9 +474,9 @@ public class DefaultErrorMessages {
             if (Modifier.isStatic(field.getModifiers())) {
                 try {
                     Object fieldValue = field.get(null);
-                    if (fieldValue instanceof AbstractDiagnosticFactory) {
-                        if (MAP.get((AbstractDiagnosticFactory) fieldValue) == null) {
-                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((AbstractDiagnosticFactory)fieldValue).getName());
+                    if (fieldValue instanceof DiagnosticFactory) {
+                        if (MAP.get((DiagnosticFactory) fieldValue) == null) {
+                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((DiagnosticFactory)fieldValue).getName());
                         }
                     }
                 }

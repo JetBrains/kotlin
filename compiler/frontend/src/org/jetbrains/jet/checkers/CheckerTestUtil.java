@@ -28,7 +28,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -329,16 +329,16 @@ public class CheckerTestUtil {
 
     public static class AbstractDiagnosticForTests implements Diagnostic {
         private final PsiElement element;
-        private final AbstractDiagnosticFactory factory;
+        private final DiagnosticFactory factory;
 
-        public AbstractDiagnosticForTests(@NotNull PsiElement element, @NotNull AbstractDiagnosticFactory factory) {
+        public AbstractDiagnosticForTests(@NotNull PsiElement element, @NotNull DiagnosticFactory factory) {
             this.element = element;
             this.factory = factory;
         }
 
         @NotNull
         @Override
-        public AbstractDiagnosticFactory getFactory() {
+        public DiagnosticFactory getFactory() {
             return factory;
         }
 
@@ -372,7 +372,7 @@ public class CheckerTestUtil {
         }
     }
 
-    public static class SyntaxErrorDiagnosticFactory extends AbstractDiagnosticFactory {
+    public static class SyntaxErrorDiagnosticFactory extends DiagnosticFactory {
         public static final SyntaxErrorDiagnosticFactory INSTANCE = new SyntaxErrorDiagnosticFactory();
 
         private SyntaxErrorDiagnosticFactory() {}
@@ -390,7 +390,7 @@ public class CheckerTestUtil {
         }
     }
 
-    public static class DebugInfoDiagnosticFactory extends AbstractDiagnosticFactory {
+    public static class DebugInfoDiagnosticFactory extends DiagnosticFactory {
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");

@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -303,7 +303,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
         BindingContext context = cancelableResolveSession.resolveToElement(functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
-            AbstractDiagnosticFactory factory = diagnostic.getFactory();
+            DiagnosticFactory factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
             boolean hasCantInferParameter = factory == Errors.CANNOT_INFER_PARAMETER_TYPE && element.getParent().getParent() == functionLiteral;
             boolean hasUnresolvedItOrThis = factory == Errors.UNRESOLVED_REFERENCE && element.getText().equals("it") &&

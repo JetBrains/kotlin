@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -459,7 +459,7 @@ public class ExpressionTypingUtils {
 
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
-                AbstractDiagnosticFactory factory = diagnostic.getFactory();
+                DiagnosticFactory factory = diagnostic.getFactory();
                 if ((factory == TYPE_MISMATCH || factory == CONSTANT_EXPECTED_TYPE_MISMATCH || factory == NULL_FOR_NONNULL_TYPE)
                         && diagnostic.getPsiElement() == expressionToWatch) {
                     mismatchFound[0] = true;

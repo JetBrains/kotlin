@@ -22,7 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetConstantExpression;
@@ -50,8 +50,8 @@ public class CompileTimeConstantResolver {
             @NotNull JetType expectedType
     ) {
         CompileTimeConstant<?> compileTimeConstant = getCompileTimeConstant(expression, expectedType);
-        Set<AbstractDiagnosticFactory> errorsThatDependOnExpectedType =
-                Sets.<AbstractDiagnosticFactory>newHashSet(CONSTANT_EXPECTED_TYPE_MISMATCH, NULL_FOR_NONNULL_TYPE);
+        Set<DiagnosticFactory> errorsThatDependOnExpectedType =
+                Sets.<DiagnosticFactory>newHashSet(CONSTANT_EXPECTED_TYPE_MISMATCH, NULL_FOR_NONNULL_TYPE);
 
         if (compileTimeConstant instanceof ErrorValueWithDiagnostic) {
             Diagnostic diagnostic = ((ErrorValueWithDiagnostic) compileTimeConstant).getDiagnostic();

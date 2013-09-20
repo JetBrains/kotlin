@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -58,9 +58,9 @@ public class DebugInfoUtil {
             @NotNull final BindingContext bindingContext,
             @NotNull final DebugInfoReporter debugInfoReporter
     ) {
-        final Map<JetReferenceExpression, AbstractDiagnosticFactory> markedWithErrorElements = Maps.newHashMap();
+        final Map<JetReferenceExpression, DiagnosticFactory> markedWithErrorElements = Maps.newHashMap();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            AbstractDiagnosticFactory factory = diagnostic.getFactory();
+            DiagnosticFactory factory = diagnostic.getFactory();
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 markedWithErrorElements.put((JetReferenceExpression) diagnostic.getPsiElement(), factory);
             }
@@ -131,7 +131,7 @@ public class DebugInfoUtil {
                 boolean resolved = target != null;
                 boolean markedWithError = markedWithErrorElements.containsKey(expression);
                 JetType expressionType = bindingContext.get(EXPRESSION_TYPE, expression);
-                AbstractDiagnosticFactory factory = markedWithErrorElements.get(expression);
+                DiagnosticFactory factory = markedWithErrorElements.get(expression);
                 if (declarationDescriptor != null &&
                     (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {
                     if (factory != Errors.EXPRESSION_EXPECTED_NAMESPACE_FOUND) {

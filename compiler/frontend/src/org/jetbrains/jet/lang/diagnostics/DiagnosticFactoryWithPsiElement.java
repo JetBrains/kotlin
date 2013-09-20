@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 
 import java.util.List;
 
-public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement> extends AbstractDiagnosticFactory {
+public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement> extends DiagnosticFactory {
     protected final Severity severity;
     protected final PositioningStrategy<? super E> positioningStrategy;
 
