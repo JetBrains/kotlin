@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.j2k;
 
-import com.intellij.mock.MockProject;
-import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
@@ -35,10 +33,12 @@ import java.io.IOException;
 
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
 
+@SuppressWarnings("JUnitTestCaseWithNoTests")
 public class StandaloneJavaToKotlinConverterTest extends UsefulTestCase {
     private final String myDataPath;
     private final String myName;
 
+    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
     public StandaloneJavaToKotlinConverterTest(String dataPath, String name) {
         myDataPath = dataPath;
         myName = name;
@@ -48,10 +48,7 @@ public class StandaloneJavaToKotlinConverterTest extends UsefulTestCase {
     protected void runTest() throws Throwable {
         JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        MockProject project = (MockProject) jetCoreEnvironment.getProject();
-        project.registerService(ProjectRootModificationTracker.class, JavaToKotlinTranslator.NEVER_CHANGED);
-
-        Converter converter = new Converter(project);
+        Converter converter = new Converter(jetCoreEnvironment.getProject());
 
         String javaPath = "j2k/tests/testData/" + getTestFilePath();
         String kotlinPath = javaPath.replace(".jav", ".kt");
@@ -127,7 +124,7 @@ public class StandaloneJavaToKotlinConverterTest extends UsefulTestCase {
     }
 
     @NotNull
-    private String fileToKotlin(Converter converter, @NotNull String text) {
+    private static String fileToKotlin(Converter converter, @NotNull String text) {
         return generateKotlinCode(converter, JavaToKotlinTranslator.createFile(converter.getProject(), text));
     }
 
@@ -141,7 +138,7 @@ public class StandaloneJavaToKotlinConverterTest extends UsefulTestCase {
     }
 
     @NotNull
-    private String methodToKotlin(Converter converter, String text) throws IOException {
+    private static String methodToKotlin(Converter converter, String text) throws IOException {
         String result = fileToKotlin(converter, "final class C {" + text + "}")
                 .replaceAll("class C\\(\\) \\{", "");
         result = result.substring(0, result.lastIndexOf("}"));
@@ -149,7 +146,7 @@ public class StandaloneJavaToKotlinConverterTest extends UsefulTestCase {
     }
 
     @NotNull
-    private String statementToKotlin(Converter converter, String text) throws Exception {
+    private static String statementToKotlin(Converter converter, String text) throws Exception {
         String result = methodToKotlin(converter, "void main() {" + text + "}");
         int pos = result.lastIndexOf("}");
         result = result.substring(0, pos).replaceFirst("fun main\\(\\) : Unit \\{", "");
@@ -157,7 +154,7 @@ public class StandaloneJavaToKotlinConverterTest extends UsefulTestCase {
     }
 
     @NotNull
-    private String expressionToKotlin(Converter converter, String code) throws Exception {
+    private static String expressionToKotlin(Converter converter, String code) throws Exception {
         String result = statementToKotlin(converter, "Object o =" + code + "}");
         result = result.replaceFirst("var o : Any\\? =", "");
         return prettify(result);
