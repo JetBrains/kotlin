@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.plugin.vfilefinder;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -6,8 +22,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.kotlin.header.IncompatibleAnnotationHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.DataInput;
@@ -19,7 +35,7 @@ import java.util.Map;
 public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
 
     private static final Logger LOG = Logger.getInstance(KotlinClassFileIndex.class);
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     public static final ID<FqName, Void> KEY = ID.create(KotlinClassFileIndex.class.getCanonicalName());
 
     private static final KeyDescriptor<FqName> KEY_DESCRIPTOR = new KeyDescriptor<FqName>() {
@@ -59,7 +75,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
         public Map<FqName, Void> map(FileContent inputData) {
             try {
                 KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(inputData.getFile());
-                if (header instanceof SerializedDataHeader) {
+                if (header != null && !(header instanceof IncompatibleAnnotationHeader)) {
                     return Collections.singletonMap(header.getFqName(), null);
                 }
             }

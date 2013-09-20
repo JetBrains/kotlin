@@ -40,6 +40,7 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
     private enum HeaderType {
         CLASS(JvmAnnotationNames.KOTLIN_CLASS),
         PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
+        PACKAGE_FRAGMENT(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT),
         OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
         OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION);
 
@@ -93,6 +94,8 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
                 return serializedDataHeader(SerializedDataHeader.Kind.CLASS, fqName);
             case PACKAGE:
                 return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE, fqName);
+            case PACKAGE_FRAGMENT:
+                return new PackageFragmentClassFileHeader(version, fqName);
             default:
                 throw new UnsupportedOperationException("Unknown compatible HeaderType: " + foundType);
         }
@@ -127,6 +130,9 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
         if (newType == HeaderType.CLASS || newType == HeaderType.PACKAGE) {
             return kotlinClassOrPackageVisitor(desc);
         }
+        else if (newType == HeaderType.PACKAGE_FRAGMENT) {
+            return kotlinPackageFragmentVisitor(desc);
+        }
 
         return null;
     }
@@ -136,12 +142,7 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
         return new AnnotationVisitor(Opcodes.ASM4) {
             @Override
             public void visit(String name, Object value) {
-                if (name.equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
-                    version = (Integer) value;
-                }
-                else if (isAbiVersionCompatible(version)) {
-                    throw new IllegalStateException("Unexpected argument " + name + " for annotation " + desc);
-                }
+                visitIntValueForSupportedAnnotation(name, value, desc);
             }
 
             @Override
@@ -176,5 +177,24 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
                 };
             }
         };
+    }
+
+    @NotNull
+    private AnnotationVisitor kotlinPackageFragmentVisitor(final String desc) {
+        return new AnnotationVisitor(Opcodes.ASM4) {
+            @Override
+            public void visit(String name, Object value) {
+                visitIntValueForSupportedAnnotation(name, value, desc);
+            }
+        };
+    }
+
+    private void visitIntValueForSupportedAnnotation(@NotNull String name, @NotNull Object value, @NotNull String desc) {
+        if (name.equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
+            version = (Integer) value;
+        }
+        else if (isAbiVersionCompatible(version)) {
+            throw new IllegalStateException("Unexpected argument " + name + " for annotation " + desc);
+        }
     }
 }

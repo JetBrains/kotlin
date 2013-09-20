@@ -92,7 +92,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @NotNull
     @Override
     public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
-        VirtualFile virtualFile = findVirtualFileByClass(descriptor);
+        VirtualFile virtualFile = findVirtualFileByDescriptor(descriptor);
         if (virtualFile == null) {
             // This means that the resource we're constructing the descriptor from is no longer present: VirtualFileFinder had found the
             // file earlier, but it can't now
@@ -111,24 +111,14 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @Nullable
     private VirtualFile findVirtualFileByDescriptor(@NotNull ClassOrNamespaceDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            return findVirtualFileByClass((ClassDescriptor) descriptor);
+            return virtualFileFinder.find(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
         }
         else if (descriptor instanceof NamespaceDescriptor) {
-            return findVirtualFileByPackage((NamespaceDescriptor) descriptor);
+            return virtualFileFinder.find(PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe()));
         }
         else {
             throw new IllegalStateException("Unrecognized descriptor: " + descriptor);
         }
-    }
-
-    @Nullable
-    private VirtualFile findVirtualFileByClass(@NotNull ClassDescriptor descriptor) {
-        return virtualFileFinder.find(kotlinFqNameToJavaFqName(naiveKotlinFqName(descriptor)));
-    }
-
-    @Nullable
-    private VirtualFile findVirtualFileByPackage(@NotNull NamespaceDescriptor descriptor) {
-        return virtualFileFinder.find(PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe()));
     }
 
     @NotNull
@@ -250,15 +240,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (container instanceof NamespaceDescriptor) {
             Name name = loadSrcClassName(proto, nameResolver);
             if (name != null) {
-                // To locate a package$src class, we first find the facade virtual file (*Package.class) and then look up the $src file in
-                // the same directory. This hack is needed because FileManager doesn't find classfiles for $src classes
-                VirtualFile facadeFile = findVirtualFileByPackage((NamespaceDescriptor) container);
-                if (facadeFile != null) {
-                    VirtualFile srcFile = facadeFile.getParent().findChild(name + ".class");
-                    if (srcFile != null) {
-                        return srcFile;
-                    }
-                }
+                return virtualFileFinder.find(getSrcClassFqName((NamespaceDescriptor) container, name));
             }
             return null;
         }
@@ -270,6 +252,11 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         }
 
         return findVirtualFileByDescriptor(container);
+    }
+
+    @NotNull
+    private static FqName getSrcClassFqName(@NotNull NamespaceDescriptor container, @NotNull Name name) {
+        return PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(container).toSafe()).parent().child(name);
     }
 
     @Nullable
