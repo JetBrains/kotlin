@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureCheck
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
@@ -57,6 +58,7 @@ public class InjectorForJavaDescriptorResolver {
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final PsiClassFinderImpl psiClassFinder;
+    private final VirtualFileKotlinClassFinder virtualFileKotlinClassFinder;
     private final VirtualFileFinder virtualFileFinder;
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
@@ -87,6 +89,7 @@ public class InjectorForJavaDescriptorResolver {
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
+        this.virtualFileKotlinClassFinder = new VirtualFileKotlinClassFinder();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
@@ -120,6 +123,8 @@ public class InjectorForJavaDescriptorResolver {
 
         this.psiClassFinder.setProject(project);
 
+        virtualFileKotlinClassFinder.setVirtualFileFinder(virtualFileFinder);
+
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
         javaAnnotationResolver.setClassResolver(javaClassResolver);
         javaAnnotationResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
@@ -133,11 +138,11 @@ public class InjectorForJavaDescriptorResolver {
         javaClassResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
+        javaClassResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
         javaClassResolver.setMemberResolver(javaMemberResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
-        javaClassResolver.setVirtualFileFinder(virtualFileFinder);
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
@@ -145,13 +150,13 @@ public class InjectorForJavaDescriptorResolver {
         deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
 
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
-        annotationDescriptorDeserializer.setVirtualFileFinder(virtualFileFinder);
+        annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileKotlinClassFinder);
 
         javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
+        javaNamespaceResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
         javaNamespaceResolver.setMemberResolver(javaMemberResolver);
-        javaNamespaceResolver.setVirtualFileFinder(virtualFileFinder);
 
         javaMemberResolver.setClassResolver(javaClassResolver);
         javaMemberResolver.setConstructorResolver(javaConstructorResolver);

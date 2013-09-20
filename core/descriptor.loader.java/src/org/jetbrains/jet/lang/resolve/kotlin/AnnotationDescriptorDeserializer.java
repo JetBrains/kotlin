@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
@@ -57,64 +56,63 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     private static final Logger LOG = Logger.getInstance(AnnotationDescriptorDeserializer.class);
 
     private JavaClassResolver javaClassResolver;
-
-    private VirtualFileFinder virtualFileFinder;
+    private KotlinClassFinder kotlinClassFinder;
 
     // TODO: a single instance of StorageManager for all computations in resolve-java
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
-    private final MemoizedFunctionToNotNull<VirtualFile, Map<MemberSignature, List<AnnotationDescriptor>>> memberAnnotations =
+    private final MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>> memberAnnotations =
             storageManager.createMemoizedFunction(
-                    new MemoizedFunctionToNotNull<VirtualFile, Map<MemberSignature, List<AnnotationDescriptor>>>() {
+                    new MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>>() {
                         @NotNull
                         @Override
-                        public Map<MemberSignature, List<AnnotationDescriptor>> fun(@NotNull VirtualFile file) {
+                        public Map<MemberSignature, List<AnnotationDescriptor>> fun(@NotNull KotlinJvmBinaryClass kotlinClass) {
                             try {
-                                return loadMemberAnnotationsFromFile(file);
+                                return loadMemberAnnotationsFromClass(kotlinClass);
                             }
                             catch (IOException e) {
-                                LOG.error("Error loading member annotations from file: " + file, e);
+                                LOG.error("Error loading member annotations from Kotlin class: " + kotlinClass, e);
                                 return Collections.emptyMap();
                             }
                         }
                     }, StorageManager.ReferenceKind.STRONG);
 
     @Inject
-    public void setVirtualFileFinder(VirtualFileFinder virtualFileFinder) {
-        this.virtualFileFinder = virtualFileFinder;
+    public void setJavaClassResolver(JavaClassResolver javaClassResolver) {
+        this.javaClassResolver = javaClassResolver;
     }
 
     @Inject
-    public void setJavaClassResolver(JavaClassResolver javaClassResolver) {
-        this.javaClassResolver = javaClassResolver;
+    public void setKotlinClassFinder(KotlinClassFinder kotlinClassFinder) {
+        this.kotlinClassFinder = kotlinClassFinder;
     }
 
     @NotNull
     @Override
     public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
-        VirtualFile virtualFile = findVirtualFileByDescriptor(descriptor);
-        if (virtualFile == null) {
-            // This means that the resource we're constructing the descriptor from is no longer present: VirtualFileFinder had found the
-            // file earlier, but it can't now
-            LOG.error("Virtual file for loading class annotations is not found: " + descriptor);
+        KotlinJvmBinaryClass kotlinClass = findKotlinClassByDescriptor(descriptor);
+        if (kotlinClass == null) {
+            // This means that the resource we're constructing the descriptor from is no longer present: KotlinClassFinder had found the
+            // class earlier, but it can't now
+            LOG.error("Kotlin class for loading class annotations is not found: " + descriptor);
             return Collections.emptyList();
         }
         try {
-            return loadClassAnnotationsFromFile(virtualFile);
+            return loadClassAnnotationsFromClass(kotlinClass);
         }
         catch (IOException e) {
-            LOG.error("Error loading member annotations from file: " + virtualFile, e);
+            LOG.error("Error loading member annotations from Kotlin class: " + kotlinClass, e);
             return Collections.emptyList();
         }
     }
 
     @Nullable
-    private VirtualFile findVirtualFileByDescriptor(@NotNull ClassOrNamespaceDescriptor descriptor) {
+    private KotlinJvmBinaryClass findKotlinClassByDescriptor(@NotNull ClassOrNamespaceDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            return virtualFileFinder.find(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
+            return kotlinClassFinder.find(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
         }
         else if (descriptor instanceof NamespaceDescriptor) {
-            return virtualFileFinder.find(PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe()));
+            return kotlinClassFinder.find(PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(descriptor).toSafe()));
         }
         else {
             throw new IllegalStateException("Unrecognized descriptor: " + descriptor);
@@ -122,10 +120,10 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @NotNull
-    private List<AnnotationDescriptor> loadClassAnnotationsFromFile(@NotNull VirtualFile virtualFile) throws IOException {
+    private List<AnnotationDescriptor> loadClassAnnotationsFromClass(@NotNull KotlinJvmBinaryClass kotlinClass) throws IOException {
         final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
 
-        new ClassReader(virtualFile.contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
+        new ClassReader(kotlinClass.getFile().contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                 return resolveAnnotation(desc, result);
@@ -222,17 +220,17 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
         if (signature == null) return Collections.emptyList();
 
-        VirtualFile file = getVirtualFileWithMemberAnnotations(container, proto, nameResolver);
-        if (file == null) {
-            LOG.error("Virtual file for loading member annotations is not found: " + container);
+        KotlinJvmBinaryClass kotlinClass = findClassWithMemberAnnotations(container, proto, nameResolver);
+        if (kotlinClass == null) {
+            LOG.error("Kotlin class for loading member annotations is not found: " + container);
         }
 
-        List<AnnotationDescriptor> annotations = memberAnnotations.fun(file).get(signature);
+        List<AnnotationDescriptor> annotations = memberAnnotations.fun(kotlinClass).get(signature);
         return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
     }
 
     @Nullable
-    private VirtualFile getVirtualFileWithMemberAnnotations(
+    private KotlinJvmBinaryClass findClassWithMemberAnnotations(
             @NotNull ClassOrNamespaceDescriptor container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver
@@ -240,18 +238,18 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (container instanceof NamespaceDescriptor) {
             Name name = loadSrcClassName(proto, nameResolver);
             if (name != null) {
-                return virtualFileFinder.find(getSrcClassFqName((NamespaceDescriptor) container, name));
+                return kotlinClassFinder.find(getSrcClassFqName((NamespaceDescriptor) container, name));
             }
             return null;
         }
         else if (container instanceof ClassDescriptor && ((ClassDescriptor) container).getKind() == ClassKind.CLASS_OBJECT) {
             // Backing fields of properties of a class object are generated in the outer class
             if (isStaticFieldInOuter(proto)) {
-                return findVirtualFileByDescriptor((ClassOrNamespaceDescriptor) container.getContainingDeclaration());
+                return findKotlinClassByDescriptor((ClassOrNamespaceDescriptor) container.getContainingDeclaration());
             }
         }
 
-        return findVirtualFileByDescriptor(container);
+        return findKotlinClassByDescriptor(container);
     }
 
     @NotNull
@@ -316,11 +314,12 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @NotNull
-    private Map<MemberSignature, List<AnnotationDescriptor>> loadMemberAnnotationsFromFile(@NotNull VirtualFile file) throws IOException {
+    private Map<MemberSignature, List<AnnotationDescriptor>> loadMemberAnnotationsFromClass(@NotNull KotlinJvmBinaryClass kotlinClass)
+            throws IOException {
         final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations =
                 new HashMap<MemberSignature, List<AnnotationDescriptor>>();
 
-        new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
+        new ClassReader(kotlinClass.getFile().contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                 final MemberSignature methodSignature = MemberSignature.fromMethodNameAndDesc(name, desc);
