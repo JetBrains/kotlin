@@ -8,4 +8,4 @@ fun firstFun() {
 // ABSENT: helloFun
 // ABSENT: helloFunPreventAutoInsert
 // ABSENT: helloWithParams
-// INVOCATION_COUNT: 0
+// NUMBER: 0

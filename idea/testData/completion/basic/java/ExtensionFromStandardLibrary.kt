@@ -7,6 +7,6 @@ fun firstFun() {
   a.toLinke<caret>
 }
 
-// TIME: 1
-// EXIST: toLinkedList@toLinkedList()~for jet.Iterable<T> in kotlin
 // INVOCATION_COUNT: 1
+// EXIST: toLinkedList@toLinkedList()~for jet.Iterable<T> in kotlin
+// NUMBER: 1

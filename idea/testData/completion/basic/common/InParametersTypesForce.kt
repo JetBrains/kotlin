@@ -4,7 +4,7 @@ class SomeClass {
   fun some(a : S<caret>)
 }
 
-// TIME: 2
+// INVOCATION_COUNT: 2
 // EXIST: SomeClass, SomeInternal
 // EXIST: String~(jet)
 // EXIST: IllegalStateException

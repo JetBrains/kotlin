@@ -12,4 +12,4 @@ fun firstFun() {
 // EXIST: testingExpectedFunction
 // ABSENT: testingUnexpectedFunction
 
-// INVOCATION_COUNT: 2
+// NUMBER: 2

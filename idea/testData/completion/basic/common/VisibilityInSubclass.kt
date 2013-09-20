@@ -11,6 +11,6 @@ class SomeSubclass : Some() {
     }
 }
 
-// TIME: 1
+// INVOCATION_COUNT: 1
 // EXIST: testPublic, testProtected, testPackage
 // ABSENT: testPrivate

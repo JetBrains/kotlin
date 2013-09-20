@@ -104,11 +104,11 @@ public class ExpectedCompletionUtils {
     private static final String EXIST_JAVA_ONLY_LINE_PREFIX = "EXIST_JAVA_ONLY:";
     private static final String EXIST_JS_ONLY_LINE_PREFIX = "EXIST_JS_ONLY:";
 
-    private static final String NUMBER_LINE_PREFIX = "INVOCATION_COUNT:";
-    private static final String NUMBER_JS_LINE_PREFIX = "INVOCATION_COUNT_JS:";
-    private static final String NUMBER_JAVA_LINE_PREFIX = "INVOCATION_COUNT_JAVA:";
+    private static final String NUMBER_LINE_PREFIX = "NUMBER:";
+    private static final String NUMBER_JS_LINE_PREFIX = "NUMBER_JS:";
+    private static final String NUMBER_JAVA_LINE_PREFIX = "NUMBER_JAVA:";
 
-    private static final String EXECUTION_TIME_PREFIX = "TIME:";
+    private static final String INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:";
     private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";
 
     public static final List<String> KNOWN_PREFIXES = ImmutableList.of(
@@ -121,7 +121,7 @@ public class ExpectedCompletionUtils {
             NUMBER_LINE_PREFIX,
             NUMBER_JS_LINE_PREFIX,
             NUMBER_JAVA_LINE_PREFIX,
-            EXECUTION_TIME_PREFIX,
+            INVOCATION_COUNT_PREFIX,
             WITH_ORDER_PREFIX);
 
     @NotNull
@@ -201,8 +201,8 @@ public class ExpectedCompletionUtils {
     }
 
     @Nullable
-    public static Integer getExecutionTime(String fileText) {
-        return InTextDirectivesUtils.getPrefixedInt(fileText, EXECUTION_TIME_PREFIX);
+    public static Integer getInvocationCount(String fileText) {
+        return InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX);
     }
 
     public static boolean isWithOrder(String fileText) {

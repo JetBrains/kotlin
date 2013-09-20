@@ -2,7 +2,7 @@ class TestClass {
     <caret>
 }
 
-// TIME: 1
+// INVOCATION_COUNT: 1
 
 // EXIST:  abstract
 // ABSENT: annotation

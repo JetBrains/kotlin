@@ -8,4 +8,4 @@ public class Testing {
 // ABSENT: jet2
 
 // Only two proposals expected
-// INVOCATION_COUNT: 1
+// NUMBER: 1

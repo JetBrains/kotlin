@@ -9,7 +9,7 @@ fun test() {
     Some().<caret>
 }
 
-// TIME: 1
+// INVOCATION_COUNT: 1
 // EXIST: testPublic, testPackage
 // ABSENT: testPrivate, testProtected
 

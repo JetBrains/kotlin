@@ -7,4 +7,4 @@ class Test {
 }
 
 // EXIST: util
-// INVOCATION_COUNT: 1
+// NUMBER: 1

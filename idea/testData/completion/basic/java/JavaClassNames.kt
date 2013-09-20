@@ -7,6 +7,6 @@ class Hello() {
    }
 }
 
-// TIME: 2
+// INVOCATION_COUNT: 2
 // EXIST: SortedMap, Short, Socket
 // ABSENT: hashSetOf

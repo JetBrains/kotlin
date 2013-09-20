@@ -5,7 +5,7 @@ fun firstFun() {
   val a = PropertyM<caret>
 }
 
-// TIME: 1
+// INVOCATION_COUNT: 1
 // EXIST: PropertyMetadata@PropertyMetadata~(jet)
 // EXIST: PropertyMetadataImpl@PropertyMetadataImpl~(jet)
-// INVOCATION_COUNT: 2
+// NUMBER: 2

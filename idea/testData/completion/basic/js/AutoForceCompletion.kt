@@ -1,4 +1,4 @@
 fun some(a : HTMLStyle<caret>)
 
-// TIME: 1
+// INVOCATION_COUNT: 1
 // EXIST: HTMLStyleElement

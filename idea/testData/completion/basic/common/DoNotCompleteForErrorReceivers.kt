@@ -4,5 +4,5 @@ fun anyfun() {
     a.b.c.d.e.f.<caret>
 }
 
-// TIME: 1
-// INVOCATION_COUNT: 0
+// INVOCATION_COUNT: 1
+// NUMBER: 0

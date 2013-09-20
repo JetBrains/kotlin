@@ -9,4 +9,4 @@ fun firstFun() {
 // EXIST: someProperty
 // EXIST: someOtherProperty
 // EXIST: someSelfProperty
-// INVOCATION_COUNT: 3
+// NUMBER: 3

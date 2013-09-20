@@ -9,4 +9,4 @@ fun firstFun() {
 // EXIST: helloFunPreventAutoInsert
 // EXIST: helloWithParams
 // ABSENT: helloFake
-// INVOCATION_COUNT: 3
+// NUMBER: 3

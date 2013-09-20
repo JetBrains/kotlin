@@ -15,5 +15,5 @@ class TestSample() {
     }
 }
 
-// TIME: 2
+// INVOCATION_COUNT: 2
 // EXIST: testVar, testFun, testTop
