@@ -354,6 +354,11 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJavaCompletionT
             doTest("idea/testData/completion/basic/common/SubpackageInFun.kt");
         }
         
+        @TestMetadata("TopLevelClassCompletionInQualifiedCall.kt")
+        public void testTopLevelClassCompletionInQualifiedCall() throws Exception {
+            doTest("idea/testData/completion/basic/common/TopLevelClassCompletionInQualifiedCall.kt");
+        }
+        
         @TestMetadata("VariableClassName.kt")
         public void testVariableClassName() throws Exception {
             doTest("idea/testData/completion/basic/common/VariableClassName.kt");
