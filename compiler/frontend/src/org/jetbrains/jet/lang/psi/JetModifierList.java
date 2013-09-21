@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.ArrayList;
@@ -57,6 +58,20 @@ public class JetModifierList extends JetElementImpl {
             answer.addAll(annotation.getEntries());
         }
         return answer != null ? answer : Collections.<JetAnnotationEntry>emptyList();
+    }
+
+    @NotNull
+    public List<ASTNode> getModifierNodes() {
+        List<ASTNode> modifierNodes = new ArrayList<ASTNode>();
+
+        ASTNode node = getNode().getFirstChildNode();
+        while (node != null) {
+            if (node.getElementType() instanceof JetKeywordToken) {
+                modifierNodes.add(node);
+            }
+            node = node.getTreeNext();
+        }
+        return modifierNodes;
     }
 
     public boolean hasModifier(JetToken token) {

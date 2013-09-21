@@ -19,8 +19,10 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,10 +31,12 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilder;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetAnnotationElementType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.inject.Inject;
@@ -88,6 +92,7 @@ public class DeclarationResolver {
 
 
     public void process(@NotNull JetScope rootScope) {
+        resolveNamespaceHeaders();
         resolveAnnotationConstructors();
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
@@ -96,6 +101,29 @@ public class DeclarationResolver {
         importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
         checkRedeclarationsInInnerClassNames();
+    }
+
+    private void resolveNamespaceHeaders() {
+        for (JetFile file : context.getNamespaceDescriptors().keySet()) {
+            JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
+
+            if (namespaceHeader != null) {
+                PsiElement firstChild = namespaceHeader.getFirstChild();
+
+                if (firstChild instanceof JetModifierList) {
+                    JetModifierList modifierList = (JetModifierList) firstChild;
+
+                    for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+                        JetReferenceExpression reference = annotationEntry.getCalleeExpression().getConstructorReferenceExpression();
+                        trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+                    }
+
+                    for (ASTNode node : modifierList.getModifierNodes()) {
+                        trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
+                    }
+                }
+            }
+        }
     }
 
     private void resolveAnnotationConstructors() {
