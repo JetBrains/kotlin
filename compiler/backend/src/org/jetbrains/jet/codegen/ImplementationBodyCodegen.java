@@ -58,8 +58,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -461,7 +460,81 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFunctionsForDataClasses();
 
+        generateBuiltinMethodStubs();
+
         genClosureFields(context.closure, v, state.getTypeMapper());
+    }
+
+    private List<String> getBuiltinMethodStubSignatures() {
+        List<String> result = Lists.newArrayList();
+
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        if (isSubclass(descriptor, builtIns.getList())) {
+            TypeParameterDescriptor listTypeParameter = builtIns.getList().getTypeConstructor().getParameters().get(0);
+            TypeSubstitutor deepSubstitutor = SubstitutionUtils.buildDeepSubstitutor(descriptor.getDefaultType());
+            TypeProjection substitute = deepSubstitutor.substitute(new TypeProjection(listTypeParameter.getDefaultType()));
+            assert substitute != null : "Couldn't substitute: " + descriptor;
+            ClassifierDescriptor classifier = substitute.getType().getConstructor().getDeclarationDescriptor();
+            assert classifier != null : "No classifier: " + substitute.getType();
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("add"),
+                                                              builtIns.getBoolean(), classifier) == null) {
+                result.add("add(Ljava/lang/Object;)Z");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
+                                                              builtIns.getBoolean(), builtIns.getAny()) == null) {
+                result.add("remove(Ljava/lang/Object;)Z");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("addAll"),
+                                                              builtIns.getBoolean(), builtIns.getCollection()) == null) {
+                result.add("addAll(Ljava/util/Collection;)Z");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("removeAll"),
+                                                              builtIns.getBoolean(), builtIns.getCollection()) == null) {
+                result.add("removeAll(Ljava/util/Collection;)Z");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("retainAll"),
+                                                              builtIns.getBoolean(), builtIns.getCollection()) == null) {
+                result.add("retainAll(Ljava/util/Collection;)Z");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("clear"), builtIns.getUnit()) == null){
+                result.add("clear()V");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("set"),
+                                                              classifier, builtIns.getInt(), classifier) == null) {
+                result.add("set(ILjava/lang/Object;)Ljava/lang/Object;");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("add"),
+                                                              builtIns.getUnit(), builtIns.getInt(), classifier) == null) {
+                result.add("add(ILjava/lang/Object;)V");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
+                                                              classifier, builtIns.getInt()) == null) {
+                result.add("remove(I)Ljava/lang/Object;");
+            }
+        }
+
+        return result;
+    }
+
+
+    private void generateBuiltinMethodStubs() {
+        for (String signature : getBuiltinMethodStubSignatures()) {
+            int parenthOpen = signature.indexOf('(');
+            String name = signature.substring(0, parenthOpen);
+            String desc = signature.substring(parenthOpen);
+
+            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, name, desc, null, null);
+            AsmUtil.genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
+        }
     }
 
     private List<PropertyDescriptor> getDataProperties() {
