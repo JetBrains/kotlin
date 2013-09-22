@@ -26,7 +26,7 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import com.intellij.codeInspection.SuppressIntentionAction
-import org.jetbrains.jet.lang.psi.JetPsiPrecedences.*
+import org.jetbrains.jet.plugin.util.JetPsiPrecedences
 
 public class KotlinSuppressIntentionAction(
         private val suppressAt: JetExpression,
@@ -95,7 +95,7 @@ public class KotlinSuppressIntentionAction(
 
         val project = suppressAt.getProject()
 
-        val parentheses = getPrecedence(suppressAt) > PRECEDENCE_OF_PREFIX_EXPRESSION
+        val parentheses = JetPsiPrecedences.getPrecedence(suppressAt) > JetPsiPrecedences.PRECEDENCE_OF_PREFIX_EXPRESSION
         val placeholderText = "PLACEHOLDER_ID"
         val inner = if (parentheses) "($placeholderText)" else placeholderText
         val annotatedExpression = JetPsiFactory.createExpression(project, suppressAnnotationText(id) + "\n" + inner)

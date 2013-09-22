@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -208,6 +209,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             return BINARY_EXPRESSION;
         }
 
+        @NotNull
         public final TokenSet getOperations() {
             return operations;
         }
