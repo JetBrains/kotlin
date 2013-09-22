@@ -26,7 +26,6 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -47,7 +46,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.cli.common.ExitCode.*;
+import static com.google.common.base.Predicates.in;
+import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
+import static org.jetbrains.jet.cli.common.ExitCode.OK;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
@@ -134,7 +135,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
 
             if (arguments.module != null) {
-                MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector);
+                MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
                 List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
 
                 File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
@@ -214,22 +215,5 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
         }
         return annotationsPath;
-    }
-
-    private static class FilteringMessageCollector implements MessageCollector {
-        private final MessageCollector messageCollector;
-
-        public FilteringMessageCollector(@NotNull MessageCollector messageCollector) {
-            this.messageCollector = messageCollector;
-        }
-
-        @Override
-        public void report(
-                @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
-        ) {
-            if (!CompilerMessageSeverity.VERBOSE.contains(severity)) {
-                messageCollector.report(severity, message, location);
-            }
-        }
     }
 }
