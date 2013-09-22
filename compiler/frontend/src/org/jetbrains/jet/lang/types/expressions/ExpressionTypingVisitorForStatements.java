@@ -357,6 +357,13 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
+    public JetTypeInfo visitAnnotatedExpression(
+            @NotNull JetAnnotatedExpression expression, ExpressionTypingContext data
+    ) {
+        return basic.visitAnnotatedExpression(expression, data, true);
+    }
+
+    @Override
     public JetTypeInfo visitIfExpression(JetIfExpression expression, ExpressionTypingContext context) {
         return controlStructures.visitIfExpression(expression, context, true);
     }

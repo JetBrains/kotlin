@@ -1169,6 +1169,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context) {
+        return visitAnnotatedExpression(expression, context, false);
+    }
+
+    public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context, boolean isStatement) {
         context.expressionTypingServices.getAnnotationResolver().resolveAnnotationsWithArguments(
                 context.scope, expression.getAnnotationEntries(), context.trace);
 
@@ -1176,7 +1180,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (baseExpression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        return facade.getTypeInfo(baseExpression, context);
+        return facade.getTypeInfo(baseExpression, context, isStatement);
     }
 
     @Override
