@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cli.common;
 
+import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
@@ -27,9 +28,7 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.PrintStream;
 
-import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
-import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
-import static org.jetbrains.jet.cli.common.ExitCode.OK;
+import static org.jetbrains.jet.cli.common.ExitCode.*;
 
 public abstract class CLICompiler<A extends CompilerArguments> {
 
@@ -108,10 +107,14 @@ public abstract class CLICompiler<A extends CompilerArguments> {
 
         printVersionIfNeeded(errStream, arguments, messageRenderer);
 
-        PrintingMessageCollector printingCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
+        MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
+
+        if (arguments.suppressAllWarnings()) {
+            collector = new FilteringMessageCollector(collector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
+        }
 
         try {
-            return exec(printingCollector, arguments);
+            return exec(collector, arguments);
         }
         finally {
             errStream.print(messageRenderer.renderConclusion());

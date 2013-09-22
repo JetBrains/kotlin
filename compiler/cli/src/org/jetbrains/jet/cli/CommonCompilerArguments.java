@@ -12,6 +12,8 @@ public abstract class CommonCompilerArguments extends CompilerArguments {
     public boolean version;
     @Argument(value = "help", alias = "h", description = "Show help")
     public boolean help;
+    @Argument(value = "suppress", description = "Suppress compiler messages by severity (warnings)")
+    public String suppress;
 
     @Override
     public boolean isHelp() {
@@ -39,5 +41,10 @@ public abstract class CommonCompilerArguments extends CompilerArguments {
 
     public void setTags(boolean tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public boolean suppressAllWarnings() {
+        return "warnings".equalsIgnoreCase(suppress);
     }
 }
