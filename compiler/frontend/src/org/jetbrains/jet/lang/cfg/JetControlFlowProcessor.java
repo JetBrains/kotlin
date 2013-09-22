@@ -151,6 +151,16 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitAnnotatedExpression(JetAnnotatedExpression expression) {
+            builder.read(expression);
+
+            JetExpression baseExpression = expression.getBaseExpression();
+            if (baseExpression != null) {
+                generateInstructions(baseExpression, inCondition);
+            }
+        }
+
+        @Override
         public void visitThisExpression(JetThisExpression expression) {
             builder.read(expression);
         }

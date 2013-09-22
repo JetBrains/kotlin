@@ -5598,6 +5598,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/suppress/allWarnings/suppressWarningsOnClassObject.kt");
                 }
                 
+                @TestMetadata("suppressWarningsOnExpression.kt")
+                public void testSuppressWarningsOnExpression() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/suppress/allWarnings/suppressWarningsOnExpression.kt");
+                }
+                
                 @TestMetadata("suppressWarningsOnFunction.kt")
                 public void testSuppressWarningsOnFunction() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/suppress/allWarnings/suppressWarningsOnFunction.kt");
@@ -5646,6 +5651,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/suppress/manyWarnings/onClassObject.kt");
                 }
                 
+                @TestMetadata("onExpression.kt")
+                public void testOnExpression() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/suppress/manyWarnings/onExpression.kt");
+                }
+                
                 @TestMetadata("onFunction.kt")
                 public void testOnFunction() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/suppress/manyWarnings/onFunction.kt");
@@ -5687,6 +5697,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 @TestMetadata("onClassObject.kt")
                 public void testOnClassObject() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/suppress/oneWarning/onClassObject.kt");
+                }
+                
+                @TestMetadata("onExpression.kt")
+                public void testOnExpression() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/suppress/oneWarning/onExpression.kt");
                 }
                 
                 @TestMetadata("onFunction.kt")

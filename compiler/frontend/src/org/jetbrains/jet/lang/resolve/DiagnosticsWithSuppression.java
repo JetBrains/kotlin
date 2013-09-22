@@ -9,16 +9,14 @@ import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.psi.JetAnnotated;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -34,7 +32,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private final Collection<Diagnostic> diagnostics;
 
     // The cache is weak: we're OK with losing it
-    private final Map<JetDeclaration, Suppressor> suppressors = new ConcurrentWeakValueHashMap<JetDeclaration, Suppressor>();
+    private final Map<JetAnnotated, Suppressor> suppressors = new ConcurrentWeakValueHashMap<JetAnnotated, Suppressor>();
 
     // Caching frequently used values:
     private final ClassDescriptor suppressClass;
@@ -82,14 +80,14 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private boolean isSuppressed(@NotNull Diagnostic diagnostic) {
         PsiElement element = diagnostic.getPsiElement();
 
-        JetDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetDeclaration.class, false);
-        if (declaration == null) return false;
+        JetAnnotated annotated = PsiTreeUtil.getParentOfType(element, JetAnnotated.class, false);
+        if (annotated == null) return false;
 
-        return isSuppressedByDeclaration(diagnostic, declaration, 0);
+        return isSuppressedByAnnotated(diagnostic, annotated, 0);
     }
 
     /*
-       The cache is optimized for the case where no warnings are suppressed at a declaration (most frequent one)
+       The cache is optimized for the case where no warnings are suppressed (most frequent one)
 
        trait Root {
          suppress("X")
@@ -117,52 +115,50 @@ public class DiagnosticsWithSuppression implements Diagnostics {
 
        This way we need no more lookups than the number of suppress() annotations from here to the root.
      */
-    private boolean isSuppressedByDeclaration(@NotNull Diagnostic diagnostic, @NotNull JetDeclaration declaration, int debugDepth) {
+    private boolean isSuppressedByAnnotated(@NotNull Diagnostic diagnostic, @NotNull JetAnnotated annotated, int debugDepth) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Declaration: ", declaration.getName());
+            LOG.debug("Annotated: ", annotated.getName());
             LOG.debug("Depth: ", debugDepth);
             LOG.debug("Cache size: ", suppressors.size(), "\n");
         }
 
-        Suppressor suppressor = getOrCreateSuppressor(declaration);
+        Suppressor suppressor = getOrCreateSuppressor(annotated);
         if (suppressor.isSuppressed(diagnostic)) return true;
 
-        JetDeclaration declarationAbove = PsiTreeUtil.getParentOfType(suppressor.getDeclaration(), JetDeclaration.class, true);
-        if (declarationAbove == null) return false;
+        JetAnnotated annotatedAbove = PsiTreeUtil.getParentOfType(suppressor.getAnnotatedElement(), JetAnnotated.class, true);
+        if (annotatedAbove == null) return false;
 
-        boolean suppressed = isSuppressedByDeclaration(diagnostic, declarationAbove, debugDepth + 1);
-        Suppressor suppressorAbove = suppressors.get(declarationAbove);
+        boolean suppressed = isSuppressedByAnnotated(diagnostic, annotatedAbove, debugDepth + 1);
+        Suppressor suppressorAbove = suppressors.get(annotatedAbove);
         if (suppressorAbove != null && suppressorAbove.dominates(suppressor)) {
-            suppressors.put(declaration, suppressorAbove);
+            suppressors.put(annotated, suppressorAbove);
         }
 
         return suppressed;
     }
 
     @NotNull
-    private Suppressor getOrCreateSuppressor(@NotNull JetDeclaration declaration) {
-        Suppressor suppressor = suppressors.get(declaration);
+    private Suppressor getOrCreateSuppressor(@NotNull JetAnnotated annotated) {
+        Suppressor suppressor = suppressors.get(annotated);
         if (suppressor == null) {
-            Set<String> strings = getSuppressingStrings(declaration.getModifierList());
+            Set<String> strings = getSuppressingStrings(annotated);
             if (strings.isEmpty()) {
-                suppressor = new EmptySuppressor(declaration);
+                suppressor = new EmptySuppressor(annotated);
             }
             else if (strings.size() == 1) {
-                suppressor = new SingularSuppressor(declaration, strings.iterator().next());
+                suppressor = new SingularSuppressor(annotated, strings.iterator().next());
             }
             else {
-                suppressor = new MultiSuppressor(declaration, strings);
+                suppressor = new MultiSuppressor(annotated, strings);
             }
-            suppressors.put(declaration, suppressor);
+            suppressors.put(annotated, suppressor);
         }
         return suppressor;
     }
 
-    private Set<String> getSuppressingStrings(@Nullable JetModifierList modifierList) {
-        if (modifierList == null) return ImmutableSet.of();
-
+    private Set<String> getSuppressingStrings(@NotNull JetAnnotated annotated) {
         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+        for (JetAnnotationEntry annotationEntry : annotated.getAnnotationEntries()) {
             AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor == null) {
                 continue;
@@ -200,15 +196,15 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     }
 
     private static abstract class Suppressor {
-        private final JetDeclaration declaration;
+        private final JetAnnotated annotated;
 
-        protected Suppressor(@NotNull JetDeclaration declaration) {
-            this.declaration = declaration;
+        protected Suppressor(@NotNull JetAnnotated annotated) {
+            this.annotated = annotated;
         }
 
         @NotNull
-        public JetDeclaration getDeclaration() {
-            return declaration;
+        public JetAnnotated getAnnotatedElement() {
+            return annotated;
         }
 
         public abstract boolean isSuppressed(@NotNull Diagnostic diagnostic);
@@ -219,8 +215,8 @@ public class DiagnosticsWithSuppression implements Diagnostics {
 
     private static class EmptySuppressor extends Suppressor {
 
-        private EmptySuppressor(@NotNull JetDeclaration declaration) {
-            super(declaration);
+        private EmptySuppressor(@NotNull JetAnnotated annotated) {
+            super(annotated);
         }
 
         @Override
@@ -237,8 +233,8 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private static class SingularSuppressor extends Suppressor {
         private final String string;
 
-        private SingularSuppressor(@NotNull JetDeclaration declaration, @NotNull String string) {
-            super(declaration);
+        private SingularSuppressor(@NotNull JetAnnotated annotated, @NotNull String string) {
+            super(annotated);
             this.string = string;
         }
 
@@ -257,8 +253,8 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private static class MultiSuppressor extends Suppressor {
         private final Set<String> strings;
 
-        private MultiSuppressor(@NotNull JetDeclaration declaration, @NotNull Set<String> strings) {
-            super(declaration);
+        private MultiSuppressor(@NotNull JetAnnotated annotated, @NotNull Set<String> strings) {
+            super(annotated);
             this.strings = strings;
         }
 
