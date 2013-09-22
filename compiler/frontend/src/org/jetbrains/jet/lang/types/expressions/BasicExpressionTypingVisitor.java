@@ -1170,7 +1170,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context) {
         context.expressionTypingServices.getAnnotationResolver().resolveAnnotationsWithArguments(
-                context.scope, expression.getAttributes(), context.trace);
+                context.scope, expression.getAnnotationEntries(), context.trace);
 
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) {

@@ -24,6 +24,9 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collections;
+import java.util.List;
+
 public class JetTypeProjection extends JetElementImpl implements JetModifierListOwner {
     public JetTypeProjection(@NotNull ASTNode node) {
         super(node);
@@ -86,5 +89,21 @@ public class JetTypeProjection extends JetElementImpl implements JetModifierList
         }
 
         return null;
+    }
+
+    @NotNull
+    @Override
+    public List<JetAnnotationEntry> getAnnotationEntries() {
+        JetModifierList modifierList = getModifierList();
+        if (modifierList == null) return Collections.emptyList();
+        return modifierList.getAnnotationEntries();
+    }
+
+    @NotNull
+    @Override
+    public List<JetAnnotation> getAnnotations() {
+        JetModifierList modifierList = getModifierList();
+        if (modifierList == null) return Collections.emptyList();
+        return modifierList.getAnnotations();
     }
 }

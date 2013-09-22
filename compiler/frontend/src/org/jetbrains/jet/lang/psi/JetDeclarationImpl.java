@@ -22,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
+import java.util.Collections;
+import java.util.List;
+
 abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclaration {
     public JetDeclarationImpl(@NotNull ASTNode node) {
         super(node);
@@ -37,5 +40,21 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
     public boolean hasModifier(JetToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
+    }
+
+    @NotNull
+    @Override
+    public List<JetAnnotationEntry> getAnnotationEntries() {
+        JetModifierList modifierList = getModifierList();
+        if (modifierList == null) return Collections.emptyList();
+        return modifierList.getAnnotationEntries();
+    }
+
+    @NotNull
+    @Override
+    public List<JetAnnotation> getAnnotations() {
+        JetModifierList modifierList = getModifierList();
+        if (modifierList == null) return Collections.emptyList();
+        return modifierList.getAnnotations();
     }
 }
