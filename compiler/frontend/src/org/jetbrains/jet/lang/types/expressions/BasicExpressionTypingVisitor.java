@@ -45,7 +45,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
@@ -1169,12 +1168,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context) {
+        context.expressionTypingServices.getAnnotationResolver().resolveAnnotationsWithArguments(
+                context.scope, expression.getAttributes(), context.trace);
+
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) {
-            return JetTypeInfo.create(null, data.dataFlowInfo);
+            return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        return facade.getTypeInfo(baseExpression, data);
+        return facade.getTypeInfo(baseExpression, context);
     }
 
     @Override

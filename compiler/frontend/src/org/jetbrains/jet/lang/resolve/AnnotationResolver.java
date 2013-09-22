@@ -80,6 +80,15 @@ public class AnnotationResolver {
         return resolveAnnotations(scope, modifierList, trace, true);
     }
 
+    @NotNull
+    public List<AnnotationDescriptor> resolveAnnotationsWithArguments(
+            @NotNull JetScope scope,
+            @NotNull List<JetAnnotationEntry> annotationEntries,
+            @NotNull BindingTrace trace
+    ) {
+        return resolveAnnotationEntries(scope, annotationEntries, trace, true);
+    }
+
     private List<AnnotationDescriptor> resolveAnnotations(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
@@ -91,6 +100,14 @@ public class AnnotationResolver {
         }
         List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
 
+        return resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments);
+    }
+
+    private List<AnnotationDescriptor> resolveAnnotationEntries(
+            @NotNull JetScope scope,
+            @NotNull List<JetAnnotationEntry> annotationEntryElements, @NotNull BindingTrace trace,
+            boolean shouldResolveArguments
+    ) {
         if (annotationEntryElements.isEmpty()) return Collections.emptyList();
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry entryElement : annotationEntryElements) {

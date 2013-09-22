@@ -610,6 +610,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/NonAnnotationClass.kt");
             }
             
+            @TestMetadata("onExpression.kt")
+            public void testOnExpression() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/onExpression.kt");
+            }
+            
+            @TestMetadata("onMultiDeclaration.kt")
+            public void testOnMultiDeclaration() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/onMultiDeclaration.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/backingField")
