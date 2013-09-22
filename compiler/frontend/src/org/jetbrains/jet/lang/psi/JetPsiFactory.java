@@ -197,9 +197,20 @@ public class JetPsiFactory {
     }
 
     public static JetModifierList createModifierList(Project project, JetKeywordToken modifier) {
-        String text = modifier.getValue() + " val x";
-        JetProperty property = createProperty(project, text);
+        return createModifierList(project, modifier.getValue());
+    }
+
+    public static JetModifierList createModifierList(Project project, String text) {
+        JetProperty property = createProperty(project, text + " val x");
         return property.getModifierList();
+    }
+
+    @NotNull
+    public static JetAnnotation createAnnotation(Project project, String text) {
+        JetProperty property = createProperty(project, text + " val x");
+        JetModifierList modifierList = property.getModifierList();
+        assert modifierList != null;
+        return modifierList.getAnnotations().get(0);
     }
 
     public static JetModifierList createConstructorModifierList(Project project, JetKeywordToken modifier) {

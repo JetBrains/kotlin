@@ -1003,4 +1003,22 @@ public class JetPsiUtil {
 
         return new StringBuilder(inFileParent.getText()).insert(inFileParentOffset, "<caret>").toString();
     }
+
+    @Nullable
+    public static JetModifierList replaceModifierList(@NotNull JetModifierListOwner owner, @Nullable JetModifierList modifierList) {
+        JetModifierList oldModifierList = owner.getModifierList();
+        if (modifierList == null) {
+            if (oldModifierList != null) oldModifierList.delete();
+            return null;
+        }
+        else {
+            if (oldModifierList == null) {
+                PsiElement firstChild = owner.getFirstChild();
+                return (JetModifierList) owner.addBefore(modifierList, firstChild);
+            }
+            else {
+                return (JetModifierList) oldModifierList.replace(modifierList);
+            }
+        }
+    }
 }
