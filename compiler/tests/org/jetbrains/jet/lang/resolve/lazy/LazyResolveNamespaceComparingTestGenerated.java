@@ -2409,6 +2409,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/varargIterator.kt");
         }
         
+        @TestMetadata("WrongAnnotationArgsOnObject.kt")
+        public void testWrongAnnotationArgsOnObject() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/WrongAnnotationArgsOnObject.kt");
+        }
+        
     }
     
     public static Test suite() {
