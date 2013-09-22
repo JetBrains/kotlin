@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.diagnostics.Severity
 import java.util.Collections
 import org.jetbrains.jet.plugin.quickfix.KotlinSuppressIntentionAction
 import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.plugin.quickfix.DeclarationKind
+import org.jetbrains.jet.plugin.quickfix.AnnotationHostKind
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import com.intellij.psi.util.PsiTreeUtil
 
@@ -53,12 +53,23 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
 
     val actions = arrayListOf<SuppressIntentionAction>()
     var current: PsiElement? = element
+    var suppressAtStatementAllowed = true
     while (current != null) {
         if (current is JetDeclaration) {
             val declaration = current as JetDeclaration
             val kind = DeclarationKindDetector.detect(declaration)
             if (kind != null) {
                 actions.add(KotlinSuppressIntentionAction(declaration, diagnosticFactory, kind))
+            }
+            suppressAtStatementAllowed = false
+        }
+        else if (current is JetExpression && suppressAtStatementAllowed) {
+            // Add suppress action at first statement
+            if ((current as PsiElement).getParent() is JetBlockExpression) {
+                val expression = current as JetExpression
+                actions.add(KotlinSuppressIntentionAction(expression, diagnosticFactory,
+                                                          AnnotationHostKind("statement", "", true)))
+                suppressAtStatementAllowed = false
             }
         }
 
@@ -67,7 +78,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
     return actions
 }
 
-private object DeclarationKindDetector : JetVisitor<DeclarationKind?, Unit?>() {
+private object DeclarationKindDetector : JetVisitor<AnnotationHostKind?, Unit?>() {
 
     fun detect(declaration: JetDeclaration) = declaration.accept(this, null)
 
@@ -91,11 +102,12 @@ private object DeclarationKindDetector : JetVisitor<DeclarationKind?, Unit?>() {
 
     override fun visitParameter(d: JetParameter, _: Unit?) = detect(d, "parameter", newLineNeeded = false)
 
-    override fun visitObjectDeclaration(d: JetObjectDeclaration, _: Unit?): DeclarationKind? {
+    override fun visitObjectDeclaration(d: JetObjectDeclaration, _: Unit?): AnnotationHostKind? {
         if (d.getParent() is JetClassObject) return null
+        if (d.getParent() is JetObjectLiteralExpression) return null
         return detect(d, "object")
     }
 
-    private fun detect(declaration: JetDeclaration, kind: String, name: String = declaration.getName() ?: "<null>", newLineNeeded: Boolean = true)
-        = DeclarationKind(kind, name, newLineNeeded)
+    private fun detect(declaration: JetDeclaration, kind: String, name: String = declaration.getName() ?: "<anonymous>", newLineNeeded: Boolean = true)
+        = AnnotationHostKind(kind, name, newLineNeeded)
 }

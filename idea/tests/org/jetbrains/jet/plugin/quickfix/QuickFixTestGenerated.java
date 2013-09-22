@@ -1372,7 +1372,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/suppress")
-    @InnerTestClasses({Suppress.AnnotationPosition.class, Suppress.Availability.class, Suppress.DeclarationKinds.class, Suppress.ErrorRecovery.class})
+    @InnerTestClasses({Suppress.AnnotationPosition.class, Suppress.Availability.class, Suppress.DeclarationKinds.class, Suppress.ErrorRecovery.class, Suppress.ForStatement.class})
     public static class Suppress extends AbstractQuickFixTest {
         public void testAllFilesPresentInSuppress() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/suppress"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -1585,6 +1585,279 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
+        @TestMetadata("idea/testData/quickfix/suppress/forStatement")
+        @InnerTestClasses({ForStatement.Unavailable.class})
+        public static class ForStatement extends AbstractQuickFixTest {
+            public void testAllFilesPresentInForStatement() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/suppress/forStatement"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeAndAnd.kt")
+            public void testAndAnd() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeAndAnd.kt");
+            }
+            
+            @TestMetadata("beforeAnnotatedExpr.kt")
+            public void testAnnotatedExpr() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeAnnotatedExpr.kt");
+            }
+            
+            @TestMetadata("beforeAnnotatedExprWithSuppress.kt")
+            public void testAnnotatedExprWithSuppress() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeAnnotatedExprWithSuppress.kt");
+            }
+            
+            @TestMetadata("beforeArrayRead.kt")
+            public void testArrayRead() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeArrayRead.kt");
+            }
+            
+            @TestMetadata("beforeAs.kt")
+            public void testAs() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeAs.kt");
+            }
+            
+            @TestMetadata("beforeAsSafe.kt")
+            public void testAsSafe() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeAsSafe.kt");
+            }
+            
+            @TestMetadata("beforeAssign.kt")
+            public void testAssign() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeAssign.kt");
+            }
+            
+            @TestMetadata("beforeCall.kt")
+            public void testCall() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeCall.kt");
+            }
+            
+            @TestMetadata("beforeColon.kt")
+            public void testColon() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeColon.kt");
+            }
+            
+            @TestMetadata("beforeDoWhile.kt")
+            public void testDoWhile() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeDoWhile.kt");
+            }
+            
+            @TestMetadata("beforeDotQualified.kt")
+            public void testDotQualified() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeDotQualified.kt");
+            }
+            
+            @TestMetadata("beforeElvis.kt")
+            public void testElvis() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeElvis.kt");
+            }
+            
+            @TestMetadata("beforeEqEq.kt")
+            public void testEqEq() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeEqEq.kt");
+            }
+            
+            @TestMetadata("beforeFor.kt")
+            public void testFor() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeFor.kt");
+            }
+            
+            @TestMetadata("beforeIf.kt")
+            public void testIf() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeIf.kt");
+            }
+            
+            @TestMetadata("beforeIn.kt")
+            public void testIn() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeIn.kt");
+            }
+            
+            @TestMetadata("beforeInfix.kt")
+            public void testInfix() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeInfix.kt");
+            }
+            
+            @TestMetadata("beforeIs.kt")
+            public void testIs() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeIs.kt");
+            }
+            
+            @TestMetadata("beforeLabeled.kt")
+            public void testLabeled() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeLabeled.kt");
+            }
+            
+            @TestMetadata("beforeLess.kt")
+            public void testLess() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeLess.kt");
+            }
+            
+            @TestMetadata("beforeMul.kt")
+            public void testMul() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeMul.kt");
+            }
+            
+            @TestMetadata("beforeOrOr.kt")
+            public void testOrOr() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeOrOr.kt");
+            }
+            
+            @TestMetadata("beforeParenthesized.kt")
+            public void testParenthesized() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeParenthesized.kt");
+            }
+            
+            @TestMetadata("beforePlus.kt")
+            public void testPlus() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforePlus.kt");
+            }
+            
+            @TestMetadata("beforePostfix.kt")
+            public void testPostfix() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforePostfix.kt");
+            }
+            
+            @TestMetadata("beforePostfixPlusPlus.kt")
+            public void testPostfixPlusPlus() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforePostfixPlusPlus.kt");
+            }
+            
+            @TestMetadata("beforePrefixPlusPlus.kt")
+            public void testPrefixPlusPlus() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforePrefixPlusPlus.kt");
+            }
+            
+            @TestMetadata("beforeRange.kt")
+            public void testRange() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeRange.kt");
+            }
+            
+            @TestMetadata("beforeReturn.kt")
+            public void testReturn() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeReturn.kt");
+            }
+            
+            @TestMetadata("beforeSafeQualified.kt")
+            public void testSafeQualified() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeSafeQualified.kt");
+            }
+            
+            @TestMetadata("beforeSimpleName.kt")
+            public void testSimpleName() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeSimpleName.kt");
+            }
+            
+            @TestMetadata("beforeStringTemplate.kt")
+            public void testStringTemplate() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeStringTemplate.kt");
+            }
+            
+            @TestMetadata("beforeThrow.kt")
+            public void testThrow() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeThrow.kt");
+            }
+            
+            @TestMetadata("beforeTry.kt")
+            public void testTry() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeTry.kt");
+            }
+            
+            @TestMetadata("beforeWhenExpressionEntry.kt")
+            public void testWhenExpressionEntry() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeWhenExpressionEntry.kt");
+            }
+            
+            @TestMetadata("beforeWhenInEntry.kt")
+            public void testWhenInEntry() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeWhenInEntry.kt");
+            }
+            
+            @TestMetadata("beforeWhenIsEntry.kt")
+            public void testWhenIsEntry() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeWhenIsEntry.kt");
+            }
+            
+            @TestMetadata("beforeWhenSubject.kt")
+            public void testWhenSubject() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeWhenSubject.kt");
+            }
+            
+            @TestMetadata("beforeWhile.kt")
+            public void testWhile() throws Exception {
+                doTest("idea/testData/quickfix/suppress/forStatement/beforeWhile.kt");
+            }
+            
+            @TestMetadata("idea/testData/quickfix/suppress/forStatement/unavailable")
+            public static class Unavailable extends AbstractQuickFixTest {
+                public void testAllFilesPresentInUnavailable() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/suppress/forStatement/unavailable"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("beforeInAnnotationArgument.kt")
+                public void testInAnnotationArgument() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInAnnotationArgument.kt");
+                }
+                
+                @TestMetadata("beforeInClassHeader.kt")
+                public void testInClassHeader() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInClassHeader.kt");
+                }
+                
+                @TestMetadata("beforeInDefaultArgument.kt")
+                public void testInDefaultArgument() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInDefaultArgument.kt");
+                }
+                
+                @TestMetadata("beforeInExpressionBody.kt")
+                public void testInExpressionBody() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInExpressionBody.kt");
+                }
+                
+                @TestMetadata("beforeInLocalValInitializer.kt")
+                public void testInLocalValInitializer() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInLocalValInitializer.kt");
+                }
+                
+                @TestMetadata("beforeInParameterType.kt")
+                public void testInParameterType() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInParameterType.kt");
+                }
+                
+                @TestMetadata("beforeInParameterTypeInFunctionLiteral.kt")
+                public void testInParameterTypeInFunctionLiteral() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInParameterTypeInFunctionLiteral.kt");
+                }
+                
+                @TestMetadata("beforeInPropertyInitializer.kt")
+                public void testInPropertyInitializer() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeInPropertyInitializer.kt");
+                }
+                
+                @TestMetadata("beforeObjectLiteral.kt")
+                public void testObjectLiteral() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeObjectLiteral.kt");
+                }
+                
+                @TestMetadata("beforeObjectLiteralInsideExpression.kt")
+                public void testObjectLiteralInsideExpression() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeObjectLiteralInsideExpression.kt");
+                }
+                
+                @TestMetadata("beforeSupretype.kt")
+                public void testSupretype() throws Exception {
+                    doTest("idea/testData/quickfix/suppress/forStatement/unavailable/beforeSupretype.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("ForStatement");
+                suite.addTestSuite(ForStatement.class);
+                suite.addTestSuite(Unavailable.class);
+                return suite;
+            }
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Suppress");
             suite.addTestSuite(Suppress.class);
@@ -1592,6 +1865,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             suite.addTestSuite(Availability.class);
             suite.addTestSuite(DeclarationKinds.class);
             suite.addTestSuite(ErrorRecovery.class);
+            suite.addTest(ForStatement.innerSuite());
             return suite;
         }
     }

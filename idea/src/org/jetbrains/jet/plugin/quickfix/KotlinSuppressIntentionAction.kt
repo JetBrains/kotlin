@@ -16,25 +16,22 @@
 
 package org.jetbrains.jet.plugin.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
-import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.plugin.JetBundle
-import java.util.Collections
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import com.intellij.codeInspection.SuppressIntentionAction
+import org.jetbrains.jet.lang.psi.JetPsiPrecedences.*
 
 public class KotlinSuppressIntentionAction(
-        private val suppressAt: JetDeclaration,
+        private val suppressAt: JetExpression,
         private val diagnosticFactory: DiagnosticFactory,
-        private val kind: DeclarationKind
+        private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
 
     override fun getFamilyName() = JetBundle.message("suppress.warnings.family")
@@ -44,49 +41,103 @@ public class KotlinSuppressIntentionAction(
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         val id = "\"${diagnosticFactory.getName()}\""
+        if (suppressAt is JetModifierListOwner) {
+            suppressAtModifierListOwner(suppressAt, id)
+        }
+        else if (suppressAt is JetAnnotatedExpression) {
+            suppressAtAnnotatedExpression(CaretBox(suppressAt, editor), id)
+        }
+        else if (suppressAt is JetExpression) {
+            suppressAtExpression(CaretBox(suppressAt, editor), id)
+        }
+    }
+
+    private fun suppressAtModifierListOwner(suppressAt: JetModifierListOwner, id: String) {
+        val project = suppressAt.getProject()
         val modifierList = suppressAt.getModifierList()
         if (modifierList == null) {
             // create a modifier list from scratch
-            val newModifierList = JetPsiFactory.createModifierList(project, "[suppress($id)]")
+            val newModifierList = JetPsiFactory.createModifierList(project, suppressAnnotationText(id))
             val replaced = JetPsiUtil.replaceModifierList(suppressAt, newModifierList)
             val whiteSpace = project.createWhiteSpace(kind)
             suppressAt.addAfter(whiteSpace, replaced)
         }
         else {
-            val entry = findSuppressAnnotation(modifierList)
+            val entry = findSuppressAnnotation(suppressAt)
             if (entry == null) {
-                val newAnnotation = JetPsiFactory.createAnnotation(project, "[suppress($id)]")
+                // no [suppress] annotation
+                val newAnnotation = JetPsiFactory.createAnnotation(project, suppressAnnotationText(id))
                 val addedAnnotation = modifierList.addBefore(newAnnotation, modifierList.getFirstChild())
                 val whiteSpace = project.createWhiteSpace(kind)
                 modifierList.addAfter(whiteSpace, addedAnnotation)
             }
             else {
-                // add new arguments to an existing entry
-                val args = entry.getValueArgumentList()
-                val newArgList = JetPsiFactory.createCallArguments(project, "($id)")
-                if (args == null) {
-                    // new argument list
-                    entry.addAfter(newArgList, entry.getLastChild())
-                }
-                else if (args.getArguments().isEmpty()) {
-                    // replace '()' with a new argument list
-                    args.replace(newArgList)
-                }
-                else {
-                    val rightParen = args.getRightParenthesis()
-                    args.addBefore(JetPsiFactory.createComma(project), rightParen)
-                    args.addBefore(JetPsiFactory.createWhiteSpace(project), rightParen)
-                    args.addBefore(newArgList.getArguments()[0], rightParen)
-                }
+                // already annotated with [suppress]
+                addArgumentToSuppressAnnotation(entry, id)
             }
         }
-
     }
 
-    private fun findSuppressAnnotation(modifierList: JetModifierList): JetAnnotationEntry? {
+    private fun suppressAtAnnotatedExpression(suppressAt: CaretBox<JetAnnotatedExpression>, id: String) {
+        val entry = findSuppressAnnotation(suppressAt.expression)
+        if (entry != null) {
+            // already annotated with [suppress]
+            addArgumentToSuppressAnnotation(entry, id)
+        }
+        else {
+            suppressAtExpression(suppressAt, id)
+        }
+    }
+
+    private fun suppressAtExpression(caretBox: CaretBox<JetExpression>, id: String) {
+        val suppressAt = caretBox.expression
+        assert(suppressAt !is JetDeclaration, "Declarations should have been checked for above")
+
+        val project = suppressAt.getProject()
+
+        val parentheses = getPrecedence(suppressAt) > PRECEDENCE_OF_PREFIX_EXPRESSION
+        val placeholderText = "PLACEHOLDER_ID"
+        val inner = if (parentheses) "($placeholderText)" else placeholderText
+        val annotatedExpression = JetPsiFactory.createExpression(project, suppressAnnotationText(id) + "\n" + inner)
+
+        val copy = suppressAt.copy()!!
+
+        val afterReplace = suppressAt.replace(annotatedExpression) as JetAnnotatedExpression
+        val toReplace = afterReplace.findElementAt(afterReplace.getTextLength() - 2)!!
+        assert (toReplace.getText() == placeholderText)
+        val result = toReplace.replace(copy)!!
+
+        caretBox.positionCaretInCopy(result)
+    }
+
+    private fun addArgumentToSuppressAnnotation(entry: JetAnnotationEntry, id: String) {
+        val project = entry.getProject()
+
+        // add new arguments to an existing entry
+        val args = entry.getValueArgumentList()
+        val newArgList = JetPsiFactory.createCallArguments(project, "($id)")
+        if (args == null) {
+            // new argument list
+            entry.addAfter(newArgList, entry.getLastChild())
+        }
+        else if (args.getArguments().isEmpty()) {
+            // replace '()' with a new argument list
+            args.replace(newArgList)
+        }
+        else {
+            val rightParen = args.getRightParenthesis()
+            args.addBefore(JetPsiFactory.createComma(project), rightParen)
+            args.addBefore(JetPsiFactory.createWhiteSpace(project), rightParen)
+            args.addBefore(newArgList.getArguments()[0], rightParen)
+        }
+    }
+
+    private fun suppressAnnotationText(id: String) = "[suppress($id)]"
+
+    private fun findSuppressAnnotation(annotated: JetAnnotated): JetAnnotationEntry? {
         val suppressAnnotationClass = KotlinBuiltIns.getInstance().getSuppressAnnotationClass()
-        val context = AnalyzerFacadeWithCache.getContextForElement(modifierList)
-        for (entry in modifierList.getAnnotationEntries()) {
+        val context = AnalyzerFacadeWithCache.getContextForElement(annotated)
+        for (entry in annotated.getAnnotationEntries()) {
             val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
             if (annotationDescriptor != null && suppressAnnotationClass.getTypeConstructor() == annotationDescriptor.getType().getConstructor()) {
                 return entry
@@ -96,9 +147,21 @@ public class KotlinSuppressIntentionAction(
     }
 }
 
-public class DeclarationKind(val kind: String, val name: String, val newLineNeeded: Boolean)
-private fun Project.createWhiteSpace(kind: DeclarationKind): PsiElement =
+public class AnnotationHostKind(val kind: String, val name: String, val newLineNeeded: Boolean)
+private fun Project.createWhiteSpace(kind: AnnotationHostKind): PsiElement =
         if (kind.newLineNeeded)
             JetPsiFactory.createNewLine(this)
         else
             JetPsiFactory.createWhiteSpace(this)
+
+private class CaretBox<out E: JetExpression>(
+        val expression: E,
+        private val editor: Editor?
+) {
+    private val offsetInExpression: Int = (editor?.getCaretModel()?.getOffset() ?: 0) - expression.getTextRange()!!.getStartOffset()
+
+    fun positionCaretInCopy(copy: PsiElement) {
+        if (editor == null) return
+        editor.getCaretModel().moveToOffset(copy.getTextOffset() + offsetInExpression)
+    }
+}

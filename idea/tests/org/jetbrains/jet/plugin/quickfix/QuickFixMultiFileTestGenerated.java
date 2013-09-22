@@ -250,15 +250,30 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     }
     
     @TestMetadata("idea/testData/quickfix/suppress")
-    @InnerTestClasses({})
+    @InnerTestClasses({Suppress.ForStatement.class})
     public static class Suppress extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInSuppress() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/suppress"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
         
+        @TestMetadata("idea/testData/quickfix/suppress/forStatement")
+        @InnerTestClasses({})
+        public static class ForStatement extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInForStatement() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/suppress/forStatement"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("ForStatement");
+                suite.addTestSuite(ForStatement.class);
+                return suite;
+            }
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Suppress");
             suite.addTestSuite(Suppress.class);
+            suite.addTest(ForStatement.innerSuite());
             return suite;
         }
     }
