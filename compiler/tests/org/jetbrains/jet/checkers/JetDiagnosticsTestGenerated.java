@@ -5888,6 +5888,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/when"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("AnnotatedWhenStatement.kt")
+            public void testAnnotatedWhenStatement() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt");
+            }
+            
             @TestMetadata("NoElseExpectedUnit.kt")
             public void testNoElseExpectedUnit() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/when/NoElseExpectedUnit.kt");

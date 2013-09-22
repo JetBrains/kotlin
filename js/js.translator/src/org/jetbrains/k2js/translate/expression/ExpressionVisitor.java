@@ -138,7 +138,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             @NotNull TranslationContext context) {
         JetExpression expressionInside = expression.getExpression();
         if (expressionInside != null) {
-            return expressionInside.accept(this, context);
+            JsNode translated = expressionInside.accept(this, context);
+            if (translated != null) {
+                return translated;
+            }
         }
         return context.program().getEmptyStatement();
     }
