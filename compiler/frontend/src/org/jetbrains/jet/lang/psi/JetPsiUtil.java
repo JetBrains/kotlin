@@ -403,19 +403,21 @@ public class JetPsiUtil {
         return null;
     }
 
-    public static boolean isFirstPartInQualified(@NotNull JetSimpleNameExpression nameExpression) {
-        @SuppressWarnings("unchecked") JetUserType userType = PsiTreeUtil.getParentOfType(nameExpression, JetUserType.class, true,
-                                                                                          JetDeclaration.class);
-        if (userType != null) {
-            return PsiTreeUtil.isAncestor(userType.getFirstChild(), nameExpression, false);
+    public static boolean isSelectorInQualified(@NotNull JetSimpleNameExpression nameExpression) {
+        PsiElement nameExpressionParent = nameExpression.getParent();
+
+        if (nameExpressionParent instanceof JetUserType) {
+            assert ((JetUserType) nameExpressionParent).getReferenceExpression() == nameExpression;
+            return ((JetUserType) nameExpressionParent).getQualifier() != null;
         }
 
-        @SuppressWarnings("unchecked") JetQualifiedExpression qualifiedExpression = PsiTreeUtil.getParentOfType(nameExpression, JetQualifiedExpression.class, true, JetDeclaration.class);
-        if (qualifiedExpression != null) {
-            return PsiTreeUtil.isAncestor(qualifiedExpression.getFirstChild(), nameExpression, false);
+        JetExpression selector = nameExpression;
+        if (nameExpressionParent instanceof JetCallExpression && ((JetCallExpression) nameExpressionParent).getCalleeExpression() == nameExpression) {
+            selector = (JetCallExpression) nameExpressionParent;
         }
 
-        return true;
+        PsiElement selectorParent = selector.getParent();
+        return selectorParent instanceof JetQualifiedExpression && (((JetQualifiedExpression) selectorParent).getSelectorExpression() == selector);
     }
 
     public static boolean isVoidType(@Nullable JetTypeReference typeReference) {

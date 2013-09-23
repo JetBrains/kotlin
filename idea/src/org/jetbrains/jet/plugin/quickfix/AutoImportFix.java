@@ -107,7 +107,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     }
 
     private static boolean isSuppressedTopLevelImportInPosition(@NotNull JetSimpleNameExpression element) {
-        return element.isImportDirectiveExpression() || !JetPsiUtil.isFirstPartInQualified(element);
+        return element.isImportDirectiveExpression() || JetPsiUtil.isSelectorInQualified(element);
     }
 
     private static Collection<FqName> getJetTopLevelFunctions(

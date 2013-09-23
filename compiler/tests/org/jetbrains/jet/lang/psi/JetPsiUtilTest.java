@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JetPsiUtilTest extends JetLiteFixture {
     public void testUnquotedIdentifier() {
@@ -85,6 +87,14 @@ public class JetPsiUtilTest extends JetLiteFixture {
         }
     }
 
+    public void testIsSelectorInExpression() {
+        checkIsSelectorInQualified();
+    }
+
+    public void testIsSelectorInType() {
+        checkIsSelectorInQualified();
+    }
+
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return new JetCoreEnvironment(getTestRootDisposable(), new CompilerConfiguration());
@@ -97,5 +107,30 @@ public class JetPsiUtilTest extends JetLiteFixture {
         assertNotNull("At least one import directive is expected", importDirective);
 
         return JetPsiUtil.getImportPath(importDirective);
+    }
+
+    private void checkIsSelectorInQualified() {
+        String trueResultString = "/*true*/";
+        String falseResultString = "/*false*/";
+
+        JetFile file = loadPsiFile(new File("psiUtil/" + getTestName(true) + ".kt").getPath());
+        String text = file.getText();
+
+        // /*true*/|/*false*/
+        Pattern pattern = Pattern.compile(String.format("%s|%s", Pattern.quote(trueResultString), Pattern.quote(falseResultString)));
+        Matcher matcher = pattern.matcher(text);
+
+        while (matcher.find()) {
+            boolean expected = trueResultString.equals(matcher.group());
+            int offset = matcher.end();
+
+            JetSimpleNameExpression expression = PsiTreeUtil.findElementOfClassAtOffset(file, offset, JetSimpleNameExpression.class, true);
+
+            String modifiedWithOffset = new StringBuilder(text).insert(offset, "<======caret======>").toString();
+
+            Assert.assertNotNull("Can't find expression in text:\n" + modifiedWithOffset, expression);
+            Assert.assertSame(expected + " result was expected at\n" + modifiedWithOffset,
+                              expected, JetPsiUtil.isSelectorInQualified(expression));
+        }
     }
 }
