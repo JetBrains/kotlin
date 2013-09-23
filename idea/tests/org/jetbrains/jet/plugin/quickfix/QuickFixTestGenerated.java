@@ -351,6 +351,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/autoImports/beforeNoImportForIndex.kt");
         }
         
+        @TestMetadata("beforeUnresolvedReferenceInCall.kt")
+        public void testUnresolvedReferenceInCall() throws Exception {
+            doTest("idea/testData/quickfix/autoImports/beforeUnresolvedReferenceInCall.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/quickfix/changeSignature")
