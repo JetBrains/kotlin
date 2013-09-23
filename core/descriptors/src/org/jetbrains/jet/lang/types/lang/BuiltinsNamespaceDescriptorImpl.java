@@ -120,7 +120,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                 ProtoBuf.Class classProto = ProtoBuf.Class.parseFrom(stream);
 
                 Name expectedShortName = classId.getRelativeClassName().shortName();
-                Name actualShortName = nameResolver.getName(classProto.getName());
+                Name actualShortName = nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName();
                 if (!actualShortName.isSpecial() && !actualShortName.equals(expectedShortName)) {
                     // Workaround for case-insensitive file systems,
                     // otherwise we'd find "Collection" for "collection" etc

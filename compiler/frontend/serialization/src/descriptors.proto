@@ -108,7 +108,7 @@ message Class {
   optional int32 flags = 1 [default = 0 /*internal final class, no annotations*/];
   optional string extra_visibility = 2; // for things like java-specific visibilities
 
-  required int32 name = 4;
+  required int32 fq_name = 3;
 
   repeated TypeParameter type_parameter = 5;
   repeated Type supertype = 6;

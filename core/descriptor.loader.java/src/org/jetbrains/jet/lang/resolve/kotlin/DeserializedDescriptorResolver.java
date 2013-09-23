@@ -19,11 +19,12 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
+import org.jetbrains.jet.descriptors.serialization.DescriptorFinder;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
@@ -95,36 +96,17 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(@NotNull ClassId id, @NotNull VirtualFile file) {
-        String[] data = readData(file);
-        if (data != null) {
-            ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
-            return createDeserializedClass(classData, id);
-        }
-        return null;
+    public ClassDescriptor resolveClass(@NotNull VirtualFile virtualFile) {
+        String[] data = readData(virtualFile);
+        return data == null ? null : new DeserializedClassDescriptor(storageManager, annotationDeserializer, javaDescriptorFinder,
+                                                                     JavaProtoBufUtil.readClassDataFrom(data));
     }
 
     @Nullable
-    public JetScope createKotlinPackageScope(@NotNull NamespaceDescriptor descriptor, @NotNull VirtualFile file) {
-        String[] data = readData(file);
-        if (data != null) {
-            PackageData packageData = JavaProtoBufUtil.readPackageDataFrom(data);
-            return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder,
-                                                      packageData);
-        }
-        return null;
-    }
-
-    @Nullable
-    private ClassDescriptor createDeserializedClass(@NotNull ClassData classData, @NotNull ClassId classId) {
-        DeclarationDescriptor owner = classId.isTopLevelClass()
-                                      ? javaNamespaceResolver.resolveNamespace(classId.getPackageFqName(), INCLUDE_KOTLIN_SOURCES)
-                                      : javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.getOuterClassId().asSingleFqName()),
-                                                                       IGNORE_KOTLIN_SOURCES);
-        assert owner != null : "No owner found for " + classId;
-
-        return new DeserializedClassDescriptor(classId, storageManager, owner, classData.getNameResolver(),
-                                               annotationDeserializer, javaDescriptorFinder, classData.getClassProto(), null);
+    public JetScope createKotlinPackageScope(@NotNull NamespaceDescriptor descriptor, @NotNull VirtualFile virtualFile) {
+        String[] data = readData(virtualFile);
+        return data == null ? null : new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer,
+                                                                        javaDescriptorFinder, JavaProtoBufUtil.readPackageDataFrom(data));
     }
 
     @Nullable

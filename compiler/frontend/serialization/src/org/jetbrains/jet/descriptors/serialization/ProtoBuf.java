@@ -4344,15 +4344,15 @@ public final class ProtoBuf {
     com.google.protobuf.ByteString
         getExtraVisibilityBytes();
 
-    // required int32 name = 4;
+    // required int32 fq_name = 3;
     /**
-     * <code>required int32 name = 4;</code>
+     * <code>required int32 fq_name = 3;</code>
      */
-    boolean hasName();
+    boolean hasFqName();
     /**
-     * <code>required int32 name = 4;</code>
+     * <code>required int32 fq_name = 3;</code>
      */
-    int getName();
+    int getFqName();
 
     // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 5;
     /**
@@ -4537,9 +4537,9 @@ public final class ProtoBuf {
               extraVisibility_ = input.readBytes();
               break;
             }
-            case 32: {
+            case 24: {
               bitField0_ |= 0x00000004;
-              name_ = input.readInt32();
+              fqName_ = input.readInt32();
               break;
             }
             case 42: {
@@ -4890,20 +4890,20 @@ public final class ProtoBuf {
       }
     }
 
-    // required int32 name = 4;
-    public static final int NAME_FIELD_NUMBER = 4;
-    private int name_;
+    // required int32 fq_name = 3;
+    public static final int FQ_NAME_FIELD_NUMBER = 3;
+    private int fqName_;
     /**
-     * <code>required int32 name = 4;</code>
+     * <code>required int32 fq_name = 3;</code>
      */
-    public boolean hasName() {
+    public boolean hasFqName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required int32 name = 4;</code>
+     * <code>required int32 fq_name = 3;</code>
      */
-    public int getName() {
-      return name_;
+    public int getFqName() {
+      return fqName_;
     }
 
     // repeated .org.jetbrains.jet.descriptors.serialization.TypeParameter type_parameter = 5;
@@ -5141,7 +5141,7 @@ public final class ProtoBuf {
     private void initFields() {
       flags_ = 0;
       extraVisibility_ = "";
-      name_ = 0;
+      fqName_ = 0;
       typeParameter_ = java.util.Collections.emptyList();
       supertype_ = java.util.Collections.emptyList();
       nestedClassName_ = java.util.Collections.emptyList();
@@ -5156,7 +5156,7 @@ public final class ProtoBuf {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      if (!hasName()) {
+      if (!hasFqName()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -5198,7 +5198,7 @@ public final class ProtoBuf {
         output.writeBytes(2, getExtraVisibilityBytes());
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(4, name_);
+        output.writeInt32(3, fqName_);
       }
       for (int i = 0; i < typeParameter_.size(); i++) {
         output.writeMessage(5, typeParameter_.get(i));
@@ -5242,7 +5242,7 @@ public final class ProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, name_);
+          .computeInt32Size(3, fqName_);
       }
       for (int i = 0; i < typeParameter_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -5386,7 +5386,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         extraVisibility_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
-        name_ = 0;
+        fqName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
         typeParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -5438,7 +5438,7 @@ public final class ProtoBuf {
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
-        result.name_ = name_;
+        result.fqName_ = fqName_;
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
           typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
           bitField0_ = (bitField0_ & ~0x00000008);
@@ -5491,8 +5491,8 @@ public final class ProtoBuf {
           extraVisibility_ = other.extraVisibility_;
           
         }
-        if (other.hasName()) {
-          setName(other.getName());
+        if (other.hasFqName()) {
+          setFqName(other.getFqName());
         }
         if (!other.typeParameter_.isEmpty()) {
           if (typeParameter_.isEmpty()) {
@@ -5564,7 +5564,7 @@ public final class ProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (!hasName()) {
+        if (!hasFqName()) {
           
           return false;
         }
@@ -5781,35 +5781,35 @@ public final class ProtoBuf {
         return this;
       }
 
-      // required int32 name = 4;
-      private int name_ ;
+      // required int32 fq_name = 3;
+      private int fqName_ ;
       /**
-       * <code>required int32 name = 4;</code>
+       * <code>required int32 fq_name = 3;</code>
        */
-      public boolean hasName() {
+      public boolean hasFqName() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required int32 name = 4;</code>
+       * <code>required int32 fq_name = 3;</code>
        */
-      public int getName() {
-        return name_;
+      public int getFqName() {
+        return fqName_;
       }
       /**
-       * <code>required int32 name = 4;</code>
+       * <code>required int32 fq_name = 3;</code>
        */
-      public Builder setName(int value) {
+      public Builder setFqName(int value) {
         bitField0_ |= 0x00000004;
-        name_ = value;
+        fqName_ = value;
         
         return this;
       }
       /**
-       * <code>required int32 name = 4;</code>
+       * <code>required int32 fq_name = 3;</code>
        */
-      public Builder clearName() {
+      public Builder clearFqName() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        name_ = 0;
+        fqName_ = 0;
         
         return this;
       }

@@ -84,7 +84,7 @@ public class DescriptorSerializer {
 
         // TODO extra visibility
 
-        builder.setName(nameTable.getSimpleNameIndex(classDescriptor.getName()));
+        builder.setFqName(getClassId(classDescriptor));
 
         DescriptorSerializer local = createChildSerializer();
 
