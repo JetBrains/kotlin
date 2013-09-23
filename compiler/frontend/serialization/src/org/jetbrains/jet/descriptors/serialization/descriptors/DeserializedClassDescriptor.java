@@ -45,6 +45,7 @@ import java.util.*;
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public class DeserializedClassDescriptor extends AbstractClassDescriptor implements ClassDescriptor {
 
@@ -77,7 +78,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     public DeserializedClassDescriptor(
             @NotNull StorageManager storageManager,
             @NotNull AnnotationDeserializer annotationResolver,
-            @NotNull final DescriptorFinder descriptorFinder,
+            @NotNull DescriptorFinder descriptorFinder,
             @NotNull ClassData classData
     ) {
         super(classData.getNameResolver().getClassId(classData.getClassProto().getFqName()).getRelativeClassName().shortName());
@@ -134,25 +135,15 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 return computeClassObjectDescriptor();
             }
         });
-        this.nestedClasses = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedClassNameList(), nameResolver)) {
-            @Override
-            protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
-                return descriptorFinder.findClass(classId.createNestedClassId(name));
-            }
-        };
-        this.nestedObjects = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedObjectNameList(), nameResolver)) {
-            @Override
-            protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
-                return descriptorFinder.findClass(classId.createNestedClassId(name));
-            }
-        };
+        this.nestedClasses = new NestedClassDescriptors(storageManager, names(classProto.getNestedClassNameList(), nameResolver));
+        this.nestedObjects = new NestedClassDescriptors(storageManager, names(classProto.getNestedObjectNameList(), nameResolver));
     }
 
     @NotNull
-    private static Set<String> stringSet(@NotNull List<Integer> nameIndices, @NotNull NameResolver nameResolver) {
-        Set<String> result = new HashSet<String>(nameIndices.size());
+    private static Set<Name> names(@NotNull List<Integer> nameIndices, @NotNull NameResolver nameResolver) {
+        Set<Name> result = new HashSet<Name>(nameIndices.size());
         for (Integer index : nameIndices) {
-            result.add(nameResolver.getName(index).asString());
+            result.add(nameResolver.getName(index));
         }
         return result;
     }
@@ -493,30 +484,27 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         }
     }
 
-    private abstract static class NestedClassDescriptors {
-        private final Set<String> declaredNames;
+    private class NestedClassDescriptors {
+        private final Set<Name> declaredNames;
         private final MemoizedFunctionToNullable<Name, ClassDescriptor> findClass;
 
-        public NestedClassDescriptors(@NotNull StorageManager storageManager, @NotNull Set<String> declaredNames) {
+        public NestedClassDescriptors(@NotNull StorageManager storageManager, @NotNull Set<Name> declaredNames) {
             this.declaredNames = declaredNames;
             this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
                 @Override
                 public ClassDescriptor fun(Name name) {
-                    NestedClassDescriptors _this = NestedClassDescriptors.this;
-                    if (!_this.declaredNames.contains(name.asString())) return null;
-
-                    return resolveNestedClass(name);
+                    return NestedClassDescriptors.this.declaredNames.contains(name) ?
+                           descriptorFinder.findClass(classId.createNestedClassId(name)) :
+                           null;
                 }
-            }, StorageManager.ReferenceKind.STRONG);
+            }, STRONG);
         }
-
-        protected abstract ClassDescriptor resolveNestedClass(@NotNull Name name);
 
         @NotNull
         public Collection<ClassDescriptor> getAllDescriptors() {
             Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(declaredNames.size());
-            for (String name : declaredNames) {
-                ClassDescriptor descriptor = findClass.fun(Name.identifier(name));
+            for (Name name : declaredNames) {
+                ClassDescriptor descriptor = findClass.fun(name);
                 if (descriptor != null) {
                     result.add(descriptor);
                 }
