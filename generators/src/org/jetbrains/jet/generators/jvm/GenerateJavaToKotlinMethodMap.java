@@ -57,7 +57,14 @@ public class GenerateJavaToKotlinMethodMap {
 
     public static final String BUILTINS_FQNAME_PREFIX = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.asString() + ".";
 
+    public static final File TARGET_FILE =
+            new File("compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/kotlinSignature/JavaToKotlinMethodMapGenerated.java");
+
     public static void main(String[] args) throws IOException {
+        GeneratorsFileUtil.writeFileIfContentChanged(TARGET_FILE, generateText().toString());
+    }
+
+    public static CharSequence generateText() throws IOException {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
 
@@ -89,9 +96,7 @@ public class GenerateJavaToKotlinMethodMap {
         printer.println("map = b.build();");
         printer.popIndent().println("}");
         printer.popIndent().println("}");
-
-        File file = new File("compiler/frontend.java/src/org/jetbrains/jet/lang/resolve/java/kotlinSignature/JavaToKotlinMethodMapGenerated.java");
-        GeneratorsFileUtil.writeFileIfContentChanged(file, buf.toString());
+        return buf;
     }
 
     private static class MyMapBuilder extends JavaToKotlinClassMapBuilder {
