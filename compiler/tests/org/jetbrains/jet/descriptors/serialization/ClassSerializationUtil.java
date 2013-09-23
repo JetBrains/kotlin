@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
 import java.util.Collection;
@@ -34,7 +32,11 @@ public class ClassSerializationUtil {
         void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto);
     }
 
-    public static void serializeClass(@NotNull ClassDescriptor classDescriptor, @NotNull DescriptorSerializer serializer, @NotNull Sink sink) {
+    private static void serializeClass(
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull DescriptorSerializer serializer,
+            @NotNull Sink sink
+    ) {
         ProtoBuf.Class classProto = serializer.classProto(classDescriptor).build();
         sink.writeClass(classDescriptor, classProto);
 
@@ -62,22 +64,10 @@ public class ClassSerializationUtil {
 
     @NotNull
     public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
-        DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
-            NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-            return new ClassId(getPackageFqName(namespaceDescriptor), FqNameUnsafe.topLevel(classDescriptor.getName()));
+        DeclarationDescriptor owner = classDescriptor.getContainingDeclaration();
+        if (owner instanceof NamespaceDescriptor) {
+            return new ClassId(((NamespaceDescriptor) owner).getFqName(), FqNameUnsafe.topLevel(classDescriptor.getName()));
         }
-        // it must be a nested class
-        ClassDescriptor outer = (ClassDescriptor) containingDeclaration;
-        ClassId outerId = getClassId(outer);
-        return outerId.createNestedClassId(classDescriptor.getName());
-    }
-
-    @NotNull
-    public static FqName getPackageFqName(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        if (DescriptorUtils.isRootNamespace(namespaceDescriptor)) return FqName.ROOT;
-
-        NamespaceDescriptor parent = (NamespaceDescriptor) namespaceDescriptor.getContainingDeclaration();
-        return getPackageFqName(parent).child(namespaceDescriptor.getName());
+        return getClassId((ClassDescriptor) owner).createNestedClassId(classDescriptor.getName());
     }
 }
