@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.di.GeneratorsFileUtil;
 import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
@@ -129,7 +130,7 @@ public class TestGenerator {
 
         String testSourceFilePath = baseDir + "/" + suiteClassPackage.replace(".", "/") + "/" + suiteClassName + ".java";
         File testSourceFile = new File(testSourceFilePath);
-        FileUtil.writeToFile(testSourceFile, out.toString());
+        GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, out.toString(), false);
     }
 
     private void generateTestClass(Printer p, TestClassModel testClassModel, boolean isStatic) {
