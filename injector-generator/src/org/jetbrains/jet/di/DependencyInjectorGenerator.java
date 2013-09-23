@@ -43,14 +43,39 @@ public class DependencyInjectorGenerator {
 
     private final ImportManager importManager = new ImportManager();
 
+    private String targetSourceRoot;
+    private String injectorPackageName;
+    private String injectorClassName;
+    private Class<?> generatorClass;
+
     public DependencyInjectorGenerator() {
     }
 
-    public void generate(String targetSourceRoot, String injectorPackageName, String injectorClassName, Class<?> generatorClass)
-            throws IOException {
-        String outputFileName = targetSourceRoot + "/" + injectorPackageName.replace(".", "/") + "/" + injectorClassName + ".java";
+    public String getInjectorClassName() {
+        return injectorClassName;
+    }
 
-        File file = new File(outputFileName);
+    public DependencyInjectorGenerator configure(String targetSourceRoot, String injectorPackageName, String injectorClassName, Class<?> generatorClass) {
+        this.targetSourceRoot = targetSourceRoot;
+        this.injectorPackageName = injectorPackageName;
+        this.injectorClassName = injectorClassName;
+        this.generatorClass = generatorClass;
+        return this;
+    }
+
+    public void generate() throws IOException {
+        assert targetSourceRoot != null : "Don't forget to call configure()";
+
+        GeneratorsFileUtil.writeFileIfContentChanged(getOutputFile(), generateText().toString());
+    }
+
+    public File getOutputFile() {
+        String outputFileName = targetSourceRoot + "/" + injectorPackageName.replace(".", "/") + "/" + injectorClassName + ".java";
+        return new File(outputFileName);
+    }
+
+    public CharSequence generateText() throws IOException {
+        assert generatorClass != null : "Don't forget to call configure()";
 
         fields.addAll(dependencies.satisfyDependencies());
         reportUnusedParameters(injectorPackageName, injectorClassName);
@@ -80,7 +105,7 @@ public class DependencyInjectorGenerator {
         p.popIndent();
         p.println("}"); // class
 
-        importManager.addClass(org.jetbrains.annotations.NotNull.class);
+        importManager.addClass(NotNull.class);
         importManager.addClass(javax.annotation.PreDestroy.class);
         StringBuilder imports = new StringBuilder();
         generateImports(new Printer(imports), injectorPackageName);
@@ -88,8 +113,7 @@ public class DependencyInjectorGenerator {
         StringBuilder text = new StringBuilder(preamble);
         text.append(imports);
         text.append(body);
-
-        GeneratorsFileUtil.writeFileIfContentChanged(file, text.toString());
+        return text;
     }
 
     private void reportUnusedParameters(String injectorPackageName, String injectorClassName) {
