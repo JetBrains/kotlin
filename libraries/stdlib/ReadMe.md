@@ -8,7 +8,7 @@ We use some code generation to apply the various collection-like methods to vari
 
 To run the code generator from a kotlin checkout
 
-    cd libraries/stdlib
-    mvn test-compile exec:java
+    cd libraries/tools/kotlin-stdlib-gen
+    mvn compile exec:java
 
-This then runs the [GenerateStandardLib.kt](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/test/org/jetbrains/kotlin/tools/GenerateStandardLib.kt) script to create the source from the files for java.lang.Iterable<T> and java.util.Collection etc.
+This then runs the [GenerateStandardLib.kt](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-stdlib-gen/src/generators/GenerateStandardLib.kt) script to create the source from the files for java.lang.Iterable<T> and java.util.Collection etc.

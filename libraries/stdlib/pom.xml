@@ -26,24 +26,7 @@
         <testSourceDirectory>test</testSourceDirectory>
 
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>${exec-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>org.jetbrains.kotlin.tools.ToolsPackage</mainClass>
-                    <classpathScope>test</classpathScope>
-                </configuration>
-            </plugin>
-
-            <plugin>
+             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
