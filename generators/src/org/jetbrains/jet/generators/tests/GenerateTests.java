@@ -57,9 +57,9 @@ import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.resolve.AbstractResolveBaseTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
+import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel;
+import org.jetbrains.jet.generators.tests.generator.TestClassModel;
+import org.jetbrains.jet.generators.tests.generator.TestGenerator;
 
 import java.io.File;
 import java.io.IOException;

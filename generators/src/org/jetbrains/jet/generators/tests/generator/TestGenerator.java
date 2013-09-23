@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.test.generator;
+package org.jetbrains.jet.generators.tests.generator;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
@@ -24,7 +24,10 @@ import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class TestGenerator {
 

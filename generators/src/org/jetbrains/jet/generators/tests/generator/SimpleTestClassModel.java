@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.test.generator;
+package org.jetbrains.jet.generators.tests.generator;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;

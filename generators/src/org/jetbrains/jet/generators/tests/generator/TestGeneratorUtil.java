@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.test.generator;
+package org.jetbrains.jet.generators.tests.generator;
 
 public class TestGeneratorUtil {
     public static String escapeForJavaIdentifier(String fileName) {

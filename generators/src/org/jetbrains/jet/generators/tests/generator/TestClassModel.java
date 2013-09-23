@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.test.generator;
+package org.jetbrains.jet.generators.tests.generator;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.Printer;
 
-public interface TestMethodModel extends TestEntityModel {
-    void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName);
+import java.util.Collection;
+
+public interface TestClassModel extends TestEntityModel {
+
+    @NotNull
+    Collection<TestClassModel> getInnerTestClasses();
+
+    @NotNull
+    Collection<TestMethodModel> getTestMethods();
+
+    boolean isEmpty();
 }
