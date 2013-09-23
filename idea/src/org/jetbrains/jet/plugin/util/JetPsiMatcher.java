@@ -86,12 +86,12 @@ public class JetPsiMatcher {
 
     private static final JetVisitor<Boolean, JetElement> VISITOR = new JetVisitor<Boolean, JetElement>() {
         @Override
-        public Boolean visitJetElement(JetElement element, JetElement data) {
+        public Boolean visitJetElement(@NotNull JetElement element, JetElement data) {
             return false;
         }
 
         @Override
-        public Boolean visitArrayAccessExpression(JetArrayAccessExpression aae1, JetElement data) {
+        public Boolean visitArrayAccessExpression(@NotNull JetArrayAccessExpression aae1, JetElement data) {
             JetArrayAccessExpression aae2 = (JetArrayAccessExpression) data;
 
             return checkElementMatch(aae1.getArrayExpression(), aae2.getArrayExpression()) &&
@@ -99,7 +99,7 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitBinaryExpression(JetBinaryExpression be1, JetElement data) {
+        public Boolean visitBinaryExpression(@NotNull JetBinaryExpression be1, JetElement data) {
             JetBinaryExpression be2 = (JetBinaryExpression) data;
 
             return be1.getOperationToken() == be2.getOperationToken() &&
@@ -108,7 +108,7 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS bet1, JetElement data) {
+        public Boolean visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS bet1, JetElement data) {
             JetBinaryExpressionWithTypeRHS bet2 = (JetBinaryExpressionWithTypeRHS) data;
 
             return checkElementMatch(bet1.getLeft(), bet2.getLeft()) &&
@@ -116,7 +116,7 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitCallExpression(JetCallExpression call1, JetElement data) {
+        public Boolean visitCallExpression(@NotNull JetCallExpression call1, JetElement data) {
             JetCallExpression call2 = (JetCallExpression) data;
 
             if (!checkElementMatch(call1.getCalleeExpression(), call2.getCalleeExpression())) return false;
@@ -126,17 +126,17 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitSimpleNameExpression(JetSimpleNameExpression expression, JetElement data) {
+        public Boolean visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, JetElement data) {
             return checkIdentifierMatch(expression.getText(), data.getText());
         }
 
         @Override
-        public Boolean visitConstantExpression(JetConstantExpression expression, JetElement data) {
+        public Boolean visitConstantExpression(@NotNull JetConstantExpression expression, JetElement data) {
             return expression.getText().equals(data.getText());
         }
 
         @Override
-        public Boolean visitIsExpression(JetIsExpression is1, JetElement data) {
+        public Boolean visitIsExpression(@NotNull JetIsExpression is1, JetElement data) {
             JetIsExpression is2 = (JetIsExpression) data;
 
             return checkElementMatch(is1.getLeftHandSide(), is2.getLeftHandSide()) &&
@@ -145,7 +145,7 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitQualifiedExpression(JetQualifiedExpression qe1, JetElement data) {
+        public Boolean visitQualifiedExpression(@NotNull JetQualifiedExpression qe1, JetElement data) {
             JetQualifiedExpression qe2 = (JetQualifiedExpression) data;
 
             return qe1.getOperationSign() == qe2.getOperationSign() &&
@@ -154,7 +154,7 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitStringTemplateExpression(JetStringTemplateExpression expression, JetElement data) {
+        public Boolean visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, JetElement data) {
             return checkListMatch(
                     Arrays.asList(expression.getEntries()),
                     Arrays.asList(((JetStringTemplateExpression) data).getEntries())
@@ -162,22 +162,22 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry, JetElement data) {
+        public Boolean visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry, JetElement data) {
             return checkElementMatch(entry.getExpression(), ((JetStringTemplateEntryWithExpression) data).getExpression());
         }
 
         @Override
-        public Boolean visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry, JetElement data) {
+        public Boolean visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry, JetElement data) {
             return entry.getText().equals(data.getText());
         }
 
         @Override
-        public Boolean visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry, JetElement data) {
+        public Boolean visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry, JetElement data) {
             return entry.getText().equals(data.getText());
         }
 
         @Override
-        public Boolean visitSuperExpression(JetSuperExpression super1, JetElement data) {
+        public Boolean visitSuperExpression(@NotNull JetSuperExpression super1, JetElement data) {
             JetSuperExpression super2 = (JetSuperExpression) data;
 
             return checkTypeReferenceMatch(super1.getSuperTypeQualifier(), super2.getSuperTypeQualifier()) &&
@@ -186,17 +186,17 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitThrowExpression(JetThrowExpression expression, JetElement data) {
+        public Boolean visitThrowExpression(@NotNull JetThrowExpression expression, JetElement data) {
             return checkElementMatch(expression.getThrownExpression(), ((JetThrowExpression) data).getThrownExpression());
         }
 
         @Override
-        public Boolean visitThisExpression(JetThisExpression this1, JetElement data) {
+        public Boolean visitThisExpression(@NotNull JetThisExpression this1, JetElement data) {
             return checkElementMatch(this1.getTargetLabel(), ((JetThisExpression) data).getTargetLabel());
         }
 
         @Override
-        public Boolean visitUnaryExpression(JetUnaryExpression ue1, JetElement data) {
+        public Boolean visitUnaryExpression(@NotNull JetUnaryExpression ue1, JetElement data) {
             JetUnaryExpression ue2 = (JetUnaryExpression) data;
 
             return checkElementMatch(ue1.getBaseExpression(), ue2.getBaseExpression()) &&
@@ -204,12 +204,12 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitTypeReference(JetTypeReference typeReference, JetElement data) {
+        public Boolean visitTypeReference(@NotNull JetTypeReference typeReference, JetElement data) {
             return checkElementMatch(typeReference.getTypeElement(), ((JetTypeReference) data).getTypeElement());
         }
 
         @Override
-        public Boolean visitFunctionType(JetFunctionType type1, JetElement data) {
+        public Boolean visitFunctionType(@NotNull JetFunctionType type1, JetElement data) {
             JetFunctionType type2 = (JetFunctionType) data;
 
             return checkElementMatch(type1.getReceiverTypeRef(), type2.getReceiverTypeRef()) &&
@@ -218,7 +218,7 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitUserType(JetUserType type1, JetElement data) {
+        public Boolean visitUserType(@NotNull JetUserType type1, JetElement data) {
             JetUserType type2 = (JetUserType) data;
 
             return checkElementMatch(type1.getReferenceExpression(), type2.getReferenceExpression()) &&
@@ -227,12 +227,12 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitSelfType(JetSelfType type, JetElement data) {
+        public Boolean visitSelfType(@NotNull JetSelfType type, JetElement data) {
             return true;
         }
 
         @Override
-        public Boolean visitNullableType(JetNullableType nullableType, JetElement data) {
+        public Boolean visitNullableType(@NotNull JetNullableType nullableType, JetElement data) {
             return checkElementMatch(nullableType.getInnerType(), ((JetNullableType) data).getInnerType());
         }
     };

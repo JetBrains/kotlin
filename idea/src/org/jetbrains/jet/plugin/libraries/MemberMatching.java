@@ -70,19 +70,19 @@ public class MemberMatching {
         assert typeElement != null;
         return typeElement.accept(new JetVisitor<String, Void>() {
             @Override
-            public String visitDeclaration(JetDeclaration declaration, Void data) {
+            public String visitDeclaration(@NotNull JetDeclaration declaration, Void data) {
                 throw new IllegalStateException("This visitor shouldn't be invoked for " + declaration.getClass());
             }
 
             @Override
-            public String visitUserType(JetUserType type, Void data) {
+            public String visitUserType(@NotNull JetUserType type, Void data) {
                 JetSimpleNameExpression referenceExpression = type.getReferenceExpression();
                 assert referenceExpression != null;
                 return referenceExpression.getReferencedName();
             }
 
             @Override
-            public String visitFunctionType(JetFunctionType type, Void data) {
+            public String visitFunctionType(@NotNull JetFunctionType type, Void data) {
                 KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
                 int parameterCount = type.getParameters().size();
 
@@ -95,7 +95,7 @@ public class MemberMatching {
             }
 
             @Override
-            public String visitNullableType(JetNullableType nullableType, Void data) {
+            public String visitNullableType(@NotNull JetNullableType nullableType, Void data) {
                 return nullableType.getInnerType().accept(this, null);
             }
         }, null);

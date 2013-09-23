@@ -94,7 +94,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitSimpleNameExpression(JetSimpleNameExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
@@ -105,7 +105,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, ExpressionTypingContext context) {
         return visitParenthesizedExpression(expression, context, false);
     }
 
@@ -130,7 +130,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitConstantExpression(JetConstantExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
         IElementType elementType = expression.getNode().getElementType();
         String text = expression.getNode().getText();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
@@ -163,7 +163,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
         ExpressionTypingContext contextWithNoExpectedType =
                 context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetExpression left = expression.getLeft();
@@ -259,7 +259,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitThisExpression(JetThisExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitThisExpression(@NotNull JetThisExpression expression, ExpressionTypingContext context) {
         JetType result = null;
         LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, false);
 
@@ -279,7 +279,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitSuperExpression(JetSuperExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitSuperExpression(@NotNull JetSuperExpression expression, ExpressionTypingContext context) {
         LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
 
         if (context.expressionPosition == ExpressionPosition.FREE) {
@@ -438,7 +438,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitBlockExpression(@NotNull JetBlockExpression expression, ExpressionTypingContext context) {
         return visitBlockExpression(expression, context, false);
     }
 
@@ -448,7 +448,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitCallableReferenceExpression(JetCallableReferenceExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, ExpressionTypingContext context) {
         JetTypeReference typeReference = expression.getTypeReference();
 
         JetType receiverType =
@@ -589,19 +589,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitQualifiedExpression(@NotNull JetQualifiedExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
         return callExpressionResolver.getQualifiedExpressionTypeInfo(expression, context);
     }
 
     @Override
-    public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitCallExpression(@NotNull JetCallExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
         return callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
     }
 
     @Override
-    public JetTypeInfo visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitUnaryExpression(@NotNull JetUnaryExpression expression, ExpressionTypingContext context) {
         return visitUnaryExpression(expression, context, false);
     }
 
@@ -762,7 +762,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetTypeInfo visitBinaryExpression(@NotNull JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = isBinaryExpressionDependentOnExpectedType(expression)
                 ? contextWithExpectedType
                 : contextWithExpectedType.replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
@@ -1051,7 +1051,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, ExpressionTypingContext context) {
         JetTypeInfo typeInfo = resolveArrayAccessGetMethod(expression, context);
         return DataFlowUtils.checkType(typeInfo, expression, context);
     }
@@ -1106,13 +1106,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitDeclaration(JetDeclaration dcl, ExpressionTypingContext context) {
+    public JetTypeInfo visitDeclaration(@NotNull JetDeclaration dcl, ExpressionTypingContext context) {
         context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(dcl));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     @Override
-    public JetTypeInfo visitRootNamespaceExpression(JetRootNamespaceExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, ExpressionTypingContext context) {
         if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT) {
             return DataFlowUtils.checkType(JetModuleUtil.getRootNamespaceType(expression), expression, context, context.dataFlowInfo);
         }
@@ -1122,7 +1122,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
 
     @Override
-    public JetTypeInfo visitStringTemplateExpression(JetStringTemplateExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetTypeInfo visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, ExpressionTypingContext contextWithExpectedType) {
         final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         final StringBuilder builder = new StringBuilder();
         final boolean[] isCompileTimeValue = new boolean[] { true };
@@ -1168,7 +1168,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitAnnotatedExpression(@NotNull JetAnnotatedExpression expression, ExpressionTypingContext context) {
         return visitAnnotatedExpression(expression, context, false);
     }
 
@@ -1184,7 +1184,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitJetElement(JetElement element, ExpressionTypingContext context) {
+    public JetTypeInfo visitJetElement(@NotNull JetElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }

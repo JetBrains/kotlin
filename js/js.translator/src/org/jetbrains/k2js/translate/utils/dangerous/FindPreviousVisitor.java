@@ -43,7 +43,7 @@ public final class FindPreviousVisitor extends JetTreeVisitor<DangerousData> {
     }
 
     @Override
-    public Void visitJetElement(JetElement element, DangerousData data) {
+    public Void visitJetElement(@NotNull JetElement element, DangerousData data) {
         if (data.getDangerousNode() == element) {
             return null;
         }

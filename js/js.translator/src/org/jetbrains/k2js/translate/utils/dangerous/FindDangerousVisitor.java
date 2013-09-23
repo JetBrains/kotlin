@@ -33,12 +33,12 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
     }
 
     @Override
-    public Void visitDeclaration(JetDeclaration dcl, DangerousData data) {
+    public Void visitDeclaration(@NotNull JetDeclaration dcl, DangerousData data) {
         return null;
     }
 
     @Override
-    public Void visitJetElement(JetElement element, DangerousData data) {
+    public Void visitJetElement(@NotNull JetElement element, DangerousData data) {
         if (data.exists()) {
             return null;
         }
@@ -46,7 +46,7 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
     }
 
     @Override
-    public Void visitWhenExpression(JetWhenExpression expression, DangerousData data) {
+    public Void visitWhenExpression(@NotNull JetWhenExpression expression, DangerousData data) {
         if (expressionFound(expression, data)) {
             return null;
         }
@@ -54,7 +54,7 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
     }
 
     @Override
-    public Void visitIfExpression(JetIfExpression expression, DangerousData data) {
+    public Void visitIfExpression(@NotNull JetIfExpression expression, DangerousData data) {
         if (expressionFound(expression, data)) {
             return null;
         }
@@ -62,7 +62,7 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
     }
 
     @Override
-    public Void visitBlockExpression(JetBlockExpression expression, DangerousData data) {
+    public Void visitBlockExpression(@NotNull JetBlockExpression expression, DangerousData data) {
         if (isStatement(context.bindingContext(), expression)) {
             return null;
         }
@@ -72,7 +72,7 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
     }
 
     @Override
-    public Void visitCallExpression(JetCallExpression expression, DangerousData data) {
+    public Void visitCallExpression(@NotNull JetCallExpression expression, DangerousData data) {
         if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context)) {
             if (expressionFound(expression, data)) {
                 return null;

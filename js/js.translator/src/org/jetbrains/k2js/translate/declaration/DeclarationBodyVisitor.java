@@ -70,7 +70,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitEnumEntry(
-            final JetEnumEntry enumEntry, TranslationContext data
+            @NotNull final JetEnumEntry enumEntry, TranslationContext data
     ) {
         JsExpression jsEnumEntryCreation;
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
@@ -96,7 +96,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitClassObject(
-            JetClassObject classObject, TranslationContext context
+            @NotNull JetClassObject classObject, TranslationContext context
     ) {
         JetObjectDeclaration declaration = classObject.getObjectDeclaration();
         assert declaration != null : "Declaration for class object must be not null";

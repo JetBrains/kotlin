@@ -250,12 +250,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public DeclarationDescriptor resolveToDescriptor(JetDeclaration declaration) {
         DeclarationDescriptor result = declaration.accept(new JetVisitor<DeclarationDescriptor, Void>() {
             @Override
-            public DeclarationDescriptor visitClass(JetClass klass, Void data) {
+            public DeclarationDescriptor visitClass(@NotNull JetClass klass, Void data) {
                 return getClassDescriptor(klass);
             }
 
             @Override
-            public DeclarationDescriptor visitObjectDeclaration(JetObjectDeclaration declaration, Void data) {
+            public DeclarationDescriptor visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
                 PsiElement parent = declaration.getParent();
                 if (parent instanceof JetClassObject) {
                     JetClassObject jetClassObject = (JetClassObject) parent;
@@ -265,12 +265,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
-            public DeclarationDescriptor visitClassObject(JetClassObject classObject, Void data) {
+            public DeclarationDescriptor visitClassObject(@NotNull JetClassObject classObject, Void data) {
                 return getClassObjectDescriptor(classObject);
             }
 
             @Override
-            public DeclarationDescriptor visitTypeParameter(JetTypeParameter parameter, Void data) {
+            public DeclarationDescriptor visitTypeParameter(@NotNull JetTypeParameter parameter, Void data) {
                 JetTypeParameterListOwner ownerElement = PsiTreeUtil.getParentOfType(parameter, JetTypeParameterListOwner.class);
                 DeclarationDescriptor ownerDescriptor = resolveToDescriptor(ownerElement);
 
@@ -298,14 +298,14 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
-            public DeclarationDescriptor visitNamedFunction(JetNamedFunction function, Void data) {
+            public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
                 JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(function);
                 scopeForDeclaration.getFunctions(safeNameForLazyResolve(function));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
             @Override
-            public DeclarationDescriptor visitParameter(JetParameter parameter, Void data) {
+            public DeclarationDescriptor visitParameter(@NotNull JetParameter parameter, Void data) {
                 PsiElement grandFather = parameter.getParent().getParent();
                 if (grandFather instanceof JetClass) {
                     JetClass jetClass = (JetClass) grandFather;
@@ -326,21 +326,21 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
-            public DeclarationDescriptor visitProperty(JetProperty property, Void data) {
+            public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
                 JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(property);
                 scopeForDeclaration.getProperties(safeNameForLazyResolve(property));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 
             @Override
-            public DeclarationDescriptor visitObjectDeclarationName(JetObjectDeclarationName declarationName, Void data) {
+            public DeclarationDescriptor visitObjectDeclarationName(@NotNull JetObjectDeclarationName declarationName, Void data) {
                 JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(declarationName.getParent());
                 scopeForDeclaration.getProperties(safeNameForLazyResolve(declarationName));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationName);
             }
 
             @Override
-            public DeclarationDescriptor visitJetElement(JetElement element, Void data) {
+            public DeclarationDescriptor visitJetElement(@NotNull JetElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
                                                    JetPsiUtil.getElementTextWithContext(element));
             }

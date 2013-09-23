@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import org.jetbrains.annotations.NotNull;
+
 public class JetTreeVisitor<D> extends JetVisitor<Void, D> {
     @Override
-    public Void visitJetElement(JetElement element, D data) {
+    public Void visitJetElement(@NotNull JetElement element, D data) {
         element.acceptChildren(this, data);
         return null;
     }

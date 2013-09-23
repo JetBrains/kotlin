@@ -52,7 +52,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitObjectLiteralExpression(final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
+    public JetTypeInfo visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
         DelegatingBindingTrace delegatingBindingTrace = context.trace.get(TRACE_DELTAS_CACHE, expression.getObjectDeclaration());
         if (delegatingBindingTrace != null) {
             delegatingBindingTrace.addAllMyDataTo(context.trace);
@@ -95,7 +95,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
         JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
         if (bodyExpression == null) return null;
 
@@ -381,7 +381,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 new JetTreeVisitor<Collection<JetReturnExpression>>() {
                     @Override
                     public Void visitReturnExpression(
-                            JetReturnExpression expression, Collection<JetReturnExpression> data
+                            @NotNull JetReturnExpression expression, Collection<JetReturnExpression> data
                     ) {
                         data.add(expression);
                         return null;

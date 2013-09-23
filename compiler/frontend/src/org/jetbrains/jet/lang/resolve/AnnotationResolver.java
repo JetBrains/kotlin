@@ -255,7 +255,7 @@ public class AnnotationResolver {
     ) {
         JetVisitor<CompileTimeConstant<?>, Void> visitor = new JetVisitor<CompileTimeConstant<?>, Void>() {
             @Override
-            public CompileTimeConstant<?> visitConstantExpression(JetConstantExpression expression, Void nothing) {
+            public CompileTimeConstant<?> visitConstantExpression(@NotNull JetConstantExpression expression, Void nothing) {
                 JetType type = expressionTypingServices.getType(JetScope.EMPTY, expression, expectedType, DataFlowInfo.EMPTY, trace);
                 if (type == null) {
                     // TODO:
@@ -276,20 +276,21 @@ public class AnnotationResolver {
 //            }
 
             @Override
-            public CompileTimeConstant<?> visitParenthesizedExpression(JetParenthesizedExpression expression, Void nothing) {
+            public CompileTimeConstant<?> visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, Void nothing) {
                 JetExpression innerExpression = expression.getExpression();
                 if (innerExpression == null) return null;
                 return innerExpression.accept(this, null);
             }
 
             @Override
-            public CompileTimeConstant<?> visitStringTemplateExpression(JetStringTemplateExpression expression,
+            public CompileTimeConstant<?> visitStringTemplateExpression(
+                    @NotNull JetStringTemplateExpression expression,
                                                                         Void nothing) {
                 return trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
             }
 
             @Override
-            public CompileTimeConstant<?> visitSimpleNameExpression(JetSimpleNameExpression expression, Void data) {
+            public CompileTimeConstant<?> visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, Void data) {
                 ResolvedCall<? extends CallableDescriptor> resolvedCall =
                         trace.getBindingContext().get(BindingContext.RESOLVED_CALL, expression);
                 if (resolvedCall != null) {
@@ -308,7 +309,7 @@ public class AnnotationResolver {
             }
 
             @Override
-            public CompileTimeConstant<?> visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
+            public CompileTimeConstant<?> visitQualifiedExpression(@NotNull JetQualifiedExpression expression, Void data) {
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 if (selectorExpression != null) {
                     return selectorExpression.accept(this, null);
@@ -317,7 +318,7 @@ public class AnnotationResolver {
             }
 
             @Override
-            public CompileTimeConstant<?> visitCallExpression(JetCallExpression expression, Void data) {
+            public CompileTimeConstant<?> visitCallExpression(@NotNull JetCallExpression expression, Void data) {
                 ResolvedCall<? extends CallableDescriptor> call =
                         trace.getBindingContext().get(BindingContext.RESOLVED_CALL, (expression).getCalleeExpression());
                 if (call != null) {
@@ -350,7 +351,7 @@ public class AnnotationResolver {
             }
 
             @Override
-            public CompileTimeConstant<?> visitJetElement(JetElement element, Void nothing) {
+            public CompileTimeConstant<?> visitJetElement(@NotNull JetElement element, Void nothing) {
                 // TODO:
                 //trace.report(ANNOTATION_PARAMETER_SHOULD_BE_CONSTANT.on(element));
                 return null;

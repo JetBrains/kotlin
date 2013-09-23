@@ -414,27 +414,27 @@ public class CandidateResolver {
             }
 
             @Override
-            public JetExpression visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
+            public JetExpression visitQualifiedExpression(@NotNull JetQualifiedExpression expression, Void data) {
                 return visitInnerExpression(expression.getSelectorExpression());
             }
 
             @Override
-            public JetExpression visitExpression(JetExpression expression, Void data) {
+            public JetExpression visitExpression(@NotNull JetExpression expression, Void data) {
                 return expression;
             }
 
             @Override
-            public JetExpression visitParenthesizedExpression(JetParenthesizedExpression expression, Void data) {
+            public JetExpression visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, Void data) {
                 return visitInnerExpression(expression.getExpression());
             }
 
             @Override
-            public JetExpression visitPrefixExpression(JetPrefixExpression expression, Void data) {
+            public JetExpression visitPrefixExpression(@NotNull JetPrefixExpression expression, Void data) {
                 return visitInnerExpression(JetPsiUtil.getBaseExpressionIfLabeledExpression(expression));
             }
 
             @Override
-            public JetExpression visitBlockExpression(JetBlockExpression expression, Void data) {
+            public JetExpression visitBlockExpression(@NotNull JetBlockExpression expression, Void data) {
                 JetElement lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
                 if (lastStatement != null) {
                     return visitInnerExpression(lastStatement);
@@ -443,7 +443,7 @@ public class CandidateResolver {
             }
 
             @Override
-            public JetExpression visitBinaryExpression(JetBinaryExpression expression, Void data) {
+            public JetExpression visitBinaryExpression(@NotNull JetBinaryExpression expression, Void data) {
                 return ExpressionTypingUtils.isBinaryExpressionDependentOnExpectedType(expression) ? expression : null;
             }
         }, null);

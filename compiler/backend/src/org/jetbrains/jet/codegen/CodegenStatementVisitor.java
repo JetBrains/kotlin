@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 
 public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> {
@@ -26,22 +27,22 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     }
 
     @Override
-    public StackValue visitJetElement(JetElement element, StackValue receiver) {
+    public StackValue visitJetElement(@NotNull JetElement element, StackValue receiver) {
         return element.accept(codegen, receiver);
     }
 
     @Override
-    public StackValue visitIfExpression(JetIfExpression expression, StackValue receiver) {
+    public StackValue visitIfExpression(@NotNull JetIfExpression expression, StackValue receiver) {
         return codegen.generateIfExpression(expression, true);
     }
 
     @Override
-    public StackValue visitTryExpression(JetTryExpression expression, StackValue data) {
+    public StackValue visitTryExpression(@NotNull JetTryExpression expression, StackValue data) {
         return codegen.generateTryExpression(expression, true);
     }
 
     @Override
-    public StackValue visitWhenExpression(JetWhenExpression expression, StackValue data) {
+    public StackValue visitWhenExpression(@NotNull JetWhenExpression expression, StackValue data) {
         return codegen.generateWhenExpression(expression, true);
     }
 }

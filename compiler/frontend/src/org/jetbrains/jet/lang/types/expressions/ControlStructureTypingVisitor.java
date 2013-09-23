@@ -86,7 +86,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
 
     @Override
-    public JetTypeInfo visitIfExpression(JetIfExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitIfExpression(@NotNull JetIfExpression expression, ExpressionTypingContext context) {
         return visitIfExpression(expression, context, false);
     }
 
@@ -180,7 +180,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitWhileExpression(@NotNull JetWhileExpression expression, ExpressionTypingContext context) {
         return visitWhileExpression(expression, context, false);
     }
 
@@ -213,7 +213,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         //todo breaks in inline function literals
         loopExpression.accept(new JetTreeVisitor<List<JetLoopExpression>>() {
             @Override
-            public Void visitBreakExpression(JetBreakExpression breakExpression, List<JetLoopExpression> outerLoops) {
+            public Void visitBreakExpression(@NotNull JetBreakExpression breakExpression, List<JetLoopExpression> outerLoops) {
                 JetSimpleNameExpression targetLabel = breakExpression.getTargetLabel();
                 PsiElement element = targetLabel != null ? context.trace.get(LABEL_TARGET, targetLabel) : null;
                 if (element == loopExpression || (targetLabel == null && outerLoops.get(outerLoops.size() - 1) == loopExpression)) {
@@ -223,7 +223,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public Void visitContinueExpression(JetContinueExpression expression, List<JetLoopExpression> outerLoops) {
+            public Void visitContinueExpression(@NotNull JetContinueExpression expression, List<JetLoopExpression> outerLoops) {
                 // continue@someOuterLoop is also considered as break
                 JetSimpleNameExpression targetLabel = expression.getTargetLabel();
                 if (targetLabel != null) {
@@ -236,7 +236,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public Void visitLoopExpression(JetLoopExpression loopExpression, List<JetLoopExpression> outerLoops) {
+            public Void visitLoopExpression(@NotNull JetLoopExpression loopExpression, List<JetLoopExpression> outerLoops) {
                 List<JetLoopExpression> newOuterLoops = Lists.newArrayList(outerLoops);
                 newOuterLoops.add(loopExpression);
                 return super.visitLoopExpression(loopExpression, newOuterLoops);
@@ -247,7 +247,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitDoWhileExpression(@NotNull JetDoWhileExpression expression, ExpressionTypingContext context) {
         return visitDoWhileExpression(expression, context, false);
     }
     public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
@@ -296,7 +296,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitForExpression(JetForExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitForExpression(@NotNull JetForExpression expression, ExpressionTypingContext context) {
         return visitForExpression(expression, context, false);
     }
 
@@ -453,7 +453,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitTryExpression(JetTryExpression expression, ExpressionTypingContext typingContext) {
+    public JetTypeInfo visitTryExpression(@NotNull JetTryExpression expression, ExpressionTypingContext typingContext) {
         ExpressionTypingContext context = typingContext.replaceContextDependency(INDEPENDENT);
         JetExpression tryBlock = expression.getTryBlock();
         List<JetCatchClause> catchClauses = expression.getCatchClauses();
@@ -500,7 +500,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitThrowExpression(JetThrowExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitThrowExpression(@NotNull JetThrowExpression expression, ExpressionTypingContext context) {
         JetExpression thrownExpression = expression.getThrownExpression();
         if (thrownExpression != null) {
             JetType throwableType = KotlinBuiltIns.getInstance().getThrowable().getDefaultType();
@@ -511,7 +511,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitReturnExpression(@NotNull JetReturnExpression expression, ExpressionTypingContext context) {
         JetElement labelTargetElement = context.labelResolver.resolveLabel(expression, context);
 
         JetExpression returnedExpression = expression.getReturnedExpression();
@@ -583,13 +583,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBreakExpression(JetBreakExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext context) {
         context.labelResolver.resolveLabel(expression, context);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
     }
 
     @Override
-    public JetTypeInfo visitContinueExpression(JetContinueExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext context) {
         context.labelResolver.resolveLabel(expression, context);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
     }

@@ -144,78 +144,78 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
         return expression.accept(closures, data);
     }
 
     @Override
-    public JetTypeInfo visitObjectLiteralExpression(JetObjectLiteralExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, ExpressionTypingContext data) {
         return expression.accept(closures, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitThrowExpression(JetThrowExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitThrowExpression(@NotNull JetThrowExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitReturnExpression(@NotNull JetReturnExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitContinueExpression(JetContinueExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitIfExpression(JetIfExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitIfExpression(@NotNull JetIfExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitTryExpression(JetTryExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitTryExpression(@NotNull JetTryExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitForExpression(JetForExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitForExpression(@NotNull JetForExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitWhileExpression(@NotNull JetWhileExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitDoWhileExpression(@NotNull JetDoWhileExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
     @Override
-    public JetTypeInfo visitBreakExpression(JetBreakExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext data) {
         return expression.accept(controlStructures, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitIsExpression(JetIsExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitIsExpression(@NotNull JetIsExpression expression, ExpressionTypingContext data) {
         return expression.accept(patterns, data);
     }
 
     @Override
-    public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitWhenExpression(@NotNull JetWhenExpression expression, ExpressionTypingContext data) {
         return expression.accept(patterns, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitJetElement(JetElement element, ExpressionTypingContext data) {
+    public JetTypeInfo visitJetElement(@NotNull JetElement element, ExpressionTypingContext data) {
         return element.accept(basic, data);
     }
 }

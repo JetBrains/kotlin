@@ -429,22 +429,22 @@ public class JetSourceNavigationHelper {
 
     private static class SourceForDecompiledExtractingVisitor extends JetVisitor<JetDeclaration, Void> {
         @Override
-        public JetDeclaration visitNamedFunction(JetNamedFunction function, Void data) {
+        public JetDeclaration visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
             return getSourceFunction(function);
         }
 
         @Override
-        public JetDeclaration visitProperty(JetProperty property, Void data) {
+        public JetDeclaration visitProperty(@NotNull JetProperty property, Void data) {
             return getSourceProperty(property);
         }
 
         @Override
-        public JetDeclaration visitObjectDeclaration(JetObjectDeclaration declaration, Void data) {
+        public JetDeclaration visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
             return getSourceClassOrObject(declaration);
         }
 
         @Override
-        public JetDeclaration visitClass(JetClass klass, Void data) {
+        public JetDeclaration visitClass(@NotNull JetClass klass, Void data) {
             return getSourceClassOrObject(klass);
         }
     }

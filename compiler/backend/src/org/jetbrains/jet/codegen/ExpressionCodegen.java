@@ -279,7 +279,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitClass(JetClass klass, StackValue data) {
+    public StackValue visitClass(@NotNull JetClass klass, StackValue data) {
         return visitClassOrObject(klass);
     }
 
@@ -297,17 +297,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitObjectDeclaration(JetObjectDeclaration declaration, StackValue data) {
+    public StackValue visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, StackValue data) {
         return visitClassOrObject(declaration);
     }
 
     @Override
-    public StackValue visitExpression(JetExpression expression, StackValue receiver) {
+    public StackValue visitExpression(@NotNull JetExpression expression, StackValue receiver) {
         throw new UnsupportedOperationException("Codegen for " + expression + " is not yet implemented");
     }
 
     @Override
-    public StackValue visitSuperExpression(JetSuperExpression expression, StackValue data) {
+    public StackValue visitSuperExpression(@NotNull JetSuperExpression expression, StackValue data) {
         return StackValue.thisOrOuter(this, getSuperCallLabelTarget(expression), true);
     }
 
@@ -339,12 +339,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitParenthesizedExpression(JetParenthesizedExpression expression, StackValue receiver) {
+    public StackValue visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, StackValue receiver) {
         return genQualified(receiver, expression.getExpression());
     }
 
     @Override
-    public StackValue visitAnnotatedExpression(JetAnnotatedExpression expression, StackValue receiver) {
+    public StackValue visitAnnotatedExpression(@NotNull JetAnnotatedExpression expression, StackValue receiver) {
         return genQualified(receiver, expression.getBaseExpression());
     }
 
@@ -363,7 +363,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitIfExpression(JetIfExpression expression, StackValue receiver) {
+    public StackValue visitIfExpression(@NotNull JetIfExpression expression, StackValue receiver) {
         return generateIfExpression(expression, false);
     }
 
@@ -410,7 +410,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitWhileExpression(JetWhileExpression expression, StackValue receiver) {
+    public StackValue visitWhileExpression(@NotNull JetWhileExpression expression, StackValue receiver) {
         Label condition = new Label();
         v.mark(condition);
 
@@ -432,7 +432,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
 
     @Override
-    public StackValue visitDoWhileExpression(JetDoWhileExpression expression, StackValue receiver) {
+    public StackValue visitDoWhileExpression(@NotNull JetDoWhileExpression expression, StackValue receiver) {
         Label continueLabel = new Label();
         v.mark(continueLabel);
 
@@ -468,7 +468,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitForExpression(JetForExpression forExpression, StackValue receiver) {
+    public StackValue visitForExpression(@NotNull JetForExpression forExpression, StackValue receiver) {
         // Is it a "1..2" or so
         RangeCodegenUtil.BinaryCall binaryCall = RangeCodegenUtil.getRangeAsBinaryCall(forExpression);
         if (binaryCall != null) {
@@ -1142,12 +1142,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
 
     @Override
-    public StackValue visitBreakExpression(JetBreakExpression expression, StackValue receiver) {
+    public StackValue visitBreakExpression(@NotNull JetBreakExpression expression, StackValue receiver) {
         return visitBreakOrContinueExpression(expression, receiver, true);
     }
 
     @Override
-    public StackValue visitContinueExpression(JetContinueExpression expression, StackValue receiver) {
+    public StackValue visitContinueExpression(@NotNull JetContinueExpression expression, StackValue receiver) {
         return visitBreakOrContinueExpression(expression, receiver, false);
     }
 
@@ -1223,14 +1223,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitConstantExpression(JetConstantExpression expression, StackValue receiver) {
+    public StackValue visitConstantExpression(@NotNull JetConstantExpression expression, StackValue receiver) {
         CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
         assert compileTimeValue != null;
         return StackValue.constant(compileTimeValue.getValue(), expressionType(expression));
     }
 
     @Override
-    public StackValue visitStringTemplateExpression(JetStringTemplateExpression expression, StackValue receiver) {
+    public StackValue visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, StackValue receiver) {
         StringBuilder constantValue = new StringBuilder("");
         JetStringTemplateEntry[] entries = expression.getEntries();
 
@@ -1275,7 +1275,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitBlockExpression(JetBlockExpression expression, StackValue receiver) {
+    public StackValue visitBlockExpression(@NotNull JetBlockExpression expression, StackValue receiver) {
         List<JetElement> statements = expression.getStatements();
         JetType unitType = KotlinBuiltIns.getInstance().getUnitType();
         boolean lastStatementIsExpression = !unitType.equals(bindingContext.get(EXPRESSION_TYPE, expression));
@@ -1283,7 +1283,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitNamedFunction(JetNamedFunction function, StackValue data) {
+    public StackValue visitNamedFunction(@NotNull JetNamedFunction function, StackValue data) {
         assert data == StackValue.none();
 
         if (JetPsiUtil.isScriptDeclaration(function)) {
@@ -1299,7 +1299,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, StackValue receiver) {
+    public StackValue visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, StackValue receiver) {
         //noinspection ConstantConditions
         if (bindingContext.get(BindingContext.BLOCK, expression)) {
             //noinspection ConstantConditions
@@ -1325,7 +1325,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitObjectLiteralExpression(JetObjectLiteralExpression expression, StackValue receiver) {
+    public StackValue visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, StackValue receiver) {
         CalculatedClosure closure = this.generateObjectLiteral(state, expression);
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, expression.getObjectDeclaration());
@@ -1568,7 +1568,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitReturnExpression(JetReturnExpression expression, StackValue receiver) {
+    public StackValue visitReturnExpression(@NotNull JetReturnExpression expression, StackValue receiver) {
         JetExpression returnedExpression = expression.getReturnedExpression();
         if (returnedExpression != null) {
             gen(returnedExpression, returnType);
@@ -1604,7 +1604,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitSimpleNameExpression(JetSimpleNameExpression expression, StackValue receiver) {
+    public StackValue visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, StackValue receiver) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
 
         DeclarationDescriptor descriptor;
@@ -1877,7 +1877,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitCallExpression(JetCallExpression expression, StackValue receiver) {
+    public StackValue visitCallExpression(@NotNull JetCallExpression expression, StackValue receiver) {
         JetExpression callee = expression.getCalleeExpression();
         assert callee != null;
 
@@ -2424,7 +2424,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitCallableReferenceExpression(JetCallableReferenceExpression expression, StackValue data) {
+    public StackValue visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, StackValue data) {
         // TODO: properties
         final FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         assert functionDescriptor != null : "Callable reference is not resolved to descriptor: " + expression.getText();
@@ -2585,13 +2585,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitDotQualifiedExpression(JetDotQualifiedExpression expression, StackValue receiver) {
+    public StackValue visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression, StackValue receiver) {
         StackValue receiverValue = StackValue.none();
         return genQualified(receiverValue, expression.getSelectorExpression());
     }
 
     @Override
-    public StackValue visitSafeQualifiedExpression(JetSafeQualifiedExpression expression, StackValue receiver) {
+    public StackValue visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, StackValue receiver) {
         JetExpression expr = expression.getReceiverExpression();
         Type receiverType = expressionType(expr);
         gen(expr, receiverType);
@@ -2624,7 +2624,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitBinaryExpression(JetBinaryExpression expression, StackValue receiver) {
+    public StackValue visitBinaryExpression(@NotNull JetBinaryExpression expression, StackValue receiver) {
         IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
         if (opToken == JetTokens.EQ) {
             return generateAssignmentExpression(expression);
@@ -2979,7 +2979,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitPrefixExpression(JetPrefixExpression expression, StackValue receiver) {
+    public StackValue visitPrefixExpression(@NotNull JetPrefixExpression expression, StackValue receiver) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
             return genQualified(receiver, expression.getBaseExpression());
@@ -3035,7 +3035,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitPostfixExpression(JetPostfixExpression expression, StackValue receiver) {
+    public StackValue visitPostfixExpression(@NotNull JetPostfixExpression expression, StackValue receiver) {
         if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
             StackValue base = genQualified(receiver, expression.getBaseExpression());
             if (isPrimitive(base.type)) {
@@ -3139,7 +3139,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitProperty(JetProperty property, StackValue receiver) {
+    public StackValue visitProperty(@NotNull JetProperty property, StackValue receiver) {
         final JetExpression initializer = property.getInitializer();
         if (initializer == null) {
             return StackValue.none();
@@ -3156,7 +3156,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitMultiDeclaration(JetMultiDeclaration multiDeclaration, StackValue receiver) {
+    public StackValue visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration, StackValue receiver) {
         JetExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) return StackValue.none();
 
@@ -3351,7 +3351,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitArrayAccessExpression(JetArrayAccessExpression expression, StackValue receiver) {
+    public StackValue visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, StackValue receiver) {
         JetExpression array = expression.getArrayExpression();
         JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, array);
         Type arrayType = asmTypeOrVoid(type);
@@ -3407,14 +3407,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitThrowExpression(JetThrowExpression expression, StackValue receiver) {
+    public StackValue visitThrowExpression(@NotNull JetThrowExpression expression, StackValue receiver) {
         gen(expression.getThrownExpression(), JAVA_THROWABLE_TYPE);
         v.athrow();
         return StackValue.none();
     }
 
     @Override
-    public StackValue visitThisExpression(JetThisExpression expression, StackValue receiver) {
+    public StackValue visitThisExpression(@NotNull JetThisExpression expression, StackValue receiver) {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
             return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false);
@@ -3428,7 +3428,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitTryExpression(JetTryExpression expression, StackValue receiver) {
+    public StackValue visitTryExpression(@NotNull JetTryExpression expression, StackValue receiver) {
         return generateTryExpression(expression, false);
     }
 
@@ -3562,7 +3562,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     @Override
-    public StackValue visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, StackValue receiver) {
+    public StackValue visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression, StackValue receiver) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType opToken = operationSign.getReferencedNameElementType();
         if (opToken == JetTokens.COLON) {
@@ -3612,7 +3612,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     @Override
-    public StackValue visitIsExpression(JetIsExpression expression, StackValue receiver) {
+    public StackValue visitIsExpression(@NotNull JetIsExpression expression, StackValue receiver) {
         StackValue match = StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this);
         return generateIsCheck(match, expression.getTypeRef(), expression.isNegated());
     }
@@ -3676,7 +3676,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     @Override
-    public StackValue visitWhenExpression(JetWhenExpression expression, StackValue receiver) {
+    public StackValue visitWhenExpression(@NotNull JetWhenExpression expression, StackValue receiver) {
         return generateWhenExpression(expression, false);
     }
 

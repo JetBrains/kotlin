@@ -268,14 +268,14 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Void visitIfExpression(JetIfExpression ifExpression, CheckTypeContext c) {
+            public Void visitIfExpression(@NotNull JetIfExpression ifExpression, CheckTypeContext c) {
                 checkExpressionType(ifExpression.getThen(), c);
                 checkExpressionType(ifExpression.getElse(), c);
                 return null;
             }
 
             @Override
-            public Void visitBlockExpression(JetBlockExpression expression, CheckTypeContext c) {
+            public Void visitBlockExpression(@NotNull JetBlockExpression expression, CheckTypeContext c) {
                 if (expression.getStatements().isEmpty()) {
                     visitExpression(expression, c);
                     return null;
@@ -288,7 +288,7 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Void visitPostfixExpression(JetPostfixExpression expression, CheckTypeContext c) {
+            public Void visitPostfixExpression(@NotNull JetPostfixExpression expression, CheckTypeContext c) {
                 if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
                     checkExpressionType(expression.getBaseExpression(), c.makeTypeNullable());
                     return null;
@@ -297,7 +297,7 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Void visitBinaryExpression(JetBinaryExpression expression, CheckTypeContext c) {
+            public Void visitBinaryExpression(@NotNull JetBinaryExpression expression, CheckTypeContext c) {
                 if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.ELVIS) {
                     checkExpressionType(expression.getLeft(), c.makeTypeNullable());
                     checkExpressionType(expression.getRight(), c);
@@ -307,7 +307,7 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Void visitExpression(JetExpression expression, CheckTypeContext c) {
+            public Void visitExpression(@NotNull JetExpression expression, CheckTypeContext c) {
                 JetTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
                 if (typeInfo != null) {
                     DataFlowUtils.checkType(typeInfo.getType(), expression, c.expectedType, typeInfo.getDataFlowInfo(), c.trace);
