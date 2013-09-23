@@ -52,7 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 // NOTE: After making changes, you need to re-generate the injectors.
-//       To do that, you can run either this class, or /build.xml/generateInjectors task
+//       To do that, you can run either this class
 public class GenerateInjectors {
 
     private GenerateInjectors() {

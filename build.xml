@@ -105,31 +105,6 @@
         <chmod dir="${kotlin-home}/bin" includes="*" perm="755"/>
     </target>
 
-    <target name="compileGenerators">
-        <cleandir dir="${output}/classes/generators"/>
-        <javac destdir="${output}/classes/generators" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-            <src path="injector-generator/src"/>
-            <src path="generators/src/org/jetbrains/jet/generators/injectors"/>
-            <src path="generators/src/org/jetbrains/jet/generators/jvm"/>
-            <src refid="compilerSources.path"/>
-            <classpath refid="classpath"/>
-        </javac>
-        <copy todir="${output}/classes/generators">
-            <fileset dir="compiler/frontend/builtins" includes="jet/**"/>
-        </copy>
-    </target>
-
-    <target name="invokeGenerators" depends="compileGenerators">
-        <java classname="org.jetbrains.jet.generators.injectors.GenerateInjectors" failonerror="true">
-            <classpath refid="classpath"/>
-            <classpath path="${output}/classes/generators"/>
-        </java>
-        <java classname="org.jetbrains.jet.generators.jvm.GenerateJavaToKotlinMethodMap" failonerror="true">
-            <classpath refid="classpath"/>
-            <classpath path="${output}/classes/generators"/>
-        </java>
-    </target>
-
     <target name="compilerSources">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
@@ -562,7 +537,7 @@
 
     <!-- builds redistributables from sources -->
     <target name="dist"
-            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,preloader,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist_quick"
