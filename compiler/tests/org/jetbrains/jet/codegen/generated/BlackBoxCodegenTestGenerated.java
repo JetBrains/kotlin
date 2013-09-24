@@ -429,6 +429,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/builtinStubMethods/Iterator.kt");
         }
         
+        @TestMetadata("IteratorWithRemove.kt")
+        public void testIteratorWithRemove() throws Exception {
+            doTest("compiler/testData/codegen/box/builtinStubMethods/IteratorWithRemove.kt");
+        }
+        
         @TestMetadata("List.kt")
         public void testList() throws Exception {
             doTest("compiler/testData/codegen/box/builtinStubMethods/List.kt");
