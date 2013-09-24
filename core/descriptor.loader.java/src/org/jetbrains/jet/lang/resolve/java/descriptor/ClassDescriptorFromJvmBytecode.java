@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -37,10 +38,11 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Name name,
             @NotNull ClassKind kind,
             boolean isInner
     ) {
-        super(containingDeclaration, kind, isInner);
+        super(containingDeclaration, name, kind, isInner);
     }
 
 

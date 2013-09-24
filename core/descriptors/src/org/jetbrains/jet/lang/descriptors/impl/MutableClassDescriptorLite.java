@@ -60,33 +60,14 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     private ReceiverParameterDescriptor implicitReceiver;
 
-    private Name name;
-    private final DeclarationDescriptor containingDeclaration;
-
     public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration,
+                                      @NotNull Name name,
                                       @NotNull ClassKind kind,
                                       boolean isInner
     ) {
-        this.containingDeclaration = containingDeclaration;
+        super(containingDeclaration, name);
         this.kind = kind;
         this.isInner = isInner;
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
-    }
-
-    @NotNull
-    @Override
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(@NotNull Name name) {
-        assert this.name == null : this.name;
-        this.name = name;
     }
 
     @NotNull

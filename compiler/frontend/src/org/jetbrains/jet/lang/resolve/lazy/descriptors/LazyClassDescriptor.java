@@ -69,8 +69,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final JetClassLikeInfo originalClassInfo;
     private final ClassMemberDeclarationProvider declarationProvider;
 
-    private final Name name;
-    private final DeclarationDescriptor containingDeclaration;
     private final LazyClassTypeConstructor typeConstructor;
     private final Modality modality;
     private final Visibility visibility;
@@ -94,8 +92,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             @NotNull Name name,
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
+        super(containingDeclaration, name);
         this.resolveSession = resolveSession;
-        this.name = name;
 
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
             this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
@@ -104,8 +102,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         this.originalClassInfo = classLikeInfo;
         JetClassLikeInfo classLikeInfoForMembers =
                 classLikeInfo.getClassKind() != ClassKind.ENUM_CLASS ? classLikeInfo : noEnumEntries(classLikeInfo);
-        this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
-        this.containingDeclaration = containingDeclaration;
+        this.declarationProvider =
+                resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
 
         this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
         this.unsubstitutedInnerClassesScope = new InnerClassesScopeWrapper(unsubstitutedMemberScope);
@@ -181,7 +179,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     private JetScope computeScopeForClassHeaderResolution() {
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with type parameters for " + name);
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with type parameters for " + getName());
         for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
             scope.addClassifierDescriptor(typeParameterDescriptor);
         }
@@ -201,7 +199,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     private JetScope computeScopeForMemberDeclarationResolution() {
-        WritableScopeImpl thisScope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with 'this' for " + name);
+        WritableScopeImpl thisScope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with 'this' for " + getName());
         thisScope.addLabeledDeclaration(this);
         thisScope.changeLockLevel(WritableScope.LockLevel.READING);
 
@@ -227,7 +225,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         ConstructorDescriptor primaryConstructor = getUnsubstitutedPrimaryConstructor();
         if (primaryConstructor == null) return getScopeForMemberDeclarationResolution();
 
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + name);
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + getName());
         for (ValueParameterDescriptor valueParameterDescriptor : primaryConstructor.getValueParameters()) {
             scope.addVariableDescriptor(valueParameterDescriptor);
         }
@@ -248,12 +246,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     @Override
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return unsubstitutedMemberScope.getPrimaryConstructor();
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
     }
 
     @NotNull
@@ -350,12 +342,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         else {
             return Collections.emptyList();
         }
-    }
-
-    @NotNull
-    @Override
-    public Name getName() {
-        return name;
     }
 
     @Override

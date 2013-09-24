@@ -271,11 +271,10 @@ public final class JavaClassResolver {
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         ClassDescriptorFromJvmBytecode classDescriptor =
-                new ClassDescriptorFromJvmBytecode(containingDeclaration, determineClassKind(javaClass), isInnerClass(javaClass));
+                new ClassDescriptorFromJvmBytecode(containingDeclaration, javaClass.getName(), determineClassKind(javaClass), isInnerClass(javaClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
 
-        classDescriptor.setName(javaClass.getName());
 
         JavaTypeParameterResolver.Initializer typeParameterInitializer = typeParameterResolver.resolveTypeParameters(classDescriptor, javaClass);
         classDescriptor.setTypeParameterDescriptors(typeParameterInitializer.getDescriptors());
@@ -462,9 +461,8 @@ public final class JavaClassResolver {
     @NotNull
     private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull JavaClass javaClass) {
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
-                new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
+                new ClassDescriptorFromJvmBytecode(containing, getClassObjectName(containing.getName()), ClassKind.CLASS_OBJECT, false);
 
-        classObjectDescriptor.setName(getClassObjectName(containing.getName()));
         classObjectDescriptor.setModality(Modality.FINAL);
         classObjectDescriptor.setVisibility(containing.getVisibility());
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());

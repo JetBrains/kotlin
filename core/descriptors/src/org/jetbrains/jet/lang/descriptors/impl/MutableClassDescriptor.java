@@ -43,7 +43,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
 
     public MutableClassDescriptor(@NotNull DeclarationDescriptor containingDeclaration,
                                   @NotNull JetScope outerScope, ClassKind kind, boolean isInner, Name name) {
-        super(containingDeclaration, kind, isInner);
+        super(containingDeclaration, name, kind, isInner);
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
@@ -57,7 +57,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
             setUpScopeForInitializers(this);
         }
 
-        setName(name);
+        scopeForMemberResolution.addLabeledDeclaration(this);
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,12 +127,6 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public void setName(@NotNull Name name) {
-        super.setName(name);
-        scopeForMemberResolution.addLabeledDeclaration(this);
-    }
 
     @Override
     public void createTypeConstructor() {

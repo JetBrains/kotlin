@@ -17,72 +17,21 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.List;
-import java.util.Map;
+public abstract class ClassDescriptorBase extends AbstractClassDescriptor {
 
-public abstract class ClassDescriptorBase implements ClassDescriptor {
+    private final DeclarationDescriptor containingDeclaration;
 
-    protected volatile JetType defaultType;
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getOriginal() {
-        return this;
-    }
-
-    protected abstract JetScope getScopeForMemberLookup();
-
-    @NotNull
-    @Override
-    public JetScope getMemberScope(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Illegal number of type arguments: expected " 
-                                                                                     + getTypeConstructor().getParameters().size() + " but was " + typeArguments.size() 
-                                                                                     + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();
-        if (typeArguments.isEmpty()) return getScopeForMemberLookup();
-
-        List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils.buildSubstitutionContext(typeParameters, typeArguments);
-
-        // Unsafe substitutor is OK, because no recursion can hurt us upon a trivial substitution:
-        // all the types are written explicitly in the code already, they can not get infinite.
-        // One exception is *-projections, but they need to be handled separately anyways.
-        TypeSubstitutor substitutor = TypeSubstitutor.createUnsafe(substitutionContext);
-        return new SubstitutingScope(getScopeForMemberLookup(), substitutor);
+    protected ClassDescriptorBase(@NotNull DeclarationDescriptor containingDeclaration, @NotNull Name name) {
+        super(name);
+        this.containingDeclaration = containingDeclaration;
     }
 
     @NotNull
     @Override
-    public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        if (substitutor.isEmpty()) {
-            return this;
-        }
-        return new LazySubstitutingClassDescriptor(this, substitutor);
-    }
-
-    @NotNull
-    @Override
-    public JetType getDefaultType() {
-        if (defaultType == null) {
-            defaultType = TypeUtils.makeUnsubstitutedType(this, getScopeForMemberLookup());
-        }
-        return defaultType;
-    }
-
-    @Override
-    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
-        visitor.visitClassDescriptor(this, null);
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitClassDescriptor(this, data);
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration;
     }
 }

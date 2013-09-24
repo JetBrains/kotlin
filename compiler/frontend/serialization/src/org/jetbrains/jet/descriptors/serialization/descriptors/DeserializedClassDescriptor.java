@@ -64,8 +64,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final NestedClassDescriptors nestedClasses;
     private final NestedClassDescriptors nestedObjects;
 
-    private final Name name;
-    private final DeclarationDescriptor containingDeclaration;
     private final DeserializedClassTypeConstructor typeConstructor;
     private final Modality modality;
     private final Visibility visibility;
@@ -84,20 +82,20 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
             @NotNull ProtoBuf.Class classProto,
             @Nullable TypeDeserializer outerTypeDeserializer
     ) {
+        super(containingDeclaration, nameResolver.getName(classProto.getName()));
+
         this.classId = classId;
         this.classProto = classProto;
         this.descriptorFinder = descriptorFinder;
-        this.name = nameResolver.getName(classProto.getName());
 
         TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, outerTypeDeserializer, nameResolver,
-                                                                        descriptorFinder, "Deserializer for class " + name, NONE);
+                                                                        descriptorFinder, "Deserializer for class " + getName(), NONE);
         DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(storageManager, notNullTypeDeserializer,
                                                                                  this, nameResolver, annotationResolver);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount());
         this.deserializer = outerDeserializer.createChildDeserializer(this, classProto.getTypeParameterList(), typeParameters);
         this.typeDeserializer = deserializer.getTypeDeserializer();
 
-        this.containingDeclaration = containingDeclaration;
         this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
         this.memberScope = new DeserializedClassMemberScope(storageManager, this);
         this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
@@ -155,12 +153,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
     @NotNull
     @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
-    }
-
-    @NotNull
-    @Override
     public TypeConstructor getTypeConstructor() {
         return typeConstructor;
     }
@@ -187,12 +179,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     @Override
     public boolean isInner() {
         return isInner;
-    }
-
-    @NotNull
-    @Override
-    public Name getName() {
-        return name;
     }
 
     private List<AnnotationDescriptor> computeAnnotations() {
