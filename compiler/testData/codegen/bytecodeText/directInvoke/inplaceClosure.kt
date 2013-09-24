@@ -1,4 +1,4 @@
-fun box() {
+fun test() {
     1.{Int.() -> 2}()
 }
 

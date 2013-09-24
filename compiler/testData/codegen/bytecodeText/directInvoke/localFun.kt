@@ -1,4 +1,4 @@
-fun box() {
+fun test() {
     fun local(s: Int) {
     }
 
