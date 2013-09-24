@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.io.File;
 import java.util.LinkedList;
 
 public class JetPluginUtil {
@@ -154,10 +153,8 @@ public class JetPluginUtil {
         VirtualFile moduleFile = module.getModuleFile();
         if (moduleFile == null) return false;
 
-        String moduleFilePath = moduleFile.getPath();
-        String buildGradle = moduleFilePath.replace(moduleFile.getName(), "build.gradle");
-
-        return new File(buildGradle).exists();
+        VirtualFile buildFile = moduleFile.getParent().findChild("build.gradle");
+        return buildFile != null && buildFile.exists();
     }
 
     public static boolean isMavenModule(@NotNull Module module) {
