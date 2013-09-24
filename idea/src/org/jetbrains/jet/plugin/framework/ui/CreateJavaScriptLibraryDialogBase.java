@@ -82,6 +82,10 @@ public abstract class CreateJavaScriptLibraryDialogBase extends DialogWrapper im
         if (!showPathToJsFilePanel) {
             copyJsFilesPlace.setVisible(false);
         }
+
+        if (!showPathToJarPanel && !showPathToJsFilePanel) {
+            modulesSeparator.setVisible(false);
+        }
     }
 
     @Override

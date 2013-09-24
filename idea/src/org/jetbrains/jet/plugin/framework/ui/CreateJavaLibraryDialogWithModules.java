@@ -41,6 +41,7 @@ public class CreateJavaLibraryDialogWithModules extends CreateJavaLibraryDialogB
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
         chooseLibraryPathPlace.setVisible(showPathPanel);
+        modulesSeparator.setVisible(showPathPanel);
 
         updateComponents();
     }
