@@ -200,9 +200,6 @@
     <item name='android.os.AsyncTask android.os.AsyncTask.Status getStatus()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel android.os.IBinder readStrongBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyDeath()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -447,9 +444,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectNetwork()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel java.lang.String readString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Bundle java.util.Set&lt;java.lang.String&gt; keySet()'>
