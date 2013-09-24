@@ -127,11 +127,6 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/functions/referencesStaticInnerClassMethodL2.kt");
         }
         
-        @TestMetadata("removeInIterator.kt")
-        public void testRemoveInIterator() throws Exception {
-            doTestWithJava("compiler/testData/codegen/boxWithJava/functions/removeInIterator.kt");
-        }
-        
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithJava/innerClass")

@@ -522,6 +522,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
+        if (isSubclass(descriptor, builtIns.getIterator())) {
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
+                                                          builtIns.getUnit()) == null) {
+                result.add("remove()V");
+            }
+        }
+
         return result;
     }
 
