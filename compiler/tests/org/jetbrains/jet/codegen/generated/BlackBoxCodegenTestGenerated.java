@@ -1139,6 +1139,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/closures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("capturedLocalGenericFun.kt")
+        public void testCapturedLocalGenericFun() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/capturedLocalGenericFun.kt");
+        }
+        
         @TestMetadata("closureInsideConstrucor.kt")
         public void testClosureInsideConstrucor() throws Exception {
             doTest("compiler/testData/codegen/box/closures/closureInsideConstrucor.kt");
@@ -1189,6 +1194,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/closures/kt2151.kt");
         }
         
+        @TestMetadata("kt3905.kt")
+        public void testKt3905() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/kt3905.kt");
+        }
+        
         @TestMetadata("localFunctionInFunction.kt")
         public void testLocalFunctionInFunction() throws Exception {
             doTest("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
@@ -1197,6 +1207,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localFunctionInInitializer.kt")
         public void testLocalFunctionInInitializer() throws Exception {
             doTest("compiler/testData/codegen/box/closures/localFunctionInInitializer.kt");
+        }
+        
+        @TestMetadata("localGenericFun.kt")
+        public void testLocalGenericFun() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/localGenericFun.kt");
         }
         
         @TestMetadata("localReturn.kt")
