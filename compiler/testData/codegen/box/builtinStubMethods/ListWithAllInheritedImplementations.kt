@@ -16,8 +16,6 @@ class MyList<T>(v: T): Super<T>(v), List<T> {
     override fun isEmpty(): Boolean = true
     override fun contains(o: Any?): Boolean = false
     override fun iterator(): Iterator<T> = throw Error()
-    override fun toArray(): Array<Any?> = throw Error()
-    override fun <E> toArray(a: Array<out E>): Array<E> = throw Error()
     override fun containsAll(c: Collection<Any?>): Boolean = false
     override fun get(index: Int): T = v
     override fun indexOf(o: Any?): Int = -1

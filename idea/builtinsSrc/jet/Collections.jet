@@ -14,8 +14,6 @@ public trait Collection<out E> : Iterable<E>, Hashable {
     public fun isEmpty() : Boolean
     public fun contains(o : Any?) : Boolean
     override fun iterator() : Iterator<E>
-    public fun toArray() : Array<Any?>
-    public fun <T> toArray(a : Array<out T>) : Array<T>
 
     // Bulk Operations
     public fun containsAll(c : Collection<Any?>) : Boolean
@@ -42,8 +40,6 @@ public trait List<out E> : Collection<E> {
     override fun isEmpty() : Boolean
     override fun contains(o : Any?) : Boolean
     override fun iterator() : Iterator<E>
-    override fun toArray() : Array<Any?>
-    override fun <T> toArray(a : Array<out T>) : Array<T>
 
     // Bulk Operations
     override fun containsAll(c : Collection<Any?>) : Boolean
@@ -94,8 +90,6 @@ public trait Set<out E> : Collection<E> {
     override fun isEmpty() : Boolean
     override fun contains(o : Any?) : Boolean
     override fun iterator() : Iterator<E>
-    override fun toArray() : Array<Any?>
-    override fun <T> toArray(a : Array<out T>) : Array<T>
 
     // Bulk Operations
     override fun containsAll(c : Collection<Any?>) : Boolean

@@ -12,6 +12,4 @@ public trait SubclassOfCollection</*0*/ E> : jet.MutableCollection<E> {
     public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }

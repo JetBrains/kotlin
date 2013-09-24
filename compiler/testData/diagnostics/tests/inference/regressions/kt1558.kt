@@ -3,6 +3,8 @@ package j
 
 fun <T : Any> T?.sure() : T = this!!
 
+fun <E> List<*>.toArray(ar: Array<E>): Array<E> = ar
+
 fun testArrays(ci: List<Int?>, cii: List<Int?>?) {
     val c1: Array<Int?> = cii.sure().toArray(<!FUNCTION_CALL_EXPECTED!><!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>Array<!><Int?><!>)
 

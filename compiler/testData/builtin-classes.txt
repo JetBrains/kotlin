@@ -284,8 +284,6 @@ public trait Collection</*0*/ out E> : jet.Iterable<E>, jet.Hashable {
     public abstract fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
     public abstract fun size(): jet.Int
-    public abstract fun toArray(): jet.Array<jet.Any?>
-    public abstract fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait Comparable</*0*/ in T> {
@@ -1131,8 +1129,6 @@ public trait List</*0*/ out E> : jet.Collection<E> {
     public abstract fun listIterator(/*0*/ index: jet.Int): jet.ListIterator<E>
     public abstract override /*1*/ fun size(): jet.Int
     public abstract fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.List<E>
-    public abstract override /*1*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*1*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait ListIterator</*0*/ out T> : jet.Iterator<T> {
@@ -1296,8 +1292,6 @@ public trait MutableCollection</*0*/ E> : jet.Collection<E>, jet.MutableIterable
     public abstract fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
-    public abstract override /*1*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait MutableIterable</*0*/ out T> : jet.Iterable<T> {
@@ -1334,8 +1328,6 @@ public trait MutableList</*0*/ E> : jet.List<E>, jet.MutableCollection<E> {
     public abstract fun set(/*0*/ index: jet.Int, /*1*/ element: E): E
     public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
     public abstract override /*1*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.MutableList<E>
-    public abstract override /*2*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public trait MutableListIterator</*0*/ T> : jet.ListIterator<T>, jet.MutableIterator<T> {
@@ -1387,8 +1379,6 @@ public trait MutableSet</*0*/ E> : jet.Set<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
-    public abstract override /*2*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*2*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public final class Nothing {
@@ -1445,8 +1435,6 @@ public trait Set</*0*/ out E> : jet.Collection<E> {
     public abstract override /*1*/ fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
     public abstract override /*1*/ fun size(): jet.Int
-    public abstract override /*1*/ fun toArray(): jet.Array<jet.Any?>
-    public abstract override /*1*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
 
 public final class Short : jet.Number, jet.Comparable<jet.Short> {
