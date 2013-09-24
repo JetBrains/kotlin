@@ -470,7 +470,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (isSubclass(descriptor, builtIns.getCollection())) {
-            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getCollection());
+            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getCollection(), 0);
 
             if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("add"),
                                                               builtIns.getBoolean(), classifier) == null) {
@@ -503,7 +503,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (isSubclass(descriptor, builtIns.getList())) {
-            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getList());
+            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getList(), 0);
 
             if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("set"),
                                                               classifier, builtIns.getInt(), classifier) == null) {
@@ -521,6 +521,39 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
+        if (isSubclass(descriptor, builtIns.getMap())) {
+            ClassifierDescriptor keyClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 0);
+            ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 1);
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("put"),
+                                                              valueClassifier, keyClassifier, valueClassifier) == null) {
+                result.add("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
+                                                              valueClassifier, builtIns.getAny()) == null) {
+                result.add("remove(Ljava/lang/Object;)Ljava/lang/Object;");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("putAll"),
+                                                              builtIns.getUnit(), builtIns.getMap()) == null) {
+                result.add("putAll(Ljava/util/Map;)V");
+            }
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("clear"), builtIns.getUnit()) == null) {
+                result.add("clear()V");
+            }
+        }
+
+        if (isSubclass(descriptor, builtIns.getMapEntry())) {
+            ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMapEntry(), 1);
+
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("setValue"),
+                                                              valueClassifier, valueClassifier) == null) {
+                result.add("setValue(Ljava/lang/Object;)Ljava/lang/Object;");
+            }
+        }
+
         if (isSubclass(descriptor, builtIns.getIterator())) {
             if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
                                                           builtIns.getUnit()) == null) {
@@ -532,8 +565,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @NotNull
-    private ClassifierDescriptor getSubstituteForTypeParameterOf(@NotNull ClassDescriptor trait) {
-        TypeParameterDescriptor listTypeParameter = trait.getTypeConstructor().getParameters().get(0);
+    private ClassifierDescriptor getSubstituteForTypeParameterOf(@NotNull ClassDescriptor trait, int index) {
+        TypeParameterDescriptor listTypeParameter = trait.getTypeConstructor().getParameters().get(index);
         TypeSubstitutor deepSubstitutor = SubstitutionUtils.buildDeepSubstitutor(descriptor.getDefaultType());
         TypeProjection substitute = deepSubstitutor.substitute(new TypeProjection(listTypeParameter.getDefaultType()));
         assert substitute != null : "Couldn't substitute: " + descriptor;

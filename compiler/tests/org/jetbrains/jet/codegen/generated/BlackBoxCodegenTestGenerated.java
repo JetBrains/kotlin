@@ -454,6 +454,26 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/builtinStubMethods/ListWithAllInheritedImplementations.kt");
         }
         
+        @TestMetadata("Map.kt")
+        public void testMap() throws Exception {
+            doTest("compiler/testData/codegen/box/builtinStubMethods/Map.kt");
+        }
+        
+        @TestMetadata("MapEntry.kt")
+        public void testMapEntry() throws Exception {
+            doTest("compiler/testData/codegen/box/builtinStubMethods/MapEntry.kt");
+        }
+        
+        @TestMetadata("MapEntryWithSetValue.kt")
+        public void testMapEntryWithSetValue() throws Exception {
+            doTest("compiler/testData/codegen/box/builtinStubMethods/MapEntryWithSetValue.kt");
+        }
+        
+        @TestMetadata("MapWithAllImplementations.kt")
+        public void testMapWithAllImplementations() throws Exception {
+            doTest("compiler/testData/codegen/box/builtinStubMethods/MapWithAllImplementations.kt");
+        }
+        
         @TestMetadata("SubstitutedList.kt")
         public void testSubstitutedList() throws Exception {
             doTest("compiler/testData/codegen/box/builtinStubMethods/SubstitutedList.kt");
