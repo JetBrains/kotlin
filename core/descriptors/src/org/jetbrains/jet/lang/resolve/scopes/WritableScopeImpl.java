@@ -479,23 +479,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return implicitReceiverHierarchy;
     }
 
-    public List<VariableDescriptor> getDeclaredVariables() {
-        checkMayRead();
-
-        List<VariableDescriptor> result = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : getVariableClassOrNamespaceDescriptors().values()) {
-            if (descriptor instanceof VariableDescriptor) {
-                VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-                result.add(variableDescriptor);
-            }
-        }
-        return result;
-    }
-
-    public boolean hasDeclaredItems() {
-        return variableClassOrNamespaceDescriptors != null  && !variableClassOrNamespaceDescriptors.isEmpty();
-    }
-
     private void addToDeclared(DeclarationDescriptor descriptor) {
         declaredDescriptorsAccessibleBySimpleName.put(descriptor.getName(), descriptor);
     }
