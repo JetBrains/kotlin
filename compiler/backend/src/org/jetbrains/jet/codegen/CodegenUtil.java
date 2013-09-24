@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -163,7 +164,7 @@ public class CodegenUtil {
     ) {
         Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
         for (FunctionDescriptor function : functions) {
-            if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION
+            if (!CallResolverUtil.isOrOverridesSynthesized(function)
                 && function.getTypeParameters().isEmpty()
                 && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClassifiers))
                 && rawTypeMatches(function.getReturnType(), returnedClassifier)) {
