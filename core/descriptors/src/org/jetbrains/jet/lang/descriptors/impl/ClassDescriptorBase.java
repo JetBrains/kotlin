@@ -29,7 +29,7 @@ import java.util.Map;
 
 public abstract class ClassDescriptorBase implements ClassDescriptor {
 
-    protected JetType defaultType;
+    protected volatile JetType defaultType;
 
     protected abstract JetScope getScopeForMemberLookup();
 
