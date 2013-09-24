@@ -252,12 +252,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     @Override
-    public DeclarationDescriptor getOriginal() {
-        return this;
-    }
-
-    @NotNull
-    @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
     }

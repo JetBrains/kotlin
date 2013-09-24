@@ -155,12 +155,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
 
     @NotNull
     @Override
-    public DeclarationDescriptor getOriginal() {
-        return this;
-    }
-
-    @NotNull
-    @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
     }

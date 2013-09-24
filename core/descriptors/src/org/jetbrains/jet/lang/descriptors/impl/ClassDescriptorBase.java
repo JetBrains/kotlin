@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -30,6 +31,12 @@ import java.util.Map;
 public abstract class ClassDescriptorBase implements ClassDescriptor {
 
     protected volatile JetType defaultType;
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getOriginal() {
+        return this;
+    }
 
     protected abstract JetScope getScopeForMemberLookup();
 

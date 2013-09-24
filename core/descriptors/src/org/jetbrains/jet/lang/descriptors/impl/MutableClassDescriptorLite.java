@@ -91,12 +91,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public DeclarationDescriptor getOriginal() {
-        return this;
-    }
-
-    @NotNull
-    @Override
     public TypeConstructor getTypeConstructor() {
         return typeConstructor;
     }
