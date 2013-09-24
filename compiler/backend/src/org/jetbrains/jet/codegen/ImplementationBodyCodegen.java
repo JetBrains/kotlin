@@ -469,13 +469,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         List<String> result = Lists.newArrayList();
 
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        if (isSubclass(descriptor, builtIns.getList())) {
-            TypeParameterDescriptor listTypeParameter = builtIns.getList().getTypeConstructor().getParameters().get(0);
-            TypeSubstitutor deepSubstitutor = SubstitutionUtils.buildDeepSubstitutor(descriptor.getDefaultType());
-            TypeProjection substitute = deepSubstitutor.substitute(new TypeProjection(listTypeParameter.getDefaultType()));
-            assert substitute != null : "Couldn't substitute: " + descriptor;
-            ClassifierDescriptor classifier = substitute.getType().getConstructor().getDeclarationDescriptor();
-            assert classifier != null : "No classifier: " + substitute.getType();
+        if (isSubclass(descriptor, builtIns.getCollection())) {
+            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getCollection());
 
             if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("add"),
                                                               builtIns.getBoolean(), classifier) == null) {
@@ -505,6 +500,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("clear"), builtIns.getUnit()) == null){
                 result.add("clear()V");
             }
+        }
+
+        if (isSubclass(descriptor, builtIns.getList())) {
+            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getList());
 
             if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("set"),
                                                               classifier, builtIns.getInt(), classifier) == null) {
@@ -530,6 +529,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         return result;
+    }
+
+    @NotNull
+    private ClassifierDescriptor getSubstituteForTypeParameterOf(@NotNull ClassDescriptor trait) {
+        TypeParameterDescriptor listTypeParameter = trait.getTypeConstructor().getParameters().get(0);
+        TypeSubstitutor deepSubstitutor = SubstitutionUtils.buildDeepSubstitutor(descriptor.getDefaultType());
+        TypeProjection substitute = deepSubstitutor.substitute(new TypeProjection(listTypeParameter.getDefaultType()));
+        assert substitute != null : "Couldn't substitute: " + descriptor;
+        ClassifierDescriptor classifier = substitute.getType().getConstructor().getDeclarationDescriptor();
+        assert classifier != null : "No classifier: " + substitute.getType();
+        return classifier;
     }
 
 
