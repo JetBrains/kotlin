@@ -70,13 +70,6 @@ public interface JetScope {
     Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName);
 
     /**
-     * @param fieldName includes the "$"
-     * @return the property declaring this field, if any
-     */
-    @Nullable
-    PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName);
-
-    /**
      * All visible descriptors from current scope.
      *
      * @return All visible descriptors from current scope.

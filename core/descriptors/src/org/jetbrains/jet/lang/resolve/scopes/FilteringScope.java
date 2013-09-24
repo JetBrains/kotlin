@@ -103,11 +103,6 @@ public class FilteringScope implements JetScope {
         return Collections2.filter(workerScope.getDeclarationsByLabel(labelName), predicate);
     }
 
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        return filterDescriptor(workerScope.getPropertyByFieldReference(fieldName));
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {

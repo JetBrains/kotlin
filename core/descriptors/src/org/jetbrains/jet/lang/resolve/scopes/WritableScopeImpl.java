@@ -38,10 +38,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
 
-    // FieldNames include "$"
-    @Nullable
-    private Map<Name, PropertyDescriptor> propertyDescriptorsByFieldNames;
-
     @Nullable
     private SetMultimap<Name, FunctionDescriptor> functionGroups;
 
@@ -481,28 +477,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         }
         implicitReceiverHierarchy.addAll(super.computeImplicitReceiversHierarchy());
         return implicitReceiverHierarchy;
-    }
-
-//    @SuppressWarnings({"NullableProblems"})
-    @NotNull
-    private Map<Name, PropertyDescriptor> getPropertyDescriptorsByFieldNames() {
-        if (propertyDescriptorsByFieldNames == null) {
-            propertyDescriptorsByFieldNames = new HashMap<Name, PropertyDescriptor>();
-        }
-        return propertyDescriptorsByFieldNames;
-    }
-
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        checkMayRead();
-
-        if (!fieldName.asString().startsWith("$")) {
-            throw new IllegalStateException();
-        }
-
-        PropertyDescriptor descriptor = getPropertyDescriptorsByFieldNames().get(fieldName);
-        if (descriptor != null) return descriptor;
-        return super.getPropertyByFieldReference(fieldName);
     }
 
     public List<VariableDescriptor> getDeclaredVariables() {

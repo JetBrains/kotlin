@@ -211,12 +211,6 @@ public abstract class DeserializedMemberScope implements JetScope {
         throw new UnsupportedOperationException("Should not be called");
     }
 
-    @Nullable
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        throw new UnsupportedOperationException("Should not be called");
-    }
-
     private Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = new LinkedHashSet<DeclarationDescriptor>(0);
 

@@ -148,17 +148,6 @@ public class ChainedScope implements JetScope {
         return Collections.emptyList();
     }
 
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        for (JetScope jetScope : scopeChain) {
-            PropertyDescriptor propertyByFieldReference = jetScope.getPropertyByFieldReference(fieldName);
-            if (propertyByFieldReference != null) {
-                return propertyByFieldReference;
-            }
-        }
-        return null;
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

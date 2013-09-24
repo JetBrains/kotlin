@@ -139,11 +139,6 @@ public class ErrorUtils {
             return Collections.emptyList();
         }
 
-        @Override
-        public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-            return null; // TODO : review
-        }
-
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getAllDescriptors() {
@@ -220,12 +215,6 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
-            throw new IllegalStateException();
-        }
-
-        @Nullable
-        @Override
-        public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
             throw new IllegalStateException();
         }
 

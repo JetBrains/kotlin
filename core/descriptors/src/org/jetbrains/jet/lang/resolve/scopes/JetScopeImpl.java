@@ -71,11 +71,6 @@ public abstract class JetScopeImpl implements JetScope {
         return Collections.emptyList();
     }
 
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        return null;
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

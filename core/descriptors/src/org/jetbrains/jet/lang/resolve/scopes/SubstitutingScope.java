@@ -136,11 +136,6 @@ public class SubstitutingScope implements JetScope {
         throw new UnsupportedOperationException(); // TODO
     }
 
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
