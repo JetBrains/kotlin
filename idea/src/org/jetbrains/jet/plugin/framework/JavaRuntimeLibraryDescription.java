@@ -23,7 +23,6 @@ import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -32,12 +31,12 @@ import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialog;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
-import org.jetbrains.jet.utils.KotlinPaths;
-import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
 import java.util.Set;
+
+import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator.getFileInDir;
 
 public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
@@ -61,11 +60,15 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
 
         String defaultPathToJarFile = FileUIUtils.createRelativePath(null, contextDirectory, "lib");
 
-        boolean jarFilePresent = configurator.isJarPresent(defaultPathToJarFile);
+        boolean jarFilePresent = getFileInDir(configurator.getJarName(), defaultPathToJarFile).exists();
 
         File libraryFile;
+        File librarySrcFile;
         if (jarFilePresent) {
-            libraryFile = configurator.getJarInDir(defaultPathToJarFile);
+            libraryFile = getFileInDir(configurator.getJarName(), defaultPathToJarFile);
+            File sourcesJar = getFileInDir(configurator.getSourcesJarName(), defaultPathToJarFile);
+            librarySrcFile = sourcesJar.exists() ? sourcesJar
+                                                 : configurator.copyFileToDir(configurator.getExistedSourcesJarFile(), libraryFile.getParent());
         }
         else {
             CreateJavaLibraryDialog dialog = new CreateJavaLibraryDialog(defaultPathToJarFile);
@@ -74,15 +77,22 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
             if (!dialog.isOK()) return null;
 
             String copyIntoPath = dialog.getCopyIntoPath();
-            libraryFile = copyIntoPath != null ? configurator.copyJarToDir(copyIntoPath) : configurator.getExistedJarFile();
+
+            File existedJarFile = configurator.getExistedJarFile();
+            libraryFile = copyIntoPath != null ? configurator.copyFileToDir(existedJarFile, copyIntoPath) : existedJarFile;
+
+            File existedSourcesJarFile = configurator.getExistedSourcesJarFile();
+            librarySrcFile = copyIntoPath != null ? configurator.copyFileToDir(existedSourcesJarFile, copyIntoPath) : existedSourcesJarFile;
         }
 
         final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
+        final String libraryFileSrcUrl = VfsUtil.getUrlForLibraryRoot(librarySrcFile);
+
         return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
                 editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);
-                editor.addRoot(libraryFileUrl + "src", OrderRootType.SOURCES);
+                editor.addRoot(libraryFileSrcUrl, OrderRootType.SOURCES);
             }
         };
     }

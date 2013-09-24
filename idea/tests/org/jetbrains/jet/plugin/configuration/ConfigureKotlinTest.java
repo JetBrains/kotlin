@@ -136,7 +136,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     ) {
         for (Module module : modules) {
             String pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp);
-            configurator.configureModuleWithLibrary(module, libraryState, runtimeState, pathToJar);
+            configurator.configureModuleWithLibraryClasses(module, libraryState, runtimeState, pathToJar);
         }
     }
 

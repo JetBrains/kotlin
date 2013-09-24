@@ -1,11 +1,7 @@
 package org.jetbrains.jet.plugin.configuration;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
@@ -31,15 +27,14 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
 
     @NotNull
     @Override
-    protected String getJarName() {
+    public String getJarName() {
         return PathUtil.KOTLIN_JAVA_RUNTIME_JAR;
     }
 
+    @NotNull
     @Override
-    protected void addRootsToLibrary(@NotNull Library.ModifiableModel library, @NotNull File jarFile) {
-        String libraryRoot = VfsUtil.getUrlForLibraryRoot(jarFile);
-        library.addRoot(libraryRoot, OrderRootType.CLASSES);
-        library.addRoot(libraryRoot + "src", OrderRootType.SOURCES);
+    public String getSourcesJarName() {
+        return PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR;
     }
 
     @NotNull
@@ -86,17 +81,12 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Override
     @NotNull
     public File getExistedJarFile() {
-        File result;
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            result = PathUtil.getKotlinPathsForDistDirectory().getRuntimePath();
-        }
-        else {
-            result = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
-        }
-        if (!result.exists()) {
-            showError("Jar file wasn't found in " + result.getPath());
-        }
-        return result;
+        return assertFileExists(getKotlinPaths().getRuntimePath());
+    }
+
+    @Override
+    public File getExistedSourcesJarFile() {
+        return assertFileExists(getKotlinPaths().getRuntimeSourcesPath());
     }
 
     KotlinJavaModuleConfigurator() {

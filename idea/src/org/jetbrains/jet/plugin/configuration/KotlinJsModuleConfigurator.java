@@ -1,11 +1,8 @@
 package org.jetbrains.jet.plugin.configuration;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.framework.JSLibraryStdDescription;
@@ -35,8 +32,8 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @Override
     public boolean isConfigured(@NotNull Module module) {
         if (KotlinFrameworkDetector.isJsKotlinModule(module)) {
-            String pathFromLibrary = getPathToJarFromLibrary(module.getProject());
-            return pathFromLibrary != null && getJarFile(pathFromLibrary).exists();
+            String pathFromLibrary = getPathFromLibrary(module.getProject(), OrderRootType.CLASSES);
+            return pathFromLibrary != null && getFileInDir(getJarName(), pathFromLibrary).exists();
         }
         return false;
     }
@@ -49,15 +46,14 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
 
     @NotNull
     @Override
-    protected String getJarName() {
+    public String getJarName() {
         return PathUtil.JS_LIB_JAR_NAME;
     }
 
+    @NotNull
     @Override
-    protected void addRootsToLibrary(@NotNull Library.ModifiableModel library, @NotNull File jarFile) {
-        String libraryRoot = VfsUtil.getUrlForLibraryRoot(jarFile);
-        library.addRoot(libraryRoot, OrderRootType.CLASSES);
-        library.addRoot(libraryRoot, OrderRootType.SOURCES);
+    protected String getSourcesJarName() {
+        return PathUtil.JS_LIB_JAR_NAME;
     }
 
     @NotNull
@@ -69,17 +65,12 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @NotNull
     @Override
     public File getExistedJarFile() {
-        File result;
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            result = PathUtil.getKotlinPathsForDistDirectory().getJsLibJarPath();
-        }
-        else {
-            result = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJarPath();
-        }
-        if (!result.exists()) {
-            showError("Jar file wasn't found in " + result.getPath());
-        }
-        return result;
+        return assertFileExists(getKotlinPaths().getJsLibJarPath());
+    }
+
+    @Override
+    protected File getExistedSourcesJarFile() {
+        return getExistedJarFile();
     }
 
     @Override
@@ -113,23 +104,12 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     }
 
     public static boolean isJsFilePresent(@NotNull String dir) {
-        String runtimeJarFileName = dir + "/" + PathUtil.JS_LIB_JAR_NAME;
-        return new File(runtimeJarFileName).exists();
+        return new File(dir + "/" + PathUtil.JS_LIB_JAR_NAME).exists();
     }
 
     @NotNull
     public File getJsFile() {
-        File result;
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            result = PathUtil.getKotlinPathsForDistDirectory().getJsLibJsPath();
-        }
-        else {
-            result = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJsPath();
-        }
-        if (!result.exists()) {
-            showError("Jar file wasn't found in " + result.getPath());
-        }
-        return result;
+        return assertFileExists(getKotlinPaths().getJsLibJsPath());
     }
 
     private static boolean needToChooseJsFilePath(@NotNull Project project) {

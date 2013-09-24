@@ -27,10 +27,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialog;
-import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 
 import javax.swing.*;
 import java.io.File;
@@ -38,6 +36,8 @@ import java.util.Set;
 
 import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.getConfiguratorByName;
 import static org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator.NAME;
+import static org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator.isJsFilePresent;
+import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator.getFileInDir;
 import static org.jetbrains.jet.plugin.framework.ui.FileUIUtils.createRelativePath;
 
 public class JSLibraryStdDescription extends CustomLibraryDescription {
@@ -62,11 +62,11 @@ public class JSLibraryStdDescription extends CustomLibraryDescription {
         String defaultPathToJsFileDir = createRelativePath(null, contextDirectory, "script");
         String defaultPathToJarFileDir = createRelativePath(null, contextDirectory, "lib");
 
-        boolean jsFilePresent = KotlinJsModuleConfigurator.isJsFilePresent(defaultPathToJsFileDir);
-        boolean jarFilePresent = configurator.isJarPresent(defaultPathToJarFileDir);
+        boolean jsFilePresent = isJsFilePresent(defaultPathToJsFileDir);
+        boolean jarFilePresent = getFileInDir(configurator.getJarName(), defaultPathToJarFileDir).exists();
 
         if (jarFilePresent && jsFilePresent) {
-            return createConfiguration(configurator.getJarInDir(defaultPathToJarFileDir));
+            return createConfiguration(getFileInDir(configurator.getJarName(), defaultPathToJarFileDir));
         }
 
         CreateJavaScriptLibraryDialog dialog =
@@ -81,15 +81,16 @@ public class JSLibraryStdDescription extends CustomLibraryDescription {
         }
 
         if (jarFilePresent) {
-            return createConfiguration(configurator.getJarInDir(defaultPathToJarFileDir));
+            return createConfiguration(getFileInDir(configurator.getJarName(), defaultPathToJarFileDir));
         }
         else {
             String copyIntoPath = dialog.getCopyLibraryIntoPath();
+            File existedJarFile = configurator.getExistedJarFile();
             if (copyIntoPath != null) {
-                return createConfiguration(configurator.copyJarToDir(copyIntoPath));
+                return createConfiguration(configurator.copyFileToDir(existedJarFile, copyIntoPath));
             }
             else {
-                return createConfiguration(configurator.getExistedJarFile());
+                return createConfiguration(existedJarFile);
             }
         }
     }

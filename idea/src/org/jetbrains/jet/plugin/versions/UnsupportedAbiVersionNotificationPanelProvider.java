@@ -104,8 +104,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
             answer.createActionLabel("Update " + kotlinRuntimeJarName, new Runnable() {
                 @Override
                 public void run() {
-                    KotlinRuntimeLibraryUtil.updateRuntime(project,
-                                                           OutdatedKotlinRuntimeNotification.showRuntimeJarNotFoundDialog(project));
+                    KotlinRuntimeLibraryUtil.updateRuntime(project);
                 }
             });
             if (otherBadRootsCount > 0) {
