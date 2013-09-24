@@ -77,7 +77,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     }
 
     @Override
-    public void configure(Project project) {
+    public void configure(@NotNull Project project) {
         List<Module> nonConfiguredModules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this);
 
         ConfigureDialogWithModulesAndVersion dialog =

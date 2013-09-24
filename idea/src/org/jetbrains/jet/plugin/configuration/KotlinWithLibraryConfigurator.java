@@ -211,12 +211,13 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     private static void addSourcesToLibraryIfNeeded(@NotNull Library library, @NotNull File file) {
         String[] librarySourceRoots = library.getUrls(OrderRootType.SOURCES);
+        String librarySourceRoot = VfsUtil.getUrlForLibraryRoot(file);
         for (String sourceRoot : librarySourceRoots) {
-            if (sourceRoot.equals(VfsUtil.getUrlForLibraryRoot(file))) return;
+            if (sourceRoot.equals(librarySourceRoot)) return;
         }
 
         final Library.ModifiableModel model = library.getModifiableModel();
-        model.addRoot(VfsUtil.getUrlForLibraryRoot(file), OrderRootType.SOURCES);
+        model.addRoot(librarySourceRoot, OrderRootType.SOURCES);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override

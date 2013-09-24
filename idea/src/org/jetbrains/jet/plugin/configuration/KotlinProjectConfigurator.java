@@ -12,7 +12,7 @@ public interface KotlinProjectConfigurator {
 
     boolean isApplicable(@NotNull Module module);
 
-    void configure(Project project);
+    void configure(@NotNull Project project);
 
     @NotNull String getPresentableText();
 
