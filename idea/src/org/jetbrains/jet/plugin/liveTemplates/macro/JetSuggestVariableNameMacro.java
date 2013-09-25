@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.plugin.liveTemplates.macro;
 
-import com.intellij.codeInsight.template.Expression;
-import com.intellij.codeInsight.template.ExpressionContext;
-import com.intellij.codeInsight.template.Macro;
-import com.intellij.codeInsight.template.Result;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.plugin.JetBundle;
 
-public class JetSuggestVariableNameMacro extends Macro {
+public class JetSuggestVariableNameMacro extends BaseJetVariableMacro {
     @Override
     public String getName() {
         return "kotlinSuggestVariableName";
@@ -35,7 +35,12 @@ public class JetSuggestVariableNameMacro extends Macro {
     }
 
     @Override
-    public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
-        return null;  //TODO
+    protected boolean isSuitable(
+            @NotNull VariableDescriptor variableDescriptor,
+            @NotNull JetScope scope,
+            @NotNull Project project,
+            ExpressionTypingServices callResolverContext
+    ) {
+        return variableDescriptor.getType().isNullable();
     }
 }

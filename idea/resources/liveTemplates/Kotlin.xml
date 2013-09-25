@@ -48,7 +48,22 @@
             <option name="KOTLIN_STATEMENT" value="true" />
         </context>
     </template>
-
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.ifn"
+              name="ifn" toReformat="true" toShortenFQNames="true"
+              value="if ($VAR$ == null) {&#10;$END$&#10;}">
+      <variable alwaysStopAt="true" defaultValue="&quot;i&quot;" expression="kotlinSuggestVariableName()" name="VAR" />
+      <context>
+        <option name="KOTLIN_EXPRESSION" value="true" />
+      </context>
+    </template>
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.inn"
+              name="inn" toReformat="true" toShortenFQNames="true"
+              value="if ($VAR$ != null) {&#10;$END$&#10;}">
+      <variable alwaysStopAt="true" defaultValue="&quot;i&quot;" expression="kotlinSuggestVariableName()" name="VAR" />
+      <context>
+        <option name="KOTLIN_EXPRESSION" value="true" />
+      </context>
+    </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.void"
               name="void" toReformat="true" toShortenFQNames="true" value="fun $NAME$($PARAMS$) {&#10;$END$&#10;}">
         <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
