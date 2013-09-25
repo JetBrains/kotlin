@@ -562,10 +562,11 @@ public class CandidateResolver {
         // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
         CallableDescriptor candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate);
 
-
+        Map<TypeParameterDescriptor, Variance> typeVariables = Maps.newLinkedHashMap();
         for (TypeParameterDescriptor typeParameterDescriptor : candidateWithFreshVariables.getTypeParameters()) {
-            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
+            typeVariables.put(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
         }
+        constraintSystem.registerTypeVariables(typeVariables);
 
         TypeSubstitutor substituteDontCare = ConstraintsUtil
                 .makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);

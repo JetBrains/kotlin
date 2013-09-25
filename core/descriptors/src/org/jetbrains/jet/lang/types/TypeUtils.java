@@ -261,9 +261,7 @@ public class TypeUtils {
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);
             ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
-            for (Map.Entry<TypeParameterDescriptor, Variance> entry : parameters.entrySet()) {
-                constraintSystem.registerTypeVariable(entry.getKey(), entry.getValue());
-            }
+            constraintSystem.registerTypeVariables(parameters);
             constraintSystem.addSubtypeConstraint(withParameters, expected, ConstraintPosition.SPECIAL);
 
             return constraintSystem.getStatus().isSuccessful();

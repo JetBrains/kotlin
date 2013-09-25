@@ -163,8 +163,12 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @Override
-    public void registerTypeVariable(@NotNull TypeParameterDescriptor typeVariable, @NotNull Variance positionVariance) {
-        typeParameterConstraints.put(typeVariable, new TypeConstraintsImpl(positionVariance));
+    public void registerTypeVariables(@NotNull Map<TypeParameterDescriptor, Variance> typeVariables) {
+        for (Map.Entry<TypeParameterDescriptor, Variance> entry : typeVariables.entrySet()) {
+            TypeParameterDescriptor typeVariable = entry.getKey();
+            Variance positionVariance = entry.getValue();
+            typeParameterConstraints.put(typeVariable, new TypeConstraintsImpl(positionVariance));
+        }
     }
 
     @Override
