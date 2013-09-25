@@ -441,6 +441,8 @@ public class DefaultErrorMessages {
                 "This expression is treated as an argument to the function call on the previous line. " +
                 "Separate it with a semicolon (;) if it is not intended to be an argument.");
 
+        MAP.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead.", NAME);
+
         MAP.put(NOT_AN_ANNOTATION_CLASS, "''{0}'' is not an annotation class", TO_STRING);
         MAP.put(ANNOTATION_CLASS_WITH_BODY, "Body is not allowed for annotation class");
         MAP.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member");

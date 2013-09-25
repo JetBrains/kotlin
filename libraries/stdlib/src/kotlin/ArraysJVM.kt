@@ -6,7 +6,7 @@ import java.util.Arrays
 import jet.runtime.Intrinsic
 
 // Array "constructor"
-[Intrinsic("kotlin.arrays.array")] public inline fun <T> array(vararg t : T) : Array<T> = t
+[Intrinsic("kotlin.arrays.array")] public inline fun <reified T> array(vararg t : T) : Array<T> = t
 
 // "constructors" for primitive types array
 [Intrinsic("kotlin.arrays.array")] public inline fun doubleArray(vararg content : Double) : DoubleArray    = content

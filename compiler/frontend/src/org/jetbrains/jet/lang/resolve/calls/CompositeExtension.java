@@ -7,7 +7,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImp
 
 public class CompositeExtension implements CallResolverExtension {
     private final CallResolverExtension[] delegates = new CallResolverExtension[]{
-            new NeedSyntheticCallResolverExtension()};
+            new NeedSyntheticCallResolverExtension(), new TypeParameterAsReifiedCheck()};
 
     @Override
     public <F extends CallableDescriptor> void run(

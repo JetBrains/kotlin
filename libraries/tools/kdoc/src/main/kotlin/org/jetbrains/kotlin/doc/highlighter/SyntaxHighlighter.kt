@@ -102,7 +102,7 @@ class SyntaxHighligher() {
 
         fun putAll(tokenSet: TokenSet?, style: String): Unit {
             if (tokenSet != null) {
-                for (token in tokenSet.getTypes().orEmpty()) {
+                for (token in tokenSet.getTypes()) {
                     styleMap.put(token, style)
                 }
             }
