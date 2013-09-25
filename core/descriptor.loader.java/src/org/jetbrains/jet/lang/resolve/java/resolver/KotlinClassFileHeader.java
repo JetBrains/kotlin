@@ -16,7 +16,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,16 +26,11 @@ public final class KotlinClassFileHeader {
     @NotNull
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull VirtualFile virtualFile) {
         try {
-            InputStream inputStream = virtualFile.getInputStream();
-            try {
-                ClassReader reader = new ClassReader(inputStream);
-                KotlinClassFileHeader classFileData = new KotlinClassFileHeader();
-                reader.accept(classFileData.new ReadDataFromAnnotationVisitor(), SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-                return classFileData;
-            }
-            finally {
-                inputStream.close();
-            }
+            byte[] bytes = virtualFile.contentsToByteArray();
+            ClassReader reader = new ClassReader(bytes);
+            KotlinClassFileHeader classFileData = new KotlinClassFileHeader();
+            reader.accept(classFileData.new ReadDataFromAnnotationVisitor(), SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
+            return classFileData;
         }
         catch (IOException e) {
             throw new RuntimeException(e);

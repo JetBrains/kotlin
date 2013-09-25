@@ -134,7 +134,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     private List<AnnotationDescriptor> loadClassAnnotationsFromFile(@NotNull VirtualFile virtualFile) throws IOException {
         final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
 
-        new ClassReader(virtualFile.getInputStream()).accept(new ClassVisitor(Opcodes.ASM4) {
+        new ClassReader(virtualFile.contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                 return resolveAnnotation(desc, result);
@@ -298,7 +298,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations =
                 new HashMap<MemberSignature, List<AnnotationDescriptor>>();
 
-        new ClassReader(file.getInputStream()).accept(new ClassVisitor(Opcodes.ASM4) {
+        new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                 final MemberSignature methodSignature = MemberSignature.fromMethodNameAndDesc(name, desc);
