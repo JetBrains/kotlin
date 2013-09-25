@@ -465,6 +465,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         genClosureFields(context.closure, v, state.getTypeMapper());
     }
 
+    private void addStubSignature(
+            @NotNull List<String> result,
+            @NotNull String signature,
+            @NotNull ClassifierDescriptor returnedClassifier,
+            @NotNull ClassifierDescriptor... valueParameterClassifiers
+    ) {
+        String name = signature.substring(0, signature.indexOf('('));
+        if (CodegenUtil.getDeclaredFunctionByRawSignature(
+                descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
+            result.add(signature);
+        }
+    }
+
     private List<String> getBuiltinMethodStubSignatures() {
         List<String> result = Lists.newArrayList();
 
@@ -472,93 +485,40 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isSubclass(descriptor, builtIns.getCollection())) {
             ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getCollection(), 0);
 
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("add"),
-                                                              builtIns.getBoolean(), classifier) == null) {
-                result.add("add(Ljava/lang/Object;)Z");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
-                                                              builtIns.getBoolean(), builtIns.getAny()) == null) {
-                result.add("remove(Ljava/lang/Object;)Z");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("addAll"),
-                                                              builtIns.getBoolean(), builtIns.getCollection()) == null) {
-                result.add("addAll(Ljava/util/Collection;)Z");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("removeAll"),
-                                                              builtIns.getBoolean(), builtIns.getCollection()) == null) {
-                result.add("removeAll(Ljava/util/Collection;)Z");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("retainAll"),
-                                                              builtIns.getBoolean(), builtIns.getCollection()) == null) {
-                result.add("retainAll(Ljava/util/Collection;)Z");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("clear"), builtIns.getUnit()) == null){
-                result.add("clear()V");
-            }
+            addStubSignature(result, "add(Ljava/lang/Object;)Z", builtIns.getBoolean(), classifier);
+            addStubSignature(result, "remove(Ljava/lang/Object;)Z", builtIns.getBoolean(), builtIns.getAny());
+            addStubSignature(result, "addAll(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            addStubSignature(result, "removeAll(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            addStubSignature(result, "retainAll(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            addStubSignature(result, "clear()V", builtIns.getUnit());
         }
 
         if (isSubclass(descriptor, builtIns.getList())) {
             ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getList(), 0);
 
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("set"),
-                                                              classifier, builtIns.getInt(), classifier) == null) {
-                result.add("set(ILjava/lang/Object;)Ljava/lang/Object;");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("add"),
-                                                              builtIns.getUnit(), builtIns.getInt(), classifier) == null) {
-                result.add("add(ILjava/lang/Object;)V");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
-                                                              classifier, builtIns.getInt()) == null) {
-                result.add("remove(I)Ljava/lang/Object;");
-            }
+            addStubSignature(result, "set(ILjava/lang/Object;)Ljava/lang/Object;", classifier, builtIns.getInt(), classifier);
+            addStubSignature(result, "add(ILjava/lang/Object;)V", builtIns.getUnit(), builtIns.getInt(), classifier);
+            addStubSignature(result, "remove(I)Ljava/lang/Object;", classifier, builtIns.getInt());
         }
 
         if (isSubclass(descriptor, builtIns.getMap())) {
             ClassifierDescriptor keyClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 0);
             ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 1);
 
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("put"),
-                                                              valueClassifier, keyClassifier, valueClassifier) == null) {
-                result.add("put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
-                                                              valueClassifier, builtIns.getAny()) == null) {
-                result.add("remove(Ljava/lang/Object;)Ljava/lang/Object;");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("putAll"),
-                                                              builtIns.getUnit(), builtIns.getMap()) == null) {
-                result.add("putAll(Ljava/util/Map;)V");
-            }
-
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("clear"), builtIns.getUnit()) == null) {
-                result.add("clear()V");
-            }
+            addStubSignature(result, "put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, keyClassifier, valueClassifier);
+            addStubSignature(result, "remove(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, builtIns.getAny());
+            addStubSignature(result, "putAll(Ljava/util/Map;)V", builtIns.getUnit(), builtIns.getMap());
+            addStubSignature(result, "clear()V", builtIns.getUnit());
         }
 
         if (isSubclass(descriptor, builtIns.getMapEntry())) {
             ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMapEntry(), 1);
 
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("setValue"),
-                                                              valueClassifier, valueClassifier) == null) {
-                result.add("setValue(Ljava/lang/Object;)Ljava/lang/Object;");
-            }
+            addStubSignature(result, "setValue(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, valueClassifier);
         }
 
         if (isSubclass(descriptor, builtIns.getIterator())) {
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("remove"),
-                                                          builtIns.getUnit()) == null) {
-                result.add("remove()V");
-            }
+            addStubSignature(result, "remove()V", builtIns.getUnit());
         }
 
         return result;
