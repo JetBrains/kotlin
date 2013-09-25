@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
@@ -28,12 +28,12 @@ import static org.jetbrains.asm4.ClassReader.*;
 
 public abstract class KotlinClassFileHeader {
     @Nullable
-    public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull VirtualFile virtualFile) {
+    public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull KotlinJvmBinaryClass kotlinClass) {
         try {
-            ClassReader reader = new ClassReader(virtualFile.contentsToByteArray());
+            ClassReader reader = new ClassReader(kotlinClass.getFile().contentsToByteArray());
             ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
             reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-            return visitor.createHeader(virtualFile);
+            return visitor.createHeader(kotlinClass);
         }
         catch (IOException e) {
             throw new RuntimeException(e);

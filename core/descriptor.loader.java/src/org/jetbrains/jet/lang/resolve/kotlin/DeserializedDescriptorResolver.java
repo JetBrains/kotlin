@@ -110,7 +110,7 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(kotlinClass.getFile());
+        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(kotlinClass);
         if (header instanceof SerializedDataHeader) {
             return ((SerializedDataHeader) header).getAnnotationData();
         }

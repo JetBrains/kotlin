@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -62,7 +63,7 @@ public final class DecompiledDataFactory {
                 new InjectorForJavaDescriptorResolver(project, new BindingTraceContext());
         this.javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
-        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(classFile);
+        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(new VirtualFileKotlinClass(classFile));
         assert header instanceof SerializedDataHeader : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
         this.classFileHeader = (SerializedDataHeader) header;
     }

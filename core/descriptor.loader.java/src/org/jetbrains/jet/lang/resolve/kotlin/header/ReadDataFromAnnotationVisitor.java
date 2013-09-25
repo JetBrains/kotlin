@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -26,6 +25,7 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.ArrayList;
@@ -75,13 +75,13 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
     }
 
     @Nullable
-    public KotlinClassFileHeader createHeader(@NotNull VirtualFile virtualFile) {
+    public KotlinClassFileHeader createHeader(@NotNull KotlinJvmBinaryClass kotlinClass) {
         if (foundType == null) {
             return null;
         }
 
         if (fqName == null) {
-            LOG.error("Class doesn't have a name in the bytecode: " + virtualFile);
+            LOG.error("Class doesn't have a name in the bytecode: " + kotlinClass);
             return null;
         }
 
