@@ -22,7 +22,6 @@ import com.google.common.collect.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilder;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetAnnotationElementType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -92,7 +90,7 @@ public class DeclarationResolver {
 
 
     public void process(@NotNull JetScope rootScope) {
-        resolveNamespaceHeaders();
+        checkModifiersAndAnnotationsInNamespaceHeaders();
         resolveAnnotationConstructors();
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
@@ -103,25 +101,27 @@ public class DeclarationResolver {
         checkRedeclarationsInInnerClassNames();
     }
 
-    private void resolveNamespaceHeaders() {
+    private void checkModifiersAndAnnotationsInNamespaceHeaders() {
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
+            if (namespaceHeader == null) continue;
 
-            if (namespaceHeader != null) {
-                PsiElement firstChild = namespaceHeader.getFirstChild();
+            PsiElement firstChild = namespaceHeader.getFirstChild();
+            if (!(firstChild instanceof JetModifierList)) continue;
+            JetModifierList modifierList = (JetModifierList) firstChild;
 
-                if (firstChild instanceof JetModifierList) {
-                    JetModifierList modifierList = (JetModifierList) firstChild;
-
-                    for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
-                        JetReferenceExpression reference = annotationEntry.getCalleeExpression().getConstructorReferenceExpression();
+            for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+                JetConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
+                if (calleeExpression != null) {
+                    JetReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
+                    if (reference != null) {
                         trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
                     }
-
-                    for (ASTNode node : modifierList.getModifierNodes()) {
-                        trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
-                    }
                 }
+            }
+
+            for (ASTNode node : modifierList.getModifierNodes()) {
+                trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
             }
         }
     }
