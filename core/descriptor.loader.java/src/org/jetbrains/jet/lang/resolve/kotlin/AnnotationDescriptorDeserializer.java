@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.*;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
@@ -47,7 +47,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
@@ -123,56 +122,54 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     private List<AnnotationDescriptor> loadClassAnnotationsFromClass(@NotNull KotlinJvmBinaryClass kotlinClass) throws IOException {
         final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
 
-        new ClassReader(kotlinClass.getFile().contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
+        kotlinClass.loadClassAnnotations(new KotlinJvmBinaryClass.AnnotationVisitor() {
+            @Nullable
             @Override
-            public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                return resolveAnnotation(desc, result);
+            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
+                return resolveAnnotation(className, result);
             }
-        }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+
+            @Override
+            public void visitEnd() {
+            }
+        });
 
         return result;
     }
 
-    private static boolean ignoreAnnotation(@NotNull String desc) {
+    private static boolean ignoreAnnotation(@NotNull JvmClassName className) {
         // TODO: JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION ?
-        return desc.equals(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor())
-               || desc.equals(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor())
-               || desc.startsWith("Ljet/runtime/typeinfo/");
-    }
-
-    @NotNull
-    private static FqName convertJvmDescriptorToFqName(@NotNull String desc) {
-        assert desc.startsWith("L") && desc.endsWith(";") : "Not a JVM descriptor: " + desc;
-        String fqName = desc.substring(1, desc.length() - 1).replace('$', '.').replace('/', '.');
-        return new FqName(fqName);
+        return className.equals(JvmAnnotationNames.KOTLIN_CLASS)
+               || className.equals(JvmAnnotationNames.KOTLIN_PACKAGE)
+               || className.getInternalName().startsWith("jet/runtime/typeinfo/");
     }
 
     @Nullable
-    private AnnotationVisitor resolveAnnotation(@NotNull String desc, @NotNull final List<AnnotationDescriptor> result) {
-        if (ignoreAnnotation(desc)) return null;
+    private KotlinJvmBinaryClass.AnnotationArgumentVisitor resolveAnnotation(
+            @NotNull JvmClassName className,
+            @NotNull final List<AnnotationDescriptor> result
+    ) {
+        if (ignoreAnnotation(className)) return null;
 
-        FqName annotationFqName = convertJvmDescriptorToFqName(desc);
-        final ClassDescriptor annotationClass = resolveAnnotationClass(annotationFqName);
+        final ClassDescriptor annotationClass = resolveAnnotationClass(className);
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
-        return new AnnotationVisitor(Opcodes.ASM4) {
-            // TODO: arrays, annotations, java.lang.Class
+        return new KotlinJvmBinaryClass.AnnotationArgumentVisitor() {
             @Override
-            public void visit(String name, Object value) {
+            public void visit(@NotNull Name name, @Nullable Object value) {
                 CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);
                 setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
             }
 
             @Override
-            public void visitEnum(String name, String desc, String value) {
-                FqName fqName = convertJvmDescriptorToFqName(desc);
-                setArgumentValueByName(name, enumEntryValue(fqName, Name.identifier(value)));
+            public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                setArgumentValueByName(name, enumEntryValue(enumClassName, enumEntryName));
             }
 
             @NotNull
-            private CompileTimeConstant<?> enumEntryValue(@NotNull FqName enumFqName, @NotNull Name name) {
-                ClassDescriptor enumClass = javaClassResolver.resolveClass(enumFqName, IGNORE_KOTLIN_SOURCES);
+            private CompileTimeConstant<?> enumEntryValue(@NotNull JvmClassName enumClassName, @NotNull Name name) {
+                ClassDescriptor enumClass = javaClassResolver.resolveClass(enumClassName.getFqName(), IGNORE_KOTLIN_SOURCES);
                 if (enumClass != null && enumClass.getKind() == ClassKind.ENUM_CLASS) {
                     ClassDescriptor classObject = enumClass.getClassObjectDescriptor();
                     if (classObject != null) {
@@ -185,7 +182,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                         }
                     }
                 }
-                return ErrorValue.create("Unresolved enum entry: " + enumFqName + "." + name);
+                return ErrorValue.create("Unresolved enum entry: " + enumClassName.getFqName() + "." + name);
             }
 
             @Override
@@ -193,9 +190,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                 result.add(annotation);
             }
 
-            private void setArgumentValueByName(@NotNull String name, @NotNull CompileTimeConstant<?> argumentValue) {
-                ValueParameterDescriptor parameter =
-                        DescriptorResolverUtils.getAnnotationParameterByName(Name.identifier(name), annotationClass);
+            private void setArgumentValueByName(@NotNull Name name, @NotNull CompileTimeConstant<?> argumentValue) {
+                ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass);
                 if (parameter != null) {
                     annotation.setValueArgument(parameter, argumentValue);
                 }
@@ -204,8 +200,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @NotNull
-    private ClassDescriptor resolveAnnotationClass(@NotNull FqName fqName) {
-        ClassDescriptor annotationClass = javaClassResolver.resolveClass(fqName, IGNORE_KOTLIN_SOURCES);
+    private ClassDescriptor resolveAnnotationClass(@NotNull JvmClassName className) {
+        ClassDescriptor annotationClass = javaClassResolver.resolveClass(className.getFqName(), IGNORE_KOTLIN_SOURCES);
         return annotationClass != null ? annotationClass : ErrorUtils.getErrorClass();
     }
 
@@ -301,11 +297,11 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                         JavaProtoBuf.JavaFieldSignature field = propertySignature.getField();
                         String type = new SignatureDeserializer(nameResolver).typeDescriptor(field.getType());
                         Name name = nameResolver.getName(field.getName());
-                        return MemberSignature.fromFieldNameAndDesc(name.asString(), type);
+                        return MemberSignature.fromFieldNameAndDesc(name, type);
                     }
                     else if (propertySignature.hasSyntheticMethodName()) {
                         Name name = nameResolver.getName(propertySignature.getSyntheticMethodName());
-                        return MemberSignature.fromMethodNameAndDesc(name.asString(), JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);
+                        return MemberSignature.fromMethodNameAndDesc(name, JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);
                     }
                 }
                 break;
@@ -319,47 +315,39 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations =
                 new HashMap<MemberSignature, List<AnnotationDescriptor>>();
 
-        new ClassReader(kotlinClass.getFile().contentsToByteArray()).accept(new ClassVisitor(Opcodes.ASM4) {
+        kotlinClass.loadMemberAnnotations(new KotlinJvmBinaryClass.MemberVisitor() {
+            @Nullable
             @Override
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                final MemberSignature methodSignature = MemberSignature.fromMethodNameAndDesc(name, desc);
-                final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
+            public KotlinJvmBinaryClass.AnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc) {
+                return annotationVisitor(MemberSignature.fromMethodNameAndDesc(name, desc));
+            }
 
-                return new MethodVisitor(Opcodes.ASM4) {
+            @Nullable
+            @Override
+            public KotlinJvmBinaryClass.AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc) {
+                return annotationVisitor(MemberSignature.fromFieldNameAndDesc(name, desc));
+            }
+
+            @NotNull
+            private KotlinJvmBinaryClass.AnnotationVisitor annotationVisitor(@NotNull final MemberSignature signature) {
+                return new KotlinJvmBinaryClass.AnnotationVisitor() {
+                    private final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
+
+                    @Nullable
                     @Override
-                    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                        return resolveAnnotation(desc, result);
+                    public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
+                        return resolveAnnotation(className, result);
                     }
 
                     @Override
                     public void visitEnd() {
                         if (!result.isEmpty()) {
-                            memberAnnotations.put(methodSignature, result);
+                            memberAnnotations.put(signature, result);
                         }
                     }
                 };
             }
-
-            @Override
-            public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-                final MemberSignature fieldSignature = MemberSignature.fromFieldNameAndDesc(name, desc);
-                final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
-
-                return new FieldVisitor(Opcodes.ASM4) {
-                    @Override
-                    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                        return resolveAnnotation(desc, result);
-                    }
-
-                    @Override
-                    public void visitEnd() {
-                        if (!result.isEmpty()) {
-                            memberAnnotations.put(fieldSignature, result);
-                        }
-                    }
-                };
-            }
-        }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+        });
 
         return memberAnnotations;
     }
@@ -374,13 +362,13 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         }
 
         @NotNull
-        public static MemberSignature fromMethodNameAndDesc(@NotNull String name, @NotNull String desc) {
-            return new MemberSignature(name + desc);
+        public static MemberSignature fromMethodNameAndDesc(@NotNull Name name, @NotNull String desc) {
+            return new MemberSignature(name.asString() + desc);
         }
 
         @NotNull
-        public static MemberSignature fromFieldNameAndDesc(@NotNull String name, @NotNull String desc) {
-            return new MemberSignature(name + "#" + desc);
+        public static MemberSignature fromFieldNameAndDesc(@NotNull Name name, @NotNull String desc) {
+            return new MemberSignature(name.asString() + "#" + desc);
         }
 
         @Override
@@ -411,7 +399,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
         @NotNull
         public MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
-            String name = nameResolver.getName(signature.getName()).asString();
+            Name name = nameResolver.getName(signature.getName());
 
             StringBuilder sb = new StringBuilder();
             sb.append('(');

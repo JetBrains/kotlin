@@ -18,8 +18,41 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface KotlinJvmBinaryClass {
     @NotNull
     VirtualFile getFile();
+
+    void loadClassAnnotations(@NotNull AnnotationVisitor visitor);
+
+    void loadMemberAnnotations(@NotNull MemberVisitor visitor);
+
+    interface MemberVisitor {
+        // TODO: abstract signatures for methods and fields instead of ASM 'desc' strings?
+
+        @Nullable
+        AnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc);
+
+        @Nullable
+        AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc);
+    }
+
+    interface AnnotationVisitor {
+        @Nullable
+        AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className);
+
+        void visitEnd();
+    }
+
+    interface AnnotationArgumentVisitor {
+        // TODO: arrays, annotations, java.lang.Class
+        void visit(@NotNull Name name, @Nullable Object value);
+
+        void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName);
+
+        void visitEnd();
+    }
 }
