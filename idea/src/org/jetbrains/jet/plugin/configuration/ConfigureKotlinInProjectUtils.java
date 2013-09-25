@@ -18,10 +18,7 @@ package org.jetbrains.jet.plugin.configuration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
+import com.intellij.notification.*;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -41,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ConfigureKotlinInProjectUtils {
+    private static final NotificationGroup CONFIGURE_KOTLIN_STICKY_BALLOON_GROUP = new NotificationGroup("Configure Kotlin: balloon", NotificationDisplayType.STICKY_BALLOON, true);
 
     public static boolean isProjectConfigured(@NotNull Project project) {
         Collection<Module> modules = getModulesWithKotlinFiles(project);
@@ -89,23 +87,25 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     private static void showConfigureKotlinNotification(@NotNull final Project project) {
-        Notifications.Bus.notify(
-                new Notification("Configure Kotlin",
-                                 "Kotlin files found in your project.",
-                                 getNotificationString(project),
-                                 NotificationType.WARNING, new NotificationListener() {
-                    @Override
-                    public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                            KotlinProjectConfigurator configurator = getConfiguratorByName(event.getDescription());
-                            if (configurator == null) {
-                                throw new AssertionError("Missed action: " + event.getDescription());
+        CONFIGURE_KOTLIN_STICKY_BALLOON_GROUP.
+                createNotification(
+                        "Configure Kotlin",
+                        getNotificationString(project),
+                        NotificationType.WARNING,
+                        new NotificationListener() {
+                            @Override
+                            public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+                                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                                    KotlinProjectConfigurator configurator = getConfiguratorByName(event.getDescription());
+                                    if (configurator == null) {
+                                        throw new AssertionError("Missed action: " + event.getDescription());
+                                    }
+                                    configurator.configure(project);
+                                    notification.expire();
+                                }
                             }
-                            configurator.configure(project);
-                            notification.expire();
                         }
-                    }
-                }), project);
+                ).notify(project);
     }
 
     private static String getNotificationString(Project project) {
@@ -190,6 +190,6 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     public static void showInfoNotification(@NotNull String message) {
-        Notifications.Bus.notify(new Notification("Configure Kotlin", "Configure Kotlin", message, NotificationType.INFORMATION));
+        Notifications.Bus.notify(new Notification("Configure Kotlin: info notification", "Configure Kotlin", message, NotificationType.INFORMATION));
     }
 }
