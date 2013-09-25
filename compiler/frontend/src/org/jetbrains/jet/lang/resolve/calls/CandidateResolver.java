@@ -665,6 +665,8 @@ public class CandidateResolver {
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
                 JetPsiUtil.unwrapFromBlock(argumentExpression), type, trace.getBindingContext());
+        if (!dataFlowValue.isStableIdentifier()) return type;
+
         Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;
 

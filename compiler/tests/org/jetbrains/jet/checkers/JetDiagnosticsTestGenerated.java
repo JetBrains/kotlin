@@ -5608,6 +5608,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt2851.kt");
                 }
                 
+                @TestMetadata("kt4009.kt")
+                public void testKt4009() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt4009.kt");
+                }
+                
             }
             
             public static Test innerSuite() {
