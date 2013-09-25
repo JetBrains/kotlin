@@ -1,6 +1,8 @@
 package test
 
-// To regenerate this test:
+// To regenerate this test, run CompileBinaryTestData.kt
+
+// Manual instructions:
 // 1. Compile this file
 // 2. Delete test/E.class
 // 3. Pack test/ into jar
