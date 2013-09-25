@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -170,12 +171,12 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     public Library getKotlinLibrary(@NotNull Project project) {
         LibrariesContainer librariesContainer = LibrariesContainerFactory.createContainer(project);
         for (Library library : librariesContainer.getLibraries(LibrariesContainer.LibraryLevel.PROJECT)) {
-            if (isKotlinLibrary(library)) {
+            if (isKotlinLibrary(project, library)) {
                 return library;
             }
         }
         for (Library library : librariesContainer.getLibraries(LibrariesContainer.LibraryLevel.GLOBAL)) {
-            if (isKotlinLibrary(library)) {
+            if (isKotlinLibrary(project, library)) {
                 return library;
             }
         }
@@ -286,12 +287,12 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     }
 
     @Nullable
-    private Library getKotlinLibrary(@NotNull Module module) {
+    private Library getKotlinLibrary(@NotNull final Module module) {
         final Ref<Library> result = Ref.create(null);
         OrderEnumerator.orderEntries(module).forEachLibrary(new Processor<Library>() {
             @Override
             public boolean process(Library library) {
-                if (isKotlinLibrary(library)) {
+                if (isKotlinLibrary(module.getProject(), library)) {
                     result.set(library);
                     return false;
                 }
@@ -301,8 +302,18 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return result.get();
     }
 
-    private boolean isKotlinLibrary(@NotNull Library library) {
-        return getLibraryName().equals(library.getName());
+    protected boolean isKotlinLibrary(@NotNull Project project, @NotNull Library library) {
+        if (getLibraryName().equals(library.getName())) {
+            return true;
+        }
+
+        for (VirtualFile root : library.getFiles(OrderRootType.CLASSES)) {
+            if (root.getName().equals(getJarName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private File copyJarToDir(@NotNull String toDir) {

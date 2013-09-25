@@ -1,11 +1,16 @@
 package org.jetbrains.jet.plugin.configuration;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaLibraryDialogWithModules;
+import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -87,6 +92,16 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Override
     public File getExistedSourcesJarFile() {
         return assertFileExists(getKotlinPaths().getRuntimeSourcesPath());
+    }
+
+    @Override
+    protected boolean isKotlinLibrary(@NotNull Project project, @NotNull Library library) {
+        if (super.isKotlinLibrary(project, library)) {
+            return true;
+        }
+
+        LibraryScope scope = new LibraryScope(project, library);
+        return KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null;
     }
 
     KotlinJavaModuleConfigurator() {
