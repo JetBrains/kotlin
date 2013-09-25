@@ -465,63 +465,60 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         genClosureFields(context.closure, v, state.getTypeMapper());
     }
 
-    private void addStubSignature(
-            @NotNull List<String> result,
-            @NotNull String signature,
+    private void generateMethodStub(
+            @NotNull String name,
+            @NotNull String desc,
             @NotNull ClassifierDescriptor returnedClassifier,
             @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
-        String name = signature.substring(0, signature.indexOf('('));
         if (CodegenUtil.getDeclaredFunctionByRawSignature(
                 descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
-            result.add(signature);
+            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, name, desc, null, null);
+            AsmUtil.genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
         }
     }
 
-    private List<String> getBuiltinMethodStubSignatures() {
-        List<String> result = Lists.newArrayList();
-
+    private void generateBuiltinMethodStubs() {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (isSubclass(descriptor, builtIns.getCollection())) {
             ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getCollection(), 0);
 
-            addStubSignature(result, "add(Ljava/lang/Object;)Z", builtIns.getBoolean(), classifier);
-            addStubSignature(result, "remove(Ljava/lang/Object;)Z", builtIns.getBoolean(), builtIns.getAny());
-            addStubSignature(result, "addAll(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
-            addStubSignature(result, "removeAll(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
-            addStubSignature(result, "retainAll(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
-            addStubSignature(result, "clear()V", builtIns.getUnit());
+            generateMethodStub("add", "(Ljava/lang/Object;)Z", builtIns.getBoolean(), classifier);
+            generateMethodStub("remove", "(Ljava/lang/Object;)Z", builtIns.getBoolean(), builtIns.getAny());
+            generateMethodStub("addAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            generateMethodStub("removeAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            generateMethodStub("retainAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            generateMethodStub("clear", "()V", builtIns.getUnit());
         }
 
         if (isSubclass(descriptor, builtIns.getList())) {
             ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getList(), 0);
 
-            addStubSignature(result, "set(ILjava/lang/Object;)Ljava/lang/Object;", classifier, builtIns.getInt(), classifier);
-            addStubSignature(result, "add(ILjava/lang/Object;)V", builtIns.getUnit(), builtIns.getInt(), classifier);
-            addStubSignature(result, "remove(I)Ljava/lang/Object;", classifier, builtIns.getInt());
+            generateMethodStub("set", "(ILjava/lang/Object;)Ljava/lang/Object;", classifier, builtIns.getInt(), classifier);
+            generateMethodStub("add", "(ILjava/lang/Object;)V", builtIns.getUnit(), builtIns.getInt(), classifier);
+            generateMethodStub("remove", "(I)Ljava/lang/Object;", classifier, builtIns.getInt());
         }
 
         if (isSubclass(descriptor, builtIns.getMap())) {
             ClassifierDescriptor keyClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 0);
             ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 1);
 
-            addStubSignature(result, "put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, keyClassifier, valueClassifier);
-            addStubSignature(result, "remove(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, builtIns.getAny());
-            addStubSignature(result, "putAll(Ljava/util/Map;)V", builtIns.getUnit(), builtIns.getMap());
-            addStubSignature(result, "clear()V", builtIns.getUnit());
+            generateMethodStub("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, keyClassifier,
+                               valueClassifier);
+            generateMethodStub("remove", "(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, builtIns.getAny());
+            generateMethodStub("putAll", "(Ljava/util/Map;)V", builtIns.getUnit(), builtIns.getMap());
+            generateMethodStub("clear", "()V", builtIns.getUnit());
         }
 
         if (isSubclass(descriptor, builtIns.getMapEntry())) {
             ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMapEntry(), 1);
 
-            addStubSignature(result, "setValue(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, valueClassifier);
+            generateMethodStub("setValue", "(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, valueClassifier);
         }
 
         if (isSubclass(descriptor, builtIns.getIterator())) {
-            addStubSignature(result, "remove()V", builtIns.getUnit());
+            generateMethodStub("remove", "()V", builtIns.getUnit());
         }
-
-        return result;
     }
 
     @NotNull
@@ -533,18 +530,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassifierDescriptor classifier = substitute.getType().getConstructor().getDeclarationDescriptor();
         assert classifier != null : "No classifier: " + substitute.getType();
         return classifier;
-    }
-
-
-    private void generateBuiltinMethodStubs() {
-        for (String signature : getBuiltinMethodStubSignatures()) {
-            int parenthOpen = signature.indexOf('(');
-            String name = signature.substring(0, parenthOpen);
-            String desc = signature.substring(parenthOpen);
-
-            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, name, desc, null, null);
-            AsmUtil.genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
-        }
     }
 
     private List<PropertyDescriptor> getDataProperties() {
