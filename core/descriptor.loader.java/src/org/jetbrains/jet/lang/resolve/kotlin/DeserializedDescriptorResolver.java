@@ -116,7 +116,7 @@ public final class DeserializedDescriptorResolver {
         }
 
         if (header != null) {
-            errorReporter.reportIncompatibleAbiVersion(header.getFqName(), kotlinClass.getFile(), header.getVersion());
+            errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassName().getFqName(), kotlinClass.getFile(), header.getVersion());
         }
 
         return null;

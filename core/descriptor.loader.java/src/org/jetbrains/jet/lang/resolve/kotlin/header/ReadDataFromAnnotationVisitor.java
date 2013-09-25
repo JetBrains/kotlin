@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +66,6 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
     private String[] annotationData = null;
     @Nullable
     private HeaderType foundType = null;
-    @Nullable
-    private FqName fqName = null;
 
     public ReadDataFromAnnotationVisitor() {
         super(Opcodes.ASM4);
@@ -80,39 +77,29 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
             return null;
         }
 
-        if (fqName == null) {
-            LOG.error("Class doesn't have a name in the bytecode: " + kotlinClass);
-            return null;
-        }
-
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            return new IncompatibleAnnotationHeader(version, fqName);
+            return new IncompatibleAnnotationHeader(version);
         }
 
         switch (foundType) {
             case CLASS:
-                return serializedDataHeader(SerializedDataHeader.Kind.CLASS, fqName);
+                return serializedDataHeader(SerializedDataHeader.Kind.CLASS, kotlinClass);
             case PACKAGE:
-                return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE, fqName);
+                return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE, kotlinClass);
             case PACKAGE_FRAGMENT:
-                return new PackageFragmentClassFileHeader(version, fqName);
+                return new PackageFragmentClassFileHeader(version);
             default:
                 throw new UnsupportedOperationException("Unknown compatible HeaderType: " + foundType);
         }
     }
 
     @Nullable
-    private SerializedDataHeader serializedDataHeader(@NotNull SerializedDataHeader.Kind kind, @NotNull FqName fqName) {
+    private SerializedDataHeader serializedDataHeader(@NotNull SerializedDataHeader.Kind kind, @NotNull KotlinJvmBinaryClass kotlinClass) {
         if (annotationData == null) {
-            LOG.error("Kotlin annotation " + foundType + " is incorrect for class: " + fqName);
+            LOG.error("Kotlin annotation " + foundType + " is incorrect for class: " + kotlinClass);
             return null;
         }
-        return new SerializedDataHeader(version, annotationData, kind, fqName);
-    }
-
-    @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        fqName = JvmClassName.byInternalName(name).getFqName();
+        return new SerializedDataHeader(version, annotationData, kind);
     }
 
     @Override

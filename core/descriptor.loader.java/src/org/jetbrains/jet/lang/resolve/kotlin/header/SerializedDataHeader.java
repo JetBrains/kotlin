@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class SerializedDataHeader extends KotlinClassFileHeader {
     public enum Kind {
@@ -28,8 +27,8 @@ public class SerializedDataHeader extends KotlinClassFileHeader {
     private final String[] data;
     private final Kind kind;
 
-    protected SerializedDataHeader(int version, @NotNull String[] annotationData, @NotNull Kind kind, @NotNull FqName fqName) {
-        super(version, fqName);
+    protected SerializedDataHeader(int version, @NotNull String[] annotationData, @NotNull Kind kind) {
+        super(version);
         this.data = annotationData;
         this.kind = kind;
     }

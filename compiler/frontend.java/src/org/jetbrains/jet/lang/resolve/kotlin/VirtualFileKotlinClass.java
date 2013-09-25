@@ -34,6 +34,7 @@ import static org.jetbrains.asm4.Opcodes.ASM4;
 
 public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     private final VirtualFile file;
+    private JvmClassName className;
 
     public VirtualFileKotlinClass(@NotNull VirtualFile file) {
         this.file = file;
@@ -43,6 +44,26 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     @Override
     public VirtualFile getFile() {
         return file;
+    }
+
+    @NotNull
+    @Override
+    public JvmClassName getClassName() {
+        if (className == null) {
+            try {
+                new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM4) {
+                    @Override
+                    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                        className = JvmClassName.byInternalName(name);
+                    }
+                }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+            }
+            catch (IOException e) {
+                throw ExceptionUtils.rethrow(e);
+            }
+        }
+
+        return className;
     }
 
     @Override

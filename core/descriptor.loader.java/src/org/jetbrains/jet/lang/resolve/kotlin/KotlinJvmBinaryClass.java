@@ -26,6 +26,9 @@ public interface KotlinJvmBinaryClass {
     @NotNull
     VirtualFile getFile();
 
+    @NotNull
+    JvmClassName getClassName();
+
     void loadClassAnnotations(@NotNull AnnotationVisitor visitor);
 
     void loadMemberAnnotations(@NotNull MemberVisitor visitor);

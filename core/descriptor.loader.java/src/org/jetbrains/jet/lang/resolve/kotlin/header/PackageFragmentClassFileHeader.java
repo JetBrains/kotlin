@@ -16,12 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-
 public class PackageFragmentClassFileHeader extends KotlinClassFileHeader {
-    protected PackageFragmentClassFileHeader(int version, @NotNull FqName fqName) {
-        super(version, fqName);
+    protected PackageFragmentClassFileHeader(int version) {
+        super(version);
     }
 }

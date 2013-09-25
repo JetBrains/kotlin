@@ -75,10 +75,10 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
         @Override
         public Map<FqName, Void> map(FileContent inputData) {
             try {
-                KotlinClassFileHeader header =
-                        KotlinClassFileHeader.readKotlinHeaderFromClassFile(new VirtualFileKotlinClass(inputData.getFile()));
+                VirtualFileKotlinClass kotlinClass = new VirtualFileKotlinClass(inputData.getFile());
+                KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(kotlinClass);
                 if (header != null && !(header instanceof IncompatibleAnnotationHeader)) {
-                    return Collections.singletonMap(header.getFqName(), null);
+                    return Collections.singletonMap(kotlinClass.getClassName().getFqName(), null);
                 }
             }
             catch (Throwable e) {

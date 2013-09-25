@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
 
@@ -41,22 +40,12 @@ public abstract class KotlinClassFileHeader {
     }
 
     private final int version;
-    private final FqName fqName;
 
-    protected KotlinClassFileHeader(int version, @NotNull FqName fqName) {
+    protected KotlinClassFileHeader(int version) {
         this.version = version;
-        this.fqName = fqName;
     }
 
     public int getVersion() {
         return version;
-    }
-
-    /**
-     * @return FQ name for class header or package class FQ name for package header (e.g. <code>test.TestPackage</code>)
-     */
-    @NotNull
-    public FqName getFqName() {
-        return fqName;
     }
 }
