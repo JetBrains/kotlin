@@ -25,7 +25,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,14 +59,18 @@ public class ConfigureKotlinInProjectUtils {
         return false;
     }
 
-    public static boolean hasKotlinFiles(@NotNull Module module) {
-        return !FileTypeIndex.getFiles(JetFileType.INSTANCE, GlobalSearchScope.moduleScope(module)).isEmpty();
+    public static boolean hasKotlinFilesInSources(@NotNull Module module) {
+        return !FileTypeIndex.getFiles(JetFileType.INSTANCE, module.getModuleScope(false)).isEmpty();
+    }
+
+    public static boolean hasKotlinFilesOnlyInTests(@NotNull Module module) {
+        return !hasKotlinFilesInSources(module) && !FileTypeIndex.getFiles(JetFileType.INSTANCE, module.getModuleScope(true)).isEmpty();
     }
 
     public static Collection<Module> getModulesWithKotlinFiles(@NotNull Project project) {
         List<Module> modulesWithKotlin = Lists.newArrayList();
         for (Module module : ModuleManager.getInstance(project).getModules()) {
-            if (hasKotlinFiles(module)) {
+            if (hasKotlinFilesInSources(module) || hasKotlinFilesOnlyInTests(module)) {
                 modulesWithKotlin.add(module);
             }
         }

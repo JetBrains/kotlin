@@ -3,9 +3,8 @@ package org.jetbrains.jet.plugin.configuration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootModificationUtil;
-import com.intellij.openapi.roots.OrderEnumerator;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.OrderEntryUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -231,13 +230,43 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     }
 
     private void addLibraryToModuleIfNeeded(Module module) {
-        if (getKotlinLibrary(module) == null) {
+        DependencyScope expectedDependencyScope = getDependencyScope(module);
+        Library kotlinLibrary = getKotlinLibrary(module);
+        if (kotlinLibrary == null) {
             Library library = getKotlinLibrary(module.getProject());
             assert library != null : "Kotlin project library should exists";
 
-            ModuleRootModificationUtil.addDependency(module, library);
+            ModuleRootModificationUtil.addDependency(module, library, expectedDependencyScope, false);
             showInfoNotification(library.getName() + " library was added to module " + module.getName());
         }
+        else {
+            final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+            LibraryOrderEntry libraryEntry = OrderEntryUtil.findLibraryOrderEntry(model, kotlinLibrary);
+            if (libraryEntry != null) {
+                DependencyScope libraryDependencyScope = libraryEntry.getScope();
+                if (!expectedDependencyScope.equals(libraryDependencyScope)) {
+                    libraryEntry.setScope(expectedDependencyScope);
+                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            model.commit();
+                        }
+                    });
+
+                    showInfoNotification(kotlinLibrary.getName() + " library scope has changed from " + libraryDependencyScope +
+                                         " to " + expectedDependencyScope + " for module " + module.getName());
+                }
+            }
+        }
+
+    }
+
+    @NotNull
+    private static DependencyScope getDependencyScope(@NotNull Module module) {
+        if (ConfigureKotlinInProjectUtils.hasKotlinFilesOnlyInTests(module)) {
+            return DependencyScope.TEST;
+        }
+        return DependencyScope.COMPILE;
     }
 
     private void addJarToExistedLibrary(@NotNull Project project, @NotNull File jarFile) {
