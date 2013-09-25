@@ -17,7 +17,7 @@
 package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.resolve.BodyResolver;
-import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
+import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
@@ -44,7 +44,7 @@ import javax.annotation.PreDestroy;
 public class InjectorForBodyResolve {
     
     private final BodyResolver bodyResolver;
-    private final NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
+    private final CompositeExtension compositeExtension;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
@@ -73,7 +73,7 @@ public class InjectorForBodyResolve {
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.bodyResolver = new BodyResolver();
-        this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
+        this.compositeExtension = new CompositeExtension();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
@@ -111,7 +111,7 @@ public class InjectorForBodyResolve {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setExtension(needSyntheticCallResolverExtension);
+        callResolver.setExtension(compositeExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);

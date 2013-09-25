@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
-import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
+import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -48,7 +48,7 @@ public class InjectorForLazyResolve {
     private final AnnotationResolver annotationResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final JetImportsFactory jetImportsFactory;
-    private final NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
+    private final CompositeExtension compositeExtension;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final CallExpressionResolver callExpressionResolver;
     private final CallResolver callResolver;
@@ -70,7 +70,7 @@ public class InjectorForLazyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.jetImportsFactory = new JetImportsFactory();
-        this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
+        this.compositeExtension = new CompositeExtension();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolver = new CallResolver();
@@ -103,7 +103,7 @@ public class InjectorForLazyResolve {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setExtension(needSyntheticCallResolverExtension);
+        callResolver.setExtension(compositeExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);

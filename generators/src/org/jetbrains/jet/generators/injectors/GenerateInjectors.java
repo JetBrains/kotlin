@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -90,7 +90,7 @@ public class GenerateInjectors {
         generator.addPublicField(AnnotationResolver.class);
         generator.addPublicField(QualifiedExpressionResolver.class);
         generator.addPublicField(JetImportsFactory.class);
-        generator.addField(NeedSyntheticCallResolverExtension.class);
+        generator.addField(CompositeExtension.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
         generator.configure("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve", GenerateInjectors.class);
         return generator;
@@ -171,7 +171,7 @@ public class GenerateInjectors {
         generator.addPublicField(ControlFlowAnalyzer.class);
         generator.addPublicField(DeclarationsChecker.class);
         generator.addPublicField(DescriptorResolver.class);
-        generator.addField(NeedSyntheticCallResolverExtension.class);
+        generator.addField(CompositeExtension.class);
 
         // Parameters
         generator.addPublicParameter(Project.class);
@@ -186,7 +186,7 @@ public class GenerateInjectors {
 
         // Fields
         generator.addPublicField(ExpressionTypingServices.class);
-        generator.addField(NeedSyntheticCallResolverExtension.class);
+        generator.addField(CompositeExtension.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
 
         // Parameters
@@ -205,7 +205,7 @@ public class GenerateInjectors {
         generator.addPublicField(ExpressionTypingServices.class);
         generator.addPublicField(TypeResolver.class);
         generator.addPublicField(CallResolver.class);
-        generator.addField(NeedSyntheticCallResolverExtension.class);
+        generator.addField(CompositeExtension.class);
         generator.addField(true, KotlinBuiltIns.class, null, new GivenExpression("KotlinBuiltIns.getInstance()"));
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
 
@@ -245,7 +245,7 @@ public class GenerateInjectors {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         // Fields
         generator.addPublicField(BodyResolver.class);
-        generator.addField(NeedSyntheticCallResolverExtension.class);
+        generator.addField(CompositeExtension.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
 
         // Parameters
