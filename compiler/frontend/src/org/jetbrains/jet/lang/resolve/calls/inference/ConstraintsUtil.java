@@ -111,27 +111,4 @@ public class ConstraintsUtil {
         }
         return true;
     }
-
-    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
-        final Set<TypeConstructor> constructors = Sets.newHashSet();
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
-            constructors.add(typeParameterDescriptor.getTypeConstructor());
-        }
-        final TypeProjection projection = new TypeProjection(type);
-
-        return TypeSubstitutor.create(new TypeSubstitution() {
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                if (constructors.contains(key)) {
-                    return projection;
-                }
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-        });
-    }
 }

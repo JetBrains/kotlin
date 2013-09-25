@@ -568,8 +568,8 @@ public class CandidateResolver {
         }
         constraintSystem.registerTypeVariables(typeVariables);
 
-        TypeSubstitutor substituteDontCare = ConstraintsUtil
-                .makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
+        TypeSubstitutor substituteDontCare =
+                makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
 
         // Value parameters
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
