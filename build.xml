@@ -12,6 +12,8 @@
     <property name="output.name" value="kotlin-compiler-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
 
+    <property name="java.target" value="1.6"/>
+
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
@@ -212,7 +214,7 @@
 
     <target name="preloader">
       <cleandir dir="${output}/classes/preloader"/>
-      <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+      <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
           <src refid="preloaderSources.path"/>
       </javac>
   
@@ -281,7 +283,7 @@
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
         <cleandir dir="${output}/classes/compiler"/>
-        <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"  target="${java.target}">
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
         </javac>
@@ -389,7 +391,7 @@
 
     <target name="antTools">
         <cleandir dir="${output}/classes/buildTools"/>
-        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src>
                 <dirset dir="${basedir}/build-tools">
                     <include name="core/src"/>
@@ -456,7 +458,7 @@
     <target name="annotationsExt">
         <cleandir dir="${output}/classes/annotations-ext"/>
 
-        <javac destdir="${output}/classes/annotations-ext" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac destdir="${output}/classes/annotations-ext" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src path="${basedir}/compiler/annotations-ext/src"/>
         </javac>
 
@@ -476,7 +478,7 @@
 
     <target name="runtime">
         <cleandir dir="${output}/classes/runtime"/>
-        <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src path="${basedir}/runtime/src"/>
         </javac>
 
@@ -531,7 +533,7 @@
 
         <cleandir dir="${output}/classes/j2k"/>
 
-        <javac destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src path="${basedir}/j2k/src"/>
             <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
         </javac>
