@@ -155,6 +155,15 @@ public class TypeConstraintsImpl implements TypeConstraints {
         if (constraints.isEmpty()) {
             return Collections.emptyList();
         }
+        boolean hasStrongConstraint = ContainerUtil.exists(constraints, new Condition<Constraint>() {
+            @Override
+            public boolean value(Constraint constraint) {
+                return constraint.constraintPosition.isStrong();
+            }
+        });
+        if (!hasStrongConstraint) {
+            return Collections.emptyList();
+        }
 
         Set<JetType> exactBounds = filterBounds(constraints, BoundKind.EXACT_BOUND, values);
         if (exactBounds.size() == 1) {

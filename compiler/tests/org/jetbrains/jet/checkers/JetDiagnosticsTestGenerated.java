@@ -3537,6 +3537,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/upperBounds"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("doNotInferFromBoundsOnly.kt")
+                public void testDoNotInferFromBoundsOnly() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/upperBounds/doNotInferFromBoundsOnly.kt");
+                }
+                
                 @TestMetadata("kt2856.kt")
                 public void testKt2856() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/upperBounds/kt2856.kt");
