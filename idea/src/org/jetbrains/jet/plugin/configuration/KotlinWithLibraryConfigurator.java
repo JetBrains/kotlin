@@ -240,25 +240,28 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             showInfoNotification(library.getName() + " library was added to module " + module.getName());
         }
         else {
-            final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-            LibraryOrderEntry libraryEntry = OrderEntryUtil.findLibraryOrderEntry(model, kotlinLibrary);
+            LibraryOrderEntry libraryEntry = findLibraryOrderEntry(ModuleRootManager.getInstance(module).getOrderEntries(), kotlinLibrary);
             if (libraryEntry != null) {
                 DependencyScope libraryDependencyScope = libraryEntry.getScope();
                 if (!expectedDependencyScope.equals(libraryDependencyScope)) {
                     libraryEntry.setScope(expectedDependencyScope);
-                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            model.commit();
-                        }
-                    });
 
                     showInfoNotification(kotlinLibrary.getName() + " library scope has changed from " + libraryDependencyScope +
                                          " to " + expectedDependencyScope + " for module " + module.getName());
                 }
             }
         }
+    }
 
+    @Nullable
+    private static LibraryOrderEntry findLibraryOrderEntry(@NotNull OrderEntry[] orderEntries, @NotNull Library library) {
+        for (OrderEntry orderEntry : orderEntries) {
+            if (orderEntry instanceof LibraryOrderEntry && library.equals(((LibraryOrderEntry)orderEntry).getLibrary())) {
+                return (LibraryOrderEntry)orderEntry;
+            }
+        }
+
+        return null;
     }
 
     @NotNull
