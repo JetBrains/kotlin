@@ -21,6 +21,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
 public class JetSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
+    @Override
     @NotNull
     protected SyntaxHighlighter createHighlighter() {
       return new JetHighlighter();
