@@ -275,6 +275,7 @@ public class JetTestUtils {
         return answer;
     }
 
+    @NotNull
     public static File tmpDir(String name) throws IOException {
         // we should use this form. otherwise directory will be deleted on each test
         File answer = FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "");

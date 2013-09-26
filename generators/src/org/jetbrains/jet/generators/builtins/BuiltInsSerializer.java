@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -21,10 +22,7 @@ import org.jetbrains.jet.lang.types.lang.BuiltInsSerializationUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -32,7 +30,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class BuiltInsSerializer {
     private static final String BUILT_INS_SRC_DIR = "idea/builtinsSrc";
-    private static final String DEST_DIR = "compiler/frontend/builtins";
+    public static final String DEST_DIR = "compiler/frontend/builtins";
 
     private static int totalSize = 0;
     private static int totalFiles = 0;
@@ -41,70 +39,80 @@ public class BuiltInsSerializer {
     }
 
     public static void main(String[] args) throws IOException {
-        List<File> sourceFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.jet"), new File(BUILT_INS_SRC_DIR));
+        serializeToDir(new File(DEST_DIR), System.out);
+    }
+
+    public static void serializeToDir(final File destDir, @Nullable final PrintStream out) throws IOException {
         Disposable rootDisposable = Disposer.newDisposable();
-        CompilerConfiguration configuration = new CompilerConfiguration();
-        JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
-        List<JetFile> files = JetTestUtils.loadToJetFiles(environment, sourceFiles);
+        try {
+            List<File> sourceFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.jet"), new File(BUILT_INS_SRC_DIR));
+            CompilerConfiguration configuration = new CompilerConfiguration();
+            JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
+            List<JetFile> files = JetTestUtils.loadToJetFiles(environment, sourceFiles);
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, environment, false);
+            ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, environment, false);
 
-        NamespaceDescriptor namespace = module.getNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
-        assert namespace != null : "No built-ins namespace: " + KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+            NamespaceDescriptor namespace = module.getNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+            assert namespace != null : "No built-ins namespace: " + KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 
-        DescriptorValidator.validate(namespace);
+            DescriptorValidator.validate(namespace);
 
-        final File destDir = new File(DEST_DIR);
-        if (!FileUtil.delete(destDir)) {
-            System.err.println("Could not delete: " + destDir);
-        }
-        if (!destDir.mkdirs()) {
-            System.err.println("Could not make directories: " + destDir);
-        }
-
-        DescriptorSerializer serializer = new DescriptorSerializer(new SerializerExtension() {
-            private final ImmutableSet<String> set = ImmutableSet.of("Any", "Nothing");
-
-            @Override
-            public boolean hasSupertypes(@NotNull ClassDescriptor classDescriptor) {
-                return !set.contains(classDescriptor.getName().asString());
+            if (!FileUtil.delete(destDir)) {
+                System.err.println("Could not delete: " + destDir);
             }
-        });
+            if (!destDir.mkdirs()) {
+                System.err.println("Could not make directories: " + destDir);
+            }
 
-        final List<Name> classNames = new ArrayList<Name>();
-        List<DeclarationDescriptor> allDescriptors = DescriptorSerializer.sort(namespace.getMemberScope().getAllDescriptors());
-        ClassSerializationUtil.serializeClasses(allDescriptors, serializer, new ClassSerializationUtil.Sink() {
-            @Override
-            public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
-                try {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    classProto.writeTo(stream);
-                    write(destDir, getFileName(classDescriptor), stream);
+            DescriptorSerializer serializer = new DescriptorSerializer(new SerializerExtension() {
+                private final ImmutableSet<String> set = ImmutableSet.of("Any", "Nothing");
 
-                    if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
-                        classNames.add(classDescriptor.getName());
+                @Override
+                public boolean hasSupertypes(@NotNull ClassDescriptor classDescriptor) {
+                    return !set.contains(classDescriptor.getName().asString());
+                }
+            });
+
+            final List<Name> classNames = new ArrayList<Name>();
+            List<DeclarationDescriptor> allDescriptors = DescriptorSerializer.sort(namespace.getMemberScope().getAllDescriptors());
+            ClassSerializationUtil.serializeClasses(allDescriptors, serializer, new ClassSerializationUtil.Sink() {
+                @Override
+                public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
+                    try {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        classProto.writeTo(stream);
+                        write(destDir, getFileName(classDescriptor), stream, out);
+
+                        if (DescriptorUtils.isTopLevelDeclaration(classDescriptor)) {
+                            classNames.add(classDescriptor.getName());
+                        }
+                    }
+                    catch (IOException e) {
+                        throw new AssertionError(e);
                     }
                 }
-                catch (IOException e) {
-                    throw new AssertionError(e);
-                }
+            });
+
+            ByteArrayOutputStream classNamesStream = new ByteArrayOutputStream();
+            writeClassNames(serializer, classNames, classNamesStream);
+            write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(namespace), classNamesStream, out);
+
+            ByteArrayOutputStream packageStream = new ByteArrayOutputStream();
+            ProtoBuf.Package packageProto = serializer.packageProto(namespace).build();
+            packageProto.writeTo(packageStream);
+            write(destDir, BuiltInsSerializationUtil.getPackageFilePath(namespace), packageStream, out);
+
+            ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
+            NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable());
+            write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(namespace), nameStream, out);
+
+            if (out != null) {
+                out.println("Total bytes written: " + totalSize + " to " + totalFiles + " files");
             }
-        });
-
-        ByteArrayOutputStream classNamesStream = new ByteArrayOutputStream();
-        writeClassNames(serializer, classNames, classNamesStream);
-        write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(namespace), classNamesStream);
-
-        ByteArrayOutputStream packageStream = new ByteArrayOutputStream();
-        ProtoBuf.Package packageProto = serializer.packageProto(namespace).build();
-        packageProto.writeTo(packageStream);
-        write(destDir, BuiltInsSerializationUtil.getPackageFilePath(namespace), packageStream);
-
-        ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
-        NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable());
-        write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(namespace), nameStream);
-
-        System.out.println("Total bytes written: " + totalSize + " to " + totalFiles + " files");
+        }
+        finally {
+            Disposer.dispose(rootDisposable);
+        }
     }
 
     private static void writeClassNames(
@@ -125,11 +133,18 @@ public class BuiltInsSerializer {
         }
     }
 
-    private static void write(@NotNull File destDir, @NotNull String fileName, @NotNull ByteArrayOutputStream stream) throws IOException {
+    private static void write(
+            @NotNull File destDir,
+            @NotNull String fileName,
+            @NotNull ByteArrayOutputStream stream,
+            @Nullable PrintStream out
+    ) throws IOException {
         totalSize += stream.size();
         totalFiles++;
         FileUtil.writeToFile(new File(destDir, fileName), stream.toByteArray());
-        System.out.println(stream.size() + " bytes written to " + fileName);
+        if (out != null) {
+            out.println(stream.size() + " bytes written to " + fileName);
+        }
     }
 
     @NotNull
