@@ -232,18 +232,12 @@ public class CandidateResolver {
 
         updateSystemWithConstraintSystemCompleter(context, resolvedCall);
 
-        if (resolvedCall.getConstraintSystem().getStatus().hasContradiction()) {
-            return reportInferenceError(context);
-        }
         updateSystemIfExpectedTypeIsUnit(context, resolvedCall);
 
-        boolean boundsAreSatisfied = updateSystemCheckingBounds(resolvedCall);
+        ((ConstraintSystemImpl)resolvedCall.getConstraintSystem()).processDeclaredBoundConstraints();
+
         if (!resolvedCall.getConstraintSystem().getStatus().isSuccessful()) {
             return reportInferenceError(context);
-        }
-        if (!boundsAreSatisfied) {
-            context.tracing.upperBoundViolated(context.trace, InferenceErrorData.create(
-                    resolvedCall.getCandidateDescriptor(), resolvedCall.getConstraintSystem()));
         }
         resolvedCall.setResultingSubstitutor(resolvedCall.getConstraintSystem().getResultingSubstitutor());
 
@@ -307,30 +301,12 @@ public class CandidateResolver {
         }
     }
 
-    private static <D extends CallableDescriptor> boolean updateSystemCheckingBounds(
-            @NotNull ResolvedCallImpl<D> resolvedCall
-    ) {
-        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
-        assert constraintSystem != null;
-
-        if (ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true)
-                && !constraintSystem.getStatus().hasUnknownParameters()) {
-            return true;
-        }
-        ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
-        copy.processDeclaredBoundConstraints();
-        if (copy.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true)) {
-            resolvedCall.setConstraintSystem(copy);
-            return true;
-        }
-        return false;
-    }
-
     private <D extends CallableDescriptor> JetType reportInferenceError(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
+        assert constraintSystem != null;
 
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
         completeNestedCallsInference(context);
@@ -471,7 +447,8 @@ public class CandidateResolver {
         if (expression == null) return;
 
         DataFlowInfo dataFlowInfoForValueArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(argument);
-        ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType).replaceDataFlowInfo(dataFlowInfoForValueArgument);
+        ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType).replaceDataFlowInfo(
+                dataFlowInfoForValueArgument);
         DataFlowUtils.checkType(type, expression, newContext);
     }
 
@@ -617,9 +594,8 @@ public class CandidateResolver {
 
         // Solution
         boolean hasContradiction = constraintSystem.getStatus().hasContradiction();
-        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/false);
         candidateCall.setHasUnknownTypeParameters(true);
-        if (!hasContradiction && boundsAreSatisfied) {
+        if (!hasContradiction) {
             return INCOMPLETE_TYPE_INFERENCE;
         }
         ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS);

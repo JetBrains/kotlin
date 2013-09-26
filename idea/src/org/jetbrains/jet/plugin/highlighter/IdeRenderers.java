@@ -201,11 +201,11 @@ public class IdeRenderers {
                 }
             };
 
-    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
-            new Renderer<InferenceErrorData>() {
+    public static final Renderer<ExtendedInferenceErrorData> HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
+            new Renderer<ExtendedInferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
+                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
                     return renderUpperBoundViolatedInferenceError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
                 }
             };

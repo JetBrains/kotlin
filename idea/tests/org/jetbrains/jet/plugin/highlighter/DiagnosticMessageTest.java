@@ -103,7 +103,7 @@ public class DiagnosticMessageTest extends JetLiteFixture {
     }
 
     public void testUpperBoundViolated() throws Exception {
-        doTest("upperBoundViolated", 1, Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED);
+        doTest("upperBoundViolated", 3, Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED);
     }
 
     public void testTypeMismatchWithNothing() throws Exception {

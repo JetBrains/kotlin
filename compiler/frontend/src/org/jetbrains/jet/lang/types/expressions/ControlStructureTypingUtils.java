@@ -477,12 +477,5 @@ public class ControlStructureTypingUtils {
         ) {
             throwError();
         }
-
-        @Override
-        public void upperBoundViolated(
-                @NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData
-        ) {
-            throwError();
-        }
     }
 }

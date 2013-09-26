@@ -44,6 +44,16 @@ public interface ConstraintSystemStatus {
     boolean hasConflictingConstraints();
 
     /**
+     * Returns <tt>true</tt> if contradiction of type constraints comes from declared bounds for type parameters.
+     *
+     * For example, for <pre>fun &lt;R: Any&gt; foo(r: R) {}</pre> in invocation <tt>foo(null)</tt>
+     * upper bounds <tt>Any</tt> for type parameter <tt>R</tt> is violated. <p/>
+     *
+     * It's the special case of 'hasConflictingConstraints' case.
+     */
+    boolean hasViolatedUpperBound();
+
+    /**
      * Returns <tt>true</tt> if there is no information for some registered type variable.
      *
      * For example, for <pre>fun &lt;E&gt; newList()</pre> in invocation <tt>"val nl = newList()"</tt>

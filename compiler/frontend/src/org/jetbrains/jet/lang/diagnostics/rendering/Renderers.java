@@ -28,10 +28,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
-import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraints;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -159,11 +156,11 @@ public class Renderers {
                 }
             };
 
-    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
-            new Renderer<InferenceErrorData>() {
+    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
+            new Renderer<ExtendedInferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
+                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
                     return renderUpperBoundViolatedInferenceError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
@@ -265,32 +262,47 @@ public class Renderers {
                                .text("Please specify it explicitly."));
     }
 
-    public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(InferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
+    @NotNull
+    public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(ExtendedInferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
+        String errorMessage = "Rendering 'upper bound violated' error for " + inferenceErrorData.descriptor;
+
         TypeParameterDescriptor typeParameterDescriptor = null;
+        ConstraintSystemImpl constraintSystem = (ConstraintSystemImpl) inferenceErrorData.constraintSystem;
+        assert constraintSystem.getStatus().hasViolatedUpperBound();
+
+        ConstraintSystem systemWithoutWeakConstraints = constraintSystem.getSystemWithoutWeakConstraints();
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.descriptor.getTypeParameters()) {
-            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(inferenceErrorData.constraintSystem, typeParameter, true)) {
+            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, typeParameter, true)) {
                 typeParameterDescriptor = typeParameter;
-                break;
             }
         }
-        assert typeParameterDescriptor != null;
+        assert typeParameterDescriptor != null : errorMessage;
+
+        JetType inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeConstraints(typeParameterDescriptor).getValue();
+        assert inferredValueForTypeParameter != null : errorMessage;
 
         result.text(newText().normal("Type parameter bound for ").strong(typeParameterDescriptor.getName()).normal(" in "))
                 .table(newTable().
                         descriptor(inferenceErrorData.descriptor));
 
-        JetType inferredValueForTypeParameter = inferenceErrorData.constraintSystem.getTypeConstraints(typeParameterDescriptor).getValue();
-        assert inferredValueForTypeParameter != null;
-        JetType upperBound = typeParameterDescriptor.getUpperBoundsAsType();
-        JetType upperBoundWithSubstitutedInferredTypes = inferenceErrorData.constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
-        assert upperBoundWithSubstitutedInferredTypes != null;
+        JetType violatedUpperBound = null;
+        for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
+            JetType upperBoundWithSubstitutedInferredTypes =
+                    systemWithoutWeakConstraints.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+            if (upperBoundWithSubstitutedInferredTypes != null &&
+                !JetTypeChecker.INSTANCE.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
+                violatedUpperBound = upperBoundWithSubstitutedInferredTypes;
+                break;
+            }
+        }
+        assert violatedUpperBound != null : errorMessage;
 
         Renderer<JetType> typeRenderer = result.getTypeRenderer();
         result.text(newText()
                             .normal(" is not satisfied: inferred type ")
                             .error(typeRenderer.render(inferredValueForTypeParameter))
                             .normal(" is not a subtype of ")
-                            .strong(typeRenderer.render(upperBoundWithSubstitutedInferredTypes)));
+                            .strong(typeRenderer.render(violatedUpperBound)));
         return result;
     }
 

@@ -21,7 +21,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -233,6 +232,9 @@ public class TracingStrategyImpl implements TracingStrategy {
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
             trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, data.expectedType, substitutedReturnType));
         }
+        else if (status.hasViolatedUpperBound()) {
+            trace.report(TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, data));
+        }
         else if (status.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
         }
@@ -243,10 +245,5 @@ public class TracingStrategyImpl implements TracingStrategy {
             assert status.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
         }
-    }
-
-    @Override
-    public void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {
-        trace.report(Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, inferenceErrorData));
     }
 }

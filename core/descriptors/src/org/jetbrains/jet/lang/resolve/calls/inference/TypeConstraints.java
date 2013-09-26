@@ -26,15 +26,6 @@ import java.util.Set;
 
 public interface TypeConstraints {
     @NotNull
-    Set<JetType> getLowerBounds();
-
-    @NotNull
-    Set<JetType> getUpperBounds();
-
-    @NotNull
-    Set<JetType> getExactBounds();
-
-    @NotNull
     Variance getVarianceOfPosition();
 
     boolean isEmpty();
