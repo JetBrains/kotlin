@@ -104,8 +104,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         generatePrimaryConstructorProperties(propertyCodegen, myClass);
     }
 
-    private boolean shouldProcessFirst(JetDeclaration declaration) {
-        return false == (declaration instanceof JetProperty || declaration instanceof JetNamedFunction);
+    private static boolean shouldProcessFirst(JetDeclaration declaration) {
+        return !(declaration instanceof JetProperty || declaration instanceof JetNamedFunction);
     }
 
 
@@ -163,7 +163,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         }
     }
 
-    @Nullable
+    @NotNull
     protected MethodVisitor createOrGetClInitMethod() {
         if (clInitMethod == null) {
             clInitMethod = v.newMethod(null, ACC_STATIC, "<clinit>", "()V", null, null);
@@ -171,22 +171,20 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         return clInitMethod;
     }
 
-    @Nullable
+    @NotNull
     protected ExpressionCodegen createOrGetClInitCodegen() {
         assert state.getClassBuilderMode() == ClassBuilderMode.FULL;
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            if (clInitCodegen == null) {
-                MethodVisitor method = createOrGetClInitMethod();
-                method.visitCode();
-                SimpleFunctionDescriptorImpl clInit =
-                        new SimpleFunctionDescriptorImpl(descriptor, Collections.<AnnotationDescriptor>emptyList(),
-                                                         Name.special("<clinit>"),
-                                                         CallableMemberDescriptor.Kind.SYNTHESIZED);
-                clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
-                                  Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
+        if (clInitCodegen == null) {
+            MethodVisitor method = createOrGetClInitMethod();
+            method.visitCode();
+            SimpleFunctionDescriptorImpl clInit =
+                    new SimpleFunctionDescriptorImpl(descriptor, Collections.<AnnotationDescriptor>emptyList(),
+                                                     Name.special("<clinit>"),
+                                                     CallableMemberDescriptor.Kind.SYNTHESIZED);
+            clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
 
-                clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state);
-            }
+            clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state);
         }
         return clInitCodegen;
     }
