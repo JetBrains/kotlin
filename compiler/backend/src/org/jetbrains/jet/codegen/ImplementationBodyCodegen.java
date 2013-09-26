@@ -227,7 +227,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
-        AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor(), true);
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {

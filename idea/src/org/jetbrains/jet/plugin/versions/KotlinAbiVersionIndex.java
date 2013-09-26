@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.versions;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -30,9 +31,12 @@ import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 
 import java.util.Map;
+import java.util.Set;
+
+import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
 
 /**
  * Important! This is not a stub-based index. And it has its own version
@@ -53,7 +57,16 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
             return file.getFileType() == StdFileTypes.CLASS;
         }
     };
+
     private static final DataIndexer<Integer, Void, FileContent> INDEXER = new DataIndexer<Integer, Void, FileContent>() {
+        @SuppressWarnings("deprecation")
+        private final Set<String> kotlinAnnotationsDesc = new ImmutableSet.Builder<String>()
+                .add(asmDescByFqNameWithoutInnerClasses(OLD_JET_CLASS_ANNOTATION))
+                .add(asmDescByFqNameWithoutInnerClasses(OLD_JET_PACKAGE_CLASS_ANNOTATION))
+                .add(asmDescByFqNameWithoutInnerClasses(KOTLIN_CLASS))
+                .add(asmDescByFqNameWithoutInnerClasses(KOTLIN_PACKAGE))
+                .build();
+
         @NotNull
         @Override
         public Map<Integer, Void> map(FileContent inputData) {
@@ -63,20 +76,16 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
             try {
                 ClassReader classReader = new ClassReader(inputData.getContent());
                 classReader.accept(new ClassVisitor(Opcodes.ASM4) {
-                    @SuppressWarnings("deprecation")
                     @Override
                     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                        if (!JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION.getDescriptor().equals(desc) &&
-                            !JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION.getDescriptor().equals(desc) &&
-                            !JvmAnnotationNames.KOTLIN_CLASS.getDescriptor().equals(desc) &&
-                            !JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor().equals(desc)) {
+                        if (!kotlinAnnotationsDesc.contains(desc)) {
                             return null;
                         }
                         annotationPresent.set(true);
                         return new AnnotationVisitor(Opcodes.ASM4) {
                             @Override
                             public void visit(String name, Object value) {
-                                if (JvmAnnotationNames.ABI_VERSION_FIELD_NAME.equals(name)) {
+                                if (ABI_VERSION_FIELD_NAME.equals(name)) {
                                     if (value instanceof Integer) {
                                         Integer abiVersion = (Integer) value;
                                         result.put(abiVersion, null);

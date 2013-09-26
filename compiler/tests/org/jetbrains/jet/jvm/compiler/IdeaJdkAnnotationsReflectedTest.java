@@ -30,7 +30,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CoreExternalAnnotationsManager;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -158,9 +158,9 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
     }
 
     private enum AnnotationsKind {
-        KOTLIN_SIGNATURE(JvmAnnotationNames.KOTLIN_SIGNATURE.getFqName().asString()),
+        KOTLIN_SIGNATURE(SignaturesUtil.KOTLIN_SIGNATURE.asString()),
         NOT_NULL(AnnotationUtil.NOT_NULL),
-        ANY(AnnotationUtil.NOT_NULL, JvmAnnotationNames.KOTLIN_SIGNATURE.getFqName().asString());
+        ANY(AnnotationUtil.NOT_NULL, SignaturesUtil.KOTLIN_SIGNATURE.asString());
 
         public final String[] annotationNames;
 

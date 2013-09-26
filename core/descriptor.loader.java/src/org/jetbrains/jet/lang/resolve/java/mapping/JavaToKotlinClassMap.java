@@ -39,6 +39,8 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
+
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
     private static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
 
@@ -113,18 +115,10 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         return annotation;
     }
 
-    private static FqName getJavaClassFqName(@NotNull Class<?> javaClass) {
-        return new FqName(javaClass.getName().replace('$', '.'));
-    }
-
     @Override
-    protected void register(
-            @NotNull Class<?> javaClass,
-            @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull Direction direction
-    ) {
+    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            register(getJavaClassFqName(javaClass), kotlinDescriptor);
+            register(fqNameByClass(javaClass), kotlinDescriptor);
         }
     }
 
@@ -136,7 +130,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             @NotNull Direction direction
     ) {
         if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            FqName javaClassName = getJavaClassFqName(javaClass);
+            FqName javaClassName = fqNameByClass(javaClass);
             register(javaClassName, kotlinDescriptor);
             registerCovariant(javaClassName, kotlinMutableDescriptor);
         }

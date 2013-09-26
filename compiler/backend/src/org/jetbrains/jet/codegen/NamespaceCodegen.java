@@ -54,6 +54,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 
 public class NamespaceCodegen extends MemberCodegen {
@@ -152,7 +153,8 @@ public class NamespaceCodegen extends MemberCodegen {
 
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto);
 
-        AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor(), true);
+        AnnotationVisitor av =
+                v.getClassBuilder().newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
@@ -215,7 +217,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private static void writeKotlinPackageFragmentAnnotation(@NotNull ClassBuilder builder) {
-        AnnotationVisitor av = builder.newAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT.getDescriptor(), true);
+        AnnotationVisitor av = builder.newAnnotation(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT).getDescriptor(), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         av.visitEnd();
     }

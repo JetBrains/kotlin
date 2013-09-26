@@ -138,9 +138,9 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     private static boolean ignoreAnnotation(@NotNull JvmClassName className) {
-        // TODO: JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION ?
-        return className.equals(JvmAnnotationNames.KOTLIN_CLASS)
-               || className.equals(JvmAnnotationNames.KOTLIN_PACKAGE)
+        // TODO: JETBRAINS_NOT_NULL_ANNOTATION ?
+        return className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS))
+               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE))
                || className.getInternalName().startsWith("jet/runtime/typeinfo/");
     }
 

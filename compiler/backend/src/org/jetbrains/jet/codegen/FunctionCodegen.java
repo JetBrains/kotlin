@@ -57,6 +57,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescrip
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public class FunctionCodegen extends GenerationStateAware {
     private final CodegenContext owner;
@@ -190,7 +191,8 @@ public class FunctionCodegen extends GenerationStateAware {
                 }
             }
 
-            AnnotationVisitor av = mv.visitParameterAnnotation(i, JvmClassName.byClass(JetValueParameter.class).getDescriptor(), true);
+            AnnotationVisitor av =
+                    mv.visitParameterAnnotation(i, asmDescByFqNameWithoutInnerClasses(fqNameByClass(JetValueParameter.class)), true);
             av.visit("name", name);
             if (nullableType) {
                 av.visit("type", "?");

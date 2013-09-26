@@ -18,11 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaAnnotationImpl;
@@ -54,11 +52,5 @@ public class PsiBasedExternalAnnotationResolver implements ExternalAnnotationRes
     @Nullable
     public static PsiAnnotation findExternalAnnotation(@NotNull PsiModifierListOwner owner, @NotNull FqName fqName) {
         return ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName.asString());
-    }
-
-    @Nullable
-    public static PsiAnnotation findOwnAnnotation(@NotNull PsiModifierListOwner owner, @NotNull JvmClassName name) {
-        PsiModifierList list = owner.getModifierList();
-        return list == null ? null : list.findAnnotation(name.getFqName().asString());
     }
 }

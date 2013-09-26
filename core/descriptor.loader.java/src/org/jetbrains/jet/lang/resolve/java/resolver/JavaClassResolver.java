@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaEnumClassObjectDescriptor;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
@@ -48,14 +47,17 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public final class JavaClassResolver {
+    private static final FqName ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION = fqNameByClass(AssertInvisibleInResolver.class);
     private static final Logger LOG = Logger.getInstance(JavaClassResolver.class);
 
     @NotNull
@@ -207,7 +209,7 @@ public final class JavaClassResolver {
         }
 
         if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            if (javaClass.findAnnotation(JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName()) != null) {
+            if (javaClass.findAnnotation(ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION) != null) {
                 if (ApplicationManager.getApplication().isInternal()) {
                     LOG.error("classpath is configured incorrectly:" +
                               " class " + qualifiedName + " from runtime must not be loaded by compiler");

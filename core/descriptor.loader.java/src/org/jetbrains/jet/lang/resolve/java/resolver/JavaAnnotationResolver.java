@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
@@ -37,9 +36,13 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public final class JavaAnnotationResolver {
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
+    public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = fqNameByClass(NotNull.class);
+    public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
+    public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
 
     private JavaClassResolver classResolver;
     private JavaAnnotationArgumentResolver argumentResolver;
@@ -102,9 +105,9 @@ public final class JavaAnnotationResolver {
 
         // Don't process internal jet annotations and jetbrains NotNull annotations
         if (fqName.asString().startsWith("jet.runtime.typeinfo.")
-            || fqName.equals(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.getFqName())
-            || fqName.equals(JvmAnnotationNames.KOTLIN_CLASS.getFqName())
-            || fqName.equals(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName())
+            || fqName.equals(JETBRAINS_NOT_NULL_ANNOTATION)
+            || fqName.equals(JvmAnnotationNames.KOTLIN_CLASS)
+            || fqName.equals(JvmAnnotationNames.KOTLIN_PACKAGE)
         ) {
             return null;
         }
@@ -143,24 +146,24 @@ public final class JavaAnnotationResolver {
     }
 
     @Nullable
-    public JavaAnnotation findAnnotationWithExternal(@NotNull JavaAnnotationOwner owner, @NotNull JvmClassName name) {
-        JavaAnnotation annotation = owner.findAnnotation(name.getFqName());
+    public JavaAnnotation findAnnotationWithExternal(@NotNull JavaAnnotationOwner owner, @NotNull FqName name) {
+        JavaAnnotation annotation = owner.findAnnotation(name);
         if (annotation != null) {
             return annotation;
         }
 
-        return externalAnnotationResolver.findExternalAnnotation(owner, name.getFqName());
+        return externalAnnotationResolver.findExternalAnnotation(owner, name);
     }
 
     public boolean hasNotNullAnnotation(@NotNull JavaAnnotationOwner owner) {
-        return findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION) != null;
+        return findAnnotationWithExternal(owner, JETBRAINS_NOT_NULL_ANNOTATION) != null;
     }
 
     public boolean hasMutableAnnotation(@NotNull JavaAnnotationOwner owner) {
-        return findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION) != null;
+        return findAnnotationWithExternal(owner, JETBRAINS_MUTABLE_ANNOTATION) != null;
     }
 
     public boolean hasReadonlyAnnotation(@NotNull JavaAnnotationOwner owner) {
-        return findAnnotationWithExternal(owner, JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION) != null;
+        return findAnnotationWithExternal(owner, JETBRAINS_READONLY_ANNOTATION) != null;
     }
 }

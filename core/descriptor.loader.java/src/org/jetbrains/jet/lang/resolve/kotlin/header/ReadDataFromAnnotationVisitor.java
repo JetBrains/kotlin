@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.ArrayList;
@@ -46,8 +47,8 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
         @NotNull
         private final JvmClassName annotation;
 
-        private HeaderType(@NotNull JvmClassName annotation) {
-            this.annotation = annotation;
+        private HeaderType(@NotNull FqName annotation) {
+            this.annotation = JvmClassName.byFqNameWithoutInnerClasses(annotation);
         }
 
         @Nullable

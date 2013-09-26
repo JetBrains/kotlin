@@ -32,11 +32,9 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -667,4 +665,8 @@ public class AsmUtil {
         }
     }
 
+    @NotNull
+    public static String asmDescByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
+        return JvmClassName.byFqNameWithoutInnerClasses(fqName).getDescriptor();
+    }
 }

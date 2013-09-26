@@ -52,11 +52,6 @@ public class JvmClassName {
     }
 
     @NotNull
-    public static JvmClassName byClass(@NotNull Class<?> klass) {
-        return byFqNameWithoutInnerClasses(new FqName(klass.getCanonicalName()));
-    }
-
-    @NotNull
     private static String encodeSpecialNames(@NotNull String str) {
         String encodedObjectNames = StringUtil.replace(str, JvmAbi.CLASS_OBJECT_CLASS_NAME, CLASS_OBJECT_REPLACE_GUARD);
         return StringUtil.replace(encodedObjectNames, JvmAbi.TRAIT_IMPL_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD);
