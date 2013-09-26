@@ -49,6 +49,12 @@ public interface StorageManager {
     <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable);
 
     /**
+     * If recursion is detected, respective calls to compute() simply return null
+     */
+    @NotNull
+    <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable);
+
+    /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */

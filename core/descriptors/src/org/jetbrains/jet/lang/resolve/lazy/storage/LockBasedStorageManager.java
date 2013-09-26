@@ -84,6 +84,17 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
+    public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable) {
+        return new LockBasedLazyValue<T>(lock, computable) {
+            @Override
+            protected Object recursionDetected() {
+                return WrappedValues.escapeNull(null);
+            }
+        };
+    }
+
+    @NotNull
+    @Override
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
             @NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute
     ) {
@@ -103,6 +114,9 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
+
+        private static final Object COMPUTING = new Object();
+
         private final Object lock;
         private final Computable<T> computable;
 
@@ -117,12 +131,20 @@ public class LockBasedStorageManager implements StorageManager {
         @Override
         public T compute() {
             Object _value = value;
-            if (_value != null) return WrappedValues.unescapeExceptionOrNull(_value);
+            if (_value != null && _value != COMPUTING) return WrappedValues.unescapeExceptionOrNull(_value);
 
             synchronized (lock) {
                 _value = value;
+                if (_value == COMPUTING) {
+                    Object result = recursionDetected();
+                    if (result != null) {
+                        return WrappedValues.unescapeExceptionOrNull(result);
+                    }
+                }
+
                 if (_value != null) return WrappedValues.unescapeExceptionOrNull(_value);
 
+                value = COMPUTING;
                 try {
                     T typedValue = computable.compute();
                     value = WrappedValues.escapeNull(typedValue);
@@ -134,6 +156,15 @@ public class LockBasedStorageManager implements StorageManager {
                     throw ExceptionUtils.rethrow(throwable);
                 }
             }
+        }
+
+        /**
+         * @return {@code null} to proceed, a wrapped value otherwise, see WrappedValues
+         * @throws DO NOT throw exceptions from implementations of this method, instead return WrappedValues.escapeThrowable(exception)
+         */
+        @Nullable
+        protected Object recursionDetected() {
+            return WrappedValues.escapeThrowable(new IllegalStateException("Recursive call in a lazy value"));
         }
 
         protected void postCompute(T value) {
