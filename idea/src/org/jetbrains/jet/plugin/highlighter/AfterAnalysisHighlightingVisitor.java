@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 abstract class AfterAnalysisHighlightingVisitor extends HighlightingVisitor {
@@ -26,10 +25,5 @@ abstract class AfterAnalysisHighlightingVisitor extends HighlightingVisitor {
     protected AfterAnalysisHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
         super(holder);
         this.bindingContext = bindingContext;
-    }
-
-    @Override
-    public void visitJetElement(JetElement element) {
-        element.acceptChildren(this);
     }
 }

@@ -214,6 +214,8 @@
     <liveTemplateMacro implementation="org.jetbrains.jet.plugin.liveTemplates.macro.JetSuggestVariableNameMacro"/>
 
     <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
+    <highlightRangeExtension implementation="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
+
     <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DebugInfoAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.jet.plugin.highlighter.KotlinProblemHighlightFilter"/>
 
