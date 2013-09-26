@@ -32,12 +32,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
@@ -91,11 +96,11 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
         Collections.sort(sortedFiles, jetFileComparator);
 
-        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + "analyze", LOG).start();
+        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze", LOG).start();
         try {
             if (USE_LAZY) {
                 ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(sortedFiles.get(0));
-                session.forceResolveAll();
+                forceResolveRelevantDeclarations(files, session);
                 return new LightClassConstructionContext(session.getBindingContext(), null);
             }
             else {
@@ -106,6 +111,49 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         }
         finally {
             p.end();
+        }
+    }
+
+    private static void forceResolveRelevantDeclarations(@NotNull Collection<JetFile> files, @NotNull KotlinCodeAnalyzer session) {
+        for (JetFile file : files) {
+            // Scripts are not supported
+            if (file.isScript()) continue;
+
+            FqName packageFqName = JetPsiUtil.getFQName(file);
+
+            // make sure we create a package descriptor
+            PackageViewDescriptor packageDescriptor = session.getModuleDescriptor().getPackage(packageFqName);
+            if (packageDescriptor == null) {
+                LOG.warn("No descriptor found for package " + packageFqName + " in file " + file.getName() + "\n" + file.getText());
+                session.forceResolveAll();
+                continue;
+            }
+
+            for (JetDeclaration declaration : file.getDeclarations()) {
+                if (declaration instanceof JetClassOrObject) {
+                    ClassDescriptor descriptor = session.getClassDescriptor((JetClassOrObject) declaration);
+                    ForceResolveUtil.forceResolveAllContents(descriptor);
+                }
+                else if (declaration instanceof JetFunction) {
+                    JetFunction jetFunction = (JetFunction) declaration;
+                    Name name = jetFunction.getNameAsSafeName();
+                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name);
+                    for (FunctionDescriptor descriptor : functions) {
+                        ForceResolveUtil.forceResolveAllContents(descriptor);
+                    }
+                }
+                else if (declaration instanceof JetProperty) {
+                    JetProperty jetProperty = (JetProperty) declaration;
+                    Name name = jetProperty.getNameAsSafeName();
+                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name);
+                    for (VariableDescriptor descriptor : properties) {
+                        ForceResolveUtil.forceResolveAllContents(descriptor);
+                    }
+                }
+                else {
+                    LOG.error("Unsupported declaration kind: " + declaration + " in file " + file.getName() + "\n" + file.getText());
+                }
+            }
         }
     }
 
