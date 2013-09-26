@@ -157,14 +157,23 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
         return new KotlinJvmBinaryClass.AnnotationArgumentVisitor() {
             @Override
-            public void visit(@NotNull Name name, @Nullable Object value) {
-                CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);
-                setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
+            public void visit(@Nullable Name name, @Nullable Object value) {
+                if (name != null) {
+                    CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);
+                    setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
+                }
             }
 
             @Override
             public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
                 setArgumentValueByName(name, enumEntryValue(enumClassName, enumEntryName));
+            }
+
+            @Nullable
+            @Override
+            public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitArray(@NotNull Name name) {
+                // TODO: support arrays
+                return null;
             }
 
             @NotNull

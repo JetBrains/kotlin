@@ -87,17 +87,23 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Nullable
-    private static org.jetbrains.asm4.AnnotationVisitor convertAnnotationVisitor(
-            @NotNull AnnotationVisitor visitor,
-            @NotNull String desc
-    ) {
-        final AnnotationArgumentVisitor v = visitor.visitAnnotation(classNameFromAsmDesc(desc));
-        if (v == null) return null;
+    private static org.jetbrains.asm4.AnnotationVisitor convertAnnotationVisitor(@NotNull AnnotationVisitor visitor, @NotNull String desc) {
+        AnnotationArgumentVisitor v = visitor.visitAnnotation(classNameFromAsmDesc(desc));
+        return v == null ? null : convertAnnotationVisitor(v);
+    }
 
+    @NotNull
+    private static org.jetbrains.asm4.AnnotationVisitor convertAnnotationVisitor(@NotNull final AnnotationArgumentVisitor v) {
         return new org.jetbrains.asm4.AnnotationVisitor(ASM4) {
             @Override
             public void visit(String name, Object value) {
-                v.visit(Name.identifier(name), value);
+                v.visit(name == null ? null : Name.identifier(name), value);
+            }
+
+            @Override
+            public org.jetbrains.asm4.AnnotationVisitor visitArray(String name) {
+                AnnotationArgumentVisitor av = v.visitArray(Name.guess(name));
+                return av == null ? null : convertAnnotationVisitor(av);
             }
 
             @Override
@@ -147,7 +153,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
 
                         @Override
                         public void visitEnd() {
-                            super.visitEnd();
+                            v.visitEnd();
                         }
                     };
                 }

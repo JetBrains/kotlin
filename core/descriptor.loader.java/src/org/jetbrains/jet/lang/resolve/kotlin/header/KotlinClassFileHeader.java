@@ -18,25 +18,14 @@ package org.jetbrains.jet.lang.resolve.kotlin.header;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-
-import java.io.IOException;
-
-import static org.jetbrains.asm4.ClassReader.*;
 
 public abstract class KotlinClassFileHeader {
     @Nullable
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        try {
-            ClassReader reader = new ClassReader(kotlinClass.getFile().contentsToByteArray());
-            ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
-            reader.accept(visitor, SKIP_CODE | SKIP_FRAMES | SKIP_DEBUG);
-            return visitor.createHeader(kotlinClass);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
+        kotlinClass.loadClassAnnotations(visitor);
+        return visitor.createHeader(kotlinClass);
     }
 
     private final int version;

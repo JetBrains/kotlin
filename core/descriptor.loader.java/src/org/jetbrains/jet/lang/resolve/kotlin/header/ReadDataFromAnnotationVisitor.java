@@ -19,20 +19,20 @@ package org.jetbrains.jet.lang.resolve.kotlin.header;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.AnnotationVisitor;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
+import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArgumentVisitor;
+import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationVisitor;
 
-/* package */ class ReadDataFromAnnotationVisitor extends ClassVisitor {
+/* package */ class ReadDataFromAnnotationVisitor implements AnnotationVisitor {
     private static final Logger LOG = Logger.getInstance(ReadDataFromAnnotationVisitor.class);
 
     @SuppressWarnings("deprecation")
@@ -51,9 +51,9 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
         }
 
         @Nullable
-        private static HeaderType byDescriptor(@NotNull String desc) {
+        private static HeaderType byClassName(@NotNull JvmClassName className) {
             for (HeaderType headerType : HeaderType.values()) {
-                if (desc.equals(headerType.annotation.getDescriptor())) {
+                if (className.equals(headerType.annotation)) {
                     return headerType;
                 }
             }
@@ -66,10 +66,6 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
     private String[] annotationData = null;
     @Nullable
     private HeaderType foundType = null;
-
-    public ReadDataFromAnnotationVisitor() {
-        super(Opcodes.ASM4);
-    }
 
     @Nullable
     public KotlinClassFileHeader createHeader(@NotNull KotlinJvmBinaryClass kotlinClass) {
@@ -102,9 +98,10 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
         return new SerializedDataHeader(version, annotationData, kind);
     }
 
+    @Nullable
     @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        HeaderType newType = HeaderType.byDescriptor(desc);
+    public AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName annotationClassName) {
+        HeaderType newType = HeaderType.byClassName(annotationClassName);
         if (newType == null) return null;
 
         if (foundType != null) {
@@ -115,41 +112,51 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
         foundType = newType;
 
         if (newType == HeaderType.CLASS || newType == HeaderType.PACKAGE) {
-            return kotlinClassOrPackageVisitor(desc);
+            return kotlinClassOrPackageVisitor(annotationClassName);
         }
         else if (newType == HeaderType.PACKAGE_FRAGMENT) {
-            return kotlinPackageFragmentVisitor(desc);
+            return kotlinPackageFragmentVisitor(annotationClassName);
         }
 
         return null;
     }
 
+    @Override
+    public void visitEnd() {
+    }
+
     @NotNull
-    private AnnotationVisitor kotlinClassOrPackageVisitor(final String desc) {
-        return new AnnotationVisitor(Opcodes.ASM4) {
+    private AnnotationArgumentVisitor kotlinClassOrPackageVisitor(@NotNull final JvmClassName annotationClassName) {
+        return new AnnotationArgumentVisitor() {
             @Override
-            public void visit(String name, Object value) {
-                visitIntValueForSupportedAnnotation(name, value, desc);
+            public void visit(@Nullable Name name, @Nullable Object value) {
+                visitIntValueForSupportedAnnotation(name, value, annotationClassName);
             }
 
             @Override
-            public AnnotationVisitor visitArray(String name) {
-                if (name.equals(JvmAnnotationNames.DATA_FIELD_NAME)) {
+            public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                unexpectedArgument(name, annotationClassName);
+            }
+
+            @Override
+            @Nullable
+            public AnnotationArgumentVisitor visitArray(@NotNull Name name) {
+                if (name.asString().equals(JvmAnnotationNames.DATA_FIELD_NAME)) {
                     return stringArrayVisitor();
                 }
                 else if (isAbiVersionCompatible(version)) {
-                    throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + desc);
+                    throw new IllegalStateException("Unexpected array argument " + name + " for annotation " + annotationClassName);
                 }
 
-                return super.visitArray(name);
+                return null;
             }
 
             @NotNull
-            private AnnotationVisitor stringArrayVisitor() {
+            private AnnotationArgumentVisitor stringArrayVisitor() {
                 final List<String> strings = new ArrayList<String>(1);
-                return new AnnotationVisitor(Opcodes.ASM4) {
+                return new AnnotationArgumentVisitor() {
                     @Override
-                    public void visit(String name, Object value) {
+                    public void visit(@Nullable Name name, @Nullable Object value) {
                         if (!(value instanceof String)) {
                             throw new IllegalStateException("Unexpected argument value: " + value);
                         }
@@ -158,30 +165,68 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
                     }
 
                     @Override
+                    public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                        unexpectedArgument(name, annotationClassName);
+                    }
+
+                    @Nullable
+                    @Override
+                    public AnnotationArgumentVisitor visitArray(@NotNull Name name) {
+                        return unexpectedArgument(name, annotationClassName);
+                    }
+
+                    @Override
                     public void visitEnd() {
                         annotationData = strings.toArray(new String[strings.size()]);
                     }
                 };
             }
-        };
-    }
 
-    @NotNull
-    private AnnotationVisitor kotlinPackageFragmentVisitor(final String desc) {
-        return new AnnotationVisitor(Opcodes.ASM4) {
             @Override
-            public void visit(String name, Object value) {
-                visitIntValueForSupportedAnnotation(name, value, desc);
+            public void visitEnd() {
             }
         };
     }
 
-    private void visitIntValueForSupportedAnnotation(@NotNull String name, @NotNull Object value, @NotNull String desc) {
-        if (name.equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
-            version = (Integer) value;
+    @NotNull
+    private AnnotationArgumentVisitor kotlinPackageFragmentVisitor(@NotNull final JvmClassName annotationClassName) {
+        return new AnnotationArgumentVisitor() {
+            @Override
+            public void visit(@Nullable Name name, @Nullable Object value) {
+                visitIntValueForSupportedAnnotation(name, value, annotationClassName);
+            }
+
+            @Override
+            public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
+                unexpectedArgument(name, annotationClassName);
+            }
+
+            @Nullable
+            @Override
+            public AnnotationArgumentVisitor visitArray(@NotNull Name name) {
+                return unexpectedArgument(name, annotationClassName);
+            }
+
+            @Override
+            public void visitEnd() {
+            }
+        };
+    }
+
+    private void visitIntValueForSupportedAnnotation(@Nullable Name name, @Nullable Object value, @NotNull JvmClassName className) {
+        if (name != null && name.asString().equals(JvmAnnotationNames.ABI_VERSION_FIELD_NAME)) {
+            version = value == null ? AbiVersionUtil.INVALID_VERSION : (Integer) value;
         }
-        else if (isAbiVersionCompatible(version)) {
-            throw new IllegalStateException("Unexpected argument " + name + " for annotation " + desc);
+        else {
+            unexpectedArgument(name, className);
         }
+    }
+
+    @Nullable
+    private AnnotationArgumentVisitor unexpectedArgument(@Nullable Name name, @NotNull JvmClassName annotationClassName) {
+        if (isAbiVersionCompatible(version)) {
+            throw new IllegalStateException("Unexpected argument " + name + " for annotation " + annotationClassName);
+        }
+        return null;
     }
 }
