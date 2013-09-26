@@ -24,13 +24,9 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
@@ -38,87 +34,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
-    private final String scopeType;
-    private final CalleeMethodsTreeStructure javaTreeStucture;
+    private final CalleeMethodsTreeStructure javaTreeStructure;
 
     public KotlinCalleeMethodsTreeStructure(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
-        super(project, new KotlinCallHierarchyNodeDescriptor(project, null, element, true, false));
-        this.scopeType = scopeType;
-
-        PsiMethod psiMethod = getPsiMethod(element);
-        assert psiMethod != null;
-
-        this.javaTreeStucture = new CalleeMethodsTreeStructure(project, psiMethod, scopeType);
-    }
-
-    private static class VisitorBase extends JetTreeVisitorVoid {
-        final BindingContext bindingContext;
-        final ArrayList<PsiElement> result;
-
-        private VisitorBase(BindingContext bindingContext, ArrayList<PsiElement> result) {
-            this.bindingContext = bindingContext;
-            this.result = result;
-        }
-
-        @Override
-        public void visitJetElement(JetElement element) {
-            if (!(element instanceof JetClassOrObject || element instanceof JetNamedFunction)) {
-                super.visitJetElement(element);
-            }
-        }
-
-        @Override
-        public void visitCallExpression(JetCallExpression expression) {
-            super.visitCallExpression(expression);
-            processCallElement(expression);
-        }
-
-        @Override
-        public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
-            if (descriptor instanceof PropertyDescriptor) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-                if (declaration instanceof JetProperty) {
-                    result.add(declaration);
-                }
-            }
-        }
-
-        @Override
-        public void visitDelegationSpecifier(JetDelegationSpecifier specifier) {
-            if (specifier instanceof JetCallElement) {
-                processCallElement((JetCallElement) specifier);
-            }
-        }
-
-        private void processCallElement(JetCallElement element) {
-            JetExpression callee = element.getCalleeExpression();
-
-            JetReferenceExpression referenceExpression = null;
-            if (callee instanceof JetReferenceExpression) {
-                referenceExpression = (JetReferenceExpression) callee;
-            }
-            else if (callee instanceof JetConstructorCalleeExpression) {
-                referenceExpression = ((JetConstructorCalleeExpression) callee).getConstructorReferenceExpression();
-            }
-
-            if (referenceExpression != null) {
-                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-                if (descriptor == null) return;
-
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-                if (declaration instanceof JetClassOrObject
-                    || (declaration instanceof JetNamedFunction && !((JetNamedFunction) declaration).isLocal())
-                    || declaration instanceof PsiMethod ) {
-                    result.add(declaration);
-                }
-            }
-        }
+        super(project, element, scopeType);
+        this.javaTreeStructure = basePsiMethod != null ? new CalleeMethodsTreeStructure(project, basePsiMethod, scopeType) : null;
     }
 
     private static List<? extends PsiElement> getCalleeElements(@NotNull JetElement rootElement, BindingContext bindingContext) {
-        ArrayList<PsiElement> result = new ArrayList<PsiElement>();
-        JetVisitorVoid visitor = new VisitorBase(bindingContext, result);
+        final ArrayList<PsiElement> result = new ArrayList<PsiElement>();
+        JetVisitorVoid visitor = new CalleeReferenceVisitorBase(bindingContext, false) {
+            @Override
+            protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
+                result.add(declaration);
+            }
+        };
 
         if (rootElement instanceof JetNamedFunction) {
             JetExpression body = ((JetNamedFunction) rootElement).getBodyExpression();
@@ -157,33 +87,6 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         return result;
     }
 
-    // copied from Java
-    private Object[] collectNodeDescriptors(
-            HierarchyNodeDescriptor descriptor,
-            List<? extends PsiElement> calleeElements,
-            PsiElement baseElement
-    ) {
-        HashMap<PsiElement, KotlinCallHierarchyNodeDescriptor> declarationToDescriptorMap =
-                new HashMap<PsiElement, KotlinCallHierarchyNodeDescriptor>();
-
-        ArrayList<KotlinCallHierarchyNodeDescriptor> result = new ArrayList<KotlinCallHierarchyNodeDescriptor>();
-
-        for (PsiElement callee : calleeElements) {
-            if (!isInScope(baseElement, callee, scopeType)) continue;
-
-            KotlinCallHierarchyNodeDescriptor d = declarationToDescriptorMap.get(callee);
-            if (d == null) {
-                d = new KotlinCallHierarchyNodeDescriptor(myProject, descriptor, callee, false, false);
-                declarationToDescriptorMap.put(callee, d);
-                result.add(d);
-            }
-            else {
-                d.incrementUsageCount();
-            }
-        }
-        return ArrayUtil.toObjectArray(result);
-    }
-
     @Override
     protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
         PsiElement targetElement = getTargetElement(descriptor);
@@ -209,24 +112,20 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             return buildChildrenByKotlinTarget(descriptor, (JetElement) targetElement);
         }
 
-        if (javaTreeStucture != null) {
+        if (javaTreeStructure != null) {
             CallHierarchyNodeDescriptor javaDescriptor = descriptor instanceof CallHierarchyNodeDescriptor
                                                          ? (CallHierarchyNodeDescriptor) descriptor
                                                          : ((KotlinCallHierarchyNodeDescriptor)descriptor).getJavaDelegate();
-            return javaTreeStucture.getChildElements(javaDescriptor);
+            return javaTreeStructure.getChildElements(javaDescriptor);
         }
 
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     private Object[] buildChildrenByKotlinTarget(HierarchyNodeDescriptor descriptor, JetElement targetElement) {
-        PsiClass baseClass = getBasePsiClass();
-        if (baseClass == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
-
         BindingContext bindingContext =
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) targetElement.getContainingFile()).getBindingContext();
         List<? extends PsiElement> calleeDescriptors = getCalleeElements((JetElement) targetElement, bindingContext);
-
-        return collectNodeDescriptors(descriptor, calleeDescriptors, baseClass);
+        return collectNodeDescriptors(descriptor, calleeDescriptors);
     }
 }

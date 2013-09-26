@@ -34,38 +34,61 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.findUsages.FindUsagesUtils;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
-    private final String scopeType;
     private final CallerMethodsTreeStructure javaTreeStructure;
 
     public KotlinCallerMethodsTreeStructure(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
-        super(project, new KotlinCallHierarchyNodeDescriptor(project, null, element, true, false));
-        this.scopeType = scopeType;
-
-        PsiMethod psiMethod = getPsiMethod(element);
-        assert psiMethod != null;
-
-        this.javaTreeStructure = new CallerMethodsTreeStructure(project, psiMethod, scopeType);
+        super(project, element, scopeType);
+        this.javaTreeStructure = basePsiMethod != null ? new CallerMethodsTreeStructure(project, basePsiMethod, scopeType) : null;
     }
 
     @Override
     protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
         PsiElement targetElement = getTargetElement(descriptor);
 
-        PsiClass baseClass = getBasePsiClass();
-        if (baseClass == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
+        if (localizingCodeBlock != null) {
+            return buildLocalizedChildren(targetElement, (KotlinCallHierarchyNodeDescriptor) descriptor);
+        }
 
-        return processCallers(targetElement, descriptor, baseClass);
+        return processCallers(targetElement, descriptor);
     }
 
-    private Object[] processCallers(PsiElement element, HierarchyNodeDescriptor descriptor, PsiClass baseClass) {
-        SearchScope searchScope = getSearchScope(scopeType, baseClass);
+    private Object[] buildLocalizedChildren(final PsiElement element, KotlinCallHierarchyNodeDescriptor descriptor) {
+        BindingContext bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+
+        final ArrayList<PsiElement> result = new ArrayList<PsiElement>();
+        localizingCodeBlock.accept(new CalleeReferenceVisitorBase(bindingContext, true) {
+            @Override
+            protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
+                if (!declaration.equals(element)) return;
+
+                //noinspection unchecked
+                PsiElement container =
+                        PsiTreeUtil.getParentOfType(reference, JetNamedFunction.class, JetPropertyAccessor.class, JetClassOrObject.class);
+                if (container instanceof JetPropertyAccessor) {
+                    container = PsiTreeUtil.getParentOfType(container, JetProperty.class);
+                }
+
+                if (container != null) {
+                    result.add(container);
+                }
+            }
+        });
+        return collectNodeDescriptors(descriptor, result);
+    }
+
+    private Object[] processCallers(PsiElement element, HierarchyNodeDescriptor descriptor) {
+        SearchScope searchScope = getSearchScope(scopeType, basePsiClass);
         Map<PsiElement, KotlinCallHierarchyNodeDescriptor> methodToDescriptorMap =
                 new HashMap<PsiElement, KotlinCallHierarchyNodeDescriptor>();
 

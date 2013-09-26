@@ -8,31 +8,54 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 
+import java.util.List;
+import java.util.Map;
+
 public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
-    public KotlinCallTreeStructure(@NotNull Project project, HierarchyNodeDescriptor baseDescriptor) {
-        super(project, baseDescriptor);
+    protected final String scopeType;
+    protected final JetElement localizingCodeBlock;
+    protected final PsiMethod basePsiMethod;
+    protected final PsiClass basePsiClass;
+
+    public KotlinCallTreeStructure(@NotNull Project project, PsiElement element, String scopeType) {
+        super(project, createNodeDescriptor(project, element, null));
+
+        this.scopeType = scopeType;
+
+        localizingCodeBlock = element instanceof JetNamedDeclaration
+                                   ? JetPsiUtil.getLocalizingCodeBlock((JetNamedDeclaration) element)
+                                   : null;
+
+        if (localizingCodeBlock == null) {
+            basePsiMethod = getPsiMethod(element);
+            assert basePsiMethod != null;
+
+            basePsiClass = basePsiMethod.getContainingClass();
+            assert basePsiClass != null;
+        }
+        else {
+            basePsiMethod = null;
+            basePsiClass = null;
+        }
+    }
+
+    protected static HierarchyNodeDescriptor createNodeDescriptor(Project project, PsiElement element, HierarchyNodeDescriptor parent) {
+        boolean root = (parent == null);
+        return element instanceof JetElement
+               ? new KotlinCallHierarchyNodeDescriptor(project, parent, element, root, false)
+               : new CallHierarchyNodeDescriptor(project, parent, element, root, false);
     }
 
     protected static PsiElement getTargetElement(HierarchyNodeDescriptor descriptor) {
         return descriptor instanceof CallHierarchyNodeDescriptor
                                        ? ((CallHierarchyNodeDescriptor) descriptor).getEnclosingElement()
                                        : ((KotlinCallHierarchyNodeDescriptor)descriptor).getTargetElement();
-    }
-
-    @Nullable
-    protected PsiMethod getBasePsiMethod() {
-        return getPsiMethod(((KotlinCallHierarchyNodeDescriptor) getBaseDescriptor()).getTargetElement());
-    }
-
-    @Nullable
-    protected PsiClass getBasePsiClass() {
-        PsiMethod method = getBasePsiMethod();
-        return method != null ? method.getContainingClass() : null;
     }
 
     private static PsiMethod getClosestContainingClassConstructor(PsiElement element) {
@@ -53,7 +76,9 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     }
 
     @Nullable
-    protected static PsiMethod getPsiMethod(PsiElement element) {
+    protected final PsiMethod getPsiMethod(PsiElement element) {
+        assert localizingCodeBlock == null : "Can't build light method for local declaration";
+
         if (element instanceof PsiMethod) {
             return (PsiMethod) element;
         }
@@ -77,17 +102,41 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         return method != null ? method : getClosestContainingClassConstructor(element);
     }
 
-    @Nullable
-    protected static PsiClass getPsiClass(PsiElement element) {
-        PsiMethod method = getPsiMethod(element);
-        return method != null ? method.getContainingClass() : null;
-    }
-
     protected static CallHierarchyNodeDescriptor getJavaNodeDescriptor(HierarchyNodeDescriptor originalDescriptor) {
         if (originalDescriptor instanceof CallHierarchyNodeDescriptor) return (CallHierarchyNodeDescriptor) originalDescriptor;
 
         assert originalDescriptor instanceof KotlinCallHierarchyNodeDescriptor;
         return ((KotlinCallHierarchyNodeDescriptor) originalDescriptor).getJavaDelegate();
+    }
+
+    protected final Object[] collectNodeDescriptors(HierarchyNodeDescriptor descriptor, List<? extends PsiElement> calleeElements) {
+        HashMap<PsiElement, HierarchyNodeDescriptor> declarationToDescriptorMap = new HashMap<PsiElement, HierarchyNodeDescriptor>();
+        for (PsiElement callee : calleeElements) {
+            if (basePsiClass != null && !isInScope(basePsiClass, callee, scopeType)) continue;
+
+            addNodeDescriptorForElement(callee, declarationToDescriptorMap, descriptor);
+        }
+        return declarationToDescriptorMap.values().toArray(new Object[declarationToDescriptorMap.size()]);
+    }
+
+    protected final void addNodeDescriptorForElement(
+            PsiElement element,
+            Map<PsiElement, HierarchyNodeDescriptor> declarationToDescriptorMap,
+            HierarchyNodeDescriptor descriptor
+    ) {
+        HierarchyNodeDescriptor d = declarationToDescriptorMap.get(element);
+        if (d == null) {
+            d = createNodeDescriptor(myProject, element, descriptor);
+            declarationToDescriptorMap.put(element, d);
+        }
+        else {
+            if (d instanceof CallHierarchyNodeDescriptor) {
+                ((CallHierarchyNodeDescriptor) d).incrementUsageCount();
+            }
+            else if (d instanceof KotlinCallHierarchyNodeDescriptor) {
+                ((KotlinCallHierarchyNodeDescriptor) d).incrementUsageCount();
+            }
+        }
     }
 
     @Override

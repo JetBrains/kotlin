@@ -1029,4 +1029,16 @@ public class JetPsiUtil {
 
         return header != null ? header.getQualifiedName() : null;
     }
+
+    public static JetElement getLocalizingCodeBlock(@NotNull JetNamedDeclaration declaration) {
+        //noinspection unchecked
+        JetDeclaration container =
+                PsiTreeUtil.getParentOfType(declaration, JetNamedFunction.class, JetPropertyAccessor.class, JetClassInitializer.class);
+
+        if (container == null) return null;
+
+        return (container instanceof JetClassInitializer)
+               ? ((JetClassInitializer) container).getBody()
+               : ((JetDeclarationWithBody) container).getBodyExpression();
+    }
 }

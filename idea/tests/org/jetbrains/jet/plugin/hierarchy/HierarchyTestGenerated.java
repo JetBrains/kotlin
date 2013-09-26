@@ -217,6 +217,16 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinFunction");
         }
         
+        @TestMetadata("kotlinLocalClass")
+        public void testKotlinLocalClass() throws Exception {
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinLocalClass");
+        }
+        
+        @TestMetadata("kotlinLocalFunction")
+        public void testKotlinLocalFunction() throws Exception {
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinLocalFunction");
+        }
+        
         @TestMetadata("kotlinNestedClass")
         public void testKotlinNestedClass() throws Exception {
             doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinNestedClass");
@@ -250,6 +260,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/javaMethod");
         }
         
+        @TestMetadata("kotlinAnonymousObject")
+        public void testKotlinAnonymousObject() throws Exception {
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinAnonymousObject");
+        }
+        
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
             doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinClass");
@@ -268,6 +283,16 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("kotlinFunction")
         public void testKotlinFunction() throws Exception {
             doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinFunction");
+        }
+        
+        @TestMetadata("kotlinLocalClass")
+        public void testKotlinLocalClass() throws Exception {
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinLocalClass");
+        }
+        
+        @TestMetadata("kotlinLocalFunction")
+        public void testKotlinLocalFunction() throws Exception {
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinLocalFunction");
         }
         
         @TestMetadata("kotlinNestedClass")

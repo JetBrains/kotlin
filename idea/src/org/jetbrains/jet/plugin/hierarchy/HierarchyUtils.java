@@ -15,9 +15,9 @@ public class HierarchyUtils {
             return input instanceof PsiMethod ||
                    input instanceof PsiClass ||
                    input instanceof JetFile ||
-                   (input instanceof JetNamedFunction && !((JetNamedFunction) input).isLocal()) ||
+                   input instanceof JetNamedFunction ||
                    input instanceof JetClassOrObject ||
-                   (input instanceof JetProperty && !((JetProperty) input).isLocal());
+                   input instanceof JetProperty;
         }
     };
 
