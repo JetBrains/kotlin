@@ -1,4 +1,4 @@
-<node text="KClient.bar()" base="true">
+<node text="KClient.bar()  ()" base="true">
   <node text="KA.KA()(2 usages)  ()"/>
   <node text="KA.foo(String)(2 usages)  ()"/>
   <node text="JA.JA()(4 usages)  ()"/>

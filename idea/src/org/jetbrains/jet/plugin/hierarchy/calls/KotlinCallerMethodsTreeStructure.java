@@ -89,8 +89,8 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
 
     private Object[] processCallers(PsiElement element, HierarchyNodeDescriptor descriptor) {
         SearchScope searchScope = getSearchScope(scopeType, basePsiClass);
-        Map<PsiElement, KotlinCallHierarchyNodeDescriptor> methodToDescriptorMap =
-                new HashMap<PsiElement, KotlinCallHierarchyNodeDescriptor>();
+        Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap =
+                new HashMap<PsiElement, HierarchyNodeDescriptor>();
 
         Object[] javaCallers = null;
         if (element instanceof PsiMethod && javaTreeStructure != null) {
@@ -118,7 +118,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
     private void processPsiMethodCallers(
             @Nullable PsiMethod lightMethod,
             HierarchyNodeDescriptor descriptor,
-            Map<PsiElement, KotlinCallHierarchyNodeDescriptor> methodToDescriptorMap,
+            Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
             SearchScope searchScope,
             boolean kotlinOnly
     ) {
@@ -130,7 +130,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
     private void processJetClassOrObjectCallers(
             final JetClassOrObject classOrObject,
             HierarchyNodeDescriptor descriptor,
-            Map<PsiElement, KotlinCallHierarchyNodeDescriptor> methodToDescriptorMap,
+            Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
             SearchScope searchScope
     ) {
         Processor<PsiReference> processor = new FilteringProcessor<PsiReference>(
@@ -147,7 +147,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
 
     private Processor<PsiReference> defaultQueryProcessor(
             final HierarchyNodeDescriptor descriptor,
-            final Map<PsiElement, KotlinCallHierarchyNodeDescriptor> methodToDescriptorMap,
+            final Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
             final boolean kotlinOnly
     ) {
         return new ReadActionProcessor<PsiReference>() {
@@ -188,15 +188,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                 }
 
                 if (element != null) {
-                    KotlinCallHierarchyNodeDescriptor d = methodToDescriptorMap.get(element);
-                    if (d == null) {
-                        d = new KotlinCallHierarchyNodeDescriptor(myProject, descriptor, element, false, true);
-                        methodToDescriptorMap.put(element, d);
-                    }
-                    else if (!d.hasReference(ref)) {
-                        d.incrementUsageCount();
-                    }
-                    d.addReference(ref);
+                    addNodeDescriptorForElement(element, methodToDescriptorMap, descriptor);
                 }
 
                 return true;

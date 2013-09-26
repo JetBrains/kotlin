@@ -12,10 +12,8 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
-import com.intellij.psi.*;
-import com.intellij.psi.presentation.java.ClassPresentationUtil;
-import com.intellij.psi.util.PsiFormatUtil;
-import com.intellij.psi.util.PsiFormatUtilBase;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Function;
@@ -32,12 +30,9 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor implements Navigatable {
     private int usageCount = 1;
-    private final List<PsiReference> references = new ArrayList<PsiReference>();
     private final CallHierarchyNodeDescriptor javaDelegate;
 
     public KotlinCallHierarchyNodeDescriptor(@NotNull Project project,
@@ -55,14 +50,6 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
 
     public final void incrementUsageCount(){
         usageCount++;
-    }
-
-    public void addReference(PsiReference reference) {
-        references.add(reference);
-    }
-
-    public boolean hasReference(PsiReference reference) {
-        return references.contains(reference);
     }
 
     public final PsiElement getTargetElement(){
@@ -132,9 +119,10 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             );
         }
 
-        if (packageName != null && packageName.length() > 0) {
-            myHighlightedText.getEnding().addText("  (" + packageName + ")", HierarchyNodeDescriptor.getPackageNameAttributes());
+        if (packageName == null) {
+            packageName = "";
         }
+        myHighlightedText.getEnding().addText("  (" + packageName + ")", HierarchyNodeDescriptor.getPackageNameAttributes());
 
         myName = myHighlightedText.getText();
 
@@ -196,30 +184,10 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
                 containerDescriptor = containerDescriptor.getContainingDeclaration();
             }
         }
-        else if (element instanceof PsiMember) {
-            PsiMember member = (PsiMember) element;
-
-            if (member instanceof PsiMethod) {
-                elementText = renderPsiMethod((PsiMethod) member);
-            } else if (member instanceof PsiClass) {
-                elementText = ClassPresentationUtil.getNameForClass((PsiClass) member, false);
-            } else return null;
-
-            PsiClass containingClass = member.getContainingClass();
-            if (containingClass != null) {
-                containerText = ClassPresentationUtil.getNameForClass(containingClass, false);
-            }
-        }
         else return null;
 
         if (elementText == null) return null;
         return containerText != null ? containerText + "." + elementText : elementText;
-    }
-
-    private static String renderPsiMethod(PsiMethod member) {
-        return PsiFormatUtil.formatMethod(
-                member, PsiSubstitutor.EMPTY, PsiFormatUtilBase.SHOW_NAME | PsiFormatUtilBase.SHOW_PARAMETERS, PsiFormatUtilBase.SHOW_TYPE
-        );
     }
 
     private static String renderNamedFunction(FunctionDescriptor descriptor) {
