@@ -70,7 +70,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
                        name.getInternalName(),
                        null,
                        OBJECT_TYPE.getInternalName(),
-                       new String[]{JvmClassName.byClassDescriptor(samInterface).getInternalName()}
+                       new String[]{ typeMapper.mapType(samInterface).getInternalName() }
         );
         cv.visitSource(file.getName(), null);
 

@@ -1095,6 +1095,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                 //This field are always static and final so if it has constant initializer don't do anything in clinit,
                 //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
+                // TODO: test this code
                 if (state.getClassBuilderMode() == ClassBuilderMode.FULL && propertyInfo.defaultValue == null) {
                     ExpressionCodegen codegen = createOrGetClInitCodegen();
                     int classObjectIndex = putClassObjectInLocalVar(codegen);
@@ -1122,7 +1123,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null);
         property.put(property.type, codegen.v);
-        StackValue.Field field = StackValue.field(property.type, JvmClassName.byClassDescriptor(descriptor),
+        StackValue.Field field = StackValue.field(property.type, JvmClassName.byType(classAsmType),
                                                   propertyDescriptor.getName().asString(), true);
         field.store(field.type, codegen.v);
     }

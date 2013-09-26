@@ -103,7 +103,7 @@ public class ClosureCodegen extends GenerationStateAware {
         }
         else {
             interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
-            superInterfaces = new String[] {JvmClassName.byClassDescriptor(samInterface).getInternalName()};
+            superInterfaces = new String[] { typeMapper.mapType(samInterface).getInternalName() };
         }
 
         cv.defineClass(fun,

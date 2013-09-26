@@ -19,14 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class JvmClassName {
 
@@ -63,38 +56,16 @@ public class JvmClassName {
         return byFqNameWithoutInnerClasses(new FqName(klass.getCanonicalName()));
     }
 
-    private static String encodeSpecialNames(String str) {
+    @NotNull
+    private static String encodeSpecialNames(@NotNull String str) {
         String encodedObjectNames = StringUtil.replace(str, JvmAbi.CLASS_OBJECT_CLASS_NAME, CLASS_OBJECT_REPLACE_GUARD);
         return StringUtil.replace(encodedObjectNames, JvmAbi.TRAIT_IMPL_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD);
     }
 
-    private static String decodeSpecialNames(String str) {
+    @NotNull
+    private static String decodeSpecialNames(@NotNull String str) {
         String decodedObjectNames = StringUtil.replace(str, CLASS_OBJECT_REPLACE_GUARD, JvmAbi.CLASS_OBJECT_CLASS_NAME);
         return StringUtil.replace(decodedObjectNames, TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME);
-    }
-
-    @NotNull
-    private static JvmClassName byFqNameAndInnerClassList(@NotNull FqName fqName, @NotNull List<String> innerClassList) {
-        String outerClassName = fqNameToInternalName(fqName);
-        StringBuilder sb = new StringBuilder(outerClassName);
-        for (String innerClassName : innerClassList) {
-            sb.append("$").append(innerClassName);
-        }
-        return new JvmClassName(sb.toString());
-    }
-
-    @NotNull
-    public static JvmClassName byClassDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
-        DeclarationDescriptor descriptor = classDescriptor;
-
-        List<String> innerClassNames = new ArrayList<String>();
-        while (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-            innerClassNames.add(descriptor.getName().asString());
-            descriptor = descriptor.getContainingDeclaration();
-            assert descriptor != null;
-        }
-
-        return byFqNameAndInnerClassList(DescriptorUtils.getFQName(descriptor).toSafe(), innerClassNames);
     }
 
     @NotNull
