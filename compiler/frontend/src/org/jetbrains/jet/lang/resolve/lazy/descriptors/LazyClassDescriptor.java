@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.*;
 
@@ -393,6 +394,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                                 return Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
                             }
                         }
+                    }
+                },
+                new Computable<Object>() {
+                    @Override
+                    public Object compute() {
+                        return WrappedValues.unescapeExceptionOrNull(Collections.emptyList());
                     }
                 },
                 new Consumer<Collection<JetType>>() {

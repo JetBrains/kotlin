@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface StorageManager {
     /**
@@ -38,21 +39,29 @@ public interface StorageManager {
     @NotNull
     <T> NotNullLazyValue<T> createLazyValue(@NotNull Computable<T> computable);
 
+    @NotNull
+    <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(@NotNull Computable<T> computable, @NotNull T onRecursiveCall);
+
     /**
-     * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
+     * @param onRecursiveCall is called if the computation calls itself recursively.
+     *                        If this parameter is null, an exception will be thrown on a recursive call.
+     *                        If this function returns null, the computation proceeds recursively,
+     *                        otherwise it should return a result of WrappedValues.escape*() method
+     * @param postCompute is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */
     @NotNull
-    <T> NotNullLazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
+    <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
+            @NotNull Computable<T> computable,
+            @Nullable Computable<Object> onRecursiveCall,
+            @NotNull Consumer<T> postCompute
+    );
 
     @NotNull
     <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable);
 
-    /**
-     * If recursion is detected, respective calls to compute() simply return null
-     */
     @NotNull
-    <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable);
+    <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable, @Nullable T onRecursiveCall);
 
     /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may

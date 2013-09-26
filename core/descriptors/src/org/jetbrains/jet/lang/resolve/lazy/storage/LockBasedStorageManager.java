@@ -67,8 +67,34 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute) {
+    public <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(
+            @NotNull Computable<T> computable, @NotNull final T onRecursiveCall
+    ) {
         return new LockBasedNotNullLazyValue<T>(lock, computable) {
+            @Override
+            protected Object recursionDetected() {
+                return onRecursiveCall;
+            }
+        };
+    }
+
+    @NotNull
+    @Override
+    public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
+            @NotNull Computable<T> computable,
+            final Computable<Object> onRecursiveCall,
+            @NotNull final Consumer<T> postCompute
+    ) {
+        return new LockBasedNotNullLazyValue<T>(lock, computable) {
+            @Nullable
+            @Override
+            protected Object recursionDetected() {
+                if (onRecursiveCall == null) {
+                    return super.recursionDetected();
+                }
+                return onRecursiveCall.compute();
+            }
+
             @Override
             protected void postCompute(@NotNull T value) {
                 postCompute.consume(value);
@@ -84,11 +110,11 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable) {
+    public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable, final T onRecursiveCall) {
         return new LockBasedLazyValue<T>(lock, computable) {
             @Override
             protected Object recursionDetected() {
-                return WrappedValues.escapeNull(null);
+                return WrappedValues.escapeNull(onRecursiveCall);
             }
         };
     }
