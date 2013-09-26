@@ -96,6 +96,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
             this.resolveSession.getTrace().record(BindingContext.CLASS, classLikeInfo.getCorrespondingClassOrObject(), this);
         }
+        this.resolveSession.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
 
         this.originalClassInfo = classLikeInfo;
         this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);

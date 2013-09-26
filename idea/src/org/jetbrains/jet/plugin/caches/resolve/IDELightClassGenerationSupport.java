@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.caches.resolve;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.Condition;
@@ -34,20 +35,27 @@ import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.utils.Profiler;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSources;
 
 public class IDELightClassGenerationSupport extends LightClassGenerationSupport {
+
+    private static final Logger LOG = Logger.getInstance(IDELightClassGenerationSupport.class);
+
+    private static boolean USE_LAZY = true;
 
     public static IDELightClassGenerationSupport getInstanceForIDE(@NotNull Project project) {
         return (IDELightClassGenerationSupport) ServiceManager.getService(project, LightClassGenerationSupport.class);
@@ -55,16 +63,50 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     private final Project project;
 
+    private final Comparator<JetFile> jetFileComparator;
+
     public IDELightClassGenerationSupport(@NotNull Project project) {
         this.project = project;
+        final GlobalSearchScope searchScope = GlobalSearchScope.allScope(project);
+        this.jetFileComparator = new Comparator<JetFile>() {
+            @Override
+            public int compare(@NotNull JetFile o1, @NotNull JetFile o2) {
+                VirtualFile f1 = o1.getVirtualFile();
+                VirtualFile f2 = o2.getVirtualFile();
+                if (f1 == f2) return 0;
+                if (f1 == null) return -1;
+                if (f2 == null) return 1;
+                return searchScope.compare(f1, f2);
+            }
+        };
     }
 
     @NotNull
     @Override
     public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
-        KotlinCacheManager cacheManager = KotlinCacheManager.getInstance(project);
-        KotlinDeclarationsCache declarationsCache = cacheManager.getPossiblyIncompleteDeclarationsForLightClassGeneration();
-        return new LightClassConstructionContext(declarationsCache.getBindingContext(), null);
+        if (files.isEmpty()) {
+            return new LightClassConstructionContext(BindingContext.EMPTY, null);
+        }
+
+        List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
+        Collections.sort(sortedFiles, jetFileComparator);
+
+        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + "analyze", LOG).start();
+        try {
+            if (USE_LAZY) {
+                ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(sortedFiles.get(0));
+                session.forceResolveAll();
+                return new LightClassConstructionContext(session.getBindingContext(), null);
+            }
+            else {
+                KotlinCacheManager cacheManager = KotlinCacheManager.getInstance(project);
+                KotlinDeclarationsCache declarationsCache = cacheManager.getPossiblyIncompleteDeclarationsForLightClassGeneration();
+                return new LightClassConstructionContext(declarationsCache.getBindingContext(), null);
+            }
+        }
+        finally {
+            p.end();
+        }
     }
 
     @NotNull
