@@ -32,10 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -132,14 +129,14 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetClassOrObject) {
                     ClassDescriptor descriptor = session.getClassDescriptor((JetClassOrObject) declaration);
-                    ForceResolveUtil.forceResolveAllContents(descriptor);
+                    forceResolveAllContents(descriptor);
                 }
                 else if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     Name name = jetFunction.getNameAsSafeName();
                     Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name);
                     for (FunctionDescriptor descriptor : functions) {
-                        ForceResolveUtil.forceResolveAllContents(descriptor);
+                        forceResolveAllContents(descriptor);
                     }
                 }
                 else if (declaration instanceof JetProperty) {
@@ -147,13 +144,20 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                     Name name = jetProperty.getNameAsSafeName();
                     Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name);
                     for (VariableDescriptor descriptor : properties) {
-                        ForceResolveUtil.forceResolveAllContents(descriptor);
+                        forceResolveAllContents(descriptor);
                     }
                 }
                 else {
                     LOG.error("Unsupported declaration kind: " + declaration + " in file " + file.getName() + "\n" + file.getText());
                 }
             }
+        }
+    }
+
+    private static void forceResolveAllContents(DeclarationDescriptor descriptor) {
+        ForceResolveUtil.forceResolveAllContents(descriptor);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("done: " + descriptor);
         }
     }
 

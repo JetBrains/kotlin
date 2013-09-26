@@ -115,14 +115,14 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
     @Override
     public void forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(getAnnotations());
-        getClassObjectType();
+        ForceResolveUtil.forceResolveAllContents(getClassObjectType());
         getContainingDeclaration();
         getDefaultType();
         getIndex();
         getLowerBounds();
         getLowerBoundsAsType();
         getOriginal();
-        getTypeConstructor();
+        ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
         getUpperBounds();
         getUpperBoundsAsType();
         getVariance();
