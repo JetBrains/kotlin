@@ -437,6 +437,17 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                         addSubtypeConstraint(constraint.type, declaredUpperBound, position);
                     }
                 }
+                ClassifierDescriptor declarationDescriptor = declaredUpperBound.getConstructor().getDeclarationDescriptor();
+                if (declarationDescriptor instanceof TypeParameterDescriptor && typeParameterConstraints.containsKey(declarationDescriptor)) {
+                    TypeConstraintsImpl typeConstraintsForUpperBound = typeParameterConstraints.get(declarationDescriptor);
+                    for (Constraint constraint : typeConstraintsForUpperBound.getConstraints()) {
+                        if (constraint.boundKind == UPPER_BOUND || constraint.boundKind == EXACT_BOUND) {
+                            ConstraintPosition position = ConstraintPosition.getCompoundConstraintPosition(
+                                    ConstraintPosition.getTypeBoundPosition(typeParameterDescriptor.getIndex()), constraint.constraintPosition);
+                            typeConstraints.addConstraint(UPPER_BOUND, constraint.type, position);
+                        }
+                    }
+                }
             }
         }
     }

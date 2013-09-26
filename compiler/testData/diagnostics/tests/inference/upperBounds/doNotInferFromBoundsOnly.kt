@@ -55,7 +55,7 @@ fun test6(a: A) {
 fun <T, R: T> emptyStrangeMap4(l: MutableList<T>): Map<T, R> = throw Exception("$l")
 
 fun test7(list: MutableList<Int>) {
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyStrangeMap4<!>(list)
+    emptyStrangeMap4(list)
 }
 
 //--------------
@@ -66,4 +66,4 @@ fun test7() : Map<A, A> = emptyStrangeMap()
 
 fun <U, V: U> foo(): U = throw Exception()
 
-fun test8(): Int = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>()
+fun test8(): Int = foo()
