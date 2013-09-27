@@ -486,9 +486,6 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
-        if (getStatus().hasOnlyExpectedTypeMismatch()) {
-            return filterConstraintsOut(EXPECTED_TYPE_POSITION).getResultingSubstitutor();
-        }
         return resultingSubstitutor;
     }
 

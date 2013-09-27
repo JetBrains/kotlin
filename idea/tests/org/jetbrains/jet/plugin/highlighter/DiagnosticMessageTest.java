@@ -118,4 +118,8 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         doTest("numberValueTypes", 4, Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, Errors.TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
                Errors.TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS);
     }
+
+    public void testTypeInferenceExpectedTypeMismatch() throws Exception {
+        doTest("typeInferenceExpectedTypeMismatch", 3, Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
+    }
 }

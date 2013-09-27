@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemStatus;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -226,7 +224,9 @@ public class TracingStrategyImpl implements TracingStrategy {
             JetType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
-            JetType substitutedReturnType = constraintSystem.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
+            ConstraintSystem systemWithoutExpectedTypeConstraint =
+                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(ConstraintPosition.EXPECTED_TYPE_POSITION);
+            JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
             assert substitutedReturnType != null; //todo
 
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
