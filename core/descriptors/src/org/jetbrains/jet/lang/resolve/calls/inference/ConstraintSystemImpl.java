@@ -268,6 +268,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             newConstraintSystem.typeParameterBounds.put(newTypeParameter, typeBoundsMap.apply(typeBounds));
         }
         newConstraintSystem.errorConstraintPositions.addAll(ContainerUtil.filter(errorConstraintPositions, constraintPositionCondition));
+        //todo if 'constraintPositionCondition' is not trivial, it's incorrect to just copy 'hasErrorInConstrainingTypes'
         newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
         return newConstraintSystem;
     }
