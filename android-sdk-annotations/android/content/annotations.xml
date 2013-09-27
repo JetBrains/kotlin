@@ -758,6 +758,15 @@
     <item name='android.content.ComponentName ComponentName(android.content.Context, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ComponentName ComponentName(android.content.Context, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ComponentName ComponentName(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ComponentName ComponentName(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentProviderOperation android.content.ContentProviderResult apply(android.content.ContentProvider, android.content.ContentProviderResult[], int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1419,6 +1428,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentName java.lang.String flattenToString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ComponentName java.lang.String getPackageName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ComponentName java.lang.String getClassName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 0'>
