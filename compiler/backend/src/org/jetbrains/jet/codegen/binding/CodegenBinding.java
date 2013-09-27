@@ -54,8 +54,6 @@ public class CodegenBinding {
 
     public static final WritableSlice<DeclarationDescriptor, JvmClassName> FQN = Slices.createSimpleSlice();
 
-    public static final WritableSlice<JvmClassName, Boolean> SCRIPT_NAMES = Slices.createSimpleSetSlice();
-
     public static final WritableSlice<ClassDescriptor, Boolean> ENUM_ENTRY_CLASS_NEED_SUBCLASS = Slices.createSimpleSetSlice();
 
     public static final WritableSlice<ClassDescriptor, Collection<ClassDescriptor>> INNER_CLASSES = Slices.createSimpleSlice();
@@ -144,8 +142,6 @@ public class CodegenBinding {
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull JvmClassName className
     ) {
-        bindingTrace.record(SCRIPT_NAMES, className);
-
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scriptDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(),
