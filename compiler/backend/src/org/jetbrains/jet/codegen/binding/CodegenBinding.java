@@ -162,7 +162,6 @@ public class CodegenBinding {
 
         recordClosure(bindingTrace, null, classDescriptor, null, className, false);
 
-        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingTrace.getBindingContext(), scriptDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_SCRIPT, scriptDescriptor, classDescriptor);
     }
 

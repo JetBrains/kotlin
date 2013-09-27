@@ -22,7 +22,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -149,47 +148,6 @@ public final class PsiCodegenPredictor {
         return name.isRoot() ?
                JvmClassName.byFqNameWithoutInnerClasses(packageClassName) :
                JvmClassName.byInternalName(packageName.getInternalName() + "/" + packageClassName);
-    }
-
-    public static boolean checkPredictedClassNameForFun(
-            BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor,
-            ClassDescriptor classDescriptor
-    ) {
-        PsiElement element = descriptorToDeclaration(bindingContext, descriptor);
-        PsiElement classDeclaration = descriptorToDeclaration(bindingContext, classDescriptor);
-        if (element instanceof JetNamedFunction && classDeclaration instanceof JetDeclaration) {
-            JvmClassName classNameFromPsi = getPredefinedJvmClassName((JetDeclaration) classDeclaration);
-            JvmClassName classNameForFun = getPredefinedJvmClassNameForFun((JetNamedFunction) element);
-            assert classNameForFun == null || classNameForFun.equals(classNameFromPsi) : "Invalid algorithm for getting enclosing method name!";
-        }
-
-        return true;
-    }
-
-    @Nullable
-    public static JvmClassName getPredefinedJvmClassNameForFun(@NotNull JetNamedFunction function) {
-        PsiElement parent = function.getParent();
-        if (parent instanceof JetFile) {
-            return getPredefinedJvmClassName((JetFile) parent, true);
-        }
-
-        @SuppressWarnings("unchecked")
-        JetClass containingClass = PsiTreeUtil.getParentOfType(function, JetClass.class, true, JetDeclaration.class);
-        if (containingClass != null) {
-            return getPredefinedJvmClassName(containingClass);
-        }
-
-        @SuppressWarnings("unchecked")
-        JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(function, JetObjectDeclaration.class, true, JetDeclaration.class);
-        if (objectDeclaration != null) {
-            if (objectDeclaration.getParent() instanceof JetClassObject) {
-                return getPredefinedJvmClassName((JetClassObject) objectDeclaration.getParent());
-            }
-
-            return getPredefinedJvmClassName(objectDeclaration);
-        }
-
-        return null;
     }
 
     @Nullable

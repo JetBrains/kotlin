@@ -88,7 +88,6 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 null,
                 false);
 
-        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingContext, funDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
         return classDescriptor;
     }
