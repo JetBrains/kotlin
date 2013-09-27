@@ -31,30 +31,30 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-public class TypeConstraintsImpl implements TypeConstraints {
+public class TypeBoundsImpl implements TypeBounds {
     public static enum BoundKind {
         LOWER_BOUND, UPPER_BOUND, EXACT_BOUND
     }
 
-    public static class Constraint {
+    public static class Bound {
         public final JetType type;
-        public final BoundKind boundKind;
-        public final ConstraintPosition constraintPosition;
+        public final BoundKind kind;
+        public final ConstraintPosition position;
 
-        public Constraint(@NotNull JetType type, @NotNull BoundKind boundKind, @NotNull ConstraintPosition constraintPosition) {
+        public Bound(@NotNull JetType type, @NotNull BoundKind kind, @NotNull ConstraintPosition position) {
             this.type = type;
-            this.boundKind = boundKind;
-            this.constraintPosition = constraintPosition;
+            this.kind = kind;
+            this.position = position;
         }
     }
 
     private final TypeParameterDescriptor typeVariable;
     private final Variance varianceOfPosition;
-    private final Set<Constraint> constraints = Sets.newLinkedHashSet();
+    private final Set<Bound> bounds = Sets.newLinkedHashSet();
 
     private Collection<JetType> resultValues;
 
-    public TypeConstraintsImpl(
+    public TypeBoundsImpl(
             @NotNull TypeParameterDescriptor typeVariable,
             @NotNull Variance varianceOfPosition
     ) {
@@ -68,9 +68,9 @@ public class TypeConstraintsImpl implements TypeConstraints {
         return varianceOfPosition;
     }
 
-    public void addConstraint(@NotNull BoundKind boundKind, @NotNull JetType type, @NotNull ConstraintPosition constraintPosition) {
+    public void addBound(@NotNull BoundKind kind, @NotNull JetType type, @NotNull ConstraintPosition position) {
         resultValues = null;
-        constraints.add(new Constraint(type, boundKind, constraintPosition));
+        bounds.add(new Bound(type, kind, position));
     }
 
     @Override
@@ -79,52 +79,52 @@ public class TypeConstraintsImpl implements TypeConstraints {
     }
 
     @NotNull
-    public Collection<Constraint> getConstraints() {
-        return constraints;
+    public Collection<Bound> getBounds() {
+        return bounds;
     }
 
     @NotNull
     private static Set<JetType> filterBounds(
-            @NotNull Collection<Constraint> constraints,
-            @NotNull BoundKind boundKind
+            @NotNull Collection<Bound> bounds,
+            @NotNull BoundKind kind
     ) {
-        return filterBounds(constraints, boundKind, null);
+        return filterBounds(bounds, kind, null);
     }
 
     @NotNull
     private static Set<JetType> filterBounds(
-            @NotNull Collection<Constraint> constraints,
-            @NotNull BoundKind boundKind,
+            @NotNull Collection<Bound> bounds,
+            @NotNull BoundKind kind,
             @Nullable Collection<JetType> errorValues
     ) {
         Set<JetType> result = Sets.newLinkedHashSet();
-        for (Constraint constraint : constraints) {
-            if (constraint.boundKind == boundKind) {
-                if (!ErrorUtils.containsErrorType(constraint.type)) {
-                    result.add(constraint.type);
+        for (Bound bound : bounds) {
+            if (bound.kind == kind) {
+                if (!ErrorUtils.containsErrorType(bound.type)) {
+                    result.add(bound.type);
                 }
                 else if (errorValues != null) {
-                    errorValues.add(constraint.type);
+                    errorValues.add(bound.type);
                 }
             }
         }
         return result;
     }
 
-    /*package*/ TypeConstraintsImpl copy() {
-        TypeConstraintsImpl typeConstraints = new TypeConstraintsImpl(typeVariable, varianceOfPosition);
-        typeConstraints.constraints.addAll(constraints);
-        typeConstraints.resultValues = resultValues;
-        return typeConstraints;
+    /*package*/ TypeBoundsImpl copy() {
+        TypeBoundsImpl typeBounds = new TypeBoundsImpl(typeVariable, varianceOfPosition);
+        typeBounds.bounds.addAll(bounds);
+        typeBounds.resultValues = resultValues;
+        return typeBounds;
     }
 
     @NotNull
-    public TypeConstraintsImpl filter(@NotNull final Condition<ConstraintPosition> condition) {
-        TypeConstraintsImpl result = new TypeConstraintsImpl(typeVariable, varianceOfPosition);
-        result.constraints.addAll(ContainerUtil.filter(constraints, new Condition<Constraint>() {
+    public TypeBoundsImpl filter(@NotNull final Condition<ConstraintPosition> condition) {
+        TypeBoundsImpl result = new TypeBoundsImpl(typeVariable, varianceOfPosition);
+        result.bounds.addAll(ContainerUtil.filter(bounds, new Condition<Bound>() {
             @Override
-            public boolean value(Constraint constraint) {
-                return condition.value(constraint.constraintPosition);
+            public boolean value(Bound bound) {
+                return condition.value(bound.position);
             }
         }));
         return result;
@@ -144,51 +144,51 @@ public class TypeConstraintsImpl implements TypeConstraints {
     @Override
     public Collection<JetType> getValues() {
         if (resultValues == null) {
-            resultValues = computeValues(constraints);
+            resultValues = computeValues(bounds);
         }
         return resultValues;
     }
 
     @NotNull
-    private static Collection<JetType> computeValues(@NotNull Collection<Constraint> constraints) {
+    private static Collection<JetType> computeValues(@NotNull Collection<Bound> bounds) {
         Set<JetType> values = Sets.newLinkedHashSet();
-        if (constraints.isEmpty()) {
+        if (bounds.isEmpty()) {
             return Collections.emptyList();
         }
-        boolean hasStrongConstraint = ContainerUtil.exists(constraints, new Condition<Constraint>() {
+        boolean hasStrongBound = ContainerUtil.exists(bounds, new Condition<Bound>() {
             @Override
-            public boolean value(Constraint constraint) {
-                return constraint.constraintPosition.isStrong();
+            public boolean value(Bound bound) {
+                return bound.position.isStrong();
             }
         });
-        if (!hasStrongConstraint) {
+        if (!hasStrongBound) {
             return Collections.emptyList();
         }
 
-        Set<JetType> exactBounds = filterBounds(constraints, BoundKind.EXACT_BOUND, values);
+        Set<JetType> exactBounds = filterBounds(bounds, BoundKind.EXACT_BOUND, values);
         if (exactBounds.size() == 1) {
             JetType exactBound = exactBounds.iterator().next();
-            if (trySuggestion(exactBound, constraints)) {
+            if (trySuggestion(exactBound, bounds)) {
                 return Collections.singleton(exactBound);
             }
         }
         values.addAll(exactBounds);
 
         Pair<Collection<JetType>, Collection<JetType>> pair =
-                TypeUtils.filterNumberTypes(filterBounds(constraints, BoundKind.LOWER_BOUND, values));
+                TypeUtils.filterNumberTypes(filterBounds(bounds, BoundKind.LOWER_BOUND, values));
         Collection<JetType> generalLowerBounds = pair.getFirst();
         Collection<JetType> numberLowerBounds = pair.getSecond();
 
         JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(generalLowerBounds);
-        if (trySuggestion(superTypeOfLowerBounds, constraints)) {
+        if (trySuggestion(superTypeOfLowerBounds, bounds)) {
             return Collections.singleton(superTypeOfLowerBounds);
         }
         ContainerUtil.addIfNotNull(superTypeOfLowerBounds, values);
 
-        Set<JetType> upperBounds = filterBounds(constraints, BoundKind.UPPER_BOUND, values);
+        Set<JetType> upperBounds = filterBounds(bounds, BoundKind.UPPER_BOUND, values);
         JetType intersectionOfUpperBounds = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
         if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
-            if (trySuggestion(intersectionOfUpperBounds, constraints)) {
+            if (trySuggestion(intersectionOfUpperBounds, bounds)) {
                 return Collections.singleton(intersectionOfUpperBounds);
             }
         }
@@ -196,10 +196,10 @@ public class TypeConstraintsImpl implements TypeConstraints {
         //fun <T> foo(t: T, consumer: Consumer<T>): T
         //foo(1, c: Consumer<Any>) - infer Int, not Any here
 
-        values.addAll(filterBounds(constraints, BoundKind.UPPER_BOUND));
+        values.addAll(filterBounds(bounds, BoundKind.UPPER_BOUND));
 
         JetType superTypeOfNumberLowerBounds = TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds);
-        if (trySuggestion(superTypeOfNumberLowerBounds, constraints)) {
+        if (trySuggestion(superTypeOfNumberLowerBounds, bounds)) {
             return Collections.singleton(superTypeOfNumberLowerBounds);
         }
         ContainerUtil.addIfNotNull(superTypeOfNumberLowerBounds, values);
@@ -207,7 +207,7 @@ public class TypeConstraintsImpl implements TypeConstraints {
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
             JetType superTypeOfAllLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(
                     Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
-            if (trySuggestion(superTypeOfAllLowerBounds, constraints)) {
+            if (trySuggestion(superTypeOfAllLowerBounds, bounds)) {
                 return Collections.singleton(superTypeOfAllLowerBounds);
             }
         }
@@ -216,28 +216,28 @@ public class TypeConstraintsImpl implements TypeConstraints {
 
     private static boolean trySuggestion(
             @Nullable JetType suggestion,
-            @NotNull Collection<Constraint> constraints
+            @NotNull Collection<Bound> bounds
     ) {
         if (suggestion == null) return false;
         if (!suggestion.getConstructor().isDenotable()) return false;
-        if (filterBounds(constraints, BoundKind.EXACT_BOUND).size() > 1) return false;
+        if (filterBounds(bounds, BoundKind.EXACT_BOUND).size() > 1) return false;
 
-        for (Constraint constraint : constraints) {
-            switch (constraint.boundKind) {
+        for (Bound bound : bounds) {
+            switch (bound.kind) {
                 case LOWER_BOUND:
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(constraint.type, suggestion)) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(bound.type, suggestion)) {
                         return false;
                     }
                     break;
 
                 case UPPER_BOUND:
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(suggestion, constraint.type)) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(suggestion, bound.type)) {
                         return false;
                     }
                     break;
 
                 case EXACT_BOUND:
-                    if (!JetTypeChecker.INSTANCE.equalTypes(constraint.type, suggestion)) {
+                    if (!JetTypeChecker.INSTANCE.equalTypes(bound.type, suggestion)) {
                         return false;
                     }
                     break;

@@ -65,7 +65,7 @@ public interface ConstraintSystem {
      * Returns null if the type variable was not registered.
      */
     @NotNull
-    TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeVariable);
+    TypeBounds getTypeBounds(@NotNull TypeParameterDescriptor typeVariable);
 
     /**
      * Returns a result of solving the constraint system (mapping from the type variable to the resulting type projection). <p/>

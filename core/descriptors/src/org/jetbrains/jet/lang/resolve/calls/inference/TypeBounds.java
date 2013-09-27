@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.Variance;
 import java.util.Collection;
 import java.util.Set;
 
-public interface TypeConstraints {
+public interface TypeBounds {
     @NotNull
     Variance getVarianceOfPosition();
 

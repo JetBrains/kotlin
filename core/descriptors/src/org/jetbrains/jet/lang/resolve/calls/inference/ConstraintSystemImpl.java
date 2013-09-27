@@ -41,9 +41,8 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.BoundKind.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.Constraint;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBoundsImpl.BoundKind.*;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBoundsImpl.Bound;
 import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_TYPE_PARAMETER;
 import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
@@ -53,7 +52,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         SUB_TYPE, EQUAL
     }
 
-    private final Map<TypeParameterDescriptor, TypeConstraintsImpl> typeParameterConstraints = Maps.newLinkedHashMap();
+    private final Map<TypeParameterDescriptor, TypeBoundsImpl> typeParameterBounds = Maps.newLinkedHashMap();
     private final Set<ConstraintPosition> errorConstraintPositions = Sets.newHashSet();
     private final TypeSubstitutor resultingSubstitutor;
     private final TypeSubstitutor currentSubstitutor;
@@ -82,16 +81,16 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         @Override
         public boolean hasConflictingConstraints() {
-            for (TypeConstraintsImpl typeConstraints : typeParameterConstraints.values()) {
-                if (typeConstraints.getValues().size() > 1) return true;
+            for (TypeBoundsImpl typeBounds : typeParameterBounds.values()) {
+                if (typeBounds.getValues().size() > 1) return true;
             }
             return false;
         }
 
         @Override
         public boolean hasUnknownParameters() {
-            for (TypeConstraintsImpl typeConstraints : typeParameterConstraints.values()) {
-                if (typeConstraints.isEmpty()) {
+            for (TypeBoundsImpl typeBounds : typeParameterBounds.values()) {
+                if (typeBounds.isEmpty()) {
                     return true;
                 }
             }
@@ -145,8 +144,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 if (declarationDescriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
 
-                    if (typeParameterConstraints.containsKey(descriptor)) {
-                        JetType value = getTypeConstraints(descriptor).getValue();
+                    if (typeParameterBounds.containsKey(descriptor)) {
+                        JetType value = getTypeBounds(descriptor).getValue();
                         if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, TypeUtils.DONT_CARE)) {
                             return new TypeProjection(value);
                         }
@@ -163,7 +162,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
             @Override
             public String toString() {
-                return typeParameterConstraints.toString();
+                return typeParameterBounds.toString();
             }
         });
     }
@@ -179,18 +178,18 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         for (Map.Entry<TypeParameterDescriptor, Variance> entry : typeVariables.entrySet()) {
             TypeParameterDescriptor typeVariable = entry.getKey();
             Variance positionVariance = entry.getValue();
-            typeParameterConstraints.put(typeVariable, new TypeConstraintsImpl(typeVariable, positionVariance));
+            typeParameterBounds.put(typeVariable, new TypeBoundsImpl(typeVariable, positionVariance));
         }
-        TypeSubstitutor constantSubstitutor = TypeUtils.makeConstantSubstitutor(typeParameterConstraints.keySet(), DONT_CARE);
-        for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
+        TypeSubstitutor constantSubstitutor = TypeUtils.makeConstantSubstitutor(typeParameterBounds.keySet(), DONT_CARE);
+        for (Map.Entry<TypeParameterDescriptor, TypeBoundsImpl> entry : typeParameterBounds.entrySet()) {
             TypeParameterDescriptor typeVariable = entry.getKey();
-            TypeConstraintsImpl typeConstraints = entry.getValue();
+            TypeBoundsImpl typeBounds = entry.getValue();
 
             for (JetType declaredUpperBound : typeVariable.getUpperBounds()) {
                 if (KotlinBuiltIns.getInstance().getNullableAnyType().equals(declaredUpperBound)) continue; //todo remove this line (?)
                 JetType substitutedBound = constantSubstitutor.substitute(declaredUpperBound, Variance.INVARIANT);
                 if (substitutedBound != null) {
-                    typeConstraints.addConstraint(UPPER_BOUND, substitutedBound, ConstraintPosition.getTypeBoundPosition(typeVariable.getIndex()));
+                    typeBounds.addBound(UPPER_BOUND, substitutedBound, ConstraintPosition.getTypeBoundPosition(typeVariable.getIndex()));
                 }
             }
         }
@@ -200,10 +199,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     public ConstraintSystem copy() {
         return replaceTypeVariables(Functions.<TypeParameterDescriptor>identity(),
-                                    new Function<TypeConstraintsImpl, TypeConstraintsImpl>() {
+                                    new Function<TypeBoundsImpl, TypeBoundsImpl>() {
                                         @Override
-                                        public TypeConstraintsImpl apply(TypeConstraintsImpl typeConstraints) {
-                                            return typeConstraints.copy();
+                                        public TypeBoundsImpl apply(TypeBoundsImpl typeBounds) {
+                                            return typeBounds.copy();
                                         }
                                     },
                                     Conditions.<ConstraintPosition>alwaysTrue());
@@ -212,17 +211,17 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     public ConstraintSystem replaceTypeVariables(@NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
         return replaceTypeVariables(typeVariablesMap,
-                                    Functions.<TypeConstraintsImpl>identity(),
+                                    Functions.<TypeBoundsImpl>identity(),
                                     Conditions.<ConstraintPosition>alwaysTrue());
     }
 
     @NotNull
-    public ConstraintSystem filterConstrains(@NotNull final Condition<ConstraintPosition> condition) {
+    public ConstraintSystem filterConstraints(@NotNull final Condition<ConstraintPosition> condition) {
         return replaceTypeVariables(Functions.<TypeParameterDescriptor>identity(),
-                                    new Function<TypeConstraintsImpl, TypeConstraintsImpl>() {
+                                    new Function<TypeBoundsImpl, TypeBoundsImpl>() {
                                         @Override
-                                        public TypeConstraintsImpl apply(TypeConstraintsImpl typeConstraints) {
-                                            return typeConstraints.filter(condition);
+                                        public TypeBoundsImpl apply(TypeBoundsImpl typeBounds) {
+                                            return typeBounds.filter(condition);
                                         }
                                     },
                                     condition);
@@ -230,7 +229,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @NotNull
     public ConstraintSystem getSystemWithoutWeakConstraints() {
-        return filterConstrains(new Condition<ConstraintPosition>() {
+        return filterConstraints(new Condition<ConstraintPosition>() {
             @Override
             public boolean value(ConstraintPosition constraintPosition) {
                 // 'isStrong' for compound means 'has some strong constraints'
@@ -248,18 +247,18 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     private ConstraintSystem replaceTypeVariables(
             @NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap,
-            @NotNull Function<TypeConstraintsImpl, TypeConstraintsImpl> typeConstraintsMap,
+            @NotNull Function<TypeBoundsImpl, TypeBoundsImpl> typeBoundsMap,
             @NotNull Condition<ConstraintPosition> constraintPositionCondition
 
     ) {
         ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
-        for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
+        for (Map.Entry<TypeParameterDescriptor, TypeBoundsImpl> entry : typeParameterBounds.entrySet()) {
             TypeParameterDescriptor typeParameter = entry.getKey();
-            TypeConstraintsImpl typeConstraints = entry.getValue();
+            TypeBoundsImpl typeBounds = entry.getValue();
 
             TypeParameterDescriptor newTypeParameter = typeVariablesMap.apply(typeParameter);
             assert newTypeParameter != null;
-            newConstraintSystem.typeParameterConstraints.put(newTypeParameter, typeConstraintsMap.apply(typeConstraints));
+            newConstraintSystem.typeParameterBounds.put(newTypeParameter, typeBoundsMap.apply(typeBounds));
         }
         newConstraintSystem.errorConstraintPositions.addAll(ContainerUtil.filter(errorConstraintPositions, constraintPositionCondition));
         newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
@@ -400,14 +399,14 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private void generateTypeParameterConstraint(
             @NotNull JetType parameterType,
             @NotNull JetType constrainingType,
-            @NotNull BoundKind boundKind,
+            @NotNull TypeBoundsImpl.BoundKind boundKind,
             @NotNull ConstraintPosition constraintPosition
     ) {
-        TypeConstraintsImpl typeConstraints = getTypeConstraints(parameterType);
-        assert typeConstraints != null : "constraint should be generated only for type variables";
+        TypeBoundsImpl typeBounds = getTypeBounds(parameterType);
+        assert typeBounds != null : "constraint should be generated only for type variables";
 
         if (!parameterType.isNullable() || !constrainingType.isNullable()) {
-            typeConstraints.addConstraint(boundKind, constrainingType, constraintPosition);
+            typeBounds.addBound(boundKind, constrainingType, constraintPosition);
             return;
         }
         // For parameter type T:
@@ -415,36 +414,36 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         // constraint T? >: Int? should transform to T >: Int
         JetType notNullConstrainingType = TypeUtils.makeNotNullable(constrainingType);
         if (boundKind == EXACT_BOUND || boundKind == LOWER_BOUND) {
-            typeConstraints.addConstraint(LOWER_BOUND, notNullConstrainingType, constraintPosition);
+            typeBounds.addBound(LOWER_BOUND, notNullConstrainingType, constraintPosition);
         }
         // constraint T? <: Int? should transform to T <: Int?
         if (boundKind == EXACT_BOUND || boundKind == UPPER_BOUND) {
-            typeConstraints.addConstraint(UPPER_BOUND, constrainingType, constraintPosition);
+            typeBounds.addBound(UPPER_BOUND, constrainingType, constraintPosition);
         }
     }
 
     public void processDeclaredBoundConstraints() {
-        for (Map.Entry<TypeParameterDescriptor, TypeConstraintsImpl> entry : typeParameterConstraints.entrySet()) {
+        for (Map.Entry<TypeParameterDescriptor, TypeBoundsImpl> entry : typeParameterBounds.entrySet()) {
             TypeParameterDescriptor typeParameterDescriptor = entry.getKey();
-            TypeConstraintsImpl typeConstraints = entry.getValue();
+            TypeBoundsImpl typeBounds = entry.getValue();
             for (JetType declaredUpperBound : typeParameterDescriptor.getUpperBounds()) {
                 //todo order matters here
-                Collection<Constraint> constraints = Lists.newArrayList(typeConstraints.getConstraints());
-                for (Constraint constraint : constraints) {
-                    if (constraint.boundKind == LOWER_BOUND || constraint.boundKind == EXACT_BOUND) {
+                Collection<Bound> bounds = Lists.newArrayList(typeBounds.getBounds());
+                for (Bound bound : bounds) {
+                    if (bound.kind == LOWER_BOUND || bound.kind == EXACT_BOUND) {
                         ConstraintPosition position = ConstraintPosition.getCompoundConstraintPosition(
-                                ConstraintPosition.getTypeBoundPosition(typeParameterDescriptor.getIndex()), constraint.constraintPosition);
-                        addSubtypeConstraint(constraint.type, declaredUpperBound, position);
+                                ConstraintPosition.getTypeBoundPosition(typeParameterDescriptor.getIndex()), bound.position);
+                        addSubtypeConstraint(bound.type, declaredUpperBound, position);
                     }
                 }
                 ClassifierDescriptor declarationDescriptor = declaredUpperBound.getConstructor().getDeclarationDescriptor();
-                if (declarationDescriptor instanceof TypeParameterDescriptor && typeParameterConstraints.containsKey(declarationDescriptor)) {
-                    TypeConstraintsImpl typeConstraintsForUpperBound = typeParameterConstraints.get(declarationDescriptor);
-                    for (Constraint constraint : typeConstraintsForUpperBound.getConstraints()) {
-                        if (constraint.boundKind == UPPER_BOUND || constraint.boundKind == EXACT_BOUND) {
+                if (declarationDescriptor instanceof TypeParameterDescriptor && typeParameterBounds.containsKey(declarationDescriptor)) {
+                    TypeBoundsImpl typeBoundsForUpperBound = typeParameterBounds.get(declarationDescriptor);
+                    for (Bound bound : typeBoundsForUpperBound.getBounds()) {
+                        if (bound.kind == UPPER_BOUND || bound.kind == EXACT_BOUND) {
                             ConstraintPosition position = ConstraintPosition.getCompoundConstraintPosition(
-                                    ConstraintPosition.getTypeBoundPosition(typeParameterDescriptor.getIndex()), constraint.constraintPosition);
-                            typeConstraints.addConstraint(UPPER_BOUND, constraint.type, position);
+                                    ConstraintPosition.getTypeBoundPosition(typeParameterDescriptor.getIndex()), bound.position);
+                            typeBounds.addBound(UPPER_BOUND, bound.type, position);
                         }
                     }
                 }
@@ -455,29 +454,29 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     @Override
     public Set<TypeParameterDescriptor> getTypeVariables() {
-        return typeParameterConstraints.keySet();
+        return typeParameterBounds.keySet();
     }
 
     @Override
     @NotNull
-    public TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeVariable) {
-        TypeConstraintsImpl typeConstraints = typeParameterConstraints.get(typeVariable);
-        assert typeConstraints != null : "TypeParameterDescriptor is not a type variable for constraint system: " + typeVariable;
-        return typeConstraints;
+    public TypeBounds getTypeBounds(@NotNull TypeParameterDescriptor typeVariable) {
+        TypeBoundsImpl typeBounds = typeParameterBounds.get(typeVariable);
+        assert typeBounds != null : "TypeParameterDescriptor is not a type variable for constraint system: " + typeVariable;
+        return typeBounds;
     }
 
     @Nullable
-    private TypeConstraintsImpl getTypeConstraints(@NotNull JetType type) {
+    private TypeBoundsImpl getTypeBounds(@NotNull JetType type) {
         ClassifierDescriptor parameterDescriptor = type.getConstructor().getDeclarationDescriptor();
         if (parameterDescriptor instanceof TypeParameterDescriptor) {
-            return typeParameterConstraints.get(parameterDescriptor);
+            return typeParameterBounds.get(parameterDescriptor);
         }
         return null;
     }
 
     private boolean isMyTypeVariable(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor instanceof TypeParameterDescriptor && typeParameterConstraints.get(descriptor) != null;
+        return descriptor instanceof TypeParameterDescriptor && typeParameterBounds.get(descriptor) != null;
     }
 
     @NotNull

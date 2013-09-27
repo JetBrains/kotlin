@@ -246,7 +246,7 @@ public class Renderers {
             TabledDescriptorRenderer renderer) {
         TypeParameterDescriptor firstUnknownParameter = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {
-            if (inferenceErrorData.constraintSystem.getTypeConstraints(typeParameter).isEmpty()) {
+            if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).isEmpty()) {
                 firstUnknownParameter = typeParameter;
                 break;
             }
@@ -278,7 +278,7 @@ public class Renderers {
         }
         assert typeParameterDescriptor != null : errorMessage;
 
-        JetType inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeConstraints(typeParameterDescriptor).getValue();
+        JetType inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).getValue();
         assert inferredValueForTypeParameter != null : errorMessage;
 
         result.text(newText().normal("Type parameter bound for ").strong(typeParameterDescriptor.getName()).normal(" in "))

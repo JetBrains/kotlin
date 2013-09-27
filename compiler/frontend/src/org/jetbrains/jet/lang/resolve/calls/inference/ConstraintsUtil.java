@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -31,7 +30,7 @@ public class ConstraintsUtil {
     @Nullable
     public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintSystem constraintSystem) {
         for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
-            TypeConstraints constraints = constraintSystem.getTypeConstraints(typeParameter);
+            TypeBounds constraints = constraintSystem.getTypeBounds(typeParameter);
             if (constraints.getValues().size() > 1) {
                 return typeParameter;
             }
@@ -44,7 +43,7 @@ public class ConstraintsUtil {
         TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintSystem);
         if (firstConflictingParameter == null) return Collections.emptyList();
 
-        Collection<JetType> conflictingTypes = constraintSystem.getTypeConstraints(firstConflictingParameter).getValues();
+        Collection<JetType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingParameter).getValues();
 
         ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (JetType type : conflictingTypes) {
@@ -71,7 +70,7 @@ public class ConstraintsUtil {
 
     @NotNull
     public static JetType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeParameter) {
-        JetType type = constraintSystem.getTypeConstraints(typeParameter).getValue();
+        JetType type = constraintSystem.getTypeBounds(typeParameter).getValue();
         if (type != null) {
             return type;
         }
@@ -84,7 +83,7 @@ public class ConstraintsUtil {
             @NotNull TypeParameterDescriptor typeParameter,
             boolean substituteOtherTypeParametersInBound
     ) {
-        JetType type = constraintSystem.getTypeConstraints(typeParameter).getValue();
+        JetType type = constraintSystem.getTypeBounds(typeParameter).getValue();
         if (type == null) return true;
         for (JetType upperBound : typeParameter.getUpperBounds()) {
             if (!substituteOtherTypeParametersInBound && TypeUtils.dependsOnTypeParameters(upperBound, constraintSystem.getTypeVariables())) {
