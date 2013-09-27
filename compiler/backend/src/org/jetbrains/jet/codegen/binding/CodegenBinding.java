@@ -43,6 +43,7 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
@@ -250,7 +251,11 @@ public class CodegenBinding {
         innerClasses.add(inner);
     }
 
-    public static void registerClassNameForScript(BindingTrace bindingTrace, @NotNull JetScript jetScript, @NotNull JvmClassName className) {
+    public static void registerClassNameForScript(
+            BindingTrace bindingTrace,
+            @NotNull JetScript jetScript,
+            @NotNull JvmClassName className
+    ) {
         ScriptDescriptor descriptor = bindingTrace.getBindingContext().get(SCRIPT, jetScript);
         if (descriptor == null) {
             throw new IllegalStateException("Descriptor is not found for PSI " + jetScript);
@@ -276,8 +281,9 @@ public class CodegenBinding {
         for (FqName name : names) {
             NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, name);
             Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
-            if (jetFiles != null)
+            if (jetFiles != null) {
                 answer.addAll(jetFiles);
+            }
         }
 
         List<JetFile> sortedAnswer = new ArrayList<JetFile>(answer);
@@ -323,65 +329,57 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static JvmClassName getJvmInternalName(BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
+    public static JvmClassName getJvmInternalName(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
-        JvmClassName name = bindingTrace.getBindingContext().get(FQN, descriptor);
-        if (name != null) {
-            return name;
+        JvmClassName alreadyComputedName = bindingTrace.getBindingContext().get(FQN, descriptor);
+        if (alreadyComputedName != null) {
+            return alreadyComputedName;
         }
 
-        name = JvmClassName.byInternalName(getJvmInternalFQNameImpl(bindingTrace, descriptor));
+        JvmClassName name = JvmClassName.byInternalName(getJvmInternalFQNameImpl(bindingTrace, descriptor));
 
         assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, name);
         bindingTrace.record(FQN, descriptor, name);
         return name;
     }
 
-    private static String getJvmInternalFQNameImpl(BindingTrace bindingTrace, DeclarationDescriptor descriptor) {
+    @NotNull
+    private static String getJvmInternalFQNameImpl(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof FunctionDescriptor) {
             throw new IllegalStateException("requested fq name for function: " + descriptor);
-        }
-
-        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor || descriptor instanceof ScriptDescriptor) {
-            return "";
         }
 
         if (descriptor instanceof ModuleDescriptor) {
             throw new IllegalStateException("missed something");
         }
 
-        if (descriptor instanceof ClassDescriptor) {
-            ClassDescriptor klass = (ClassDescriptor) descriptor;
-            if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
-                if (klass.getContainingDeclaration() instanceof ClassDescriptor) {
-                    ClassDescriptor containingKlass = (ClassDescriptor) klass.getContainingDeclaration();
-                    if (containingKlass.getKind() == ClassKind.ENUM_CLASS) {
-                        return getJvmInternalName(bindingTrace, containingKlass).getInternalName();
-                    }
-                    else if (klass.getKind() == ClassKind.OBJECT) {
-                        return getJvmInternalName(bindingTrace, containingKlass).getInternalName() + "$" + klass.getName();
-                    }
-                    else {
-                        return getJvmInternalName(bindingTrace, containingKlass).getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX;
-                    }
-                }
-            }
-        }
-
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
-
         if (container == null) {
             throw new IllegalStateException("descriptor has no container: " + descriptor);
         }
 
-        Name name = descriptor.getName();
-
-        String baseName = getJvmInternalName(bindingTrace, container).getInternalName();
-        if (!baseName.isEmpty()) {
-            return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name.getIdentifier();
+        if (container.getContainingDeclaration() instanceof ModuleDescriptor || container instanceof ScriptDescriptor) {
+            return descriptor.getName().getIdentifier();
         }
 
-        return name.getIdentifier();
+        String containerInternalName = getJvmInternalName(bindingTrace, container).getInternalName();
+
+        if (descriptor instanceof ClassDescriptor && container instanceof ClassDescriptor) {
+            ClassDescriptor klass = (ClassDescriptor) descriptor;
+            if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
+                if (isEnumClass(container)) {
+                    return containerInternalName;
+                }
+                else if (klass.getKind() == ClassKind.OBJECT) {
+                    return containerInternalName + "$" + klass.getName();
+                }
+                else {
+                    return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
+                }
+            }
+        }
+
+        return containerInternalName + (container instanceof NamespaceDescriptor ? "/" : "$") + descriptor.getName().getIdentifier();
     }
 
     public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
