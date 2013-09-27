@@ -217,7 +217,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private static void writeKotlinPackageFragmentAnnotation(@NotNull ClassBuilder builder) {
-        AnnotationVisitor av = builder.newAnnotation(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT).getDescriptor(), true);
+        AnnotationVisitor av = builder.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         av.visitEnd();
     }

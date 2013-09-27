@@ -81,7 +81,6 @@ public class JvmClassName {
 
     private final String internalName;
     private FqName fqName;
-    private String descriptor;
     private Type asmType;
 
     private JvmClassName(@NotNull String internalName) {
@@ -102,17 +101,9 @@ public class JvmClassName {
     }
 
     @NotNull
-    public String getDescriptor() {
-        if (descriptor == null) {
-            descriptor = "L" + internalName + ';';
-        }
-        return descriptor;
-    }
-
-    @NotNull
     public Type getAsmType() {
         if (asmType == null) {
-            asmType = Type.getType(getDescriptor());
+            asmType = Type.getType("L" + internalName + ';');
         }
         return asmType;
     }

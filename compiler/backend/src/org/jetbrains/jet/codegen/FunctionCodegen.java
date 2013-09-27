@@ -532,17 +532,15 @@ public class FunctionCodegen extends GenerationStateAware {
 
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
-        JvmClassName ownerInternalName;
+        Type ownerType;
         if (contextClass instanceof NamespaceDescriptor) {
-            ownerInternalName = state.getTypeMapper().getOwner(functionDescriptor, kind, true);
+            ownerType = state.getTypeMapper().getOwner(functionDescriptor, kind, true).getAsmType();
         }
         else if (contextClass instanceof ClassDescriptor) {
-            ownerInternalName = JvmClassName.byType(state.getTypeMapper()
-                                                            .mapType(((ClassDescriptor) contextClass).getDefaultType(),
-                                                                     JetTypeMapperMode.IMPL));
+            ownerType = state.getTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), JetTypeMapperMode.IMPL);
         }
         else if (isLocalNamedFun(functionDescriptor)) {
-            ownerInternalName = classNameForAnonymousClass(state.getBindingContext(), functionDescriptor);
+            ownerType = classNameForAnonymousClass(state.getBindingContext(), functionDescriptor).getAsmType();
         }
         else {
             throw new IllegalStateException("Couldn't obtain owner name for " + functionDescriptor);
@@ -551,7 +549,7 @@ public class FunctionCodegen extends GenerationStateAware {
         String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
         if (!isStatic && !isConstructor) {
-            descriptor = descriptor.replace("(", "(" + ownerInternalName.getDescriptor());
+            descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
         }
         MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
                                              isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX,

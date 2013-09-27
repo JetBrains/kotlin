@@ -667,6 +667,6 @@ public class AsmUtil {
 
     @NotNull
     public static String asmDescByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
-        return JvmClassName.byFqNameWithoutInnerClasses(fqName).getDescriptor();
+        return "L" + JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName() + ';';
     }
 }

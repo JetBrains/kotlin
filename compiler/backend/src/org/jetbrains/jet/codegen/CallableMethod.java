@@ -38,7 +38,7 @@ public class CallableMethod implements Callable {
     @Nullable
     private final JvmClassName defaultImplOwner;
     @Nullable
-    private final JvmClassName defaultImplParam;
+    private final Type defaultImplParam;
     private final JvmMethodSignature signature;
     private final int invokeOpcode;
     @Nullable
@@ -55,7 +55,7 @@ public class CallableMethod implements Callable {
     ) {
         this.owner = owner;
         this.defaultImplOwner = defaultImplOwner;
-        this.defaultImplParam = defaultImplParam;
+        this.defaultImplParam = defaultImplParam == null ? null : defaultImplParam.getAsmType();
         this.signature = signature;
         this.invokeOpcode = invokeOpcode;
         this.thisClass = thisClass;
@@ -66,11 +66,6 @@ public class CallableMethod implements Callable {
     @NotNull
     public JvmClassName getOwner() {
         return owner;
-    }
-
-    @Nullable
-    public JvmClassName getDefaultImplParam() {
-        return defaultImplParam;
     }
 
     public JvmMethodSignature getSignature() {
@@ -157,12 +152,6 @@ public class CallableMethod implements Callable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Printer.OPCODES[invokeOpcode]);
-        sb.append(" ");
-        sb.append(owner);
-        sb.append(".");
-        sb.append(signature);
-        return sb.toString();
+        return Printer.OPCODES[invokeOpcode] + " " + owner + "." + signature;
     }
 }

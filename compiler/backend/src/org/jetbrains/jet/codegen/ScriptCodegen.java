@@ -182,10 +182,9 @@ public class ScriptCodegen extends MemberCodegen {
 
     private void genFieldsForParameters(@NotNull ScriptDescriptor script, @NotNull ClassBuilder classBuilder) {
         for (ScriptDescriptor earlierScript : earlierScripts) {
-            JvmClassName earlierClassName;
-            earlierClassName = classNameForScriptDescriptor(bindingContext, earlierScript);
+            JvmClassName earlierClassName = classNameForScriptDescriptor(bindingContext, earlierScript);
             int access = ACC_PRIVATE | ACC_FINAL;
-            classBuilder.newField(null, access, getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
+            classBuilder.newField(null, access, getScriptFieldName(earlierScript), earlierClassName.getAsmType().getDescriptor(), null, null);
         }
 
         for (ValueParameterDescriptor parameter : script.getValueParameters()) {
