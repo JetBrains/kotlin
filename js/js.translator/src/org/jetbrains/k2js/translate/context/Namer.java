@@ -164,6 +164,8 @@ public final class Namer {
     private final JsName objectName;
     @NotNull
     private final JsName enumEntriesName;
+    @NotNull
+    private final JsExpression undefinedExpression;
 
     @NotNull
     private final JsName isTypeName;
@@ -181,6 +183,8 @@ public final class Namer {
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
 
         isTypeName = kotlinScope.declareName("isType");
+
+        undefinedExpression = new JsPrefixOperation(JsUnaryOperator.VOID, rootScope.getProgram().getNumberLiteral(0));
     }
 
     @NotNull
@@ -277,5 +281,10 @@ public final class Namer {
     @NotNull
     public JsInvocation enumEntriesObjectCreateInvocation() {
         return new JsInvocation(enumEntriesCreationMethodReference());
+    }
+
+    @NotNull
+    public JsExpression getUndefinedExpression() {
+        return undefinedExpression;
     }
 }

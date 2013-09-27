@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -128,27 +127,6 @@ public final class TranslationUtils {
         }
 
         return new JsConditional(testExpression, thenExpression, elseExpression);
-    }
-
-    @NotNull
-    public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
-            @NotNull List<? extends ValueArgument> jetArguments) {
-        if (jetArguments.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<JsExpression> jsArguments = new SmartList<JsExpression>();
-        for (ValueArgument argument : jetArguments) {
-            jsArguments.add(translateArgument(context, argument));
-        }
-        return jsArguments;
-    }
-
-    @NotNull
-    private static JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
-        JetExpression jetExpression = argument.getArgumentExpression();
-        assert jetExpression != null : "Argument with no expression";
-        return Translation.translateAsExpression(jetExpression, context);
     }
 
     @NotNull
