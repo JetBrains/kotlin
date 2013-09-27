@@ -5,7 +5,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime.jar!/src" />
+      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-runtime-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
