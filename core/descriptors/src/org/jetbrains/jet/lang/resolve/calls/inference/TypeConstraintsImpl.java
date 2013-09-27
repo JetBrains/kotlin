@@ -186,9 +186,10 @@ public class TypeConstraintsImpl implements TypeConstraints {
         ContainerUtil.addIfNotNull(superTypeOfLowerBounds, values);
 
         Set<JetType> upperBounds = filterBounds(constraints, BoundKind.UPPER_BOUND, values);
-        for (JetType upperBound : upperBounds) {
-            if (trySuggestion(upperBound, constraints)) {
-                return Collections.singleton(upperBound);
+        JetType intersectionOfUpperBounds = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
+        if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
+            if (trySuggestion(intersectionOfUpperBounds, constraints)) {
+                return Collections.singleton(intersectionOfUpperBounds);
             }
         }
         //todo

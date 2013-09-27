@@ -3542,9 +3542,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/upperBounds/doNotInferFromBoundsOnly.kt");
                 }
                 
+                @TestMetadata("intersectUpperBounds.kt")
+                public void testIntersectUpperBounds() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/upperBounds/intersectUpperBounds.kt");
+                }
+                
                 @TestMetadata("kt2856.kt")
                 public void testKt2856() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/upperBounds/kt2856.kt");
+                }
+                
+                @TestMetadata("nonNullUpperBound.kt")
+                public void testNonNullUpperBound() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/upperBounds/nonNullUpperBound.kt");
                 }
                 
                 @TestMetadata("useBoundsIfUnknownParameters.kt")
