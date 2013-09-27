@@ -335,7 +335,7 @@ public class ControlStructureTypingUtils {
 
             @Override
             public void typeInferenceFailed(
-                    @NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data
+                    @NotNull BindingTrace trace, @NotNull InferenceErrorData data
             ) {
                 ConstraintSystem constraintSystem = data.constraintSystem;
                 ConstraintSystemStatus status = constraintSystem.getStatus();
@@ -473,7 +473,7 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void typeInferenceFailed(
-                @NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData inferenceErrorData
+                @NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData
         ) {
             throwError();
         }

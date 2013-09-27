@@ -313,7 +313,7 @@ public class CandidateResolver {
         List<JetType> argumentTypes = checkValueArgumentTypes(
                 context, resolvedCall, context.trace, RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
         JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
-        InferenceErrorData.ExtendedInferenceErrorData errorData = InferenceErrorData
+        InferenceErrorData errorData = InferenceErrorData
                 .create(resolvedCall.getCandidateDescriptor(), constraintSystem, argumentTypes, receiverType, context.expectedType);
 
         context.tracing.typeInferenceFailed(context.trace, errorData);

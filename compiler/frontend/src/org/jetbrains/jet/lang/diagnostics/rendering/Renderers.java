@@ -42,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
 public class Renderers {
     public static final Renderer<Object> TO_STRING = new Renderer<Object>() {
@@ -129,43 +128,43 @@ public class Renderers {
         };
     }
 
-    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderConflictingSubstitutionsInferenceError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderTypeConstructorMismatchError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderNoInformationForParameterError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderUpperBoundViolatedInferenceError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(ExtendedInferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
         assert inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints();
 
@@ -224,7 +223,7 @@ public class Renderers {
         return result;
     }
 
-    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final ExtendedInferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
             @Override
@@ -242,7 +241,7 @@ public class Renderers {
                                               isErrorPosition));
     }
 
-    public static TabledDescriptorRenderer renderNoInformationForParameterError(ExtendedInferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         TypeParameterDescriptor firstUnknownParameter = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {
@@ -263,7 +262,7 @@ public class Renderers {
     }
 
     @NotNull
-    public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(ExtendedInferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
+    public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(InferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
         String errorMessage = "Rendering 'upper bound violated' error for " + inferenceErrorData.descriptor;
 
         TypeParameterDescriptor typeParameterDescriptor = null;

@@ -212,7 +212,7 @@ public class TracingStrategyImpl implements TracingStrategy {
     }
 
     @Override
-    public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data) {
+    public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData data) {
         ConstraintSystem constraintSystem = data.constraintSystem;
         ConstraintSystemStatus status = constraintSystem.getStatus();
         assert !status.isSuccessful() : "Report error only for not successful constraint system";

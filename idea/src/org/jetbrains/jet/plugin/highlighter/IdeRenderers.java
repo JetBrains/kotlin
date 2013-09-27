@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
 public class IdeRenderers {
     private static final String RED_TEMPLATE = "<font color=red><b>%s</b></font>";
@@ -174,38 +173,38 @@ public class IdeRenderers {
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderConflictingSubstitutionsInferenceError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> HTML_TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderTypeConstructorMismatchError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderNoInformationForParameterError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderUpperBoundViolatedInferenceError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
                 }
             };
