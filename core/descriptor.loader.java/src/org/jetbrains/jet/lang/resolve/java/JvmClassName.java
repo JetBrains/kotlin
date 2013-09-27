@@ -28,14 +28,6 @@ public class JvmClassName {
         return new JvmClassName(internalName);
     }
 
-    @NotNull
-    public static JvmClassName byType(@NotNull Type type) {
-        if (type.getSort() != Type.OBJECT) {
-            throw new IllegalArgumentException("Type is not convertible to " + JvmClassName.class.getSimpleName() + ": " + type);
-        }
-        return byInternalName(type.getInternalName());
-    }
-
     /**
      * WARNING: fq name cannot be uniquely mapped to JVM class name.
      */

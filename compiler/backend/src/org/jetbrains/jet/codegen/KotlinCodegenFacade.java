@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -48,7 +49,7 @@ public class KotlinCodegenFacade {
             }
         }
 
-        state.getScriptCodegen().registerEarlierScripts(Collections.<Pair<ScriptDescriptor, JvmClassName>>emptyList());
+        state.getScriptCodegen().registerEarlierScripts(Collections.<Pair<ScriptDescriptor, Type>>emptyList());
 
         state.beforeCompile();
 

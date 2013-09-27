@@ -21,11 +21,9 @@ import com.intellij.openapi.util.Factory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 
 import java.util.Map;
@@ -33,18 +31,18 @@ import java.util.Map;
 public class SamWrapperClasses {
     private final GenerationState state;
 
-    private final Map<Pair<ClassDescriptorFromJvmBytecode, JetFile>, JvmClassName> samInterfaceToWrapperClass = Maps.newHashMap();
+    private final Map<Pair<ClassDescriptorFromJvmBytecode, JetFile>, Type> samInterfaceToWrapperClass = Maps.newHashMap();
 
     public SamWrapperClasses(GenerationState state) {
         this.state = state;
     }
 
     @NotNull
-    public JvmClassName getSamWrapperClass(@NotNull final ClassDescriptorFromJvmBytecode samInterface, @NotNull final JetFile file) {
+    public Type getSamWrapperClass(@NotNull final ClassDescriptorFromJvmBytecode samInterface, @NotNull final JetFile file) {
         return ContainerUtil.getOrCreate(samInterfaceToWrapperClass, Pair.create(samInterface, file),
-                                         new Factory<JvmClassName>() {
+                                         new Factory<Type>() {
                                              @Override
-                                             public JvmClassName create() {
+                                             public Type create() {
                                                  return new SamWrapperCodegen(state, samInterface).genWrapper(file);
                                              }
                                          });

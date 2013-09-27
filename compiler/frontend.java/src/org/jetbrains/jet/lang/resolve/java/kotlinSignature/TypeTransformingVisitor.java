@@ -210,7 +210,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         Type javaAnalog = KotlinToJavaTypesMap.getInstance().getJavaAnalog(originalType);
         if (javaAnalog == null || javaAnalog.getSort() != Type.OBJECT)  return null;
         Collection<ClassDescriptor> descriptors =
-                JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byType(javaAnalog).getFqName());
+                JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byInternalName(javaAnalog.getInternalName()).getFqName());
         for (ClassDescriptor descriptor : descriptors) {
             String fqName = DescriptorUtils.getFQName(descriptor).asString();
             if (isSameName(qualifiedName, fqName)) {

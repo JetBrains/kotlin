@@ -76,7 +76,7 @@ public class ScriptCodegen extends MemberCodegen {
         JvmClassName className = bindingContext.get(FQN, classDescriptorForScript);
         assert className != null;
 
-        ClassBuilder classBuilder = classFileFactory.newVisitor(className, scriptDeclaration.getContainingFile());
+        ClassBuilder classBuilder = classFileFactory.newVisitor(className.getAsmType(), scriptDeclaration.getContainingFile());
         classBuilder.defineClass(scriptDeclaration,
                                  V1_6,
                                  ACC_PUBLIC,
@@ -151,12 +151,11 @@ public class ScriptCodegen extends MemberCodegen {
         int offset = 1;
 
         for (ScriptDescriptor earlierScript : importedScripts) {
-            JvmClassName earlierClassName = classNameForScriptDescriptor(bindingContext, earlierScript);
+            Type earlierClassType = asmTypeForScriptDescriptor(bindingContext, earlierScript);
             instructionAdapter.load(0, className.getAsmType());
-            instructionAdapter.load(offset, earlierClassName.getAsmType());
-            offset += earlierClassName.getAsmType().getSize();
-            instructionAdapter.putfield(className.getInternalName(), getScriptFieldName(earlierScript),
-                                        earlierClassName.getAsmType().getDescriptor());
+            instructionAdapter.load(offset, earlierClassType);
+            offset += earlierClassType.getSize();
+            instructionAdapter.putfield(className.getInternalName(), getScriptFieldName(earlierScript), earlierClassType.getDescriptor());
         }
 
         for (ValueParameterDescriptor parameter : scriptDescriptor.getValueParameters()) {
@@ -171,8 +170,8 @@ public class ScriptCodegen extends MemberCodegen {
                 new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state).gen(scriptDeclaration.getBlockExpression());
         if (stackValue.type != Type.VOID_TYPE) {
             stackValue.put(stackValue.type, instructionAdapter);
-            instructionAdapter
-                    .putfield(className.getInternalName(), ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME, blockType.getDescriptor());
+            instructionAdapter.putfield(className.getInternalName(), ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME,
+                                        blockType.getDescriptor());
         }
 
         instructionAdapter.areturn(Type.VOID_TYPE);
@@ -182,9 +181,9 @@ public class ScriptCodegen extends MemberCodegen {
 
     private void genFieldsForParameters(@NotNull ScriptDescriptor script, @NotNull ClassBuilder classBuilder) {
         for (ScriptDescriptor earlierScript : earlierScripts) {
-            JvmClassName earlierClassName = classNameForScriptDescriptor(bindingContext, earlierScript);
+            Type earlierClassName = asmTypeForScriptDescriptor(bindingContext, earlierScript);
             int access = ACC_PRIVATE | ACC_FINAL;
-            classBuilder.newField(null, access, getScriptFieldName(earlierScript), earlierClassName.getAsmType().getDescriptor(), null, null);
+            classBuilder.newField(null, access, getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
         }
 
         for (ValueParameterDescriptor parameter : script.getValueParameters()) {
@@ -200,16 +199,17 @@ public class ScriptCodegen extends MemberCodegen {
         }
     }
 
-    public void registerEarlierScripts(List<Pair<ScriptDescriptor, JvmClassName>> earlierScripts) {
-        for (Pair<ScriptDescriptor, JvmClassName> t : earlierScripts) {
+    public void registerEarlierScripts(List<Pair<ScriptDescriptor, Type>> earlierScripts) {
+        for (Pair<ScriptDescriptor, Type> t : earlierScripts) {
             ScriptDescriptor earlierDescriptor = t.first;
-            JvmClassName earlierClassName = t.second;
+            Type earlierClassName = t.second;
 
-            registerClassNameForScript(state.getBindingTrace(), earlierDescriptor, earlierClassName);
+            registerClassNameForScript(state.getBindingTrace(), earlierDescriptor,
+                                       JvmClassName.byInternalName(earlierClassName.getInternalName()));
         }
 
         List<ScriptDescriptor> earlierScriptDescriptors = Lists.newArrayList();
-        for (Pair<ScriptDescriptor, JvmClassName> t : earlierScripts) {
+        for (Pair<ScriptDescriptor, Type> t : earlierScripts) {
             ScriptDescriptor earlierDescriptor = t.first;
             earlierScriptDescriptors.add(earlierDescriptor);
         }
@@ -238,12 +238,12 @@ public class ScriptCodegen extends MemberCodegen {
 
     public void compileScript(
             @NotNull JetScript script,
-            @NotNull JvmClassName className,
-            @NotNull List<Pair<ScriptDescriptor, JvmClassName>> earlierScripts,
+            @NotNull Type classType,
+            @NotNull List<Pair<ScriptDescriptor, Type>> earlierScripts,
             @NotNull CompilationErrorHandler errorHandler
     ) {
         registerEarlierScripts(earlierScripts);
-        registerClassNameForScript(state.getBindingTrace(), script, className);
+        registerClassNameForScript(state.getBindingTrace(), script, JvmClassName.byInternalName(classType.getInternalName()));
 
         state.beforeCompile();
         KotlinCodegenFacade.generateNamespace(

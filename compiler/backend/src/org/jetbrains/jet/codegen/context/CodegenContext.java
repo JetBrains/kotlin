@@ -153,7 +153,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public FieldOwnerContext intoNamespacePart(@NotNull JvmClassName delegateTo, @NotNull NamespaceDescriptor descriptor) {
+    public FieldOwnerContext intoNamespacePart(@NotNull Type delegateTo, @NotNull NamespaceDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 
@@ -278,7 +278,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         ClassDescriptor enclosingClass = getEnclosingClass();
         outerExpression = enclosingClass != null && canHaveOuter(typeMapper.getBindingContext(), classDescriptor)
                           ? StackValue.field(typeMapper.mapType(enclosingClass),
-                                             CodegenBinding.getJvmInternalName(typeMapper.getBindingTrace(), classDescriptor),
+                                             CodegenBinding.getJvmInternalName(typeMapper.getBindingTrace(), classDescriptor).getAsmType(),
                                              CAPTURED_THIS_FIELD,
                                              false)
                           : null;
@@ -295,7 +295,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
                 if (aCase.isCase(d, state)) {
-                    StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure, state.getBindingContext().get(FQN, getThisDescriptor()));
+                    JvmClassName className = state.getBindingContext().get(FQN, getThisDescriptor());
+                    Type classType = className == null ? null : className.getAsmType();
+                    StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure, classType);
                     if (innerValue == null) {
                         break;
                     }

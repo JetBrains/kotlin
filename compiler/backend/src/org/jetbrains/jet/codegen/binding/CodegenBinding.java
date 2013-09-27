@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
@@ -79,19 +80,19 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static JvmClassName classNameForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
+    public static Type asmTypeForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
         //noinspection ConstantConditions
         return fqn(bindingContext, classDescriptor);
     }
 
     @NotNull
-    public static JvmClassName classNameForScriptPsi(BindingContext bindingContext, @NotNull JetScript script) {
+    public static Type asmTypeForScriptPsi(BindingContext bindingContext, @NotNull JetScript script) {
         ScriptDescriptor scriptDescriptor = bindingContext.get(SCRIPT, script);
         if (scriptDescriptor == null) {
             throw new IllegalStateException("Script descriptor not found by PSI " + script);
         }
-        return classNameForScriptDescriptor(bindingContext, scriptDescriptor);
+        return asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
     }
 
     public static ClassDescriptor enclosingClassDescriptor(BindingContext bindingContext, ClassDescriptor descriptor) {
@@ -109,13 +110,13 @@ public class CodegenBinding {
     }
 
     @NotNull
-    private static JvmClassName fqn(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor descriptor) {
+    private static Type fqn(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor descriptor) {
         //noinspection ConstantConditions
-        return bindingContext.get(FQN, descriptor);
+        return bindingContext.get(FQN, descriptor).getAsmType();
     }
 
     @NotNull
-    public static JvmClassName classNameForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull JetElement expression) {
+    public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull JetElement expression) {
         if (expression instanceof JetObjectLiteralExpression) {
             JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
             expression = jetObjectLiteralExpression.getObjectDeclaration();
@@ -125,14 +126,14 @@ public class CodegenBinding {
         if (descriptor == null) {
             SimpleFunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
             assert functionDescriptor != null;
-            return classNameForAnonymousClass(bindingContext, functionDescriptor);
+            return asmTypeForAnonymousClass(bindingContext, functionDescriptor);
         }
 
         return fqn(bindingContext, descriptor);
     }
 
     @NotNull
-    public static JvmClassName classNameForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull FunctionDescriptor descriptor) {
+    public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull FunctionDescriptor descriptor) {
         ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, descriptor);
         return fqn(bindingContext, classDescriptor);
     }

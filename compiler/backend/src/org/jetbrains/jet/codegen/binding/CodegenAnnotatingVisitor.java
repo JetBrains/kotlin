@@ -131,7 +131,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, bindingContext.get(SCRIPT, file.getScript()));
             classStack.push(classDescriptor);
             //noinspection ConstantConditions
-            nameStack.push(classNameForScriptPsi(bindingContext, file.getScript()).getInternalName());
+            nameStack.push(asmTypeForScriptPsi(bindingContext, file.getScript()).getInternalName());
         }
         else {
             nameStack.push(JvmClassName.byFqNameWithoutInnerClasses(JetPsiUtil.getFQName(file)).getInternalName());

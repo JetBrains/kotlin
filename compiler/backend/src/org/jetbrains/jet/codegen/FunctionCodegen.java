@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
@@ -50,7 +49,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -112,8 +111,8 @@ public class FunctionCodegen extends GenerationStateAware {
 
         OwnerKind contextKind = owner.getContextKind();
         if (contextKind instanceof OwnerKind.StaticDelegateKind) {
-            JvmClassName ownerName = ((OwnerKind.StaticDelegateKind) contextKind).getOwnerClass();
-            v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, shortNameByAsmType(ownerName.getAsmType()));
+            Type ownerType = ((OwnerKind.StaticDelegateKind) contextKind).getOwnerClass();
+            v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, shortNameByAsmType(ownerType));
         }
         else {
             v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);
@@ -486,9 +485,9 @@ public class FunctionCodegen extends GenerationStateAware {
             InstructionAdapter v = new InstructionAdapter(mv);
             mv.visitCode();
 
-            JvmClassName ownerInternalName = method.getOwner();
+            Type methodOwner = method.getOwner();
             Method jvmSignature = method.getSignature().getAsmMethod();
-            v.load(0, ownerInternalName.getAsmType()); // Load this on stack
+            v.load(0, methodOwner); // Load this on stack
 
             int mask = 0;
             for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
@@ -498,9 +497,9 @@ public class FunctionCodegen extends GenerationStateAware {
             }
             v.iconst(mask);
             String desc = jvmSignature.getDescriptor().replace(")", "I)");
-            v.invokespecial(ownerInternalName.getInternalName(), "<init>", desc);
+            v.invokespecial(methodOwner.getInternalName(), "<init>", desc);
             v.areturn(Type.VOID_TYPE);
-            endVisit(mv, "default constructor for " + ownerInternalName.getInternalName(), null);
+            endVisit(mv, "default constructor for " + methodOwner.getInternalName(), null);
         }
     }
 
@@ -533,13 +532,13 @@ public class FunctionCodegen extends GenerationStateAware {
 
         Type ownerType;
         if (contextClass instanceof NamespaceDescriptor) {
-            ownerType = state.getTypeMapper().getOwner(functionDescriptor, kind, true).getAsmType();
+            ownerType = state.getTypeMapper().getOwner(functionDescriptor, kind, true);
         }
         else if (contextClass instanceof ClassDescriptor) {
             ownerType = state.getTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), JetTypeMapperMode.IMPL);
         }
         else if (isLocalNamedFun(functionDescriptor)) {
-            ownerType = classNameForAnonymousClass(state.getBindingContext(), functionDescriptor).getAsmType();
+            ownerType = asmTypeForAnonymousClass(state.getBindingContext(), functionDescriptor);
         }
         else {
             throw new IllegalStateException("Couldn't obtain owner name for " + functionDescriptor);

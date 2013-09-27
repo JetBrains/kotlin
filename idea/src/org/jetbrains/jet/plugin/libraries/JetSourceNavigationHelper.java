@@ -70,6 +70,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.codegen.AsmUtil.fqNameByAsmTypeUnsafe;
 import static org.jetbrains.jet.plugin.libraries.MemberMatching.*;
 
 public class JetSourceNavigationHelper {
@@ -360,7 +361,7 @@ public class JetSourceNavigationHelper {
                 if (javaAnalog.getSort() != Type.OBJECT) {
                     return null;
                 }
-                String fqName = JvmClassName.byType(javaAnalog).getFqName().asString();
+                String fqName = fqNameByAsmTypeUnsafe(javaAnalog).asString();
                 return JavaPsiFacade.getInstance(classOrObject.getProject()).
                         findClass(fqName, GlobalSearchScope.allScope(classOrObject.getProject()));
             }
@@ -390,7 +391,7 @@ public class JetSourceNavigationHelper {
         if (vFile == null || !idx.isInLibrarySource(vFile)) return null;
         final Set<OrderEntry> orderEntries = new THashSet<OrderEntry>(idx.getOrderEntriesForFile(vFile));
 
-        PsiClass original = JavaPsiFacade.getInstance(project).findClass(fqName, new GlobalSearchScope(project) {
+        return JavaPsiFacade.getInstance(project).findClass(fqName, new GlobalSearchScope(project) {
             @Override
             public int compare(VirtualFile file1, VirtualFile file2) {
                 return 0;
@@ -399,9 +400,7 @@ public class JetSourceNavigationHelper {
             @Override
             public boolean contains(VirtualFile file) {
                 List<OrderEntry> entries = idx.getOrderEntriesForFile(file);
-                //noinspection ForLoopReplaceableByForEach
-                for (int i = 0; i < entries.size(); i++) {
-                    final OrderEntry entry = entries.get(i);
+                for (OrderEntry entry : entries) {
                     if (orderEntries.contains(entry)) return true;
                 }
                 return false;
@@ -417,8 +416,6 @@ public class JetSourceNavigationHelper {
                 return true;
             }
         });
-
-        return original;
     }
 
     @NotNull

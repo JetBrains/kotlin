@@ -183,12 +183,12 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (!generateSrcClass) return null;
 
-        JvmClassName className = getMultiFileNamespaceInternalName(PackageClassUtils.getPackageClassFqName(name), file);
-        ClassBuilder builder = state.getFactory().forNamespacePart(className, file);
+        Type namespacePartType = getNamespacePartType(PackageClassUtils.getPackageClassFqName(name), file);
+        ClassBuilder builder = state.getFactory().forNamespacePart(namespacePartType, file);
 
         builder.defineClass(file, V1_6,
                             ACC_PUBLIC | ACC_FINAL,
-                            className.getInternalName(),
+                            namespacePartType.getInternalName(),
                             null,
                             //"jet/lang/Namespace",
                             "java/lang/Object",
@@ -200,7 +200,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         FieldOwnerContext nameSpaceContext = CodegenContext.STATIC.intoNamespace(descriptor);
 
-        FieldOwnerContext nameSpacePart = CodegenContext.STATIC.intoNamespacePart(className, descriptor);
+        FieldOwnerContext nameSpacePart = CodegenContext.STATIC.intoNamespacePart(namespacePartType, descriptor);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -319,7 +319,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    private static JvmClassName getMultiFileNamespaceInternalName(@NotNull FqName facadeFqName, @NotNull PsiFile file) {
+    private static Type getNamespacePartType(@NotNull FqName facadeFqName, @NotNull PsiFile file) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // path hashCode to prevent same name / different path collision
@@ -328,7 +328,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         FqName srcFqName = facadeFqName.parent().child(Name.identifier(srcName));
 
-        return JvmClassName.byFqNameWithoutInnerClasses(srcFqName);
+        return JvmClassName.byFqNameWithoutInnerClasses(srcFqName).getAsmType();
     }
 
     @NotNull
@@ -340,6 +340,6 @@ public class NamespaceCodegen extends MemberCodegen {
     public static String getNamespacePartInternalName(@NotNull JetFile file) {
         FqName fqName = JetPsiUtil.getFQName(file);
         JvmClassName namespaceJvmClassName = getJVMClassNameForKotlinNs(fqName);
-        return getMultiFileNamespaceInternalName(namespaceJvmClassName.getFqName(), file).getInternalName();
+        return getNamespacePartType(namespaceJvmClassName.getFqName(), file).getInternalName();
     }
 }

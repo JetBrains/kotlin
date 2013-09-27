@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -88,8 +87,8 @@ public class PropertyCodegen extends GenerationStateAware {
                 : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
 
         if (kind instanceof OwnerKind.StaticDelegateKind) {
-            JvmClassName ownerName = ((OwnerKind.StaticDelegateKind) kind).getOwnerClass();
-            v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerName.getAsmType()));
+            Type ownerType = ((OwnerKind.StaticDelegateKind) kind).getOwnerClass();
+            v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerType));
         }
         else if (kind != OwnerKind.TRAIT_IMPL) {
             generateBackingField(p, propertyDescriptor);

@@ -19,9 +19,9 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -157,24 +157,24 @@ public class FunctionTypesUtil {
     }
 
     @NotNull
-    public static JvmClassName getFunctionTraitClassName(@NotNull FunctionDescriptor descriptor) {
+    public static Type getFunctionTraitClassName(@NotNull FunctionDescriptor descriptor) {
         int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter() != null) {
-            return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
+            return Type.getObjectType("jet/ExtensionFunction" + paramCount);
         }
         else {
-            return JvmClassName.byInternalName("jet/Function" + paramCount);
+            return Type.getObjectType("jet/Function" + paramCount);
         }
     }
 
     @NotNull
-    public static JvmClassName getFunctionImplClassName(@NotNull FunctionDescriptor descriptor) {
+    public static Type getFunctionImplType(@NotNull FunctionDescriptor descriptor) {
         int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter() != null) {
-            return JvmClassName.byInternalName("jet/ExtensionFunctionImpl" + paramCount);
+            return Type.getObjectType("jet/ExtensionFunctionImpl" + paramCount);
         }
         else {
-            return JvmClassName.byInternalName("jet/FunctionImpl" + paramCount);
+            return Type.getObjectType("jet/FunctionImpl" + paramCount);
         }
     }
 }
