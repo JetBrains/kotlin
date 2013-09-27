@@ -1486,6 +1486,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/sourceJava"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("ClassExtendsTypeParameter.java")
+        public void testClassExtendsTypeParameter() throws Exception {
+            doTestSourceJava("compiler/testData/loadJava/sourceJava/ClassExtendsTypeParameter.java");
+        }
+        
         @TestMetadata("ErrorTypes.java")
         public void testErrorTypes() throws Exception {
             doTestSourceJava("compiler/testData/loadJava/sourceJava/ErrorTypes.java");

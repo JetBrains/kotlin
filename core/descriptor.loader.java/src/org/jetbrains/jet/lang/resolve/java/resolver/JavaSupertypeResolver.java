@@ -19,9 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
@@ -90,16 +88,6 @@ public final class JavaSupertypeResolver {
     ) {
         List<JetType> result = new ArrayList<JetType>(supertypes.size());
         for (JavaClassifierType type : supertypes) {
-            JavaClassifier resolved = type.getClassifier();
-            if (resolved != null) {
-                assert resolved instanceof JavaClass : "Supertype should be a class: " + resolved;
-                FqName fqName = ((JavaClass) resolved).getFqName();
-                assert fqName != null : "Unresolved supertype: " + resolved;
-                if (JvmAbi.JET_OBJECT.getFqName().equals(fqName)) {
-                    continue;
-                }
-            }
-
             JetType transformed = typeTransformer.transformToType(type, TypeUsage.SUPERTYPE, typeVariableResolver);
             if (transformed.isError()) {
                 // TODO: report INCOMPLETE_HIERARCHY
