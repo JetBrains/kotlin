@@ -97,9 +97,7 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements M
     @Override
     public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
         List<PackageFragmentDescriptor> fragments = packageFragmentProvider.getPackageFragments(fqName);
-        return !fragments.isEmpty()
-               ? new PackageViewDescriptorImpl(this, fqName, fragments)
-               : null;
+        return !fragments.isEmpty() ? new PackageViewDescriptorImpl(this, fqName, fragments) : null;
     }
 
     @NotNull

@@ -70,8 +70,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
                 new StubGenerationStrategy.NoDeclaredClasses() {
                     @NotNull
                     @Override
-                    public LightClassConstructionContext createLightClassConstructionContext(@NotNull Collection<JetFile> files) {
-                        return LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(files);
+                    public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                        return LightClassGenerationSupport.getInstance(project).getContextForPackage(files);
                     }
 
                     @NotNull
@@ -116,8 +116,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
 
                     @NotNull
                     @Override
-                    public LightClassConstructionContext createLightClassConstructionContext(@NotNull Collection<JetFile> files) {
-                        return LightClassGenerationSupport.getInstance(classOrObject.getProject()).analyzeRelevantCode(classOrObject);
+                    public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                        return LightClassGenerationSupport.getInstance(classOrObject.getProject()).getContextForClassOrObject(classOrObject);
                     }
 
                     @NotNull
@@ -201,7 +201,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
 
         checkForBuiltIns(packageFqName, files);
 
-        LightClassConstructionContext context = stubGenerationStrategy.createLightClassConstructionContext(files);
+        LightClassConstructionContext context = stubGenerationStrategy.getContext(files);
         Throwable error = context.getError();
         if (error != null) {
             throw new IllegalStateException("failed to analyze: " + error, error);
@@ -242,7 +242,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
             throw e;
         }
 
-        return Result.create(
+        return Result.<LightClassStubWithData>create(
                 stubGenerationStrategy.createLightClassStubWithData(javaFileStub, bindingContext),
                 local ? PsiModificationTracker.MODIFICATION_COUNT : PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
         );
@@ -303,11 +303,11 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
     }
 
     private interface StubGenerationStrategy {
-        @NotNull LightClassConstructionContext createLightClassConstructionContext(@NotNull Collection<JetFile> files);
-        @NotNull
-        LightClassStubWithData createLightClassStubWithData(PsiJavaFileStub javaFileStub, BindingContext bindingContext);
         @NotNull Collection<JetFile> getFiles();
         @NotNull FqName getPackageFqName();
+        @NotNull LightClassConstructionContext getContext(@NotNull Collection<JetFile> files);
+        @NotNull LightClassStubWithData createLightClassStubWithData(PsiJavaFileStub javaFileStub, BindingContext bindingContext);
+
         boolean generateDeclaredClasses();
         void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files);
 

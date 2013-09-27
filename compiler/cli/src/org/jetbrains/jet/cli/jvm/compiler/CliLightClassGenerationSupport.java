@@ -103,20 +103,21 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         module = null;
     }
 
-    private LightClassConstructionContext analyzeRelevantCode() {
+    @NotNull
+    @Override
+    public LightClassConstructionContext getContextForPackage(@NotNull Collection<JetFile> files) {
+        return getContext();
+    }
+
+    @NotNull
+    @Override
+    public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        return getContext();
+    }
+
+    @NotNull
+    private LightClassConstructionContext getContext() {
         return new LightClassConstructionContext(getTrace().getBindingContext(), null);
-    }
-
-    @NotNull
-    @Override
-    public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
-        return analyzeRelevantCode();
-    }
-
-    @NotNull
-    @Override
-    public LightClassConstructionContext analyzeRelevantCode(@NotNull JetClassOrObject classOrObject) {
-        return analyzeRelevantCode();
     }
 
     @NotNull
