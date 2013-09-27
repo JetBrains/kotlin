@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.hierarchy.calls;
 
+import com.google.common.base.Predicate;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.ide.hierarchy.call.CallHierarchyNodeDescriptor;
@@ -7,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,30 +19,16 @@ import java.util.Map;
 
 public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     protected final String scopeType;
-    protected final JetElement localizingCodeBlock;
-    protected final PsiMethod basePsiMethod;
-    protected final PsiClass basePsiClass;
 
     public KotlinCallTreeStructure(@NotNull Project project, PsiElement element, String scopeType) {
         super(project, createNodeDescriptor(project, element, null));
-
         this.scopeType = scopeType;
+    }
 
-        localizingCodeBlock = element instanceof JetNamedDeclaration
-                                   ? JetPsiUtil.getLocalizingCodeBlock((JetNamedDeclaration) element)
+    protected static JetElement getEnclosingBlockForLocalDeclaration(PsiElement element) {
+        return element instanceof JetNamedDeclaration
+                                   ? JetPsiUtil.getEnclosingBlockForLocalDeclaration((JetNamedDeclaration) element)
                                    : null;
-
-        if (localizingCodeBlock == null) {
-            basePsiMethod = getPsiMethod(element);
-            assert basePsiMethod != null;
-
-            basePsiClass = basePsiMethod.getContainingClass();
-            assert basePsiClass != null;
-        }
-        else {
-            basePsiMethod = null;
-            basePsiClass = null;
-        }
     }
 
     protected static HierarchyNodeDescriptor createNodeDescriptor(Project project, PsiElement element, HierarchyNodeDescriptor parent) {
@@ -58,48 +44,52 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
                                        : ((KotlinCallHierarchyNodeDescriptor)descriptor).getTargetElement();
     }
 
-    private static PsiMethod getClosestContainingClassConstructor(PsiElement element) {
-        while (element != null) {
-            JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, false);
-            if (classOrObject == null) return null;
+    private static final Predicate<PsiElement> IS_NON_LOCAL_DECLARATION = new Predicate<PsiElement>() {
+        @Override
+        public boolean apply(@javax.annotation.Nullable PsiElement input) {
+            return input instanceof PsiMethod
+                   || ((input instanceof JetNamedFunction || input instanceof JetClassOrObject || input instanceof JetProperty)
+                       && !JetPsiUtil.isLocal((JetNamedDeclaration) input));
+        }
+    };
 
-            element = classOrObject.getParent();
+    @Nullable
+    protected static PsiMethod getRepresentativePsiMethod(PsiElement element) {
+        while (true) {
+            element = JetPsiUtil.getParentByTypeAndPredicate(element, PsiElement.class, IS_NON_LOCAL_DECLARATION, false);
+            if (element == null) return null;
 
-            PsiClass psiClass = LightClassUtil.getPsiClass(classOrObject);
-            if (psiClass == null) continue;
+            PsiMethod method = getRepresentativePsiMethodForNonLocalDeclaration(element);
+            if (method != null) return method;
+
+            element = element.getParent();
+        }
+    }
+
+    private static PsiMethod getRepresentativePsiMethodForNonLocalDeclaration(PsiElement element) {
+        if (element instanceof PsiMethod) {
+            return (PsiMethod) element;
+        }
+
+        if (element instanceof JetNamedFunction) {
+            return LightClassUtil.getLightClassMethod((JetNamedFunction) element);
+        }
+
+        if (element instanceof JetProperty) {
+            LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
+                    LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
+            return (propertyMethods.getGetter() != null) ? propertyMethods.getGetter() : propertyMethods.getSetter();
+        }
+
+        if (element instanceof JetClassOrObject) {
+            PsiClass psiClass = LightClassUtil.getPsiClass((JetClassOrObject) element);
+            if (psiClass == null) return null;
 
             PsiMethod[] constructors = psiClass.getConstructors();
             if (constructors.length > 0) return constructors[0];
         }
 
         return null;
-    }
-
-    @Nullable
-    protected final PsiMethod getPsiMethod(PsiElement element) {
-        assert localizingCodeBlock == null : "Can't build light method for local declaration";
-
-        if (element instanceof PsiMethod) {
-            return (PsiMethod) element;
-        }
-
-        PsiMethod method = null;
-        if (element instanceof JetNamedFunction) {
-            method = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
-        }
-        else if (element instanceof JetProperty) {
-            LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
-
-            if (propertyMethods.getGetter() != null) {
-                method = propertyMethods.getGetter();
-            }
-            else {
-                method = propertyMethods.getSetter();
-            }
-        }
-
-        return method != null ? method : getClosestContainingClassConstructor(element);
     }
 
     protected static CallHierarchyNodeDescriptor getJavaNodeDescriptor(HierarchyNodeDescriptor originalDescriptor) {
@@ -109,7 +99,9 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         return ((KotlinCallHierarchyNodeDescriptor) originalDescriptor).getJavaDelegate();
     }
 
-    protected final Object[] collectNodeDescriptors(HierarchyNodeDescriptor descriptor, List<? extends PsiElement> calleeElements) {
+    protected Object[] collectNodeDescriptors(
+            HierarchyNodeDescriptor descriptor, List<? extends PsiElement> calleeElements, PsiClass basePsiClass
+    ) {
         HashMap<PsiElement, HierarchyNodeDescriptor> declarationToDescriptorMap = new HashMap<PsiElement, HierarchyNodeDescriptor>();
         for (PsiElement callee : calleeElements) {
             if (basePsiClass != null && !isInScope(basePsiClass, callee, scopeType)) continue;

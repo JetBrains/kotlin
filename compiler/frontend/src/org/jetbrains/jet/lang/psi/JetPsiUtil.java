@@ -1030,7 +1030,7 @@ public class JetPsiUtil {
         return header != null ? header.getQualifiedName() : null;
     }
 
-    public static JetElement getLocalizingCodeBlock(@NotNull JetNamedDeclaration declaration) {
+    public static JetElement getEnclosingBlockForLocalDeclaration(@NotNull JetNamedDeclaration declaration) {
         //noinspection unchecked
         JetDeclaration container =
                 PsiTreeUtil.getParentOfType(declaration, JetNamedFunction.class, JetPropertyAccessor.class, JetClassInitializer.class);
@@ -1040,5 +1040,9 @@ public class JetPsiUtil {
         return (container instanceof JetClassInitializer)
                ? ((JetClassInitializer) container).getBody()
                : ((JetDeclarationWithBody) container).getBodyExpression();
+    }
+
+    public static boolean isLocal(@NotNull JetNamedDeclaration declaration) {
+        return getEnclosingBlockForLocalDeclaration(declaration) != null;
     }
 }

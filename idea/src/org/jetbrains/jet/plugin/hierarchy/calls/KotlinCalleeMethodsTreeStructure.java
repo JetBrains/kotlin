@@ -35,10 +35,16 @@ import java.util.List;
 
 public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
     private final CalleeMethodsTreeStructure javaTreeStructure;
+    private final PsiClass representativePsiClass;
 
     public KotlinCalleeMethodsTreeStructure(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
         super(project, element, scopeType);
-        this.javaTreeStructure = basePsiMethod != null ? new CalleeMethodsTreeStructure(project, basePsiMethod, scopeType) : null;
+
+        PsiMethod representativePsiMethod = getRepresentativePsiMethod(element);
+        assert representativePsiMethod != null;
+
+        this.representativePsiClass = representativePsiMethod.getContainingClass();
+        this.javaTreeStructure = new CalleeMethodsTreeStructure(project, representativePsiMethod, scopeType);
     }
 
     private static List<? extends PsiElement> getCalleeElements(@NotNull JetElement rootElement, BindingContext bindingContext) {
@@ -126,6 +132,6 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         BindingContext bindingContext =
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) targetElement.getContainingFile()).getBindingContext();
         List<? extends PsiElement> calleeDescriptors = getCalleeElements((JetElement) targetElement, bindingContext);
-        return collectNodeDescriptors(descriptor, calleeDescriptors);
+        return collectNodeDescriptors(descriptor, calleeDescriptors, representativePsiClass);
     }
 }

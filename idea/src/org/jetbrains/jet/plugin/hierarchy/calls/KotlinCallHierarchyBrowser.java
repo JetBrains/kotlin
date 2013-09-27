@@ -31,7 +31,6 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.ui.PopupHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 
 import javax.swing.*;
 import java.util.Comparator;
@@ -87,7 +86,7 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
     @Override
     protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
         if (typeName.equals(CALLER_TYPE)) {
-            return new KotlinCallerMethodsTreeStructure(myProject, psiElement, getCurrentScopeType());
+            return KotlinCallerMethodsTreeStructure.newInstance(myProject, psiElement, getCurrentScopeType());
         }
 
         if (typeName.equals(CALLEE_TYPE)) {
