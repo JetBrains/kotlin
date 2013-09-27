@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition.EXPECTED_TYPE_POSITION;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBoundsImpl.BoundKind.*;
@@ -57,9 +58,6 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private final TypeSubstitutor resultingSubstitutor;
     private final TypeSubstitutor currentSubstitutor;
     private boolean hasErrorInConstrainingTypes;
-
-    @Nullable
-    private ConstraintSystem systemWithoutExpectedTypeConstraint;
 
     private final ConstraintSystemStatus constraintSystemStatus = new ConstraintSystemStatus() {
         @Override
@@ -109,14 +107,12 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
         @Override
         public boolean hasOnlyExpectedTypeMismatch() {
-            if (systemWithoutExpectedTypeConstraint == null) {
-                // the expected type constraint isn't added, there can't be an error with it
-                return false;
-            }
-            if (!isSuccessful() && systemWithoutExpectedTypeConstraint.getStatus().isSuccessful()) {
+            if (isSuccessful()) return false;
+            ConstraintSystem systemWithoutExpectedTypeConstraint = filterConstraintsOut(EXPECTED_TYPE_POSITION);
+            if (systemWithoutExpectedTypeConstraint.getStatus().isSuccessful()) {
                 return true;
             }
-            if (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(ConstraintPosition.EXPECTED_TYPE_POSITION)) {
+            if (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(EXPECTED_TYPE_POSITION)) {
                 // if systemWithoutExpectedTypeConstraint has unknown type parameters, it's not successful,
                 // but there can be expected type mismatch after expected type is added
                 return true;
@@ -216,6 +212,17 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @NotNull
+    public ConstraintSystem filterConstraintsOut(@NotNull ConstraintPosition... excludePositions) {
+        final Set<ConstraintPosition> positions = Sets.newHashSet(excludePositions);
+        return filterConstraints(new Condition<ConstraintPosition>() {
+            @Override
+            public boolean value(ConstraintPosition constraintPosition) {
+                return !positions.contains(constraintPosition);
+            }
+        });
+    }
+
+    @NotNull
     public ConstraintSystem filterConstraints(@NotNull final Condition<ConstraintPosition> condition) {
         return replaceTypeVariables(Functions.<TypeParameterDescriptor>identity(),
                                     new Function<TypeBoundsImpl, TypeBoundsImpl>() {
@@ -273,9 +280,6 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     ) {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return;
 
-        if (constraintPosition == ConstraintPosition.EXPECTED_TYPE_POSITION) {
-            systemWithoutExpectedTypeConstraint = copy();
-        }
         addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
@@ -483,8 +487,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
         if (getStatus().hasOnlyExpectedTypeMismatch()) {
-            assert systemWithoutExpectedTypeConstraint != null;
-            return systemWithoutExpectedTypeConstraint.getResultingSubstitutor();
+            return filterConstraintsOut(EXPECTED_TYPE_POSITION).getResultingSubstitutor();
         }
         return resultingSubstitutor;
     }
