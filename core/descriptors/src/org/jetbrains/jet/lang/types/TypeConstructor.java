@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -27,9 +28,11 @@ import java.util.List;
 
 public interface TypeConstructor extends Annotated {
     @NotNull
+    @ReadOnly
     List<TypeParameterDescriptor> getParameters();
 
     @NotNull
+    @ReadOnly
     Collection<JetType> getSupertypes();
 
     /**

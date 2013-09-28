@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
@@ -109,6 +110,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     }
 
     @NotNull
+    @ReadOnly
     protected abstract Set<JetType> resolveUpperBounds();
 
     @NotNull

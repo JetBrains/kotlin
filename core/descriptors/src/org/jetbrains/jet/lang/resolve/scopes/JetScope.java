@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -49,24 +50,28 @@ public interface JetScope {
     ClassDescriptor getObjectDescriptor(@NotNull Name name);
 
     @NotNull
+    @ReadOnly
     Collection<ClassDescriptor> getObjectDescriptors();
 
     @Nullable
     NamespaceDescriptor getNamespace(@NotNull Name name);
 
     @NotNull
+    @ReadOnly
     Collection<VariableDescriptor> getProperties(@NotNull Name name);
 
     @Nullable
     VariableDescriptor getLocalVariable(@NotNull Name name);
 
     @NotNull
+    @ReadOnly
     Collection<FunctionDescriptor> getFunctions(@NotNull Name name);
 
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
 
     @NotNull
+    @ReadOnly
     Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName);
 
     /**
@@ -75,14 +80,17 @@ public interface JetScope {
      * @return All visible descriptors from current scope.
      */
     @NotNull
+    @ReadOnly
     Collection<DeclarationDescriptor> getAllDescriptors();
 
     /**
      * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
      */
     @NotNull
+    @ReadOnly
     List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy();
 
     @NotNull
+    @ReadOnly
     Collection<DeclarationDescriptor> getOwnDeclaredDescriptors();
 }

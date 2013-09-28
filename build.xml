@@ -12,6 +12,7 @@
     <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
+    <property name="bootstrap.annotations.ext" value="${bootstrap.compiler.home}/lib/kotlin-annotations-ext.jar"/>
 
     <property name="output.relative" value="dist"/>
     <property name="output" value="${basedir}/${output.relative}"/>
@@ -28,6 +29,7 @@
 
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
+        <file file="${bootstrap.annotations.ext}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
 
@@ -375,6 +377,7 @@
 
                     -libraryjars '${rtjar}'
                     -libraryjars '${bootstrap.runtime}'
+                    -libraryjars '${bootstrap.annotations.ext}'
 
                     -target 1.6
                     -dontoptimize
