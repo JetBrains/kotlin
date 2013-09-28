@@ -26,7 +26,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -219,24 +218,6 @@ public class TypeUtils {
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
                 new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
-    }
-
-    @NotNull
-    public static String toString(@NotNull JetType type) {
-        List<TypeProjection> arguments = type.getArguments();
-        return type.getConstructor() + (arguments.isEmpty() ? "" : "<" + argumentsToString(arguments) + ">") + (type.isNullable() ? "?" : "");
-    }
-
-    private static StringBuilder argumentsToString(List<TypeProjection> arguments) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Iterator<TypeProjection> iterator = arguments.iterator(); iterator.hasNext();) {
-            TypeProjection argument = iterator.next();
-            stringBuilder.append(argument);
-            if (iterator.hasNext()) {
-                stringBuilder.append(", ");
-            }
-        }
-        return stringBuilder;
     }
 
     private static class TypeUnifier {
@@ -742,7 +723,7 @@ public class TypeUtils {
         });
     }
 
-    private static abstract class AbstractTypeWithKnownNullability implements JetType {
+    private static abstract class AbstractTypeWithKnownNullability extends AbstractJetType {
         private final JetType delegate;
 
         private AbstractTypeWithKnownNullability(@NotNull JetType delegate) {
@@ -757,7 +738,6 @@ public class TypeUtils {
 
         @Override
         @NotNull
-        @ReadOnly
         public List<TypeProjection> getArguments() {
             return delegate.getArguments();
         }
@@ -780,21 +760,6 @@ public class TypeUtils {
         @NotNull
         public List<AnnotationDescriptor> getAnnotations() {
             return delegate.getAnnotations();
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            return TypeUtils.equals(this, other);
-        }
-
-        @Override
-        public int hashCode() {
-            return TypeUtils.hashCode(this);
-        }
-
-        @Override
-        public String toString() {
-            return TypeUtils.toString(this);
         }
     }
 

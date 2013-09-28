@@ -18,23 +18,22 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.Collections;
 import java.util.List;
 
-public final class JetTypeImpl extends AnnotatedImpl implements JetType {
+public final class JetTypeImpl extends AbstractJetType {
 
     private final TypeConstructor constructor;
     private final List<? extends TypeProjection> arguments;
     private final boolean nullable;
     private final JetScope memberScope;
+    private final List<AnnotationDescriptor> annotations;
 
     public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, @NotNull List<? extends TypeProjection> arguments, JetScope memberScope) {
-        super(annotations);
+        this.annotations = annotations;
 
         if (memberScope instanceof ErrorUtils.ErrorScope) {
             throw new IllegalStateException("JetTypeImpl should not be created for error type: " + memberScope + "\n" + constructor);
@@ -56,6 +55,11 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
                 false,
                 Collections.<TypeProjection>emptyList(),
                 classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList()));
+    }
+
+    @Override
+    public List<AnnotationDescriptor> getAnnotations() {
+        return annotations;
     }
 
     @NotNull
@@ -85,28 +89,5 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     @Override
     public boolean isError() {
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return TypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof JetType)) return false;
-
-        JetType type = (JetType) o;
-
-        return nullable == type.isNullable() && JetTypeChecker.INSTANCE.equalTypes(this, type);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = constructor.hashCode();
-        result = 31 * result + arguments.hashCode();
-        result = 31 * result + (nullable ? 1 : 0);
-        return result;
     }
 }
