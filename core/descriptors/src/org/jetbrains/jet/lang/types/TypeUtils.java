@@ -26,6 +26,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -121,7 +122,17 @@ public class TypeUtils {
         if (type.isError()) {
             return type;
         }
-        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
+
+        // Wrapping serves two purposes here
+        // 1. It's requires less memory than copying with a changed nullability flag: a copy has many fields, while a wrapper has only one
+        // 2. It preserves laziness of types
+
+        // Unwrap to avoid long delegation call chains
+        if (type instanceof AbstractTypeWithKnownNullability) {
+            return makeNullableAsSpecified(((AbstractTypeWithKnownNullability) type).delegate, nullable);
+        }
+
+        return nullable ? new NullableType(type) : new NotNullType(type);
     }
 
     public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
@@ -730,4 +741,85 @@ public class TypeUtils {
             }
         });
     }
+
+    private static abstract class AbstractTypeWithKnownNullability implements JetType {
+        private final JetType delegate;
+
+        private AbstractTypeWithKnownNullability(@NotNull JetType delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        @NotNull
+        public TypeConstructor getConstructor() {
+            return delegate.getConstructor();
+        }
+
+        @Override
+        @NotNull
+        @ReadOnly
+        public List<TypeProjection> getArguments() {
+            return delegate.getArguments();
+        }
+
+        @Override
+        public abstract boolean isNullable();
+
+        @Override
+        @NotNull
+        public JetScope getMemberScope() {
+            return delegate.getMemberScope();
+        }
+
+        @Override
+        public boolean isError() {
+            return delegate.isError();
+        }
+
+        @Override
+        @NotNull
+        public List<AnnotationDescriptor> getAnnotations() {
+            return delegate.getAnnotations();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return TypeUtils.equals(this, other);
+        }
+
+        @Override
+        public int hashCode() {
+            return TypeUtils.hashCode(this);
+        }
+
+        @Override
+        public String toString() {
+            return TypeUtils.toString(this);
+        }
+    }
+
+    private static class NullableType extends AbstractTypeWithKnownNullability {
+
+        private NullableType(@NotNull JetType delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public boolean isNullable() {
+            return true;
+        }
+    }
+
+    private static class NotNullType extends AbstractTypeWithKnownNullability {
+
+        private NotNullType(@NotNull JetType delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public boolean isNullable() {
+            return false;
+        }
+    }
+
 }
