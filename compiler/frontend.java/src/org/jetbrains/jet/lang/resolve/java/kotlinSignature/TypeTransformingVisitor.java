@@ -202,7 +202,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         else {
             altProjectionKind = projectionKind;
         }
-        return new TypeProjection(altProjectionKind, alternativeArgumentType);
+        return new TypeProjectionImpl(altProjectionKind, alternativeArgumentType);
     }
 
     @Nullable

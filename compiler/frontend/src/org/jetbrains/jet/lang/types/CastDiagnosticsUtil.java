@@ -158,7 +158,7 @@ public class CastDiagnosticsUtil {
         if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             TypeUnifier.UnificationResult solution = TypeUnifier.unify(
-                    new TypeProjection(supertype), new TypeProjection(supertypeWithVariables),
+                    new TypeProjectionImpl(supertype), new TypeProjectionImpl(supertypeWithVariables),
                     new Predicate<TypeConstructor>() {
                         @Override
                         public boolean apply(TypeConstructor typeConstructor) {

@@ -219,20 +219,20 @@ public class CommonSupertypes {
             JetType intersection = TypeUtils.intersect(JetTypeChecker.INSTANCE, ins);
             if (intersection == null) {
                 if (outs != null) {
-                    return new TypeProjection(OUT_VARIANCE, commonSupertype(outs));
+                    return new TypeProjectionImpl(OUT_VARIANCE, commonSupertype(outs));
                 }
-                return new TypeProjection(OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
+                return new TypeProjectionImpl(OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
             }
             Variance projectionKind = variance == IN_VARIANCE ? Variance.INVARIANT : IN_VARIANCE;
-            return new TypeProjection(projectionKind, intersection);
+            return new TypeProjectionImpl(projectionKind, intersection);
         }
         else if (outs != null) {
             Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
-            return new TypeProjection(projectionKind, commonSupertype(outs));
+            return new TypeProjectionImpl(projectionKind, commonSupertype(outs));
         }
         else {
             Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
-            return new TypeProjection(projectionKind, commonSupertype(parameterDescriptor.getUpperBounds()));
+            return new TypeProjectionImpl(projectionKind, commonSupertype(parameterDescriptor.getUpperBounds()));
         }
     }
 

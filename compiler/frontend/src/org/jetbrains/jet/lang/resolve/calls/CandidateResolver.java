@@ -885,7 +885,7 @@ public class CandidateResolver {
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             TypeParameterDescriptor typeParameter = typeParameters.get(i);
             JetType typeArgument = typeArguments.get(i);
-            context.put(typeParameter.getTypeConstructor(), new TypeProjection(typeArgument));
+            context.put(typeParameter.getTypeConstructor(), new TypeProjectionImpl(typeArgument));
         }
         TypeSubstitutor substitutor = TypeSubstitutor.create(context);
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {

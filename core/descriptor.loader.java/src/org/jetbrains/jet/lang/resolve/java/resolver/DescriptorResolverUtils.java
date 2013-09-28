@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeProjectionImpl;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.*;
@@ -263,7 +264,7 @@ public final class DescriptorResolverUtils {
         for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameter : originalToAltTypeParameters
                 .entrySet()) {
             typeSubstitutionContext.put(originalToAltTypeParameter.getKey().getTypeConstructor(),
-                                        new TypeProjection(originalToAltTypeParameter.getValue().getDefaultType()));
+                                        new TypeProjectionImpl(originalToAltTypeParameter.getValue().getDefaultType()));
         }
         return TypeSubstitutor.create(typeSubstitutionContext);
     }

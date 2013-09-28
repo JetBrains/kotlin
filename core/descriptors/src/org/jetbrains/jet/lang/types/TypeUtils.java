@@ -381,7 +381,7 @@ public class TypeUtils {
     public static List<TypeProjection> getDefaultTypeProjections(List<TypeParameterDescriptor> parameters) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
-            result.add(new TypeProjection(parameterDescriptor.getDefaultType()));
+            result.add(new TypeProjectionImpl(parameterDescriptor.getDefaultType()));
         }
         return result;
     }
@@ -472,7 +472,7 @@ public class TypeUtils {
         List<TypeProjection> projections = ContainerUtil.map(typeArguments, new com.intellij.util.Function<JetType, TypeProjection>() {
             @Override
             public TypeProjection fun(JetType type) {
-                return new TypeProjection(type);
+                return new TypeProjectionImpl(type);
             }
         });
 
@@ -713,7 +713,7 @@ public class TypeUtils {
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
             constructors.add(typeParameterDescriptor.getTypeConstructor());
         }
-        final TypeProjection projection = new TypeProjection(type);
+        final TypeProjection projection = new TypeProjectionImpl(type);
 
         return TypeSubstitutor.create(new TypeSubstitution() {
             @Override

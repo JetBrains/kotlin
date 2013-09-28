@@ -126,9 +126,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     };
 
     public ConstraintSystemImpl() {
-        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(
+        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjectionImpl(
                 TypeUtils.CANT_INFER_TYPE_PARAMETER));
-        this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjection(TypeUtils.DONT_CARE));
+        this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjectionImpl(TypeUtils.DONT_CARE));
     }
 
     private TypeSubstitutor createTypeSubstitutorWithDefaultForUnknownTypeParameter(@Nullable final TypeProjection defaultTypeProjection) {
@@ -142,7 +142,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                     if (typeParameterBounds.containsKey(descriptor)) {
                         JetType value = getTypeBounds(descriptor).getValue();
                         if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, TypeUtils.DONT_CARE)) {
-                            return new TypeProjection(value);
+                            return new TypeProjectionImpl(value);
                         }
                         return defaultTypeProjection;
                     }

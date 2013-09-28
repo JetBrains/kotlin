@@ -70,15 +70,15 @@ public class TypeUnifier {
         Variance knownProjectionKind = knownProjection.getProjectionKind();
         Variance withVariablesProjectionKind = projectWithVariables.getProjectionKind();
         if (knownProjectionKind == withVariablesProjectionKind && knownProjectionKind != Variance.INVARIANT) {
-            doUnify(new TypeProjection(known), new TypeProjection(withVariables), isVariable, result);
+            doUnify(new TypeProjectionImpl(known), new TypeProjectionImpl(withVariables), isVariable, result);
             return;
         }
 
         // Foo? ~ X?  =>  Foo ~ X
         if (known.isNullable() && withVariables.isNullable()) {
             doUnify(
-                    new TypeProjection(knownProjectionKind, TypeUtils.makeNotNullable(known)),
-                    new TypeProjection(withVariablesProjectionKind, TypeUtils.makeNotNullable(withVariables)),
+                    new TypeProjectionImpl(knownProjectionKind, TypeUtils.makeNotNullable(known)),
+                    new TypeProjectionImpl(withVariablesProjectionKind, TypeUtils.makeNotNullable(withVariables)),
                     isVariable,
                     result
             );
@@ -101,7 +101,7 @@ public class TypeUnifier {
         // Foo ~ X  =>  x |-> Foo
         TypeConstructor maybeVariable = withVariables.getConstructor();
         if (isVariable.apply(maybeVariable)) {
-            result.put(maybeVariable, new TypeProjection(knownProjectionKind, known));
+            result.put(maybeVariable, new TypeProjectionImpl(knownProjectionKind, known));
             return;
         }
 

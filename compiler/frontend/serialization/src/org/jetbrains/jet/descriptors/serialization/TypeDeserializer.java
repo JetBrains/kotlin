@@ -165,7 +165,7 @@ public class TypeDeserializer {
     }
 
     private TypeProjection typeProjection(ProtoBuf.Type.Argument proto) {
-        return new TypeProjection(
+        return new TypeProjectionImpl(
                 variance(proto.getProjection()),
                 type(proto.getType())
         );

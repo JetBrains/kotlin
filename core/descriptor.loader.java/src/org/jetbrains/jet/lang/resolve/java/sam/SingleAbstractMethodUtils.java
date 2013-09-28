@@ -63,7 +63,7 @@ public class SingleAbstractMethodUtils {
             Variance kind = argument.getProjectionKind();
             if (kind != INVARIANT && variance != INVARIANT) {
                 if (kind == variance) {
-                    arguments.add(new TypeProjection(argument.getType()));
+                    arguments.add(new TypeProjectionImpl(argument.getType()));
                 }
                 else {
                     return null;

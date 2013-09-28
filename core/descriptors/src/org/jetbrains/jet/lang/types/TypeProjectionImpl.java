@@ -18,10 +18,28 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface TypeProjection {
-    @NotNull
-    Variance getProjectionKind();
+public class TypeProjectionImpl extends TypeProjectionBase {
+    private final Variance projection;
+    private final JetType type;
 
+    public TypeProjectionImpl(@NotNull Variance projection, @NotNull JetType type) {
+        this.projection = projection;
+        this.type = type;
+    }
+
+    public TypeProjectionImpl(@NotNull JetType type) {
+        this(Variance.INVARIANT, type);
+    }
+
+    @Override
     @NotNull
-    JetType getType();
+    public Variance getProjectionKind() {
+        return projection;
+    }
+
+    @Override
+    @NotNull
+    public JetType getType() {
+        return type;
+    }
 }

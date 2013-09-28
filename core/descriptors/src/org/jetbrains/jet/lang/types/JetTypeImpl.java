@@ -29,11 +29,11 @@ import java.util.List;
 public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
     private final TypeConstructor constructor;
-    private final List<TypeProjection> arguments;
+    private final List<? extends TypeProjection> arguments;
     private final boolean nullable;
     private final JetScope memberScope;
 
-    public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, @NotNull List<TypeProjection> arguments, JetScope memberScope) {
+    public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, @NotNull List<? extends TypeProjection> arguments, JetScope memberScope) {
         super(annotations);
 
         if (memberScope instanceof ErrorUtils.ErrorScope) {
@@ -67,7 +67,8 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     @NotNull
     @Override
     public List<TypeProjection> getArguments() {
-        return arguments;
+        //noinspection unchecked
+        return (List) arguments;
     }
 
     @Override

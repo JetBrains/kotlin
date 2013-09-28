@@ -214,7 +214,7 @@ public class TypeUnifierTest extends JetLiteFixture {
         assert typeReference != null;
         JetType type = typeResolver.resolveType(withX, typeReference, JetTestUtils.DUMMY_TRACE, true);
 
-        return new TypeProjection(getProjectionKind(typeStr, projection), type);
+        return new TypeProjectionImpl(getProjectionKind(typeStr, projection), type);
     }
 
     private static Variance getProjectionKind(String typeStr, JetTypeProjection projection) {

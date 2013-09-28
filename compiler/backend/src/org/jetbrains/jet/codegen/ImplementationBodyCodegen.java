@@ -584,7 +584,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private ClassifierDescriptor getSubstituteForTypeParameterOf(@NotNull ClassDescriptor trait, int index) {
         TypeParameterDescriptor listTypeParameter = trait.getTypeConstructor().getParameters().get(index);
         TypeSubstitutor deepSubstitutor = SubstitutionUtils.buildDeepSubstitutor(descriptor.getDefaultType());
-        TypeProjection substitute = deepSubstitutor.substitute(new TypeProjection(listTypeParameter.getDefaultType()));
+        TypeProjection substitute = deepSubstitutor.substitute(new TypeProjectionImpl(listTypeParameter.getDefaultType()));
         assert substitute != null : "Couldn't substitute: " + descriptor;
         ClassifierDescriptor classifier = substitute.getType().getConstructor().getDeclarationDescriptor();
         assert classifier != null : "No classifier: " + substitute.getType();

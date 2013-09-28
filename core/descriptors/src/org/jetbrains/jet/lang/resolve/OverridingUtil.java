@@ -261,7 +261,7 @@ public class OverridingUtil {
             TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
             substitutionContext.put(
                     superTypeParameter.getTypeConstructor(),
-                    new TypeProjection(subTypeParameter.getDefaultType()));
+                    new TypeProjectionImpl(subTypeParameter.getDefaultType()));
         }
         return TypeSubstitutor.create(substitutionContext);
     }
