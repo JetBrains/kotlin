@@ -132,7 +132,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetFunctionLiteralExpression functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, JetFunctionLiteralExpression.class);
-                assert functionLiteralExpression != null : "ASSIGNMENT/EXPECTED_TYPE_MISMATCH reported outside any function literal";
+                if (functionLiteralExpression == null) return null;
                 return new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, KotlinBuiltIns.getInstance().getUnitType());
             }
         };
