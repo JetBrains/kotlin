@@ -33,6 +33,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.*;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +50,23 @@ import java.util.Set;
 public class PluginJetFilesProvider extends JetFilesProvider {
     private final Project project;
 
+    private final ParameterizedCachedValue<Collection<JetFile>, GlobalSearchScope> cache;
+
     public PluginJetFilesProvider(Project project) {
         this.project = project;
+        this.cache = CachedValuesManager.getManager(project).createParameterizedCachedValue(
+                new ParameterizedCachedValueProvider<Collection<JetFile>, GlobalSearchScope>() {
+                    @Nullable
+                    @Override
+                    public CachedValueProvider.Result<Collection<JetFile>> compute(GlobalSearchScope param) {
+                        return new CachedValueProvider.Result<Collection<JetFile>>(
+                                computeAllInScope(param),
+                                PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                        );
+                    }
+                },
+                false
+        );
     }
 
     public static final Function<JetFile, Collection<JetFile>> WHOLE_PROJECT_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
@@ -105,6 +121,10 @@ public class PluginJetFilesProvider extends JetFilesProvider {
 
     @Override
     public Collection<JetFile> allInScope(@NotNull GlobalSearchScope scope) {
+        return cache.getValue(scope);
+    }
+
+    private Collection<JetFile> computeAllInScope(GlobalSearchScope scope) {
         final PsiManager manager = PsiManager.getInstance(project);
 
         Collection<JetFile> jetFiles = ContainerUtil.map(
