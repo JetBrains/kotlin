@@ -20,11 +20,9 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * Encapuslates different types of constants and naming conventions.
@@ -55,14 +53,6 @@ public final class Namer {
 
     private static final String DELEGATE_POSTFIX = "$delegate";
     private static final String PROPERTY_METADATA = "PropertyMetadata";
-
-    private static final Named CLASS_OBJECT_INITIALIZER_NAMED = new Named() {
-        @NotNull
-        @Override
-        public Name getName() {
-            return Name.identifier(CLASS_OBJECT_INITIALIZER);
-        }
-    };
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -119,8 +109,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static Named getNamedForClassObjectInitializer() {
-        return CLASS_OBJECT_INITIALIZER_NAMED;
+    public static String getNameForClassObjectInitializer() {
+        return CLASS_OBJECT_INITIALIZER;
     }
 
     @NotNull

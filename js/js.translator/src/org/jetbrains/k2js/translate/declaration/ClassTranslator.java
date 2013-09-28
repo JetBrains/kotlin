@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.k2js.translate.LabelGenerator;
-import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
@@ -42,7 +41,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
-import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createPropertyInitializer;
+import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
@@ -213,7 +212,7 @@ public final class ClassTranslator extends AbstractTranslator {
             invocation.getArguments().add(new JsObjectLiteral(enumEntryList, true));
 
             JsFunction fun = simpleReturnFunction(declarationContext.getScopeForDescriptor(descriptor), invocation);
-            staticProperties.add(createPropertyInitializer(Namer.getNamedForClassObjectInitializer(), fun, declarationContext));
+            staticProperties.add(createClassObjectInitializer(fun, declarationContext));
         } else {
             assert enumEntryList.isEmpty(): "Only enum class may have enum entry. Class kind is: " + descriptor.getKind();
         }

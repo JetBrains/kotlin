@@ -74,7 +74,7 @@ public final class PropertyTranslator extends AbstractTranslator {
         List<JsPropertyInitializer> to;
         if (!JsDescriptorUtils.isExtension(descriptor)) {
             to = new SmartList<JsPropertyInitializer>();
-            result.add(new JsPropertyInitializer(context().nameToLiteral(descriptor), new JsObjectLiteral(to, true)));
+            result.add(new JsPropertyInitializer(context().getNameForDescriptor(descriptor).makeRef(), new JsObjectLiteral(to, true)));
         }
         else {
             to = result;

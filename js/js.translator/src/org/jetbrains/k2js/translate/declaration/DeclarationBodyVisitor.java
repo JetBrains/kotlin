@@ -21,11 +21,12 @@ import com.google.dart.compiler.backend.js.ast.JsFunction;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
@@ -36,7 +37,7 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createPropertyInitializer;
+import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 
@@ -69,9 +70,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitEnumEntry(
-            @NotNull final JetEnumEntry enumEntry, TranslationContext data
-    ) {
+    public Void visitEnumEntry(@NotNull JetEnumEntry enumEntry, TranslationContext data) {
         JsExpression jsEnumEntryCreation;
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
         Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
@@ -81,16 +80,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
             assert supertypes.size() == 1 : "Simple Enum entry must have one supertype";
             jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.iterator().next());
         }
-        Named named = new Named() {
-            @NotNull
-            @Override
-            public Name getName() {
-                String name = enumEntry.getName();
-                assert name != null : "Enum entry name must be not null";
-                return Name.identifier(name);
-            }
-        };
-        enumEntryList.add(new JsPropertyInitializer(data.nameToLiteral(named), jsEnumEntryCreation));
+        enumEntryList.add(new JsPropertyInitializer(data.getNameForDescriptor(descriptor).makeRef(), jsEnumEntryCreation));
         return null;
     }
 
@@ -104,7 +94,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
 
         JsFunction fun = TranslationUtils.simpleReturnFunction(context.getScopeForDescriptor(descriptor), value);
-        staticResult.add(createPropertyInitializer(Namer.getNamedForClassObjectInitializer(), fun, context));
+        staticResult.add(createClassObjectInitializer(fun, context));
         return null;
     }
 
