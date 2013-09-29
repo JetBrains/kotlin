@@ -669,4 +669,11 @@ public class AsmUtil {
     public static String asmDescByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return "L" + JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName() + ';';
     }
+
+    @NotNull
+    public static String shortNameByAsmType(@NotNull Type type) {
+        String internalName = type.getInternalName();
+        int lastSlash = internalName.lastIndexOf('/');
+        return lastSlash < 0 ? internalName : internalName.substring(lastSlash + 1);
+    }
 }

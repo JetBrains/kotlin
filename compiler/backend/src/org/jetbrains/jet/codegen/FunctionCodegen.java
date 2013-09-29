@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
@@ -113,8 +112,8 @@ public class FunctionCodegen extends GenerationStateAware {
 
         OwnerKind contextKind = owner.getContextKind();
         if (contextKind instanceof OwnerKind.StaticDelegateKind) {
-            FqName fqName = ((OwnerKind.StaticDelegateKind) contextKind).getOwnerClass().getFqName();
-            v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, fqName.shortName());
+            JvmClassName ownerName = ((OwnerKind.StaticDelegateKind) contextKind).getOwnerClass();
+            v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, shortNameByAsmType(ownerName.getAsmType()));
         }
         else {
             v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);

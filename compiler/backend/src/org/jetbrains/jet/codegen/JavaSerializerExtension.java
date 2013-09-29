@@ -21,7 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.NameTable;
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -93,9 +96,9 @@ public class JavaSerializerExtension extends SerializerExtension {
             @NotNull ProtoBuf.Callable.Builder proto,
             @NotNull NameTable nameTable
     ) {
-        Name name = memberMap.getSrcClassNameOfCallable(callable);
+        String name = memberMap.getSrcClassNameOfCallable(callable);
         if (name != null) {
-            proto.setExtension(JavaProtoBuf.srcClassName, nameTable.getSimpleNameIndex(name));
+            proto.setExtension(JavaProtoBuf.srcClassName, nameTable.getSimpleNameIndex(Name.identifier(name)));
         }
     }
 

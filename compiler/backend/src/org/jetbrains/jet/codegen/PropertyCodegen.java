@@ -37,15 +37,14 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.getDeprecatedAccessFlag;
-import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityForSpecialPropertyBackingField;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -89,8 +88,8 @@ public class PropertyCodegen extends GenerationStateAware {
                 : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
 
         if (kind instanceof OwnerKind.StaticDelegateKind) {
-            FqName fqName = ((OwnerKind.StaticDelegateKind) kind).getOwnerClass().getFqName();
-            v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, fqName.shortName());
+            JvmClassName ownerName = ((OwnerKind.StaticDelegateKind) kind).getOwnerClass();
+            v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerName.getAsmType()));
         }
         else if (kind != OwnerKind.TRAIT_IMPL) {
             generateBackingField(p, propertyDescriptor);

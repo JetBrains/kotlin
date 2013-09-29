@@ -24,7 +24,6 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
 
@@ -32,7 +31,7 @@ public final class MemberMap {
     private final Map<FunctionDescriptor, Method> methodForFunction = new HashMap<FunctionDescriptor, Method>();
     private final Map<PropertyDescriptor, Pair<Type, String>> fieldForProperty = new HashMap<PropertyDescriptor, Pair<Type, String>>();
     private final Map<PropertyDescriptor, String> syntheticMethodNameForProperty = new HashMap<PropertyDescriptor, String>();
-    private final Map<CallableMemberDescriptor, Name> srcClassNameForCallable = new HashMap<CallableMemberDescriptor, Name>();
+    private final Map<CallableMemberDescriptor, String> srcClassNameForCallable = new HashMap<CallableMemberDescriptor, String>();
     private final Set<PropertyDescriptor> staticFieldInOuterClass = new HashSet<PropertyDescriptor>();
 
     @NotNull
@@ -51,7 +50,7 @@ public final class MemberMap {
                 result.recordSyntheticMethodNameOfProperty(entry.getKey(), entry.getValue());
             }
 
-            for (Map.Entry<CallableMemberDescriptor, Name> entry : map.srcClassNameForCallable.entrySet()) {
+            for (Map.Entry<CallableMemberDescriptor, String> entry : map.srcClassNameForCallable.entrySet()) {
                 result.recordSrcClassNameForCallable(entry.getKey(), entry.getValue());
             }
 
@@ -78,8 +77,8 @@ public final class MemberMap {
         assert old == null : "Duplicate synthetic method for property: " + descriptor + "; " + old;
     }
 
-    public void recordSrcClassNameForCallable(@NotNull CallableMemberDescriptor descriptor, @NotNull Name name) {
-        Name old = srcClassNameForCallable.put(descriptor, name);
+    public void recordSrcClassNameForCallable(@NotNull CallableMemberDescriptor descriptor, @NotNull String name) {
+        String old = srcClassNameForCallable.put(descriptor, name);
         assert old == null : "Duplicate src class name for callable: " + descriptor + "; " + old;
     }
 
@@ -104,7 +103,7 @@ public final class MemberMap {
     }
 
     @Nullable
-    public Name getSrcClassNameOfCallable(@NotNull CallableMemberDescriptor descriptor) {
+    public String getSrcClassNameOfCallable(@NotNull CallableMemberDescriptor descriptor) {
         return srcClassNameForCallable.get(descriptor);
     }
 
