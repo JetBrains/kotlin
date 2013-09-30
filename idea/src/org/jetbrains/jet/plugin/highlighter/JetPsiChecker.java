@@ -52,18 +52,19 @@ import java.util.List;
 import java.util.Set;
 
 public class JetPsiChecker implements Annotator, HighlightRangeExtension {
-    private static boolean namesHighlightingTest;
     private static final Logger LOG = Logger.getInstance(JetPsiChecker.class);
+
+    private static boolean isNamesHighlightingEnabled = true;
 
     private HighlightingPassCache passCache = null;
 
     @TestOnly
-    public static void setNamesHighlightingTest(boolean namesHighlightingTest) {
-        JetPsiChecker.namesHighlightingTest = namesHighlightingTest;
+    public static void setNamesHighlightingEnabled(boolean namesHighlightingEnabled) {
+        isNamesHighlightingEnabled = namesHighlightingEnabled;
     }
 
-    static boolean isNamesHighlightingEnabled() {
-        return !ApplicationManager.getApplication().isUnitTestMode() || namesHighlightingTest;
+    public static boolean isNamesHighlightingEnabled() {
+        return isNamesHighlightingEnabled;
     }
 
     static void highlightName(@NotNull AnnotationHolder holder,

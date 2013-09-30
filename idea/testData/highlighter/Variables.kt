@@ -25,3 +25,5 @@ class <info textAttributesKey="KOTLIN_CLASS">Foo</info>(val <info textAttributes
     <info textAttributesKey="KOTLIN_PARAMETER">value</info>
   }
 }
+
+// NO_CHECK_WARNINGS

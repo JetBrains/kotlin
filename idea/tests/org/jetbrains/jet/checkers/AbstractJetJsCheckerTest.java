@@ -30,6 +30,6 @@ public abstract class AbstractJetJsCheckerTest extends LightCodeInsightFixtureTe
 
     public void doTest(String filePath) {
         myFixture.configureByFile(filePath);
-        myFixture.checkHighlighting();
+        myFixture.checkHighlighting(true, false, false);
     }
 }

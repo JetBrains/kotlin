@@ -19,3 +19,6 @@ trait MyTrait {
         val test: String = ""
     }
 }
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS

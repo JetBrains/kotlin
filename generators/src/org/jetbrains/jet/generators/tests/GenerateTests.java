@@ -36,6 +36,9 @@ import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializati
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 import org.jetbrains.jet.formatter.AbstractJetFormatterTest;
+import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel;
+import org.jetbrains.jet.generators.tests.generator.TestClassModel;
+import org.jetbrains.jet.generators.tests.generator.TestGenerator;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -48,7 +51,7 @@ import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
 import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
-import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
+import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest;
 import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
 import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
@@ -59,9 +62,6 @@ import org.jetbrains.jet.resolve.AbstractResolveBaseTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.resolve.AbstractResolveWithLibTest;
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest;
-import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel;
-import org.jetbrains.jet.generators.tests.generator.TestClassModel;
-import org.jetbrains.jet.generators.tests.generator.TestGenerator;
 
 import java.io.File;
 import java.io.IOException;
@@ -334,9 +334,9 @@ public class GenerateTests {
 
         generateTest(
                 "idea/tests/",
-                "DeprecatedHighlightingTestGenerated",
-                AbstractDeprecatedHighlightingTest.class,
-                testModel("idea/testData/highlighter/deprecated")
+                "HighlightingTestGenerated",
+                AbstractHighlightingTest.class,
+                testModel("idea/testData/highlighter")
         );
 
         generateTest(

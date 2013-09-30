@@ -15,3 +15,6 @@ fun test() {
 class Test(): <warning descr="'test.MyClass' is deprecated. Use A instead">MyClass</warning>() {}
 
 class Test2(param: <warning descr="'test.MyClass' is deprecated. Use A instead">MyClass</warning>) {}
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS

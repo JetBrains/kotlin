@@ -7,3 +7,6 @@ class MyClass(): Base() {
 open class Base() {
     fun test1() {}
 }
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS

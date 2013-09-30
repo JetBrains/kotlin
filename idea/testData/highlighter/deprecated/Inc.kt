@@ -9,3 +9,6 @@ fun test() {
     x3<warning descr="'fun inc()' is deprecated. Use A instead">++</warning>
     x3.i
 }
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS

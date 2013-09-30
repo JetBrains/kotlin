@@ -36,3 +36,6 @@ fun test() {
     x1 <warning descr="'fun equals(i: jet.Any?)' is deprecated. Use A instead">!=</warning> x2
     x1 <warning descr="'fun compareTo(i: MyClass)' is deprecated. Use A instead">></warning> x2
 }
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS
