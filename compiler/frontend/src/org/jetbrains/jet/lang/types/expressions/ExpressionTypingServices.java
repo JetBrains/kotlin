@@ -193,7 +193,7 @@ public class ExpressionTypingServices {
                 ? context.replaceExpectedType(NO_EXPECTED_TYPE)
                 : context;
 
-        expressionTypingFacade.getTypeInfo(bodyExpression, newContext, !blockBody);
+        expressionTypingFacade.getTypeInfo(bodyExpression, newContext, blockBody);
     }
 
     @NotNull
@@ -247,7 +247,7 @@ public class ExpressionTypingServices {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, ExpressionPosition.FREE
         );
-        JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, !function.hasBlockBody());
+        JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
         trace.record(STATEMENT, bodyExpression, false);
         JetType type = typeInfo.getType();

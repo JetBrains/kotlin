@@ -42,8 +42,8 @@ fun box() : Int {
 
 //More tests
 
-fun test1() = while(true) {}
-fun test2(): Unit = while(true) {}
+fun test1() { while(true) {} }
+fun test2(): Unit { while(true) {} }
 
 fun testCoercionToUnit() {
     val <!UNUSED_VARIABLE!>simple<!>: ()-> Unit = {

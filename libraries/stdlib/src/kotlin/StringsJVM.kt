@@ -253,7 +253,7 @@ public inline fun String.reverse(): String = StringBuilder(this).reverse().toStr
  *
  * @includeFunctionBody ../../test/StringTest.kt forEach
  */
-public inline fun String.forEach(operation: (Char) -> Unit): Unit = for(c in this) operation(c)
+public inline fun String.forEach(operation: (Char) -> Unit) { for(c in this) operation(c) }
 
 /**
  * Returns *true* if all characters match the given *predicate*

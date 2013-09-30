@@ -25,7 +25,7 @@ open class A(val init: String) {
 
     public var backingField : Int = 0
         get() = $backingField.myInc
-        set(s) = $backingField = s
+        set(s) { $backingField = s }
 
 }
 

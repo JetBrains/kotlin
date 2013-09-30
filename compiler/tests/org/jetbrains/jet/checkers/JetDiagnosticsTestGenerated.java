@@ -1557,6 +1557,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlStructures/ForWithoutBraces.kt");
             }
             
+            @TestMetadata("ForbidStatementAsDirectFunctionBody.kt")
+            public void testForbidStatementAsDirectFunctionBody() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlStructures/ForbidStatementAsDirectFunctionBody.kt");
+            }
+            
             @TestMetadata("kt1075.kt")
             public void testKt1075() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlStructures/kt1075.kt");
