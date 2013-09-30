@@ -266,17 +266,18 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         if (thisDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
             return Collections.emptySet();
         }
-        DelegationResolver.Callback<T> lazyResolveCallback = new DelegationResolver.Callback<T>() {
+        DelegationResolver.TypeResolver lazyTypeResolver = new DelegationResolver.TypeResolver() {
             @Nullable
             @Override
-            public JetType getTypeByTypeReference(@NotNull JetTypeReference reference) {
+            public JetType resolve(@NotNull JetTypeReference reference) {
                 return resolveSession.getInjector().getTypeResolver().resolveType(
                         thisDescriptor.getScopeForClassHeaderResolution(),
                         reference,
                         resolveSession.getTrace(),
                         false);
             }
-
+        };
+        DelegationResolver.MemberExtractor<T> lazyMemberExtractor = new DelegationResolver.MemberExtractor<T>() {
             @NotNull
             @Override
             public Collection<T> getMembersByType(@NotNull JetType type) {
@@ -285,7 +286,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         };
         JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
         assert classOrObject != null : "Should not be null for non class object class.";
-        return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, resolveSession.getTrace(), lazyResolveCallback);
+        return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, resolveSession.getTrace(), lazyMemberExtractor,
+                                        lazyTypeResolver);
     }
 
     @Override
