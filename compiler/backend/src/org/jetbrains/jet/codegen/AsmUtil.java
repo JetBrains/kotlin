@@ -47,6 +47,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
 
 public class AsmUtil {
     private static final Set<ClassDescriptor> PRIMITIVE_NUMBER_CLASSES = Sets.newHashSet(
@@ -81,14 +82,15 @@ public class AsmUtil {
     private static final String STUB_EXCEPTION_MESSAGE = "Stubs are for compiler only, do not add them to runtime classpath";
 
     private static final ImmutableMap<Integer, JvmPrimitiveType> primitiveTypeByAsmSort;
-    private static final ImmutableMap<Type, JvmPrimitiveType> primitiveTypeByBoxedType;
+    private static final ImmutableMap<Type, Type> primitiveTypeByBoxedType;
 
     static {
         ImmutableMap.Builder<Integer, JvmPrimitiveType> typeBySortBuilder = ImmutableMap.builder();
-        ImmutableMap.Builder<Type, JvmPrimitiveType> typeByWrapperBuilder = ImmutableMap.builder();
-        for (JvmPrimitiveType type : JvmPrimitiveType.values()) {
-            typeBySortBuilder.put(type.getAsmType().getSort(), type);
-            typeByWrapperBuilder.put(type.getWrapper().getAsmType(), type);
+        ImmutableMap.Builder<Type, Type> typeByWrapperBuilder = ImmutableMap.builder();
+        for (JvmPrimitiveType primitiveType : JvmPrimitiveType.values()) {
+            Type asmType = asmTypeForPrimitive(primitiveType);
+            typeBySortBuilder.put(asmType.getSort(), primitiveType);
+            typeByWrapperBuilder.put(primitiveType.getWrapper().getAsmType(), asmType);
         }
         primitiveTypeByAsmSort = typeBySortBuilder.build();
         primitiveTypeByBoxedType = typeByWrapperBuilder.build();
@@ -104,14 +106,12 @@ public class AsmUtil {
     }
 
     @NotNull
-    public static Type unboxType(@NotNull Type type) {
-        JvmPrimitiveType jvmPrimitiveType = primitiveTypeByBoxedType.get(type);
-        if (jvmPrimitiveType != null) {
-            return jvmPrimitiveType.getAsmType();
+    public static Type unboxType(@NotNull Type boxedType) {
+        Type primitiveType = primitiveTypeByBoxedType.get(boxedType);
+        if (primitiveType == null) {
+            throw new UnsupportedOperationException("Unboxing: " + boxedType);
         }
-        else {
-            throw new UnsupportedOperationException("Unboxing: " + type);
-        }
+        return primitiveType;
     }
 
     public static boolean isIntPrimitive(Type type) {

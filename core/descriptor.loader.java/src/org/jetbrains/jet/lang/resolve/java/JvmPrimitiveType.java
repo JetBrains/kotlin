@@ -16,30 +16,27 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 public enum JvmPrimitiveType {
-    BOOLEAN(PrimitiveType.BOOLEAN, "boolean", "java.lang.Boolean", Type.BOOLEAN_TYPE),
-    CHAR(PrimitiveType.CHAR, "char", "java.lang.Character", Type.CHAR_TYPE),
-    BYTE(PrimitiveType.BYTE, "byte", "java.lang.Byte", Type.BYTE_TYPE),
-    SHORT(PrimitiveType.SHORT, "short", "java.lang.Short", Type.SHORT_TYPE),
-    INT(PrimitiveType.INT, "int", "java.lang.Integer", Type.INT_TYPE),
-    FLOAT(PrimitiveType.FLOAT, "float", "java.lang.Float", Type.FLOAT_TYPE),
-    LONG(PrimitiveType.LONG, "long", "java.lang.Long", Type.LONG_TYPE),
-    DOUBLE(PrimitiveType.DOUBLE, "double", "java.lang.Double", Type.DOUBLE_TYPE),
+    BOOLEAN(PrimitiveType.BOOLEAN, "boolean", "java.lang.Boolean"),
+    CHAR(PrimitiveType.CHAR, "char", "java.lang.Character"),
+    BYTE(PrimitiveType.BYTE, "byte", "java.lang.Byte"),
+    SHORT(PrimitiveType.SHORT, "short", "java.lang.Short"),
+    INT(PrimitiveType.INT, "int", "java.lang.Integer"),
+    FLOAT(PrimitiveType.FLOAT, "float", "java.lang.Float"),
+    LONG(PrimitiveType.LONG, "long", "java.lang.Long"),
+    DOUBLE(PrimitiveType.DOUBLE, "double", "java.lang.Double"),
     ;
     
     private final PrimitiveType primitiveType;
     private final String name;
     private final JvmClassName wrapper;
-    private final Type asmType;
 
-    private JvmPrimitiveType(PrimitiveType primitiveType, String name, String wrapperClassName, Type asmType) {
+    private JvmPrimitiveType(PrimitiveType primitiveType, String name, String wrapperClassName) {
         this.primitiveType = primitiveType;
         this.name = name;
         this.wrapper = JvmClassName.byFqNameWithoutInnerClasses(wrapperClassName);
-        this.asmType = asmType;
     }
 
     public PrimitiveType getPrimitiveType() {
@@ -52,9 +49,5 @@ public enum JvmPrimitiveType {
 
     public JvmClassName getWrapper() {
         return wrapper;
-    }
-
-    public Type getAsmType() {
-        return asmType;
     }
 }

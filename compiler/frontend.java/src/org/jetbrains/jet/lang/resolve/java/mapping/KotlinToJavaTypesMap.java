@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
+
 public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     private static KotlinToJavaTypesMap instance = null;
 
@@ -56,7 +58,7 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
         FqName builtInsFqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            Type asmType = jvmPrimitiveType.getAsmType();
+            Type asmType = asmTypeForPrimitive(jvmPrimitiveType);
             FqName fqName = builtInsFqName.child(primitiveType.getTypeName());
 
             register(fqName, asmType);
