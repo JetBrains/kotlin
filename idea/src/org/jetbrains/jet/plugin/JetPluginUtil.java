@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager;
 
 import java.util.LinkedList;
 
@@ -150,11 +151,7 @@ public class JetPluginUtil {
     }
 
     public static boolean isGradleModule(@NotNull Module module) {
-        VirtualFile moduleFile = module.getModuleFile();
-        if (moduleFile == null) return false;
-
-        VirtualFile buildFile = moduleFile.getParent().findChild("build.gradle");
-        return buildFile != null && buildFile.exists();
+        return ModuleTypeCacheManager.object$.geInstance(module.getProject()).isGradleModule(module);
     }
 
     public static boolean isMavenModule(@NotNull Module module) {
