@@ -54,6 +54,7 @@ import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
@@ -318,7 +319,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         FqName srcFqName = facadeFqName.parent().child(Name.identifier(srcName));
 
-        return JvmClassName.byFqNameWithoutInnerClasses(srcFqName).getAsmType();
+        return asmTypeByFqNameWithoutInnerClasses(srcFqName);
     }
 
     @NotNull

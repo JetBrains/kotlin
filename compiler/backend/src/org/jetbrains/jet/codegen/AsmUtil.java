@@ -667,7 +667,7 @@ public class AsmUtil {
 
     @NotNull
     public static String asmDescByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
-        return "L" + JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName() + ';';
+        return asmTypeByFqNameWithoutInnerClasses(fqName).getDescriptor();
     }
 
     @NotNull
@@ -681,5 +681,10 @@ public class AsmUtil {
     @NotNull
     public static FqName fqNameByAsmTypeUnsafe(@NotNull Type asmType) {
         return JvmClassName.byInternalName(asmType.getInternalName()).getFqName();
+    }
+
+    @NotNull
+    public static Type asmTypeByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
+        return Type.getObjectType(JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName());
     }
 }
