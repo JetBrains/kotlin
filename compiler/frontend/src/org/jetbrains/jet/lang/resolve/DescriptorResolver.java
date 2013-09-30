@@ -1041,7 +1041,8 @@ public class DescriptorResolver {
             final JetExpression initializer = variable.getInitializer();
             if (initializer == null) {
                 if (hasDelegate && variableDescriptor instanceof PropertyDescriptor) {
-                    final JetExpression propertyDelegateExpression = ((JetProperty) variable).getDelegateExpression();
+                    final JetProperty property = (JetProperty) variable;
+                    final JetExpression propertyDelegateExpression = property.getDelegateExpression();
                     if (propertyDelegateExpression != null) {
                         return DeferredType.create(
                                 trace,
@@ -1050,7 +1051,7 @@ public class DescriptorResolver {
                                         new Function0<JetType>() {
                                             @Override
                                             public JetType invoke() {
-                                                return resolveDelegatedPropertyType((PropertyDescriptor) variableDescriptor, scope,
+                                                return resolveDelegatedPropertyType(property, (PropertyDescriptor) variableDescriptor, scope,
                                                                                     propertyDelegateExpression, dataFlowInfo, trace);
                                             }
                                         }));
@@ -1090,19 +1091,24 @@ public class DescriptorResolver {
 
     @NotNull
     private JetType resolveDelegatedPropertyType(
+            @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetScope scope,
             @NotNull JetExpression delegateExpression,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        JetType type = expressionTypingServices.safeGetType(scope, delegateExpression, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace);
-
         JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, this, trace);
-        JetType getterReturnType = delegatedPropertyResolver
-                .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, accessorScope);
-        if (getterReturnType != null) {
-            return getterReturnType;
+
+        JetType type = delegatedPropertyResolver.resolveDelegateExpression(
+                delegateExpression, property, propertyDescriptor, scope, accessorScope, trace, dataFlowInfo);
+
+        if (type != null) {
+            JetType getterReturnType = delegatedPropertyResolver
+                    .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, accessorScope);
+            if (getterReturnType != null) {
+                return getterReturnType;
+            }
         }
         return ErrorUtils.createErrorType("Type from delegate");
     }

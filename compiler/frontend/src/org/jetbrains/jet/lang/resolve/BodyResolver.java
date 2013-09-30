@@ -30,10 +30,6 @@ import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -44,7 +40,6 @@ import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -55,9 +50,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
-import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
@@ -531,24 +524,12 @@ public class BodyResolver {
 
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
                 propertyScope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
-        TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
         JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
                 propertyDescriptor, parentScopeForAccessor, descriptorResolver, trace);
 
-        JetExpression calleeExpression = JetPsiUtil.getCalleeExpressionIfAny(delegateExpression);
-        ConstraintSystemCompleter completer = delegatedPropertyResolver.createConstraintSystemCompleter(
-                jetProperty, propertyDescriptor, delegateExpression, accessorScope, trace);
-        if (calleeExpression != null) {
-            traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
-        }
-        JetType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
-                                                                    context.getOuterDataFlowInfo(), traceToResolveDelegatedProperty);
-        traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
-            @Override
-            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
-                return slice != CONSTRAINT_SYSTEM_COMPLETER;
-            }
-        }, true);
+        JetType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
+                delegateExpression, jetProperty, propertyDescriptor, propertyDeclarationInnerScope, accessorScope, trace,
+                context.getOuterDataFlowInfo());
 
         delegatedPropertyResolver.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
                                                                     trace, accessorScope);

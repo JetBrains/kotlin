@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.TraceEntryFilter;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -207,8 +209,36 @@ public class DelegatedPropertyResolver {
         return builder.toString();
     }
 
+    @Nullable
+    public JetType resolveDelegateExpression(
+            @NotNull JetExpression delegateExpression,
+            @NotNull JetProperty jetProperty,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetScope propertyDeclarationInnerScope,
+            @NotNull JetScope accessorScope,
+            @NotNull BindingTrace trace,
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
+        JetExpression calleeExpression = JetPsiUtil.getCalleeExpressionIfAny(delegateExpression);
+        ConstraintSystemCompleter completer = createConstraintSystemCompleter(
+                jetProperty, propertyDescriptor, delegateExpression, accessorScope, trace);
+        if (calleeExpression != null) {
+            traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
+        }
+        JetType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
+                                                                    dataFlowInfo, traceToResolveDelegatedProperty);
+        traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
+            @Override
+            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
+                return slice != CONSTRAINT_SYSTEM_COMPLETER;
+            }
+        }, true);
+        return delegateType;
+    }
+
     @NotNull
-    public ConstraintSystemCompleter createConstraintSystemCompleter(
+    private ConstraintSystemCompleter createConstraintSystemCompleter(
             @NotNull JetProperty property,
             @NotNull final PropertyDescriptor propertyDescriptor,
             @NotNull final JetExpression delegateExpression,

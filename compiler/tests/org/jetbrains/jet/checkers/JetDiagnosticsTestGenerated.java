@@ -2444,6 +2444,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/noErrorsForImplicitConstraints.kt");
                 }
                 
+                @TestMetadata("useCompleterWithoutExpectedType.kt")
+                public void testUseCompleterWithoutExpectedType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/useCompleterWithoutExpectedType.kt");
+                }
+                
                 @TestMetadata("useExpectedType.kt")
                 public void testUseExpectedType() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/useExpectedType.kt");
