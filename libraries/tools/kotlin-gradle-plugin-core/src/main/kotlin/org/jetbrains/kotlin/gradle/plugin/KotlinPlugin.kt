@@ -279,7 +279,7 @@ open class GradleUtils() {
             val configurationsContainer : ConfigurationContainer = project.getBuildscript().getConfigurations()
 
             val deps = coordinates.map { dependencyHandler.create(it) }
-            val configuration = configurationsContainer.detachedConfiguration(*deps.toArray(array<Dependency>()))
+            val configuration = configurationsContainer.detachedConfiguration(*deps.copyToArray())
 
             return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
         }

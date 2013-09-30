@@ -492,6 +492,16 @@ String.prototype.contains = function (s) {
         }
     };
 
+    Kotlin.copyToArray = function (collection) {
+        var array = [];
+        var it = collection.iterator();
+        while (it.hasNext()) {
+            array.push(it.next());
+        }
+
+        return array;
+    };
+
 
     Kotlin.StringBuilder = Kotlin.createClass(null,
         function () {

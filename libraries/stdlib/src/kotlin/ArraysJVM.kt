@@ -108,3 +108,6 @@ public inline fun ByteArray.toString(encoding: String): String = String(this, en
 public inline fun ByteArray.toString(): String = String(this)
 
 public inline fun ByteArray.toString(encoding: Charset) : String = String(this, encoding)
+
+[Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.copyToArray(): Array<T> =
+        throw UnsupportedOperationException()

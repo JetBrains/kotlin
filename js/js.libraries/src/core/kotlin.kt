@@ -24,3 +24,5 @@ public fun byteArray(vararg content : Byte): ByteArray          = js.noImpl
 
 public fun booleanArray(vararg content : Boolean): BooleanArray = js.noImpl
 
+library("copyToArray")
+public fun <reified T> Collection<T>.copyToArray(): Array<T> = js.noImpl
