@@ -26,7 +26,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -37,6 +37,7 @@ import java.net.URL;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.*;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
 
@@ -136,8 +137,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Class<?> generateNamespaceClass() {
-        JvmClassName name = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile()));
-        return generateClass(name.getFqName().asString());
+        FqName packageFqName = JetPsiUtil.getFQName(myFiles.getPsiFile());
+        return generateClass(getPackageClassFqName(packageFqName).asString());
     }
 
     @NotNull

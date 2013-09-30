@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -56,6 +55,7 @@ import java.util.List;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public class NamespaceCodegen extends MemberCodegen {
     @NotNull
@@ -87,7 +87,7 @@ public class NamespaceCodegen extends MemberCodegen {
             public void doSomething(@NotNull ClassBuilder v) {
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
-                              getJVMClassNameForKotlinNs(fqName).getInternalName(),
+                              JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName)).getInternalName(),
                               null,
                               //"jet/lang/Namespace",
                               "java/lang/Object",
@@ -183,7 +183,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (!generateSrcClass) return null;
 
-        Type namespacePartType = getNamespacePartType(PackageClassUtils.getPackageClassFqName(name), file);
+        Type namespacePartType = getNamespacePartType(getPackageClassFqName(name), file);
         ClassBuilder builder = state.getFactory().forNamespacePart(namespacePartType, file);
 
         builder.defineClass(file, V1_6,
@@ -309,16 +309,6 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    public static JvmClassName getJVMClassNameForKotlinNs(@NotNull FqName fqName) {
-        String packageClassName = PackageClassUtils.getPackageClassName(fqName);
-        if (fqName.isRoot()) {
-            return JvmClassName.byInternalName(packageClassName);
-        }
-
-        return JvmClassName.byFqNameWithoutInnerClasses(fqName.child(Name.identifier(packageClassName)));
-    }
-
-    @NotNull
     private static Type getNamespacePartType(@NotNull FqName facadeFqName, @NotNull PsiFile file) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
@@ -338,8 +328,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
     @NotNull
     public static String getNamespacePartInternalName(@NotNull JetFile file) {
-        FqName fqName = JetPsiUtil.getFQName(file);
-        JvmClassName namespaceJvmClassName = getJVMClassNameForKotlinNs(fqName);
-        return getNamespacePartType(namespaceJvmClassName.getFqName(), file).getInternalName();
+        FqName packageFqName = JetPsiUtil.getFQName(file);
+        return getNamespacePartType(getPackageClassFqName(packageFqName), file).getInternalName();
     }
 }

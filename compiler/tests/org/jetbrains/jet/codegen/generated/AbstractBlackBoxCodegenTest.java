@@ -26,7 +26,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -38,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.compileJava;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     public void doTest(@NotNull String filename) {
@@ -97,7 +97,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
         // If there are many files, the first of them should contain the 'box(): String' function
         JetFile firstFile = myFiles.getPsiFiles().get(0);
-        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(firstFile)).getFqName().asString();
+        String fqName = getPackageClassFqName(JetPsiUtil.getFQName(firstFile)).asString();
 
         try {
             Class<?> namespaceClass = loader.loadClass(fqName);

@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public final class ClassFileFactory extends GenerationStateAware {
     @NotNull private ClassBuilderFactory builderFactory;
@@ -111,7 +113,7 @@ public final class ClassFileFactory extends GenerationStateAware {
                 @NotNull
                 @Override
                 protected ClassBuilder createClassBuilder() {
-                    return newVisitor(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getAsmType(), files);
+                    return newVisitor(JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName)).getAsmType(), files);
                 }
             };
             codegen = new NamespaceCodegen(onDemand, fqName, state, files);
