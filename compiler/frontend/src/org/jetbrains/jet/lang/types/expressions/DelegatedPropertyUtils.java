@@ -66,13 +66,8 @@ public class DelegatedPropertyUtils {
     ) {
         resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace,
                                                  scope, true);
-        return getDelegateGetMethodReturnType(trace.getBindingContext(), propertyDescriptor);
-    }
-
-    @Nullable
-    private static JetType getDelegateGetMethodReturnType(@NotNull BindingContext context, @NotNull PropertyDescriptor descriptor) {
         ResolvedCall<FunctionDescriptor> resolvedCall =
-                context.get(DELEGATED_PROPERTY_RESOLVED_CALL, descriptor.getGetter());
+                trace.getBindingContext().get(DELEGATED_PROPERTY_RESOLVED_CALL, propertyDescriptor.getGetter());
         return resolvedCall != null ? resolvedCall.getResultingDescriptor().getReturnType() : null;
     }
 
@@ -84,9 +79,8 @@ public class DelegatedPropertyUtils {
             @NotNull BindingTrace trace,
             @NotNull JetScope scope
     ) {
-        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace,
-                                                 scope, true);
-        JetType returnType = getDelegateGetMethodReturnType(trace.getBindingContext(), propertyDescriptor);
+        JetType returnType = getDelegatedPropertyGetMethodReturnType(
+                propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace, scope);
         JetType propertyType = propertyDescriptor.getType();
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
