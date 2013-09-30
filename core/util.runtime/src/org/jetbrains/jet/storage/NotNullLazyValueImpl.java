@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.storage;
+package org.jetbrains.jet.storage;
 
-import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 
-public interface NotNullLazyValue<T> extends Computable<T> {
-    @Override
+public abstract class NotNullLazyValueImpl<T> extends NullableLazyValueImpl<T> implements NotNullLazyValue<T> {
+
     @NotNull
-    T compute();
+    @Override
+    public T compute() {
+        T result = super.compute();
+        assert result != null : "compute() returned null";
+        return result;
+    }
+
+    @NotNull
+    @Override
+    protected abstract T doCompute();
 }

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.storage;
+package org.jetbrains.jet.storage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public abstract class MemoizedFunctionToNotNullImpl<K, V> extends MemoizedFunctionToNullableImpl<K, V> implements MemoizedFunctionToNotNull<K, V> {
+public abstract class MemoizedFunctionToNotNullImpl<K, V> extends MemoizedFunctionToNullableImpl<K, V> implements
+                                                                                                       MemoizedFunctionToNotNull<K, V> {
 
     public MemoizedFunctionToNotNullImpl() {
     }

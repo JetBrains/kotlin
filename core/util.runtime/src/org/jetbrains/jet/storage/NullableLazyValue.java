@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.storage;
+package org.jetbrains.jet.storage;
 
-import com.intellij.util.Function;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.util.Computable;
+import org.jetbrains.annotations.Nullable;
 
-public interface MemoizedFunctionToNotNull<P, R> extends Function<P, R> {
+public interface NullableLazyValue<T> extends Computable<T> {
     @Override
-    @NotNull
-    R fun(P p);
+    @Nullable
+    T compute();
 }

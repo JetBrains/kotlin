@@ -14,21 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.storage;
+package org.jetbrains.jet.storage;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.jet.utils.WrappedValues;
 
-public abstract class NotNullLazyValueImpl<T> extends NullableLazyValueImpl<T> implements NotNullLazyValue<T> {
+public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
+    @Nullable
+    private Object value = null;
 
-    @NotNull
     @Override
     public T compute() {
-        T result = super.compute();
-        assert result != null : "compute() returned null";
-        return result;
+        Object _value = value;
+        if (_value != null) return WrappedValues.unescapeNull(_value);
+
+        T typedValue = doCompute();
+        value = WrappedValues.escapeNull(typedValue);
+
+        postCompute(typedValue);
+
+        return typedValue;
     }
 
-    @NotNull
-    @Override
     protected abstract T doCompute();
+
+    protected void postCompute(T value) {
+        // Doing something in post-compute helps prevent infinite recursion
+    }
 }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.storage;
+package org.jetbrains.jet.storage;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.storage.StorageManager;
+import com.intellij.util.Function;
+import org.jetbrains.annotations.Nullable;
 
-public interface LazyResolveStorageManager extends StorageManager {
-    @NotNull
-    BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);
+public interface MemoizedFunctionToNullable<P, R> extends Function<P, R> {
+    @Override
+    @Nullable
+    R fun(P p);
 }

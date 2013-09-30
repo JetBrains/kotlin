@@ -13,6 +13,7 @@
     <orderEntry type="library" name="annotations" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="runtime" />
+    <orderEntry type="module" module-name="util.runtime" />
   </component>
 </module>
 
