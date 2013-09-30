@@ -114,7 +114,7 @@ public class LockBasedStorageManager implements StorageManager {
         return new LockBasedLazyValue<T>(lock, computable) {
             @Override
             protected Object recursionDetected() {
-                return WrappedValues.escapeNull(onRecursiveCall);
+                return onRecursiveCall;
             }
         };
     }
@@ -141,13 +141,14 @@ public class LockBasedStorageManager implements StorageManager {
 
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
 
+        private static final Object NOT_COMPUTED = new Object();
         private static final Object COMPUTING = new Object();
 
         private final Object lock;
         private final Computable<T> computable;
 
         @Nullable
-        private volatile Object value = null;
+        private volatile Object value = NOT_COMPUTED;
 
         public LockBasedLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
             this.lock = lock;
@@ -157,23 +158,23 @@ public class LockBasedStorageManager implements StorageManager {
         @Override
         public T compute() {
             Object _value = value;
-            if (_value != null && _value != COMPUTING) return WrappedValues.unescapeExceptionOrNull(_value);
+            if (_value != NOT_COMPUTED && _value != COMPUTING) return WrappedValues.unescapeThrowable(_value);
 
             synchronized (lock) {
                 _value = value;
                 if (_value == COMPUTING) {
                     Object result = recursionDetected();
-                    if (result != null) {
-                        return WrappedValues.unescapeExceptionOrNull(result);
+                    if (result != NOT_COMPUTED) {
+                        return WrappedValues.unescapeThrowable(result);
                     }
                 }
 
-                if (_value != null) return WrappedValues.unescapeExceptionOrNull(_value);
+                if (_value != NOT_COMPUTED) return WrappedValues.unescapeThrowable(_value);
 
                 value = COMPUTING;
                 try {
                     T typedValue = computable.compute();
-                    value = WrappedValues.escapeNull(typedValue);
+                    value = typedValue;
                     postCompute(typedValue);
                     return typedValue;
                 }
@@ -185,7 +186,7 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         /**
-         * @return {@code null} to proceed, a wrapped value otherwise, see WrappedValues
+         * @return {@code NOT_COMPUTED} to proceed, a value or wrapped exception otherwise, see WrappedValues
          * @throws DO NOT throw exceptions from implementations of this method, instead return WrappedValues.escapeThrowable(exception)
          */
         @Nullable
