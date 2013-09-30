@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
+import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -46,6 +47,7 @@ public class InjectorForTests {
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
     private final AnnotationResolver annotationResolver;
+    private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final CallExpressionResolver callExpressionResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -65,12 +67,14 @@ public class InjectorForTests {
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
         this.annotationResolver = new AnnotationResolver();
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.callExpressionResolver = new CallExpressionResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
+        this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
@@ -94,6 +98,8 @@ public class InjectorForTests {
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
+
+        delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
+import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -81,6 +82,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
+    private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final ScriptBodyResolver scriptBodyResolver;
     
     public InjectorForTopDownAnalyzerForJs(
@@ -118,6 +120,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.scriptBodyResolver = new ScriptBodyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
@@ -138,6 +141,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.bodyResolver.setContext(topDownAnalysisContext);
         this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
         this.bodyResolver.setDeclarationsChecker(declarationsChecker);
+        this.bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.bodyResolver.setDescriptorResolver(descriptorResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
@@ -150,6 +154,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.declarationsChecker.setTrace(bindingTrace);
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
+        this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
@@ -218,6 +223,8 @@ public class InjectorForTopDownAnalyzerForJs {
         typeHierarchyResolver.setNamespaceFactory(namespaceFactory);
         typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
         typeHierarchyResolver.setTrace(bindingTrace);
+
+        delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
         scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);

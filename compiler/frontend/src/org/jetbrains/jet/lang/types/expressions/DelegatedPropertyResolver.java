@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import javax.inject.Inject;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -53,34 +54,39 @@ import static org.jetbrains.jet.lang.psi.JetPsiFactory.createSimpleName;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
 
-public class DelegatedPropertyUtils {
+public class DelegatedPropertyResolver {
+   
+    @NotNull
+    private ExpressionTypingServices expressionTypingServices;
+
+    @Inject
+    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
+        this.expressionTypingServices = expressionTypingServices;
+    }
 
     @Nullable
-    public static JetType getDelegatedPropertyGetMethodReturnType(
+    public JetType getDelegatedPropertyGetMethodReturnType(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
-            @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope
     ) {
-        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace,
-                                                 scope, true);
+        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, scope, true);
         ResolvedCall<FunctionDescriptor> resolvedCall =
                 trace.getBindingContext().get(DELEGATED_PROPERTY_RESOLVED_CALL, propertyDescriptor.getGetter());
         return resolvedCall != null ? resolvedCall.getResultingDescriptor().getReturnType() : null;
     }
 
-    public static void resolveDelegatedPropertyGetMethod(
+    public void resolveDelegatedPropertyGetMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
-            @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope
     ) {
         JetType returnType = getDelegatedPropertyGetMethodReturnType(
-                propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace, scope);
+                propertyDescriptor, delegateExpression, delegateType, trace, scope);
         JetType propertyType = propertyDescriptor.getType();
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
@@ -92,24 +98,21 @@ public class DelegatedPropertyUtils {
         }
     }
 
-    public static void resolveDelegatedPropertySetMethod(
+    public void resolveDelegatedPropertySetMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
-            @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope
     ) {
-        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace,
-                                                 scope, false);
+        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, scope, false);
     }
 
     /* Resolve get() or set() methods from delegate */
-    private static void resolveDelegatedPropertyConventionMethod(
+    private void resolveDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
-            @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             boolean isGet
@@ -120,7 +123,7 @@ public class DelegatedPropertyUtils {
         if (trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor) != null) return;
 
         OverloadResolutionResults<FunctionDescriptor> functionResults = getDelegatedPropertyConventionMethod(
-                propertyDescriptor, delegateExpression, delegateType, expressionTypingServices, trace, scope, isGet);
+                propertyDescriptor, delegateExpression, delegateType, trace, scope, isGet);
         Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor);
         assert call != null : "'getDelegatedPropertyConventionMethod' didn't record a call";
 
@@ -148,11 +151,10 @@ public class DelegatedPropertyUtils {
     }
 
     /* Resolve get() or set() methods from delegate */
-    public static OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
+    public OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
             @NotNull JetType delegateType,
-            @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             boolean isGet
@@ -191,7 +193,7 @@ public class DelegatedPropertyUtils {
         return context.resolveCallWithGivenName(call, fakeCalleeExpression, functionName);
     }
 
-    private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {
+    private String renderCall(@NotNull Call call, @NotNull BindingContext context) {
         JetExpression calleeExpression = call.getCalleeExpression();
         assert calleeExpression != null : "CalleeExpression should exists for fake call of convention method";
         StringBuilder builder = new StringBuilder(calleeExpression.getText());
@@ -204,8 +206,5 @@ public class DelegatedPropertyUtils {
         builder.append(Renderers.RENDER_COLLECTION_OF_TYPES.render(argumentTypes));
         builder.append(")");
         return builder.toString();
-    }
-
-    private DelegatedPropertyUtils() {
     }
 }

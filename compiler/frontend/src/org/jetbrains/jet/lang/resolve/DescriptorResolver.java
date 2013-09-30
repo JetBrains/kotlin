@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyUtils;
+import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -65,6 +65,8 @@ public class DescriptorResolver {
     private AnnotationResolver annotationResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
+    @NotNull
+    private DelegatedPropertyResolver delegatedPropertyResolver;
 
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
@@ -81,6 +83,10 @@ public class DescriptorResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
+    @Inject
+    public void setDelegatedPropertyResolver(@NotNull DelegatedPropertyResolver delegatedPropertyResolver) {
+        this.delegatedPropertyResolver = delegatedPropertyResolver;
+    }
 
     public void resolveMutableClassDescriptor(
             @NotNull JetClass classElement,
@@ -1093,9 +1099,8 @@ public class DescriptorResolver {
         JetType type = expressionTypingServices.safeGetType(scope, delegateExpression, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace);
 
         JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, this, trace);
-        JetType getterReturnType = DelegatedPropertyUtils
-                .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, expressionTypingServices, trace,
-                                                         accessorScope);
+        JetType getterReturnType = delegatedPropertyResolver
+                .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, accessorScope);
         if (getterReturnType != null) {
             return getterReturnType;
         }

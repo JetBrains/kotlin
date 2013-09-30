@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -48,6 +49,7 @@ public class InjectorForMacros {
     private final CandidateResolver candidateResolver;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
+    private final DelegatedPropertyResolver delegatedPropertyResolver;
     
     public InjectorForMacros(
         @NotNull Project project,
@@ -66,6 +68,7 @@ public class InjectorForMacros {
         this.candidateResolver = new CandidateResolver();
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
@@ -96,8 +99,11 @@ public class InjectorForMacros {
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
+        descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         descriptorResolver.setTypeResolver(typeResolver);
+
+        delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
     }
     

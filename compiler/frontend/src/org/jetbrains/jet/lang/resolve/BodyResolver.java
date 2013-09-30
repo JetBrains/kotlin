@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
-import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyUtils;
+import org.jetbrains.jet.lang.types.expressions.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -81,6 +81,8 @@ public class BodyResolver {
     private DeclarationsChecker declarationsChecker;
     @NotNull
     private AnnotationResolver annotationResolver;
+    @NotNull
+    private DelegatedPropertyResolver delegatedPropertyResolver;
 
     @Inject
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -130,6 +132,11 @@ public class BodyResolver {
     @Inject
     public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setDelegatedPropertyResolver(@NotNull DelegatedPropertyResolver delegatedPropertyResolver) {
+        this.delegatedPropertyResolver = delegatedPropertyResolver;
     }
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -543,12 +550,12 @@ public class BodyResolver {
             }
         }, true);
 
-        DelegatedPropertyUtils.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                 expressionTypingServices, trace, accessorScope);
+        delegatedPropertyResolver.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
+                                                                    trace, accessorScope);
 
         if (jetProperty.isVar()) {
-            DelegatedPropertyUtils.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                     expressionTypingServices, trace, accessorScope);
+            delegatedPropertyResolver.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
+                                                                        trace, accessorScope);
         }
     }
 
@@ -570,9 +577,8 @@ public class BodyResolver {
                 TemporaryBindingTrace traceToResolveConventionMethods =
                         TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods");
                 OverloadResolutionResults<FunctionDescriptor>
-                        getMethodResults = DelegatedPropertyUtils.getDelegatedPropertyConventionMethod(
-                        propertyDescriptor, delegateExpression, returnType, expressionTypingServices,
-                        traceToResolveConventionMethods, accessorScope, true);
+                        getMethodResults = delegatedPropertyResolver.getDelegatedPropertyConventionMethod(
+                        propertyDescriptor, delegateExpression, returnType,  traceToResolveConventionMethods, accessorScope, true);
 
                 if (conventionMethodFound(getMethodResults)) {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
@@ -585,9 +591,8 @@ public class BodyResolver {
                 if (!propertyDescriptor.isVar()) return;
 
                 OverloadResolutionResults<FunctionDescriptor> setMethodResults =
-                        DelegatedPropertyUtils.getDelegatedPropertyConventionMethod(
-                                propertyDescriptor, delegateExpression, returnType, expressionTypingServices,
-                                traceToResolveConventionMethods, accessorScope, false);
+                        delegatedPropertyResolver.getDelegatedPropertyConventionMethod(
+                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope, false);
 
                 if (conventionMethodFound(setMethodResults)) {
                     FunctionDescriptor descriptor = setMethodResults.getResultingDescriptor();
