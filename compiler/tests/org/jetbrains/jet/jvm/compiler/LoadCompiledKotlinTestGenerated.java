@@ -1054,6 +1054,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/prop/VarDelegationToTraitImpl.kt");
         }
         
+        @TestMetadata("VarWithDelegated.kt")
+        public void testVarWithDelegated() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/VarWithDelegated.kt");
+        }
+        
         @TestMetadata("compiler/testData/loadKotlin/prop/defaultAccessors")
         public static class DefaultAccessors extends AbstractLoadCompiledKotlinTest {
             public void testAllFilesPresentInDefaultAccessors() throws Exception {

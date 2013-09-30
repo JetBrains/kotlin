@@ -1056,6 +1056,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/prop/VarDelegationToTraitImpl.kt");
             }
             
+            @TestMetadata("VarWithDelegated.kt")
+            public void testVarWithDelegated() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/prop/VarWithDelegated.kt");
+            }
+            
             @TestMetadata("compiler/testData/loadKotlin/prop/defaultAccessors")
             public static class DefaultAccessors extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInDefaultAccessors() throws Exception {

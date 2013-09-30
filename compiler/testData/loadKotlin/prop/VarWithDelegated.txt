@@ -1,0 +1,14 @@
+package test
+
+internal final class A {
+    /*primary*/ public constructor A()
+    internal final var a: jet.Int
+        internal final fun <get-a>(): jet.Int
+        internal final fun <set-a>(/*0*/ <set-?>: jet.Int): jet.Unit
+}
+
+internal final class MyProperty</*0*/ T> {
+    /*primary*/ public constructor MyProperty</*0*/ T>()
+    internal final fun get(/*0*/ t: T, /*1*/ p: jet.PropertyMetadata): jet.Int
+    internal final fun set(/*0*/ t: T, /*1*/ p: jet.PropertyMetadata, /*2*/ i: jet.Int): jet.Unit
+}

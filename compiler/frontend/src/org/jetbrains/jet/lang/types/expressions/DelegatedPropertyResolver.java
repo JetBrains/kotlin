@@ -53,6 +53,7 @@ import static org.jetbrains.jet.lang.psi.JetPsiFactory.createExpression;
 import static org.jetbrains.jet.lang.psi.JetPsiFactory.createSimpleName;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType;
 
 public class DelegatedPropertyResolver {
@@ -270,6 +271,11 @@ public class DelegatedPropertyResolver {
                 }
                 if (!propertyDescriptor.isVar()) return;
 
+                // For the case: 'val v by d' (no declared type).
+                // When we add a constraint for 'set' method for delegated expression 'd' we use a type of the declared variable 'v'.
+                // But if the type isn't known yet, the constraint shouldn't be added (we try to infer the type of 'v' here as well).
+                if (propertyDescriptor.getReturnType() instanceof DeferredType) return;
+
                 OverloadResolutionResults<FunctionDescriptor> setMethodResults =
                         getDelegatedPropertyConventionMethod(
                                 propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope, false);
@@ -280,8 +286,10 @@ public class DelegatedPropertyResolver {
                     if (valueParameters.size() == 3) {
                         ValueParameterDescriptor valueParameterForThis = valueParameters.get(2);
 
-                        constraintSystem
-                                .addSubtypeConstraint(expectedType, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
+                        if (!noExpectedType(expectedType)) {
+                            constraintSystem.addSubtypeConstraint(
+                                    expectedType, valueParameterForThis.getType(), ConstraintPosition.FROM_COMPLETER);
+                        }
                         addConstraintForThisValue(constraintSystem, descriptor);
                     }
                 }
