@@ -41,7 +41,6 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @NotNull
-    @Override
     public VirtualFile getFile() {
         return file;
     }

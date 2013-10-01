@@ -16,16 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface KotlinJvmBinaryClass {
-    @NotNull
-    VirtualFile getFile();
-
     @NotNull
     JvmClassName getClassName();
 
