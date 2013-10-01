@@ -43,9 +43,7 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class PluginJetFilesProvider extends JetFilesProvider {
     private final Project project;
@@ -145,7 +143,9 @@ public class PluginJetFilesProvider extends JetFilesProvider {
                     }
                 });
 
-        return Sets.newHashSet(Collections2.filter(jetFiles, Predicates.<JetFile>notNull()));
+        return Collections.unmodifiableCollection(
+                Sets.newHashSet(Collections2.filter(jetFiles, Predicates.<JetFile>notNull()))
+        );
     }
 
     @Override
