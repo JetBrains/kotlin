@@ -9,4 +9,4 @@ val some = foo<caret>
 
 // ORDER: foo, fooVar, fooLocal, fooImported, fooNotImported
 // INVOCATION_COUNT: 2
-// SELECTED: 1
+// SELECTED: 0

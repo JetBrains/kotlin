@@ -16,4 +16,4 @@ class Test(val br2 = 12) {
 // "br" function is before other elements because of exact prefix match
 
 // ORDER: br, br4, br5, br1, br2, br3, break, brf
-// SELECTED: 1
+// SELECTED: 0
