@@ -17,6 +17,8 @@
 package org.jetbrains.jet.storage;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.WrappedValues;
 
 public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
     private static final Object NOT_COMPUTED = new Object();
@@ -27,14 +29,18 @@ public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
     @Override
     public T compute() {
         Object _value = value;
-        if (_value != NOT_COMPUTED) return (T) _value;
+        if (_value != NOT_COMPUTED) return WrappedValues.unescapeThrowable(_value);
 
-        T typedValue = doCompute();
-        value = typedValue;
-
-        postCompute(typedValue);
-
-        return typedValue;
+        try {
+            T typedValue = doCompute();
+            value = typedValue;
+            postCompute(typedValue);
+            return typedValue;
+        }
+        catch (Throwable e) {
+            value = WrappedValues.escapeThrowable(e);
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
     protected abstract T doCompute();
