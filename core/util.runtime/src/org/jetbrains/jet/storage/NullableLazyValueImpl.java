@@ -28,6 +28,10 @@ public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
     @Nullable
     private Object value = NOT_COMPUTED;
 
+    public boolean isComputed() {
+        return value != NOT_COMPUTED;
+    }
+
     @Override
     public T compute() {
         if (value == COMPUTING) {
