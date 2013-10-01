@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.jps.build;
 
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -49,21 +48,6 @@ public class KotlinSourceFileCollector {
             }
         });
         return sourceFiles;
-    }
-
-    // For incremental compilation
-    public static boolean hasDirtyFiles(DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder)
-            throws IOException {
-        final Ref<Boolean> result = Ref.create(false);
-
-        dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
-            @Override
-            public boolean apply(ModuleBuildTarget target, File file, JavaSourceRootDescriptor root) throws IOException {
-                result.set(true);
-                return false;
-            }
-        });
-        return result.get();
     }
 
     @NotNull
