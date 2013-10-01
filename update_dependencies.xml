@@ -127,6 +127,9 @@
 
         <!-- Protocol Buffers -->
         <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.4.1" bin="false"/>
+
+        <!-- CLI Parser -->
+        <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.1"/>
     </target>
 
     <macrodef name="get-asm4-and-rename-packages">
