@@ -17,20 +17,20 @@
 package org.jetbrains.jet.storage;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.storage.NullableLazyValue;
-import org.jetbrains.jet.utils.WrappedValues;
 
 public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
+    private static final Object NOT_COMPUTED = new Object();
+
     @Nullable
-    private Object value = null;
+    private Object value = NOT_COMPUTED;
 
     @Override
     public T compute() {
         Object _value = value;
-        if (_value != null) return WrappedValues.unescapeNull(_value);
+        if (_value != NOT_COMPUTED) return (T) _value;
 
         T typedValue = doCompute();
-        value = WrappedValues.escapeNull(typedValue);
+        value = typedValue;
 
         postCompute(typedValue);
 
