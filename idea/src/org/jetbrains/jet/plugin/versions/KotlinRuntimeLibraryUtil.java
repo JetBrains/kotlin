@@ -234,9 +234,13 @@ public class KotlinRuntimeLibraryUtil {
         if (kotlinLibrary == null) return null;
 
         VirtualFile[] kotlinSourceFiles = kotlinLibrary.getFiles(OrderRootType.SOURCES);
-        if (kotlinSourceFiles.length < 1) return null;
 
-        return kotlinSourceFiles[0];
+        for (VirtualFile sourceFile : kotlinSourceFiles) {
+            if (sourceFile.getName().equals(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR)) {
+                return sourceFile;
+            }
+        }
+        return null;
     }
 
     @Nullable
