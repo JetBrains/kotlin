@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.RecursionIntolerantLazyValueWithDefault;
+import org.jetbrains.jet.storage.NotNullLazyValueWithDefault;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -66,9 +66,10 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
                 if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                    JetType defaultType = DeferredType.create(context.trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
+                    JetType defaultType = DeferredType.create(context.trace, new NotNullLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
+                        @NotNull
                         @Override
-                        protected JetType compute() {
+                        protected JetType doCompute() {
                             return descriptor.getDefaultType();
                         }
                     });

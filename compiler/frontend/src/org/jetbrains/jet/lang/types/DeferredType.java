@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 import org.jetbrains.jet.util.Box;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
 import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
 
 import java.util.List;
@@ -30,15 +30,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 
 public class DeferredType implements JetType {
     
-    public static DeferredType create(BindingTrace trace, RecursionIntolerantLazyValue<JetType> lazyValue) {
+    public static DeferredType create(BindingTrace trace, NotNullLazyValueImpl<JetType> lazyValue) {
         DeferredType deferredType = new DeferredType(lazyValue);
         trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
         return deferredType;
     }
     
-    private final RecursionIntolerantLazyValue<JetType> lazyValue;
+    private final NotNullLazyValueImpl<JetType> lazyValue;
 
-    private DeferredType(RecursionIntolerantLazyValue<JetType> lazyValue) {
+    private DeferredType(NotNullLazyValueImpl<JetType> lazyValue) {
         this.lazyValue = lazyValue;
     }
 
@@ -48,7 +48,7 @@ public class DeferredType implements JetType {
 
     @NotNull
     public JetType getActualType() {
-        return lazyValue.get();
+        return lazyValue.compute();
     }
 
     @Override

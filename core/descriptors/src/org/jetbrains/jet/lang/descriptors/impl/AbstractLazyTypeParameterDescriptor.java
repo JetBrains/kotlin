@@ -23,8 +23,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
@@ -32,7 +30,9 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValueImpl;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -198,9 +198,10 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
 
     @NotNull
     private JetType createDefaultType() {
-        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
+        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new NotNullLazyValueImpl<JetScope>() {
+                        @NotNull
                         @Override
-                        protected JetScope compute() {
+                        protected JetScope doCompute() {
                             return getUpperBoundsAsType().getMemberScope();
                         }
                     }));

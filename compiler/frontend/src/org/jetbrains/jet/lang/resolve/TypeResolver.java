@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -239,9 +239,10 @@ public class TypeResolver {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
         else {
-            return new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
+            return new LazyScopeAdapter(new NotNullLazyValueImpl<JetScope>() {
+                @NotNull
                 @Override
-                protected JetScope compute() {
+                protected JetScope doCompute() {
                     return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
                 }
             });

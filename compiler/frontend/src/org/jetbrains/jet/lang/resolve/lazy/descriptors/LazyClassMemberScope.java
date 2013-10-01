@@ -29,13 +29,13 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.jet.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValueImpl;
+import org.jetbrains.jet.storage.NullableLazyValue;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -378,9 +378,10 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
-        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new RecursionIntolerantLazyValue<JetType>() {
+        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new NotNullLazyValueImpl<JetType>() {
+            @NotNull
             @Override
-            protected JetType compute() {
+            protected JetType doCompute() {
                 return thisDescriptor.getDefaultType();
             }
         }));

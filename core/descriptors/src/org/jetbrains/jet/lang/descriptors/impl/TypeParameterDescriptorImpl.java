@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -222,9 +222,10 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
                             getTypeConstructor(),
                             TypeUtils.hasNullableLowerBound(this),
                             Collections.<TypeProjection>emptyList(),
-                            new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
+                            new LazyScopeAdapter(new NotNullLazyValueImpl<JetScope>() {
+                                @NotNull
                                 @Override
-                                protected JetScope compute() {
+                                protected JetScope doCompute() {
                                     return getUpperBoundsAsType().getMemberScope();
                                 }
                             }));
