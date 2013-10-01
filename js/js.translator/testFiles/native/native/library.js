@@ -17,9 +17,8 @@
 (function () {
     var c = 0;
 
-    Kotlin.A = Kotlin.$createClass(
-        {
-            initialize:function () {
+    Kotlin.A = Kotlin.createClass(null,
+            function () {
                 this.f = function(i) {
                     if (i === undefined && c === 0) {
                         c = 1;
@@ -29,7 +28,7 @@
                     }
                 }
             }
-        });
+        );
     Kotlin.getResult = function () {
         return c === 2;
     };

@@ -73,7 +73,7 @@ public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
     }
 
     public void runTestFile(@NotNull String pathToTestFile) throws Exception {
-        Iterable<EcmaVersion> versions = failOnEcma5();
+        Iterable<EcmaVersion> versions = DEFAULT_ECMA_VERSIONS;
         String testName = pathToTestFile.substring(pathToTestFile.lastIndexOf("/"));
         generateJavaScriptFiles(Lists.newArrayList(pathToTestFile), testName, MainCallParameters.noCall(), versions,
                                 TestConfigWithUnitTests.FACTORY);

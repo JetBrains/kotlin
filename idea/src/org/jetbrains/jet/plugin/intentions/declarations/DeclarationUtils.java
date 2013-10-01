@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
@@ -93,7 +92,7 @@ public class DeclarationUtils {
                 property.getInitializer()
         );
 
-        return type == null || ErrorUtils.isErrorType(type) ? null : type;
+        return type == null || type.isError() ? null : type;
     }
 
     // returns assignment which replaces initializer

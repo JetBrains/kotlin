@@ -2,6 +2,8 @@
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
+    <!-- Set to false to disable compiler's @NotNull assertions. Speeds up the build -->
+    <property name="generate.assertions" value="true"/>
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
     <property name="generate.javadoc" value="true"/>
 
@@ -12,6 +14,8 @@
     <property name="output.name" value="kotlin-compiler-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
 
+    <property name="java.target" value="1.6"/>
+
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${idea.sdk}" includes="lib/protobuf-2.4.1.jar"/>
@@ -19,11 +23,31 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jline.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jansi.jar"/>
+        <fileset dir="${basedir}/dependencies" includes="cli-parser-1.1.1.jar"/>
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+
+    <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
+    <if>
+      <istrue value="${generate.assertions}"/>
+      <then>
+        <path id="javac2.classpath">
+          <pathelement location="${idea.sdk}/lib/javac2.jar"/>
+          <pathelement location="${idea.sdk}/lib/jetbrains-asm-debug-all-4.0.jar"/>
+        </path>
+        <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+        <echo message="Use javac2 from Idea lib"/>
+      </then>
+      <else>
+        <echo message="Use default javac compiler"/>
+      </else>
+    </if>
+
     <dirset id="compilerSources.dirset" dir="${basedir}/">
         <include name="compiler/frontend/src"/>
+        <include name="core/descriptors/src"/>
         <include name="compiler/frontend/serialization/src"/>
         <include name="core/descriptor.loader.java/src"/>
         <include name="compiler/frontend.java/src"/>
@@ -32,6 +56,7 @@
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/util/src"/>
+        <include name="core/util.runtime/src"/>
         <!--<include name="j2k/src"/>-->
         <include name="compiler/jet.as.java.psi/src"/>
 
@@ -43,6 +68,7 @@
     <property name="idea.out" value="${basedir}/out/production"/>
     <patternset id="compilerClassesFromIDEA.fileset">
         <include name="frontend/**"/>
+        <include name="descriptors/**"/>
         <include name="serialization/**"/>
         <include name="descriptor.loader.java/**"/>
         <include name="frontend.java/**"/>
@@ -51,6 +77,7 @@
         <include name="cli/**"/>
         <include name="cli-common/**"/>
         <include name="util/**"/>
+        <include name="util.runtime/**"/>
         <include name="jet.as.java.psi/**"/>
 
         <include name="runtime/**"/>
@@ -101,41 +128,18 @@
         <chmod dir="${kotlin-home}/bin" includes="*" perm="755"/>
     </target>
 
-    <target name="compileGenerators">
-        <cleandir dir="${output}/classes/generators"/>
-        <javac destdir="${output}/classes/generators" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-            <src path="injector-generator/src"/>
-            <src path="generators/org/jetbrains/jet/generators/injectors"/>
-            <src path="generators/org/jetbrains/jet/generators/jvm"/>
-            <src refid="compilerSources.path"/>
-            <classpath refid="classpath"/>
-        </javac>
-        <copy todir="${output}/classes/generators">
-            <fileset dir="compiler/frontend/builtins" includes="jet/**"/>
-        </copy>
-    </target>
-
-    <target name="invokeGenerators" depends="compileGenerators">
-        <java classname="org.jetbrains.jet.generators.injectors.GenerateInjectors" failonerror="true">
-            <classpath refid="classpath"/>
-            <classpath path="${output}/classes/generators"/>
-        </java>
-        <java classname="org.jetbrains.jet.generators.jvm.GenerateJavaToKotlinMethodMap" failonerror="true">
-            <classpath refid="classpath"/>
-            <classpath path="${output}/classes/generators"/>
-        </java>
-    </target>
-
     <target name="compilerSources">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
             <fileset dir="compiler/frontend/src"/>
+            <fileset dir="core/descriptors/src"/>
             <fileset dir="core/descriptor.loader.java/src"/>
             <fileset dir="compiler/frontend.java/src"/>
             <fileset dir="compiler/backend/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="j2k/src"/>
             <fileset dir="compiler/util/src"/>
+            <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/jet.as.java.psi/src"/>
             <fileset dir="runtime/src"/>
             <fileset dir="js/js.translator/src"/>
@@ -150,7 +154,7 @@
             </manifest>
         </jar>
 
-        <if>
+      <if>
             <istrue value="${generate.javadoc}"/>
 
             <then>
@@ -224,60 +228,41 @@
             <arg value="--js"/>
             <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
             <arg value="--js_output_file"/>
-            <arg value="${kotlin-home}/lib/kotlinEcma5.js"/>
-        </java>
-        <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
-            <classpath>
-                <pathelement location="${basedir}/js/js.tests/testLib/closure-compiler.jar"/>
-            </classpath>
-            <arg value="--formatting"/>
-            <arg value="PRETTY_PRINT"/>
-            <arg value="--language_in"/>
-            <arg value="ECMASCRIPT3"/>
-            <arg value="--compilation_level"/>
-            <arg value="SIMPLE_OPTIMIZATIONS"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma3.js"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
-            <arg value="--js_output_file"/>
-            <arg value="${kotlin-home}/lib/kotlinEcma3.js"/>
+            <arg value="${kotlin-home}/lib/kotlin.js"/>
         </java>
     </target>
 
     <target name="preloader">
       <cleandir dir="${output}/classes/preloader"/>
-      <javac destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+      <javac2 destdir="${output}/classes/preloader" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
           <src refid="preloaderSources.path"/>
-      </javac>
-  
+      </javac2>
+
       <jar jarfile="${kotlin-home}/lib/kotlin-preloader.jar">
           <fileset dir="${output}/classes/preloader"/>
-  
+
           <manifest>
               <attribute name="Built-By" value="JetBrains"/>
-  
+
               <attribute name="Implementation-Vendor" value="JetBrains"/>
               <attribute name="Implementation-Title" value="Kotlin Preloader"/>
               <attribute name="Implementation-Version" value="${build.number}"/>
-  
+
               <attribute name="Main-Class" value="org.jetbrains.jet.preloading.Preloader"/>
           </manifest>
       </jar>
     </target>
-  
+
     <macrodef name="pack_compiler">
         <attribute name="jarfile"/>
         <attribute name="compress" default="true"/>
-  
+
         <sequential>
           <jar jarfile="@{jarfile}" compress="@{compress}">
               <fileset dir="${output}/classes/compiler"/>
               <fileset dir="${basedir}/compiler/frontend/builtins" includes="jet/**"/>
               <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
-  
+
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
@@ -285,14 +270,15 @@
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.4.1.jar"/>
               <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
+              <zipgroupfileset dir="${basedir}/dependencies" includes="cli-parser-1.1.1.jar"/>
 
               <manifest>
                   <attribute name="Built-By" value="JetBrains"/>
-  
+
                   <attribute name="Implementation-Vendor" value="JetBrains"/>
                   <attribute name="Implementation-Title" value="Kotlin Compiler"/>
                   <attribute name="Implementation-Version" value="${build.number}"/>
-  
+
                   <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
               </manifest>
           </jar>
@@ -314,13 +300,12 @@
 
     <target name="compiler">
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
         <cleandir dir="${output}/classes/compiler"/>
-        <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"  target="${java.target}">
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
-        </javac>
+        </javac2>
 
         <pack_compiler jarfile="${output}/kotlin-compiler-before-shrink.jar"/>
 
@@ -425,7 +410,7 @@
 
     <target name="antTools">
         <cleandir dir="${output}/classes/buildTools"/>
-        <javac destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac2 destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src>
                 <dirset dir="${basedir}/build-tools">
                     <include name="core/src"/>
@@ -437,7 +422,7 @@
                 <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
                 <fileset dir="${basedir}/dependencies" includes="ant.jar"/>
             </classpath>
-        </javac>
+        </javac2>
 
         <jar destfile="${kotlin-home}/lib/kotlin-ant.jar">
             <fileset dir="${output}/classes/buildTools"/>
@@ -492,9 +477,9 @@
     <target name="annotationsExt">
         <cleandir dir="${output}/classes/annotations-ext"/>
 
-        <javac destdir="${output}/classes/annotations-ext" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac2 destdir="${output}/classes/annotations-ext" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src path="${basedir}/compiler/annotations-ext/src"/>
-        </javac>
+        </javac2>
 
         <jar destfile="${kotlin-home}/lib/kotlin-annotations-ext.jar">
             <fileset dir="${output}/classes/annotations-ext"/>
@@ -512,9 +497,9 @@
 
     <target name="runtime">
         <cleandir dir="${output}/classes/runtime"/>
-        <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac2 destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src path="${basedir}/runtime/src"/>
-        </javac>
+        </javac2>
 
         <cleandir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
@@ -534,8 +519,6 @@
         <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>
-            <fileset dir="${basedir}/runtime" includes="src/**/*"/>
-            <fileset dir="${basedir}/libraries/stdlib" includes="src/**/*"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
@@ -548,15 +531,31 @@
         </jar>
     </target>
 
+    <target name="runtime_sources">
+        <jar destfile="${kotlin-home}/lib/kotlin-runtime-sources.jar">
+            <fileset dir="${basedir}/runtime/src" includes="**/*"/>
+            <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler Runtime + StdLib Sources"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
+    </target>
+
     <target name="j2kConverter">
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
         <cleandir dir="${output}/classes/j2k"/>
 
-        <javac destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+        <javac2 destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
             <src path="${basedir}/j2k/src"/>
             <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-        </javac>
+        </javac2>
 
         <jar jarfile="${kotlin-home}/lib/tools/j2k.jar">
             <fileset dir="${output}/classes/j2k" includes="org/jetbrains/jet/j2k/**"/>
@@ -575,11 +574,11 @@
 
     <!-- builds redistributables from sources -->
     <target name="dist"
-            depends="clean,init,prepareDist,compileGenerators,invokeGenerators,preloader,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,preloader,compiler,compilerSources,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,runtime_sources,jslib,j2kConverter"/>
 
     <!-- builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc -->
     <target name="dist_quick"
-            depends="clean,init,prepareDist,preloader,compiler_quick,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,jslib,j2kConverter"/>
+            depends="clean,init,prepareDist,preloader,compiler_quick,antTools,jdkAnnotations,androidSdkAnnotations,annotationsExt,runtime,runtime_sources,jslib,j2kConverter"/>
 
     <!-- builds compiler jar from project out dir -->
     <target name="dist_quick_compiler_only"

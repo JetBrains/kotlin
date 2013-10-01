@@ -20,13 +20,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 
 public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
-    public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, Name name) {
+
+    private final JetExpression expression;
+
+    public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, Name name, JetExpression expression) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name, Kind.DECLARATION);
+        this.expression = expression;
     }
 
     @Override
@@ -38,5 +43,9 @@ public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
     @Override
     public FunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
         throw new IllegalStateException();
+    }
+
+    public JetExpression getExpression() {
+        return expression;
     }
 }

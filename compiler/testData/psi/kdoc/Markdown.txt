@@ -1,4 +1,4 @@
-JetFile: Markdown.jet
+JetFile: Markdown.kt
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n ')

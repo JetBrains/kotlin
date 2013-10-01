@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JetAnnotatedExpression extends JetExpressionImpl {
+public class JetAnnotatedExpression extends JetExpressionImpl implements JetAnnotated {
     public JetAnnotatedExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -45,13 +45,17 @@ public class JetAnnotatedExpression extends JetExpressionImpl {
         return findChildByClass(JetExpression.class);
     }
 
-    public List<JetAnnotation> getAttributeAnnotations() {
+    @Override
+    @NotNull
+    public List<JetAnnotation> getAnnotations() {
         return findChildrenByType(JetNodeTypes.ANNOTATION);
     }
 
-    public List<JetAnnotationEntry> getAttributes() {
+    @Override
+    @NotNull
+    public List<JetAnnotationEntry> getAnnotationEntries() {
         List<JetAnnotationEntry> answer = null;
-        for (JetAnnotation annotation : getAttributeAnnotations()) {
+        for (JetAnnotation annotation : getAnnotations()) {
             if (answer == null) answer = new ArrayList<JetAnnotationEntry>();
             answer.addAll(annotation.getEntries());
         }

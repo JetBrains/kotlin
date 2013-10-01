@@ -22,18 +22,33 @@ import com.intellij.ide.actions.CreateFileFromTemplateDialog;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.util.PlatformIcons;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
+
+import java.util.Map;
 
 public class NewKotlinFileAction extends CreateFileFromTemplateAction {
     public NewKotlinFileAction() {
         super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file", JetFileType.INSTANCE.getIcon());
+    }
+
+    @Override
+    protected void postProcess(PsiFile createdElement, String templateName, Map<String, String> customProperties) {
+        super.postProcess(createdElement, templateName, customProperties);
+
+        Module module = ModuleUtilCore.findModuleForPsiElement(createdElement);
+        if (module != null) {
+            ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(module);
+        }
     }
 
     @Override

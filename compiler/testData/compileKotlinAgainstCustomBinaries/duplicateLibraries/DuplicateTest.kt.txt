@@ -1,5 +1,8 @@
 package testing
 
+// To regenerate this test, run CompileBinaryTestData.kt
+// Or manually, compile this file into DuplicateLibTest-1.jar and copy it to DuplicateLibTest-2.jar
+
 object TopLevelObject
 
 class Outer {

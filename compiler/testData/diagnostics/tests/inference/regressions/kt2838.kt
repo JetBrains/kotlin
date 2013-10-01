@@ -6,7 +6,7 @@ fun bar<T>(a: T, b: Map<T, String>) = b.get(a)
 
 fun test(a: Int) {
     foo(a, null)
-    bar(a, <!ERROR_COMPILE_TIME_VALUE!>null<!>)
+    bar(a, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
 fun test1(a: Int) {
     <!UNREACHABLE_CODE!>foo(a, throw Exception())<!>

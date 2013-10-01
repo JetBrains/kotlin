@@ -1,4 +1,4 @@
-JetFile: BinaryHeap.jet
+JetFile: BinaryHeap.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

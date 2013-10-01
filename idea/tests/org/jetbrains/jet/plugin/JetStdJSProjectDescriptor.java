@@ -25,10 +25,9 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.jet.plugin.framework.JSLibraryCreateOptions;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.framework.JSLibraryStdDescription;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
-import org.jetbrains.jet.utils.PathUtil;
 
 public class JetStdJSProjectDescriptor implements LightProjectDescriptor {
     public static final JetStdJSProjectDescriptor INSTANCE = new JetStdJSProjectDescriptor();
@@ -44,9 +43,8 @@ public class JetStdJSProjectDescriptor implements LightProjectDescriptor {
     }
 
     @Override
-    public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
-        NewLibraryConfiguration configuration = new JSLibraryStdDescription().createNewLibrary(
-                null, PathUtil.getKotlinPathsForDistDirectory(), JSLibraryCreateOptions.DEFAULT);
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, ContentEntry contentEntry) {
+        NewLibraryConfiguration configuration = new JSLibraryStdDescription().createNewLibraryForTests();
 
         assert configuration != null : "Configuration should exist";
 

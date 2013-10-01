@@ -34,13 +34,13 @@ import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 @InnerTestClasses({JetFindUsagesTest.FindClassUsages.class, JetFindUsagesTest.FindMethodUsages.class, JetFindUsagesTest.FindObjectUsages.class, JetFindUsagesTest.FindPropertyUsages.class, JetFindUsagesTest.FindWithFilteringImports.class, JetFindUsagesTest.UnresolvedAnnotation.class})
 public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
     public void testAllFilesPresentInFindUsages() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages"), Pattern.compile("^(.+).0.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
     }
     
     @TestMetadata("idea/testData/findUsages/findClassUsages")
     public static class FindClassUsages extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInFindClassUsages() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findClassUsages"), Pattern.compile("^(.+).0.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findClassUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
         }
         
         @TestMetadata("javaClassAllUsages.0.kt")
@@ -168,7 +168,7 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/findMethodUsages")
     public static class FindMethodUsages extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInFindMethodUsages() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findMethodUsages"), Pattern.compile("^(.+).0.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findMethodUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
         }
         
         @TestMetadata("javaAndKotlinOverrides.0.kt")
@@ -191,12 +191,17 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findMethodUsages/kotlinOverloadAndExtensionUsages.0.kt");
         }
         
+        @TestMetadata("kotlinTopLevelMethodUsages.0.kt")
+        public void testKotlinTopLevelMethodUsages() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinTopLevelMethodUsages.0.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/findUsages/findObjectUsages")
     public static class FindObjectUsages extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInFindObjectUsages() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findObjectUsages"), Pattern.compile("^(.+).0.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findObjectUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
         }
         
         @TestMetadata("javaObjectUsages.0.kt")
@@ -214,7 +219,7 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/findPropertyUsages")
     public static class FindPropertyUsages extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInFindPropertyUsages() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findPropertyUsages"), Pattern.compile("^(.+).0.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findPropertyUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
         }
         
         @TestMetadata("javaPropertyUsages.0.kt")
@@ -232,7 +237,7 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/findWithFilteringImports")
     public static class FindWithFilteringImports extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInFindWithFilteringImports() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findWithFilteringImports"), Pattern.compile("^(.+).0.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/findWithFilteringImports"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
         }
         
         @TestMetadata("findWithFilteringImports.0.kt")
@@ -245,7 +250,7 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/unresolvedAnnotation")
     public static class UnresolvedAnnotation extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInUnresolvedAnnotation() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/unresolvedAnnotation"), Pattern.compile("^(.+).0.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/unresolvedAnnotation"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
         }
         
         @TestMetadata("unresolvedAnnotation.0.kt")

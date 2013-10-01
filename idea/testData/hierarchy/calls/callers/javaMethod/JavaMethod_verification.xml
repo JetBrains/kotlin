@@ -1,0 +1,7 @@
+<node text="KA.foo(String)  ()" base="true">
+  <node text="KClient.bar()  ()"/>
+  <node text="KClient.getBar()  ()"/>
+  <node text="KClient(2 usages)  ()"/>
+  <node text="JA.foo()  ()"/>
+  <node text="JA  ()"/>
+</node>

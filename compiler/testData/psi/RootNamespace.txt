@@ -1,4 +1,4 @@
-JetFile: RootNamespace.jet
+JetFile: RootNamespace.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

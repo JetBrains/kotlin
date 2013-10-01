@@ -19,20 +19,6 @@ package org.jetbrains.jet.plugin.framework;
 import org.jetbrains.annotations.Nullable;
 
 public interface JSLibraryCreateOptions {
-    JSLibraryCreateOptions DEFAULT = new JSLibraryCreateOptions() {
-        @Nullable
-        @Override
-        public String getCopyJsIntoPath() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public String getCopyLibraryIntoPath() {
-            return null;
-        }
-    };
-
     @Nullable
     String getCopyJsIntoPath();
 

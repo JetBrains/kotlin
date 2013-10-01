@@ -216,6 +216,9 @@ public final class K2JSCompiler implements TranslatingCompiler {
             args.add("-target");
             args.add(libLocationAndTarget.second);
         }
+
+        //TODO drop later
+        args.add("-sourcemap");
     }
 
     private static void addPathToSourcesDir(@NotNull VirtualFile[] sourceFiles, @NotNull ArrayList<String> args) {

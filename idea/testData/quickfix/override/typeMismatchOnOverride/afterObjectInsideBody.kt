@@ -1,5 +1,5 @@
 // "Change 'prop' type to 'Int'" "true"
-// ERROR: Null can not be a value of a non-null type Int
+// ERROR: Null can not be a value of a non-null type jet.Int
 trait Test<T> {
     val prop : T
 }

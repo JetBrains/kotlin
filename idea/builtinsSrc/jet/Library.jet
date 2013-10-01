@@ -6,6 +6,7 @@ public annotation class volatile : Annotation
 public annotation class atomic : Annotation
 public annotation class data : Annotation
 public annotation class deprecated(value: String) : Annotation
+public annotation class suppress(vararg names: String)
 
 public fun <R> synchronized(lock: Any, block : () -> R) : R
 

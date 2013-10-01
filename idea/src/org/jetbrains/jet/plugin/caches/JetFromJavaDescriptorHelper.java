@@ -29,7 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -102,15 +103,31 @@ public class JetFromJavaDescriptorHelper {
     @Nullable
     private static ClassData getClassData(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
-        if (virtualFile == null) return null;
-        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile).readClassData();
+        if (virtualFile != null) {
+            KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
+            if (header instanceof SerializedDataHeader) {
+                String[] data = ((SerializedDataHeader) header).getAnnotationData();
+                if (data != null) {
+                    return JavaProtoBufUtil.readClassDataFrom(data);
+                }
+            }
+        }
+        return null;
     }
 
     @Nullable
     private static PackageData getPackageData(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
-        if (virtualFile == null) return null;
-        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile).readPackageData();
+        if (virtualFile != null) {
+            KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
+            if (header instanceof SerializedDataHeader) {
+                String[] data = ((SerializedDataHeader) header).getAnnotationData();
+                if (data != null) {
+                    return JavaProtoBufUtil.readPackageDataFrom(data);
+                }
+            }
+        }
+        return null;
     }
 
     //TODO: common utility

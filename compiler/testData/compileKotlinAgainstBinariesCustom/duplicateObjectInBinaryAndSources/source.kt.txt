@@ -1,0 +1,6 @@
+package test
+
+// To regenerate this test, run CompileBinaryTestData.kt
+// Or manually compile this file into jar
+
+public object Lol

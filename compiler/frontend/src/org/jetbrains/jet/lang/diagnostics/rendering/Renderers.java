@@ -31,12 +31,14 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraints;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.Renderer;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -168,7 +170,7 @@ public class Renderers {
 
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(ExtendedInferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
-        assert inferenceErrorData.constraintSystem.hasConflictingConstraints();
+        assert inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints();
 
         Collection<CallableDescriptor> substitutedDescriptors = Lists.newArrayList();
         Collection<TypeSubstitutor> substitutors = ConstraintsUtil.getSubstitutorsForConflictingParameters(
@@ -231,7 +233,7 @@ public class Renderers {
             @Override
             public boolean apply(@Nullable ConstraintPosition constraintPosition) {
                 assert constraintPosition != null;
-                return inferenceErrorData.constraintSystem.hasTypeConstructorMismatchAt(constraintPosition);
+                return inferenceErrorData.constraintSystem.getStatus().hasTypeConstructorMismatchAt(constraintPosition);
             }
         };
         return renderer.table(TabledDescriptorRenderer.newTable()
@@ -277,7 +279,7 @@ public class Renderers {
                 .table(newTable().
                         descriptor(inferenceErrorData.descriptor));
 
-        JetType inferredValueForTypeParameter = ConstraintsUtil.getValue(inferenceErrorData.constraintSystem.getTypeConstraints(typeParameterDescriptor));
+        JetType inferredValueForTypeParameter = inferenceErrorData.constraintSystem.getTypeConstraints(typeParameterDescriptor).getValue();
         assert inferredValueForTypeParameter != null;
         JetType upperBound = typeParameterDescriptor.getUpperBoundsAsType();
         JetType upperBoundWithSubstitutedInferredTypes = inferenceErrorData.constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);

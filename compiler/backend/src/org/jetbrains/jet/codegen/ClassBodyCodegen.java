@@ -27,14 +27,13 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.genMethodThrow;
+import static org.jetbrains.asm4.Opcodes.ACC_STATIC;
+import static org.jetbrains.asm4.Opcodes.RETURN;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
 public abstract class ClassBodyCodegen extends MemberCodegen {
@@ -71,8 +70,6 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         generateSyntheticParts();
 
         generateStaticInitializer();
-
-        generateRemoveInIterator();
 
         generateKotlinAnnotation();
     }
@@ -192,13 +189,5 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             }
         }
         return clInitCodegen;
-    }
-
-    private void generateRemoveInIterator() {
-        // generates stub 'remove' function for subclasses of Iterator to be compatible with java.util.Iterator
-        if (DescriptorUtils.isIteratorWithoutRemoveImpl(descriptor)) {
-            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "remove", "()V", null, null);
-            genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
-        }
     }
 }

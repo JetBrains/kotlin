@@ -465,9 +465,7 @@ public class JetParsing extends AbstractJetParsing {
         assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
         advance(); // CLASS_KEYWORD or TRAIT_KEYWORD
 
-        if (!parseIdeTemplate()) {
-            expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
-        }
+        expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
         boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
@@ -525,31 +523,29 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
         advance(); // LBRACE
 
-        if (!parseIdeTemplate()) {
-            while (!eof() && !at(RBRACE)) {
-                PsiBuilder.Marker entryOrMember = mark();
+        while (!eof() && !at(RBRACE)) {
+            PsiBuilder.Marker entryOrMember = mark();
 
-                TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
-                int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
-                TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-                createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector, false);
+            TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
+            int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
+            TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
+            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector, false);
 
-                IElementType type;
-                if (at(IDENTIFIER)) {
-                    parseEnumEntry();
-                    type = ENUM_ENTRY;
-                }
-                else {
-                    type = parseMemberDeclarationRest(enumDetector.isDetected());
-                }
+            IElementType type;
+            if (at(IDENTIFIER)) {
+                parseEnumEntry();
+                type = ENUM_ENTRY;
+            }
+            else {
+                type = parseMemberDeclarationRest(enumDetector.isDetected());
+            }
 
-                if (type == null) {
-                    errorAndAdvance("Expecting an enum entry or member declaration");
-                    entryOrMember.drop();
-                }
-                else {
-                    entryOrMember.done(type);
-                }
+            if (type == null) {
+                errorAndAdvance("Expecting an enum entry or member declaration");
+                entryOrMember.drop();
+            }
+            else {
+                entryOrMember.done(type);
             }
         }
 
@@ -595,13 +591,11 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
         expect(LBRACE, "Expecting a class body", TokenSet.create(LBRACE));
 
-        if (!parseIdeTemplate()) {
-            while (!eof()) {
-                if (at(RBRACE)) {
-                    break;
-                }
-                parseMemberDeclaration();
+        while (!eof()) {
+            if (at(RBRACE)) {
+                break;
             }
+            parseMemberDeclaration();
         }
         expect(RBRACE, "Missing '}");
         myBuilder.restoreNewlinesState();
@@ -689,9 +683,7 @@ public class JetParsing extends AbstractJetParsing {
 
         if (named) {
             PsiBuilder.Marker propertyDeclaration = mark();
-            if (!parseIdeTemplate()) {
-                expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
-            }
+            expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
             propertyDeclaration.done(OBJECT_DECLARATION_NAME);
         }
         else {
@@ -879,9 +871,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(COLON)) {
             PsiBuilder.Marker type = mark();
             advance(); // COLON
-            if (!parseIdeTemplate()) {
-                parseTypeRef();
-            }
+            parseTypeRef();
             errorIf(type, multiDeclaration, "Type annotations are not allowed on multi-declarations");
         }
 
@@ -1097,9 +1087,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(COLON)) {
             advance(); // COLON
 
-            if (!parseIdeTemplate()) {
-                parseTypeRef();
-            }
+            parseTypeRef();
         }
 
         parseTypeConstraintsGuarded(typeParameterListOccurred);
@@ -1122,20 +1110,14 @@ public class JetParsing extends AbstractJetParsing {
             parseAnnotations(false);
         }
         else {
-            if (parseIdeTemplate()) {
-                expect(DOT, "Expecting '.' after receiver template");
+            createTruncatedBuilder(lastDot).parseTypeRef();
+
+            if (atSet(RECEIVER_TYPE_TERMINATORS)) {
+                advance(); // expectation
             }
             else {
-                createTruncatedBuilder(lastDot).parseTypeRef();
-
-                if (atSet(RECEIVER_TYPE_TERMINATORS)) {
-                    advance(); // expectation
-                }
-                else {
-                    errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
-                }
+                errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
             }
-
         }
     }
 
@@ -1144,14 +1126,10 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow) {
         if (!receiverFound) {
-            if (!parseIdeTemplate()) {
-                expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
-            }
+            expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
         }
         else {
-            if (!parseIdeTemplate()) {
-                expect(IDENTIFIER, "Expecting " + title + " name", nameFollow);
-            }
+            expect(IDENTIFIER, "Expecting " + title + " name", nameFollow);
         }
     }
 
@@ -1702,32 +1680,30 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.disableNewlines();
         advance(); // LPAR
 
-        if (!parseIdeTemplate()) {
-            if (!at(RPAR) && !atSet(recoverySet)) {
-                while (true) {
-                    if (at(COMMA)) {
-                        errorAndAdvance("Expecting a parameter declaration");
-                    }
-                    else if (at(RPAR)) {
-                        error("Expecting a parameter declaration");
-                        break;
-                    }
-                    if (isFunctionTypeContents) {
-                        if (!tryParseValueParameter()) {
-                            PsiBuilder.Marker valueParameter = mark();
-                            parseModifierList(MODIFIER_LIST, false); // lazy, out, ref
-                            parseTypeRef();
-                            valueParameter.done(VALUE_PARAMETER);
-                        }
-                    }
-                    else {
-                        parseValueParameter();
-                    }
-                    if (at(COMMA)) {
-                        advance(); // COMMA
-                    }
-                    else if (!atSet(VALUE_PARAMETER_FIRST)) break;
+        if (!at(RPAR) && !atSet(recoverySet)) {
+            while (true) {
+                if (at(COMMA)) {
+                    errorAndAdvance("Expecting a parameter declaration");
                 }
+                else if (at(RPAR)) {
+                    error("Expecting a parameter declaration");
+                    break;
+                }
+                if (isFunctionTypeContents) {
+                    if (!tryParseValueParameter()) {
+                        PsiBuilder.Marker valueParameter = mark();
+                        parseModifierList(MODIFIER_LIST, false); // lazy, out, ref
+                        parseTypeRef();
+                        valueParameter.done(VALUE_PARAMETER);
+                    }
+                }
+                else {
+                    parseValueParameter();
+                }
+                if (at(COMMA)) {
+                    advance(); // COMMA
+                }
+                else if (!atSet(VALUE_PARAMETER_FIRST)) break;
             }
         }
 
@@ -1801,29 +1777,6 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         return noErrors;
-    }
-
-    /*
-    * "<#<" expression ">#>"
-    */
-    boolean parseIdeTemplate() {
-        @Nullable JetNodeType nodeType = IDE_TEMPLATE_EXPRESSION;
-        if (at(IDE_TEMPLATE_START)) {
-            PsiBuilder.Marker mark = null;
-            if (nodeType != null) {
-                mark = mark();
-            }
-            advance();
-            expect(IDENTIFIER, "Expecting identifier inside template");
-            expect(IDE_TEMPLATE_END, "Expecting IDE template end after identifier");
-            if (nodeType != null) {
-                mark.done(nodeType);
-            }
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     @Override

@@ -157,6 +157,8 @@ public class JavaToKotlinTranslator {
         }
     }
 
+    // Used in the Kotlin Web Demo.
+    @SuppressWarnings("UnusedDeclaration")
     public static String translateToKotlin(String code) {
         return generateKotlinCode(code);
     }

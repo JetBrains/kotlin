@@ -2,7 +2,7 @@ fun main(args: Array<String>) {
     Array<caret>
 }
 
-// TIME: 2
+// INVOCATION_COUNT: 2
 // WITH_ORDER: 1
 // EXIST: Array~(jet)
 // EXIST_JAVA_ONLY: Array~(java.sql)

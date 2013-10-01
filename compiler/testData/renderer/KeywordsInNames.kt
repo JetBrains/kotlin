@@ -13,6 +13,10 @@ val `in` = `class`<`trait`>(null)
 
 fun <`in` : `trait`> `trait`.`fun`(`false`: `trait`): `trait` where `in` : Number
 
+val AS_SAFE = 1
+val NOT_IN = 2
+val NOT_IS = 3
+
 //internal final annotation class `true` : jet.Annotation defined in root package
 //public constructor `true`() defined in `true`
 //internal val `val`: jet.Int defined in root package
@@ -28,3 +32,6 @@ fun <`in` : `trait`> `trait`.`fun`(`false`: `trait`): `trait` where `in` : Numbe
 //internal fun <`in` : `trait`> `trait`.`fun`(`false`: `trait`): `trait` where `in` : jet.Number defined in root package
 //<`in` : `trait` & jet.Number> defined in `fun`
 //value-parameter val `false`: `trait` defined in `fun`
+//internal val AS_SAFE: jet.Int defined in root package
+//internal val NOT_IN: jet.Int defined in root package
+//internal val NOT_IS: jet.Int defined in root package

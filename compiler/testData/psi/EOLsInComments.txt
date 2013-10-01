@@ -1,4 +1,4 @@
-JetFile: EOLsInComments.jet
+JetFile: EOLsInComments.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.types.JetType;
@@ -40,8 +39,6 @@ public class ResolutionDebugInfo {
     public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, StringBuilder> LOG = Slices.createSimpleSlice();
     public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Map<TypeParameterDescriptor, BoundsOwner>> BOUNDS_FOR_UNKNOWNS = Slices.createSimpleSlice();
     public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Map<JetType, BoundsOwner>> BOUNDS_FOR_KNOWNS = Slices.createSimpleSlice();
-    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, ConstraintSystemSolution> SOLUTION = Slices.createSimpleSlice();
-    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Collection<TypeParameterDescriptor>> UNKNOWNS = Slices.createSimpleSlice();
 
     public static boolean RESOLUTION_DEBUG_INFO_ENABLED = false;
 

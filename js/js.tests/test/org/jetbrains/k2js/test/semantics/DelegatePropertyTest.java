@@ -35,6 +35,9 @@ public class DelegatePropertyTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testDelegateWithPropertyAccess() throws Exception {
+        checkFooBoxIsOk();
+    }
 
     public void testDelegateByTopLevelFun() throws Exception {
         checkFooBoxIsOk();

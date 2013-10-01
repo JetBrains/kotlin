@@ -9,5 +9,5 @@ fun test() {
     Some().<caret>
 }
 
-// TIME: 2
+// INVOCATION_COUNT: 2
 // EXIST: testPublic, testProtected, testPrivate, testPackage

@@ -1,4 +1,4 @@
-JetFile: Graph.jet
+JetFile: Graph.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

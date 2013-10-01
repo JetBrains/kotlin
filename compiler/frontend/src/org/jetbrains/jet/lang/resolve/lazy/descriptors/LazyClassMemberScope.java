@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -34,12 +33,18 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+import static org.jetbrains.jet.lang.resolve.DelegationResolver.generateDelegatedMembers;
 
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
 
@@ -101,12 +106,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @NotNull final Collection<D> result,
             @NotNull final Class<? extends D> exactDescriptorClass
     ) {
-        OverrideResolver.generateOverridesInFunctionGroup(
+        OverridingUtil.generateOverridesInFunctionGroup(
                 name,
                 fromSupertypes,
                 Lists.newArrayList(result),
                 thisDescriptor,
-                new OverrideResolver.DescriptorSink() {
+                new OverridingUtil.DescriptorSink() {
                     @Override
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                         assert exactDescriptorClass.isInstance(fakeOverride) : "Wrong descriptor type in an override: " +
@@ -137,10 +142,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // TODO: this should be handled by lazy function descriptors
         Set<FunctionDescriptor> functions = super.getFunctions(name);
         for (FunctionDescriptor functionDescriptor : functions) {
-            if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-            PsiElement element =
-                    BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), functionDescriptor);
-            OverrideResolver.resolveUnknownVisibilityForMember((JetDeclaration) element, functionDescriptor, resolveSession.getTrace());
+            if (functionDescriptor.getKind() != FAKE_OVERRIDE && functionDescriptor.getKind() != DELEGATION) {
+                OverrideResolver.resolveUnknownVisibilityForMember(functionDescriptor, resolveSession.getTrace());
+            }
         }
         return functions;
     }
@@ -151,7 +155,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name));
         }
-        generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result);
+        result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_FUNCTIONS, result));
         generateEnumClassObjectMethods(result, name);
         generateDataClassMethods(result, name);
         generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor.class);
@@ -165,7 +169,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         int parameterIndex = 0;
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            if (ErrorUtils.isErrorType(parameter.getType())) continue;
+            if (parameter.getType().isError()) continue;
             Set<VariableDescriptor> properties = getProperties(parameter.getName());
             if (properties.isEmpty()) continue;
             assert properties.size() == 1 : "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter;
@@ -192,12 +196,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
         if (!DescriptorUtils.isEnumClassObject(thisDescriptor)) return;
 
-        if (name.equals(DescriptorResolver.VALUES_METHOD_NAME)) {
+        if (name.equals(DescriptorFactory.VALUES_METHOD_NAME)) {
             SimpleFunctionDescriptor valuesMethod = DescriptorResolver
                     .createEnumClassObjectValuesMethod(thisDescriptor, resolveSession.getTrace());
             result.add(valuesMethod);
         }
-        else if (name.equals(DescriptorResolver.VALUE_OF_METHOD_NAME)) {
+        else if (name.equals(DescriptorFactory.VALUE_OF_METHOD_NAME)) {
             SimpleFunctionDescriptor valueOfMethod = DescriptorResolver
                     .createEnumClassObjectValueOfMethod(thisDescriptor, resolveSession.getTrace());
             result.add(valueOfMethod);
@@ -211,10 +215,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         Set<VariableDescriptor> properties = super.getProperties(name);
         for (VariableDescriptor variableDescriptor : properties) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-            PsiElement element =
-                    BindingContextUtils.callableDescriptorToDeclaration(resolveSession.getTrace().getBindingContext(), propertyDescriptor);
-            OverrideResolver.resolveUnknownVisibilityForMember((JetDeclaration) element, propertyDescriptor, resolveSession.getTrace());
+            if (propertyDescriptor.getKind() == FAKE_OVERRIDE || propertyDescriptor.getKind() == DELEGATION) continue;
+            OverrideResolver.resolveUnknownVisibilityForMember(propertyDescriptor, resolveSession.getTrace());
         }
         return properties;
     }
@@ -250,31 +252,42 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
         }
-        generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result);
+        result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result));
         generateFakeOverrides(name, fromSupertypes, (Set) result, PropertyDescriptor.class);
     }
 
-    private <T extends CallableMemberDescriptor> void generateDelegatingDescriptors(
-            @NotNull Name name,
-            @NotNull MemberExtractor<T> extractor,
-            @NotNull Set<? super T> result
+    @NotNull
+    private <T extends CallableMemberDescriptor> Collection<T> generateDelegatingDescriptors(
+            @NotNull final Name name,
+            @NotNull final MemberExtractor<T> extractor,
+            @NotNull Collection<? extends CallableDescriptor> existingDescriptors
     ) {
-        for (JetDelegationSpecifier delegationSpecifier : declarationProvider.getOwnerInfo().getDelegationSpecifiers()) {
-            if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
-                JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
-                JetTypeReference typeReference = specifier.getTypeReference();
-                if (typeReference != null) {
-                    JetType supertype = resolveSession.getInjector().getTypeResolver().resolveType(
-                            thisDescriptor.getScopeForClassHeaderResolution(),
-                            typeReference,
-                            resolveSession.getTrace(),
-                            false);
-                    Collection<T> descriptors =
-                            DelegationResolver.generateDelegatedMembers(thisDescriptor, extractor.extract(supertype, name));
-                    result.addAll(descriptors);
-                }
-            }
+        //class objects do not have delegated members
+        if (thisDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            return Collections.emptySet();
         }
+        DelegationResolver.TypeResolver lazyTypeResolver = new DelegationResolver.TypeResolver() {
+            @Nullable
+            @Override
+            public JetType resolve(@NotNull JetTypeReference reference) {
+                return resolveSession.getInjector().getTypeResolver().resolveType(
+                        thisDescriptor.getScopeForClassHeaderResolution(),
+                        reference,
+                        resolveSession.getTrace(),
+                        false);
+            }
+        };
+        DelegationResolver.MemberExtractor<T> lazyMemberExtractor = new DelegationResolver.MemberExtractor<T>() {
+            @NotNull
+            @Override
+            public Collection<T> getMembersByType(@NotNull JetType type) {
+                return extractor.extract(type, name);
+            }
+        };
+        JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+        assert classOrObject != null : "Should not be null for non class object class.";
+        return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, resolveSession.getTrace(), lazyMemberExtractor,
+                                        lazyTypeResolver);
     }
 
     @Override
@@ -291,8 +304,8 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
         }
 
-        result.addAll(getFunctions(DescriptorResolver.VALUES_METHOD_NAME));
-        result.addAll(getFunctions(DescriptorResolver.VALUE_OF_METHOD_NAME));
+        result.addAll(getFunctions(DescriptorFactory.VALUES_METHOD_NAME));
+        result.addAll(getFunctions(DescriptorFactory.VALUE_OF_METHOD_NAME));
 
         addDataClassMethods(result);
     }

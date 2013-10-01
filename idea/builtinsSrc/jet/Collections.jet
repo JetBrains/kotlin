@@ -1,11 +1,11 @@
 package jet
 
 public trait Iterable<out T> {
-  public fun iterator() : Iterator<T>
+    public fun iterator() : Iterator<T>
 }
 
 public trait MutableIterable<out T> : Iterable<T> {
-  override fun iterator() : MutableIterator<T>
+    override fun iterator() : MutableIterator<T>
 }
 
 public trait Collection<out E> : Iterable<E>, Hashable {
@@ -130,8 +130,8 @@ public trait Map<K, out V> {
     public fun entrySet() : Set<Map.Entry<K, V>>
 
     public trait Entry<out K, out V> : Hashable {
-	public fun getKey() : K
-	public fun getValue() : V
+        public fun getKey() : K
+        public fun getValue() : V
     }
 }
 
@@ -150,6 +150,6 @@ public trait MutableMap<K, V> : Map<K, V> {
     override fun entrySet() : MutableSet<MutableMap.MutableEntry<K, V>>
 
     public trait MutableEntry<K,V> : Map.Entry<K, V>, Hashable {
-	public fun setValue(value : V) : V
+    	public fun setValue(value : V) : V
     }
 }

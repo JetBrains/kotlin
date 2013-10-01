@@ -13,9 +13,10 @@ Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -output [String] output directory
   -module [String] module to compile
   -script [flag] evaluate script
+  -kotlinHome [String] Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
   -tags [flag] Demarcate each compilation message (error, warning, etc) with an open and close tag
   -verbose [flag] Enable verbose logging output
   -version [flag] Display compiler version
-  -help (-h) [flag] show help
-  -kotlinHome [String] Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
+  -help (-h) [flag] Show help
+  -suppress [String] Suppress compiler messages by severity (warnings)
 OK

@@ -28,7 +28,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.SubstitutionUtils;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -612,7 +615,7 @@ public class TypeHierarchyResolver {
         ) {
             ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver
                     .createAndRecordPrimaryConstructorForObject(object, mutableClassDescriptor, trace);
-            mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
+            mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
             return constructorDescriptor;
         }
 

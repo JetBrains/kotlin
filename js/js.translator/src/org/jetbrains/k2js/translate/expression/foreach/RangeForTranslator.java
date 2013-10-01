@@ -63,9 +63,9 @@ public final class RangeForTranslator extends ForTranslator {
     private RangeForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         rangeExpression = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        start = context().declareTemporary(callFunction("get_start"));
-        end = context().declareTemporary(callFunction("get_end"));
-        increment = context().declareTemporary(callFunction("get_increment"));
+        start = context().declareTemporary(getProperty("start"));
+        end = context().declareTemporary(getProperty("end"));
+        increment = context().declareTemporary(getProperty("increment"));
     }
 
     @NotNull
@@ -79,7 +79,7 @@ public final class RangeForTranslator extends ForTranslator {
     @NotNull
     private JsFor generateForExpression() {
         JsFor result = new JsFor(initExpression(), getCondition(), getIncrExpression());
-        result.setBody(translateOriginalBodyExpression());
+        result.setBody(translateBody(null));
         return result;
     }
 
@@ -99,7 +99,7 @@ public final class RangeForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsExpression callFunction(@NotNull String funName) {
-        return new JsInvocation(new JsNameRef(funName, rangeExpression.reference()));
+    private JsExpression getProperty(@NotNull String funName) {
+        return new JsNameRef(funName, rangeExpression.reference());
     }
 }

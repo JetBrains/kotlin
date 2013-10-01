@@ -19,13 +19,14 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -44,7 +45,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
@@ -60,7 +60,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.utils.ThrowingList;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -68,15 +70,21 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver.ErrorValueWithDiagnostic;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.resolveSpecialConstructionAsCall;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
+import static org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil.reconstructBareType;
+import static org.jetbrains.jet.lexer.JetTokens.AS_KEYWORD;
+import static org.jetbrains.jet.lexer.JetTokens.AS_SAFE;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
+
+    private static final TokenSet BARE_TYPES_ALLOWED = TokenSet.create(AS_KEYWORD, AS_SAFE);
 
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
 
@@ -86,7 +94,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitSimpleNameExpression(JetSimpleNameExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
@@ -97,7 +105,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitParenthesizedExpression(JetParenthesizedExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, ExpressionTypingContext context) {
         return visitParenthesizedExpression(expression, context, false);
     }
 
@@ -122,7 +130,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitConstantExpression(JetConstantExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
         IElementType elementType = expression.getNode().getElementType();
         String text = expression.getNode().getText();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
@@ -145,10 +153,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         CompileTimeConstant<?> value = compileTimeConstantResolver.getCompileTimeConstant(expression, context.expectedType);
         if (value instanceof ErrorValue) {
-            // 'checkType' for 'ContextDependency.DEPENDENT' will take place in 'completeInferenceForArgument'
-            if (context.contextDependency == INDEPENDENT) {
-                context.trace.report(ERROR_COMPILE_TIME_VALUE.on(expression, ((ErrorValue) value).getMessage()));
-            }
+            assert value instanceof ErrorValueWithDiagnostic;
+            //noinspection CastConflictsWithInstanceof
+            context.trace.report(((ErrorValueWithDiagnostic)value).getDiagnostic());
             return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
         }
         context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, value);
@@ -156,7 +163,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext context) {
         ExpressionTypingContext contextWithNoExpectedType =
                 context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetExpression left = expression.getLeft();
@@ -166,10 +173,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return JetTypeInfo.create(null, leftTypeInfo.getDataFlowInfo());
         }
 
-        JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
         IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
 
+        boolean allowBareTypes = BARE_TYPES_ALLOWED.contains(operationType);
+        TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, allowBareTypes);
+        PossiblyBareType possiblyBareTarget = context.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, right);
+
         if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
+            // We do not allow bare types on static assertions, because static assertions provide an expected type for their argument,
+            // thus causing a circularity in type dependencies
+            assert !possiblyBareTarget.isBare() : "Bare types should not be allowed for static assertions, because argument inference makes no sense there";
+            JetType targetType = possiblyBareTarget.getActualType();
 
             JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType.replaceExpectedType(targetType));
             checkBinaryWithTypeRHS(expression, context, targetType, typeInfo.getType());
@@ -179,15 +193,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
 
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
-        if (typeInfo.getType() != null) {
-            checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, typeInfo.getType());
+        JetType subjectType = typeInfo.getType();
+        JetType targetType = reconstructBareType(right, possiblyBareTarget, subjectType, context.trace);
+
+        if (subjectType != null) {
+            checkBinaryWithTypeRHS(expression, contextWithNoExpectedType, targetType, subjectType);
             dataFlowInfo = typeInfo.getDataFlowInfo();
-            if (operationType == JetTokens.AS_KEYWORD) {
-                DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(left, typeInfo.getType(), context.trace.getBindingContext());
+            if (operationType == AS_KEYWORD) {
+                DataFlowValue value = DataFlowValueFactory.createDataFlowValue(left, subjectType, context.trace.getBindingContext());
                 dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
             }
         }
-        JetType result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
+
+        JetType result = operationType == AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
         return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
 
@@ -241,7 +259,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitThisExpression(JetThisExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitThisExpression(@NotNull JetThisExpression expression, ExpressionTypingContext context) {
         JetType result = null;
         LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, false);
 
@@ -261,7 +279,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitSuperExpression(JetSuperExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitSuperExpression(@NotNull JetSuperExpression expression, ExpressionTypingContext context) {
         LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
 
         if (context.expressionPosition == ExpressionPosition.FREE) {
@@ -342,7 +360,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
 
             boolean validClassifier = classifierCandidate != null && !ErrorUtils.isError(classifierCandidate);
-            boolean validType = supertype != null && !ErrorUtils.isErrorType(supertype);
+            boolean validType = supertype != null && !supertype.isError();
             if (result == null && (validClassifier || validType)) {
                 context.trace.report(NOT_A_SUPERTYPE.on(superTypeQualifier));
             }
@@ -363,8 +381,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         if (result != null) {
-            if (DescriptorUtils.isKindOf(thisType, ClassKind.TRAIT)) {
-                if (DescriptorUtils.isKindOf(result, ClassKind.CLASS)) {
+            if (DescriptorUtils.isTrait(thisType.getConstructor().getDeclarationDescriptor())) {
+                if (DescriptorUtils.isClass(result.getConstructor().getDeclarationDescriptor())) {
                     context.trace.report(SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT.on(expression));
                 }
             }
@@ -420,7 +438,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitBlockExpression(@NotNull JetBlockExpression expression, ExpressionTypingContext context) {
         return visitBlockExpression(expression, context, false);
     }
 
@@ -430,7 +448,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitCallableReferenceExpression(JetCallableReferenceExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, ExpressionTypingContext context) {
         JetTypeReference typeReference = expression.getTypeReference();
 
         JetType receiverType =
@@ -489,13 +507,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 receiverParameter != null
         );
 
-        ExpressionAsFunctionDescriptor functionDescriptor = new ExpressionAsFunctionDescriptor(
+        AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(),
-                Name.special("<callable-reference>")
-        );
+                Collections.<AnnotationDescriptor>emptyList(),
+                CallableMemberDescriptor.Kind.DECLARATION);
+
         FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);
 
-        context.trace.record(CALLABLE_REFERENCE, expression, functionDescriptor);
+        context.trace.record(FUNCTION, expression, functionDescriptor);
 
         return type;
     }
@@ -570,19 +589,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitQualifiedExpression(@NotNull JetQualifiedExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
         return callExpressionResolver.getQualifiedExpressionTypeInfo(expression, context);
     }
 
     @Override
-    public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitCallExpression(@NotNull JetCallExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
         return callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
     }
 
     @Override
-    public JetTypeInfo visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitUnaryExpression(@NotNull JetUnaryExpression expression, ExpressionTypingContext context) {
         return visitUnaryExpression(expression, context, false);
     }
 
@@ -686,11 +705,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return baseTypeInfo;
         }
         DataFlowInfo dataFlowInfo = baseTypeInfo.getDataFlowInfo();
-        if (isKnownToBeNotNull(baseExpression, context) && !ErrorUtils.isErrorType(baseType)) {
+        if (isKnownToBeNotNull(baseExpression, context) && !baseType.isError()) {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, baseType));
         }
         else {
-            DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
+            DataFlowValue value = DataFlowValueFactory.createDataFlowValue(baseExpression, baseType, context.trace.getBindingContext());
             dataFlowInfo = dataFlowInfo.disequate(value, DataFlowValue.NULL);
         }
         return JetTypeInfo.create(TypeUtils.makeNotNullable(baseType), dataFlowInfo);
@@ -718,7 +737,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, JetType jetType, ExpressionTypingContext context) {
-        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, jetType, context.trace.getBindingContext());
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, jetType, context.trace.getBindingContext());
         return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
@@ -743,7 +762,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetTypeInfo visitBinaryExpression(@NotNull JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = isBinaryExpressionDependentOnExpectedType(expression)
                 ? contextWithExpectedType
                 : contextWithExpectedType.replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
@@ -852,7 +871,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
         JetType compareToReturnType = typeInfo.getType();
         JetType type = null;
-        if (compareToReturnType != null && !ErrorUtils.isErrorType(compareToReturnType)) {
+        if (compareToReturnType != null && !compareToReturnType.isError()) {
             TypeConstructor constructor = compareToReturnType.getConstructor();
             KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
             TypeConstructor intTypeConstructor = builtIns.getInt().getTypeConstructor();
@@ -995,9 +1014,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         JetType type = facade.getTypeInfo(expr, context).getType();
-        if (type == null || ErrorUtils.isErrorType(type)) return;
+        if (type == null || type.isError()) return;
 
-        DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(expr, type, context.trace.getBindingContext());
+        DataFlowValue value = DataFlowValueFactory.createDataFlowValue(expr, type, context.trace.getBindingContext());
         Nullability nullability = context.dataFlowInfo.getNullability(value);
 
         boolean expressionIsAlways;
@@ -1032,7 +1051,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, ExpressionTypingContext context) {
         JetTypeInfo typeInfo = resolveArrayAccessGetMethod(expression, context);
         return DataFlowUtils.checkType(typeInfo, expression, context);
     }
@@ -1087,13 +1106,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitDeclaration(JetDeclaration dcl, ExpressionTypingContext context) {
+    public JetTypeInfo visitDeclaration(@NotNull JetDeclaration dcl, ExpressionTypingContext context) {
         context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(dcl));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     @Override
-    public JetTypeInfo visitRootNamespaceExpression(JetRootNamespaceExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, ExpressionTypingContext context) {
         if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT) {
             return DataFlowUtils.checkType(JetModuleUtil.getRootNamespaceType(expression), expression, context, context.dataFlowInfo);
         }
@@ -1103,12 +1122,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
 
     @Override
-    public JetTypeInfo visitStringTemplateExpression(JetStringTemplateExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetTypeInfo visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, ExpressionTypingContext contextWithExpectedType) {
         final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         final StringBuilder builder = new StringBuilder();
-        final CompileTimeConstant<?>[] value = new CompileTimeConstant<?>[1];
-        final DataFlowInfo[] dataFlowInfo = new DataFlowInfo[1];
-        dataFlowInfo[0] = context.dataFlowInfo;
+        final boolean[] isCompileTimeValue = new boolean[] { true };
+        final DataFlowInfo[] dataFlowInfo = new DataFlowInfo[] { context.dataFlowInfo };
 
         for (JetStringTemplateEntry entry : expression.getEntries()) {
             entry.accept(new JetVisitorVoid() {
@@ -1120,7 +1138,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                         JetTypeInfo typeInfo = facade.getTypeInfo(entryExpression, context.replaceDataFlowInfo(dataFlowInfo[0]));
                         dataFlowInfo[0] = typeInfo.getDataFlowInfo();
                     }
-                    value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
+                    isCompileTimeValue[0] = false;
                 }
 
                 @Override
@@ -1130,12 +1148,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
                 @Override
                 public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
-                    String text = entry.getText();
-
-                    CompileTimeConstant<?> character = CompileTimeConstantResolver.escapedStringToCharValue(text);
+                    CompileTimeConstant<?> character = CompileTimeConstantResolver.escapedStringToCharValue(entry.getText(), entry);
                     if (character instanceof ErrorValue) {
-                        context.trace.report(ILLEGAL_ESCAPE_SEQUENCE.on(entry));
-                        value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
+                        assert character instanceof ErrorValueWithDiagnostic;
+                        //noinspection CastConflictsWithInstanceof
+                        context.trace.report(((ErrorValueWithDiagnostic) character).getDiagnostic());
+                        isCompileTimeValue[0] = false;
                     }
                     else {
                         builder.append(((CharValue) character).getValue());
@@ -1143,23 +1161,30 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             });
         }
-        if (value[0] != CompileTimeConstantResolver.OUT_OF_RANGE) {
+        if (isCompileTimeValue[0]) {
             context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new StringValue(builder.toString()));
         }
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getStringType(), expression, contextWithExpectedType, dataFlowInfo[0]);
     }
 
     @Override
-    public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitAnnotatedExpression(@NotNull JetAnnotatedExpression expression, ExpressionTypingContext context) {
+        return visitAnnotatedExpression(expression, context, false);
+    }
+
+    public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context, boolean isStatement) {
+        context.expressionTypingServices.getAnnotationResolver().resolveAnnotationsWithArguments(
+                context.scope, expression.getAnnotationEntries(), context.trace);
+
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) {
-            return JetTypeInfo.create(null, data.dataFlowInfo);
+            return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        return facade.getTypeInfo(baseExpression, data);
+        return facade.getTypeInfo(baseExpression, context, isStatement);
     }
 
     @Override
-    public JetTypeInfo visitJetElement(JetElement element, ExpressionTypingContext context) {
+    public JetTypeInfo visitJetElement(@NotNull JetElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }

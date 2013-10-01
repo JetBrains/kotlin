@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import com.google.common.collect.Sets;
+import com.intellij.codeInsight.intention.EmptyIntentionAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
@@ -164,7 +165,7 @@ public class JetPsiChecker implements Annotator {
                 return;
             }
 
-            if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE_SEQUENCE) {
+            if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE) {
                 for (TextRange textRange : diagnostic.getTextRanges()) {
                     Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
                     annotation.setTooltip(getMessage(diagnostic));
@@ -223,6 +224,17 @@ public class JetPsiChecker implements Annotator {
         Collection<IntentionAction> actions = QuickFixes.getActions(diagnostic.getFactory());
         for (IntentionAction action : actions) {
             annotation.registerFix(action);
+        }
+
+        // Making warnings suppressable
+        if (diagnostic.getSeverity() == Severity.WARNING) {
+            annotation.setProblemGroup(new KotlinSuppressableWarningProblemGroup(diagnostic.getFactory()));
+
+            List<Annotation.QuickFixInfo> fixes = annotation.getQuickFixes();
+            if (fixes == null || fixes.isEmpty()) {
+                // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
+                annotation.registerFix(new EmptyIntentionAction(diagnostic.getFactory().getName()));
+            }
         }
 
         return annotation;

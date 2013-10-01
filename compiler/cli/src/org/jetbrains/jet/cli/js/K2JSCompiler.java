@@ -150,7 +150,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
-        EcmaVersion ecmaVersion = EcmaVersion.fromString(arguments.target);
+        if (arguments.target != null) {
+            assert arguments.target == "v5" : "Unsupported ECMA version: " + arguments.target;
+        }
+        EcmaVersion ecmaVersion = EcmaVersion.defaultVersion();
         String moduleId = FileUtil.getNameWithoutExtension(new File(arguments.outputFile));
         if (arguments.libraryFiles != null) {
             return new LibrarySourcesConfig(project, moduleId, Arrays.asList(arguments.libraryFiles), ecmaVersion, arguments.sourcemap);

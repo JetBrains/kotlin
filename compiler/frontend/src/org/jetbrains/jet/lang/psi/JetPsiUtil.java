@@ -49,7 +49,6 @@ import java.util.Set;
 public class JetPsiUtil {
 
     public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
-    public static final Name ROOT_NAMESPACE_NAME = Name.special("<root namespace>");
 
     private JetPsiUtil() {
     }
@@ -404,19 +403,21 @@ public class JetPsiUtil {
         return null;
     }
 
-    public static boolean isFirstPartInQualified(@NotNull JetSimpleNameExpression nameExpression) {
-        @SuppressWarnings("unchecked") JetUserType userType = PsiTreeUtil.getParentOfType(nameExpression, JetUserType.class, true,
-                                                                                          JetDeclaration.class);
-        if (userType != null) {
-            return PsiTreeUtil.isAncestor(userType.getFirstChild(), nameExpression, false);
+    public static boolean isSelectorInQualified(@NotNull JetSimpleNameExpression nameExpression) {
+        PsiElement nameExpressionParent = nameExpression.getParent();
+
+        if (nameExpressionParent instanceof JetUserType) {
+            assert ((JetUserType) nameExpressionParent).getReferenceExpression() == nameExpression;
+            return ((JetUserType) nameExpressionParent).getQualifier() != null;
         }
 
-        @SuppressWarnings("unchecked") JetQualifiedExpression qualifiedExpression = PsiTreeUtil.getParentOfType(nameExpression, JetQualifiedExpression.class, true, JetDeclaration.class);
-        if (qualifiedExpression != null) {
-            return PsiTreeUtil.isAncestor(qualifiedExpression.getFirstChild(), nameExpression, false);
+        JetExpression selector = nameExpression;
+        if (nameExpressionParent instanceof JetCallExpression && ((JetCallExpression) nameExpressionParent).getCalleeExpression() == nameExpression) {
+            selector = (JetCallExpression) nameExpressionParent;
         }
 
-        return true;
+        PsiElement selectorParent = selector.getParent();
+        return selectorParent instanceof JetQualifiedExpression && (((JetQualifiedExpression) selectorParent).getSelectorExpression() == selector);
     }
 
     public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
@@ -1001,5 +1002,47 @@ public class JetPsiUtil {
         int inFileParentOffset = elementContextOffset - startContextOffset;
 
         return new StringBuilder(inFileParent.getText()).insert(inFileParentOffset, "<caret>").toString();
+    }
+
+    @Nullable
+    public static JetModifierList replaceModifierList(@NotNull JetModifierListOwner owner, @Nullable JetModifierList modifierList) {
+        JetModifierList oldModifierList = owner.getModifierList();
+        if (modifierList == null) {
+            if (oldModifierList != null) oldModifierList.delete();
+            return null;
+        }
+        else {
+            if (oldModifierList == null) {
+                PsiElement firstChild = owner.getFirstChild();
+                return (JetModifierList) owner.addBefore(modifierList, firstChild);
+            }
+            else {
+                return (JetModifierList) oldModifierList.replace(modifierList);
+            }
+        }
+    }
+
+    @Nullable
+    public static String getPackageName(@NotNull JetElement element) {
+        JetFile file = (JetFile) element.getContainingFile();
+        JetNamespaceHeader header = PsiTreeUtil.findChildOfType(file, JetNamespaceHeader.class);
+
+        return header != null ? header.getQualifiedName() : null;
+    }
+
+    public static JetElement getEnclosingBlockForLocalDeclaration(@NotNull JetNamedDeclaration declaration) {
+        //noinspection unchecked
+        JetDeclaration container =
+                PsiTreeUtil.getParentOfType(declaration, JetNamedFunction.class, JetPropertyAccessor.class, JetClassInitializer.class);
+
+        if (container == null) return null;
+
+        return (container instanceof JetClassInitializer)
+               ? ((JetClassInitializer) container).getBody()
+               : ((JetDeclarationWithBody) container).getBodyExpression();
+    }
+
+    public static boolean isLocal(@NotNull JetNamedDeclaration declaration) {
+        return getEnclosingBlockForLocalDeclaration(declaration) != null;
     }
 }

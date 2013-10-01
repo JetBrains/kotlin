@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.cli.jvm;
 
-import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -35,7 +35,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -47,12 +49,12 @@ public class CliTest {
     public final TestName testName = new TestName();
 
     @NotNull
-    private String executeCompilerGrabOutput(@NotNull String[] args) {
+    private static String executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull String[] args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream origOut = System.out;
         try {
             System.setOut(new PrintStream(bytes));
-            ExitCode exitCode = CLICompiler.doMainNoExit(new K2JVMCompiler(), args);
+            ExitCode exitCode = CLICompiler.doMainNoExit(compiler, args);
             return bytes.toString("utf-8") + exitCode + "\n";
         }
         catch (Exception e) {
@@ -63,37 +65,20 @@ public class CliTest {
         }
     }
 
-    private void executeCompilerCompareOutput(@NotNull String[] args) {
-        try {
-            String actual = normalize(executeCompilerGrabOutput(args))
-                    .replace(new File("compiler/testData/cli/").getAbsolutePath(), "$TESTDATA_DIR$")
-                    .replace("\\", "/");
+    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String[] args) {
+        String actual = executeCompilerGrabOutput(compiler, args)
+                .replace(new File("compiler/testData/cli/").getAbsolutePath(), "$TESTDATA_DIR$")
+                .replace("\\", "/");
 
-            String expected = normalize(FileUtil.loadFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out")));
-
-            Assert.assertEquals(expected, actual);
-        }
-        catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
-        }
+        JetTestUtils.assertEqualsToFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out"), actual);
     }
 
-    @NotNull
-    private String normalize(String input) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new StringReader(input));
-            while (true) {
-                String line = reader.readLine();
-                if (line == null) {
-                    return sb.toString();
-                }
-                sb.append(line + "\n");
-            }
-        }
-        catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
-        }
+    private void executeCompilerCompareOutputJVM(@NotNull String[] args) {
+        executeCompilerCompareOutput(new K2JVMCompiler(), args);
+    }
+
+    private void executeCompilerCompareOutputJS(@NotNull String[] args) {
+        executeCompilerCompareOutput(new K2JSCompiler(), args);
     }
 
     @Test
@@ -101,7 +86,7 @@ public class CliTest {
         String[] args = {
                 "-src", "compiler/testData/cli/simple.kt",
                 "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutput(args);
+        executeCompilerCompareOutputJVM(args);
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
     }
@@ -113,7 +98,7 @@ public class CliTest {
                         + File.pathSeparator
                         + "compiler/testData/cli/diagnosticsOrder2.kt",
                 "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutput(args);
+        executeCompilerCompareOutputJVM(args);
     }
 
     @Test
@@ -121,7 +106,7 @@ public class CliTest {
         String[] args = {
                 "-src", "compiler/testData/cli/multipleTextRangesInDiagnosticsOrder.kt",
                 "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutput(args);
+        executeCompilerCompareOutputJVM(args);
     }
 
     @Test
@@ -130,7 +115,7 @@ public class CliTest {
                 "-src", "compiler/testData/cli/wrongKotlinSignature.kt",
                 "-classpath", "compiler/testData/cli/wrongKotlinSignatureLib",
                 "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutput(args);
+        executeCompilerCompareOutputJVM(args);
     }
 
     @Test
@@ -139,34 +124,29 @@ public class CliTest {
                 "-src", "compiler/testData/cli/wrongAbiVersion.kt",
                 "-classpath", "compiler/testData/cli/wrongAbiVersionLib",
                 "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutput(args);
+        executeCompilerCompareOutputJVM(args);
     }
 
     @Test
     public void help() throws Exception {
-        executeCompilerCompareOutput(new String[] {"-help"});
+        executeCompilerCompareOutputJVM(new String[] {"-help"});
     }
 
     @Test
     public void script() throws Exception {
-        executeCompilerCompareOutput(new String[]{ "-script", "compiler/testData/cli/script.ktscript", "hi", "there" });
-    }
-
-    @Test
-    public void ideTemplates() {
-        executeCompilerCompareOutput(new String[]{ "-src", "compiler/testData/cli/ideTemplates.kt", "-output", tmpdir.getTmpDir().getPath()});
+        executeCompilerCompareOutputJVM(new String[] {"-script", "compiler/testData/cli/script.ktscript", "hi", "there"});
     }
 
     @Test
     public void wrongArgument() {
-        executeCompilerCompareOutput(new String[] { "-wrongArgument" });
+        executeCompilerCompareOutputJVM(new String[] {"-wrongArgument"});
     }
 
     @Test
     public void printArguments() {
         try {
             System.setProperty("kotlin.print.cmd.args", "true");
-            executeCompilerCompareOutput(new String[] {"-script", "compiler/testData/cli/hello.ktscript"});
+            executeCompilerCompareOutputJVM(new String[] {"-script", "compiler/testData/cli/hello.ktscript"});
         }
         finally {
             System.clearProperty("kotlin.print.cmd.args");
@@ -180,7 +160,7 @@ public class CliTest {
                 "-classpath", "not/existing/path",
                 "-annotations", "yet/another/not/existing/path",
                 "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutput(args);
+        executeCompilerCompareOutputJVM(args);
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
     }
@@ -190,7 +170,7 @@ public class CliTest {
         String[] args = {
                 "-src", "not/existing/path",
                 "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutput(args);
+        executeCompilerCompareOutputJVM(args);
     }
 
     @Test
@@ -227,7 +207,6 @@ public class CliTest {
         }
     }
 
-
     @Test
     public void testScriptWithScriptDefinition() {
         LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
@@ -243,5 +222,32 @@ public class CliTest {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void suppressAllWarningsLowercase() {
+        String[] args = {
+                "-src", "compiler/testData/cli/warnings.kt",
+                "-suppress", "warnings",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutputJVM(args);
+    }
+
+    @Test
+    public void suppressAllWarningsMixedCase() {
+        String[] args = {
+                "-src", "compiler/testData/cli/warnings.kt",
+                "-suppress", "WaRnInGs",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutputJVM(args);
+    }
+
+    @Test
+    public void suppressAllWarningsJS() {
+        String[] args = {
+                "-sourceFiles", "compiler/testData/cli/warnings.kt",
+                "-suppress", "WaRnInGs",
+                "-output", new File(tmpdir.getTmpDir(), "out.js").getPath()};
+        executeCompilerCompareOutputJS(args);
     }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ConverterUtil;
 import org.jetbrains.jet.j2k.ast.*;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.Collections;
@@ -130,7 +131,7 @@ public class ExpressionVisitor extends StatementVisitor {
         if (tokenType == JavaTokenType.MINUSMINUS) return "--";
         if (tokenType == JavaTokenType.EXCL) return "!";
 
-        System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType.toString());
+        assert false : "UNSUPPORTED TOKEN TYPE: " + tokenType.toString();
         return "";
     }
 
@@ -138,20 +139,20 @@ public class ExpressionVisitor extends StatementVisitor {
     public void visitBinaryExpression(@NotNull PsiBinaryExpression expression) {
         super.visitBinaryExpression(expression);
 
+        Expression left = getConverter().expressionToExpression(expression.getLOperand());
+        Expression right = getConverter().expressionToExpression(expression.getROperand());
+
         if (expression.getOperationSign().getTokenType() == JavaTokenType.GTGTGT) {
-            myResult = new DummyMethodCallExpression(
-                    getConverter().expressionToExpression(expression.getLOperand()),
-                    "ushr",
-                    getConverter().expressionToExpression(expression.getROperand()));
+            myResult = new DummyMethodCallExpression(left, "ushr", right);
         }
         else {
-            myResult =
-                    new BinaryExpression(
-                            getConverter().expressionToExpression(expression.getLOperand()),
-                            getConverter().expressionToExpression(expression.getROperand()),
-                            getOperatorString(expression.getOperationSign().getTokenType()),
-                            getConverter().createConversions(expression, PsiType.BOOLEAN)
-                    );
+            List<String> conversions = getConverter().createConversions(expression, PsiType.BOOLEAN);
+            assert conversions.size() == 2 :
+                    "conversions.size for BinaryExpression should be 2 but equals " + conversions.size() +
+                    " for expression: \"" + expression.getText() + "\" at " + DiagnosticUtils.atLocation(expression);
+
+            String operator = getOperatorString(expression.getOperationSign().getTokenType());
+            myResult = new BinaryExpression(left, right, operator, conversions);
         }
     }
 

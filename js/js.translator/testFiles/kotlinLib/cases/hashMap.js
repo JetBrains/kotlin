@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-var map = Kotlin.$new(Kotlin.HashMap)()
+var map = new Kotlin.HashMap();
 
-map.put(3, 4)
-map.put(6, 3)
+map.put(3, 4);
+map.put(6, 3);
 
 function test() {
     if (map.containsKey(4) || map.containsKey(5)) return false;

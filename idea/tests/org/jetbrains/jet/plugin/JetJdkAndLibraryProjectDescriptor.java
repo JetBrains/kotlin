@@ -37,12 +37,10 @@ public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor
     public static final String LIBRARY_NAME = "myLibrary";
 
     private final File libraryFile;
-    private final OrderRootType libraryRootType;
 
     public JetJdkAndLibraryProjectDescriptor(File libraryFile) {
         assert libraryFile.exists() : "Library file doesn't exist: " + libraryFile.getAbsolutePath();
         this.libraryFile = libraryFile;
-        this.libraryRootType = OrderRootType.CLASSES;
     }
 
     @Override
@@ -59,7 +57,7 @@ public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
         NewLibraryEditor editor = new NewLibraryEditor();
         editor.setName(LIBRARY_NAME);
-        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), libraryRootType);
+        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES);
 
         ConfigLibraryUtil.addLibrary(editor, model);
     }

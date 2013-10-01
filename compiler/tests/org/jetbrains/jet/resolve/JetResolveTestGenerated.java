@@ -52,6 +52,11 @@ public class JetResolveTestGenerated extends AbstractResolveTest {
         doTest("compiler/testData/resolve/Classifiers.resolve");
     }
     
+    @TestMetadata("DefaultParamsOfLocalFunctions.resolve")
+    public void testDefaultParamsOfLocalFunctions() throws Exception {
+        doTest("compiler/testData/resolve/DefaultParamsOfLocalFunctions.resolve");
+    }
+    
     @TestMetadata("ErrorSupertype.resolve")
     public void testErrorSupertype() throws Exception {
         doTest("compiler/testData/resolve/ErrorSupertype.resolve");

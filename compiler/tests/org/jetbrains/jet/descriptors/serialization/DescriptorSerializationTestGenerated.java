@@ -411,6 +411,11 @@ public class DescriptorSerializationTestGenerated extends AbstractDescriptorSeri
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("DeclaredMemberOverridesDelegated.kt")
+        public void testDeclaredMemberOverridesDelegated() throws Exception {
+            doTest("compiler/testData/loadKotlin/fun/DeclaredMemberOverridesDelegated.kt");
+        }
+        
         @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
         public void testInheritMethodsDifferentReturnTypesAndVisibilities() throws Exception {
             doTest("compiler/testData/loadKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
@@ -424,6 +429,11 @@ public class DescriptorSerializationTestGenerated extends AbstractDescriptorSeri
         @TestMetadata("InheritValsDifferentTypes.kt")
         public void testInheritValsDifferentTypes() throws Exception {
             doTest("compiler/testData/loadKotlin/fun/InheritValsDifferentTypes.kt");
+        }
+        
+        @TestMetadata("NoDelegationForFunctionInheritedFromTraitSuperClass.kt")
+        public void testNoDelegationForFunctionInheritedFromTraitSuperClass() throws Exception {
+            doTest("compiler/testData/loadKotlin/fun/NoDelegationForFunctionInheritedFromTraitSuperClass.kt");
         }
         
         @TestMetadata("NoSamAdapter.kt")

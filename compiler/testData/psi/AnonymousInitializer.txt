@@ -1,4 +1,4 @@
-JetFile: AnonymousInitializer.jet
+JetFile: AnonymousInitializer.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetToken;
 
-public interface JetModifierListOwner extends PsiElement {
+public interface JetModifierListOwner extends PsiElement, JetAnnotated {
     @Nullable
     JetModifierList getModifierList();
 

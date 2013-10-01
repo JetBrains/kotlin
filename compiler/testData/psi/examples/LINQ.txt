@@ -1,4 +1,4 @@
-JetFile: LINQ.jet
+JetFile: LINQ.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

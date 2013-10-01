@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -48,9 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.UNIT_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ExpressionTypingServices {
@@ -67,6 +66,8 @@ public class ExpressionTypingServices {
     private DescriptorResolver descriptorResolver;
     @NotNull
     private TypeResolver typeResolver;
+    @NotNull
+    private AnnotationResolver annotationResolver;
     @NotNull
     private PlatformToKotlinClassMap platformToKotlinClassMap;
 
@@ -118,6 +119,16 @@ public class ExpressionTypingServices {
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
+    }
+
+    @NotNull
+    public AnnotationResolver getAnnotationResolver() {
+        return annotationResolver;
+    }
+
+    @Inject
+    public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
     }
 
     @Inject
@@ -182,7 +193,7 @@ public class ExpressionTypingServices {
                 ? context.replaceExpectedType(NO_EXPECTED_TYPE)
                 : context;
 
-        expressionTypingFacade.getTypeInfo(bodyExpression, newContext, !blockBody);
+        expressionTypingFacade.getTypeInfo(bodyExpression, newContext, blockBody);
     }
 
     @NotNull
@@ -236,7 +247,7 @@ public class ExpressionTypingServices {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 this, trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, ExpressionPosition.FREE
         );
-        JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, !function.hasBlockBody());
+        JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
         trace.record(STATEMENT, bodyExpression, false);
         JetType type = typeInfo.getType();
@@ -347,5 +358,44 @@ public class ExpressionTypingServices {
                 return null;
             }
         });
+    }
+
+    public void resolveValueParameters(
+            @NotNull List<JetParameter> valueParameters,
+            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
+            @NotNull JetScope declaringScope,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
+        for (int i = 0; i < valueParameters.size(); i++) {
+            ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
+            JetParameter jetParameter = valueParameters.get(i);
+
+            annotationResolver.resolveAnnotationsArguments(declaringScope, jetParameter.getModifierList(), trace);
+
+            resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter, dataFlowInfo, trace);
+        }
+    }
+
+    private void resolveDefaultValue(
+            @NotNull JetScope declaringScope,
+            @NotNull ValueParameterDescriptor valueParameterDescriptor,
+            @NotNull JetParameter jetParameter,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull BindingTrace trace
+    ) {
+        if (valueParameterDescriptor.hasDefaultValue()) {
+            JetExpression defaultValue = jetParameter.getDefaultValue();
+            if (defaultValue != null) {
+                getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), dataFlowInfo, trace);
+                if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
+                    CompileTimeConstant<?> constant =
+                            annotationResolver.resolveExpressionToCompileTimeValue(defaultValue, valueParameterDescriptor.getType(), trace);
+                    if (constant != null) {
+                        trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
+                    }
+                }
+            }
+        }
     }
 }

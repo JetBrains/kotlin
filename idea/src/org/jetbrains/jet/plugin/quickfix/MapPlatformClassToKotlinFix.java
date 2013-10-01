@@ -78,7 +78,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(file);
-        Collection<Diagnostic> diagnostics = context.getDiagnostics();
+        Iterable<Diagnostic> diagnostics = context.getDiagnostics();
         List<JetImportDirective> imports = new ArrayList<JetImportDirective>();
         List<JetUserType> usages = new ArrayList<JetUserType>();
 

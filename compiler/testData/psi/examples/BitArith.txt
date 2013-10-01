@@ -1,4 +1,4 @@
-JetFile: BitArith.jet
+JetFile: BitArith.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

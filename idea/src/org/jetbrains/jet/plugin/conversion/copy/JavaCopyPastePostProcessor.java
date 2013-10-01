@@ -25,10 +25,7 @@ import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -40,28 +37,16 @@ import java.util.List;
 
 public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBlockTransferableData> {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.conversion.copy.JavaCopyPastePostProcessor");
+    private static final String EOL = System.getProperty("line.separator");
 
     @Override
     public TextBlockTransferableData collectTransferableData(@NotNull PsiFile file, Editor editor, @NotNull int[] startOffsets, @NotNull int[] endOffsets) {
-        try {
-            if (!(file instanceof PsiJavaFile)) {
-                return null;
-            }
-            String eol = System.getProperty("line.separator");
-            List<PsiElement> buffer = getSelectedElements(file, startOffsets, endOffsets);
-            StringBuilder result = new StringBuilder();
-
-            for (PsiElement e : buffer) {
-                String converted = new Converter(file.getProject()).elementToKotlin(e);
-                if (!converted.isEmpty()) {
-                    result.append(converted).append(eol);
-                }
-            }
-            return new ConvertedCode(StringUtil.convertLineSeparators(result.toString()));
-        } catch (Throwable t) {
-            LOG.error(t);
+        if (!(file instanceof PsiJavaFile)) {
+            return null;
         }
-        return null;
+
+        PsiFile lightFile = PsiFileFactory.getInstance(file.getProject()).createFileFromText(file.getText(), file);
+        return new CopiedCode(lightFile, startOffsets, endOffsets);
     }
 
     @NotNull
@@ -91,8 +76,8 @@ public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBl
     @Override
     public TextBlockTransferableData extractTransferableData(@NotNull Transferable content) {
         try {
-            if (content.isDataFlavorSupported(ConvertedCode.DATA_FLAVOR)) {
-                return (TextBlockTransferableData) content.getTransferData(ConvertedCode.DATA_FLAVOR);
+            if (content.isDataFlavorSupported(CopiedCode.DATA_FLAVOR)) {
+                return (TextBlockTransferableData) content.getTransferData(CopiedCode.DATA_FLAVOR);
             }
         } catch (Throwable e) {
             LOG.error(e);
@@ -102,29 +87,42 @@ public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBl
 
     @Override
     public void processTransferableData(Project project, @NotNull final Editor editor, @NotNull final RangeMarker bounds, int caretColumn, Ref<Boolean> indented, @NotNull TextBlockTransferableData value) {
-        try {
-            final PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-            if (!(file instanceof JetFile)) {
-                return;
+        if (!(value instanceof CopiedCode)) return;
+
+        final PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+        if (!(file instanceof JetFile)) return;
+
+        JetEditorOptions jetEditorOptions = JetEditorOptions.getInstance();
+        boolean needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project));
+        if (needConvert) {
+            final String text = convertCopiedCodeToKotlin((CopiedCode) value, file);
+
+            if (!text.isEmpty()) {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        editor.getDocument().replaceString(bounds.getStartOffset(), bounds.getEndOffset(), text);
+                        editor.getCaretModel().moveToOffset(bounds.getStartOffset() + text.length());
+                        PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
+                    }
+                });
             }
-            JetEditorOptions jetEditorOptions = JetEditorOptions.getInstance();
-            boolean needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project));
-            if (needConvert) {
-                if (value instanceof ConvertedCode) {
-                    final String text = ((ConvertedCode) value).getData();
-                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            editor.getDocument().replaceString(bounds.getStartOffset(), bounds.getEndOffset(), text);
-                            editor.getCaretModel().moveToOffset(bounds.getStartOffset() + text.length());
-                            PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
-                        }
-                    });
-                }
-            }
-        } catch (Throwable t) {
-            LOG.error(t);
         }
+    }
+
+    private static String convertCopiedCodeToKotlin(CopiedCode code, PsiFile file) {
+        List<PsiElement> buffer = getSelectedElements(code.getFile(), code.getStartOffsets(), code.getEndOffsets());
+
+        Project project = file.getProject();
+        StringBuilder result = new StringBuilder();
+        for (PsiElement e : buffer) {
+            String converted = new Converter(project).elementToKotlin(e);
+            if (!converted.isEmpty()) {
+                result.append(converted).append(EOL);
+            }
+        }
+
+        return StringUtil.convertLineSeparators(result.toString());
     }
 
     private static boolean okFromDialog(@NotNull Project project) {

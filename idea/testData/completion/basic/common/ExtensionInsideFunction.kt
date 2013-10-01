@@ -12,7 +12,7 @@ class StrMore {
   class StrAbsent
 }
 
-// TIME: 1
+// INVOCATION_COUNT: 1
 // EXIST: String~(jet)
 // EXIST: StrSome
 // EXIST: StrMore

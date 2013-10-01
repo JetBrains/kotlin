@@ -2,5 +2,11 @@
 // OPTIONS: usages
 package server;
 
-fun <caret>processRequest() = "foo"
+public open class Server() {
+    open fun <caret>processRequest() = "foo"
+}
+
+public class ServerEx(): Server() {
+    override fun processRequest() = "foofoo"
+}
 

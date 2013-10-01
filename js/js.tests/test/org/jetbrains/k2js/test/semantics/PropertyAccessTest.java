@@ -39,6 +39,9 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testBackendField() throws Exception {
+        checkFooBoxIsOk();
+    }
 
     public void testSetter() throws Exception {
         runFunctionOutputTest("setter.kt", "foo", "f", 99.0);

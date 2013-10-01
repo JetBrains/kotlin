@@ -1,4 +1,4 @@
-JetFile: BinaryTree.jet
+JetFile: BinaryTree.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

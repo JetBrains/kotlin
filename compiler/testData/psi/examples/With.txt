@@ -1,4 +1,4 @@
-JetFile: With.jet
+JetFile: With.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

@@ -198,7 +198,22 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         checkAfter();
     }
 
+    private void doTestIfnInn() {
+        start();
 
+        assertStringItems("b", "t", "y");
+        typeAndNextTab("b");
+
+        checkAfter();
+    }
+
+    public void testIfn() {
+        doTestIfnInn();
+    }
+
+    public void testInn() {
+        doTestIfnInn();
+    }
 
     private void paremeterless() {
         start();

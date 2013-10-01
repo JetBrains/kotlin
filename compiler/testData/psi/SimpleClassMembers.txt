@@ -1,4 +1,4 @@
-JetFile: SimpleClassMembers.jet
+JetFile: SimpleClassMembers.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

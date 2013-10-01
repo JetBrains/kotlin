@@ -1,12 +1,8 @@
-package client
-
-import server.processRequest
+import server.*;
 
 class Client {
-    val methodRef = ::processRequest()
-
-    fun doProcessRequest() {
-        println("Process...")
-        processRequest()
+    public fun foo() {
+        Server().processRequest()
+        ServerEx().processRequest()
     }
 }

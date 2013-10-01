@@ -26,7 +26,7 @@ import java.util.List;
 public interface Diagnostic {
 
     @NotNull
-    AbstractDiagnosticFactory getFactory();
+    DiagnosticFactory getFactory();
 
     @NotNull
     Severity getSeverity();

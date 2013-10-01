@@ -28,7 +28,8 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.inequality;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
@@ -79,10 +80,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
     private JsBlock translate() {
         List<JsStatement> blockStatements = Lists.newArrayList();
         blockStatements.add(temporariesInitialization(rangeEnd).makeStmt());
-        blockStatements.add(generateForExpression(initExpression(),
-                                                  getCondition(),
-                                                  getIncrExpression(),
-                                                  translateOriginalBodyExpression()));
+        blockStatements.add(new JsFor(initExpression(), getCondition(), getIncrExpression(), translateBody(null)));
         return new JsBlock(blockStatements);
     }
 

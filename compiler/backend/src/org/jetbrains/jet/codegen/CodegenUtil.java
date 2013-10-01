@@ -34,10 +34,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -159,15 +159,15 @@ public class CodegenUtil {
     public static FunctionDescriptor getDeclaredFunctionByRawSignature(
             @NotNull ClassDescriptor owner,
             @NotNull Name name,
-            @NotNull ClassDescriptor returnedClass,
-            @NotNull ClassDescriptor... valueParameterClasses
+            @NotNull ClassifierDescriptor returnedClassifier,
+            @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
         Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
         for (FunctionDescriptor function : functions) {
-            if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION
+            if (!CallResolverUtil.isOrOverridesSynthesized(function)
                 && function.getTypeParameters().isEmpty()
-                && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClasses))
-                && rawTypeMatches(function.getReturnType(), returnedClass)) {
+                && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClassifiers))
+                && rawTypeMatches(function.getReturnType(), returnedClassifier)) {
                 return function;
             }
         }
@@ -176,11 +176,11 @@ public class CodegenUtil {
 
     private static boolean valueParameterClassesMatch(
             @NotNull List<ValueParameterDescriptor> parameters,
-            @NotNull List<ClassDescriptor> classes) {
-        if (parameters.size() != classes.size()) return false;
+            @NotNull List<ClassifierDescriptor> classifiers) {
+        if (parameters.size() != classifiers.size()) return false;
         for (int i = 0; i < parameters.size(); i++) {
             ValueParameterDescriptor parameterDescriptor = parameters.get(i);
-            ClassDescriptor classDescriptor = classes.get(i);
+            ClassifierDescriptor classDescriptor = classifiers.get(i);
             if (!rawTypeMatches(parameterDescriptor.getType(), classDescriptor)) {
                 return false;
             }
@@ -188,8 +188,8 @@ public class CodegenUtil {
         return true;
     }
 
-    private static boolean rawTypeMatches(JetType type, ClassDescriptor classDescriptor) {
-        return type.getConstructor().getDeclarationDescriptor().getOriginal() == classDescriptor.getOriginal();
+    private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
+        return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
     }
 
     public static boolean isCallInsideSameClassAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {
@@ -215,15 +215,15 @@ public class CodegenUtil {
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
         return ContainerUtil.exists(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
-                new Condition<DeclarationDescriptor>() {
-                    @Override
-                    public boolean value(DeclarationDescriptor declaration) {
-                        if (!(declaration instanceof MemberDescriptor)) {
-                            return false;
-                        }
-                        return ((MemberDescriptor) declaration).getModality() == ABSTRACT;
-                    }
-                });
+                                    new Condition<DeclarationDescriptor>() {
+                                        @Override
+                                        public boolean value(DeclarationDescriptor declaration) {
+                                            if (!(declaration instanceof MemberDescriptor)) {
+                                                return false;
+                                            }
+                                            return ((MemberDescriptor) declaration).getModality() == ABSTRACT;
+                                        }
+                                    });
     }
 
     /**
@@ -251,7 +251,13 @@ public class CodegenUtil {
                !specialTypeProperty &&
                (accessorDescriptor == null ||
                 accessorDescriptor.isDefault() &&
-                (!DescriptorUtils.isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
+                (!isExternallyAccessible(propertyDescriptor) || accessorDescriptor.getModality() == Modality.FINAL));
+    }
+
+    private static boolean isExternallyAccessible(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getVisibility() != Visibilities.PRIVATE ||
+               DescriptorUtils.isClassObject(propertyDescriptor.getContainingDeclaration()) ||
+               DescriptorUtils.isTopLevelDeclaration(propertyDescriptor);
     }
 
     @NotNull

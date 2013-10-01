@@ -40,10 +40,10 @@ public class DelegatingBindingTrace implements BindingTrace {
     private final BindingContext bindingContext = new BindingContext() {
         @NotNull
         @Override
-        public Collection<Diagnostic> getDiagnostics() {
+        public Diagnostics getDiagnostics() {
             ArrayList<Diagnostic> mergedDiagnostics = new ArrayList<Diagnostic>(diagnostics);
-            mergedDiagnostics.addAll(parentContext.getDiagnostics());
-            return mergedDiagnostics;
+            mergedDiagnostics.addAll(parentContext.getDiagnostics().noSuppression().all());
+            return new DiagnosticsWithSuppression(this, mergedDiagnostics);
         }
 
         @Override

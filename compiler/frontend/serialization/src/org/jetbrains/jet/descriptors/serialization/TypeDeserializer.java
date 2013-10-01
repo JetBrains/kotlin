@@ -26,7 +26,9 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.*;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -241,12 +243,11 @@ public class TypeDeserializer {
 
         @NotNull
         private JetScope computeMemberScope() {
-            TypeConstructor typeConstructor = getConstructor();
-            if (ErrorUtils.isError(typeConstructor)) {
-                return ErrorUtils.createErrorScope(typeConstructor.toString());
+            if (isError()) {
+                return ErrorUtils.createErrorScope(getConstructor().toString());
             }
             else {
-                return getTypeMemberScope(typeConstructor, getArguments());
+                return getTypeMemberScope(getConstructor(), getArguments());
             }
         }
 
@@ -254,6 +255,12 @@ public class TypeDeserializer {
         @Override
         public JetScope getMemberScope() {
             return memberScope.compute();
+        }
+
+        @Override
+        public boolean isError() {
+            ClassifierDescriptor descriptor = getConstructor().getDeclarationDescriptor();
+            return descriptor != null && ErrorUtils.isError(descriptor);
         }
 
         @Override

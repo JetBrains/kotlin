@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager;
 
 import java.util.LinkedList;
 
@@ -127,7 +128,7 @@ public class JetPluginUtil {
         Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
         if (module == null) return false;
 
-        if (!isAndroidGradleModule(module)) {
+        if (!isAndroidGradleModule(module) && !isGradleModule(module)) {
             return false;
         }
 
@@ -147,5 +148,15 @@ public class JetPluginUtil {
             }
         }
         return false;
+    }
+
+    public static boolean isGradleModule(@NotNull Module module) {
+        return ModuleTypeCacheManager.object$.geInstance(module.getProject()).isGradleModule(module);
+    }
+
+    public static boolean isMavenModule(@NotNull Module module) {
+        // This constant could be acquired from MavenProjectsManager, but we don't want to depend on the Maven plugin...
+        // See MavenProjectsManager.isMavenizedModule()
+        return "true".equals(module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule"));
     }
 }

@@ -245,11 +245,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         return Collections.emptySet();
     }
 
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

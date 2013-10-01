@@ -36,7 +36,7 @@ public abstract class ASTAlignmentStrategy {
     }
 
     @Nullable
-    public abstract Alignment getAlignment(ASTNode node);
+    public abstract Alignment getAlignment(@NotNull ASTNode node);
 
     public static class AlignmentStrategyWrapper extends ASTAlignmentStrategy {
         private final AlignmentStrategy internalStrategy;

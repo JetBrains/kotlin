@@ -36,25 +36,30 @@ import java.util.List;
 
 public class JetPsiFactory {
 
+    @NotNull
     public static ASTNode createValNode(Project project) {
         JetProperty property = createProperty(project, "val x = 1");
         return property.getValOrVarNode();
     }
 
+    @NotNull
     public static ASTNode createVarNode(Project project) {
         JetProperty property = createProperty(project, "var x = 1");
         return property.getValOrVarNode();
     }
 
+    @NotNull
     public static ASTNode createValOrVarNode(Project project, String text) {
         return createParameterList(project, "(" + text + " int x)").getParameters().get(0).getValOrVarNode();
     }
 
+    @NotNull
     public static JetExpression createExpression(Project project, String text) {
         JetProperty property = createProperty(project, "val x = " + text);
         return property.getInitializer();
     }
 
+    @NotNull
     public static JetValueArgumentList createCallArguments(Project project, String text) {
         JetProperty property = createProperty(project, "val x = foo" + text);
         JetExpression initializer = property.getInitializer();
@@ -62,6 +67,7 @@ public class JetPsiFactory {
         return callExpression.getValueArgumentList();
     }
 
+    @NotNull
     public static JetTypeArgumentList createTypeArguments(Project project, String text) {
         JetProperty property = createProperty(project, "val x = foo" + text + "()");
         JetExpression initializer = property.getInitializer();
@@ -69,6 +75,7 @@ public class JetPsiFactory {
         return callExpression.getTypeArgumentList();
     }
 
+    @NotNull
     public static JetTypeReference createType(Project project, String type) {
         JetProperty property = createProperty(project, "val x : " + type);
         return property.getTypeRef();
@@ -89,17 +96,20 @@ public class JetPsiFactory {
     }
 
     //the pair contains the first and the last elements of a range
+    @NotNull
     public static Pair<PsiElement, PsiElement> createColonAndWhiteSpaces(Project project) {
         JetProperty property = createProperty(project, "val x : Int");
         return Pair.create(property.findElementAt(5), property.findElementAt(7));
     }
 
     //the pair contains the first and the last elements of a range
+    @NotNull
     public static Pair<PsiElement, PsiElement> createTypeWhiteSpaceAndColon(Project project, String type) {
         JetProperty property = createProperty(project, "val x: " + type);
         return Pair.create(property.findElementAt(5), (PsiElement) property.getTypeRef());
     }
 
+    @NotNull
     public static ASTNode createColonNode(Project project) {
         JetProperty property = createProperty(project, "val x: Int");
         return property.getNode().findChildByType(JetTokens.COLON);
@@ -121,19 +131,23 @@ public class JetPsiFactory {
         return Pair.create(functionType.findElementAt(2), functionType.findElementAt(3));
     }
 
+    @NotNull
     public static PsiElement createWhiteSpace(Project project) {
         return createWhiteSpace(project, " ");
     }
 
+    @NotNull
     private static PsiElement createWhiteSpace(Project project, String text) {
         JetProperty property = createProperty(project, "val" + text + "x");
         return property.findElementAt(3);
     }
 
+    @NotNull
     public static PsiElement createNewLine(Project project) {
         return createWhiteSpace(project, "\n");
     }
 
+    @NotNull
     public static JetClass createClass(Project project, String text) {
         return createDeclaration(project, text, JetClass.class);
     }
@@ -155,19 +169,23 @@ public class JetPsiFactory {
                                                                                 LocalTimeCounter.currentTime(), true);
     }
 
+    @NotNull
     public static JetProperty createProperty(Project project, String name, String type, boolean isVar, @Nullable String initializer) {
         String text = (isVar ? "var " : "val ") + name + (type != null ? ":" + type : "") + (initializer == null ? "" : " = " + initializer);
         return createProperty(project, text);
     }
 
+    @NotNull
     public static JetProperty createProperty(Project project, String name, String type, boolean isVar) {
         return createProperty(project, name, type, isVar, null);
     }
 
+    @NotNull
     public static JetProperty createProperty(Project project, String text) {
         return createDeclaration(project, text, JetProperty.class);
     }
 
+    @NotNull
     public static <T> T createDeclaration(Project project, String text, Class<T> clazz) {
         JetFile file = createFile(project, text);
         List<JetDeclaration> dcls = file.getDeclarations();
@@ -177,48 +195,70 @@ public class JetPsiFactory {
         return result;
     }
 
+    @NotNull
     public static PsiElement createNameIdentifier(Project project, String name) {
         return createProperty(project, name, null, false).getNameIdentifier();
     }
 
+    @NotNull
     public static JetSimpleNameExpression createSimpleName(Project project, String name) {
         return (JetSimpleNameExpression) createProperty(project, name, null, false, name).getInitializer();
     }
 
+    @NotNull
     public static PsiElement createIdentifier(Project project, String name) {
         return createSimpleName(project, name).getIdentifier();
     }
 
+    @NotNull
     public static JetNamedFunction createFunction(Project project, String funDecl) {
         return createDeclaration(project, funDecl, JetNamedFunction.class);
     }
 
+    @NotNull
     public static JetModifierList createModifierList(Project project, JetKeywordToken modifier) {
-        String text = modifier.getValue() + " val x";
-        JetProperty property = createProperty(project, text);
+        return createModifierList(project, modifier.getValue());
+    }
+
+    @NotNull
+    public static JetModifierList createModifierList(Project project, String text) {
+        JetProperty property = createProperty(project, text + " val x");
         return property.getModifierList();
     }
 
+    @NotNull
+    public static JetAnnotation createAnnotation(Project project, String text) {
+        JetProperty property = createProperty(project, text + " val x");
+        JetModifierList modifierList = property.getModifierList();
+        assert modifierList != null;
+        return modifierList.getAnnotations().get(0);
+    }
+
+    @NotNull
     public static JetModifierList createConstructorModifierList(Project project, JetKeywordToken modifier) {
         JetClass aClass = createClass(project, "class C " + modifier.getValue() + " (){}");
         return aClass.getPrimaryConstructorModifierList();
     }
 
+    @NotNull
     public static JetExpression createEmptyBody(Project project) {
         JetNamedFunction function = createFunction(project, "fun foo() {}");
         return function.getBodyExpression();
     }
 
+    @NotNull
     public static JetClassBody createEmptyClassBody(Project project) {
         JetClass aClass = createClass(project, "class A(){}");
         return aClass.getBody();
     }
 
+    @NotNull
     public static JetParameter createParameter(Project project, String name, String type) {
         JetNamedFunction function = createFunction(project, "fun foo(" + name + " : " + type + ") {}");
         return function.getValueParameters().get(0);
     }
 
+    @NotNull
     public static JetParameterList createParameterList(Project project, String text) {
         JetNamedFunction function = createFunction(project, "fun foo" + text + "{}");
         return function.getValueParameterList();
@@ -235,6 +275,7 @@ public class JetPsiFactory {
         return whenEntry;
     }
 
+    @NotNull
     public static JetStringTemplateEntryWithExpression createBlockStringTemplateEntry(@NotNull Project project, @NotNull JetExpression expression) {
         JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression) createExpression(project,
                                                                                                  "\"${" + expression.getText() + "}\"");
@@ -264,16 +305,19 @@ public class JetPsiFactory {
         return namespace.getImportDirectives().iterator().next();
     }
 
+    @NotNull
     public static PsiElement createPrimaryConstructor(Project project) {
         JetClass aClass = createClass(project, "class A()");
         return aClass.findElementAt(7).getParent();
     }
 
+    @NotNull
     public static JetSimpleNameExpression createClassLabel(Project project, @NotNull String labelName) {
         JetThisExpression expression = (JetThisExpression) createExpression(project, "this@" + labelName);
         return expression.getTargetLabel();
     }
 
+    @NotNull
     public static JetExpression createFieldIdentifier(Project project, @NotNull String fieldName) {
         return createExpression(project, "$" + fieldName);
     }
@@ -288,10 +332,12 @@ public class JetPsiFactory {
         return createBinaryExpression(project, JetPsiUtil.getText(lhs), op, JetPsiUtil.getText(rhs));
     }
 
+    @NotNull
     public static JetTypeCodeFragment createTypeCodeFragment(Project project, String text, PsiElement context) {
         return new JetTypeCodeFragmentImpl(project, "fragment.kt", text, context);
     }
 
+    @NotNull
     public static JetExpressionCodeFragment createExpressionCodeFragment(Project project, String text, PsiElement context) {
         return new JetExpressionCodeFragmentImpl(project, "fragment.kt", text, context);
     }
@@ -476,16 +522,19 @@ public class JetPsiFactory {
         }
     }
 
+    @NotNull
     public static JetExpression createFunctionBody(Project project, @NotNull String bodyText) {
         JetFunction func = createFunction(project, "fun foo() {\n" + bodyText + "\n}");
         return func.getBodyExpression();
     }
 
+    @NotNull
     public static JetClassObject createEmptyClassObject(Project project) {
         JetClass klass = createClass(project, "class foo { class object { } }");
         return klass.getClassObject();
     }
 
+    @NotNull
     public static JetBlockExpression wrapInABlock(@NotNull final JetExpression expression) {
         if (expression instanceof JetBlockExpression) {
             return (JetBlockExpression) expression;

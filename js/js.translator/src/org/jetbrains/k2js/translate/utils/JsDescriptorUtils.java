@@ -52,10 +52,6 @@ public final class JsDescriptorUtils {
         return (functionDescriptor.getName().equals(OperatorConventions.COMPARE_TO));
     }
 
-    public static boolean isConstructorDescriptor(@NotNull CallableDescriptor descriptor) {
-        return (descriptor instanceof ConstructorDescriptor);
-    }
-
     @Nullable
     public static ClassDescriptor findAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
         for (ClassDescriptor descriptor : superclassDescriptors) {
@@ -140,10 +136,10 @@ public final class JsDescriptorUtils {
         return accessorDescriptor == null || accessorDescriptor.isDefault();
     }
 
-    public static boolean isAsPrivate(@NotNull PropertyDescriptor propertyDescriptor) {
-        return isExtension(propertyDescriptor) ||
-               !isDefaultAccessor(propertyDescriptor.getGetter()) ||
-               !isDefaultAccessor(propertyDescriptor.getSetter());
+    public static boolean isSimpleProperty(@NotNull PropertyDescriptor propertyDescriptor) {
+        return !isExtension(propertyDescriptor) &&
+               isDefaultAccessor(propertyDescriptor.getGetter()) &&
+               isDefaultAccessor(propertyDescriptor.getSetter());
     }
 
     public static boolean isStandardDeclaration(@NotNull DeclarationDescriptor descriptor) {

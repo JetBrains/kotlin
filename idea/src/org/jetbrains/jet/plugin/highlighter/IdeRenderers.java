@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.psi.JetValueArgument;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.Renderer;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -103,7 +103,7 @@ public class IdeRenderers {
                 private Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<? extends CallableDescriptor> call) {
                     Set<ValueParameterDescriptor> parameters = new HashSet<ValueParameterDescriptor>();
                     if (call instanceof ResolvedCallImpl) {
-                        Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
+                        Iterable<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
                         for (Diagnostic diagnostic : diagnostics) {
                             if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
                                 parameters.add(null);

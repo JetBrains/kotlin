@@ -343,6 +343,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/tostring/alreadyDeclaredWrongSignature.kt");
             }
             
+            @TestMetadata("alreadyInherited.kt")
+            public void testAlreadyInherited() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/tostring/alreadyInherited.kt");
+            }
+            
             @TestMetadata("arrayParams.kt")
             public void testArrayParams() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/dataClasses/tostring/arrayParams.kt");

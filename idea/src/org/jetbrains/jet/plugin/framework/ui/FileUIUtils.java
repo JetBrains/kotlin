@@ -43,11 +43,11 @@ public class FileUIUtils {
 
     @Nullable
     public static File copyWithOverwriteDialog(
-            @NotNull Component parent,
             @NotNull String messagesTitle,
             @NotNull String destinationFolder,
-            @NotNull File file) {
-        Map<File, File> copiedFiles = copyWithOverwriteDialog(parent, messagesTitle, ImmutableMap.of(file, destinationFolder));
+            @NotNull File file
+    ) {
+        Map<File, File> copiedFiles = copyWithOverwriteDialog(messagesTitle, ImmutableMap.of(file, destinationFolder));
         if (copiedFiles == null) {
             return null;
         }
@@ -60,7 +60,6 @@ public class FileUIUtils {
 
     @Nullable
     public static Map<File, File> copyWithOverwriteDialog(
-            @NotNull Component parent,
             @NotNull String messagesTitle,
             @NotNull Map<File, String> filesWithDestinations
     ) {
@@ -131,7 +130,7 @@ public class FileUIUtils {
                 LocalFileSystem.getInstance().refreshAndFindFileByIoFile(sourceToTarget.getValue());
             }
             catch (IOException e) {
-                Messages.showErrorDialog(parent, "Error with copy file " + sourceToTarget.getKey().getName(), messagesTitle + ". Error");
+                Messages.showErrorDialog("Error with copy file " + sourceToTarget.getKey().getName(), messagesTitle + ". Error");
                 return null;
             }
         }

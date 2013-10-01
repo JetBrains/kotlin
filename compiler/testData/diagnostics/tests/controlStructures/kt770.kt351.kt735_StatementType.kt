@@ -42,8 +42,8 @@ fun box() : Int {
 
 //More tests
 
-fun test1() = while(true) {}
-fun test2(): Unit = while(true) {}
+fun test1() { while(true) {} }
+fun test2(): Unit { while(true) {} }
 
 fun testCoercionToUnit() {
     val <!UNUSED_VARIABLE!>simple<!>: ()-> Unit = {
@@ -106,7 +106,7 @@ fun testImplicitCoercion() {
     val <!UNUSED_VARIABLE!>h<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (false) 4 else {}<!>
 
     bar(if (true) {
-        <!TYPE_MISMATCH!>4<!>
+        <!CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>
     }
     else {
         z = <!UNUSED_VALUE!>342<!>

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +33,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.inject.Inject;
@@ -89,6 +90,7 @@ public class DeclarationResolver {
 
 
     public void process(@NotNull JetScope rootScope) {
+        checkModifiersAndAnnotationsInNamespaceHeaders();
         resolveAnnotationConstructors();
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
@@ -97,6 +99,31 @@ public class DeclarationResolver {
         importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
         checkRedeclarationsInInnerClassNames();
+    }
+
+    private void checkModifiersAndAnnotationsInNamespaceHeaders() {
+        for (JetFile file : context.getNamespaceDescriptors().keySet()) {
+            JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
+            if (namespaceHeader == null) continue;
+
+            PsiElement firstChild = namespaceHeader.getFirstChild();
+            if (!(firstChild instanceof JetModifierList)) continue;
+            JetModifierList modifierList = (JetModifierList) firstChild;
+
+            for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+                JetConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
+                if (calleeExpression != null) {
+                    JetReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
+                    if (reference != null) {
+                        trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+                    }
+                }
+            }
+
+            for (ASTNode node : modifierList.getModifierNodes()) {
+                trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
+            }
+        }
     }
 
     private void resolveAnnotationConstructors() {
@@ -262,7 +289,7 @@ public class DeclarationResolver {
     private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
         int parameterIndex = 0;
         for (ValueParameterDescriptor parameter : constructorDescriptor.getValueParameters()) {
-            if (!ErrorUtils.isErrorType(parameter.getType())) {
+            if (!parameter.getType().isError()) {
                 PropertyDescriptor property = trace.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
                 if (property != null) {
                     ++parameterIndex;
@@ -298,6 +325,7 @@ public class DeclarationResolver {
             List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
             List<JetParameter> primaryConstructorParameters = klass.getPrimaryConstructorParameters();
             assert valueParameterDescriptors.size() == primaryConstructorParameters.size();
+            List<ValueParameterDescriptor> notProperties = new ArrayList<ValueParameterDescriptor>();
             for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
                 JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
                 if (parameter.getValOrVarNode() != null) {
@@ -310,9 +338,14 @@ public class DeclarationResolver {
                     classDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
                     context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
                 }
+                else {
+                    notProperties.add(valueParameterDescriptor);
+                }
             }
+
             if (classDescriptor.getKind() != ClassKind.TRAIT) {
-                classDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
+                classDescriptor.setPrimaryConstructor(constructorDescriptor);
+                classDescriptor.addConstructorParametersToInitializersScope(notProperties);
             }
         }
     }

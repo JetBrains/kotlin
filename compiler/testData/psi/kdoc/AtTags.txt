@@ -1,4 +1,4 @@
-JetFile: AtTags.jet
+JetFile: AtTags.kt
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n ')

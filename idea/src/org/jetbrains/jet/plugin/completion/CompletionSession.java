@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
+import org.jetbrains.jet.plugin.completion.weigher.WeigherPackage;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
@@ -66,8 +66,9 @@ public class CompletionSession {
 
         inDescriptor = scope != null ? scope.getContainingDeclaration() : null;
 
+        //noinspection StaticMethodReferencedViaSubclass
         this.jetResult = new JetCompletionResultSet(
-                JetCompletionSorting.addJetSorting(parameters, result),
+                WeigherPackage.addJetSorting(result, parameters),
                 resolveSession,
                 expressionBindingContext, new Condition<DeclarationDescriptor>() {
             @Override
@@ -206,20 +207,9 @@ public class CompletionSession {
         PsiElement element = getPosition();
         if (getPosition().getNode().getElementType() == JetTokens.IDENTIFIER) {
             if (element.getParent() instanceof JetSimpleNameExpression) {
-                JetSimpleNameExpression nameExpression = (JetSimpleNameExpression)element.getParent();
-
-                // Top level completion should be executed for simple name which is not in qualified expression
-                if (PsiTreeUtil.getParentOfType(nameExpression, JetQualifiedExpression.class) != null) {
-                    return false;
+                if (!JetPsiUtil.isSelectorInQualified((JetSimpleNameExpression) element.getParent())) {
+                    return true;
                 }
-
-                // Don't call top level completion in qualified named position of user type
-                PsiElement parent = nameExpression.getParent();
-                if (parent instanceof JetUserType && ((JetUserType) parent).getQualifier() != null) {
-                    return false;
-                }
-
-                return true;
             }
         }
 

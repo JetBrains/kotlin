@@ -29,4 +29,8 @@ public final class ForeachTest extends AbstractExpressionTest {
     public void testForOnEmptyArray() throws Exception {
         fooBoxTest();
     }
+
+    public void testLabeledFor() throws Exception {
+        fooBoxTest();
+    }
 }

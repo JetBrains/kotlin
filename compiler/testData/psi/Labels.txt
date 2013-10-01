@@ -1,4 +1,4 @@
-JetFile: Labels.jet
+JetFile: Labels.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

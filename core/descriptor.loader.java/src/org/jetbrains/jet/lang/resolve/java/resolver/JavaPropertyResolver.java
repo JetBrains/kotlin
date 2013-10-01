@@ -41,10 +41,7 @@ public final class JavaPropertyResolver {
     private JavaResolverCache cache;
     private JavaAnnotationResolver annotationResolver;
     private ExternalSignatureResolver externalSignatureResolver;
-    private FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver;
-
-    public JavaPropertyResolver() {
-    }
+    private ErrorReporter errorReporter;
 
     @Inject
     public void setTypeTransformer(@NotNull JavaTypeTransformer javaTypeTransformer) {
@@ -67,8 +64,8 @@ public final class JavaPropertyResolver {
     }
 
     @Inject
-    public void setFakeOverrideVisibilityResolver(FakeOverrideVisibilityResolver fakeOverrideVisibilityResolver) {
-        this.fakeOverrideVisibilityResolver = fakeOverrideVisibilityResolver;
+    public void setErrorReporter(ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
     }
 
     @NotNull
@@ -93,7 +90,7 @@ public final class JavaPropertyResolver {
             Collection<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(propertyName, classDescriptor);
 
             properties.addAll(resolveOverrides(propertyName, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor,
-                                               fakeOverrideVisibilityResolver));
+                                               errorReporter));
         }
 
         properties.addAll(propertiesFromCurrent);

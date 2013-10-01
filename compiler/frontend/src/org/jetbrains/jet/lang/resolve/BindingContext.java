@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
@@ -46,8 +45,8 @@ public interface BindingContext {
     BindingContext EMPTY = new BindingContext() {
         @NotNull
         @Override
-        public Collection<Diagnostic> getDiagnostics() {
-            return Collections.emptyList();
+        public Diagnostics getDiagnostics() {
+            return Diagnostics.EMPTY;
         }
 
         @Override
@@ -265,7 +264,7 @@ public interface BindingContext {
             Void _static_initializer = BasicWritableSlice.initSliceDebugNames(BindingContext.class);
 
     @NotNull
-    Collection<Diagnostic> getDiagnostics();
+    Diagnostics getDiagnostics();
 
     @Nullable
     <K, V> V get(ReadOnlySlice<K, V> slice, K key);

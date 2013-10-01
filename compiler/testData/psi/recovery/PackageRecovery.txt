@@ -1,4 +1,4 @@
-JetFile: PackageRecovery.jet
+JetFile: PackageRecovery.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

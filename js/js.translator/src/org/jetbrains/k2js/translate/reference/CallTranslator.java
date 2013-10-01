@@ -36,10 +36,8 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isObjectDeclaration;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 
 //TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
@@ -84,7 +82,7 @@ public final class CallTranslator extends AbstractTranslator {
         if (result != null) {
             return result;
         }
-        if (isConstructor()) {
+        if ((descriptor instanceof ConstructorDescriptor)) {
             return createConstructorCallExpression(translateAsFunctionWithNoThisObject(descriptor));
         }
         if (resolvedCall.getReceiverArgument().exists()) {
@@ -125,18 +123,9 @@ public final class CallTranslator extends AbstractTranslator {
         return null;
     }
 
-    private boolean isConstructor() {
-        return isConstructorDescriptor(descriptor);
-    }
-
     @NotNull
     public HasArguments createConstructorCallExpression(@NotNull JsExpression constructorReference) {
-        if (context().isEcma5() && !AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())) {
-            return new JsInvocation(constructorReference, arguments);
-        }
-        else {
-            return new JsNew(constructorReference, arguments);
-        }
+        return new JsNew(constructorReference, arguments);
     }
 
     @NotNull
@@ -211,13 +200,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isDirectPropertyAccess() {
-        return descriptor instanceof PropertyAccessorDescriptor &&
-               (context().isEcma5() || isObjectAccessor((PropertyAccessorDescriptor) descriptor));
-    }
-
-    private boolean isObjectAccessor(@NotNull PropertyAccessorDescriptor propertyAccessorDescriptor) {
-        PropertyDescriptor correspondingProperty = propertyAccessorDescriptor.getCorrespondingProperty();
-        return isObjectDeclaration(correspondingProperty);
+        return descriptor instanceof PropertyAccessorDescriptor;
     }
 
     @NotNull

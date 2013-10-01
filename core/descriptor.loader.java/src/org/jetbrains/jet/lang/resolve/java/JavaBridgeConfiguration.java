@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -45,15 +44,11 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     }
 
     @Override
-    public void extendNamespaceScope(
-            @NotNull BindingTrace trace,
-            @NotNull NamespaceDescriptor namespaceDescriptor,
-            @NotNull WritableScope namespaceMemberScope
-    ) {
+    public void extendNamespaceScope(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
         if (javaPackageScope != null) {
             namespaceMemberScope.importScope(javaPackageScope);
         }
-        DefaultModuleConfiguration.INSTANCE.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+        DefaultModuleConfiguration.INSTANCE.extendNamespaceScope(namespaceDescriptor, namespaceMemberScope);
     }
 }

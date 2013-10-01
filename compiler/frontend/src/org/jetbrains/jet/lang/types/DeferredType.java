@@ -21,8 +21,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.util.Box;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
-import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
 
 import java.util.List;
 
@@ -55,6 +55,11 @@ public class DeferredType implements JetType {
     @NotNull
     public JetScope getMemberScope() {
         return getActualType().getMemberScope();
+    }
+
+    @Override
+    public boolean isError() {
+        return getActualType().isError();
     }
 
     @Override

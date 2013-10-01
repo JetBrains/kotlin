@@ -2,7 +2,7 @@ class Test {
     val St<caret>
 }
 
-// TIME: 2
+// INVOCATION_COUNT: 2
 // EXIST: String~(jet)
 // EXIST: IllegalStateException
 // EXIST: StringBuilder

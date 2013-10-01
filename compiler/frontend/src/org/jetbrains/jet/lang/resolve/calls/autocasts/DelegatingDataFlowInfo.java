@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.util.CommonSuppliers;
+import org.jetbrains.jet.utils.CommonSuppliers;
 
 import java.util.*;
 

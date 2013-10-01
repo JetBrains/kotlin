@@ -113,7 +113,10 @@ public class SourceMap3Builder implements SourceMapBuilder {
             out.append(',');
         }
 
-        Base64VLQ.encode(out, textOutput.getColumn() - previousGeneratedColumn);
+        int columnDiff = textOutput.getColumn() - previousGeneratedColumn;
+        // TODO fix sections overlapping
+        // assert columnDiff != 0;
+        Base64VLQ.encode(out, columnDiff);
         previousGeneratedColumn = textOutput.getColumn();
         int sourceIndex = getSourceIndex(source);
         Base64VLQ.encode(out, sourceIndex - previousSourceIndex);
@@ -128,8 +131,9 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public void addLink() {
-        textOutput.print("\n//@ sourceMappingURL=file://");
-        textOutput.print(getOutFile().getAbsolutePath());
+        textOutput.print("\n//@ sourceMappingURL=");
+        textOutput.print(generatedFile.getName());
+        textOutput.print(".map");
     }
 
     private static final class Base64VLQ {
@@ -143,6 +147,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
         // The continuation bit is the 6th bit.
         private static final int VLQ_CONTINUATION_BIT = VLQ_BASE;
 
+        @SuppressWarnings("SpellCheckingInspection")
         private static final char[] BASE64_MAP = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
 
         private Base64VLQ() {

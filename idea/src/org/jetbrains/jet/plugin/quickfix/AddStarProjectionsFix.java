@@ -72,14 +72,17 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
         return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION;
+                assert diagnostic.getFactory() == Errors.NO_TYPE_ARGUMENTS_ON_RHS;
                 @SuppressWarnings("unchecked")
-                DiagnosticWithParameters2<JetUserType, Integer, String> diagnosticWithParameters =
-                        (DiagnosticWithParameters2<JetUserType, Integer, String>) diagnostic;
-                JetUserType userType = QuickFixUtil.getParentElementOfType(diagnostic, JetUserType.class);
-                if (userType == null) return null;
+                DiagnosticWithParameters2<JetTypeReference, Integer, String> diagnosticWithParameters =
+                        (DiagnosticWithParameters2<JetTypeReference, Integer, String>) diagnostic;
+                JetTypeElement typeElement = diagnosticWithParameters.getPsiElement().getTypeElement();
+                while (typeElement instanceof JetNullableType) {
+                    typeElement = ((JetNullableType) typeElement).getInnerType();
+                }
+                if (!(typeElement instanceof JetUserType)) return null;
                 Integer size = diagnosticWithParameters.getA();
-                return new AddStarProjectionsFix(userType, size) {};
+                return new AddStarProjectionsFix((JetUserType) typeElement, size) {};
             }
         };
     }

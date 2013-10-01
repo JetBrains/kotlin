@@ -1,4 +1,4 @@
-JetFile: SimpleClassMembers_ERR.jet
+JetFile: SimpleClassMembers_ERR.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

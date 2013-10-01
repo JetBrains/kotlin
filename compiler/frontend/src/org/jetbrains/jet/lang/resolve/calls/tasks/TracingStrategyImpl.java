@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -214,14 +215,15 @@ public class TracingStrategyImpl implements TracingStrategy {
     @Override
     public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data) {
         ConstraintSystem constraintSystem = data.constraintSystem;
-        assert !constraintSystem.isSuccessful() : "Report error only for not successful constraint system";
+        ConstraintSystemStatus status = constraintSystem.getStatus();
+        assert !status.isSuccessful() : "Report error only for not successful constraint system";
 
-        if (constraintSystem.hasErrorInConstrainingTypes()) {
+        if (status.hasErrorInConstrainingTypes()) {
             // Do not report type inference errors if there is one in the arguments
             // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
             return;
         }
-        if (constraintSystem.hasOnlyExpectedTypeMismatch()) {
+        if (status.hasOnlyExpectedTypeMismatch()) {
             JetType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
@@ -231,14 +233,14 @@ public class TracingStrategyImpl implements TracingStrategy {
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
             trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, data.expectedType, substitutedReturnType));
         }
-        else if (constraintSystem.hasTypeConstructorMismatch()) {
+        else if (status.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
         }
-        else if (constraintSystem.hasConflictingConstraints()) {
+        else if (status.hasConflictingConstraints()) {
             trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data));
         }
         else {
-            assert constraintSystem.hasUnknownParameters();
+            assert status.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
         }
     }

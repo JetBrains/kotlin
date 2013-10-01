@@ -78,7 +78,7 @@ public final class ArrayForTranslator extends ForTranslator {
     private JsBlock translate() {
         List<JsStatement> blockStatements = Lists.newArrayList();
         blockStatements.add(temporariesInitialization(loopRange, end).makeStmt());
-        blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrementExpression(), getBody()));
+        blockStatements.add(new JsFor(getInitExpression(), getCondition(), getIncrementExpression(), getBody()));
         return new JsBlock(blockStatements);
     }
 
@@ -86,9 +86,7 @@ public final class ArrayForTranslator extends ForTranslator {
     @NotNull
     private JsStatement getBody() {
         JsArrayAccess arrayAccess = new JsArrayAccess(loopRange.reference(), index.reference());
-        JsStatement currentVar = newVar(parameterName, arrayAccess);
-        JsStatement realBody = translateOriginalBodyExpression();
-        return new JsBlock(currentVar, realBody);
+        return translateBody(arrayAccess);
     }
 
     @NotNull

@@ -23,7 +23,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
@@ -48,15 +48,15 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
     }
 
-    public void doTest(String name, int diagnosticNumber, AbstractDiagnosticFactory... diagnosticFactories) throws Exception {
+    public void doTest(String name, int diagnosticNumber, DiagnosticFactory... diagnosticFactories) throws Exception {
         String fileName = name + ".kt";
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
-        final Set<AbstractDiagnosticFactory> factoriesSet = Sets.newHashSet(diagnosticFactories);
-        List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics(), new Condition<Diagnostic>() {
+        final Set<DiagnosticFactory> factoriesSet = Sets.newHashSet(diagnosticFactories);
+        List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
             @Override
             public boolean value(Diagnostic diagnostic) {
                 return factoriesSet.contains(diagnostic.getFactory());

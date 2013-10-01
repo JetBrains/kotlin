@@ -61,6 +61,9 @@ public class CopyIntoPanel {
             copyIntoLabel.setDisplayedMnemonic(mnemonicChar);
             copyIntoLabel.setDisplayedMnemonicIndex(mnemonicIndex);
         }
+        else {
+            copyIntoLabel.setVisible(false);
+        }
 
         copyIntoLabel.setLabelFor(copyIntoField.getTextField());
         copyIntoField.getTextField().setText(defaultPath);
@@ -106,5 +109,9 @@ public class CopyIntoPanel {
 
     public boolean hasErrors() {
         return hasErrorsState;
+    }
+
+    public void setLabelWidth(int width) {
+        copyIntoLabel.setPreferredSize(new Dimension(width, -1));
     }
 }

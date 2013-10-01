@@ -47,9 +47,9 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
 
         String fileText = myFixture.getFile().getText();
 
-        Integer completionTime = ExpectedCompletionUtils.getExecutionTime(fileText);
+        Integer invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText);
 
-        myFixture.complete(CompletionType.BASIC, completionTime == null ? 0 : completionTime);
+        myFixture.complete(CompletionType.BASIC, invocationCount == null ? 0 : invocationCount);
 
         ExpectedCompletionUtils.assertDirectivesValid(fileText);
 

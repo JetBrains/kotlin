@@ -41,6 +41,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.k2js.config.EcmaVersion;
 
@@ -59,7 +60,8 @@ public class KotlinFrameworkDetector {
     }
 
     public static boolean isJavaKotlinModule(@NotNull Module module) {
-        GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
+        GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(
+                ConfigureKotlinInProjectUtils.hasKotlinFilesOnlyInTests(module));
         return KotlinRuntimeLibraryUtil.getKotlinRuntimeMarkerClass(scope) != null;
     }
 

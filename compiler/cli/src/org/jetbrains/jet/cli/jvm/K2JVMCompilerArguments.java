@@ -18,7 +18,7 @@
 package org.jetbrains.jet.cli.jvm;
 
 import com.sampullara.cli.Argument;
-import org.jetbrains.jet.cli.common.CompilerArguments;
+import org.jetbrains.jet.cli.CommonCompilerArguments;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * Command line arguments for the {@link K2JVMCompiler}
  */
 @SuppressWarnings("UnusedDeclaration")
-public class K2JVMCompilerArguments extends CompilerArguments {
+public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
 
     // TODO ideally we'd unify this with 'src' to just having a single field that supports multiple files/dirs
@@ -82,18 +82,6 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "script", description = "evaluate script")
     public boolean script;
 
-    @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
-    public boolean tags;
-
-    @Argument(value = "verbose", description = "Enable verbose logging output")
-    public boolean verbose;
-
-    @Argument(value = "version", description = "Display compiler version")
-    public boolean version;
-
-    @Argument(value = "help", alias = "h", description = "show help")
-    public boolean help;
-
     @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
     public String kotlinHome;
 
@@ -111,15 +99,6 @@ public class K2JVMCompilerArguments extends CompilerArguments {
 
     public void setClasspath(String classpath) {
         this.classpath = classpath;
-    }
-
-    @Override
-    public boolean isHelp() {
-        return help;
-    }
-
-    public void setHelp(boolean help) {
-        this.help = help;
     }
 
     public boolean isIncludeRuntime() {
@@ -154,31 +133,13 @@ public class K2JVMCompilerArguments extends CompilerArguments {
         this.outputDir = outputDir;
     }
 
+    @Override
     public String getSrc() {
         return src;
     }
 
     public void setSrc(String src) {
         this.src = src;
-    }
-
-    @Override
-    public boolean isTags() {
-        return tags;
-    }
-
-    @Override
-    public boolean isVersion() {
-        return version;
-    }
-
-    @Override
-    public boolean isVerbose() {
-        return verbose;
-    }
-
-    public void setTags(boolean tags) {
-        this.tags = tags;
     }
 
     public void setNoStdlib(boolean noStdlib) {

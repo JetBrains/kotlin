@@ -71,7 +71,31 @@
     <item name='android.os.ParcelUuid void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.os.Message android.os.Message obtain()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Message)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.os.Message android.os.Message obtain(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, java.lang.Runnable)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, int, int, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Parcel java.util.ArrayList&lt;T&gt; createTypedArrayList(android.os.Parcelable.Creator&lt;T&gt;) 0'>
@@ -198,9 +222,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.AsyncTask android.os.AsyncTask.Status getStatus()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel android.os.IBinder readStrongBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyDeath()'>
@@ -447,9 +468,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectNetwork()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel java.lang.String readString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Bundle java.util.Set&lt;java.lang.String&gt; keySet()'>

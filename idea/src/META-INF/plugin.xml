@@ -9,6 +9,8 @@
   <idea-version since-build="129.1" until-build="129.99999"/>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
+  <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
@@ -25,6 +27,9 @@
     </component>
     <component>
       <implementation-class>org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.NonConfiguredKotlinProjectNotification</implementation-class>
     </component>
     <component>
       <implementation-class>org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
@@ -69,6 +74,21 @@
       <action id="ShowKotlinSignatures" class="org.jetbrains.jet.plugin.ktSignature.ShowKotlinSignaturesAction"/>
       <add-to-group group-id="EditorGutterPopupMenu" anchor="last"/>
     </group>
+
+    <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/jet/plugin/icons/kotlin13.png"
+           class="org.jetbrains.jet.plugin.actions.KotlinActionGroup">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </group>
+
+    <action id="ConfigureKotlinInProject" class="org.jetbrains.jet.plugin.actions.ConfigureKotlinInProjectAction"
+            text="Configure Kotlin in Project">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
+
+    <action id="ConfigureKotlinJsInProject" class="org.jetbrains.jet.plugin.actions.ConfigureKotlinJsInProjectAction"
+            text="Configure Kotlin (JavaScript) in Project">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -84,7 +104,7 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder"
+    <projectService serviceInterface="org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder"
                     serviceImplementation="org.jetbrains.jet.plugin.vfilefinder.IDEVirtualFileFinder"/>
 
     <projectService serviceInterface="org.jetbrains.jet.asJava.LightClassGenerationSupport"
@@ -92,6 +112,9 @@
 
     <projectService serviceInterface="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"/>
+
+    <projectService serviceInterface="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"
+                    serviceImplementation="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"/>
 
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
@@ -141,8 +164,6 @@
                          id="project.kotlinCompiler"
                          displayName="Kotlin Compiler"
                          parentId="project.propCompiler"/>
-
-    <templateParameterTraversalPolicy implementation="org.jetbrains.jet.plugin.completion.JetTemplateParameterTraversalPolicy"/>
 
     <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 
@@ -245,6 +266,13 @@
     <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.JsHeaderLibraryPresentationProvider"/>
 
     <typeHierarchyProvider language="jet" implementationClass="org.jetbrains.jet.plugin.hierarchy.KotlinTypeHierarchyProvider"/>
+    <callHierarchyProvider
+        language="jet"
+        implementationClass="org.jetbrains.jet.plugin.hierarchy.calls.KotlinCallHierarchyProvider" />
+    <callHierarchyProvider
+        language="JAVA"
+        implementationClass="org.jetbrains.jet.plugin.hierarchy.calls.KotlinCallHierarchyProvider"
+        order="first" />
 
     <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
@@ -269,9 +297,9 @@
 
     <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.KotlinLibrariesNotificationProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.AbsentJdkAnnotationsNotifications"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.IncorrectSourceRootNameNotification"/>
+    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
 
@@ -279,6 +307,7 @@
     <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDirectInheritorsSearcher"/>
     <definitionsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.KotlinAnnotatedElementsSearcher"/>
+    <methodReferencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinLightMethodUsagesSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>
 
@@ -407,11 +436,22 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ReconstructTypeInCastOrIsAction</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>
 
   <extensionPoints>
     <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
+    <extensionPoint name="projectConfigurator" interface="org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator"/>
   </extensionPoints>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator"/>
+    <projectConfigurator implementation="org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator"/>
+  </extensions>
 </idea-plugin>

@@ -1,4 +1,4 @@
-JetFile: ForWithMultiDecl.jet
+JetFile: ForWithMultiDecl.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

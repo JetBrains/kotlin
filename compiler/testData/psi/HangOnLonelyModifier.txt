@@ -1,4 +1,4 @@
-JetFile: HangOnLonelyModifier.jet
+JetFile: HangOnLonelyModifier.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

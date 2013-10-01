@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -64,8 +64,6 @@ public class ExpressionTypingUtils {
 
     private ExpressionTypingUtils() {
     }
-
-    public static final JetType CANT_INFER_LAMBDA_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
 
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
@@ -310,7 +308,7 @@ public class ExpressionTypingUtils {
         }
 
         constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
-        return constraintSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true);
+        return constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true);
     }
 
     private static Set<Name> collectUsedTypeNames(@NotNull JetType jetType) {
@@ -461,8 +459,8 @@ public class ExpressionTypingUtils {
 
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
-                AbstractDiagnosticFactory factory = diagnostic.getFactory();
-                if ((factory == TYPE_MISMATCH || factory == ERROR_COMPILE_TIME_VALUE)
+                DiagnosticFactory factory = diagnostic.getFactory();
+                if ((factory == TYPE_MISMATCH || factory == CONSTANT_EXPECTED_TYPE_MISMATCH || factory == NULL_FOR_NONNULL_TYPE)
                         && diagnostic.getPsiElement() == expressionToWatch) {
                     mismatchFound[0] = true;
                 }

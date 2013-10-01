@@ -1,4 +1,4 @@
-JetFile: ImportSoftKW.jet
+JetFile: ImportSoftKW.kt
   NAMESPACE_HEADER
     <empty list>
   IMPORT_DIRECTIVE

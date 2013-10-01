@@ -36,7 +36,7 @@ public final class Namer {
     public static final String CALLEE_NAME = "$fun";
     public static final String OUTER_CLASS_NAME = "$outer";
 
-    private static final String INITIALIZE_METHOD_NAME = "initialize";
+    private static final String CALL_FUNCTION = "call";
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
@@ -44,12 +44,12 @@ public final class Namer {
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
-    private static final String SUPER_METHOD_NAME = "super_init";
+    private static final String SUPER_METHOD_NAME = "baseInitializer";
     private static final String ROOT_NAMESPACE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String CLASSES_OBJECT_NAME = "_c";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
-    private static final String CLASS_OBJECT_GETTER = "object$";
+    private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
 
 
@@ -75,13 +75,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static JsNameRef initializeMethodReference() {
-        return new JsNameRef(INITIALIZE_METHOD_NAME);
-    }
-
-    @NotNull
-    public static String superMethodName() {
-        return SUPER_METHOD_NAME;
+    public static JsNameRef superMethodNameRef(@NotNull JsName superClassJsName) {
+        return new JsNameRef(SUPER_METHOD_NAME, superClassJsName.makeRef());
     }
 
     @NotNull
@@ -120,7 +115,7 @@ public final class Namer {
 
     @NotNull
     public static JsExpression getClassObjectAccessor(@NotNull JsExpression referenceToClass) {
-        return new JsInvocation(new JsNameRef(CLASS_OBJECT_GETTER, referenceToClass));
+        return new JsNameRef(CLASS_OBJECT_GETTER, referenceToClass);
     }
 
     @NotNull
@@ -144,6 +139,11 @@ public final class Namer {
     }
 
     @NotNull
+    public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
+        return new JsNameRef(CALL_FUNCTION, functionExpression);
+    }
+
+    @NotNull
     public static Namer newInstance(@NotNull JsScope rootScope) {
         return new Namer(rootScope);
     }
@@ -159,6 +159,8 @@ public final class Namer {
     @NotNull
     private final JsExpression definePackage;
     @NotNull
+    private final JsExpression defineRootPackage;
+    @NotNull
     private final JsName objectName;
     @NotNull
     private final JsName enumEntriesName;
@@ -172,6 +174,7 @@ public final class Namer {
         traitName = kotlinScope.declareName(TRAIT_OBJECT_NAME);
 
         definePackage = kotlin("definePackage");
+        defineRootPackage = kotlin("defineRootPackage");
 
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
         enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
@@ -198,6 +201,11 @@ public final class Namer {
     @NotNull
     public JsExpression packageDefinitionMethodReference() {
         return definePackage;
+    }
+
+    @NotNull
+    public JsExpression rootPackageDefinitionMethodReference() {
+        return defineRootPackage;
     }
 
     @NotNull

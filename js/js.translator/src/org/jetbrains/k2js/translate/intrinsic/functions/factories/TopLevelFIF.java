@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
@@ -169,7 +170,7 @@ public final class TopLevelFIF extends CompositeFIF {
                         if (functionReference instanceof JsNameRef && ((JsNameRef) functionReference).getIdent().equals("invoke")) {
                             return callTranslator.explicitInvokeCall();
                         }
-                        return new JsInvocation(new JsNameRef("call", functionReference), generateInvocationArguments(thisExpression, arguments));
+                        return new JsInvocation(Namer.getFunctionCallRef(functionReference), generateInvocationArguments(thisExpression, arguments));
                     }
                 }
             }

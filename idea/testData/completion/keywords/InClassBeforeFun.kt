@@ -7,7 +7,7 @@ public class Test {
     }
 }
 
-// TIME: 1
+// INVOCATION_COUNT: 1
 
 // EXIST:  abstract
 /* // ABSENT: annotation */
@@ -15,17 +15,17 @@ public class Test {
 // ABSENT: break
 // ABSENT: by
 // ABSENT: catch
-// EXIST:  class ... {...}
+// EXIST:  class
 // ABSENT: continue
 // ABSENT: default
 // ABSENT: do
 // ABSENT: else
-// EXIST:  enum class ... {...}
+// EXIST:  enum
 // ABSENT: false
 // EXIST:  final
 // ABSENT: finally
 // ABSENT: for
-// EXIST:  fun ...(...) : ... {...}
+// EXIST:  fun
 // EXIST:  get
 // ABSENT: if
 // ABSENT: import
@@ -49,14 +49,12 @@ public class Test {
 // ABSENT: This
 // ABSENT: this
 // ABSENT: throw
-// EXIST:  trait ... {...}
+// EXIST:  trait
 // ABSENT: true
 // ABSENT: try
 // EXIST:  type
-// EXIST:  val ... : ... = ...
-// EXIST:  val ... : ...get() {...}
-// EXIST:  var ... : ... = ...
-// EXIST:  var ... : ...get() {...}set(value) {...}
+// EXIST:  val
+// EXIST:  var
 // ABSENT: vararg
 // ABSENT: when
 // ABSENT: where

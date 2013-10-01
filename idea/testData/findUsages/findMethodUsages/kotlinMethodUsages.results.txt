@@ -1,3 +1,2 @@
-Callable reference (6: 23) val methodRef = ::processRequest()
-Function call (10: 9) processRequest()
-Import directive (3: 15) import server.processRequest
+Function call (5: 18) Server().processRequest()
+Function call (6: 20) ServerEx().processRequest()

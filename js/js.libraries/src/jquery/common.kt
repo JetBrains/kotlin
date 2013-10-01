@@ -1,6 +1,6 @@
 package js.jquery;
 
-import js.dom.core.Element
+import org.w3c.dom.Element
 
 native
 public public class JQuery() {

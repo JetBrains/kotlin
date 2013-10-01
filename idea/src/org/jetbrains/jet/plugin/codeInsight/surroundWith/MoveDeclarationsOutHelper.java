@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
@@ -131,7 +130,7 @@ public class MoveDeclarationsOutHelper {
         if (typeRef != null) {
             typeString = typeRef.getText();
         }
-        else if (!ErrorUtils.isErrorType(propertyType)) {
+        else if (!propertyType.isError()) {
             typeString = DescriptorRenderer.TEXT.renderType(propertyType);
         }
 

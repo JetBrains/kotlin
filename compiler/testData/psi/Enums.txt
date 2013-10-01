@@ -1,4 +1,4 @@
-JetFile: Enums.jet
+JetFile: Enums.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

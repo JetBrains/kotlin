@@ -24,7 +24,8 @@ import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
@@ -34,16 +35,19 @@ import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
-public class DeserializedClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
+public class DeserializedClassDescriptor extends AbstractClassDescriptor implements ClassDescriptor {
 
     private final ClassId classId;
     private final ProtoBuf.Class classProto;
@@ -62,8 +66,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final NestedClassDescriptors nestedClasses;
     private final NestedClassDescriptors nestedObjects;
 
-    private final Name name;
-    private final DeclarationDescriptor containingDeclaration;
+    private final NotNullLazyValue<DeclarationDescriptor> containingDeclaration;
     private final DeserializedClassTypeConstructor typeConstructor;
     private final Modality modality;
     private final Visibility visibility;
@@ -73,21 +76,19 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     private final DescriptorFinder descriptorFinder;
 
     public DeserializedClassDescriptor(
-            @NotNull ClassId classId,
             @NotNull StorageManager storageManager,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver,
             @NotNull AnnotationDeserializer annotationResolver,
-            @NotNull final DescriptorFinder descriptorFinder,
-            @NotNull ProtoBuf.Class classProto,
-            @Nullable TypeDeserializer outerTypeDeserializer
+            @NotNull DescriptorFinder descriptorFinder,
+            @NotNull ClassData classData
     ) {
-        this.classId = classId;
-        this.classProto = classProto;
-        this.descriptorFinder = descriptorFinder;
-        this.name = nameResolver.getName(classProto.getName());
+        super(classData.getNameResolver().getClassId(classData.getClassProto().getFqName()).getRelativeClassName().shortName());
+        NameResolver nameResolver = classData.getNameResolver();
+        this.classProto = classData.getClassProto();
 
-        TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, outerTypeDeserializer, nameResolver,
+        this.classId = nameResolver.getClassId(classProto.getFqName());
+        this.descriptorFinder = descriptorFinder;
+
+        TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, null, nameResolver,
                                                                         descriptorFinder, "Deserializer for class " + name, NONE);
         DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(storageManager, notNullTypeDeserializer,
                                                                                  this, nameResolver, annotationResolver);
@@ -95,7 +96,13 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         this.deserializer = outerDeserializer.createChildDeserializer(this, classProto.getTypeParameterList(), typeParameters);
         this.typeDeserializer = deserializer.getTypeDeserializer();
 
-        this.containingDeclaration = containingDeclaration;
+        this.containingDeclaration = storageManager.createLazyValue(new Computable<DeclarationDescriptor>() {
+            @Override
+            public DeclarationDescriptor compute() {
+                return computeContainingDeclaration();
+            }
+        });
+
         this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
         this.memberScope = new DeserializedClassMemberScope(storageManager, this);
         this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
@@ -128,39 +135,31 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
                 return computeClassObjectDescriptor();
             }
         });
-        this.nestedClasses = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedClassNameList(), nameResolver)) {
-            @Override
-            protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
-                return descriptorFinder.findClass(DeserializedClassDescriptor.this.classId.createNestedClassId(name));
-            }
-        };
-        this.nestedObjects = new NestedClassDescriptors(storageManager, stringSet(classProto.getNestedObjectNameList(), nameResolver)) {
-            @Override
-            protected ClassDescriptor resolveNestedClass(@NotNull Name name) {
-                return descriptorFinder.findClass(DeserializedClassDescriptor.this.classId.createNestedClassId(name));
-            }
-        };
+        this.nestedClasses = new NestedClassDescriptors(storageManager, names(classProto.getNestedClassNameList(), nameResolver));
+        this.nestedObjects = new NestedClassDescriptors(storageManager, names(classProto.getNestedObjectNameList(), nameResolver));
     }
 
     @NotNull
-    private static Set<String> stringSet(@NotNull List<Integer> nameIndices, @NotNull NameResolver nameResolver) {
-        Set<String> result = new HashSet<String>(nameIndices.size());
+    private static Set<Name> names(@NotNull List<Integer> nameIndices, @NotNull NameResolver nameResolver) {
+        Set<Name> result = new HashSet<Name>(nameIndices.size());
         for (Integer index : nameIndices) {
-            result.add(nameResolver.getName(index).asString());
+            result.add(nameResolver.getName(index));
         }
         return result;
     }
 
     @NotNull
     @Override
-    public DeclarationDescriptor getOriginal() {
-        return this;
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration.compute();
     }
 
     @NotNull
-    @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
+    private DeclarationDescriptor computeContainingDeclaration() {
+        ClassOrNamespaceDescriptor result = classId.isTopLevelClass() ?
+                                            descriptorFinder.findPackage(classId.getPackageFqName()) :
+                                            descriptorFinder.findClass(classId.getOuterClassId());
+        return result != null ? result : ErrorUtils.getErrorModule();
     }
 
     @NotNull
@@ -191,12 +190,6 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
     @Override
     public boolean isInner() {
         return isInner;
-    }
-
-    @NotNull
-    @Override
-    public Name getName() {
-        return name;
     }
 
     private List<AnnotationDescriptor> computeAnnotations() {
@@ -282,14 +275,16 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObject.createTypeConstructor();
 
-        // TODO: do something if trace has errors?
-        BindingTrace trace = new BindingTraceContext();
-        ConstructorDescriptorImpl primaryConstructor = DescriptorResolver.createPrimaryConstructorForObject(classObject);
+        ConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(classObject);
         primaryConstructor.setReturnType(classObject.getDefaultType());
-        classObject.setPrimaryConstructor(primaryConstructor, trace);
+        classObject.setPrimaryConstructor(primaryConstructor);
 
-        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, trace));
-        classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, trace));
+        JetType defaultType = getDefaultType();
+        JetType defaultTypeArray = KotlinBuiltIns.getInstance().getArrayType(defaultType);
+        classObject.getBuilder().addFunctionDescriptor(
+                DescriptorFactory.createEnumClassObjectValuesMethod(classObject, defaultTypeArray));
+        classObject.getBuilder().addFunctionDescriptor(
+                DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, defaultType));
 
         return classObject;
     }
@@ -301,7 +296,7 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         property.setType(getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
                          enumClassObject.getThisAsReceiverParameter(), NO_RECEIVER_PARAMETER);
 
-        PropertyGetterDescriptorImpl getter = DescriptorResolver.createDefaultGetter(property);
+        PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(property);
         getter.initialize(property.getReturnType());
         property.initialize(getter, null);
 
@@ -417,15 +412,21 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
                 @NotNull final Collection<D> result
         ) {
             List<CallableMemberDescriptor> fromCurrent = new ArrayList<CallableMemberDescriptor>(result);
-            OverrideResolver.generateOverridesInFunctionGroup(
+            OverridingUtil.generateOverridesInFunctionGroup(
                     name,
                     fromSupertypes,
                     fromCurrent,
                     classDescriptor,
-                    new OverrideResolver.DescriptorSink() {
+                    new OverridingUtil.DescriptorSink() {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            OverrideResolver.resolveUnknownVisibilityForMember(null, fakeOverride, TraceUtil.TRACE_STUB);
+                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new OverridingUtil.NotInferredVisibilitySink() {
+                                @Override
+                                public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+                                    // Do nothing
+                                    // TODO: do something
+                                }
+                            });
                             //noinspection unchecked
                             result.add((D) fakeOverride);
                         }
@@ -483,30 +484,27 @@ public class DeserializedClassDescriptor extends ClassDescriptorBase implements 
         }
     }
 
-    private abstract static class NestedClassDescriptors {
-        private final Set<String> declaredNames;
+    private class NestedClassDescriptors {
+        private final Set<Name> declaredNames;
         private final MemoizedFunctionToNullable<Name, ClassDescriptor> findClass;
 
-        public NestedClassDescriptors(@NotNull StorageManager storageManager, @NotNull Set<String> declaredNames) {
+        public NestedClassDescriptors(@NotNull StorageManager storageManager, @NotNull Set<Name> declaredNames) {
             this.declaredNames = declaredNames;
             this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
                 @Override
                 public ClassDescriptor fun(Name name) {
-                    NestedClassDescriptors _this = NestedClassDescriptors.this;
-                    if (!_this.declaredNames.contains(name.asString())) return null;
-
-                    return resolveNestedClass(name);
+                    return NestedClassDescriptors.this.declaredNames.contains(name) ?
+                           descriptorFinder.findClass(classId.createNestedClassId(name)) :
+                           null;
                 }
-            }, StorageManager.ReferenceKind.STRONG);
+            }, STRONG);
         }
-
-        protected abstract ClassDescriptor resolveNestedClass(@NotNull Name name);
 
         @NotNull
         public Collection<ClassDescriptor> getAllDescriptors() {
             Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(declaredNames.size());
-            for (String name : declaredNames) {
-                ClassDescriptor descriptor = findClass.fun(Name.identifier(name));
+            for (Name name : declaredNames) {
+                ClassDescriptor descriptor = findClass.fun(name);
                 if (descriptor != null) {
                     result.add(descriptor);
                 }

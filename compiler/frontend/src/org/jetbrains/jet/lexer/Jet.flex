@@ -268,8 +268,6 @@ LONG_TEMPLATE_ENTRY_END=\}
 \!in{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
 \!is{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
 
-"<#<"        { return JetTokens.IDE_TEMPLATE_START    ; }
-">#>"        { return JetTokens.IDE_TEMPLATE_END    ; }
 "==="        { return JetTokens.EQEQEQ    ; }
 "!=="        { return JetTokens.EXCLEQEQEQ; }
 "!in"        { return JetTokens.NOT_IN; }

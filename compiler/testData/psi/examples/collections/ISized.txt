@@ -1,4 +1,4 @@
-JetFile: ISized.jet
+JetFile: ISized.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

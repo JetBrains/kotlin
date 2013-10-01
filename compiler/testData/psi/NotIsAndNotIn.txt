@@ -1,4 +1,4 @@
-JetFile: NotIsAndNotIn.jet
+JetFile: NotIsAndNotIn.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

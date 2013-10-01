@@ -151,6 +151,16 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitAnnotatedExpression(JetAnnotatedExpression expression) {
+            builder.read(expression);
+
+            JetExpression baseExpression = expression.getBaseExpression();
+            if (baseExpression != null) {
+                generateInstructions(baseExpression, inCondition);
+            }
+        }
+
+        @Override
         public void visitThisExpression(JetThisExpression expression) {
             builder.read(expression);
         }
@@ -462,7 +472,8 @@ public class JetControlFlowProcessor {
             }
             boolean conditionIsTrueConstant = false;
             if (condition instanceof JetConstantExpression && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
-                if (BooleanValue.TRUE == new CompileTimeConstantResolver().getBooleanValue(condition.getText(), KotlinBuiltIns.getInstance().getBooleanType())) {
+                if (BooleanValue.TRUE == new CompileTimeConstantResolver().getBooleanValue(
+                        (JetConstantExpression) condition, KotlinBuiltIns.getInstance().getBooleanType())) {
                     conditionIsTrueConstant = true;
                 }
             }
@@ -795,7 +806,6 @@ public class JetControlFlowProcessor {
             Label doneLabel = builder.createUnboundLabel();
 
             Label nextLabel = null;
-            Collection<Label> allowDeadLabels = Lists.newArrayList();
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
                 JetWhenEntry whenEntry = iterator.next();
 
@@ -837,8 +847,7 @@ public class JetControlFlowProcessor {
                 }
             }
             builder.bindLabel(doneLabel);
-            boolean isWhenExhaust = WhenChecker.isWhenExhaustive(expression, trace);
-            if (!hasElseOrIrrefutableBranch && !isWhenExhaust) {
+            if (!hasElseOrIrrefutableBranch && WhenChecker.mustHaveElse(expression, trace)) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
         }

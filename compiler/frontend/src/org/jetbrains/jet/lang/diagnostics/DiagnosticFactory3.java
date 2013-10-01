@@ -35,6 +35,6 @@ public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends Diagnosti
 
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, severity);
+        return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, getSeverity());
     }
 }

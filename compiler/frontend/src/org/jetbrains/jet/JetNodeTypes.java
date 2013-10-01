@@ -148,8 +148,6 @@ public interface JetNodeTypes {
     JetNodeType NAMESPACE_HEADER = new JetNodeType("NAMESPACE_HEADER", JetNamespaceHeader.class);
     JetNodeType SCRIPT = new JetNodeType("SCRIPT", JetScript.class);
 
-    JetNodeType IDE_TEMPLATE_EXPRESSION   = new JetNodeType("IDE_TEMPLATE_EXPRESSION", JetIdeTemplate.class);
-
     IFileElementType TYPE_CODE_FRAGMENT = new JetTypeCodeFragmentType();
     IFileElementType EXPRESSION_CODE_FRAGMENT = new JetExpressionCodeFragmentType();
 }

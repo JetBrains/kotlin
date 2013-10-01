@@ -25,7 +25,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -42,7 +41,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
         JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);
         if (property == null) return false;
         JetType type = QuickFixUtil.getDeclarationReturnType(property);
-        if (super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type)) {
+        if (super.isAvailable(project, editor, file) && type != null && !type.isError()) {
             renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
             return true;
         }

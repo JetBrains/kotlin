@@ -1,4 +1,4 @@
-JetFile: TypeExpressionAmbiguities_ERR.jet
+JetFile: TypeExpressionAmbiguities_ERR.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

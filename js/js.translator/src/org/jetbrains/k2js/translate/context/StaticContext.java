@@ -35,7 +35,6 @@ import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Arrays;
@@ -44,7 +43,6 @@ import java.util.Comparator;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isObjectDeclaration;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 
 /**
@@ -199,13 +197,6 @@ public final class StaticContext {
     }
 
     private final class NameGenerator extends Generator<JsName> {
-        private JsName declareName(DeclarationDescriptor descriptor, String name) {
-            JsScope scope = getEnclosingScope(descriptor);
-            // ecma 5 property name never declares as obfuscatable:
-            // 1) property cannot be overloaded, so, name collision is not possible
-            // 2) main reason: if property doesn't have any custom accessor, value holder will have the same name as accessor, so, the same name will be declared more than once
-            return isEcma5() ? scope.declareName(name) : scope.declareFreshName(name);
-        }
 
         public NameGenerator() {
             Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
@@ -286,23 +277,40 @@ public final class StaticContext {
                     return getNameForDescriptor(containingClass);
                 }
             };
-            Rule<JsName> accessorsHasNamesWithSpecialPrefixes = new Rule<JsName>() {
+
+            // ecma 5 property name never declares as obfuscatable:
+            // 1) property cannot be overloaded, so, name collision is not possible
+            // 2) main reason: if property doesn't have any custom accessor, value holder will have the same name as accessor, so, the same name will be declared more than once
+            //
+            // But extension property may obfuscatable, because transform into function. Example: String.foo = 1, Int.foo = 2
+            Rule<JsName> propertyOrPropertyAccessor = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof PropertyAccessorDescriptor)) {
+                    PropertyDescriptor propertyDescriptor;
+                    if (descriptor instanceof PropertyAccessorDescriptor) {
+                        propertyDescriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
+                    }
+                    else if (descriptor instanceof PropertyDescriptor) {
+                        propertyDescriptor = (PropertyDescriptor) descriptor;
+                    }
+                    else {
                         return null;
                     }
 
-                    PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) descriptor;
-                    String propertyName = accessorDescriptor.getCorrespondingProperty().getName().asString();
-                    if (isObjectDeclaration(accessorDescriptor.getCorrespondingProperty())) {
-                        return declareName(descriptor, propertyName);
-                    }
+                    String propertyName = propertyDescriptor.getName().asString();
 
-                    boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
-                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter,
-                                                                   accessorDescriptor.getReceiverParameter() == null && isEcma5());
-                    return declareName(descriptor, accessorName);
+                    if (!isExtension(propertyDescriptor)) {
+                        return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
+                    } else {
+                        if (descriptor instanceof PropertyDescriptor) {
+                            return declarePropertyOrPropertyAccessorName(descriptor, propertyName, true);
+                        } else {
+                            String propertyJsName = getNameForDescriptor(propertyDescriptor).getIdent();
+                            boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
+                            String accessorName = Namer.getNameForAccessor(propertyJsName, isGetter, false);
+                            return declarePropertyOrPropertyAccessorName(descriptor, accessorName, false);
+                        }
+                    }
                 }
             };
 
@@ -318,21 +326,6 @@ public final class StaticContext {
                         return getEnclosingScope(descriptor).declareName(name);
                     }
                     return null;
-                }
-            };
-            Rule<JsName> propertiesCorrespondToSpeciallyTreatedBackingFieldNames = new Rule<JsName>() {
-                @Override
-                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof PropertyDescriptor)) {
-                        return null;
-                    }
-
-                    String name = descriptor.getName().asString();
-                    if (!isEcma5() || JsDescriptorUtils.isAsPrivate((PropertyDescriptor) descriptor)) {
-                        name = Namer.getKotlinBackingFieldName(name);
-                    }
-
-                    return declareName(descriptor, name);
                 }
             };
             Rule<JsName> overridingDescriptorsReferToOriginalName = new Rule<JsName>() {
@@ -355,13 +348,18 @@ public final class StaticContext {
             };
             addRule(namesForStandardClasses);
             addRule(constructorHasTheSameNameAsTheClass);
+            addRule(propertyOrPropertyAccessor);
             addRule(predefinedObjectsHasUnobfuscatableNames);
-            addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
             addRule(namespacesShouldBeDefinedInRootScope);
             addRule(overridingDescriptorsReferToOriginalName);
-            addRule(accessorsHasNamesWithSpecialPrefixes);
             addRule(memberDeclarationsInsideParentsScope);
         }
+    }
+
+    @NotNull
+    public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name, boolean fresh) {
+        JsScope scope = getEnclosingScope(descriptor);
+        return fresh ? scope.declareFreshName(name) : scope.declareName(name);
     }
 
     @NotNull

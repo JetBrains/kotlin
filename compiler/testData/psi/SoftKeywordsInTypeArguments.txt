@@ -1,4 +1,4 @@
-JetFile: SoftKeywordsInTypeArguments.jet
+JetFile: SoftKeywordsInTypeArguments.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

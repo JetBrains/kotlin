@@ -6,7 +6,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.DataInput;
@@ -58,7 +59,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
         public Map<FqName, Void> map(FileContent inputData) {
             try {
                 KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(inputData.getFile());
-                if (header.isKotlinCompiledFile()) {
+                if (header instanceof SerializedDataHeader && header.isCompatibleKotlinCompiledFile()) {
                     return Collections.singletonMap(header.getFqName(), null);
                 }
             }

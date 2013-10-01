@@ -39,14 +39,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    @Nullable
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        checkMayRead();
-
-        return writableWorker.getPropertyByFieldReference(fieldName);
-    }
-
-    @Override
     @NotNull
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
         checkMayRead();

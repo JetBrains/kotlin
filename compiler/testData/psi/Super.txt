@@ -1,4 +1,4 @@
-JetFile: Super.jet
+JetFile: Super.kt
   PsiComment(EOL_COMMENT)('// KT-156 Fix the this<Super> syntax')
   PsiWhiteSpace('\n')
   NAMESPACE_HEADER

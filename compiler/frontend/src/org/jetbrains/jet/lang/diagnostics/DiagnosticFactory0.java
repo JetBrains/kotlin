@@ -35,6 +35,6 @@ public class DiagnosticFactory0<E extends PsiElement> extends DiagnosticFactoryW
 
     @NotNull
     public SimpleDiagnostic<E> on(@NotNull E element) {
-        return new SimpleDiagnostic<E>(element, this, severity);
+        return new SimpleDiagnostic<E>(element, this, getSeverity());
     }
 }

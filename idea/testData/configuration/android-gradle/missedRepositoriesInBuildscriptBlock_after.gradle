@@ -1,0 +1,41 @@
+buildscript {
+    ext.kotlin_version = '$VERSION$'
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$ext.kotlin_version"
+    }
+    repositories {
+        maven {
+            url 'http://oss.sonatype.org/content/repositories/snapshots'
+        }
+    }
+}
+apply plugin: 'android'
+apply plugin: 'kotlin-android'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 16
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:13.0.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$ext.kotlin_version"
+}
+
+// VERSION: $VERSION$

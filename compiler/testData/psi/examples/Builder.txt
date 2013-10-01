@@ -1,4 +1,4 @@
-JetFile: Builder.jet
+JetFile: Builder.kt
   NAMESPACE_HEADER
     <empty list>
   PROPERTY

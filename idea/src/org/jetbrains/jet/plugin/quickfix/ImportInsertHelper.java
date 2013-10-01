@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetPluginUtil;
@@ -56,7 +55,7 @@ public class ImportInsertHelper {
      * @param file file where import directive should be added
      */
     public static void addImportDirectivesIfNeeded(@NotNull JetType type, @NotNull JetFile file) {
-        if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || ErrorUtils.isErrorType(type)) {
+        if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || type.isError()) {
             return;
         }
         BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();

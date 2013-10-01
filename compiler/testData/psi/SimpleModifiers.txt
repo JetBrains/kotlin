@@ -1,4 +1,4 @@
-JetFile: SimpleModifiers.jet
+JetFile: SimpleModifiers.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

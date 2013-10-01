@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
@@ -31,7 +32,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Set;
 
-public class LazyTypeParameterDescriptor extends  AbstractLazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyDescriptor {
+public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyDescriptor {
     private final ResolveSession resolveSession;
 
     private final JetTypeParameter jetTypeParameter;

@@ -45,6 +45,10 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testInheritanceFromNativeClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testClass() throws Exception {
         fooBoxTest();
     }

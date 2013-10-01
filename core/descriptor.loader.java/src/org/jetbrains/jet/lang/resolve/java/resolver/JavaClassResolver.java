@@ -21,9 +21,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
@@ -34,7 +33,8 @@ import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
-import org.jetbrains.jet.lang.resolve.java.vfilefinder.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -191,20 +191,7 @@ public final class JavaClassResolver {
         //TODO: correct scope
         VirtualFile file = virtualFileFinder.find(qualifiedName);
         if (file != null) {
-            //TODO: code duplication
-            //TODO: it is a hackish way to determine whether it is inner class or not
-            boolean isInnerClass = file.getName().contains("$");
-            ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, isInnerClass);
-            // class may be resolved during resolution of parent
-            ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
-            if (cachedDescriptor != null) {
-                return cachedDescriptor;
-            }
-            assert !unresolvedCache.contains(qualifiedName.toUnsafe())
-                    : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
-
-            ClassId id = ClassId.fromFqNameAndContainingDeclaration(qualifiedName.toUnsafe(), containingDeclaration);
-            ClassDescriptor deserializedDescriptor = deserializedDescriptorResolver.resolveClass(id, file);
+            ClassDescriptor deserializedDescriptor = deserializedDescriptorResolver.resolveClass(file);
             if (deserializedDescriptor != null) {
                 cache(javaClassToKotlinFqName(qualifiedName), deserializedDescriptor);
                 return deserializedDescriptor;
@@ -233,7 +220,6 @@ public final class JavaClassResolver {
             return alreadyResolved;
         }
 
-        //TODO: code duplication
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, javaClass.getOuterClass() != null);
         // class may be resolved during resolution of parent
         ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
@@ -271,11 +257,10 @@ public final class JavaClassResolver {
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         ClassDescriptorFromJvmBytecode classDescriptor =
-                new ClassDescriptorFromJvmBytecode(containingDeclaration, determineClassKind(javaClass), isInnerClass(javaClass));
+                new ClassDescriptorFromJvmBytecode(containingDeclaration, javaClass.getName(), determineClassKind(javaClass), isInnerClass(javaClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
 
-        classDescriptor.setName(javaClass.getName());
 
         JavaTypeParameterResolver.Initializer typeParameterInitializer = typeParameterResolver.resolveTypeParameters(classDescriptor, javaClass);
         classDescriptor.setTypeParameterDescriptors(typeParameterInitializer.getDescriptors());
@@ -448,12 +433,12 @@ public final class JavaClassResolver {
 
         JetType valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(containing.getDefaultType());
         SimpleFunctionDescriptor valuesMethod =
-                DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, valuesReturnType);
+                DescriptorFactory.createEnumClassObjectValuesMethod(classObjectDescriptor, valuesReturnType);
         classObjectDescriptor.getBuilder().addFunctionDescriptor(valuesMethod);
 
         JetType valueOfReturnType = containing.getDefaultType();
         SimpleFunctionDescriptor valueOfMethod =
-                DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, valueOfReturnType);
+                DescriptorFactory.createEnumClassObjectValueOfMethod(classObjectDescriptor, valueOfReturnType);
         classObjectDescriptor.getBuilder().addFunctionDescriptor(valueOfMethod);
 
         return classObjectDescriptor;
@@ -462,9 +447,8 @@ public final class JavaClassResolver {
     @NotNull
     private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull JavaClass javaClass) {
         ClassDescriptorFromJvmBytecode classObjectDescriptor =
-                new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, false);
+                new ClassDescriptorFromJvmBytecode(containing, getClassObjectName(containing.getName()), ClassKind.CLASS_OBJECT, false);
 
-        classObjectDescriptor.setName(getClassObjectName(containing.getName()));
         classObjectDescriptor.setModality(Modality.FINAL);
         classObjectDescriptor.setVisibility(containing.getVisibility());
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());

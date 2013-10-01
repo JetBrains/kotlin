@@ -18,13 +18,13 @@ package org.jetbrains.jet.jvm.compiler;
 
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.parsing.JetParsingTest;
 import org.junit.Assert;
 
 import java.io.File;
@@ -45,7 +45,7 @@ public class CompileEnvironmentTest extends TestCase {
             File jdkAnnotations = ForTestPackJdkAnnotations.jdkAnnotationsForTests();
             File resultJar = new File(tempDir, "result.jar");
             ExitCode rv = new K2JVMCompiler().exec(System.out,
-                                                   "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
+                                                   "-module", JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.kts",
                                                    "-jar", resultJar.getAbsolutePath(),
                                                    "-noStdlib",
                                                    "-classpath", stdlib.getAbsolutePath(),
@@ -80,7 +80,7 @@ public class CompileEnvironmentTest extends TestCase {
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             File jdkAnnotations = ForTestPackJdkAnnotations.jdkAnnotationsForTests();
             ExitCode exitCode = new K2JVMCompiler()
-                    .exec(System.out, "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
+                    .exec(System.out, "-src", JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
                           "-output", out.getAbsolutePath(),
                           "-noStdlib",
                           "-classpath", stdlib.getAbsolutePath(),

@@ -1,4 +1,4 @@
-JetFile: CallWithManyClosures.jet
+JetFile: CallWithManyClosures.kt
   NAMESPACE_HEADER
     <empty list>
   PROPERTY

@@ -1,4 +1,4 @@
-JetFile: Comparison.jet
+JetFile: Comparison.kt
   NAMESPACE_HEADER
     <empty list>
   TYPEDEF

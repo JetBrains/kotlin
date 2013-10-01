@@ -1,4 +1,4 @@
-JetFile: Expressions_ERR.jet
+JetFile: Expressions_ERR.kt
   NAMESPACE_HEADER
     <empty list>
   PROPERTY

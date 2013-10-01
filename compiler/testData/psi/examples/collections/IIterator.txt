@@ -1,4 +1,4 @@
-JetFile: IIterator.jet
+JetFile: IIterator.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

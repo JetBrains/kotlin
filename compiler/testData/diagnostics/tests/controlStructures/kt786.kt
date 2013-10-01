@@ -14,7 +14,7 @@ fun foo() : Int {
 //test unreachable code
 fun fff(): Int {
     var d = 3
-    <!NO_ELSE_IN_WHEN!>when<!>(d) {
+    when(d) {
         4 -> 21
         return 2 -> <!UNREACHABLE_CODE!>return 47<!>
         <!UNREACHABLE_CODE!>bar() -> 45<!>

@@ -1,4 +1,4 @@
-JetFile: Imports.jet
+JetFile: Imports.kt
   NAMESPACE_HEADER
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

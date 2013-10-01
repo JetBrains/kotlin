@@ -134,7 +134,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                     public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                             if ("update".equals(event.getDescription())) {
-                                updateKotlinLibraries(outdatedLibraries, showRuntimeJarNotFoundDialog(myProject));
+                                updateKotlinLibraries(outdatedLibraries);
                             }
                             else if ("ignore".equals(event.getDescription())) {
                                 PropertiesComponent.getInstance(myProject).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion);
@@ -160,10 +160,10 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
         });
     }
 
-    private static void updateKotlinLibraries(Collection<Library> libraries, @NotNull Runnable jarNotFoundHandler) {
+    private void updateKotlinLibraries(Collection<Library> libraries) {
         File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
         if (!runtimePath.exists()) {
-            jarNotFoundHandler.run();
+            showRuntimeJarNotFoundDialog(myProject, PathUtil.KOTLIN_JAVA_RUNTIME_JAR).run();
             return;
         }
 
@@ -173,6 +173,16 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                    libraryJar != null : "Only java runtime libraries are expected";
 
             KotlinRuntimeLibraryUtil.replaceFile(runtimePath, libraryJar);
+
+            VirtualFile libraryJarSrc = JavaRuntimePresentationProvider.getRuntimeSrcJar(library);
+            if (libraryJarSrc != null) {
+                File runtimeSrcPath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimeSourcesPath();
+                if (!runtimeSrcPath.exists()) {
+                    showRuntimeJarNotFoundDialog(myProject, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR).run();
+                    return;
+                }
+                KotlinRuntimeLibraryUtil.replaceFile(runtimeSrcPath, libraryJarSrc);
+            }
         }
     }
 
@@ -225,12 +235,12 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
     }
 
     @NotNull
-    public static Runnable showRuntimeJarNotFoundDialog(@NotNull final Project project) {
+    public static Runnable showRuntimeJarNotFoundDialog(@NotNull final Project project, final @NotNull String jarName) {
         return new Runnable() {
             @Override
             public void run() {
                 Messages.showErrorDialog(project,
-                                         "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
+                                         jarName + " is not found. Make sure plugin is properly installed.",
                                          "No Runtime Found");
             }
         };

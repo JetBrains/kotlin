@@ -1,4 +1,4 @@
-JetFile: FunctionLiterals_ERR.jet
+JetFile: FunctionLiterals_ERR.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

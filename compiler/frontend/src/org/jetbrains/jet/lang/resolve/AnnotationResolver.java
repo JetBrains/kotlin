@@ -24,12 +24,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -80,6 +80,15 @@ public class AnnotationResolver {
         return resolveAnnotations(scope, modifierList, trace, true);
     }
 
+    @NotNull
+    public List<AnnotationDescriptor> resolveAnnotationsWithArguments(
+            @NotNull JetScope scope,
+            @NotNull List<JetAnnotationEntry> annotationEntries,
+            @NotNull BindingTrace trace
+    ) {
+        return resolveAnnotationEntries(scope, annotationEntries, trace, true);
+    }
+
     private List<AnnotationDescriptor> resolveAnnotations(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
@@ -91,6 +100,14 @@ public class AnnotationResolver {
         }
         List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
 
+        return resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments);
+    }
+
+    private List<AnnotationDescriptor> resolveAnnotationEntries(
+            @NotNull JetScope scope,
+            @NotNull List<JetAnnotationEntry> annotationEntryElements, @NotNull BindingTrace trace,
+            boolean shouldResolveArguments
+    ) {
         if (annotationEntryElements.isEmpty()) return Collections.emptyList();
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
@@ -118,7 +135,7 @@ public class AnnotationResolver {
     ) {
         TemporaryBindingTrace temporaryBindingTrace = new TemporaryBindingTrace(trace, "Trace for resolve annotation type");
         OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(entryElement, scope, temporaryBindingTrace);
-        if (results.isSuccess()) {
+        if (results.isSingleResult()) {
             FunctionDescriptor descriptor = results.getResultingDescriptor();
             if (!ErrorUtils.isError(descriptor)) {
                 if (descriptor instanceof ConstructorDescriptor) {
@@ -136,7 +153,9 @@ public class AnnotationResolver {
             annotationDescriptor.setAnnotationType(annotationType);
         }
         else {
-            annotationDescriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type"));
+            JetConstructorCalleeExpression calleeExpression = entryElement.getCalleeExpression();
+            annotationDescriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type: " +
+                                                                              (calleeExpression == null ? "null" : calleeExpression.getText())));
         }
     }
 
@@ -176,7 +195,7 @@ public class AnnotationResolver {
             @NotNull BindingTrace trace
     ) {
         OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(annotationEntry, scope, trace);
-        if (results.isSuccess()) {
+        if (results.isSingleResult()) {
             AnnotationDescriptor annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
             assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
             resolveAnnotationArgument(annotationDescriptor, results.getResultingCall(), trace);
@@ -236,7 +255,7 @@ public class AnnotationResolver {
     ) {
         JetVisitor<CompileTimeConstant<?>, Void> visitor = new JetVisitor<CompileTimeConstant<?>, Void>() {
             @Override
-            public CompileTimeConstant<?> visitConstantExpression(JetConstantExpression expression, Void nothing) {
+            public CompileTimeConstant<?> visitConstantExpression(@NotNull JetConstantExpression expression, Void nothing) {
                 JetType type = expressionTypingServices.getType(JetScope.EMPTY, expression, expectedType, DataFlowInfo.EMPTY, trace);
                 if (type == null) {
                     // TODO:
@@ -257,20 +276,21 @@ public class AnnotationResolver {
 //            }
 
             @Override
-            public CompileTimeConstant<?> visitParenthesizedExpression(JetParenthesizedExpression expression, Void nothing) {
+            public CompileTimeConstant<?> visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, Void nothing) {
                 JetExpression innerExpression = expression.getExpression();
                 if (innerExpression == null) return null;
                 return innerExpression.accept(this, null);
             }
 
             @Override
-            public CompileTimeConstant<?> visitStringTemplateExpression(JetStringTemplateExpression expression,
+            public CompileTimeConstant<?> visitStringTemplateExpression(
+                    @NotNull JetStringTemplateExpression expression,
                                                                         Void nothing) {
                 return trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
             }
 
             @Override
-            public CompileTimeConstant<?> visitSimpleNameExpression(JetSimpleNameExpression expression, Void data) {
+            public CompileTimeConstant<?> visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, Void data) {
                 ResolvedCall<? extends CallableDescriptor> resolvedCall =
                         trace.getBindingContext().get(BindingContext.RESOLVED_CALL, expression);
                 if (resolvedCall != null) {
@@ -289,7 +309,7 @@ public class AnnotationResolver {
             }
 
             @Override
-            public CompileTimeConstant<?> visitQualifiedExpression(JetQualifiedExpression expression, Void data) {
+            public CompileTimeConstant<?> visitQualifiedExpression(@NotNull JetQualifiedExpression expression, Void data) {
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 if (selectorExpression != null) {
                     return selectorExpression.accept(this, null);
@@ -298,7 +318,7 @@ public class AnnotationResolver {
             }
 
             @Override
-            public CompileTimeConstant<?> visitCallExpression(JetCallExpression expression, Void data) {
+            public CompileTimeConstant<?> visitCallExpression(@NotNull JetCallExpression expression, Void data) {
                 ResolvedCall<? extends CallableDescriptor> call =
                         trace.getBindingContext().get(BindingContext.RESOLVED_CALL, (expression).getCalleeExpression());
                 if (call != null) {
@@ -331,7 +351,7 @@ public class AnnotationResolver {
             }
 
             @Override
-            public CompileTimeConstant<?> visitJetElement(JetElement element, Void nothing) {
+            public CompileTimeConstant<?> visitJetElement(@NotNull JetElement element, Void nothing) {
                 // TODO:
                 //trace.report(ANNOTATION_PARAMETER_SHOULD_BE_CONSTANT.on(element));
                 return null;
@@ -341,13 +361,10 @@ public class AnnotationResolver {
     }
 
     private static boolean isEnumProperty(@NotNull PropertyDescriptor descriptor) {
-        if (DescriptorUtils.isKindOf(descriptor.getType(), ClassKind.ENUM_CLASS)) {
-            DeclarationDescriptor enumClassObject = descriptor.getContainingDeclaration();
-            if (DescriptorUtils.isKindOf(enumClassObject, ClassKind.CLASS_OBJECT))  {
-                return DescriptorUtils.isKindOf(enumClassObject.getContainingDeclaration(), ClassKind.ENUM_CLASS);
-            }
-        }
-        return false;
+        ClassifierDescriptor classifier = descriptor.getType().getConstructor().getDeclarationDescriptor();
+        return classifier != null &&
+               DescriptorUtils.isEnumClass(classifier) &&
+               DescriptorUtils.isEnumClassObject(descriptor.getContainingDeclaration());
     }
 
     @NotNull

@@ -43,12 +43,7 @@ public final class InitializerUtils {
     public static JsStatement generateInitializerForProperty(@NotNull TranslationContext context,
             @NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression value) {
-        if (context.isEcma5()) {
-            return JsAstUtils.definePropertyDataDescriptor(descriptor, value, context).makeStmt();
-        }
-        else {
-            return assignmentToBackingField(context, descriptor, value).makeStmt();
-        }
+        return assignmentToBackingField(context, descriptor, value).makeStmt();
     }
 
     @Nullable
@@ -58,38 +53,23 @@ public final class InitializerUtils {
             JsExpression value = Translation.translateAsExpression(delegate, context);
             String name = property.getName();
             assert name != null: "Delegate property must have name";
-            return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value, context);
+            return JsAstUtils.defineSimpleProperty(Namer.getDelegateName(name), value);
         }
         return null;
     }
 
-    public static void generate(
+    public static void generateObjectInitializer(
             @NotNull JetObjectDeclaration declaration,
             @NotNull List<JsStatement> initializers,
             @NotNull TranslationContext context
     ) {
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsExpression value = ClassTranslator.generateObjectLiteral(declaration, descriptor, context);
-        initializers.add(create(descriptor, !(descriptor.getContainingDeclaration() instanceof NamespaceDescriptor), value, context));
-    }
-
-    private static JsStatement create(DeclarationDescriptor descriptor, boolean enumerable, JsExpression value, TranslationContext context) {
-        JsExpression expression;
-        if (context.isEcma5()) {
-            expression = JsAstUtils.defineProperty(descriptor.getName().asString(), JsAstUtils.createDataDescriptor(value, false, enumerable), context);
-        }
-        else {
-            expression = assignment(new JsNameRef(descriptor.getName().asString(), JsLiteral.THIS), value);
-        }
-        return expression.makeStmt();
-    }
-
-
-    public static JsExpression toDataDescriptor(JsExpression value, TranslationContext context) {
-        return context.isEcma5() ? JsAstUtils.createDataDescriptor(value) : value;
+        JsExpression expression = assignment(new JsNameRef(descriptor.getName().asString(), JsLiteral.THIS), value);
+        initializers.add(expression.makeStmt());
     }
 
     public static JsPropertyInitializer createPropertyInitializer(Named named, JsExpression value, TranslationContext context) {
-        return new JsPropertyInitializer(context.nameToLiteral(named), toDataDescriptor(value, context));
+        return new JsPropertyInitializer(context.nameToLiteral(named), value);
     }
 }

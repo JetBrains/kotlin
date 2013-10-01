@@ -184,7 +184,7 @@ fun mergeAutocasts(a: Any?) {
   if (a is Int || a is String) {
     a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")
   }
-  <error>when</error> (a) {
+  when (a) {
     is String, is Any -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")
   }
   if (a is String && a is Any) {

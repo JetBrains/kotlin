@@ -1,4 +1,4 @@
-JetFile: TypeConstraints.jet
+JetFile: TypeConstraints.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

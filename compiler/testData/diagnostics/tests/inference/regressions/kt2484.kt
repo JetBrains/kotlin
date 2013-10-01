@@ -3,7 +3,7 @@
 package a
 //+JDK
 
-fun <T> Array<T>.forEach(operation: (T) -> Unit) : Unit = for (element in this) operation(element)
+fun <T> Array<T>.forEach(operation: (T) -> Unit) : Unit { for (element in this) operation(element) }
 
 fun bar(operation: (String) -> Unit) = operation("")
 

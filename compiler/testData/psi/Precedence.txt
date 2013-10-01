@@ -1,4 +1,4 @@
-JetFile: Precedence.jet
+JetFile: Precedence.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

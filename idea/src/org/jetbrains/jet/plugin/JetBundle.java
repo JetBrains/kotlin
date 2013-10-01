@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.lang.ref.Reference;
@@ -33,6 +34,7 @@ public class JetBundle {
     private JetBundle() {
     }
 
+    @NotNull
     public static String message(@NonNls @PropertyKey(resourceBundle = BUNDLE)String key, Object... params) {
       return CommonBundle.message(getBundle(), key, params);
     }

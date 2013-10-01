@@ -1,4 +1,4 @@
-JetFile: Functions.jet
+JetFile: Functions.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

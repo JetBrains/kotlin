@@ -39,7 +39,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgumentList;
 
@@ -89,11 +88,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             arguments = Collections.emptyList();
         }
         JsNameRef reference = context().getQualifiedReference(getClassDescriptorForType(enumClassType));
-        if(context().isEcma5()) {
-            return new JsInvocation(reference, arguments);
-        } else {
-            return new JsNew(reference, arguments);
-        }
+        return new JsNew(reference, arguments);
     }
 
     private void mayBeAddCallToSuperMethod(JsFunction initializer) {
@@ -111,18 +106,12 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void addCallToSuperMethod(@NotNull List<JsExpression> arguments, JsFunction initializer) {
-        if (context().isEcma5()) {
-            JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
-            initializer.setName(ref);
-            JsInvocation call = new JsInvocation(new JsNameRef("call", new JsNameRef("baseInitializer", ref.makeRef())));
-            call.getArguments().add(JsLiteral.THIS);
-            call.getArguments().addAll(arguments);
-            initializerStatements.add(call.makeStmt());
-        }
-        else {
-            JsName superMethodName = context().scope().declareName(Namer.superMethodName());
-            initializerStatements.add(convertToStatement(new JsInvocation(new JsNameRef(superMethodName, JsLiteral.THIS), arguments)));
-        }
+        JsName ref = context().scope().declareName(Namer.CALLEE_NAME);
+        initializer.setName(ref);
+        JsInvocation call = new JsInvocation(Namer.getFunctionCallRef(Namer.superMethodNameRef(ref)));
+        call.getArguments().add(JsLiteral.THIS);
+        call.getArguments().addAll(arguments);
+        initializerStatements.add(call.makeStmt());
     }
 
     @NotNull

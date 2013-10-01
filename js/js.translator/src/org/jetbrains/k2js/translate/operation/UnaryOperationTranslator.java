@@ -18,15 +18,13 @@ package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
-import org.jetbrains.k2js.translate.reference.CallType;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
-
-import java.util.Collections;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
@@ -41,12 +39,15 @@ public final class UnaryOperationTranslator {
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull JetUnaryExpression expression,
-                                         @NotNull TranslationContext context) {
-        if (isExclExcl(expression)) {
-            return translateExclExclOperator(expression, context);
+    public static JsExpression translate(
+            @NotNull JetUnaryExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        IElementType operationToken = expression.getOperationReference().getReferencedNameElementType();
+        if (operationToken == JetTokens.EXCLEXCL) {
+            return sure(translateAsExpression(getBaseExpression(expression), context), context);
         }
-        if (IncrementTranslator.isIncrement(expression)) {
+        if (IncrementTranslator.isIncrement(operationToken)) {
             return IncrementTranslator.translate(expression, context);
         }
 
@@ -54,16 +55,11 @@ public final class UnaryOperationTranslator {
         if (isExclForBinaryEqualLikeExpr(expression, baseExpression)) {
             return translateExclForBinaryEqualLikeExpr((JsBinaryOperation) baseExpression);
         }
-        return translateAsCall(expression, context, baseExpression);
-    }
 
-    private static boolean isExclExcl(@NotNull JetUnaryExpression expression) {
-        return getOperationToken(expression).equals(JetTokens.EXCLEXCL);
-    }
-
-    @NotNull
-    private static JsExpression translateExclExclOperator(@NotNull JetUnaryExpression expression, @NotNull TranslationContext context) {
-        return sure(translateAsExpression(getBaseExpression(expression), context), context);
+        return CallBuilder.build(context)
+                .receiver(TranslationUtils.translateBaseExpression(context, expression))
+                .resolvedCall(getResolvedCall(context.bindingContext(), expression.getOperationReference()))
+                .translate();
     }
 
     private static boolean isExclForBinaryEqualLikeExpr(@NotNull JetUnaryExpression expression, @NotNull JsExpression baseExpression) {
@@ -73,16 +69,5 @@ public final class UnaryOperationTranslator {
             }
         }
         return false;
-    }
-
-    @NotNull
-    private static JsExpression translateAsCall(@NotNull JetUnaryExpression expression,
-                                                @NotNull TranslationContext context,
-                                                @NotNull JsExpression baseExpression) {
-        return CallBuilder.build(context)
-                .receiver(baseExpression)
-                .args(Collections.<JsExpression>emptyList())
-                .resolvedCall(getResolvedCall(context.bindingContext(), expression.getOperationReference()))
-                .type(CallType.NORMAL).translate();
     }
 }

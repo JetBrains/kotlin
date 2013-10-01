@@ -3,7 +3,8 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -16,7 +17,11 @@
     <orderEntry type="module" module-name="injector-generator" scope="TEST" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="serialization" scope="TEST" />
-    <orderEntry type="module" module-name="descriptor.loader.java" />
+    <orderEntry type="module" module-name="descriptor.loader.java" scope="TEST" />
+    <orderEntry type="module" module-name="js.tests" scope="TEST" />
+    <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
+    <orderEntry type="module" module-name="util" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="kotlin-runtime" level="project" />
   </component>
 </module>
 

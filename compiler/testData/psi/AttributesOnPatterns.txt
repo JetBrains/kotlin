@@ -1,4 +1,4 @@
-JetFile: AttributesOnPatterns.jet
+JetFile: AttributesOnPatterns.kt
   NAMESPACE_HEADER
     <empty list>
   FUN

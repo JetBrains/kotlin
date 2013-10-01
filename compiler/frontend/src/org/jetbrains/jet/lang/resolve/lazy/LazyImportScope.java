@@ -291,12 +291,6 @@ public class LazyImportScope implements JetScope {
         return Collections.emptyList();
     }
 
-    @Nullable
-    @Override
-    public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        return null;
-    }
-
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

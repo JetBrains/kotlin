@@ -1,4 +1,4 @@
-JetFile: TypeDef_ERR.jet
+JetFile: TypeDef_ERR.kt
   NAMESPACE_HEADER
     <empty list>
   TYPEDEF

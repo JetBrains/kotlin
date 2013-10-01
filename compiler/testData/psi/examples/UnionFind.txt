@@ -1,4 +1,4 @@
-JetFile: UnionFind.jet
+JetFile: UnionFind.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

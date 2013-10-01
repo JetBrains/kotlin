@@ -56,10 +56,12 @@ public final class QualifiedExpressionTranslator {
     }
 
     @NotNull
-    private static JsExpression dispatchToCorrectTranslator(@Nullable JsExpression receiver,
-                                                            @NotNull JetExpression selector,
-                                                            @NotNull CallType callType,
-                                                            @NotNull TranslationContext context) {
+    private static JsExpression dispatchToCorrectTranslator(
+            @Nullable JsExpression receiver,
+            @NotNull JetExpression selector,
+            @NotNull CallType callType,
+            @NotNull TranslationContext context
+    ) {
         if (PropertyAccessTranslator.canBePropertyGetterCall(selector, context)) {
             assert selector instanceof JetSimpleNameExpression : "Selectors for properties must be simple names.";
             return PropertyAccessTranslator.translateAsPropertyGetterCall

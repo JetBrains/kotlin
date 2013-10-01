@@ -1,4 +1,4 @@
-// ERROR: Cannot perform refactoring.\nCannot find a single definition to inline.
+// ERROR: Cannot perform refactoring.\nCannot find a single definition to inline
 
 fun f() {
     val v: Int

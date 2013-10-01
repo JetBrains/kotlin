@@ -175,6 +175,7 @@ public class InjectorForTopDownAnalyzerForJs {
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
         argumentTypeResolver.setTypeResolver(typeResolver);
 
+        expressionTypingServices.setAnnotationResolver(annotationResolver);
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
@@ -185,7 +186,6 @@ public class InjectorForTopDownAnalyzerForJs {
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleDescriptor(moduleDescriptor);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 

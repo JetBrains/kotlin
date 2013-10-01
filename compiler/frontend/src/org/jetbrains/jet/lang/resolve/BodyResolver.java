@@ -23,7 +23,6 @@ import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -48,8 +47,8 @@ import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
-import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -265,7 +264,7 @@ public class BodyResolver {
                 ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                 if (classDescriptor == null) return;
                 if (descriptor.getKind() != ClassKind.TRAIT && !classDescriptor.getConstructors().isEmpty() &&
-                    !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
+                    !ErrorUtils.isError(classDescriptor) && classDescriptor.getKind() != ClassKind.TRAIT) {
                     trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
                 }
             }
@@ -392,8 +391,8 @@ public class BodyResolver {
                     parameterScope.addVariableDescriptor(valueParameterDescriptor);
                 }
                 parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
-                resolveValueParameter(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
-                                      parameterScope);
+                expressionTypingServices.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
+                                       parameterScope, context.getOuterDataFlowInfo(), trace);
             }
         }
     }
@@ -682,44 +681,9 @@ public class BodyResolver {
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
-        resolveValueParameter(valueParameters, valueParameterDescriptors, functionInnerScope);
+        expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, functionInnerScope, context.getOuterDataFlowInfo(), trace);
 
         assert functionDescriptor.getReturnType() != null;
-    }
-
-    private void resolveValueParameter(
-            @NotNull List<JetParameter> valueParameters,
-            @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
-            @NotNull JetScope declaringScope
-    ) {
-        for (int i = 0; i < valueParameters.size(); i++) {
-            ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
-            JetParameter jetParameter = valueParameters.get(i);
-
-            resolveAnnotationArguments(declaringScope, jetParameter);
-
-            resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter);
-        }
-    }
-
-    private void resolveDefaultValue(
-            @NotNull JetScope declaringScope,
-            @NotNull ValueParameterDescriptor valueParameterDescriptor,
-            @NotNull JetParameter jetParameter
-    ) {
-        if (valueParameterDescriptor.hasDefaultValue()) {
-            JetExpression defaultValue = jetParameter.getDefaultValue();
-            if (defaultValue != null) {
-                expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), context.getOuterDataFlowInfo(), trace);
-                if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
-                    CompileTimeConstant<?> constant =
-                            annotationResolver.resolveExpressionToCompileTimeValue(defaultValue, valueParameterDescriptor.getType(), trace);
-                    if (constant != null) {
-                        trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
-                    }
-                }
-            }
-        }
     }
 
     private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {

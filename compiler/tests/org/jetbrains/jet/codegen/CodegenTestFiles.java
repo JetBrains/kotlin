@@ -20,12 +20,12 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
-import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -86,7 +86,7 @@ public class CodegenTestFiles {
         ArrayList<JetFile> files = new ArrayList<JetFile>();
         for (String name : names) {
             try {
-                String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
+                String content = JetTestUtils.doLoadFile(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/", name);
                 int i = name.lastIndexOf('/');
                 //name = name.substring(i+1);
                 JetFile file = JetTestUtils.createFile(name, content, project);

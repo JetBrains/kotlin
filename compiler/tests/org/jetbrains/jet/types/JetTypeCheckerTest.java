@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.CommonSupertypes;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -541,7 +540,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
         JetType type = expressionTypingServices.safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
-        assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
+        assertTrue("Error type expected but " + type + " returned", type.isError());
     }
 
     private void assertType(String contextType, final String expression, String expectedType) {

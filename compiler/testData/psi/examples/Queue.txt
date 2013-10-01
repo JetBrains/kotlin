@@ -1,4 +1,4 @@
-JetFile: Queue.jet
+JetFile: Queue.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

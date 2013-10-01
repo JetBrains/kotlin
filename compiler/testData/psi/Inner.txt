@@ -1,4 +1,4 @@
-JetFile: Inner.jet
+JetFile: Inner.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

@@ -1,4 +1,4 @@
-JetFile: IMutableSet.jet
+JetFile: IMutableSet.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

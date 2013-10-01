@@ -1,13 +1,13 @@
 fun test(<!UNUSED_PARAMETER!>c<!> : Char) {
-  test(<!ERROR_COMPILE_TIME_VALUE!>''<!>)
+  test(<!EMPTY_CHARACTER_LITERAL!>''<!>)
   test('a')
-  test(<!ERROR_COMPILE_TIME_VALUE!>'aa'<!>)
-  test(<!ERROR_COMPILE_TIME_VALUE!>'a)<!>
-  <!UNRESOLVED_REFERENCE!>test<!>(<!ERROR_COMPILE_TIME_VALUE!>'<!>
+  test(<!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'aa'<!>)
+  test(<!INCORRECT_CHARACTER_LITERAL!>'a)<!>
+  <!UNRESOLVED_REFERENCE!>test<!>(<!INCORRECT_CHARACTER_LITERAL!>'<!>
   <!UNRESOLVED_REFERENCE!>test<!>(0<!SYNTAX!><!SYNTAX!><!>'<!>
   test('\n')
   test('\\')
-  test(<!ERROR_COMPILE_TIME_VALUE!>''<!><!SYNTAX!>''<!><!SYNTAX!>)<!>
+  test(<!EMPTY_CHARACTER_LITERAL!>''<!><!SYNTAX!>''<!><!SYNTAX!>)<!>
   test('\'')
   test('\"')
 }

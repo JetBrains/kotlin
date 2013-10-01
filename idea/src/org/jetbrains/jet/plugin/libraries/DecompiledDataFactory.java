@@ -27,7 +27,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -48,7 +49,7 @@ public final class DecompiledDataFactory {
     @NotNull
     private final JavaDescriptorResolver javaDescriptorResolver;
     @NotNull
-    private final KotlinClassFileHeader kotlinClassFileHeader;
+    private final SerializedDataHeader classFileHeader;
     @NotNull
     private final VirtualFile classFile;
     @NotNull
@@ -60,7 +61,10 @@ public final class DecompiledDataFactory {
         InjectorForJavaDescriptorResolver injector =
                 new InjectorForJavaDescriptorResolver(project, new BindingTraceContext());
         this.javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        this.kotlinClassFileHeader = KotlinClassFileHeader.readKotlinHeaderFromClassFile(classFile);
+
+        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(classFile);
+        assert header instanceof SerializedDataHeader : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
+        this.classFileHeader = (SerializedDataHeader) header;
     }
 
     @NotNull
@@ -69,10 +73,10 @@ public final class DecompiledDataFactory {
     }
 
     private JetDecompiledData build() {
-        FqName packageFqName = kotlinClassFileHeader.getFqName().parent();
+        FqName packageFqName = classFileHeader.getFqName().parent();
         appendDecompiledTextAndPackageName(packageFqName);
-        KotlinClassFileHeader.HeaderType type = kotlinClassFileHeader.getType();
-        if (type == KotlinClassFileHeader.HeaderType.PACKAGE) {
+        SerializedDataHeader.Kind kind = classFileHeader.getKind();
+        if (kind == SerializedDataHeader.Kind.PACKAGE) {
             NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(packageFqName, INCLUDE_KOTLIN_SOURCES);
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
@@ -85,12 +89,14 @@ public final class DecompiledDataFactory {
                 }
             }
         }
-        else {
-            assert type == KotlinClassFileHeader.HeaderType.CLASS;
-            ClassDescriptor cd = javaDescriptorResolver.resolveClass(kotlinClassFileHeader.getFqName(), INCLUDE_KOTLIN_SOURCES);
+        else if (kind == SerializedDataHeader.Kind.CLASS) {
+            ClassDescriptor cd = javaDescriptorResolver.resolveClass(classFileHeader.getFqName(), INCLUDE_KOTLIN_SOURCES);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
+        }
+        else {
+            throw new UnsupportedOperationException("Unknown header kind: " + kind);
         }
 
         JetFile jetFile = JetDummyClassFileViewProvider.createJetFile(PsiManager.getInstance(project), classFile, builder.toString());

@@ -27,14 +27,13 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValueWithDefault;
+import org.jetbrains.jet.util.RecursionIntolerantLazyValueWithDefault;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -43,11 +42,9 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.*;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
@@ -55,7 +52,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitObjectLiteralExpression(final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
+    public JetTypeInfo visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
         DelegatingBindingTrace delegatingBindingTrace = context.trace.get(TRACE_DELTAS_CACHE, expression.getObjectDeclaration());
         if (delegatingBindingTrace != null) {
             delegatingBindingTrace.addAllMyDataTo(context.trace);
@@ -98,7 +95,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
         JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
         if (bodyExpression == null) return null;
 
@@ -272,7 +269,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            if (expectedType == null || expectedType == CallResolverUtil.DONT_CARE || expectedType == CallResolverUtil.CANT_INFER_TYPE_PARAMETER) {
+            if (expectedType == null || expectedType == DONT_CARE || expectedType == CANT_INFER_TYPE_PARAMETER) {
                 context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
             }
             if (expectedType != null) {
@@ -384,7 +381,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 new JetTreeVisitor<Collection<JetReturnExpression>>() {
                     @Override
                     public Void visitReturnExpression(
-                            JetReturnExpression expression, Collection<JetReturnExpression> data
+                            @NotNull JetReturnExpression expression, Collection<JetReturnExpression> data
                     ) {
                         data.add(expression);
                         return null;

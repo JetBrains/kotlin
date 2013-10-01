@@ -189,7 +189,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
     private final List<DiagnosticData> diagnostics = Lists.newArrayList(
             new DiagnosticData(0, 0, "UNUSED_PARAMETER", 8, 9),
-            new DiagnosticData(1, 1, "TYPE_MISMATCH", 56, 57),
+            new DiagnosticData(1, 1, "CONSTANT_EXPECTED_TYPE_MISMATCH", 56, 57),
             new DiagnosticData(2, 2, "UNUSED_VARIABLE", 67, 68),
             new DiagnosticData(3, 3, "TYPE_MISMATCH", 98, 99),
             new DiagnosticData(4, 4, "NONE_APPLICABLE", 120, 121),

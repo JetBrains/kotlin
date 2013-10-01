@@ -632,6 +632,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("DeclaredMemberOverridesDelegated.kt")
+            public void testDeclaredMemberOverridesDelegated() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/DeclaredMemberOverridesDelegated.kt");
+            }
+            
             @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
             public void testInheritMethodsDifferentReturnTypesAndVisibilities() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
@@ -645,6 +650,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("InheritValsDifferentTypes.kt")
             public void testInheritValsDifferentTypes() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/InheritValsDifferentTypes.kt");
+            }
+            
+            @TestMetadata("NoDelegationForFunctionInheritedFromTraitSuperClass.kt")
+            public void testNoDelegationForFunctionInheritedFromTraitSuperClass() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/fun/NoDelegationForFunctionInheritedFromTraitSuperClass.kt");
             }
             
             @TestMetadata("NoSamAdapter.kt")
@@ -2407,6 +2417,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("varargIterator.kt")
         public void testVarargIterator() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/varargIterator.kt");
+        }
+        
+        @TestMetadata("WrongAnnotationArgsOnObject.kt")
+        public void testWrongAnnotationArgsOnObject() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/WrongAnnotationArgsOnObject.kt");
         }
         
     }

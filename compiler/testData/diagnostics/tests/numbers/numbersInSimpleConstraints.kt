@@ -26,9 +26,9 @@ fun test() {
 
     val <!UNUSED_VARIABLE!>g<!>: Byte = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>either<!>(1, 300)
 
-    other(<!ERROR_COMPILE_TIME_VALUE!>11<!>)
+    other(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>11<!>)
 
-    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>otherGeneric<!>(<!ERROR_COMPILE_TIME_VALUE!>1<!>)
+    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>otherGeneric<!>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
     <!TYPE_MISMATCH!>r<!>: Int

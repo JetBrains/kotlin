@@ -21,12 +21,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -74,7 +74,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected String loadFile(@NotNull String name) {
-        return loadFileByFullPath(JetParsingTest.getTestDataDir() + "/codegen/" + name);
+        return loadFileByFullPath(JetTestCaseBuilder.getTestDataPathBase() + "/codegen/" + name);
     }
 
     @NotNull

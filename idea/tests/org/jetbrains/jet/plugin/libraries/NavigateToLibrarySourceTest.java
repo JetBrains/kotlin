@@ -18,17 +18,18 @@ package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 
 import java.util.*;
@@ -37,8 +38,6 @@ import java.util.*;
  * Attaching library with sources, and trying to navigate to its entities from source code.
  */
 public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
-    private VirtualFile userFile;
-
     public void testEnum() {
         doTest();
     }
@@ -88,7 +87,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     }
 
     private void doTest() {
-        userFile = copyFileToSrcDir(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
+        myFixture.configureByFile(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
 
         checkAnnotatedLibraryCode(false);
         checkAnnotatedLibraryCode(true);
@@ -108,8 +107,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     }
 
     private Collection<JetPsiReference> collectInterestingReferences() {
-        PsiFile psiFile = getPsiManager().findFile(userFile);
-        assert psiFile != null;
+        PsiFile psiFile = myFixture.getFile();
         Map<PsiElement, JetPsiReference> referenceContainersToReferences = new LinkedHashMap<PsiElement, JetPsiReference>();
         for (int offset = 0; offset < psiFile.getTextLength(); offset++) {
             PsiReference ref = psiFile.findReferenceAt(offset);
@@ -120,22 +118,12 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
                 if (targetNavPsiFile == null) continue;
                 VirtualFile targetNavFile = targetNavPsiFile.getVirtualFile();
                 if (targetNavFile == null) continue;
-                if (VfsUtilCore.isAncestor(librarySourceDir, targetNavFile, true)) {
+                if (ProjectFileIndex.SERVICE.getInstance(getProject()).isInLibrarySource(targetNavFile)) {
                     referenceContainersToReferences.put(ref.getElement(), (JetPsiReference)ref);
                 }
             }
         }
         return referenceContainersToReferences.values();
-    }
-
-    @NotNull
-    private String getRelativePath(@NotNull PsiFile librarySourceFile) {
-        VirtualFile virtualFile = librarySourceFile.getVirtualFile();
-        if (virtualFile == null) {
-            return "";
-        }
-        String relativePath = VfsUtilCore.getRelativePath(virtualFile, librarySourceDir, '/');
-        return relativePath == null ? "" : relativePath;
     }
 
     private String getActualAnnotatedLibraryCode() {
@@ -157,7 +145,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         Collections.sort(files, new Comparator<PsiFile>() {
             @Override
             public int compare(PsiFile o1, PsiFile o2) {
-                return getRelativePath(o1).compareTo(getRelativePath(o2));
+                return o1.getName().compareTo(o2.getName());
             }
         });
 
@@ -191,20 +179,22 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
             Document annotated = EditorFactory.getInstance().createDocument(resultForFile);
             String filePart = annotated.getText().substring(annotated.getLineStartOffset(minLine),
                                                              annotated.getLineEndOffset(maxLine));
-            result.append(" ").append(getRelativePath(file)).append("\n");
+            result.append(" ").append(file.getName()).append("\n");
             result.append(filePart).append("\n");
         }
         return result.toString();
     }
 
     private String getExpectedAnnotatedLibraryCode() {
-        Document document = FileDocumentManager.getInstance().getDocument(userFile);
+        Document document = myFixture.getDocument(myFixture.getFile());
         assertNotNull(document);
         return JetTestUtils.getLastCommentedLines(document);
     }
 
+
+    @NotNull
     @Override
-    protected boolean isWithSources() {
-        return true;
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/library", true);
     }
 }

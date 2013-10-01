@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import jet.KotlinClass;
 import jet.KotlinPackage;
+import jet.KotlinPackageFragment;
 import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -27,6 +28,8 @@ public final class JvmAnnotationNames {
     public static final JvmClassName KOTLIN_CLASS = JvmClassName.byClass(KotlinClass.class);
 
     public static final JvmClassName KOTLIN_PACKAGE = JvmClassName.byClass(KotlinPackage.class);
+
+    public static final JvmClassName KOTLIN_PACKAGE_FRAGMENT = JvmClassName.byClass(KotlinPackageFragment.class);
 
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
 

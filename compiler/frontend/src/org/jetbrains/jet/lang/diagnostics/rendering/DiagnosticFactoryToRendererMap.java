@@ -20,13 +20,14 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.renderer.Renderer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public final class DiagnosticFactoryToRendererMap {
-    private final Map<AbstractDiagnosticFactory, DiagnosticRenderer<?>> map =
-            new HashMap<AbstractDiagnosticFactory, DiagnosticRenderer<?>>();
+    private final Map<DiagnosticFactory, DiagnosticRenderer<?>> map =
+            new HashMap<DiagnosticFactory, DiagnosticRenderer<?>>();
     private boolean immutable = false;
 
     private void checkMutability() {
@@ -63,7 +64,7 @@ public final class DiagnosticFactoryToRendererMap {
     }
 
     @Nullable
-    public DiagnosticRenderer<?> get(@NotNull AbstractDiagnosticFactory factory) {
+    public DiagnosticRenderer<?> get(@NotNull DiagnosticFactory factory) {
         return map.get(factory);
     }
 

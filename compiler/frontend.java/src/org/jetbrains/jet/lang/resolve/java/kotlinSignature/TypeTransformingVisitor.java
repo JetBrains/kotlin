@@ -72,7 +72,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Override
-    public JetType visitNullableType(JetNullableType nullableType, Void aVoid) {
+    public JetType visitNullableType(@NotNull JetNullableType nullableType, Void aVoid) {
         if (!originalType.isNullable() && typeUsage != TYPE_ARGUMENT) {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
                  DescriptorRenderer.TEXT.renderType(originalType), nullableType.getText());
@@ -81,14 +81,14 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Override
-    public JetType visitFunctionType(JetFunctionType type, Void data) {
+    public JetType visitFunctionType(@NotNull JetFunctionType type, Void data) {
         return visitCommonType(type.getReceiverTypeRef() == null
                 ? KotlinBuiltIns.getInstance().getFunction(type.getParameters().size())
                 : KotlinBuiltIns.getInstance().getExtensionFunction(type.getParameters().size()), type);
     }
 
     @Override
-    public JetType visitUserType(JetUserType type, Void data) {
+    public JetType visitUserType(@NotNull JetUserType type, Void data) {
         JetUserType qualifier = type.getQualifier();
 
         //noinspection ConstantConditions
@@ -221,7 +221,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Override
-    public JetType visitSelfType(JetSelfType type, Void data) {
+    public JetType visitSelfType(@NotNull JetSelfType type, Void data) {
         throw new UnsupportedOperationException("Self-types are not supported yet");
     }
 

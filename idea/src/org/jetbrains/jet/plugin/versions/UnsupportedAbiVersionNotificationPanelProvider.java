@@ -16,30 +16,66 @@
 
 package org.jetbrains.jet.plugin.versions;
 
+import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.compiler.CompilerManager;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootAdapter;
+import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.EditorNotifications;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
+import org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Collection;
 
-public class UnsupportedAbiVersionNotificationPanelProvider {
+public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
+    private static final Key<EditorNotificationPanel> KEY = Key.create("unsupported.abi.version");
+
     private final Project project;
 
     public UnsupportedAbiVersionNotificationPanelProvider(@NotNull Project project) {
         this.project = project;
+        MessageBusConnection connection = project.getMessageBus().connect();
+        connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+            @Override
+            public void rootsChanged(ModuleRootEvent event) {
+                updateNotifications();
+            }
+        });
+        connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+            @Override
+            public void enteredDumbMode() {}
+
+            @Override
+            public void exitDumbMode() {
+                updateNotifications();
+            }
+        });
     }
 
     @Nullable
@@ -68,8 +104,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider {
             answer.createActionLabel("Update " + kotlinRuntimeJarName, new Runnable() {
                 @Override
                 public void run() {
-                    KotlinRuntimeLibraryUtil.updateRuntime(project,
-                                                           OutdatedKotlinRuntimeNotification.showRuntimeJarNotFoundDialog(project));
+                    KotlinRuntimeLibraryUtil.updateRuntime(project);
                 }
             });
             if (otherBadRootsCount > 0) {
@@ -117,6 +152,40 @@ public class UnsupportedAbiVersionNotificationPanelProvider {
         label.set(answer.createActionLabel(labelText, action));
     }
 
+    @Override
+    public Key<EditorNotificationPanel> getKey() {
+        return KEY;
+    }
+
+    @Nullable
+    @Override
+    public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
+        try {
+            if (file.getFileType() != JetFileType.INSTANCE) return null;
+
+            if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
+
+            Module module = ModuleUtilCore.findModuleForFile(file, project);
+            if (module == null) return null;
+
+            KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
+            assert configurator != null : "Configurator should exists " + KotlinJavaModuleConfigurator.NAME;
+            if (!configurator.isConfigured(module)) {
+                return null;
+            }
+
+            return checkAndCreate(project);
+        }
+        catch (ProcessCanceledException e) {
+            // Ignore
+        }
+        catch (IndexNotReadyException e) {
+            DumbService.getInstance(project).runWhenSmart(updateNotifications);
+        }
+
+        return null;
+    }
+
     private static class LibraryRootsPopupModel extends BaseListPopupStep<VirtualFile> {
         private final Project project;
 
@@ -157,4 +226,21 @@ public class UnsupportedAbiVersionNotificationPanelProvider {
             myLabel.setIcon(AllIcons.General.Error);
         }
     }
+
+    private final Runnable updateNotifications = new Runnable() {
+        @Override
+        public void run() {
+            updateNotifications();
+        }
+    };
+
+    private void updateNotifications() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                EditorNotifications.getInstance(project).updateAllNotifications();
+            }
+        });
+    }
+
 }

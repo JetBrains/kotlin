@@ -1,4 +1,4 @@
-JetFile: PriorityQueueAsPushPop.jet
+JetFile: PriorityQueueAsPushPop.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

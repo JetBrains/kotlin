@@ -16,15 +16,18 @@
 
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.AUTOCAST_IMPOSSIBLE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
@@ -37,54 +40,40 @@ public class AutoCastUtils {
     /**
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
+    @NotNull
     public static List<ReceiverValue> getAutoCastVariants(
-            @NotNull final BindingContext bindingContext,
-            @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverValue receiverToCast
+            @NotNull BindingContext bindingContext,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ReceiverValue receiverToCast
     ) {
-        return receiverToCast.accept(new ReceiverValueVisitor<List<ReceiverValue>, Object>() {
-            @Override
-            public List<ReceiverValue> visitNoReceiver(ReceiverValue noReceiver, Object data) {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public List<ReceiverValue> visitTransientReceiver(TransientReceiver receiver, Object data) {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public List<ReceiverValue> visitExtensionReceiver(ExtensionReceiver receiver, Object data) {
-                return castThis(dataFlowInfo, receiver);
-            }
-
-            @Override
-            public List<ReceiverValue> visitClassReceiver(ClassReceiver receiver, Object data) {
-                return castThis(dataFlowInfo, receiver);
-            }
-
-            @Override
-            public List<ReceiverValue> visitScriptReceiver(ScriptReceiver receiver, Object data) {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public List<ReceiverValue> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
-                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(), receiver.getType(),
-                                                                                                bindingContext);
-                List<ReceiverValue> result = Lists.newArrayList();
-                for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
-                    result.add(new AutoCastReceiver(receiver, possibleType, dataFlowValue.isStableIdentifier()));
-                }
-                return result;
-            }
-        }, null);
+        if (receiverToCast instanceof ThisReceiver) {
+            ThisReceiver receiver = (ThisReceiver) receiverToCast;
+            assert receiver.exists();
+            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver);
+            return collectAutoCastReceiverValues(dataFlowInfo, receiver, dataFlowValue);
+        }
+        else if (receiverToCast instanceof ExpressionReceiver) {
+            ExpressionReceiver receiver = (ExpressionReceiver) receiverToCast;
+            DataFlowValue dataFlowValue =
+                    DataFlowValueFactory.createDataFlowValue(receiver.getExpression(), receiver.getType(), bindingContext);
+            return collectAutoCastReceiverValues(dataFlowInfo, receiver, dataFlowValue);
+        }
+        else if (receiverToCast instanceof AutoCastReceiver) {
+            return getAutoCastVariants(bindingContext, dataFlowInfo, ((AutoCastReceiver) receiverToCast).getOriginal());
+        }
+        return Collections.emptyList();
     }
 
-    private static List<ReceiverValue> castThis(@NotNull DataFlowInfo dataFlowInfo, @NotNull ThisReceiver receiver) {
-        assert receiver.exists();
-        List<ReceiverValue> result = Lists.newArrayList();
-        for (JetType possibleType : dataFlowInfo.getPossibleTypes(DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver))) {
-            result.add(new AutoCastReceiver(receiver, possibleType, true));
+    @NotNull
+    private static List<ReceiverValue> collectAutoCastReceiverValues(
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ReceiverValue receiver,
+            @NotNull DataFlowValue dataFlowValue
+    ) {
+        Set<JetType> possibleTypes = dataFlowInfo.getPossibleTypes(dataFlowValue);
+        List<ReceiverValue> result = new ArrayList<ReceiverValue>(possibleTypes.size());
+        for (JetType possibleType : possibleTypes) {
+            result.add(new AutoCastReceiver(receiver, possibleType, dataFlowValue.isStableIdentifier()));
         }
         return result;
     }

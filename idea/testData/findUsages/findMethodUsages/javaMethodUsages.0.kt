@@ -2,6 +2,10 @@
 // OPTIONS: usages
 package testing;
 
-public class Server() {
-    public fun <caret>processRequest() = "foo"
+public open class Server() {
+    public open fun <caret>processRequest() = "foo"
+}
+
+public class ServerEx(): Server() {
+    public override fun processRequest() = "foofoo"
 }

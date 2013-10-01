@@ -1,4 +1,4 @@
-JetFile: ShortAnnotations.jet
+JetFile: ShortAnnotations.kt
   NAMESPACE_HEADER
     MODIFIER_LIST
       ANNOTATION_ENTRY

@@ -35,11 +35,6 @@ public class ExpressionReceiver extends AbstractReceiverValue implements Receive
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
-        return visitor.visitExpressionReceiver(this, data);
-    }
-
-    @Override
     public String toString() {
         return getType() + " {" + expression + ": " + expression.getText() + "}";
     }

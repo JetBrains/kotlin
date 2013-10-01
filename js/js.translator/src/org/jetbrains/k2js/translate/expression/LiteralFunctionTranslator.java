@@ -37,7 +37,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.context.UsageTracker;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 
 import java.util.List;
 
@@ -136,7 +135,7 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
     private JsNameRef createReference(JsFunction fun) {
         Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> place = definitionPlace.getValue();
         JsNameRef nameRef = new JsNameRef(place.second.generate(), place.third);
-        place.first.add(new JsPropertyInitializer(nameRef, InitializerUtils.toDataDescriptor(fun, context())));
+        place.first.add(new JsPropertyInitializer(nameRef, fun));
         return nameRef;
     }
 

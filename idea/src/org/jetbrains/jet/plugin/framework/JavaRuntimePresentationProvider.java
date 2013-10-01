@@ -69,8 +69,17 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
 
     @Nullable
     public static VirtualFile getRuntimeJar(@NotNull List<VirtualFile> classesRoots) {
+        return getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_JAR);
+    }
+
+    @Nullable
+    public static VirtualFile getRuntimeSrcJar(@NotNull List<VirtualFile> classesRoots) {
+        return getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
+    }
+
+    private static VirtualFile getJarFile(@NotNull List<VirtualFile> classesRoots, @NotNull String jarName) {
         for (VirtualFile root : classesRoots) {
-            if (root.getName().equals(PathUtil.KOTLIN_JAVA_RUNTIME_JAR)) {
+            if (root.getName().equals(jarName)) {
                 return root;
             }
         }
@@ -81,5 +90,10 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     @Nullable
     public static VirtualFile getRuntimeJar(@NotNull Library library) {
         return getRuntimeJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
+    }
+
+    @Nullable
+    public static VirtualFile getRuntimeSrcJar(@NotNull Library library) {
+        return getRuntimeSrcJar(Arrays.asList(library.getFiles(OrderRootType.SOURCES)));
     }
 }

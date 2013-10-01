@@ -155,24 +155,8 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsFor generateForExpression(@NotNull JsVars initExpression,
-            @NotNull JsExpression condition,
-            @NotNull JsExpression incrementExpression,
-            @NotNull JsStatement body) {
-        JsFor result = new JsFor(initExpression, condition, incrementExpression);
-        result.setBody(body);
-        return result;
-    }
-
-    @NotNull
     public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
         return new JsVars(new JsVars.JsVar(name, expr));
-    }
-
-    public static void setArguments(@NotNull JsInvocation invocation, @NotNull List<JsExpression> newArgs) {
-        List<JsExpression> arguments = invocation.getArguments();
-        assert arguments.isEmpty() : "Arguments already set.";
-        arguments.addAll(newArgs);
     }
 
     public static void setArguments(@NotNull HasArguments invocation, @NotNull List<JsExpression> newArgs) {
@@ -223,14 +207,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsInvocation definePropertyDataDescriptor(@NotNull PropertyDescriptor descriptor,
-            @NotNull JsExpression value,
-            @NotNull TranslationContext context) {
-        return defineProperty(context.getNameForDescriptor(descriptor).getIdent(), createPropertyDataDescriptor(descriptor, value),
-                              context);
-    }
-
-    @NotNull
     public static JsInvocation defineProperty(
             @NotNull String name,
             @NotNull JsObjectLiteral value,
@@ -240,23 +216,8 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value, @NotNull TranslationContext context) {
-        if (context.isEcma5()) {
-            return defineProperty(name, createDataDescriptor(value, false, false), context).makeStmt();
-        } else {
-            return assignment(new JsNameRef(name, JsLiteral.THIS), value).makeStmt();
-        }
-    }
-
-    @NotNull
-    public static JsObjectLiteral createPropertyDataDescriptor(@NotNull FunctionDescriptor descriptor,
-            @NotNull JsExpression value) {
-        return createPropertyDataDescriptor(descriptor, descriptor.getModality().isOverridable(), value);
-    }
-
-    @NotNull
-    public static JsObjectLiteral createDataDescriptor(@NotNull JsExpression value) {
-        return createDataDescriptor(value, false, false);
+    public static JsStatement defineSimpleProperty(@NotNull String name, @NotNull JsExpression value) {
+        return assignment(new JsNameRef(name, JsLiteral.THIS), value).makeStmt();
     }
 
     @NotNull
@@ -273,20 +234,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsObjectLiteral createPropertyDataDescriptor(@NotNull PropertyDescriptor descriptor, @NotNull JsExpression value) {
-        return createPropertyDataDescriptor(descriptor, descriptor.isVar() || descriptor.getModality() == Modality.OPEN, value);
-    }
-
-    @NotNull
-    private static JsObjectLiteral createPropertyDataDescriptor(
-            @NotNull DeclarationDescriptor descriptor,
-            boolean writable,
-            @NotNull JsExpression value
-    ) {
-        return createDataDescriptor(value, writable, AnnotationsUtils.isEnumerable(descriptor));
-    }
-
-    @NotNull
     public static JsFunction createPackage(@NotNull List<JsStatement> to, @NotNull JsScope scope) {
         JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
         to.add(new JsInvocation(EMPTY_REF, new JsInvocation(packageBlockFunction)).makeStmt());
@@ -297,11 +244,4 @@ public final class JsAstUtils {
     public static JsObjectLiteral wrapValue(@NotNull JsExpression label, @NotNull JsExpression value) {
         return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(label, value)));
     }
-
-    @NotNull
-    public static <T extends JsNode> T source(@NotNull T jsNode, @NotNull JetElement ktElement) {
-        jsNode.setSourceInfo(ktElement);
-        return jsNode;
-    }
-
 }

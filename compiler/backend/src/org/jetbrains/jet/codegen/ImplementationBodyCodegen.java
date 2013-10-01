@@ -40,9 +40,9 @@ import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
+import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
@@ -58,8 +58,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -229,7 +228,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor(), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
-        for (String string : JavaProtoBufUtil.encodeBytes(data.toBytes())) {
+        for (String string : BitEncoding.encodeBytes(data.toBytes())) {
             array.visit(null, string);
         }
         array.visitEnd();
@@ -461,17 +460,84 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFunctionsForDataClasses();
 
+        generateBuiltinMethodStubs();
+
         genClosureFields(context.closure, v, state.getTypeMapper());
+    }
+
+    private void generateMethodStub(
+            @NotNull String name,
+            @NotNull String desc,
+            @NotNull ClassifierDescriptor returnedClassifier,
+            @NotNull ClassifierDescriptor... valueParameterClassifiers
+    ) {
+        if (CodegenUtil.getDeclaredFunctionByRawSignature(
+                descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
+            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, name, desc, null, null);
+            AsmUtil.genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
+        }
+    }
+
+    private void generateBuiltinMethodStubs() {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        if (isSubclass(descriptor, builtIns.getCollection())) {
+            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getCollection(), 0);
+
+            generateMethodStub("add", "(Ljava/lang/Object;)Z", builtIns.getBoolean(), classifier);
+            generateMethodStub("remove", "(Ljava/lang/Object;)Z", builtIns.getBoolean(), builtIns.getAny());
+            generateMethodStub("addAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            generateMethodStub("removeAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            generateMethodStub("retainAll", "(Ljava/util/Collection;)Z", builtIns.getBoolean(), builtIns.getCollection());
+            generateMethodStub("clear", "()V", builtIns.getUnit());
+        }
+
+        if (isSubclass(descriptor, builtIns.getList())) {
+            ClassifierDescriptor classifier = getSubstituteForTypeParameterOf(builtIns.getList(), 0);
+
+            generateMethodStub("set", "(ILjava/lang/Object;)Ljava/lang/Object;", classifier, builtIns.getInt(), classifier);
+            generateMethodStub("add", "(ILjava/lang/Object;)V", builtIns.getUnit(), builtIns.getInt(), classifier);
+            generateMethodStub("remove", "(I)Ljava/lang/Object;", classifier, builtIns.getInt());
+        }
+
+        if (isSubclass(descriptor, builtIns.getMap())) {
+            ClassifierDescriptor keyClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 0);
+            ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMap(), 1);
+
+            generateMethodStub("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, keyClassifier,
+                               valueClassifier);
+            generateMethodStub("remove", "(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, builtIns.getAny());
+            generateMethodStub("putAll", "(Ljava/util/Map;)V", builtIns.getUnit(), builtIns.getMap());
+            generateMethodStub("clear", "()V", builtIns.getUnit());
+        }
+
+        if (isSubclass(descriptor, builtIns.getMapEntry())) {
+            ClassifierDescriptor valueClassifier = getSubstituteForTypeParameterOf(builtIns.getMapEntry(), 1);
+
+            generateMethodStub("setValue", "(Ljava/lang/Object;)Ljava/lang/Object;", valueClassifier, valueClassifier);
+        }
+
+        if (isSubclass(descriptor, builtIns.getIterator())) {
+            generateMethodStub("remove", "()V", builtIns.getUnit());
+        }
+    }
+
+    @NotNull
+    private ClassifierDescriptor getSubstituteForTypeParameterOf(@NotNull ClassDescriptor trait, int index) {
+        TypeParameterDescriptor listTypeParameter = trait.getTypeConstructor().getParameters().get(index);
+        TypeSubstitutor deepSubstitutor = SubstitutionUtils.buildDeepSubstitutor(descriptor.getDefaultType());
+        TypeProjection substitute = deepSubstitutor.substitute(new TypeProjection(listTypeParameter.getDefaultType()));
+        assert substitute != null : "Couldn't substitute: " + descriptor;
+        ClassifierDescriptor classifier = substitute.getType().getConstructor().getDeclarationDescriptor();
+        assert classifier != null : "No classifier: " + substitute.getType();
+        return classifier;
     }
 
     private List<PropertyDescriptor> getDataProperties() {
         ArrayList<PropertyDescriptor> result = Lists.newArrayList();
         for (JetParameter parameter : getPrimaryConstructorParameters()) {
-            if (parameter.getValOrVarNode() == null) continue;
-
-            PropertyDescriptor propertyDescriptor = DescriptorUtils.getPropertyDescriptor(parameter, bindingContext);
-
-            result.add(propertyDescriptor);
+            if (parameter.getValOrVarNode() != null) {
+                result.add(bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter));
+            }
         }
         return result;
     }
@@ -1107,9 +1173,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Type type = typeMapper.mapType(descriptor);
                 iv.load(0, classAsmType);
                 iv.load(codegen.myFrameMap.getIndex(descriptor), type);
-                iv.putfield(classAsmType.getInternalName(),
-                            context.getFieldName(DescriptorUtils.getPropertyDescriptor(parameter, bindingContext)),
-                            type.getDescriptor());
+                PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+                assert propertyDescriptor != null : "Property descriptor is not found for primary constructor parameter: " + parameter;
+                iv.putfield(classAsmType.getInternalName(), context.getFieldName(propertyDescriptor), type.getDescriptor());
             }
             curParam++;
         }
@@ -1260,7 +1326,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 else {
                     assert descriptor instanceof CallableDescriptor;
                     if (context.getCallableDescriptorWithReceiver() != descriptor) {
-                        context.lookupInContext(descriptor, null, state, false);
+                        context.lookupInContext(descriptor, null, state, true);
                     }
                 }
             }
@@ -1740,7 +1806,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             CallableMemberDescriptor candidate = null;
 
             for (CallableMemberDescriptor overriddenDeclaration : filteredOverriddenDeclarations) {
-                if (isKindOf(overriddenDeclaration.getContainingDeclaration(), ClassKind.TRAIT) &&
+                if (isTrait(overriddenDeclaration.getContainingDeclaration()) &&
                     overriddenDeclaration.getModality() != Modality.ABSTRACT) {
                     candidate = overriddenDeclaration;
                     count++;

@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.*;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -49,7 +49,6 @@ import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORW
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class JetFlowInformationProvider {
@@ -187,7 +186,7 @@ public class JetFlowInformationProvider {
         Map<Instruction, Edges<Map<VariableDescriptor,VariableInitState>>> initializers = pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
 
-        final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
+        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
 
         PseudocodeTraverser.traverse(pseudocode, FORWARD, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
             @Override
@@ -436,7 +435,7 @@ public class JetFlowInformationProvider {
 
     public void markUnusedVariables() {
         Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
-        final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
+        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableUseState>>() {
             @Override
@@ -519,7 +518,7 @@ public class JetFlowInformationProvider {
 
     public void markUnusedLiteralsInBlock() {
         assert pseudocode != null;
-        final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
+        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
         PseudocodeTraverser.traverse(
                 pseudocode, FORWARD, new InstructionAnalyzeStrategy() {
             @Override
@@ -565,13 +564,13 @@ public class JetFlowInformationProvider {
             trace.report(diagnostic);
             return;
         }
-        Map<Instruction, AbstractDiagnosticFactory> previouslyReported = ctxt.reportedDiagnosticMap;
+        Map<Instruction, DiagnosticFactory> previouslyReported = ctxt.reportedDiagnosticMap;
         previouslyReported.put(instruction, diagnostic.getFactory());
 
         boolean alreadyReported = false;
         boolean sameErrorForAllCopies = true;
         for (Instruction copy : instruction.getCopies()) {
-            AbstractDiagnosticFactory previouslyReportedErrorFactory = previouslyReported.get(copy);
+            DiagnosticFactory previouslyReportedErrorFactory = previouslyReported.get(copy);
             if (previouslyReportedErrorFactory != null) {
                 alreadyReported = true;
             }
@@ -594,7 +593,7 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private static boolean mustBeReportedOnAllCopies(@NotNull AbstractDiagnosticFactory diagnosticFactory) {
+    private static boolean mustBeReportedOnAllCopies(@NotNull DiagnosticFactory diagnosticFactory) {
         return diagnosticFactory == UNUSED_VARIABLE
                || diagnosticFactory == UNUSED_PARAMETER
                || diagnosticFactory == UNUSED_CHANGED_VALUE;
@@ -603,13 +602,13 @@ public class JetFlowInformationProvider {
 
 
     private class VariableContext {
-        final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap;
+        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap;
         final Instruction instruction;
         final VariableDescriptor variableDescriptor;
 
         private VariableContext(
                 @NotNull Instruction instruction,
-                @NotNull Map<Instruction, AbstractDiagnosticFactory> map
+                @NotNull Map<Instruction, DiagnosticFactory> map
         ) {
             this.instruction = instruction;
             reportedDiagnosticMap = map;
@@ -623,7 +622,7 @@ public class JetFlowInformationProvider {
 
         private VariableInitContext(
                 @NotNull Instruction instruction,
-                @NotNull Map<Instruction, AbstractDiagnosticFactory> map,
+                @NotNull Map<Instruction, DiagnosticFactory> map,
                 @NotNull Map<VariableDescriptor, VariableInitState> in,
                 @NotNull Map<VariableDescriptor, VariableInitState> out
         ) {
@@ -640,7 +639,7 @@ public class JetFlowInformationProvider {
 
         private VariableUseContext(
                 @NotNull Instruction instruction,
-                @NotNull Map<Instruction, AbstractDiagnosticFactory> map,
+                @NotNull Map<Instruction, DiagnosticFactory> map,
                 @NotNull Map<VariableDescriptor, VariableUseState> in,
                 @NotNull Map<VariableDescriptor, VariableUseState> out
         ) {

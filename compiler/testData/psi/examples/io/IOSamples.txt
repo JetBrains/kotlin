@@ -1,4 +1,4 @@
-JetFile: IOSamples.jet
+JetFile: IOSamples.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS

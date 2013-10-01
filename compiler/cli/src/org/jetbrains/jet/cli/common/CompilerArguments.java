@@ -45,4 +45,6 @@ public abstract class CompilerArguments {
     public abstract boolean isVerbose();
 
     public abstract String getSrc();
+
+    public abstract boolean suppressAllWarnings();
 }

@@ -53,10 +53,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -105,7 +102,7 @@ public class JetTestUtils {
 
                 @NotNull
                 @Override
-                public Collection<Diagnostic> getDiagnostics() {
+                public Diagnostics getDiagnostics() {
                     throw new UnsupportedOperationException(); // TODO
                 }
 
@@ -164,7 +161,7 @@ public class JetTestUtils {
             return new BindingContext() {
                 @NotNull
                 @Override
-                public Collection<Diagnostic> getDiagnostics() {
+                public Diagnostics getDiagnostics() {
                     throw new UnsupportedOperationException();
                 }
 
@@ -278,6 +275,7 @@ public class JetTestUtils {
         return answer;
     }
 
+    @NotNull
     public static File tmpDir(String name) throws IOException {
         // we should use this form. otherwise directory will be deleted on each test
         File answer = FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "");
@@ -377,6 +375,24 @@ public class JetTestUtils {
         List<File> files = Lists.newArrayList();
         FileUtil.collectMatchedFiles(root, KT_FILES, files);
         return files;
+    }
+
+    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {
+        try {
+            if (!expectedFile.exists()) {
+                FileUtil.writeToFile(expectedFile, actual);
+                Assert.fail("Expected data file did not exist. Generating: " + expectedFile);
+            }
+            String expected = FileUtil.loadFile(expectedFile, true);
+
+            // compare with hard copy: make sure nothing is lost in output
+            Assert.assertEquals("Expected and actual namespaces differ from " + expectedFile.getName(),
+                                StringUtil.convertLineSeparators(expected),
+                                StringUtil.convertLineSeparators(actual));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public interface TestFileFactory<F> {
@@ -648,7 +664,7 @@ public class JetTestUtils {
     public static NamespaceDescriptorImpl createTestNamespace(@NotNull Name testPackageName) {
         ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<test module>");
         NamespaceDescriptorImpl rootNamespace =
-                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), JetPsiUtil.ROOT_NAMESPACE_NAME);
+                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), DescriptorUtils.ROOT_NAMESPACE_NAME);
         module.setRootNamespace(rootNamespace);
         NamespaceDescriptorImpl test = new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), testPackageName);
         test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));

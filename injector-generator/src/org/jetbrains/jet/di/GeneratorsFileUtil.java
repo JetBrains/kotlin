@@ -26,6 +26,11 @@ import java.io.IOException;
 public class GeneratorsFileUtil {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void writeFileIfContentChanged(File file, String newText) throws IOException {
+        writeFileIfContentChanged(file, newText, true);
+    }
+
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    public static void writeFileIfContentChanged(File file, String newText, boolean logNotChanged) throws IOException {
         File parentFile = file.getParentFile();
         if (!parentFile.exists()) {
             if (parentFile.mkdirs()) {
@@ -37,7 +42,9 @@ public class GeneratorsFileUtil {
         }
 
         if (checkFileIgnoringLineSeparators(file, newText)) {
-            System.out.println("Not changed: " + file.getAbsolutePath());
+            if (logNotChanged) {
+                System.out.println("Not changed: " + file.getAbsolutePath());
+            }
             return;
         }
 

@@ -16,7 +16,9 @@
 
 package org.jetbrains.k2js.translate.declaration;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsFunction;
+import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,14 +31,14 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createPropertyInitializer;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     protected final List<JsPropertyInitializer> result;
@@ -68,7 +70,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitEnumEntry(
-            final JetEnumEntry enumEntry, TranslationContext data
+            @NotNull final JetEnumEntry enumEntry, TranslationContext data
     ) {
         JsExpression jsEnumEntryCreation;
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
@@ -94,7 +96,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitClassObject(
-            JetClassObject classObject, TranslationContext context
+            @NotNull JetClassObject classObject, TranslationContext context
     ) {
         JetObjectDeclaration declaration = classObject.getObjectDeclaration();
         assert declaration != null : "Declaration for class object must be not null";
@@ -120,10 +122,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         }
 
         JsPropertyInitializer methodAsPropertyInitializer = Translation.functionTranslator(expression, context).translateAsMethod();
-        if (context.isEcma5()) {
-            JsExpression methodBodyExpression = methodAsPropertyInitializer.getValueExpr();
-            methodAsPropertyInitializer.setValueExpr(JsAstUtils.createPropertyDataDescriptor(descriptor, methodBodyExpression));
-        }
         result.add(methodAsPropertyInitializer);
         return null;
     }

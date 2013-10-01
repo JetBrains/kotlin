@@ -17,16 +17,16 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.Renderer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -292,7 +292,15 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS, "Class object upper bounds of {0} have empty intersection", NAME);
 
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", DescriptorRenderer.TEXT);
-        MAP.put(ERROR_COMPILE_TIME_VALUE, "{0}", TO_STRING);
+
+        MAP.put(CONSTANT_EXPECTED_TYPE_MISMATCH, "An {0} literal does not conform to the expected type {1}", TO_STRING, RENDER_TYPE);
+        MAP.put(INT_LITERAL_OUT_OF_RANGE, "The value is out of range");
+        MAP.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range");
+        MAP.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal");
+        MAP.put(EMPTY_CHARACTER_LITERAL, "Empty character literal");
+        MAP.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal ''{0}''", ELEMENT_TEXT);
+        MAP.put(ILLEGAL_ESCAPE, "Illegal escape: ''{0}''", ELEMENT_TEXT);
+        MAP.put(NULL_FOR_NONNULL_TYPE, "Null can not be a value of a non-null type {0}", RENDER_TYPE);
 
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
 
@@ -389,7 +397,7 @@ public class DefaultErrorMessages {
             @NotNull
             @Override
             public String render(@NotNull JetType type) {
-                if (ErrorUtils.isErrorType(type)) return "";
+                if (type.isError()) return "";
                 return " of type '" + type.toString() + "'";
             }
         });
@@ -426,7 +434,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: found: {1} required: {0}", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", null);
-        MAP.put(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected. " +
+        MAP.put(NO_TYPE_ARGUMENTS_ON_RHS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected. " +
                                                            "Use ''{1}'' if you don''t want to pass type arguments", null, TO_STRING);
 
         MAP.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED,
@@ -466,9 +474,9 @@ public class DefaultErrorMessages {
             if (Modifier.isStatic(field.getModifiers())) {
                 try {
                     Object fieldValue = field.get(null);
-                    if (fieldValue instanceof AbstractDiagnosticFactory) {
-                        if (MAP.get((AbstractDiagnosticFactory) fieldValue) == null) {
-                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((AbstractDiagnosticFactory)fieldValue).getName());
+                    if (fieldValue instanceof DiagnosticFactory) {
+                        if (MAP.get((DiagnosticFactory) fieldValue) == null) {
+                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((DiagnosticFactory)fieldValue).getName());
                         }
                     }
                 }

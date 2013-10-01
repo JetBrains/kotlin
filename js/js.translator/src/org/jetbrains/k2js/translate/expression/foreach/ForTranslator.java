@@ -21,8 +21,12 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetForExpression;
+import org.jetbrains.jet.lang.psi.JetMultiDeclaration;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.expression.MultiDeclarationTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
@@ -51,34 +55,54 @@ public abstract class ForTranslator extends AbstractTranslator {
     protected final JetForExpression expression;
     @NotNull
     protected final JsName parameterName;
+    @Nullable
+    protected final JetMultiDeclaration multiParameter;
 
     protected ForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(context);
         this.expression = forExpression;
+        this.multiParameter = forExpression.getMultiParameter();
         this.parameterName = declareParameter();
     }
 
     @NotNull
     private JsName declareParameter() {
-        return context().getNameForElement(getLoopParameter(expression));
-    }
-
-    @NotNull
-    protected JsStatement translateOriginalBodyExpression() {
-        return Translation.translateAsStatement(getLoopBody(expression), context());
-    }
-
-    @NotNull
-    protected JsStatement translateBody(JsExpression itemValue) {
-        JsStatement currentVar = newVar(parameterName, itemValue);
-        JsStatement realBody = translateOriginalBodyExpression();
-        if (realBody instanceof JsBlock) {
-            JsBlock block = (JsBlock) realBody;
-            block.getStatements().add(0, currentVar);
-            return block;
+        JetParameter loopParameter = getLoopParameter(expression);
+        if (loopParameter != null) {
+            return context().getNameForElement(loopParameter);
         }
-        else {
-            return new JsBlock(currentVar, realBody);
+        assert parameterIsMultiDeclaration() : "If loopParameter is null, multi parameter must be not null";
+        return context().scope().declareTemporary();
+    }
+
+    private boolean parameterIsMultiDeclaration() {
+        return multiParameter != null;
+    }
+
+    @NotNull
+    private JsStatement makeCurrentVarInit(@Nullable JsExpression itemValue) {
+        if (multiParameter == null) {
+            return newVar(parameterName, itemValue);
+        } else {
+            return MultiDeclarationTranslator.translate(multiParameter, parameterName, itemValue, context());
+        }
+    }
+
+    @NotNull
+    protected JsStatement translateBody(@Nullable JsExpression itemValue) {
+        JsStatement realBody = Translation.translateAsStatement(getLoopBody(expression), context());
+        if (itemValue == null && !parameterIsMultiDeclaration()) {
+            return realBody;
+        } else {
+            JsStatement currentVarInit = makeCurrentVarInit(itemValue);
+            if (realBody instanceof JsBlock) {
+                JsBlock block = (JsBlock) realBody;
+                block.getStatements().add(0, currentVarInit);
+                return block;
+            }
+            else {
+                return new JsBlock(currentVarInit, realBody);
+            }
         }
     }
 }

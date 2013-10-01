@@ -16,15 +16,13 @@
 
 package org.jetbrains.jet.plugin.hierarchy;
 
-import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
-import com.intellij.ide.hierarchy.HierarchyTreeStructure;
-import com.intellij.ide.hierarchy.LanguageTypeHierarchy;
+import com.intellij.ide.hierarchy.*;
 import com.intellij.ide.hierarchy.type.SubtypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.SupertypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.TypeHierarchyTreeStructure;
 import com.intellij.lang.Language;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
@@ -38,6 +36,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.hierarchy.calls.KotlinCalleeMethodsTreeStructure;
+import org.jetbrains.jet.plugin.hierarchy.calls.KotlinCallerMethodsTreeStructure;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,11 +68,24 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
         doHierarchyTest(getSubTypesHierarchyStructure(), getFilesToConfigure());
     }
 
+    protected void doCallerHierarchyTest(@NotNull String folderName) throws Exception {
+        this.folderName = folderName;
+        doHierarchyTest(getCallerHierarchyStructure(), getFilesToConfigure());
+    }
+
+    protected void doCalleeHierarchyTest(@NotNull String folderName) throws Exception {
+        this.folderName = folderName;
+        doHierarchyTest(getCalleeHierarchyStructure(), getFilesToConfigure());
+    }
+
     private Computable<HierarchyTreeStructure> getSuperTypesHierarchyStructure() {
         return new Computable<HierarchyTreeStructure>() {
             @Override
             public HierarchyTreeStructure compute() {
-                return new SupertypesHierarchyTreeStructure(getProject(), (PsiClass) getElementAtCaret());
+                return new SupertypesHierarchyTreeStructure(
+                        getProject(),
+                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE.forLanguage(getLanguage()))
+                );
             }
         };
     }
@@ -81,8 +94,11 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
         return new Computable<HierarchyTreeStructure>() {
             @Override
             public HierarchyTreeStructure compute() {
-                return new SubtypesHierarchyTreeStructure(getProject(), (PsiClass) getElementAtCaret(),
-                                                          HierarchyBrowserBaseEx.SCOPE_PROJECT);
+                return new SubtypesHierarchyTreeStructure(
+                        getProject(),
+                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        HierarchyBrowserBaseEx.SCOPE_PROJECT
+                );
             }
         };
     }
@@ -91,14 +107,43 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
         return new Computable<HierarchyTreeStructure>() {
             @Override
             public HierarchyTreeStructure compute() {
-                return new TypeHierarchyTreeStructure(getProject(), (PsiClass) getElementAtCaret(),
-                                                      HierarchyBrowserBaseEx.SCOPE_PROJECT);
+                return new TypeHierarchyTreeStructure(
+                        getProject(),
+                        (PsiClass) getElementAtCaret(LanguageTypeHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        HierarchyBrowserBaseEx.SCOPE_PROJECT
+                );
             }
         };
     }
 
-    private PsiElement getElementAtCaret() {
-        PsiElement target = LanguageTypeHierarchy.INSTANCE.forLanguage(getLanguage()).getTarget(getDataContext());
+    private Computable<HierarchyTreeStructure> getCallerHierarchyStructure() {
+        return new Computable<HierarchyTreeStructure>() {
+            @Override
+            public HierarchyTreeStructure compute() {
+                return KotlinCallerMethodsTreeStructure.newInstance(
+                        getProject(),
+                        getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        HierarchyBrowserBaseEx.SCOPE_PROJECT
+                );
+            }
+        };
+    }
+
+    private Computable<HierarchyTreeStructure> getCalleeHierarchyStructure() {
+        return new Computable<HierarchyTreeStructure>() {
+            @Override
+            public HierarchyTreeStructure compute() {
+                return new KotlinCalleeMethodsTreeStructure(
+                        getProject(),
+                        getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage())),
+                        HierarchyBrowserBaseEx.SCOPE_PROJECT
+                );
+            }
+        };
+    }
+
+    private PsiElement getElementAtCaret(HierarchyProvider provider) {
+        PsiElement target = provider.getTarget(getDataContext());
         assert target != null : "Cannot apply action for element at caret";
         return target;
     }
@@ -111,8 +156,8 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
 
     private DataContext getDataContext() {
         MapDataContext context = new MapDataContext();
-        context.put(PlatformDataKeys.PROJECT, getProject());
-        context.put(PlatformDataKeys.EDITOR, getEditor());
+        context.put(CommonDataKeys.PROJECT, getProject());
+        context.put(CommonDataKeys.EDITOR, getEditor());
         return context;
     }
 

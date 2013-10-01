@@ -9,7 +9,7 @@ class event<T>()
 
     fun plusAssign(f : (T) -> Unit) = callbacks.add(f)
     fun minusAssign(f : (T) -> Unit) = callbacks.remove(f)
-    fun call(value : T) = for(c in callbacks) c(value)
+    fun call(value : T) { for(c in callbacks) c(value) }
 }
 
 class MouseMovedEventArgs()

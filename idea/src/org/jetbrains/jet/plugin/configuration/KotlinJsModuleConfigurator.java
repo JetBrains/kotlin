@@ -1,0 +1,139 @@
+package org.jetbrains.jet.plugin.configuration;
+
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderRootType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.framework.JSLibraryStdDescription;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialogWithModules;
+import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
+import org.jetbrains.jet.utils.PathUtil;
+
+import java.io.File;
+import java.util.List;
+
+public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
+    public static final String NAME = "js";
+
+    @NotNull
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @NotNull
+    @Override
+    public String getPresentableText() {
+        return "JavaScript";
+    }
+
+    @Override
+    public boolean isConfigured(@NotNull Module module) {
+        if (KotlinFrameworkDetector.isJsKotlinModule(module)) {
+            String pathFromLibrary = getPathFromLibrary(module.getProject(), OrderRootType.CLASSES);
+            return pathFromLibrary != null && getFileInDir(getJarName(), pathFromLibrary).exists();
+        }
+        return false;
+    }
+
+    @NotNull
+    @Override
+    protected String getLibraryName() {
+        return JSLibraryStdDescription.LIBRARY_NAME;
+    }
+
+    @NotNull
+    @Override
+    public String getJarName() {
+        return PathUtil.JS_LIB_JAR_NAME;
+    }
+
+    @NotNull
+    @Override
+    protected String getSourcesJarName() {
+        return PathUtil.JS_LIB_JAR_NAME;
+    }
+
+    @NotNull
+    @Override
+    protected String getMessageForOverrideDialog() {
+        return JSLibraryStdDescription.JAVA_SCRIPT_LIBRARY_CREATION;
+    }
+
+    @NotNull
+    @Override
+    public File getExistedJarFile() {
+        return assertFileExists(getKotlinPaths().getJsLibJarPath());
+    }
+
+    @Override
+    protected File getExistedSourcesJarFile() {
+        return getExistedJarFile();
+    }
+
+    @Override
+    public void configure(@NotNull Project project) {
+        String defaultPathToJar = getDefaultPathToJarFile(project);
+        String defaultPathToJsFile = getDefaultPathToJsFile(project);
+
+        boolean showPathToJarPanel = needToChooseJarPath(project);
+        boolean showPathToJsFilePanel = needToChooseJsFilePath(project);
+
+        List<Module> nonConfiguredModules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this);
+
+        if (nonConfiguredModules.size() > 1 || showPathToJarPanel || showPathToJsFilePanel) {
+            CreateJavaScriptLibraryDialogWithModules dialog =
+                    new CreateJavaScriptLibraryDialogWithModules(project, nonConfiguredModules,
+                                                                 defaultPathToJar, defaultPathToJsFile,
+                                                                 showPathToJarPanel, showPathToJsFilePanel);
+            dialog.show();
+            if (!dialog.isOK()) return;
+            for (Module module : dialog.getModulesToConfigure()) {
+                configureModuleWithLibrary(module, defaultPathToJar, dialog.getCopyLibraryIntoPath());
+            }
+            configureModuleWithJsFile(defaultPathToJsFile, dialog.getCopyJsIntoPath());
+        }
+        else {
+            for (Module module : nonConfiguredModules) {
+                configureModuleWithLibrary(module, defaultPathToJar, null);
+            }
+            configureModuleWithJsFile(defaultPathToJsFile, null);
+        }
+    }
+
+    public static boolean isJsFilePresent(@NotNull String dir) {
+        return new File(dir + "/" + PathUtil.JS_LIB_JAR_NAME).exists();
+    }
+
+    @NotNull
+    public File getJsFile() {
+        return assertFileExists(getKotlinPaths().getJsLibJsPath());
+    }
+
+    private static boolean needToChooseJsFilePath(@NotNull Project project) {
+        String defaultPath = FileUIUtils.createRelativePath(project, project.getBaseDir(), "script");
+        return !isJsFilePresent(defaultPath);
+    }
+
+    @NotNull
+    private static String getDefaultPathToJsFile(@NotNull Project project) {
+        return FileUIUtils.createRelativePath(project, project.getBaseDir(), "script");
+    }
+
+    protected void configureModuleWithJsFile(
+            @NotNull String defaultPath,
+            @Nullable String pathToJsFromDialog
+    ) {
+        boolean isJsFilePresent = isJsFilePresent(defaultPath);
+        if (isJsFilePresent) return;
+
+        if (pathToJsFromDialog != null) {
+            copyFileToDir(getJsFile(), pathToJsFromDialog);
+        }
+    }
+
+    KotlinJsModuleConfigurator() {
+    }
+}

@@ -1,0 +1,32 @@
+apply plugin: 'android'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 15
+    buildToolsVersion "17.0"
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+//
+// A basic Android application split over a library and a main project.
+//
+dependencies {
+    compile project(':lib')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$ext.kotlin_version"
+}
+
+buildscript {
+    ext.kotlin_version = '$VERSION$'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$ext.kotlin_version"
+    }
+}
+repositories {
+    mavenCentral()
+}

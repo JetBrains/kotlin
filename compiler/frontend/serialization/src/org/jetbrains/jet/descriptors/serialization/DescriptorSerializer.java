@@ -19,7 +19,10 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -81,7 +84,7 @@ public class DescriptorSerializer {
 
         // TODO extra visibility
 
-        builder.setName(nameTable.getSimpleNameIndex(classDescriptor.getName()));
+        builder.setFqName(getClassId(classDescriptor));
 
         DescriptorSerializer local = createChildSerializer();
 
@@ -325,7 +328,7 @@ public class DescriptorSerializer {
 
     @NotNull
     public ProtoBuf.Type.Builder type(@NotNull JetType type) {
-        assert !ErrorUtils.isErrorType(type) : "Can't serialize error types: " + type; // TODO
+        assert !type.isError() : "Can't serialize error types: " + type; // TODO
 
         ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
 

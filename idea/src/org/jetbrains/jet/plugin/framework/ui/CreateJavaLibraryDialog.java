@@ -16,67 +16,12 @@
 
 package org.jetbrains.jet.plugin.framework.ui;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetPluginUtil;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+public class CreateJavaLibraryDialog extends CreateJavaLibraryDialogBase {
 
-public class CreateJavaLibraryDialog extends DialogWrapper {
-    private final CopyIntoPanel copyIntoPanel;
-
-    private JPanel contentPane;
-    private JCheckBox copyLibraryCheckbox;
-    private JPanel copyIntoPanelPlace;
-    private JLabel compilerTextLabel;
-
-    public CreateJavaLibraryDialog(@Nullable Project project, @NotNull String title, VirtualFile contextDirectory) {
-        super(project);
-
-        setTitle(title);
-
-        init();
-
-        compilerTextLabel.setText(compilerTextLabel.getText() + " - " + JetPluginUtil.getPluginVersion());
-
-        copyIntoPanel = new CopyIntoPanel(project, FileUIUtils.createRelativePath(project, contextDirectory, "lib"));
-        copyIntoPanel.addValidityListener(new ValidityListener() {
-            @Override
-            public void validityChanged(boolean isValid) {
-                updateComponents();
-            }
-        });
-        copyIntoPanelPlace.add(copyIntoPanel.getContentPane(), BorderLayout.CENTER);
-
-        copyLibraryCheckbox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(@NotNull ActionEvent e) {
-                updateComponents();
-            }
-        });
-
+    public CreateJavaLibraryDialog(@NotNull String defaultPath) {
+        super(null, defaultPath);
         updateComponents();
-    }
-
-    @Nullable
-    public String getCopyIntoPath() {
-        return copyIntoPanel.getPath();
-    }
-
-    private void updateComponents() {
-        copyIntoPanel.setEnabled(copyLibraryCheckbox.isSelected());
-        setOKActionEnabled(!copyIntoPanel.hasErrors());
-    }
-
-    @Nullable
-    @Override
-    protected JComponent createCenterPanel() {
-        return contentPane;
     }
 }

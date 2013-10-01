@@ -15,7 +15,7 @@
  */
 
 var A = Kotlin.createClass();
-var a = Kotlin.$new(A)();
+var a = new A();
 
 function test() {
     return Kotlin.isType(a, A);

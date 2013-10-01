@@ -34,7 +34,9 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -46,10 +48,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ArgumentTypeResolver {
 
@@ -79,7 +81,7 @@ public class ArgumentTypeResolver {
     }
 
     private static boolean isFunctionOrErrorType(@NotNull JetType supertype) {
-        return KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(supertype) || ErrorUtils.isErrorType(supertype);
+        return KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(supertype) || supertype.isError();
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {

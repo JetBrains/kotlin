@@ -38,7 +38,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator.createDefineInvocation;
+import static org.jetbrains.k2js.translate.declaration.DefineInvocation.createDefineInvocation;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
@@ -54,7 +54,7 @@ final class NamespaceTranslator extends AbstractTranslator {
 
     NamespaceTranslator(
             @NotNull final NamespaceDescriptor descriptor,
-            @NotNull final Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
+            @NotNull final Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation,
             @NotNull TranslationContext context
     ) {
         super(context.newDeclaration(descriptor));
@@ -67,12 +67,12 @@ final class NamespaceTranslator extends AbstractTranslator {
             @Override
             @NotNull
             public Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> compute() {
-                List<JsExpression> defineInvocation = descriptorToDefineInvocation.get(descriptor);
+                DefineInvocation defineInvocation = descriptorToDefineInvocation.get(descriptor);
                 if (defineInvocation == null) {
                     defineInvocation = createDefinitionPlace(null, descriptorToDefineInvocation);
                 }
 
-                return createPlace(getListFromPlace(defineInvocation), context().getQualifiedReference(descriptor));
+                return createPlace(defineInvocation.getMembers(), context().getQualifiedReference(descriptor));
             }
         };
     }
@@ -87,41 +87,38 @@ final class NamespaceTranslator extends AbstractTranslator {
         context().literalFunctionTranslator().setDefinitionPlace(null);
     }
 
-    private List<JsExpression> createDefinitionPlace(@Nullable JsExpression initializer,
-            Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation) {
-        List<JsExpression> place = createDefineInvocation(descriptor, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
+    private DefineInvocation createDefinitionPlace(
+            @Nullable JsExpression initializer,
+            Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation
+    ) {
+        DefineInvocation place = createDefineInvocation(descriptor, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
         descriptorToDefineInvocation.put(descriptor, place);
         addToParent((NamespaceDescriptor) descriptor.getContainingDeclaration(), getEntry(descriptor, place), descriptorToDefineInvocation);
         return place;
     }
 
-    public void add(@NotNull Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
-            @NotNull List<JsStatement> initializers) {
+    public void add(@NotNull Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation) {
         JsExpression initializer;
         if (visitor.initializerStatements.isEmpty()) {
             initializer = null;
         }
         else {
             initializer = visitor.initializer;
-            if (!context().isEcma5()) {
-                initializers.add(new JsInvocation(new JsNameRef("call", initializer),
-                                                  context().getQualifiedReference(descriptor)).makeStmt());
-            }
         }
 
-        List<JsExpression> defineInvocation = descriptorToDefineInvocation.get(descriptor);
+        DefineInvocation defineInvocation = descriptorToDefineInvocation.get(descriptor);
         if (defineInvocation == null) {
             if (initializer != null || !visitor.getResult().isEmpty()) {
                 createDefinitionPlace(initializer, descriptorToDefineInvocation);
             }
         }
         else {
-            if (context().isEcma5() && initializer != null) {
-                assert defineInvocation.get(0) == JsLiteral.NULL;
-                defineInvocation.set(0, initializer);
+            if (initializer != null) {
+                assert defineInvocation.getInitializer() == JsLiteral.NULL;
+                defineInvocation.setInitializer(initializer);
             }
 
-            List<JsPropertyInitializer> listFromPlace = getListFromPlace(defineInvocation);
+            List<JsPropertyInitializer> listFromPlace = defineInvocation.getMembers();
             // if equals, so, inner functions was added
             if (listFromPlace != visitor.getResult()) {
                 listFromPlace.addAll(visitor.getResult());
@@ -129,21 +126,17 @@ final class NamespaceTranslator extends AbstractTranslator {
         }
     }
 
-    private List<JsPropertyInitializer> getListFromPlace(List<JsExpression> defineInvocation) {
-        return ((JsObjectLiteral) defineInvocation.get(context().isEcma5() ? 2 : 0)).getPropertyInitializers();
-    }
-
-    private JsPropertyInitializer getEntry(@NotNull NamespaceDescriptor descriptor, List<JsExpression> defineInvocation) {
+    private JsPropertyInitializer getEntry(@NotNull NamespaceDescriptor descriptor, DefineInvocation defineInvocation) {
         return new JsPropertyInitializer(context().getNameForDescriptor(descriptor).makeRef(),
-                                         new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation));
+                                         new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation.asList()));
     }
 
     private boolean addEntryIfParentExists(NamespaceDescriptor parentDescriptor,
             JsPropertyInitializer entry,
-            Map<NamespaceDescriptor, List<JsExpression>> descriptorToDeclarationPlace) {
-        List<JsExpression> parentDefineInvocation = descriptorToDeclarationPlace.get(parentDescriptor);
+            Map<NamespaceDescriptor, DefineInvocation> descriptorToDeclarationPlace) {
+        DefineInvocation parentDefineInvocation = descriptorToDeclarationPlace.get(parentDescriptor);
         if (parentDefineInvocation != null) {
-            getListFromPlace(parentDefineInvocation).add(entry);
+            parentDefineInvocation.getMembers().add(entry);
             return true;
         }
         return false;
@@ -151,10 +144,10 @@ final class NamespaceTranslator extends AbstractTranslator {
 
     private void addToParent(NamespaceDescriptor parentDescriptor,
             JsPropertyInitializer entry,
-            Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation) {
+            Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation) {
         while (!addEntryIfParentExists(parentDescriptor, entry, descriptorToDefineInvocation)) {
             JsObjectLiteral members = new JsObjectLiteral(new SmartList<JsPropertyInitializer>(entry), true);
-            List<JsExpression> defineInvocation = createDefineInvocation(parentDescriptor, null, members, context());
+            DefineInvocation defineInvocation = createDefineInvocation(parentDescriptor, null, members, context());
             entry = getEntry(parentDescriptor, defineInvocation);
 
             descriptorToDefineInvocation.put(parentDescriptor, defineInvocation);
@@ -186,7 +179,7 @@ final class NamespaceTranslator extends AbstractTranslator {
 
         @Override
         public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, @NotNull TranslationContext context) {
-            InitializerUtils.generate(declaration, initializerStatements, context);
+            InitializerUtils.generateObjectInitializer(declaration, initializerStatements, context);
             return null;
         }
 
@@ -197,14 +190,7 @@ final class NamespaceTranslator extends AbstractTranslator {
             if (initializer != null) {
                 JsExpression value = Translation.translateAsExpression(initializer, initializerContext);
                 PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), property);
-                if (value instanceof JsLiteral) {
-                    result.add(new JsPropertyInitializer(context.getNameForDescriptor(propertyDescriptor).makeRef(),
-                                                         context().isEcma5() ? JsAstUtils
-                                                                 .createPropertyDataDescriptor(propertyDescriptor, value) : value));
-                }
-                else {
-                    initializerStatements.add(generateInitializerForProperty(context, propertyDescriptor, value));
-                }
+                initializerStatements.add(generateInitializerForProperty(context, propertyDescriptor, value));
             }
 
             JsStatement delegate = generateInitializerForDelegate(context, property);
