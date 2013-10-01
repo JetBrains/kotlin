@@ -41,34 +41,34 @@ public class KotlinCompilerRunner {
     public static void runCompiler(
             MessageCollector messageCollector,
             CompilerEnvironment environment,
-            File scriptFile,
+            File moduleFile,
             OutputItemsCollector collector,
             boolean runOutOfProcess
     ) {
         if (runOutOfProcess) {
-            runOutOfProcess(messageCollector, collector, environment, scriptFile);
+            runOutOfProcess(messageCollector, collector, environment, moduleFile);
         }
         else {
-            runInProcess(messageCollector, collector, environment, scriptFile);
+            runInProcess(messageCollector, collector, environment, moduleFile);
         }
     }
 
     private static void runInProcess(final MessageCollector messageCollector,
             OutputItemsCollector collector,
             final CompilerEnvironment environment,
-            final File scriptFile) {
+            final File moduleFile) {
         CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
             @Override
             public Integer fun(PrintStream stream) {
-                return execInProcess(environment, scriptFile, stream, messageCollector);
+                return execInProcess(environment, moduleFile, stream, messageCollector);
             }
         });
     }
 
-    private static int execInProcess(CompilerEnvironment environment, File scriptFile, PrintStream out, MessageCollector messageCollector) {
+    private static int execInProcess(CompilerEnvironment environment, File moduleFile, PrintStream out, MessageCollector messageCollector) {
         try {
             String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
-            String[] arguments = commandLineArguments(environment.getOutput(), scriptFile);
+            String[] arguments = commandLineArguments(environment.getOutput(), moduleFile);
             messageCollector.report(CompilerMessageSeverity.INFO,
                                     "Using kotlinHome=" + environment.getKotlinPaths().getHomePath(),
                                     CompilerMessageLocation.NO_LOCATION);
@@ -87,9 +87,9 @@ public class KotlinCompilerRunner {
         }
     }
 
-    private static String[] commandLineArguments(File outputDir, File scriptFile) {
+    private static String[] commandLineArguments(File outputDir, File moduleFile) {
         return new String[]{
-                "-module", scriptFile.getAbsolutePath(),
+                "-module", moduleFile.getAbsolutePath(),
                 "-output", outputDir.getPath(),
                 "-tags", "-verbose", "-version",
                 "-notNullAssertions", "-notNullParamAssertions",
@@ -100,13 +100,13 @@ public class KotlinCompilerRunner {
             final MessageCollector messageCollector,
             final OutputItemsCollector itemCollector,
             CompilerEnvironment environment,
-            File scriptFile
+            File moduleFile
     ) {
         SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
         params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
 
-        for (String arg : commandLineArguments(environment.getOutput(), scriptFile)) {
+        for (String arg : commandLineArguments(environment.getOutput(), moduleFile)) {
             params.getProgramParametersList().add(arg);
         }
 
@@ -118,6 +118,8 @@ public class KotlinCompilerRunner {
         //        params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
 
         Sdk sdk = params.getJdk();
+
+        assert sdk != null;
 
         GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
                 ((JavaSdkType) sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
@@ -157,7 +159,6 @@ public class KotlinCompilerRunner {
             messageCollector.report(CompilerMessageSeverity.ERROR,
                                     "[Internal Error] " + e.getLocalizedMessage(),
                                     CompilerMessageLocation.NO_LOCATION);
-            return;
         }
     }
 
