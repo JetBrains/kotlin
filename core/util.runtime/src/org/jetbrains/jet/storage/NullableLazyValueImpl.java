@@ -18,19 +18,29 @@ package org.jetbrains.jet.storage;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.utils.WrappedValues;
 
 public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
     private static final Object NOT_COMPUTED = new Object();
+    private static final Object COMPUTING = new Object();
 
     @Nullable
     private Object value = NOT_COMPUTED;
 
     @Override
     public T compute() {
-        Object _value = value;
-        if (_value != NOT_COMPUTED) return WrappedValues.unescapeThrowable(_value);
+        if (value == COMPUTING) {
+            Object result = recursionDetected();
+            if (result != NOT_COMPUTED) {
+                return WrappedValues.unescapeThrowable(result);
+            }
+        }
+        else if (value != NOT_COMPUTED) {
+            return WrappedValues.unescapeThrowable(value);
+        }
 
+        value = COMPUTING;
         try {
             T typedValue = doCompute();
             value = typedValue;
@@ -41,6 +51,14 @@ public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
             value = WrappedValues.escapeThrowable(e);
             throw ExceptionUtils.rethrow(e);
         }
+    }
+
+    /**
+     * @return {@code NOT_COMPUTED} to proceed, a value or wrapped exception otherwise, see WrappedValues
+     * @throws DO NOT throw exceptions from implementations of this method, instead return WrappedValues.escapeThrowable(exception)
+     */
+    public Object recursionDetected() {
+        return WrappedValues.escapeThrowable(new ReenteringLazyValueComputationException());
     }
 
     protected abstract T doCompute();
