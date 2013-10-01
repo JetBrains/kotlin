@@ -31,6 +31,8 @@ public class CopyToArray implements IntrinsicMethod {
         v.newarray(expectedType.getElementType());
         v.invokeinterface("java/util/Collection", "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;");
 
+        StackValue.coerce(Type.getType("[Ljava/lang/Object;"), expectedType, v);
+
         return StackValue.onStack(expectedType);
     }
 }

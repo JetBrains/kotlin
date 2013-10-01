@@ -955,7 +955,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         public void testKt3177_copyToArray() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/toArray/kt3177-copyToArray.kt");
         }
-
+        
+        @TestMetadata("returnCopyToArray.kt")
+        public void testReturnCopyToArray() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/toArray/returnCopyToArray.kt");
+        }
+        
     }
     
     public static Test suite() {
