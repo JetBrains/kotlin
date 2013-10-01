@@ -220,7 +220,7 @@ public class TracingStrategyImpl implements TracingStrategy {
             // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
             return;
         }
-        if (status.hasOnlyExpectedTypeMismatch()) {
+        if (status.hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION)) {
             JetType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 

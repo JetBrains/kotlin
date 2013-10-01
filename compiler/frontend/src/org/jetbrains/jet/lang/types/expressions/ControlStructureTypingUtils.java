@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
@@ -344,7 +345,7 @@ public class ControlStructureTypingUtils {
                 if (status.hasErrorInConstrainingTypes()) {
                     return;
                 }
-                if (status.hasOnlyExpectedTypeMismatch() || status.hasConflictingConstraints()) {
+                if (status.hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()) {
                     JetExpression expression = call.getCalleeExpression();
                     if (expression != null) {
                         expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));

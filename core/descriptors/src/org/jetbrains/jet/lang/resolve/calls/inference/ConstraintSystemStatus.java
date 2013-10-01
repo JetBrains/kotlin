@@ -79,9 +79,10 @@ public interface ConstraintSystemStatus {
     boolean hasTypeConstructorMismatchAt(@NotNull ConstraintPosition constraintPosition);
 
     /**
-     * Returns <tt>true</tt> if there is type constructor mismatch only in {@link ConstraintPosition.EXPECTED_TYPE_POSITION}.
+     * Returns <tt>true</tt> if there is type constructor mismatch only in constraintPosition or
+     * constraint system is successful without constraints from this position.
      */
-    boolean hasOnlyExpectedTypeMismatch();
+    boolean hasOnlyErrorsFromPosition(ConstraintPosition constraintPosition);
 
     /**
      * Returns <tt>true</tt> if there is an error in constraining types. <p/>

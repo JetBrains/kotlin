@@ -270,14 +270,13 @@ public class CandidateResolver {
                 BindingContext.CONSTRAINT_SYSTEM_COMPLETER, context.call.getCalleeExpression());
         if (constraintSystemCompleter == null) return;
 
-        ConstraintSystemImpl backup = (ConstraintSystemImpl) constraintSystem.copy();
+        ConstraintSystem copy = constraintSystem.copy();
+
+        constraintSystemCompleter.completeConstraintSystem(copy, resolvedCall);
 
         //todo improve error reporting with errors in constraints from completer
-        constraintSystemCompleter.completeConstraintSystem(constraintSystem, resolvedCall);
-        if (constraintSystem.getStatus().hasTypeConstructorMismatchAt(ConstraintPosition.FROM_COMPLETER) ||
-            (constraintSystem.getStatus().hasContradiction() && !backup.getStatus().hasContradiction())) {
-
-            resolvedCall.setConstraintSystem(backup);
+        if (!copy.getStatus().hasOnlyErrorsFromPosition(ConstraintPosition.FROM_COMPLETER)) {
+            resolvedCall.setConstraintSystem(copy);
         }
     }
 
@@ -295,8 +294,7 @@ public class CandidateResolver {
 
             copy.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, ConstraintPosition.EXPECTED_TYPE_POSITION);
             if (copy.getStatus().isSuccessful()) {
-                constraintSystem = copy;
-                resolvedCall.setConstraintSystem(constraintSystem);
+                resolvedCall.setConstraintSystem(copy);
             }
         }
     }

@@ -106,15 +106,14 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
 
         @Override
-        public boolean hasOnlyExpectedTypeMismatch() {
+        public boolean hasOnlyErrorsFromPosition(ConstraintPosition constraintPosition) {
             if (isSuccessful()) return false;
-            ConstraintSystem systemWithoutExpectedTypeConstraint = filterConstraintsOut(EXPECTED_TYPE_POSITION);
-            if (systemWithoutExpectedTypeConstraint.getStatus().isSuccessful()) {
+            ConstraintSystem systemWithoutConstraintsFromPosition = filterConstraintsOut(constraintPosition);
+            if (systemWithoutConstraintsFromPosition.getStatus().isSuccessful()) {
                 return true;
             }
-            if (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(EXPECTED_TYPE_POSITION)) {
-                // if systemWithoutExpectedTypeConstraint has unknown type parameters, it's not successful,
-                // but there can be expected type mismatch after expected type is added
+            if (errorConstraintPositions.size() == 1 && errorConstraintPositions.contains(constraintPosition)) {
+                // e.g. if systemWithoutConstraintsFromPosition has unknown type parameters, it's not successful
                 return true;
             }
             return false;
