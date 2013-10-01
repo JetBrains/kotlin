@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.utils;
+package org.jetbrains.jet.storage;
 
 import org.jetbrains.annotations.NotNull;
 

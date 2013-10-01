@@ -18,7 +18,6 @@ package org.jetbrains.jet.storage;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.ExceptionUtils;
-import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.utils.WrappedValues;
 
 public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {

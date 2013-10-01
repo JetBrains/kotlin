@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 import org.jetbrains.jet.util.Box;
-import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.storage.ReenteringLazyValueComputationException;
 
 import java.util.List;
 
