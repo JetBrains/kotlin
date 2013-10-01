@@ -106,10 +106,7 @@ public class JetFromJavaDescriptorHelper {
         if (virtualFile != null) {
             KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
             if (header instanceof SerializedDataHeader) {
-                String[] data = ((SerializedDataHeader) header).getAnnotationData();
-                if (data != null) {
-                    return JavaProtoBufUtil.readClassDataFrom(data);
-                }
+                return JavaProtoBufUtil.readClassDataFrom(((SerializedDataHeader) header).getAnnotationData());
             }
         }
         return null;
@@ -121,10 +118,7 @@ public class JetFromJavaDescriptorHelper {
         if (virtualFile != null) {
             KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
             if (header instanceof SerializedDataHeader) {
-                String[] data = ((SerializedDataHeader) header).getAnnotationData();
-                if (data != null) {
-                    return JavaProtoBufUtil.readPackageDataFrom(data);
-                }
+                return JavaProtoBufUtil.readPackageDataFrom(((SerializedDataHeader) header).getAnnotationData());
             }
         }
         return null;

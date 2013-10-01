@@ -29,8 +29,7 @@ public final class DecompiledUtils {
             return false;
         }
         //TODO: check index
-        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(file);
-        return header instanceof SerializedDataHeader && header.isCompatibleKotlinCompiledFile();
+        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(file) instanceof SerializedDataHeader;
     }
 
     private DecompiledUtils() {

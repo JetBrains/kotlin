@@ -17,11 +17,10 @@
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class OldAnnotationHeader extends KotlinClassFileHeader {
-    protected OldAnnotationHeader(@NotNull FqName fqName) {
-        super(AbiVersionUtil.INVALID_VERSION, fqName);
+public class IncompatibleAnnotationHeader extends KotlinClassFileHeader {
+    protected IncompatibleAnnotationHeader(int version, @NotNull FqName fqName) {
+        super(version, fqName);
     }
 }

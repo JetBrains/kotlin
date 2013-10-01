@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.io.IOException;
 
 import static org.jetbrains.asm4.ClassReader.*;
-import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 
 public abstract class KotlinClassFileHeader {
     @Nullable
@@ -59,12 +58,5 @@ public abstract class KotlinClassFileHeader {
     @NotNull
     public FqName getFqName() {
         return fqName;
-    }
-
-    /**
-     * @return true if this is a header for compiled Kotlin file with correct abi version which can be processed by compiler or the IDE
-     */
-    public boolean isCompatibleKotlinCompiledFile() {
-        return isAbiVersionCompatible(version);
     }
 }

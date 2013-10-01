@@ -112,13 +112,14 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     private String[] readData(@NotNull VirtualFile virtualFile) {
         KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(virtualFile);
-        if (header instanceof SerializedDataHeader && header.isCompatibleKotlinCompiledFile()) {
+        if (header instanceof SerializedDataHeader) {
             return ((SerializedDataHeader) header).getAnnotationData();
         }
 
         if (header != null) {
             errorReporter.reportIncompatibleAbiVersion(header.getFqName(), virtualFile, header.getVersion());
         }
+
         return null;
     }
 }

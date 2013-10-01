@@ -84,17 +84,27 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
             return null;
         }
 
+        if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
+            return new IncompatibleAnnotationHeader(version, fqName);
+        }
+
         switch (foundType) {
             case CLASS:
-                return SerializedDataHeader.create(version, annotationData, SerializedDataHeader.Kind.CLASS, fqName);
+                return serializedDataHeader(SerializedDataHeader.Kind.CLASS, fqName);
             case PACKAGE:
-                return SerializedDataHeader.create(version, annotationData, SerializedDataHeader.Kind.PACKAGE, fqName);
-            case OLD_CLASS:
-            case OLD_PACKAGE:
-                return new OldAnnotationHeader(fqName);
+                return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE, fqName);
             default:
-                throw new UnsupportedOperationException("Unknown HeaderType: " + foundType);
+                throw new UnsupportedOperationException("Unknown compatible HeaderType: " + foundType);
         }
+    }
+
+    @Nullable
+    private SerializedDataHeader serializedDataHeader(@NotNull SerializedDataHeader.Kind kind, @NotNull FqName fqName) {
+        if (annotationData == null) {
+            LOG.error("Kotlin annotation " + foundType + " is incorrect for class: " + fqName);
+            return null;
+        }
+        return new SerializedDataHeader(version, annotationData, kind, fqName);
     }
 
     @Override

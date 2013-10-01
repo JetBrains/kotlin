@@ -16,16 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
-
 public class SerializedDataHeader extends KotlinClassFileHeader {
-    private static final Logger LOG = Logger.getInstance(SerializedDataHeader.class);
-
     public enum Kind {
         CLASS,
         PACKAGE
@@ -34,22 +28,13 @@ public class SerializedDataHeader extends KotlinClassFileHeader {
     private final String[] data;
     private final Kind kind;
 
-    private SerializedDataHeader(int version, @Nullable String[] annotationData, @NotNull Kind kind, @NotNull FqName fqName) {
+    protected SerializedDataHeader(int version, @NotNull String[] annotationData, @NotNull Kind kind, @NotNull FqName fqName) {
         super(version, fqName);
         this.data = annotationData;
         this.kind = kind;
     }
 
-    @Nullable
-    public static SerializedDataHeader create(int version, @Nullable String[] annotationData, @NotNull Kind kind, @NotNull FqName fqName) {
-        if (isAbiVersionCompatible(version) && annotationData == null) {
-            LOG.error("Kotlin annotation " + kind + " is incorrect for class: " + fqName);
-            return null;
-        }
-        return new SerializedDataHeader(version, annotationData, kind, fqName);
-    }
-
-    @Nullable
+    @NotNull
     public String[] getAnnotationData() {
         return data;
     }
