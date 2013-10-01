@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.NeedSyntheticCallResolverExtension;
+import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
@@ -40,7 +40,7 @@ public class InjectorForTests {
     private final ExpressionTypingServices expressionTypingServices;
     private final TypeResolver typeResolver;
     private final CallResolver callResolver;
-    private final NeedSyntheticCallResolverExtension needSyntheticCallResolverExtension;
+    private final CompositeExtension compositeExtension;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
@@ -59,7 +59,7 @@ public class InjectorForTests {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.callResolver = new CallResolver();
-        this.needSyntheticCallResolverExtension = new NeedSyntheticCallResolverExtension();
+        this.compositeExtension = new CompositeExtension();
         this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.project = project;
@@ -89,7 +89,7 @@ public class InjectorForTests {
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
         this.callResolver.setCandidateResolver(candidateResolver);
         this.callResolver.setExpressionTypingServices(expressionTypingServices);
-        this.callResolver.setExtension(needSyntheticCallResolverExtension);
+        this.callResolver.setExtension(compositeExtension);
         this.callResolver.setTypeResolver(typeResolver);
 
         annotationResolver.setCallResolver(callResolver);

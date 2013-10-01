@@ -154,7 +154,7 @@ public class JetPsiFactory {
 
     @NotNull
     public static JetFile createFile(Project project, String text) {
-        return createFile(project, "dummy.jet", text);
+        return createFile(project, "dummy.kt", text);
     }
 
     @NotNull

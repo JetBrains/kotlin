@@ -70,7 +70,7 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
     protected JetFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
         if (fileName == null) {
             Assert.assertNotNull(testName);
-            fileName = testName + ".jet";
+            fileName = testName + ".kt";
         }
         return JetTestUtils.createFile(fileName, text, getProject());
     }
@@ -93,7 +93,7 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
     }
 
     protected void prepareForTest(String name) throws IOException {
-        String text = loadFile(name + ".jet");
+        String text = loadFile(name + ".kt");
         createAndCheckPsiFile(name, text);
     }
 

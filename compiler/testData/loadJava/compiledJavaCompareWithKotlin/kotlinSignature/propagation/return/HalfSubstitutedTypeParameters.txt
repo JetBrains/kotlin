@@ -34,7 +34,5 @@ public trait HalfSubstitutedTypeParameters : java.lang.Object {
         public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: jet.Int, /*1*/ element: E): E
         public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
         public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.MutableList<E>
-        public abstract override /*1*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
-        public abstract override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
     }
 }

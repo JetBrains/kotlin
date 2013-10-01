@@ -27,7 +27,7 @@ public class CompilationException extends RuntimeException {
     private final PsiElement element;
 
     public CompilationException(@NotNull String message, @Nullable Throwable cause, @NotNull PsiElement element) {
-        super(message, cause);
+        super(getMessage(message, cause, element), cause);
         this.element = element;
     }
 
@@ -37,33 +37,31 @@ public class CompilationException extends RuntimeException {
     }
 
 
-    private String where() {
-        Throwable cause = getCause();
-        Throwable throwable = cause != null ? cause : this;
-        StackTraceElement[] stackTrace = throwable.getStackTrace();
+    private static String where(@NotNull Throwable cause) {
+        StackTraceElement[] stackTrace = cause.getStackTrace();
         if (stackTrace != null && stackTrace.length > 0) {
             return stackTrace[0].getFileName() + ":" + stackTrace[0].getLineNumber();
         }
         return "unknown";
     }
 
-    @Override
-    public String getMessage() {
+    public static String getMessage(@NotNull final String message, @Nullable final Throwable cause, @NotNull final PsiElement element) {
         return ApplicationManager.getApplication().runReadAction(new Computable<String>() {
             @Override
             public String compute() {
-                StringBuilder message =
-                        new StringBuilder("Back-end (JVM) Internal error: ").append(CompilationException.super.getMessage()).append("\n");
-                Throwable cause = getCause();
+                StringBuilder result =
+                        new StringBuilder("Back-end (JVM) Internal error: ").append(message).append("\n");
                 if (cause != null) {
                     String causeMessage = cause.getMessage();
-                    message.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
+                    result.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
                 }
-                message.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
-                message.append("PsiElement: ").append(element.getText()).append("\n");
-                message.append("The root cause was thrown at: ").append(where());
+                result.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
+                result.append("PsiElement: ").append(element.getText()).append("\n");
+                if (cause != null) {
+                    result.append("The root cause was thrown at: ").append(where(cause));
+                }
 
-                return message.toString();
+                return result.toString();
             }
         });
     }

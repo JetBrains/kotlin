@@ -87,7 +87,7 @@ public class LightClassUtil {
 
     @NotNull
     public static URL getBuiltInsDirUrl() {
-        String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING + "/Library.jet";
+        String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING + "/Library.kt";
 
         URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
 

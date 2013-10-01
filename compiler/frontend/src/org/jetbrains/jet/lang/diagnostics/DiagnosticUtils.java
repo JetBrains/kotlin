@@ -77,7 +77,7 @@ public class DiagnosticUtils {
     public static String atLocation(@NotNull ASTNode node) {
         int startOffset = node.getStartOffset();
         PsiElement element = getClosestPsiElement(node);
-        if (element != null) {
+        if (element != null && element.isValid()) {
             return atLocation(element.getContainingFile(), element.getTextRange());
         }
         return "' at offset " + startOffset + " (line and file unknown: no PSI element)";

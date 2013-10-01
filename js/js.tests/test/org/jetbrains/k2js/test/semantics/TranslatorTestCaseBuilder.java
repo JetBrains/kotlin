@@ -57,12 +57,11 @@ public abstract class TranslatorTestCaseBuilder {
 
     public static void appendTestsInDirectory(String dataPath, boolean recursive,
                                               final FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
-        final String extensionJet = ".jet";
         final String extensionKt = ".kt";
         final FilenameFilter extensionFilter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(extensionJet) || name.endsWith(extensionKt);
+                return name.endsWith(extensionKt);
             }
         };
         FilenameFilter resultFilter;
@@ -98,7 +97,6 @@ public abstract class TranslatorTestCaseBuilder {
         for (File file : files) {
             String fileName = file.getName();
             assert fileName != null;
-            String extension = fileName.endsWith(extensionJet) ? extensionJet : extensionKt;
             suite.addTest(factory.createTest(fileName));
         }
     }

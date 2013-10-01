@@ -47,7 +47,7 @@ fun box(): Boolean {
     a.clear()
     assertThat(a.isEmpty(), true)
 
-    val array = list.toArray(Array<Int>(0, {it}))
+    val array = list.copyToArray()
 
     assertThat(array[0], 1)
     assertThat(array[1], 500)

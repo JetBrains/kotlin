@@ -50,6 +50,7 @@ import org.jetbrains.jet.plugin.util.ApplicationUtils;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 
 public final class AnalyzerFacadeWithCache {
 
@@ -131,7 +132,7 @@ public final class AnalyzerFacadeWithCache {
                             Project project = file.getProject();
 
 
-                            Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
+                            Collection<JetFile> files = new HashSet<JetFile>(JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project)));
 
                             // Add requested file to the list of files for searching declarations
                             files.add(file);

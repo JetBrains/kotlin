@@ -6,7 +6,7 @@ import java.util.Arrays
 import jet.runtime.Intrinsic
 
 // Array "constructor"
-[Intrinsic("kotlin.arrays.array")] public inline fun <T> array(vararg t : T) : Array<T> = t
+[Intrinsic("kotlin.arrays.array")] public inline fun <reified T> array(vararg t : T) : Array<T> = t
 
 // "constructors" for primitive types array
 [Intrinsic("kotlin.arrays.array")] public inline fun doubleArray(vararg content : Double) : DoubleArray    = content
@@ -108,3 +108,6 @@ public inline fun ByteArray.toString(encoding: String): String = String(this, en
 public inline fun ByteArray.toString(): String = String(this)
 
 public inline fun ByteArray.toString(encoding: Charset) : String = String(this, encoding)
+
+[Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.copyToArray(): Array<T> =
+        throw UnsupportedOperationException()

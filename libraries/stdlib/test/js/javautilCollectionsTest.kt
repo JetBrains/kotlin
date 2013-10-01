@@ -29,4 +29,9 @@ class JavautilCollectionsTest {
         Collections.sort(list, COMPARATOR)
         assertEquals(SORTED_TEST_LIST, list)
     }
+
+    test fun collectionToArray() {
+        val array = TEST_LIST.copyToArray()
+        assertEquals(array.toList(), TEST_LIST)
+    }
 }

@@ -15,7 +15,6 @@ fun <T> testCollectionIterator(c: Collection<T>) {
         assertEquals(1, it.next())
     }
 }
-fun <T> testCollectionToArray(c: Collection<T>) = assertEquals(1, c.toArray()[0])
 fun <T> testCollectionContainsAll(c: Collection<T>) = assertTrue(c.containsAll(c))
 fun <T> testMutableCollectionAdd(c: MutableCollection<T>, t: T) {
     c.add(t)
@@ -60,7 +59,6 @@ fun testCollection() {
     testCollectionIsEmpty(arrayList<String>())
     testCollectionContains(arrayList(1))
     testCollectionIterator(arrayList(1))
-    testCollectionToArray(arrayList(1))
     testCollectionContainsAll(arrayList("a", "b"))
 
     testMutableCollectionAdd(arrayList(), "")

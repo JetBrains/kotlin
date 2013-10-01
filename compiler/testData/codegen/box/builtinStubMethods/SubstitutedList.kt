@@ -3,8 +3,6 @@ class MyList: List<String> {
     override fun isEmpty(): Boolean = true
     override fun contains(o: Any?): Boolean = false
     override fun iterator(): Iterator<String> = throw Error()
-    override fun toArray(): Array<Any?> = throw Error()
-    override fun <E> toArray(a: Array<out E>): Array<E> = throw Error()
     override fun containsAll(c: Collection<Any?>): Boolean = false
     override fun get(index: Int): String = throw IndexOutOfBoundsException()
     override fun indexOf(o: Any?): Int = -1

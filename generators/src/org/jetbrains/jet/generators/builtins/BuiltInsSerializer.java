@@ -45,7 +45,7 @@ public class BuiltInsSerializer {
     public static void serializeToDir(final File destDir, @Nullable final PrintStream out) throws IOException {
         Disposable rootDisposable = Disposer.newDisposable();
         try {
-            List<File> sourceFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.jet"), new File(BUILT_INS_SRC_DIR));
+            List<File> sourceFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), new File(BUILT_INS_SRC_DIR));
             CompilerConfiguration configuration = new CompilerConfiguration();
             JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
             List<JetFile> files = JetTestUtils.loadToJetFiles(environment, sourceFiles);

@@ -2018,7 +2018,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             for (ValueArgument argument : call.getValueArguments()) {
                 args.add(argument.getArgumentExpression());
             }
-            JetType type = resolvedCall.getCandidateDescriptor().getReturnType();
+            JetType type = resolvedCall.getResultingDescriptor().getReturnType();
             assert type != null;
             Type callType = typeMapper.mapType(type);
 

@@ -8,7 +8,7 @@ import jet.runtime.Intrinsic
 [Intrinsic("kotlin.javaClass.property")] public val <T> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
-[Intrinsic("kotlin.javaClass.function")] fun <T> javaClass() : Class<T> = null as Class<T>
+[Intrinsic("kotlin.javaClass.function")] fun <reified T> javaClass() : Class<T> = null as Class<T>
 
 
 /**

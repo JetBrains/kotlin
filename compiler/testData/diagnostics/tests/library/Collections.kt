@@ -5,8 +5,6 @@ fun <T> testCollection(c: Collection<T>, t: T) {
     c.isEmpty()
     c.contains(1)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = c.iterator()
-    val <!UNUSED_VARIABLE!>arrayOfAnys<!>: Array<Any?> = c.toArray()
-    val <!UNUSED_VARIABLE!>arrayOfTs<!>: Array<T> = c.toArray(array<T>())
     c.containsAll(c)
 
     val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = <!TYPE_MISMATCH!>c.iterator()<!>
@@ -23,8 +21,6 @@ fun <T> testMutableCollection(c: MutableCollection<T>, t: T) {
     c.isEmpty()
     c.contains(1)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = c.iterator()
-    val <!UNUSED_VARIABLE!>arrayOfAnys<!>: Array<Any?> = c.toArray()
-    val <!UNUSED_VARIABLE!>arrayOfTs<!>: Array<T> = c.toArray(array<T>())
     c.containsAll(c)
 
 
@@ -67,8 +63,6 @@ fun <T> testSet(s: Set<T>, t: T) {
     s.isEmpty()
     s.contains(1)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = s.iterator()
-    val <!UNUSED_VARIABLE!>arrayOfAnys<!>: Array<Any?> = s.toArray()
-    val <!UNUSED_VARIABLE!>arrayOfTs<!>: Array<T> = s.toArray(array<T>())
     s.containsAll(s)
 
     val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = <!TYPE_MISMATCH!>s.iterator()<!>
@@ -85,8 +79,6 @@ fun <T> testMutableSet(s: MutableSet<T>, t: T) {
     s.isEmpty()
     s.contains(1)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = s.iterator()
-    val <!UNUSED_VARIABLE!>arrayOfAnys<!>: Array<Any?> = s.toArray()
-    val <!UNUSED_VARIABLE!>arrayOfTs<!>: Array<T> = s.toArray(array<T>())
     s.containsAll(s)
 
 

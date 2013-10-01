@@ -56,8 +56,8 @@ public class GenerateFunctions {
             this.superClassNamePrefix = superClassNamePrefix;
         }
 
-        public String getJetFileName() {
-            return classNamePrefix + "s.jet";
+        public String getFileName() {
+            return classNamePrefix + "s.kt";
         }
 
         public String getClassName(int i) {
@@ -223,7 +223,7 @@ public class GenerateFunctions {
         assert RUNTIME_SRC_DIR.exists() : "Runtime src dir does not exist: " + RUNTIME_SRC_DIR.getAbsolutePath();
 
         for (FunctionKind kind : FunctionKind.values()) {
-            PrintWriter functions = new PrintWriter(new File(JET_SRC_DIR, kind.getJetFileName()));
+            PrintWriter functions = new PrintWriter(new File(JET_SRC_DIR, kind.getFileName()));
             new GenerateFunctions(functions, kind).generateBuiltInFunctions();
             functions.close();
             

@@ -51,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -59,6 +60,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -462,7 +464,65 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateBuiltinMethodStubs();
 
+        generateToArray();
+
         genClosureFields(context.closure, v, state.getTypeMapper());
+    }
+
+    private boolean isGenericToArrayPresent() {
+        Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"));
+        for (FunctionDescriptor function : functions) {
+            if (CallResolverUtil.isOrOverridesSynthesized(function)) {
+                continue;
+            }
+
+            if (function.getValueParameters().size() != 1 || function.getTypeParameters().size() != 1) {
+                continue;
+            }
+
+            JetType arrayType = KotlinBuiltIns.getInstance().getArrayType(function.getTypeParameters().get(0).getDefaultType());
+            JetType returnType = function.getReturnType();
+            assert returnType != null : function.toString();
+            JetType paramType = function.getValueParameters().get(0).getType();
+            if (JetTypeChecker.INSTANCE.equalTypes(arrayType, returnType) && JetTypeChecker.INSTANCE.equalTypes(arrayType, paramType)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    private void generateToArray() {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        if (isSubclass(descriptor, builtIns.getCollection())) {
+            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
+                MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toArray", "()[Ljava/lang/Object;", null, null);
+                InstructionAdapter iv = new InstructionAdapter(mv);
+
+                mv.visitCode();
+
+                iv.load(0, classAsmType);
+                iv.invokestatic("jet/runtime/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;");
+                iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
+
+                FunctionCodegen.endVisit(mv, "toArray", myClass);
+            }
+
+            if (!isGenericToArrayPresent()) {
+                MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
+                InstructionAdapter iv = new InstructionAdapter(mv);
+
+                mv.visitCode();
+
+                iv.load(0, classAsmType);
+                iv.load(1, Type.getObjectType("[Ljava/lang/Object;"));
+
+                iv.invokestatic("jet/runtime/CollectionToArray", "toArray", "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;");
+                iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
+
+                FunctionCodegen.endVisit(mv, "toArray", myClass);
+            }
+        }
     }
 
     private void generateMethodStub(

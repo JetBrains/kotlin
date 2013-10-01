@@ -33,9 +33,9 @@ trait WriteOnlyArray<in T> : ISized {
 }
 
 class MutableArray<T>(length: Int, init : (Int) -> T) : ReadOnlyArray<T>, WriteOnlyArray<T> {
-    private val array = Array<T>(length, init)
+    private val array = Array<Any?>(length, init)
 
-    override fun get(index : Int) : T = array[index]
+    override fun get(index : Int) : T = array[index] as T
     override fun set(index : Int, value : T) : Unit { array[index] = value }
 
     override val size : Int

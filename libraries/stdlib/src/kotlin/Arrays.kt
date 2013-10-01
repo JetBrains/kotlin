@@ -6,9 +6,6 @@ public inline fun <T> Array<T>.isNotEmpty() : Boolean = !this.isEmpty()
 /** Returns true if the array is empty */
 public inline fun <T> Array<T>.isEmpty() : Boolean = this.size == 0
 
-/** Returns the array if its not null or else returns an empty array */
-public inline fun <T> Array<out T>?.orEmpty() : Array<out T> = if (this != null) this else array<T>()
-
 public inline val          BooleanArray.lastIndex : Int
     get() = this.size - 1
 

@@ -10,9 +10,6 @@ public trait Comparator<T> {
 
 library
 public abstract class AbstractCollection<E>() : MutableCollection<E> {
-    override fun toArray(): Array<Any?> = js.noImpl
-    override fun <T> toArray(a: Array<out T>): Array<T> = js.noImpl
-
     override fun isEmpty(): Boolean = js.noImpl
     override fun contains(o: Any?): Boolean = js.noImpl
     override fun iterator(): MutableIterator<E> = js.noImpl

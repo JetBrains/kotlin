@@ -79,9 +79,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
             pair("iterator()", "fun iterator(): jet.Iterator<E>"),            
-            pair("size()", "fun size(): jet.Int"),            
-            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
+            pair("size()", "fun size(): jet.Int")            
         );
         
         put(b, "java.util.Collection", "MutableCollection",
@@ -97,9 +95,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("remove(java.lang.Object)", "fun remove(o: jet.Any?): jet.Boolean"),            
             pair("removeAll(java.util.Collection<?>)", "fun removeAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
             pair("retainAll(java.util.Collection<?>)", "fun retainAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
-            pair("size()", "fun size(): jet.Int"),            
-            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
+            pair("size()", "fun size(): jet.Int")            
         );
         
         put(b, "java.util.List", "List",
@@ -115,9 +111,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("listIterator()", "fun listIterator(): jet.ListIterator<E>"),            
             pair("listIterator(int)", "fun listIterator(index: jet.Int): jet.ListIterator<E>"),            
             pair("size()", "fun size(): jet.Int"),            
-            pair("subList(int, int)", "fun subList(fromIndex: jet.Int, toIndex: jet.Int): jet.List<E>"),            
-            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
+            pair("subList(int, int)", "fun subList(fromIndex: jet.Int, toIndex: jet.Int): jet.List<E>")            
         );
         
         put(b, "java.util.List", "MutableList",
@@ -143,9 +137,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("retainAll(java.util.Collection<?>)", "fun retainAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
             pair("set(int, E)", "fun set(index: jet.Int, element: E): E"),            
             pair("size()", "fun size(): jet.Int"),            
-            pair("subList(int, int)", "fun subList(fromIndex: jet.Int, toIndex: jet.Int): jet.MutableList<E>"),            
-            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
+            pair("subList(int, int)", "fun subList(fromIndex: jet.Int, toIndex: jet.Int): jet.MutableList<E>")            
         );
         
         put(b, "java.util.Set", "Set",
@@ -155,9 +147,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
             pair("iterator()", "fun iterator(): jet.Iterator<E>"),            
-            pair("size()", "fun size(): jet.Int"),            
-            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
+            pair("size()", "fun size(): jet.Int")            
         );
         
         put(b, "java.util.Set", "MutableSet",
@@ -173,9 +163,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("remove(java.lang.Object)", "fun remove(o: jet.Any?): jet.Boolean"),            
             pair("removeAll(java.util.Collection<?>)", "fun removeAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
             pair("retainAll(java.util.Collection<?>)", "fun retainAll(c: jet.Collection<jet.Any?>): jet.Boolean"),            
-            pair("size()", "fun size(): jet.Int"),            
-            pair("toArray()", "fun toArray(): jet.Array<jet.Any?>"),            
-            pair("toArray(T[])", "fun <T> toArray(a: jet.Array<out T>): jet.Array<T>")            
+            pair("size()", "fun size(): jet.Int")            
         );
         
         put(b, "java.util.Map", "Map",

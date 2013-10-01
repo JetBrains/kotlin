@@ -3,8 +3,6 @@ class MyCollection<T>: Collection<T> {
     override fun isEmpty(): Boolean = true
     override fun contains(o: Any?): Boolean = false
     override fun iterator(): Iterator<T> = throw UnsupportedOperationException()
-    override fun toArray(): Array<Any?> = throw UnsupportedOperationException()
-    override fun <E> toArray(a: Array<out E>): Array<E> = throw UnsupportedOperationException()
     override fun containsAll(c: Collection<Any?>): Boolean = false
     override fun hashCode(): Int = 0
     override fun equals(other: Any?): Boolean = false
