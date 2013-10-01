@@ -23,14 +23,13 @@ import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.compiler.PathManager;
+import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
@@ -190,7 +189,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     }
 
     private String generateTestName(String fileName) {
-        String result = FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName));
+        String result = TestGeneratorUtil.escapeForJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)));
 
         int i = 0;
         while (generatedTestNames.contains(result)) {

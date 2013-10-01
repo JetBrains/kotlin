@@ -15,6 +15,7 @@
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="library" name="jps-test" level="project" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="generators" scope="TEST" />
   </component>
 </module>
 
