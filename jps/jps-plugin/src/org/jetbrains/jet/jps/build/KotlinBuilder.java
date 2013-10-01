@@ -77,6 +77,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             OutputConsumer outputConsumer
     ) throws ProjectBuildException, IOException {
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
+        // Workaround for Android Studio
         if (!isJavaPluginEnabled(context)) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION);
             return ExitCode.NOTHING_DONE;
@@ -141,6 +142,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
     private static boolean isJavaPluginEnabled(@NotNull CompileContext context) {
         try {
+            // Using reflection for backward compatibility with IDEA 12
             Field javaPluginIsEnabledField = JavaBuilder.class.getDeclaredField("IS_ENABLED");
             return Modifier.isPublic(javaPluginIsEnabledField.getModifiers()) ? JavaBuilder.IS_ENABLED.get(context, Boolean.TRUE) : true;
         }
