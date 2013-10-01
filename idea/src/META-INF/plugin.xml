@@ -292,6 +292,8 @@
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelShortObjectNameIndex"/>
 
+    <clsStubBuilderFactory implementation="org.jetbrains.jet.plugin.stubindex.builder.EmptyPackageFragmentClsStubBuilderFactory"/>
+
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex"/>
 

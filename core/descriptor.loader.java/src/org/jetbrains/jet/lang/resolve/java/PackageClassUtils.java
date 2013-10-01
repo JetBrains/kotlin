@@ -22,8 +22,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class PackageClassUtils {
-
-    private static final String DEFAULT_PACKAGE = "_DefaultPackage";
+    public static final String PACKAGE_CLASS_NAME_SUFFIX = "Package";
+    private static final String DEFAULT_PACKAGE_CLASS_NAME = "_Default" + PACKAGE_CLASS_NAME_SUFFIX;
 
     private PackageClassUtils() {
     }
@@ -31,9 +31,9 @@ public final class PackageClassUtils {
     // ex. <root> -> _DefaultPackage, a -> APackage, a.b -> BPackage
     public static String getPackageClassName(@NotNull FqName packageFQN) {
         if (packageFQN.isRoot()) {
-            return DEFAULT_PACKAGE;
+            return DEFAULT_PACKAGE_CLASS_NAME;
         }
-        return StringUtil.capitalize(packageFQN.shortName().asString()) + "Package";
+        return StringUtil.capitalize(packageFQN.shortName().asString()) + PACKAGE_CLASS_NAME_SUFFIX;
     }
 
     public static FqName getPackageClassFqName(@NotNull FqName packageFQN) {
