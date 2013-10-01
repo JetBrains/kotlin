@@ -117,9 +117,9 @@ public class DiagnosticsWithSuppression implements Diagnostics {
      */
     private boolean isSuppressedByAnnotated(@NotNull Diagnostic diagnostic, @NotNull JetAnnotated annotated, int debugDepth) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Annotated: ", annotated.getName());
-            LOG.debug("Depth: ", debugDepth);
-            LOG.debug("Cache size: ", suppressors.size(), "\n");
+            LOG.debug("Annotated: " + annotated.getName());
+            LOG.debug("Depth: " + debugDepth);
+            LOG.debug("Cache size: " + suppressors.size() + "\n");
         }
 
         Suppressor suppressor = getOrCreateSuppressor(annotated);

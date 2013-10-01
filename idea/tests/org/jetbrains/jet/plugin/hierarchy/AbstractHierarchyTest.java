@@ -21,7 +21,7 @@ import com.intellij.ide.hierarchy.type.SubtypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.SupertypesHierarchyTreeStructure;
 import com.intellij.ide.hierarchy.type.TypeHierarchyTreeStructure;
 import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Computable;
@@ -156,8 +156,8 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
 
     private DataContext getDataContext() {
         MapDataContext context = new MapDataContext();
-        context.put(CommonDataKeys.PROJECT, getProject());
-        context.put(CommonDataKeys.EDITOR, getEditor());
+        context.put(PlatformDataKeys.PROJECT, getProject());
+        context.put(PlatformDataKeys.EDITOR, getEditor());
         return context;
     }
 

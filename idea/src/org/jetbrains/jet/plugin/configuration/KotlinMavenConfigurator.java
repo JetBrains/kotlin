@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.configuration;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.application.Result;
@@ -119,7 +119,7 @@ public class KotlinMavenConfigurator implements KotlinProjectConfigurator {
                 addPluginIfNeeded(domModel, module, virtualFile);
                 addLibraryDependencyIfNeeded(domModel);
 
-                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(file);
+                CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(file);
             }
         }.execute();
 

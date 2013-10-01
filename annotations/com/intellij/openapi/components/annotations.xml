@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.openapi.components.ComponentManager com.intellij.util.messages.MessageBus getMessageBus()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

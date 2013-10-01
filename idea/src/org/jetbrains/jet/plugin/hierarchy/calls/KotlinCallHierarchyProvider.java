@@ -20,7 +20,8 @@ import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
 import com.intellij.ide.hierarchy.HierarchyBrowser;
 import com.intellij.ide.hierarchy.HierarchyProvider;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -34,14 +35,14 @@ import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 public class KotlinCallHierarchyProvider implements HierarchyProvider {
     @Override
     public PsiElement getTarget(@NotNull DataContext dataContext) {
-        Project project = CommonDataKeys.PROJECT.getData(dataContext);
+        Project project = PlatformDataKeys.PROJECT.getData(dataContext);
         if (project == null) return null;
 
         return HierarchyUtils.getCallHierarchyElement(getCurrentElement(dataContext, project));
     }
 
     private static PsiElement getCurrentElement(DataContext dataContext, Project project) {
-        Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+        Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
         if (editor != null) {
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             if (file == null) return null;
@@ -52,7 +53,7 @@ public class KotlinCallHierarchyProvider implements HierarchyProvider {
             return TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
         }
 
-        return CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+        return LangDataKeys.PSI_ELEMENT.getData(dataContext);
     }
 
     @NotNull

@@ -4,7 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
@@ -17,7 +17,7 @@ public class ConfigureKotlinInProjectAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+        Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
         if (project == null) {
             return;
         }

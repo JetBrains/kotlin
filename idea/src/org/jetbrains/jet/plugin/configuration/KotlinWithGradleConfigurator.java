@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.configuration;
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -178,7 +178,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
             protected void run(Result result) {
                 addElements(groovyFile, version);
 
-                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(groovyFile);
+                CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(groovyFile);
             }
         }.execute();
 
