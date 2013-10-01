@@ -1,2 +1,2 @@
 val empty = IntRange.<ref>EMPTY
-//jet/Ranges.jet:EMPTY
+//jet/Ranges.kt:EMPTY

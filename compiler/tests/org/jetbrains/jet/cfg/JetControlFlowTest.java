@@ -67,7 +67,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     
     @Override
     protected void runTest() throws Throwable {
-        JetFile file = loadPsiFile(myName + ".jet");
+        JetFile file = loadPsiFile(myName + ".kt");
 
         Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
         AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(file);

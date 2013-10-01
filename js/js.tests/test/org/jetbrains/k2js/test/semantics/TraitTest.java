@@ -55,7 +55,7 @@ public final class TraitTest extends SingleFileTranslationTest {
 
 
     public void testFunDelegation() throws Exception {
-        checkFooBoxIsOk("funDelegation.jet");
+        checkFooBoxIsOk("funDelegation.kt");
     }
 
 

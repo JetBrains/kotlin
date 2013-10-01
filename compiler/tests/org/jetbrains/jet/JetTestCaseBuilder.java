@@ -34,7 +34,7 @@ import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
 
 public abstract class JetTestCaseBuilder {
 
-    public static final FilenameFilter KOTLIN_FILTER = filterByExtension("kt", "jet", JetParserDefinition.KTSCRIPT_FILE_SUFFIX);
+    public static final FilenameFilter KOTLIN_FILTER = filterByExtension("kt", JetParserDefinition.KTSCRIPT_FILE_SUFFIX);
 
     @NotNull
     public static FilenameFilter filterByExtension(@NotNull final String... extensions) {

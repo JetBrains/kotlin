@@ -34,6 +34,6 @@ public final class JetFileUtils {
             @NotNull Project project
     ) {
         return (JetFile) PsiFileFactory.getInstance(project)
-                .createFileFromText(name.endsWith(".kt") ? name : name + ".jet", JetLanguage.INSTANCE, text, true, false);
+                .createFileFromText(name.endsWith(".kt") ? name : name + ".kt", JetLanguage.INSTANCE, text, true, false);
     }
 }
