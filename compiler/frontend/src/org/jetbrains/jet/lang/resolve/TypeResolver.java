@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -25,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -36,6 +36,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.PossiblyBareType.type;
 import static org.jetbrains.jet.lang.types.Variance.*;
+import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class TypeResolver {
 
@@ -239,13 +240,12 @@ public class TypeResolver {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
         else {
-            return new LazyScopeAdapter(new NotNullLazyValueImpl<JetScope>() {
-                @NotNull
+            return new LazyScopeAdapter(NO_LOCKS.createLazyValue(new Computable<JetScope>() {
                 @Override
-                protected JetScope doCompute() {
+                public JetScope compute() {
                     return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
                 }
-            });
+            }));
         }
     }
 

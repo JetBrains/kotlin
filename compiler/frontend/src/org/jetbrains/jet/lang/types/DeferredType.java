@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.lang.types;
 
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.util.Box;
@@ -36,6 +38,10 @@ public class DeferredType implements JetType {
         return deferredType;
     }
     
+    public static DeferredType create(BindingTrace trace, Computable<JetType> compute) {
+        return create(trace, LockBasedStorageManager.NO_LOCKS.createLazyValue(compute));
+    }
+
     private final NotNullLazyValue<JetType> lazyValue;
 
     private DeferredType(NotNullLazyValue<JetType> lazyValue) {

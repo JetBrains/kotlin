@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
@@ -30,11 +31,12 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
     public static TypeParameterDescriptor createWithDefaultBound(
@@ -222,13 +224,12 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
                             getTypeConstructor(),
                             TypeUtils.hasNullableLowerBound(this),
                             Collections.<TypeProjection>emptyList(),
-                            new LazyScopeAdapter(new NotNullLazyValueImpl<JetScope>() {
-                                @NotNull
+                            new LazyScopeAdapter(NO_LOCKS.createLazyValue(new Computable<JetScope>() {
                                 @Override
-                                protected JetScope doCompute() {
+                                public JetScope compute() {
                                     return getUpperBoundsAsType().getMemberScope();
                                 }
-                            }));
+                            })));
         }
         return defaultType;
     }
