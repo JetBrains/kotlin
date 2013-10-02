@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
@@ -29,10 +27,11 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /* package */ final class MembersCache {
-    private final Multimap<Name, Runnable> memberProcessingTasks = HashMultimap.create();
+    private final Map<Name, Collection<Runnable>> memberProcessingTasks = new HashMap<Name, Collection<Runnable>>();
     private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
     @Nullable
@@ -60,7 +59,13 @@ import java.util.Map;
     }
 
     private void addTask(@NotNull JavaNamedElement member, @NotNull RunOnce task) {
-        memberProcessingTasks.put(member.getName(), task);
+        Name name = member.getName();
+        Collection<Runnable> tasks = memberProcessingTasks.get(name);
+        if (tasks == null) {
+            tasks = new HashSet<Runnable>();
+            memberProcessingTasks.put(name, tasks);
+        }
+        tasks.add(task);
     }
 
     private void runTasksByName(Name name) {
@@ -74,8 +79,10 @@ import java.util.Map;
     }
 
     private void runAllTasks() {
-        for (Runnable task : memberProcessingTasks.values()) {
-            task.run();
+        for (Collection<Runnable> tasks : memberProcessingTasks.values()) {
+            for (Runnable task : tasks) {
+                task.run();
+            }
         }
     }
 

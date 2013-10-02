@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.mapping;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -57,7 +55,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();
     private final Map<String, JetType> primitiveTypesMap = new HashMap<String, JetType>();
-    private final Multimap<FqName, ClassDescriptor> packagesWithMappedClasses = HashMultimap.create();
+    private final Map<FqName, Collection<ClassDescriptor>> packagesWithMappedClasses = new HashMap<FqName, Collection<ClassDescriptor>>();
 
     private JavaToKotlinClassMap() {
         init();
@@ -139,12 +137,21 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         classDescriptorMap.put(javaClassName, kotlinDescriptor);
-        packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
+        registerClassInPackage(javaClassName.parent(), kotlinDescriptor);
     }
 
     private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
-        packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
+        registerClassInPackage(javaClassName.parent(), kotlinDescriptor);
+    }
+
+    private void registerClassInPackage(@NotNull FqName packageFqName, @NotNull ClassDescriptor kotlinDescriptor) {
+        Collection<ClassDescriptor> classesInPackage = packagesWithMappedClasses.get(packageFqName);
+        if (classesInPackage == null) {
+            classesInPackage = new HashSet<ClassDescriptor>();
+            packagesWithMappedClasses.put(packageFqName, classesInPackage);
+        }
+        classesInPackage.add(kotlinDescriptor);
     }
 
     @NotNull
@@ -178,6 +185,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         if (!fqName.isSafe()) {
             return Collections.emptyList();
         }
-        return packagesWithMappedClasses.get(fqName.toSafe());
+        Collection<ClassDescriptor> result = packagesWithMappedClasses.get(fqName.toSafe());
+        return result == null ? Collections.<ClassDescriptor>emptySet() : Collections.unmodifiableCollection(result);
     }
 }
