@@ -156,6 +156,11 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         @Override
+        public boolean isComputed() {
+            return value != NOT_COMPUTED && value != COMPUTING;
+        }
+
+        @Override
         public T compute() {
             Object _value = value;
             if (_value != NOT_COMPUTED && _value != COMPUTING) return WrappedValues.unescapeThrowable(_value);

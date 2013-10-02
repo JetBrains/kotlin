@@ -23,4 +23,7 @@ public interface NullableLazyValue<T> extends Computable<T> {
     @Override
     @Nullable
     T compute();
+
+    // Needed for proper toString() behaviors
+    boolean isComputed();
 }

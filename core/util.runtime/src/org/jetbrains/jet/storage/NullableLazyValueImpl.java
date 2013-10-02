@@ -30,8 +30,9 @@ public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
     @Nullable
     private Object value = State.NOT_COMPUTED;
 
+    @Override
     public boolean isComputed() {
-        return value != State.NOT_COMPUTED;
+        return value != State.NOT_COMPUTED && value != State.COMPUTING;
     }
 
     @Override

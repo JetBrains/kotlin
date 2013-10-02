@@ -23,4 +23,7 @@ public interface NotNullLazyValue<T> extends Computable<T> {
     @Override
     @NotNull
     T compute();
+
+    // Needed for proper toString() behaviors
+    boolean isComputed();
 }
