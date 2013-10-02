@@ -188,12 +188,7 @@ public class LockBasedStorageManager implements StorageManager {
                 _value = value;
                 if (!(_value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
 
-                if (_value == NotValue.COMPUTING) {
-                    Object result = recursionDetected();
-                    if (result != NotValue.NOT_COMPUTED) {
-                        return WrappedValues.unescapeThrowable(result);
-                    }
-                }
+                if (_value == NotValue.COMPUTING) return WrappedValues.unescapeThrowable(recursionDetected());
 
                 value = NotValue.COMPUTING;
                 try {
@@ -213,7 +208,7 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         /**
-         * @return {@code NOT_COMPUTED} to proceed, a value or wrapped exception otherwise, see WrappedValues
+         * @return a value or wrapped exception, see WrappedValues
          * @throws DO NOT throw exceptions from implementations of this method, instead return WrappedValues.escapeThrowable(exception)
          */
         @Nullable

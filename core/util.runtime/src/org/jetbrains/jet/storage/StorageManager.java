@@ -46,8 +46,8 @@ public interface StorageManager {
      * @param onRecursiveCall is called if the computation calls itself recursively.
      *                        If this parameter is null, an exception will be thrown on a recursive call,
      *                        otherwise it should return a result of WrappedValues.escapeThrowable() method
-     * @param postCompute is called after the value is computed, but before any other thread sees it (the current thread may
-     * see it in between)
+     * @param postCompute is called after the value is computed, but before any other thread sees it
+     *                    (the current thread may see it in between)
      */
     @NotNull
     <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
