@@ -32,7 +32,22 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LockBasedStorageManager implements StorageManager {
 
-    protected final Lock lock = new ReentrantLock();
+    public static final StorageManager NO_LOCKS = new LockBasedStorageManager(NoLock.INSTANCE) {
+        @Override
+        public String toString() {
+            return "NO_LOCKS";
+        }
+    };
+
+    protected final Lock lock;
+
+    public LockBasedStorageManager() {
+        this(new ReentrantLock());
+    }
+
+    private LockBasedStorageManager(@NotNull Lock lock) {
+        this.lock = lock;
+    }
 
     @NotNull
     @Override
