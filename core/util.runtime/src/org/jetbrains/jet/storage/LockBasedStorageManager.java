@@ -206,7 +206,10 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
-                    value = WrappedValues.escapeThrowable(throwable);
+                    if (value == NotValue.COMPUTING) {
+                        // Store only if it's a genuine result, not something thrown through recursionDetected()
+                        value = WrappedValues.escapeThrowable(throwable);
+                    }
                     throw ExceptionUtils.rethrow(throwable);
                 }
             }
