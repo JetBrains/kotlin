@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
@@ -53,7 +52,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     private final NotNullLazyValue<JetType> upperBoundsAsType;
 
     public AbstractLazyTypeParameterDescriptor(
-            @NotNull StorageManager storageManager,
+            @NotNull final StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull Variance variance,
@@ -75,7 +74,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
         this.defaultType = storageManager.createLazyValue(new Computable<JetType>() {
             @Override
             public JetType compute() {
-                return createDefaultType();
+                return createDefaultType(storageManager);
             }
         });
         this.upperBounds = storageManager.createLazyValue(new Computable<Set<JetType>>() {
@@ -197,14 +196,15 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     }
 
     @NotNull
-    private JetType createDefaultType() {
-        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new NotNullLazyValueImpl<JetScope>() {
-                        @NotNull
-                        @Override
-                        protected JetScope doCompute() {
-                            return getUpperBoundsAsType().getMemberScope();
-                        }
-                    }));
+    private JetType createDefaultType(@NotNull StorageManager storageManager) {
+        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(storageManager.createLazyValue(
+                new Computable<JetScope>() {
+                    @Override
+                    public JetScope compute() {
+                        return getUpperBoundsAsType().getMemberScope();
+                    }
+                }
+        )));
     }
 
     @Override

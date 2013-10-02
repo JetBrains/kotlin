@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.NotNullLazyValueImpl;
 import org.jetbrains.jet.storage.NullableLazyValue;
 
 import java.util.Collection;
@@ -378,13 +377,14 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
-        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new NotNullLazyValueImpl<JetType>() {
-            @NotNull
-            @Override
-            protected JetType doCompute() {
-                return thisDescriptor.getDefaultType();
-            }
-        }));
+        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), resolveSession.getStorageManager().createLazyValue(
+                new Computable<JetType>() {
+                    @Override
+                    public JetType compute() {
+                        return thisDescriptor.getDefaultType();
+                    }
+                })
+        ));
     }
 
     @Override

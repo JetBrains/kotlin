@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.storage.NotNullLazyValueImpl;
-import org.jetbrains.jet.util.Box;
+import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.util.Box;
 
 import java.util.List;
 
@@ -30,15 +30,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 
 public class DeferredType implements JetType {
     
-    public static DeferredType create(BindingTrace trace, NotNullLazyValueImpl<JetType> lazyValue) {
+    public static DeferredType create(BindingTrace trace, NotNullLazyValue<JetType> lazyValue) {
         DeferredType deferredType = new DeferredType(lazyValue);
         trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
         return deferredType;
     }
     
-    private final NotNullLazyValueImpl<JetType> lazyValue;
+    private final NotNullLazyValue<JetType> lazyValue;
 
-    private DeferredType(NotNullLazyValueImpl<JetType> lazyValue) {
+    private DeferredType(NotNullLazyValue<JetType> lazyValue) {
         this.lazyValue = lazyValue;
     }
 
