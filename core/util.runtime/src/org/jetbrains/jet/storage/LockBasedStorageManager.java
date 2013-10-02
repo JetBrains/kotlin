@@ -157,14 +157,16 @@ public class LockBasedStorageManager implements StorageManager {
 
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
 
-        private static final Object NOT_COMPUTED = new Object();
-        private static final Object COMPUTING = new Object();
+        private enum NotValue {
+            NOT_COMPUTED,
+            COMPUTING
+        }
 
         private final Lock lock;
         private final Computable<T> computable;
 
         @Nullable
-        private volatile Object value = NOT_COMPUTED;
+        private volatile Object value = NotValue.NOT_COMPUTED;
 
         public LockBasedLazyValue(@NotNull Lock lock, @NotNull Computable<T> computable) {
             this.lock = lock;
@@ -173,27 +175,27 @@ public class LockBasedStorageManager implements StorageManager {
 
         @Override
         public boolean isComputed() {
-            return value != NOT_COMPUTED && value != COMPUTING;
+            return value != NotValue.NOT_COMPUTED && value != NotValue.COMPUTING;
         }
 
         @Override
         public T compute() {
             Object _value = value;
-            if (_value != NOT_COMPUTED && _value != COMPUTING) return WrappedValues.unescapeThrowable(_value);
+            if (!(value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
 
             lock.lock();
             try {
                 _value = value;
-                if (_value == COMPUTING) {
+                if (!(_value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
+
+                if (_value == NotValue.COMPUTING) {
                     Object result = recursionDetected();
-                    if (result != NOT_COMPUTED) {
+                    if (result != NotValue.NOT_COMPUTED) {
                         return WrappedValues.unescapeThrowable(result);
                     }
                 }
 
-                if (_value != NOT_COMPUTED) return WrappedValues.unescapeThrowable(_value);
-
-                value = COMPUTING;
+                value = NotValue.COMPUTING;
                 try {
                     T typedValue = computable.compute();
                     value = typedValue;
