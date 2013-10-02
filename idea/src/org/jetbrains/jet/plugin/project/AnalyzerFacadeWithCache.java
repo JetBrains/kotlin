@@ -25,8 +25,6 @@ import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -109,13 +107,7 @@ public final class AnalyzerFacadeWithCache {
     private static AnalyzeExhaust emptyExhaustWithDiagnosticOnFile(JetFile file, Throwable e) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
-        AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
-
-        // Force invalidating of headers cache - temp decision for monitoring rewrite slice bug
-        PsiModificationTracker tracker = PsiManager.getInstance(file.getProject()).getModificationTracker();
-        ((PsiModificationTrackerImpl) tracker).incOutOfCodeBlockModificationCounter();
-
-        return analyzeExhaust;
+        return AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
     }
 
     private static final SLRUCache<JetFile, CachedValue<CancelableResolveSession>> PER_FILE_SESSION_CACHE = new SLRUCache<JetFile, CachedValue<CancelableResolveSession>>(2, 3) {
@@ -176,6 +168,10 @@ public final class AnalyzerFacadeWithCache {
                     }
                     catch (Throwable e) {
                         handleError(e);
+
+                        // Exception during body resolve analyze can harm internal caches in declarations cache
+                        KotlinCacheManager.getInstance(file.getProject()).invalidateCache();
+
                         return emptyExhaustWithDiagnosticOnFile(file, e);
                     }
                 }

@@ -20,6 +20,8 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.DefaultModificationTracker;
+import com.intellij.openapi.util.ModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
@@ -31,6 +33,8 @@ public class KotlinCacheManager {
     }
 
     private final Map<TargetPlatform, DeclarationsCacheProvider> cacheProviders = Maps.newHashMap();
+
+    private final DefaultModificationTracker kotlinDeclarationsTracker = new DefaultModificationTracker();
 
     public KotlinCacheManager(@NotNull Project project) {
         cacheProviders.put(TargetPlatform.JVM, new JvmDeclarationsCacheProvider(project));
@@ -78,5 +82,13 @@ public class KotlinCacheManager {
         }
 
         return provider;
+    }
+
+    public void invalidateCache() {
+        kotlinDeclarationsTracker.incModificationCount();
+    }
+
+    public ModificationTracker getDeclarationsTracker() {
+        return kotlinDeclarationsTracker;
     }
 }

@@ -62,7 +62,8 @@ class JSDeclarationsCacheProvider extends DeclarationsCacheProvider {
 
                     return Result.<KotlinDeclarationsCache>create(
                             new KotlinDeclarationsCacheImpl(analyzeExhaust),
-                            PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                            PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
+                            KotlinCacheManager.getInstance(project).getDeclarationsTracker()
                     );
                 }
             }
