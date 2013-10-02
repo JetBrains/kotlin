@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.storage;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 public class ReenteringLazyValueComputationException extends RuntimeException {
@@ -25,6 +27,10 @@ public class ReenteringLazyValueComputationException extends RuntimeException {
     @NotNull
     @Override
     public synchronized Throwable fillInStackTrace() {
+        Application application = ApplicationManager.getApplication();
+        if (application == null || application.isInternal() || application.isUnitTestMode()) {
+            return super.fillInStackTrace();
+        }
         return this;
     }
 }
