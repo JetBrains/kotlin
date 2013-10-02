@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -240,7 +239,9 @@ public final class DescriptorResolverUtils {
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
     ) {
-        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result = Maps.newLinkedHashMap(); // save order of type parameters
+        // LinkedHashMap to save the order of type parameters
+        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result =
+                new LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
         for (TypeParameterDescriptor typeParameter : originalParameters) {
             result.put(typeParameter,
                        TypeParameterDescriptorImpl.createForFurtherModification(
@@ -258,7 +259,7 @@ public final class DescriptorResolverUtils {
     public static TypeSubstitutor createSubstitutorForTypeParameters(
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters
     ) {
-        Map<TypeConstructor, TypeProjection> typeSubstitutionContext = Maps.newHashMap();
+        Map<TypeConstructor, TypeProjection> typeSubstitutionContext = new HashMap<TypeConstructor, TypeProjection>();
         for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameter : originalToAltTypeParameters
                 .entrySet()) {
             typeSubstitutionContext.put(originalToAltTypeParameter.getKey().getTypeConstructor(),
