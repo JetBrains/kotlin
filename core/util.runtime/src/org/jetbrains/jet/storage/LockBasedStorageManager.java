@@ -27,15 +27,12 @@ import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class LockBasedStorageManager implements StorageManager {
 
-    protected final Object lock = new Object() {
-        @Override
-        public String toString() {
-            return "LockBasedStorageManager centralized lock";
-        }
-    };
+    protected final Lock lock = new ReentrantLock();
 
     @NotNull
     @Override
@@ -134,8 +131,12 @@ public class LockBasedStorageManager implements StorageManager {
 
     @Override
     public <T> T compute(@NotNull Computable<T> computable) {
-        synchronized (lock) {
+        lock.lock();
+        try {
             return computable.compute();
+        }
+        finally {
+            lock.unlock();
         }
     }
 
@@ -144,13 +145,13 @@ public class LockBasedStorageManager implements StorageManager {
         private static final Object NOT_COMPUTED = new Object();
         private static final Object COMPUTING = new Object();
 
-        private final Object lock;
+        private final Lock lock;
         private final Computable<T> computable;
 
         @Nullable
         private volatile Object value = NOT_COMPUTED;
 
-        public LockBasedLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+        public LockBasedLazyValue(@NotNull Lock lock, @NotNull Computable<T> computable) {
             this.lock = lock;
             this.computable = computable;
         }
@@ -165,7 +166,8 @@ public class LockBasedStorageManager implements StorageManager {
             Object _value = value;
             if (_value != NOT_COMPUTED && _value != COMPUTING) return WrappedValues.unescapeThrowable(_value);
 
-            synchronized (lock) {
+            lock.lock();
+            try {
                 _value = value;
                 if (_value == COMPUTING) {
                     Object result = recursionDetected();
@@ -188,6 +190,9 @@ public class LockBasedStorageManager implements StorageManager {
                     throw ExceptionUtils.rethrow(throwable);
                 }
             }
+            finally {
+                lock.unlock();
+            }
         }
 
         /**
@@ -206,7 +211,7 @@ public class LockBasedStorageManager implements StorageManager {
 
     private static class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
 
-        public LockBasedNotNullLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+        public LockBasedNotNullLazyValue(@NotNull Lock lock, @NotNull Computable<T> computable) {
             super(lock, computable);
         }
 
@@ -220,11 +225,11 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     private static class MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNullable<K, V> {
-        private final Object lock;
+        private final Lock lock;
         private final ConcurrentMap<K, Object> cache;
         private final Function<K, V> compute;
 
-        public MapBasedMemoizedFunction(@NotNull Object lock, @NotNull ConcurrentMap<K, Object> map, @NotNull Function<K, V> compute) {
+        public MapBasedMemoizedFunction(@NotNull Lock lock, @NotNull ConcurrentMap<K, Object> map, @NotNull Function<K, V> compute) {
             this.lock = lock;
             this.cache = map;
             this.compute = compute;
@@ -236,7 +241,8 @@ public class LockBasedStorageManager implements StorageManager {
             Object value = cache.get(input);
             if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
-            synchronized (lock) {
+            lock.lock();
+            try {
                 value = cache.get(input);
                 if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
@@ -254,13 +260,16 @@ public class LockBasedStorageManager implements StorageManager {
                     throw ExceptionUtils.rethrow(throwable);
                 }
             }
+            finally {
+                lock.unlock();
+            }
         }
     }
 
     private static class MapBasedMemoizedFunctionToNotNull<K, V> extends MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNotNull<K, V> {
 
         public MapBasedMemoizedFunctionToNotNull(
-                @NotNull Object lock,
+                @NotNull Lock lock,
                 @NotNull ConcurrentMap<K, Object> map,
                 @NotNull Function<K, V> compute
         ) {
