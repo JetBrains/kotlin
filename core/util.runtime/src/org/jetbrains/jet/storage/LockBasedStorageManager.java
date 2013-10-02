@@ -84,7 +84,7 @@ public class LockBasedStorageManager implements StorageManager {
     ) {
         return new LockBasedNotNullLazyValue<T>(lock, computable) {
             @Override
-            protected Object recursionDetected() {
+            protected Object recursionDetected(boolean firstTime) {
                 return onRecursiveCall;
             }
         };
@@ -94,17 +94,17 @@ public class LockBasedStorageManager implements StorageManager {
     @Override
     public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
             @NotNull Computable<T> computable,
-            final Computable<Object> onRecursiveCall,
+            final Function<Boolean, Object> onRecursiveCall,
             @NotNull final Consumer<T> postCompute
     ) {
         return new LockBasedNotNullLazyValue<T>(lock, computable) {
             @Nullable
             @Override
-            protected Object recursionDetected() {
+            protected Object recursionDetected(boolean firstTime) {
                 if (onRecursiveCall == null) {
-                    return super.recursionDetected();
+                    return super.recursionDetected(firstTime);
                 }
-                return onRecursiveCall.compute();
+                return onRecursiveCall.fun(firstTime);
             }
 
             @Override
@@ -125,7 +125,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable, final T onRecursiveCall) {
         return new LockBasedLazyValue<T>(lock, computable) {
             @Override
-            protected Object recursionDetected() {
+            protected Object recursionDetected(boolean firstTime) {
                 return onRecursiveCall;
             }
         };
@@ -159,7 +159,8 @@ public class LockBasedStorageManager implements StorageManager {
 
         private enum NotValue {
             NOT_COMPUTED,
-            COMPUTING
+            COMPUTING,
+            RECURSION_WAS_DETECTED
         }
 
         private final Lock lock;
@@ -188,7 +189,14 @@ public class LockBasedStorageManager implements StorageManager {
                 _value = value;
                 if (!(_value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
 
-                if (_value == NotValue.COMPUTING) return WrappedValues.unescapeThrowable(recursionDetected());
+                if (_value == NotValue.COMPUTING) {
+                    value = NotValue.RECURSION_WAS_DETECTED;
+                    return WrappedValues.unescapeThrowable(recursionDetected(/*firstTime = */ true));
+                }
+
+                if (_value == NotValue.RECURSION_WAS_DETECTED) {
+                    return WrappedValues.unescapeThrowable(recursionDetected(/*firstTime = */ false));
+                }
 
                 value = NotValue.COMPUTING;
                 try {
@@ -208,11 +216,12 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         /**
+         * @param firstTime {@code true} when recursion has been just detected, {@code false} otherwise
          * @return a value or wrapped exception, see WrappedValues
          * @throws DO NOT throw exceptions from implementations of this method, instead return WrappedValues.escapeThrowable(exception)
          */
         @Nullable
-        protected Object recursionDetected() {
+        protected Object recursionDetected(boolean firstTime) {
             return WrappedValues.escapeThrowable(new IllegalStateException("Recursive call in a lazy value"));
         }
 

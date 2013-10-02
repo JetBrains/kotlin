@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Consumer;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -41,15 +42,14 @@ import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.NullableLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.*;
@@ -397,9 +397,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                         }
                     }
                 },
-                new Computable<Object>() {
+                new Function<Boolean, Object>() {
                     @Override
-                    public Object compute() {
+                    public Object fun(Boolean firstTime) {
                         return WrappedValues.unescapeExceptionOrNull(Collections.emptyList());
                     }
                 },
