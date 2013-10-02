@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class JvmClassName {
@@ -73,7 +72,6 @@ public class JvmClassName {
 
     private final String internalName;
     private FqName fqName;
-    private Type asmType;
 
     private JvmClassName(@NotNull String internalName) {
         this.internalName = internalName;
@@ -90,14 +88,6 @@ public class JvmClassName {
     @NotNull
     public String getInternalName() {
         return internalName;
-    }
-
-    @NotNull
-    public Type getAsmType() {
-        if (asmType == null) {
-            asmType = Type.getType("L" + internalName + ';');
-        }
-        return asmType;
     }
 
     @Override

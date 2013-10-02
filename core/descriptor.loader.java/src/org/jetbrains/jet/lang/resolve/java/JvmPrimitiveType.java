@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 public enum JvmPrimitiveType {
@@ -31,23 +33,26 @@ public enum JvmPrimitiveType {
     
     private final PrimitiveType primitiveType;
     private final String name;
-    private final JvmClassName wrapper;
+    private final FqName wrapperFqName;
 
-    private JvmPrimitiveType(PrimitiveType primitiveType, String name, String wrapperClassName) {
+    private JvmPrimitiveType(@NotNull PrimitiveType primitiveType, @NotNull String name, @NotNull String wrapperClassName) {
         this.primitiveType = primitiveType;
         this.name = name;
-        this.wrapper = JvmClassName.byFqNameWithoutInnerClasses(wrapperClassName);
+        this.wrapperFqName = new FqName(wrapperClassName);
     }
 
+    @NotNull
     public PrimitiveType getPrimitiveType() {
         return primitiveType;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
 
-    public JvmClassName getWrapper() {
-        return wrapper;
+    @NotNull
+    public FqName getWrapperFqName() {
+        return wrapperFqName;
     }
 }

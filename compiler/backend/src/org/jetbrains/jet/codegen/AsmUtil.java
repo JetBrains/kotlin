@@ -90,7 +90,7 @@ public class AsmUtil {
         for (JvmPrimitiveType primitiveType : JvmPrimitiveType.values()) {
             Type asmType = asmTypeForPrimitive(primitiveType);
             typeBySortBuilder.put(asmType.getSort(), primitiveType);
-            typeByWrapperBuilder.put(primitiveType.getWrapper().getAsmType(), asmType);
+            typeByWrapperBuilder.put(asmTypeByFqNameWithoutInnerClasses(primitiveType.getWrapperFqName()), asmType);
         }
         primitiveTypeByAsmSort = typeBySortBuilder.build();
         primitiveTypeByBoxedType = typeByWrapperBuilder.build();
@@ -102,7 +102,7 @@ public class AsmUtil {
     @NotNull
     public static Type boxType(@NotNull Type type) {
         JvmPrimitiveType jvmPrimitiveType = primitiveTypeByAsmSort.get(type.getSort());
-        return jvmPrimitiveType != null ? jvmPrimitiveType.getWrapper().getAsmType() : type;
+        return jvmPrimitiveType != null ? asmTypeByFqNameWithoutInnerClasses(jvmPrimitiveType.getWrapperFqName()) : type;
     }
 
     @NotNull

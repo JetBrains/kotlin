@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -62,7 +63,9 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
             FqName fqName = builtInsFqName.child(primitiveType.getTypeName());
 
             register(fqName, asmType);
-            registerNullable(fqName, jvmPrimitiveType.getWrapper().getAsmType());
+
+            JvmClassName wrapperName = JvmClassName.byFqNameWithoutInnerClasses(jvmPrimitiveType.getWrapperFqName());
+            registerNullable(fqName, Type.getObjectType(wrapperName.getInternalName()));
 
             register(builtInsFqName.child(primitiveType.getArrayTypeName()), Type.getType("[" + asmType.getDescriptor()));
         }

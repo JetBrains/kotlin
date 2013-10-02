@@ -69,11 +69,12 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
             String name = jvmPrimitiveType.getName();
-            register(jvmPrimitiveType.getWrapper().getFqName(), builtIns.getPrimitiveClassDescriptor(primitiveType));
+            FqName wrapperFqName = jvmPrimitiveType.getWrapperFqName();
+
+            register(wrapperFqName, builtIns.getPrimitiveClassDescriptor(primitiveType));
             primitiveTypesMap.put(name, builtIns.getPrimitiveJetType(primitiveType));
             primitiveTypesMap.put("[" + name, builtIns.getPrimitiveArrayJetType(primitiveType));
-            primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().asString(), builtIns.getNullablePrimitiveJetType(
-                    primitiveType));
+            primitiveTypesMap.put(wrapperFqName.asString(), builtIns.getNullablePrimitiveJetType(primitiveType));
         }
         primitiveTypesMap.put("void", KotlinBuiltIns.getInstance().getUnitType());
     }

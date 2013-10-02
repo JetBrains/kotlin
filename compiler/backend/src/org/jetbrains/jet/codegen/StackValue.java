@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -252,11 +251,8 @@ public abstract class StackValue {
             }
         }
         else if (fromType.getSort() == Type.OBJECT) {
-            if (toType.getSort() == Type.BOOLEAN) {
-                coerce(fromType, JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType(), v);
-            }
-            else if (toType.getSort() == Type.CHAR) {
-                coerce(fromType, JvmPrimitiveType.CHAR.getWrapper().getAsmType(), v);
+            if (toType.getSort() == Type.BOOLEAN || toType.getSort() == Type.CHAR) {
+                coerce(fromType, boxType(toType), v);
             }
             else {
                 coerce(fromType, getType(Number.class), v);
