@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -52,7 +51,7 @@ public class CodegenBinding {
 
     public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<DeclarationDescriptor, JvmClassName> FQN = Slices.createSimpleSlice();
+    public static final WritableSlice<DeclarationDescriptor, Type> ASM_TYPE = Slices.createSimpleSlice();
 
     public static final WritableSlice<ClassDescriptor, Boolean> ENUM_ENTRY_CLASS_NEED_SUBCLASS = Slices.createSimpleSetSlice();
 
@@ -82,7 +81,7 @@ public class CodegenBinding {
     public static Type asmTypeForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
         //noinspection ConstantConditions
-        return fqn(bindingContext, classDescriptor);
+        return asmType(bindingContext, classDescriptor);
     }
 
     @NotNull
@@ -109,9 +108,9 @@ public class CodegenBinding {
     }
 
     @NotNull
-    private static Type fqn(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor descriptor) {
+    private static Type asmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor descriptor) {
         //noinspection ConstantConditions
-        return bindingContext.get(FQN, descriptor).getAsmType();
+        return bindingContext.get(ASM_TYPE, descriptor);
     }
 
     @NotNull
@@ -128,25 +127,25 @@ public class CodegenBinding {
             return asmTypeForAnonymousClass(bindingContext, functionDescriptor);
         }
 
-        return fqn(bindingContext, descriptor);
+        return asmType(bindingContext, descriptor);
     }
 
     @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull FunctionDescriptor descriptor) {
         ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, descriptor);
-        return fqn(bindingContext, classDescriptor);
+        return asmType(bindingContext, classDescriptor);
     }
 
     public static void registerClassNameForScript(
             BindingTrace bindingTrace,
             @NotNull ScriptDescriptor scriptDescriptor,
-            @NotNull JvmClassName className
+            @NotNull Type asmType
     ) {
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scriptDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(),
                 Modality.FINAL,
-                Name.special("<script-" + className + ">"));
+                Name.special("<script-" + asmType.getInternalName() + ">"));
         classDescriptor.initialize(
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
@@ -156,7 +155,7 @@ public class CodegenBinding {
                 null,
                 false);
 
-        recordClosure(bindingTrace, null, classDescriptor, null, className, false);
+        recordClosure(bindingTrace, null, classDescriptor, null, asmType, false);
 
         bindingTrace.record(CLASS_FOR_SCRIPT, scriptDescriptor, classDescriptor);
     }
@@ -200,7 +199,7 @@ public class CodegenBinding {
             @Nullable JetElement element,
             ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
-            JvmClassName name,
+            Type asmType,
             boolean functionLiteral
     ) {
         JetDelegatorToSuperCall superCall = findSuperCall(bindingTrace.getBindingContext(), element);
@@ -219,8 +218,8 @@ public class CodegenBinding {
 
         MutableClosure closure = new MutableClosure(superCall, enclosing, enclosingReceiver);
 
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, classDescriptor, name);
-        bindingTrace.record(FQN, classDescriptor, name);
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, classDescriptor, asmType);
+        bindingTrace.record(ASM_TYPE, classDescriptor, asmType);
         bindingTrace.record(CLOSURE, classDescriptor, closure);
 
         // TODO: this is temporary before we have proper inner classes
@@ -249,13 +248,13 @@ public class CodegenBinding {
     public static void registerClassNameForScript(
             BindingTrace bindingTrace,
             @NotNull JetScript jetScript,
-            @NotNull JvmClassName className
+            @NotNull Type asmType
     ) {
         ScriptDescriptor descriptor = bindingTrace.getBindingContext().get(SCRIPT, jetScript);
         if (descriptor == null) {
             throw new IllegalStateException("Descriptor is not found for PSI " + jetScript);
         }
-        registerClassNameForScript(bindingTrace, descriptor, className);
+        registerClassNameForScript(bindingTrace, descriptor, asmType);
     }
 
     @NotNull
@@ -324,22 +323,22 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static JvmClassName getJvmInternalName(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
+    public static Type getAsmType(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
-        JvmClassName alreadyComputedName = bindingTrace.getBindingContext().get(FQN, descriptor);
-        if (alreadyComputedName != null) {
-            return alreadyComputedName;
+        Type alreadyComputedType = bindingTrace.getBindingContext().get(ASM_TYPE, descriptor);
+        if (alreadyComputedType != null) {
+            return alreadyComputedType;
         }
 
-        JvmClassName name = JvmClassName.byInternalName(getJvmInternalFQNameImpl(bindingTrace, descriptor));
+        Type asmType = Type.getObjectType(getAsmTypeImpl(bindingTrace, descriptor));
 
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, name);
-        bindingTrace.record(FQN, descriptor, name);
-        return name;
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, asmType);
+        bindingTrace.record(ASM_TYPE, descriptor, asmType);
+        return asmType;
     }
 
     @NotNull
-    private static String getJvmInternalFQNameImpl(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
+    private static String getAsmTypeImpl(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof FunctionDescriptor) {
             throw new IllegalStateException("requested fq name for function: " + descriptor);
         }
@@ -357,7 +356,7 @@ public class CodegenBinding {
             return descriptor.getName().getIdentifier();
         }
 
-        String containerInternalName = getJvmInternalName(bindingTrace, container).getInternalName();
+        String containerInternalName = getAsmType(bindingTrace, container).getInternalName();
 
         if (descriptor instanceof ClassDescriptor && container instanceof ClassDescriptor) {
             ClassDescriptor klass = (ClassDescriptor) descriptor;

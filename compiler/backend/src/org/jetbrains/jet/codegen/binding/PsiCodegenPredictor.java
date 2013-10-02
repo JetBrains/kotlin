@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -30,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -38,34 +38,24 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public final class PsiCodegenPredictor {
     private PsiCodegenPredictor() {
     }
 
     public static boolean checkPredictedNameFromPsi(
-            @NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor, JvmClassName nameFromDescriptors
+            @NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor, @Nullable Type nameFromDescriptors
     ) {
         PsiElement element = descriptorToDeclaration(bindingTrace.getBindingContext(), descriptor);
         if (element instanceof JetDeclaration) {
-            JvmClassName classNameFromPsi = getPredefinedJvmClassName((JetDeclaration) element);
-            assert classNameFromPsi == null || classNameFromPsi.equals(nameFromDescriptors) :
+            String classNameFromPsi = getPredefinedJvmInternalName((JetDeclaration) element);
+            assert classNameFromPsi == null || Type.getObjectType(classNameFromPsi).equals(nameFromDescriptors) :
                     String.format("Invalid algorithm for getting qualified name from psi! Predicted: %s, actual %s\n" +
                                   "Element: %s", classNameFromPsi, nameFromDescriptors, element.getText());
         }
 
         return true;
-    }
-
-    @Nullable
-    public static JvmClassName getPredefinedJvmClassName(@NotNull JetFile jetFile, boolean withNamespace) {
-        String packageName = jetFile.getPackageName();
-        if (packageName == null) {
-            return null;
-        }
-
-        JvmClassName packageJvmName = JvmClassName.byFqNameWithoutInnerClasses(packageName);
-        return !withNamespace ? packageJvmName : addPackageClass(packageJvmName);
     }
 
     /**
@@ -74,80 +64,73 @@ public final class PsiCodegenPredictor {
      * @return null if no prediction can be done.
      */
     @Nullable
-    public static JvmClassName getPredefinedJvmClassName(@NotNull JetDeclaration declaration) {
+    public static String getPredefinedJvmInternalName(@NotNull JetDeclaration declaration) {
         // TODO: Method won't work for declarations inside class objects
         // TODO: Method won't give correct class name for traits implementations
 
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(declaration, JetDeclaration.class);
         if (parentDeclaration instanceof JetClassObject) {
             assert declaration instanceof JetObjectDeclaration : "Only object declarations can be children of JetClassObject: " + declaration;
-            return getPredefinedJvmClassName(parentDeclaration);
+            return getPredefinedJvmInternalName(parentDeclaration);
         }
 
-        JvmClassName parentClassName = parentDeclaration != null ?
-                                       getPredefinedJvmClassName(parentDeclaration) :
-                                       getPredefinedJvmClassName((JetFile) declaration.getContainingFile(), false);
-        if (parentClassName == null) {
-            return null;
+        String parentInternalName;
+        if (parentDeclaration != null) {
+            parentInternalName = getPredefinedJvmInternalName(parentDeclaration);
+            if (parentInternalName == null) {
+                return null;
+            }
+        }
+        else {
+            String packageName = ((JetFile) declaration.getContainingFile()).getPackageName();
+            if (packageName == null) {
+                return null;
+            }
+            parentInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageName).getInternalName();
         }
 
         if (declaration instanceof JetClassObject) {
             // Get parent and assign Class object prefix
-            return JvmClassName.byInternalName(parentClassName.getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX);
+            return parentInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
         }
 
-        if (declaration instanceof JetNamedDeclaration) {
-            if (!PsiTreeUtil.instanceOf(declaration, JetClass.class, JetObjectDeclaration.class, JetNamedFunction.class, JetProperty.class) ||
-                    declaration instanceof JetEnumEntry) {
-                // Other subclasses are not valid for class name prediction.
-                // For example EnumEntry, JetFunctionLiteral
-                return null;
-            }
-
-            JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) declaration;
-            Name name = namedDeclaration.getNameAsName();
-            if (name == null) {
-                return null;
-            }
-
-            FqName fqName = parentClassName.getFqName();
-
-            if (declaration instanceof JetNamedFunction) {
-                if (parentDeclaration == null) {
-                    JvmClassName packageClass = addPackageClass(parentClassName);
-                    return JvmClassName.byInternalName(packageClass.getInternalName() + "$" + name.asString());
-                }
-
-                if (!(parentDeclaration instanceof JetClass || parentDeclaration instanceof JetObjectDeclaration)) {
-                    // Can't generate predefined name for internal functions
-                    return null;
-                }
-            }
-
-            // NOTE: looks like a bug - for class in getter of top level property class name will be $propertyName$ClassName but not
-            // namespace$propertyName$ClassName
-            if (declaration instanceof JetProperty) {
-                return JvmClassName.byInternalName(parentClassName.getInternalName() + "$" + name.asString());
-            }
-
-            if (fqName.isRoot()) {
-                return JvmClassName.byInternalName(name.asString());
-            }
-
-            return JvmClassName.byInternalName(parentDeclaration == null ?
-                                               parentClassName.getInternalName() + "/" + name.asString() :
-                                               parentClassName.getInternalName() + "$" + name.asString());
+        if (!PsiTreeUtil.instanceOf(declaration, JetClass.class, JetObjectDeclaration.class, JetNamedFunction.class, JetProperty.class) ||
+                declaration instanceof JetEnumEntry) {
+            // Other subclasses are not valid for class name prediction.
+            // For example EnumEntry, JetFunctionLiteral
+            return null;
         }
 
-        return null;
-    }
+        JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) declaration;
+        Name name = namedDeclaration.getNameAsName();
+        if (name == null) {
+            return null;
+        }
 
-    private static JvmClassName addPackageClass(JvmClassName packageName) {
-        FqName name = packageName.getFqName();
-        String packageClassName = PackageClassUtils.getPackageClassName(name);
-        return name.isRoot() ?
-               JvmClassName.byFqNameWithoutInnerClasses(packageClassName) :
-               JvmClassName.byInternalName(packageName.getInternalName() + "/" + packageClassName);
+        if (declaration instanceof JetNamedFunction) {
+            if (parentDeclaration == null) {
+                FqName fqName = JvmClassName.byInternalName(parentInternalName).getFqName();
+                JvmClassName packageClass = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
+                return packageClass.getInternalName() + "$" + name.asString();
+            }
+
+            if (!(parentDeclaration instanceof JetClass || parentDeclaration instanceof JetObjectDeclaration)) {
+                // Can't generate predefined name for internal functions
+                return null;
+            }
+        }
+
+        // NOTE: looks like a bug - for class in getter of top level property class name will be $propertyName$ClassName but not
+        // namespace$propertyName$ClassName
+        if (declaration instanceof JetProperty) {
+            return parentInternalName + "$" + name.asString();
+        }
+
+        if (parentInternalName.isEmpty()) {
+            return name.asString();
+        }
+
+        return parentInternalName + (parentDeclaration == null ? "/" : "$") + name.asString();
     }
 
     @Nullable
@@ -166,7 +149,7 @@ public final class PsiCodegenPredictor {
     public static JetFile getFileForCodegenNamedClass(
             @NotNull BindingContext context,
             @NotNull Collection<JetFile> allNamespaceFiles,
-            @NotNull final JvmClassName className
+            @NotNull final String classInternalName
     ) {
         final Ref<DeclarationDescriptor> resultingDescriptor = Ref.create();
 
@@ -174,8 +157,8 @@ public final class PsiCodegenPredictor {
             @Override
             public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
                 super.record(slice, key, value);
-                if (slice == CodegenBinding.FQN && key instanceof DeclarationDescriptor) {
-                    if (className.equals(value)) {
+                if (slice == CodegenBinding.ASM_TYPE && key instanceof DeclarationDescriptor && value instanceof Type) {
+                    if (classInternalName.equals(((Type) value).getInternalName())) {
                         resultingDescriptor.set((DeclarationDescriptor) key);
                     }
                 }

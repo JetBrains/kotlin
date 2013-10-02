@@ -74,7 +74,7 @@ public class DebuggerUtils {
         // we may actually need to analyze the project in order to find a file which produces this class
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(anyFile);
 
-        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allNamespaceFiles, className);
+        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allNamespaceFiles, className.getInternalName());
     }
 
     @NotNull

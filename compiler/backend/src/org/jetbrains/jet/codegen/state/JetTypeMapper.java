@@ -334,13 +334,13 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            JvmClassName name = getJvmInternalName(bindingTrace, descriptor);
+            Type descriptorAsmType = getAsmType(bindingTrace, descriptor);
             Type asmType;
             if (kind == JetTypeMapperMode.TRAIT_IMPL) {
-                asmType = Type.getObjectType(name.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
+                asmType = Type.getObjectType(descriptorAsmType.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
             }
             else {
-                asmType = name.getAsmType();
+                asmType = descriptorAsmType;
             }
 
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed);

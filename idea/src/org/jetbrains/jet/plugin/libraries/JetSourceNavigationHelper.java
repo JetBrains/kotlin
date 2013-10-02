@@ -375,11 +375,11 @@ public class JetSourceNavigationHelper {
     @Nullable
     public static PsiClass getOriginalClass(@NotNull JetClassOrObject classOrObject) {
         // Copied from JavaPsiImplementationHelperImpl:getOriginalClass()
-        JvmClassName className = PsiCodegenPredictor.getPredefinedJvmClassName(classOrObject);
-        if (className == null) {
+        String internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
+        if (internalName == null) {
             return null;
         }
-        String fqName = className.getFqName().asString();
+        String fqName = JvmClassName.byInternalName(internalName).getFqName().asString();
 
         JetFile file = (JetFile) classOrObject.getContainingFile();
 
