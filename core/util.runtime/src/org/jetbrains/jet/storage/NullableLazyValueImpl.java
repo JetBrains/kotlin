@@ -21,29 +21,41 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.WrappedValues;
 
 public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
-    private static final Object NOT_COMPUTED = new Object();
-    private static final Object COMPUTING = new Object();
+    private enum State {
+        NOT_COMPUTED,
+        COMPUTING,
+        RECURSION_WAS_DETECTED
+    }
 
     @Nullable
-    private Object value = NOT_COMPUTED;
+    private Object value = State.NOT_COMPUTED;
 
     public boolean isComputed() {
-        return value != NOT_COMPUTED;
+        return value != State.NOT_COMPUTED;
     }
 
     @Override
     public T compute() {
-        if (value == COMPUTING) {
-            Object result = recursionDetected();
-            if (result != NOT_COMPUTED) {
-                return WrappedValues.unescapeThrowable(result);
-            }
-        }
-        else if (value != NOT_COMPUTED) {
+        if (!(value instanceof State)) {
+            // Computed already
             return WrappedValues.unescapeThrowable(value);
         }
 
-        value = COMPUTING;
+        if (value == State.COMPUTING) {
+            Object result = recursionDetected(true);
+            if (result != State.NOT_COMPUTED) {
+                value = State.RECURSION_WAS_DETECTED;
+                return WrappedValues.unescapeThrowable(result);
+            }
+        }
+        else if (value == State.RECURSION_WAS_DETECTED) {
+            Object result = recursionDetected(false);
+            if (result != State.NOT_COMPUTED) {
+                return WrappedValues.unescapeThrowable(result);
+            }
+        }
+
+        value = State.COMPUTING;
         try {
             T typedValue = doCompute();
             value = typedValue;
@@ -60,7 +72,7 @@ public abstract class NullableLazyValueImpl<T> implements NullableLazyValue<T> {
      * @return {@code NOT_COMPUTED} to proceed, a value or wrapped exception otherwise, see WrappedValues
      * @throws DO NOT throw exceptions from implementations of this method, instead return WrappedValues.escapeThrowable(exception)
      */
-    public Object recursionDetected() {
+    public Object recursionDetected(boolean firstTime) {
         return WrappedValues.escapeThrowable(new ReenteringLazyValueComputationException());
     }
 

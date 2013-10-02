@@ -10,7 +10,8 @@ public abstract class NotNullLazyValueWithDefault<T> extends NotNullLazyValueImp
     }
 
     @Override
-    public Object recursionDetected() {
+    public Object recursionDetected(boolean firstTime) {
+        if (firstTime) return super.recursionDetected(firstTime);
         return defaultValue;
     }
 }
