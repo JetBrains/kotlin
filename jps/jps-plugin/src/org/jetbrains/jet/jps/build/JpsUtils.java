@@ -17,15 +17,35 @@
 package org.jetbrains.jet.jps.build;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.utils.LibraryUtils;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind;
 import org.jetbrains.jps.model.java.JpsJavaDependenciesEnumerator;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.jps.model.library.JpsLibrary;
+import org.jetbrains.jps.model.library.JpsLibraryRoot;
+import org.jetbrains.jps.model.library.JpsOrderRootType;
+import org.jetbrains.jps.util.JpsPathUtil;
 
-public class JpsUtil {
+import java.util.Set;
+
+class JpsUtils {
+    private JpsUtils() {}
+
     @NotNull
-    public static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
+    static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
         return JpsJavaExtensionService.dependencies(target.getModule()).recursively().exportedOnly()
                 .includedIn(JpsJavaClasspathKind.compile(target.isTests()));
+    }
+
+    static boolean isJsKotlinModule(@NotNull ModuleBuildTarget target) {
+        Set<JpsLibrary> libraries = getAllDependencies(target).getLibraries();
+        for (JpsLibrary library : libraries) {
+            for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
+                if (LibraryUtils.isJsRuntimeLibrary(JpsPathUtil.urlToFile(root.getUrl())))
+                    return true;
+            }
+        }
+        return false;
     }
 }
