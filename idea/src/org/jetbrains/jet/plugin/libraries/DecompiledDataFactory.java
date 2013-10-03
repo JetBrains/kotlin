@@ -66,7 +66,7 @@ public final class DecompiledDataFactory {
         this.javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         VirtualFileKotlinClass kotlinClass = new VirtualFileKotlinClass(classFile);
-        this.classFqName = kotlinClass.getClassName().getFqName();
+        this.classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars();
 
         KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(kotlinClass);
         assert header instanceof SerializedDataHeader : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;

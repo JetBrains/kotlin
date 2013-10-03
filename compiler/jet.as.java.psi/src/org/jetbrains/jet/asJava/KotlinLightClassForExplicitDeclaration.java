@@ -69,7 +69,8 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         String jvmInternalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
         if (jvmInternalName == null) return null;
 
-        return new KotlinLightClassForExplicitDeclaration(manager, JvmClassName.byInternalName(jvmInternalName).getFqName(), classOrObject);
+        FqName fqName = JvmClassName.byInternalName(jvmInternalName).getFqNameForClassNameWithoutDollars();
+        return new KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject);
     }
 
     private final FqName classFqName; // FqName of (possibly inner) class

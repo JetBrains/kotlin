@@ -77,8 +77,11 @@ public class JvmClassName {
         this.internalName = internalName;
     }
 
+    /**
+     * WARNING: internal name cannot be converted to FQ name for a class which contains dollars in the name
+     */
     @NotNull
-    public FqName getFqName() {
+    public FqName getFqNameForClassNameWithoutDollars() {
         if (fqName == null) {
             fqName = new FqName(internalNameToFqName(internalName));
         }

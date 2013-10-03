@@ -210,7 +210,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     private ClassDescriptor resolveClass(@NotNull JvmClassName className) {
-        ClassDescriptor annotationClass = javaClassResolver.resolveClass(className.getFqName(), IGNORE_KOTLIN_SOURCES);
+        ClassDescriptor annotationClass = javaClassResolver.resolveClass(className.getFqNameForClassNameWithoutDollars(),
+                                                                         IGNORE_KOTLIN_SOURCES);
         return annotationClass != null ? annotationClass : ErrorUtils.getErrorClass();
     }
 

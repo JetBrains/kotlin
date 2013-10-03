@@ -370,7 +370,7 @@ public class JetSourceNavigationHelper {
         if (internalName == null) {
             return null;
         }
-        String fqName = JvmClassName.byInternalName(internalName).getFqName().asString();
+        String fqName = JvmClassName.byInternalName(internalName).getFqNameForClassNameWithoutDollars().asString();
 
         JetFile file = (JetFile) classOrObject.getContainingFile();
 
