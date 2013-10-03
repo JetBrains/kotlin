@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -47,19 +45,14 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public final class JavaClassResolver {
-    private static final FqName ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION = fqNameByClass(AssertInvisibleInResolver.class);
-    private static final Logger LOG = Logger.getInstance(JavaClassResolver.class);
-
     @NotNull
     private final Map<FqNameUnsafe, ClassDescriptor> classDescriptorCache = new HashMap<FqNameUnsafe, ClassDescriptor>();
 
@@ -206,16 +199,6 @@ public final class JavaClassResolver {
         if (javaClass == null) {
             cacheNegativeValue(javaClassToKotlinFqName(qualifiedName));
             return null;
-        }
-
-        if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            if (javaClass.findAnnotation(ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION) != null) {
-                if (ApplicationManager.getApplication().isInternal()) {
-                    LOG.error("classpath is configured incorrectly:" +
-                              " class " + qualifiedName + " from runtime must not be loaded by compiler");
-                }
-                return null;
-            }
         }
 
         // Class may have been resolved previously by different Java resolver instance, and we are reusing its trace
