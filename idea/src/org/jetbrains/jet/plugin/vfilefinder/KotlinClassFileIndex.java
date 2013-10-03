@@ -24,7 +24,7 @@ import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.IncompatibleAnnotationHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.DataInput;
@@ -76,7 +76,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
         public Map<FqName, Void> map(FileContent inputData) {
             try {
                 VirtualFileKotlinClass kotlinClass = new VirtualFileKotlinClass(inputData.getFile());
-                KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(kotlinClass);
+                KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
                 if (header != null && !(header instanceof IncompatibleAnnotationHeader)) {
                     return Collections.singletonMap(kotlinClass.getClassName().getFqNameForClassNameWithoutDollars(), null);
                 }

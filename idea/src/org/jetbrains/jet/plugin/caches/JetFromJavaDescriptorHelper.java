@@ -30,7 +30,7 @@ import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -117,7 +117,7 @@ public class JetFromJavaDescriptorHelper {
     private static String[] getAnnotationDataForKotlinClass(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile != null) {
-            KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(new VirtualFileKotlinClass(virtualFile));
+            KotlinClassHeader header = KotlinClassHeader.read(new VirtualFileKotlinClass(virtualFile));
             if (header instanceof SerializedDataHeader) {
                 return ((SerializedDataHeader) header).getAnnotationData();
             }

@@ -16,8 +16,23 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-public class PackageFragmentClassFileHeader extends KotlinClassFileHeader {
-    protected PackageFragmentClassFileHeader(int version) {
-        super(version);
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+
+public abstract class KotlinClassHeader {
+    @Nullable
+    public static KotlinClassHeader read(@NotNull KotlinJvmBinaryClass kotlinClass) {
+        return ReadKotlinClassHeaderAnnotationVisitor.read(kotlinClass);
+    }
+
+    private final int version;
+
+    protected KotlinClassHeader(int version) {
+        this.version = version;
+    }
+
+    public int getVersion() {
+        return version;
     }
 }

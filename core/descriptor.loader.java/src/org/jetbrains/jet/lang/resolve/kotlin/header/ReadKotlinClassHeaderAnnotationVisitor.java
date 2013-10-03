@@ -32,7 +32,7 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
 import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArgumentVisitor;
 import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationVisitor;
 
-/* package */ class ReadDataFromAnnotationVisitor implements AnnotationVisitor {
+/* package */ class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
     @SuppressWarnings("deprecation")
     private enum HeaderType {
         CLASS(JvmAnnotationNames.KOTLIN_CLASS),
@@ -65,18 +65,18 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
     @Nullable
     private HeaderType foundType = null;
 
-    private ReadDataFromAnnotationVisitor() {
+    private ReadKotlinClassHeaderAnnotationVisitor() {
     }
 
     @Nullable
-    public static KotlinClassFileHeader read(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
+    public static KotlinClassHeader read(@NotNull KotlinJvmBinaryClass kotlinClass) {
+        ReadKotlinClassHeaderAnnotationVisitor visitor = new ReadKotlinClassHeaderAnnotationVisitor();
         kotlinClass.loadClassAnnotations(visitor);
         return visitor.createHeader();
     }
 
     @Nullable
-    public KotlinClassFileHeader createHeader() {
+    public KotlinClassHeader createHeader() {
         if (foundType == null) {
             return null;
         }
@@ -91,7 +91,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
             case PACKAGE:
                 return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE);
             case PACKAGE_FRAGMENT:
-                return new PackageFragmentClassFileHeader(version);
+                return new PackageFragmentClassHeader(version);
             default:
                 throw new UnsupportedOperationException("Unknown compatible HeaderType: " + foundType);
         }

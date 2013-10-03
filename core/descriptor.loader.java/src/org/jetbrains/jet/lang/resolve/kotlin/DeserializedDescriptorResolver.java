@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -110,7 +110,7 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(kotlinClass);
+        KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
         if (header instanceof SerializedDataHeader) {
             return ((SerializedDataHeader) header).getAnnotationData();
         }

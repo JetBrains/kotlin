@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-public class IncompatibleAnnotationHeader extends KotlinClassFileHeader {
+public class IncompatibleAnnotationHeader extends KotlinClassHeader {
     protected IncompatibleAnnotationHeader(int version) {
         super(version);
     }
