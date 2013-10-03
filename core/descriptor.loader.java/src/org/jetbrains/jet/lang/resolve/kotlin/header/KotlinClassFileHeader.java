@@ -23,9 +23,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 public abstract class KotlinClassFileHeader {
     @Nullable
     public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
-        kotlinClass.loadClassAnnotations(visitor);
-        return visitor.createHeader(kotlinClass);
+        return ReadDataFromAnnotationVisitor.read(kotlinClass);
     }
 
     private final int version;

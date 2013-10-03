@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
@@ -34,8 +33,6 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
 import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationVisitor;
 
 /* package */ class ReadDataFromAnnotationVisitor implements AnnotationVisitor {
-    private static final Logger LOG = Logger.getInstance(ReadDataFromAnnotationVisitor.class);
-
     @SuppressWarnings("deprecation")
     private enum HeaderType {
         CLASS(JvmAnnotationNames.KOTLIN_CLASS),
@@ -68,8 +65,18 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
     @Nullable
     private HeaderType foundType = null;
 
+    private ReadDataFromAnnotationVisitor() {
+    }
+
     @Nullable
-    public KotlinClassFileHeader createHeader(@NotNull KotlinJvmBinaryClass kotlinClass) {
+    public static KotlinClassFileHeader read(@NotNull KotlinJvmBinaryClass kotlinClass) {
+        ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
+        kotlinClass.loadClassAnnotations(visitor);
+        return visitor.createHeader();
+    }
+
+    @Nullable
+    public KotlinClassFileHeader createHeader() {
         if (foundType == null) {
             return null;
         }
@@ -80,9 +87,9 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
 
         switch (foundType) {
             case CLASS:
-                return serializedDataHeader(SerializedDataHeader.Kind.CLASS, kotlinClass);
+                return serializedDataHeader(SerializedDataHeader.Kind.CLASS);
             case PACKAGE:
-                return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE, kotlinClass);
+                return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE);
             case PACKAGE_FRAGMENT:
                 return new PackageFragmentClassFileHeader(version);
             default:
@@ -91,9 +98,10 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
     }
 
     @Nullable
-    private SerializedDataHeader serializedDataHeader(@NotNull SerializedDataHeader.Kind kind, @NotNull KotlinJvmBinaryClass kotlinClass) {
+    private SerializedDataHeader serializedDataHeader(@NotNull SerializedDataHeader.Kind kind) {
         if (annotationData == null) {
-            LOG.error("Kotlin annotation " + foundType + " is incorrect for class: " + kotlinClass);
+            // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
+            // We tell the outside world that there's really no annotation at all
             return null;
         }
         return new SerializedDataHeader(version, annotationData, kind);
@@ -106,7 +114,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
         if (newType == null) return null;
 
         if (foundType != null) {
-            LOG.error("Both annotations are present for compiled Kotlin file: " + foundType + " and " + newType);
+            // Ignore all Kotlin annotations except the first found
             return null;
         }
 
