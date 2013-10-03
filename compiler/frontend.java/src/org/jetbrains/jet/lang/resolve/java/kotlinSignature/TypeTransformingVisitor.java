@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -27,10 +26,10 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -106,10 +105,11 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         TypeConstructor originalTypeConstructor = originalType.getConstructor();
         ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().asString();
-        ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(qualifiedName);
-        if (!isSameName(qualifiedName, fqName) && classFromLibrary == null) {
-            throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s", qualifiedName, fqName);
+        FqName originalClassFqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe();
+        ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(originalClassFqName, qualifiedName);
+        if (!isSameName(qualifiedName, originalClassFqName.asString()) && classFromLibrary == null) {
+            throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s",
+                                                            qualifiedName, originalClassFqName);
         }
 
         TypeConstructor typeConstructor;
@@ -206,11 +206,11 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Nullable
-    private ClassDescriptor getAutoTypeAnalogWithinBuiltins(String qualifiedName) {
-        Type javaAnalog = KotlinToJavaTypesMap.getInstance().getJavaAnalog(originalType);
-        if (javaAnalog == null || javaAnalog.getSort() != Type.OBJECT)  return null;
-        Collection<ClassDescriptor> descriptors =
-                JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byInternalName(javaAnalog.getInternalName()).getFqName());
+    private static ClassDescriptor getAutoTypeAnalogWithinBuiltins(@NotNull FqName originalClassFqName, @NotNull String qualifiedName) {
+        FqName javaFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(originalClassFqName);
+        if (javaFqName == null) return null;
+
+        Collection<ClassDescriptor> descriptors = JavaToKotlinClassMap.getInstance().mapPlatformClass(javaFqName);
         for (ClassDescriptor descriptor : descriptors) {
             String fqName = DescriptorUtils.getFQName(descriptor).asString();
             if (isSameName(qualifiedName, fqName)) {

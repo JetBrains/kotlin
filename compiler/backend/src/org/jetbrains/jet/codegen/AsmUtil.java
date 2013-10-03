@@ -677,12 +677,6 @@ public class AsmUtil {
         return lastSlash < 0 ? internalName : internalName.substring(lastSlash + 1);
     }
 
-    // WARNING: this method works incorrectly for classes with dollars in their names
-    @NotNull
-    public static FqName fqNameByAsmTypeUnsafe(@NotNull Type asmType) {
-        return JvmClassName.byInternalName(asmType.getInternalName()).getFqName();
-    }
-
     @NotNull
     public static Type asmTypeByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return Type.getObjectType(JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName());

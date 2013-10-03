@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -259,9 +260,10 @@ public class JetTypeMapper extends BindingTraceAware {
         Type known = null;
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
-        if (mapBuiltinsToJava) {
-            if (descriptor instanceof ClassDescriptor) {
-                known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(jetType);
+        if (mapBuiltinsToJava && descriptor instanceof ClassDescriptor) {
+            FqNameUnsafe className = DescriptorUtils.getFQName(descriptor);
+            if (className.isSafe()) {
+                known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(className.toSafe(), jetType.isNullable());
             }
         }
 

@@ -67,7 +67,7 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.fqNameByAsmTypeUnsafe;
+import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 
 public class ReplInterpreter {
 
@@ -184,7 +184,8 @@ public class ReplInterpreter {
     public LineResult eval(@NotNull String line) {
         ++lineNumber;
 
-        Type scriptClassType = Type.getObjectType("Line" + lineNumber);
+        FqName scriptFqName = new FqName("Line" + lineNumber);
+        Type scriptClassType = asmTypeByFqNameWithoutInnerClasses(scriptFqName);
 
         StringBuilder fullText = new StringBuilder();
         for (String prevLine : previousIncompleteLines) {
@@ -239,7 +240,7 @@ public class ReplInterpreter {
         }
 
         try {
-            Class<?> scriptClass = classLoader.loadClass(fqNameByAsmTypeUnsafe(scriptClassType).asString());
+            Class<?> scriptClass = classLoader.loadClass(scriptFqName.asString());
 
             Class<?>[] constructorParams = new Class<?>[earlierLines.size()];
             Object[] constructorArgs = new Object[earlierLines.size()];
