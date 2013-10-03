@@ -229,6 +229,10 @@ var Kotlin = {};
 
         obj.$metadata$ = computeMetadata(bases, properties);
         obj.$metadata$.type = Kotlin.TYPE.TRAIT;
+
+        obj.prototype = {};
+        Object.defineProperties(obj.prototype, obj.$metadata$.properties);
+        copyProperties(obj.prototype, obj.$metadata$.functions);
         return obj;
     };
 

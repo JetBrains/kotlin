@@ -16,16 +16,17 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.HasArguments;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNew;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
@@ -33,6 +34,7 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
@@ -94,6 +96,10 @@ public final class CallTranslator extends AbstractTranslator {
         if (isExpressionAsFunction()) {
             return expressionAsFunctionCall();
         }
+        if (isSuperInvocation()) {
+            return superMethodCall(getThisObjectOrQualifier());
+        }
+
         return methodCall(getThisObjectOrQualifier());
     }
 
@@ -168,6 +174,28 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private List<JsExpression> generateCallArgumentList(@NotNull JsExpression receiver) {
         return TranslationUtils.generateInvocationArguments(receiver, arguments);
+    }
+
+    private boolean isSuperInvocation() {
+        ReceiverValue thisObject = resolvedCall.getThisObject();
+        return thisObject instanceof ExpressionReceiver && ((ExpressionReceiver) thisObject).getExpression() instanceof JetSuperExpression;
+    }
+
+    @NotNull
+    private JsExpression superMethodCall(@Nullable JsExpression receiver) {
+        return callType.constructCall(receiver, new CallType.CallConstructor() {
+            @NotNull
+            @Override
+            public JsExpression construct(@Nullable JsExpression receiver) {  // TODO: support super val access
+                assert receiver != null;
+                JsExpression qualifiedCallee = getQualifiedCallee(Namer.getRefToPrototype(receiver));
+                qualifiedCallee = Namer.getFunctionCallRef(qualifiedCallee);
+                List<JsExpression> arguments = new ArrayList<JsExpression>(CallTranslator.this.arguments.size() + 1);
+                arguments.add(JsLiteral.THIS);
+                arguments.addAll(CallTranslator.this.arguments);
+                return new JsInvocation(qualifiedCallee, arguments);
+            }
+        }, context());
     }
 
     @NotNull

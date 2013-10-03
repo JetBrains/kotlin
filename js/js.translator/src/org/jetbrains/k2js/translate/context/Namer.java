@@ -49,6 +49,7 @@ public final class Namer {
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
+    private static final String PROTOTYPE_NAME = "prototype";
 
 
     private static final String DELEGATE_POSTFIX = "$delegate";
@@ -111,6 +112,16 @@ public final class Namer {
     @NotNull
     public static String getNameForClassObjectInitializer() {
         return CLASS_OBJECT_INITIALIZER;
+    }
+
+    @NotNull
+    public static String getPrototypeName() {
+        return PROTOTYPE_NAME;
+    }
+
+    @NotNull
+    public static JsNameRef getRefToPrototype(@NotNull JsExpression classOrTraitExpression) {
+        return new JsNameRef(getPrototypeName(), classOrTraitExpression);
     }
 
     @NotNull
@@ -243,7 +254,7 @@ public final class Namer {
     }
 
     @NotNull
-    static String generateNamespaceName(DeclarationDescriptor descriptor) {
+    static String generateNamespaceName(@NotNull DeclarationDescriptor descriptor) {
         if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
             return getRootNamespaceName();
         }

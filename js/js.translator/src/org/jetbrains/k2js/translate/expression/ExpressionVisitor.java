@@ -47,6 +47,7 @@ import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
+import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
@@ -428,6 +429,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression,
             @NotNull TranslationContext context) {
         return AccessTranslationUtils.translateAsGet(expression, context);
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitSuperExpression(@NotNull JetSuperExpression expression, @NotNull TranslationContext context) {
+        DeclarationDescriptor superClassDescriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
+        assert superClassDescriptor != null: message(expression);
+        return translateAsFQReference(superClassDescriptor, context);
     }
 
     @Override
