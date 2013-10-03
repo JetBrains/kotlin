@@ -64,17 +64,17 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testObjectLiteralInPackageClass() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$src$outerClassInfo$", null, null);
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage-outerClassInfo-", null, null);
         doCustomTest("foo.FooPackage$packageObjectLiteral$1", expectedInfo);
     }
 
     public void testLocalClassInTopLevelFunction() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$src$outerClassInfo$", "packageMethod", "(Lfoo/Foo;)V");
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage-outerClassInfo-", "packageMethod", "(Lfoo/Foo;)V");
         doCustomTest("foo.FooPackage$packageMethod$PackageLocalClass", expectedInfo);
     }
 
     public void testLocalObjectInTopLevelFunction() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage$src$outerClassInfo$", "packageMethod", "(Lfoo/Foo;)V");
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage-outerClassInfo-", "packageMethod", "(Lfoo/Foo;)V");
         doCustomTest("foo.FooPackage$packageMethod$PackageLocalObject", expectedInfo);
     }
 

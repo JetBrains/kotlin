@@ -27,7 +27,6 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
-import org.jetbrains.jps.model.JpsDummyElement;
 import org.jetbrains.jps.model.java.*;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
@@ -44,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator.DependencyProvider;
+import static org.jetbrains.jet.jps.build.JpsUtil.getAllDependencies;
 
 public class KotlinBuilderModuleScriptGenerator {
 
@@ -142,12 +142,6 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
         return JpsJavaSdkType.INSTANCE;
-    }
-
-    @NotNull
-    private static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
-        return JpsJavaExtensionService.dependencies(target.getModule()).recursively().exportedOnly()
-                    .includedIn(JpsJavaClasspathKind.compile(target.isTests()));
     }
 
     @Nullable

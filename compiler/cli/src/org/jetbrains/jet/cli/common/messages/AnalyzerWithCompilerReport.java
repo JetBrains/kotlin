@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 
 import java.util.Collection;
 import java.util.List;
@@ -139,15 +140,16 @@ public final class AnalyzerWithCompilerReport {
         assert analyzeExhaust != null;
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
-        Collection<TraceBasedErrorReporter.AbiVersionErrorLocation> errorLocations =
-                bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
-        for (TraceBasedErrorReporter.AbiVersionErrorLocation abiVersionErrorLocation : errorLocations) {
-            Integer abiVersion = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, abiVersionErrorLocation);
+        Collection<VirtualFileKotlinClass> errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
+        for (VirtualFileKotlinClass kotlinClass : errorClasses) {
+            Integer abiVersion = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, kotlinClass);
+            String fqName = kotlinClass.getClassName().getFqName().asString();
+            String path = toSystemDependentName(kotlinClass.getFile().getPath());
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           "Class '" + abiVersionErrorLocation.getClassFqName().asString() +
+                                           "Class '" + fqName +
                                            "' was compiled with an incompatible version of Kotlin. " +
                                            "Its ABI version is " + abiVersion + ", expected ABI version is " + JvmAbi.VERSION,
-                                           CompilerMessageLocation.create(toSystemDependentName(abiVersionErrorLocation.getPath()), 0, 0));
+                                           CompilerMessageLocation.create(path, 0, 0));
         }
     }
 

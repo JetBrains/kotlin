@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -36,7 +35,8 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -62,11 +62,11 @@ public final class JavaNamespaceResolver {
     private JavaMemberResolver memberResolver;
 
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
-    private VirtualFileFinder virtualFileFinder;
+    private KotlinClassFinder kotlinClassFinder;
 
     @Inject
-    public void setVirtualFileFinder(VirtualFileFinder virtualFileFinder) {
-        this.virtualFileFinder = virtualFileFinder;
+    public void setKotlinClassFinder(KotlinClassFinder kotlinClassFinder) {
+        this.kotlinClassFinder = kotlinClassFinder;
     }
 
     @Inject
@@ -153,12 +153,12 @@ public final class JavaNamespaceResolver {
         JavaPackage javaPackage = javaClassFinder.findPackage(fqName);
         if (javaPackage != null) {
             FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName);
-            VirtualFile virtualFile = virtualFileFinder.find(packageClassFqName);
+            KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.find(packageClassFqName);
 
             cache.recordProperNamespace(namespaceDescriptor);
 
-            if (virtualFile != null) {
-                JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(namespaceDescriptor, virtualFile);
+            if (kotlinClass != null) {
+                JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(namespaceDescriptor, kotlinClass);
                 if (kotlinPackageScope != null) {
                     return kotlinPackageScope;
                 }

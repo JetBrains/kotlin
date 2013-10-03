@@ -26,18 +26,12 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,10 +39,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
-import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -134,7 +126,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                     public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                             if ("update".equals(event.getDescription())) {
-                                updateKotlinLibraries(outdatedLibraries);
+                                KotlinRuntimeLibraryUtil.updateLibraries(myProject, outdatedLibraries);
                             }
                             else if ("ignore".equals(event.getDescription())) {
                                 PropertiesComponent.getInstance(myProject).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion);
@@ -160,79 +152,31 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
         });
     }
 
-    private void updateKotlinLibraries(Collection<Library> libraries) {
-        File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
-        if (!runtimePath.exists()) {
-            showRuntimeJarNotFoundDialog(myProject, PathUtil.KOTLIN_JAVA_RUNTIME_JAR).run();
-            return;
-        }
-
-        for (Library library : libraries) {
-            VirtualFile libraryJar = JavaRuntimePresentationProvider.getRuntimeJar(library);
-            assert LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library) &&
-                   libraryJar != null : "Only java runtime libraries are expected";
-
-            KotlinRuntimeLibraryUtil.replaceFile(runtimePath, libraryJar);
-
-            VirtualFile libraryJarSrc = JavaRuntimePresentationProvider.getRuntimeSrcJar(library);
-            if (libraryJarSrc != null) {
-                File runtimeSrcPath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimeSourcesPath();
-                if (!runtimeSrcPath.exists()) {
-                    showRuntimeJarNotFoundDialog(myProject, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR).run();
-                    return;
-                }
-                KotlinRuntimeLibraryUtil.replaceFile(runtimeSrcPath, libraryJarSrc);
-            }
-        }
-    }
-
-    private static Collection<VersionedLibrary> findOutdatedKotlinLibraries(Project project, String pluginVersion) {
+    @NotNull
+    private static Collection<VersionedLibrary> findOutdatedKotlinLibraries(@NotNull Project project, @NotNull String pluginVersion) {
         List<VersionedLibrary> outdatedLibraries = Lists.newArrayList();
 
-        for (VersionedLibrary versionedLibrary : findKotlinLibraries(project)) {
-            String libraryVersion = versionedLibrary.getVersion();
+        for (Library library : KotlinRuntimeLibraryUtil.findKotlinLibraries(project)) {
+            LibraryVersionProperties javaRuntimeProperties =
+                    LibraryPresentationProviderUtil.getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library);
+            if (javaRuntimeProperties == null) {
+                continue;
+            }
+            String libraryVersion = javaRuntimeProperties.getVersionString();
 
             boolean isOutdated = "snapshot".equals(libraryVersion)
-                                        || libraryVersion == null
-                                        || libraryVersion.startsWith("internal-") != pluginVersion.startsWith("internal-")
-                                        || VersionComparatorUtil.compare(pluginVersion, libraryVersion) > 0;
+                                 || libraryVersion == null
+                                 || libraryVersion.startsWith("internal-") != pluginVersion.startsWith("internal-")
+                                 || VersionComparatorUtil.compare(pluginVersion, libraryVersion) > 0;
 
             if (isOutdated) {
-                outdatedLibraries.add(versionedLibrary);
+                outdatedLibraries.add(new VersionedLibrary(library, libraryVersion));
             }
         }
 
         return outdatedLibraries;
     }
 
-    private static Collection<VersionedLibrary> findKotlinLibraries(Project project) {
-        List<VersionedLibrary> libraries = Lists.newArrayList();
-
-        for (Module module : ModuleManager.getInstance(project).getModules()) {
-            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-
-            for (OrderEntry entry : moduleRootManager.getOrderEntries()) {
-                if (entry instanceof LibraryOrderEntry) {
-                    LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) entry;
-                    Library library = libraryOrderEntry.getLibrary();
-
-                    if (library == null) {
-                        continue;
-                    }
-
-                    LibraryVersionProperties javaRuntimeProperties = LibraryPresentationProviderUtil.getLibraryProperties(
-                            JavaRuntimePresentationProvider.getInstance(), library);
-                    if (javaRuntimeProperties != null) {
-                        libraries.add(new VersionedLibrary(library, javaRuntimeProperties.getVersionString()));
-                    }
-
-                    // TODO: search js libraries as well
-                }
-            }
-        }
-
-        return libraries;
-    }
 
     @NotNull
     public static Runnable showRuntimeJarNotFoundDialog(@NotNull final Project project, final @NotNull String jarName) {

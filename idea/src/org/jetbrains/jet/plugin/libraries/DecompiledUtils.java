@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.libraries;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 
@@ -29,8 +30,7 @@ public final class DecompiledUtils {
             return false;
         }
         //TODO: check index
-        KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(file);
-        return header instanceof SerializedDataHeader && header.isCompatibleKotlinCompiledFile();
+        return KotlinClassFileHeader.readKotlinHeaderFromClassFile(new VirtualFileKotlinClass(file)) instanceof SerializedDataHeader;
     }
 
     private DecompiledUtils() {

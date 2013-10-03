@@ -24,8 +24,12 @@ import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
+import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.SystemProperties;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -35,40 +39,57 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.util.Arrays;
+import java.util.*;
 
 public class KotlinCompilerRunner {
-    public static void runCompiler(
+    private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
+    private static final String K2JS_COMPILER = "org.jetbrains.jet.cli.js.K2JSCompiler";
+
+    public static void runK2JvmCompiler(
             MessageCollector messageCollector,
             CompilerEnvironment environment,
-            File scriptFile,
+            File moduleFile,
             OutputItemsCollector collector,
             boolean runOutOfProcess
     ) {
+        String[] arguments = createArgumentsForJvmCompiler(environment.getOutput(), moduleFile);
+
         if (runOutOfProcess) {
-            runOutOfProcess(messageCollector, collector, environment, scriptFile);
+            runOutOfProcess(K2JVM_COMPILER, arguments, messageCollector, collector, environment);
         }
         else {
-            runInProcess(messageCollector, collector, environment, scriptFile);
+            runInProcess(K2JVM_COMPILER, arguments, messageCollector, collector, environment);
         }
     }
 
-    private static void runInProcess(final MessageCollector messageCollector,
+    public static void runK2JsCompiler(
+            MessageCollector messageCollector,
+            CompilerEnvironment environment,
             OutputItemsCollector collector,
-            final CompilerEnvironment environment,
-            final File scriptFile) {
+            List<File> sourceFiles,
+            Set<String> libraryFiles,
+            File outputFile
+    ) {
+        String[] arguments = createArgumentsForJsCompiler(outputFile, sourceFiles, libraryFiles);
+        runInProcess(K2JS_COMPILER, arguments, messageCollector, collector, environment);
+    }
+
+    private static void runInProcess(
+            final String compilerClassName,
+            final String[] arguments,
+            final MessageCollector messageCollector,
+            OutputItemsCollector collector,
+            final CompilerEnvironment environment) {
         CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
             @Override
             public Integer fun(PrintStream stream) {
-                return execInProcess(environment, scriptFile, stream, messageCollector);
+                return execInProcess(compilerClassName, arguments, environment, stream, messageCollector);
             }
         });
     }
 
-    private static int execInProcess(CompilerEnvironment environment, File scriptFile, PrintStream out, MessageCollector messageCollector) {
+    private static int execInProcess(String compilerClassName, String[] arguments, CompilerEnvironment environment, PrintStream out, MessageCollector messageCollector) {
         try {
-            String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
-            String[] arguments = commandLineArguments(environment.getOutput(), scriptFile);
             messageCollector.report(CompilerMessageSeverity.INFO,
                                     "Using kotlinHome=" + environment.getKotlinPaths().getHomePath(),
                                     CompilerMessageLocation.NO_LOCATION);
@@ -87,26 +108,62 @@ public class KotlinCompilerRunner {
         }
     }
 
-    private static String[] commandLineArguments(File outputDir, File scriptFile) {
+    private static String[] createArgumentsForJvmCompiler(File outputDir, File moduleFile) {
         return new String[]{
-                "-module", scriptFile.getAbsolutePath(),
+                "-module", moduleFile.getAbsolutePath(),
                 "-output", outputDir.getPath(),
                 "-tags", "-verbose", "-version",
                 "-notNullAssertions", "-notNullParamAssertions",
                 "-noStdlib", "-noJdkAnnotations", "-noJdk"};
     }
 
+    private static String[] createArgumentsForJsCompiler(
+            File outputFile,
+            List<File> sourceFiles,
+            Set<String> libraryFiles
+    ) {
+        List<String> args = new ArrayList<String>();
+
+        Collections.addAll(args, "-tags", "-verbose", "-version", "-sourcemap");
+
+        args.add("-sourceFiles");
+        args.add(convertSourceFilesListToString(sourceFiles));
+
+        args.add("-output");
+        args.add(outputFile.getPath());
+
+        args.add("-libraryFiles");
+        args.add(StringUtil.join(libraryFiles, ","));
+
+        return ArrayUtil.toStringArray(args);
+    }
+
+    @NotNull
+    private static String convertSourceFilesListToString(@NotNull List<File> sourceFiles) {
+        StringBuilder sb = StringBuilderSpinAllocator.alloc();
+
+        for (File file : sourceFiles) {
+            sb.append(file.getPath()).append(',');
+        }
+        String result = sb.substring(0, sb.length() - 1);
+
+        StringBuilderSpinAllocator.dispose(sb);
+
+        return result;
+    }
+
     private static void runOutOfProcess(
+            String compilerClassName,
+            String[] arguments,
             final MessageCollector messageCollector,
             final OutputItemsCollector itemCollector,
-            CompilerEnvironment environment,
-            File scriptFile
+            CompilerEnvironment environment
     ) {
         SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
-        params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
+        params.setMainClass(compilerClassName);
 
-        for (String arg : commandLineArguments(environment.getOutput(), scriptFile)) {
+        for (String arg : arguments) {
             params.getProgramParametersList().add(arg);
         }
 
@@ -118,6 +175,8 @@ public class KotlinCompilerRunner {
         //        params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
 
         Sdk sdk = params.getJdk();
+
+        assert sdk != null;
 
         GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
                 ((JavaSdkType) sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
@@ -157,7 +216,6 @@ public class KotlinCompilerRunner {
             messageCollector.report(CompilerMessageSeverity.ERROR,
                                     "[Internal Error] " + e.getLocalizedMessage(),
                                     CompilerMessageLocation.NO_LOCATION);
-            return;
         }
     }
 

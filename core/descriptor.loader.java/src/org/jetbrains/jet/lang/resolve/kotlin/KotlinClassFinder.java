@@ -14,32 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin.header;
+package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class SerializedDataHeader extends KotlinClassFileHeader {
-    public enum Kind {
-        CLASS,
-        PACKAGE
-    }
-
-    private final String[] data;
-    private final Kind kind;
-
-    protected SerializedDataHeader(int version, @NotNull String[] annotationData, @NotNull Kind kind) {
-        super(version);
-        this.data = annotationData;
-        this.kind = kind;
-    }
-
-    @NotNull
-    public String[] getAnnotationData() {
-        return data;
-    }
-
-    @NotNull
-    public Kind getKind() {
-        return kind;
-    }
+public interface KotlinClassFinder {
+    @Nullable
+    KotlinJvmBinaryClass find(@NotNull FqName fqName);
 }

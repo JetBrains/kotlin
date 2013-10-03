@@ -16,30 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-import org.jetbrains.annotations.NotNull;
-
-public class SerializedDataHeader extends KotlinClassFileHeader {
-    public enum Kind {
-        CLASS,
-        PACKAGE
-    }
-
-    private final String[] data;
-    private final Kind kind;
-
-    protected SerializedDataHeader(int version, @NotNull String[] annotationData, @NotNull Kind kind) {
+public class IncompatibleAnnotationHeader extends KotlinClassFileHeader {
+    protected IncompatibleAnnotationHeader(int version) {
         super(version);
-        this.data = annotationData;
-        this.kind = kind;
-    }
-
-    @NotNull
-    public String[] getAnnotationData() {
-        return data;
-    }
-
-    @NotNull
-    public Kind getKind() {
-        return kind;
     }
 }

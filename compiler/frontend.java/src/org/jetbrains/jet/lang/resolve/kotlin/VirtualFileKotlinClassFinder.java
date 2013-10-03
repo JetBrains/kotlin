@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin.header;
+package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public abstract class KotlinClassFileHeader {
+import javax.inject.Inject;
+
+public class VirtualFileKotlinClassFinder implements KotlinClassFinder {
+    private VirtualFileFinder virtualFileFinder;
+
+    @Inject
+    public void setVirtualFileFinder(@NotNull VirtualFileFinder virtualFileFinder) {
+        this.virtualFileFinder = virtualFileFinder;
+    }
+
     @Nullable
-    public static KotlinClassFileHeader readKotlinHeaderFromClassFile(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        ReadDataFromAnnotationVisitor visitor = new ReadDataFromAnnotationVisitor();
-        kotlinClass.loadClassAnnotations(visitor);
-        return visitor.createHeader(kotlinClass);
-    }
-
-    private final int version;
-
-    protected KotlinClassFileHeader(int version) {
-        this.version = version;
-    }
-
-    public int getVersion() {
-        return version;
+    @Override
+    public KotlinJvmBinaryClass find(@NotNull FqName fqName) {
+        VirtualFile file = virtualFileFinder.find(fqName);
+        return file == null ? null : new VirtualFileKotlinClass(file);
     }
 }

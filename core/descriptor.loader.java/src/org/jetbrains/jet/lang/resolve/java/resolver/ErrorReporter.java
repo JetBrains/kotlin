@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 
 public interface ErrorReporter {
-    void reportIncompatibleAbiVersion(@NotNull FqName fqName, @NotNull VirtualFile file, int actualVersion);
+    void reportIncompatibleAbiVersion(@NotNull KotlinJvmBinaryClass kotlinClass, int actualVersion);
 
     void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
 }

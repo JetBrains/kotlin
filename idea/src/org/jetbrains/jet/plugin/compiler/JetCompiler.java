@@ -136,7 +136,7 @@ public class JetCompiler implements TranslatingCompiler {
             File scriptFile,
             OutputItemsCollector outputItemsCollector
     ) {
-        KotlinCompilerRunner.runCompiler(messageCollector, environment, scriptFile, outputItemsCollector, RUN_OUT_OF_PROCESS);
+        KotlinCompilerRunner.runK2JvmCompiler(messageCollector, environment, scriptFile, outputItemsCollector, RUN_OUT_OF_PROCESS);
     }
 
     public static File tryToWriteScriptFile(

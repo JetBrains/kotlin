@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.versions;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
@@ -30,6 +32,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -47,6 +50,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator;
+import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,23 +92,36 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
         return null;
     }
 
-    private EditorNotificationPanel doCreate(Collection<VirtualFile> badRoots) {
+    private EditorNotificationPanel doCreate(final Collection<VirtualFile> badRoots) {
         EditorNotificationPanel answer = new ErrorNotificationPanel();
 
-        VirtualFile kotlinRuntimeJar = KotlinRuntimeLibraryUtil.getLocalKotlinRuntimeJar(project);
-        if (kotlinRuntimeJar != null && badRoots.contains(kotlinRuntimeJar)) {
-            int otherBadRootsCount = badRoots.size() - 1;
-            String kotlinRuntimeJarName = kotlinRuntimeJar.getPresentableName();
-            String text = MessageFormat.format("<html>Kotlin <b>runtime library</b> jar <b>''{0}''</b> " +
+        Collection<Library> kotlinLibraries = KotlinRuntimeLibraryUtil.findKotlinLibraries(project);
+        final Collection<Library> badRuntimeLibraries = Collections2.filter(kotlinLibraries, new Predicate<Library>() {
+            @Override
+            public boolean apply(@Nullable Library library) {
+                assert library != null : "library should be non null";
+                VirtualFile runtimeJar = JavaRuntimePresentationProvider.getRuntimeJar(library);
+                return badRoots.contains(KotlinRuntimeLibraryUtil.getLocalJar(runtimeJar));
+            }
+        });
+
+        if (!badRuntimeLibraries.isEmpty()) {
+            int otherBadRootsCount = badRoots.size() - badRuntimeLibraries.size();
+
+            String text = MessageFormat.format("<html><b>{0,choice,0#|1#|1<Some }Kotlin runtime librar{0,choice,0#|1#y|1<ies}</b>" +
                                                "{1,choice,0#|1# and one other jar|1< and {1} other jars} " +
                                                "{1,choice,0#has|0<have} an unsupported format</html>",
-                                               kotlinRuntimeJarName,
+                                               badRuntimeLibraries.size(),
                                                otherBadRootsCount);
+
+            String actionLabelText = MessageFormat.format("Update {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ",
+                                                badRuntimeLibraries.size());
+
             answer.setText(text);
-            answer.createActionLabel("Update " + kotlinRuntimeJarName, new Runnable() {
+            answer.createActionLabel(actionLabelText, new Runnable() {
                 @Override
                 public void run() {
-                    KotlinRuntimeLibraryUtil.updateRuntime(project);
+                    KotlinRuntimeLibraryUtil.updateLibraries(project, badRuntimeLibraries);
                 }
             });
             if (otherBadRootsCount > 0) {

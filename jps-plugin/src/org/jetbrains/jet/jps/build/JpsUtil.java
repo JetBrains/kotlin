@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin.header;
+package org.jetbrains.jet.jps.build;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jps.incremental.ModuleBuildTarget;
+import org.jetbrains.jps.model.java.JpsJavaClasspathKind;
+import org.jetbrains.jps.model.java.JpsJavaDependenciesEnumerator;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 
-public class OldAnnotationHeader extends KotlinClassFileHeader {
-    protected OldAnnotationHeader(@NotNull FqName fqName) {
-        super(AbiVersionUtil.INVALID_VERSION, fqName);
+public class JpsUtil {
+    @NotNull
+    public static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
+        return JpsJavaExtensionService.dependencies(target.getModule()).recursively().exportedOnly()
+                .includedIn(JpsJavaClasspathKind.compile(target.isTests()));
     }
 }

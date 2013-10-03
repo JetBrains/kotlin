@@ -16,11 +16,6 @@
 
 package org.jetbrains.jet.compiler;
 
-import com.intellij.application.options.PathMacrosImpl;
-import com.intellij.mock.MockApplication;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathMacros;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -34,9 +29,6 @@ import org.jetbrains.jet.compiler.run.PermissionManager;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -177,25 +169,6 @@ public class CodegenTestsOnAndroidRunner {
 
     @Nullable
     public String runTests() {
-        //TODO: TEMPORARY HACK: should be possible to remove in idea 12.1
-        Disposable disposable = new Disposable() {
-            @Override
-            public void dispose() {}
-        };
-
-        MockApplication app = new MockApplication(disposable)
-        {
-            ExecutorService executorService = Executors.newFixedThreadPool(10);
-            @Override
-            public Future<?> executeOnPooledThread(@NotNull Runnable action) {
-                return executorService.submit(action);
-            }
-        };
-
-        app.addComponent(PathMacros.class, new PathMacrosImpl());
-        ApplicationManager.setApplication(app, disposable);
-        //TODO: HACK END
-
         File rootForAndroidDependencies = new File(pathManager.getDependenciesRoot());
         if (!rootForAndroidDependencies.exists()) {
             rootForAndroidDependencies.mkdirs();
