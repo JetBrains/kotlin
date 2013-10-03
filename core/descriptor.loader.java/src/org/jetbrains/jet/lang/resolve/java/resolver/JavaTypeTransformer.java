@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -37,9 +36,6 @@ import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
 public class JavaTypeTransformer {
-
-    private static final Logger LOG = Logger.getInstance(JavaTypeTransformer.class);
-
     private JavaClassResolver classResolver;
 
     @Inject
@@ -193,9 +189,6 @@ public class JavaTypeTransformer {
 
             if (parameters.size() != javaTypeArguments.size()) {
                 // Most of the time this means there is an error in the Java code
-                LOG.warn("parameters = " + parameters.size() + ", actual arguments = " + javaTypeArguments.size() +
-                         " in " + classifierType.getPresentableText() + "\n fqName: \n" + fqName);
-
                 for (TypeParameterDescriptor parameter : parameters) {
                     arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().asString())));
                 }
