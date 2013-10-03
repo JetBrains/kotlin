@@ -49,7 +49,7 @@ import org.jetbrains.jet.plugin.framework.ui.ConfigureDialogWithModulesAndVersio
 import java.util.List;
 
 public class KotlinMavenConfigurator implements KotlinProjectConfigurator {
-    private static final String[] KOTLIN_VERSIONS = {"0.6.179", "0.1-SNAPSHOT"};
+    private static final String[] KOTLIN_VERSIONS = {"0.6.594", "0.1-SNAPSHOT"};
 
     public static final String NAME = "maven";
 
