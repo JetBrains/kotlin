@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.OrderEntryUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -192,7 +191,11 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @Nullable
     protected String getPathFromLibrary(@NotNull Project project, @NotNull OrderRootType type) {
-        Library library = getKotlinLibrary(project);
+        return getPathFromLibrary(getKotlinLibrary(project), type);
+    }
+
+    @Nullable
+    protected static String getPathFromLibrary(@Nullable Library library, @NotNull OrderRootType type) {
         if (library == null) return null;
 
         String[] libraryFiles = library.getUrls(type);
@@ -209,11 +212,11 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return parentDir;
     }
 
-    private static void addSourcesToLibraryIfNeeded(@NotNull Library library, @NotNull File file) {
+    protected static boolean addSourcesToLibraryIfNeeded(@NotNull Library library, @NotNull File file) {
         String[] librarySourceRoots = library.getUrls(OrderRootType.SOURCES);
         String librarySourceRoot = VfsUtil.getUrlForLibraryRoot(file);
         for (String sourceRoot : librarySourceRoots) {
-            if (sourceRoot.equals(librarySourceRoot)) return;
+            if (sourceRoot.equals(librarySourceRoot)) return false;
         }
 
         final Library.ModifiableModel model = library.getModifiableModel();
@@ -226,7 +229,8 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             }
         });
 
-        showInfoNotification(library.getName() + " library was configured");
+        showInfoNotification("Source root '" + librarySourceRoot + "' was added to " + library.getName() + " library");
+        return true;
     }
 
     private void addLibraryToModuleIfNeeded(Module module) {

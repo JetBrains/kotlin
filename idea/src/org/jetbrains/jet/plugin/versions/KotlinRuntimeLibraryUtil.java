@@ -19,16 +19,15 @@ package org.jetbrains.jet.plugin.versions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.roots.AnnotationOrderRootType;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
@@ -50,12 +49,14 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinJavaModuleConfigurator;
+import org.jetbrains.jet.plugin.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static com.intellij.util.PathUtil.getLocalFile;
@@ -160,17 +161,36 @@ public class KotlinRuntimeLibraryUtil {
         return null;
     }
 
-    public static void updateRuntime(@NotNull final Project project) {
+    public static void updateLibraries(
+            @NotNull final Project project,
+            @NotNull final Collection<Library> libraries
+    ) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                updateJar(project, LibraryJarDescriptor.RUNTIME_JAR);
-                updateJar(project, LibraryJarDescriptor.RUNTIME_SRC_JAR);
+                KotlinJavaModuleConfigurator configurator = (KotlinJavaModuleConfigurator)
+                        ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
+                assert configurator != null : "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME;
+
+                for (Library library : libraries) {
+                    updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR);
+
+                    if (configurator.changeOldSourcesPathIfNeeded(library)) {
+                        configurator.copySourcesToPathFromLibrary(library);
+                    }
+                    else {
+                        updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR);
+                    }
+                }
             }
         });
     }
 
-    private static void updateJar(@NotNull Project project, @NotNull LibraryJarDescriptor libraryJarDescriptor) {
+    private static void updateJar(@NotNull Project project, @Nullable VirtualFile fileToReplace, @NotNull LibraryJarDescriptor libraryJarDescriptor) {
+        if (fileToReplace == null && !libraryJarDescriptor.shouldExists) {
+            return;
+        }
+
         KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
         File runtimePath = null;
         switch (libraryJarDescriptor) {
@@ -183,20 +203,36 @@ public class KotlinRuntimeLibraryUtil {
             return;
         }
 
-        VirtualFile jar = null;
-        switch (libraryJarDescriptor) {
-            case RUNTIME_JAR: jar = getKotlinRuntimeJar(project); break;
-            case RUNTIME_SRC_JAR: jar = getKotlinRuntimeSourcesJar(project); break;
-        }
-
-        if (jar == null && !libraryJarDescriptor.shouldExists) {
-            return;
-        }
-
-        VirtualFile localJar = getLocalJar(jar);
+        VirtualFile localJar = getLocalJar(fileToReplace);
         assert localJar != null;
 
         replaceFile(runtimePath, localJar);
+    }
+
+    @NotNull
+    public static Collection<Library> findKotlinLibraries(@NotNull Project project) {
+        Set<Library> libraries = Sets.newHashSet();
+
+        for (Module module : ModuleManager.getInstance(project).getModules()) {
+            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+
+            for (OrderEntry entry : moduleRootManager.getOrderEntries()) {
+                if (entry instanceof LibraryOrderEntry) {
+                    LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) entry;
+                    Library library = libraryOrderEntry.getLibrary();
+
+                    if (library == null) {
+                        continue;
+                    }
+
+                    libraries.add(library);
+
+                    // TODO: search js libraries as well
+                }
+            }
+        }
+
+        return libraries;
     }
 
     private enum LibraryJarDescriptor {
@@ -213,43 +249,7 @@ public class KotlinRuntimeLibraryUtil {
     }
 
     @Nullable
-    private static VirtualFile getKotlinRuntimeJar(@NotNull Project project) {
-        PsiClass markerClass = getKotlinRuntimeMarkerClass(ProjectScope.getAllScope(project));
-        if (markerClass == null) return null;
-
-        VirtualFile virtualFile = markerClass.getContainingFile().getVirtualFile();
-        if (virtualFile == null) return null;
-
-        ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-        return projectFileIndex.getClassRootForFile(virtualFile);
-    }
-
-    @Nullable
-    private static VirtualFile getKotlinRuntimeSourcesJar(@NotNull Project project) {
-        KotlinJavaModuleConfigurator configurator = (KotlinJavaModuleConfigurator)
-                ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
-        assert configurator != null : "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME;
-
-        Library kotlinLibrary = configurator.getKotlinLibrary(project);
-        if (kotlinLibrary == null) return null;
-
-        VirtualFile[] kotlinSourceFiles = kotlinLibrary.getFiles(OrderRootType.SOURCES);
-
-        for (VirtualFile sourceFile : kotlinSourceFiles) {
-            if (sourceFile.getName().equals(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR)) {
-                return sourceFile;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    public static VirtualFile getLocalKotlinRuntimeJar(@NotNull Project project) {
-        return getLocalJar(getKotlinRuntimeJar(project));
-    }
-
-    @Nullable
-    private static VirtualFile getLocalJar(@Nullable VirtualFile kotlinRuntimeJar) {
+    public static VirtualFile getLocalJar(@Nullable VirtualFile kotlinRuntimeJar) {
         if (kotlinRuntimeJar == null) return null;
 
         VirtualFile localJarFile = JarFileSystem.getInstance().getVirtualFileForJar(kotlinRuntimeJar);
