@@ -144,6 +144,7 @@ public class InjectorForJavaDescriptorResolver {
         deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
         deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
 
+        annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileKotlinClassFinder);
 
