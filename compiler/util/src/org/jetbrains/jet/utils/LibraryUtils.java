@@ -32,6 +32,8 @@ public class LibraryUtils {
     public static final String TITLE_KOTLIN_RUNTIME_AND_STDLIB_SOURCES = "Kotlin Compiler Runtime + StdLib Sources";
     public static final String TITLE_KOTLIN_JAVASCRIPT_STDLIB = "Kotlin JavaScript StdLib";
 
+    private LibraryUtils() {}
+
     @Nullable
     public static Manifest getManifestFromJar(@NotNull File library) {
         if (!library.canRead()) return null;
@@ -45,9 +47,9 @@ public class LibraryUtils {
                 jarFile.close();
             }
         }
-        catch (IOException ignored) { }
-
-        return null;
+        catch (IOException ignored) {
+            return null;
+        }
     }
 
     @Nullable

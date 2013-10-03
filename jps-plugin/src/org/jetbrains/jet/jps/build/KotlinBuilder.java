@@ -17,7 +17,6 @@
 package org.jetbrains.jet.jps.build;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.compiler.runner.*;
-import org.jetbrains.jet.utils.LibraryUtils;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -35,14 +33,7 @@ import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.java.JpsJavaModuleType;
-import org.jetbrains.jps.model.library.JpsLibrary;
-import org.jetbrains.jps.model.library.JpsLibraryRoot;
-import org.jetbrains.jps.model.library.JpsOrderRootType;
 import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
-import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,7 +117,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl(outputDir);
 
-        if (isJsKotlinModule(representativeTarget)) {
+        if (JpsUtils.isJsKotlinModule(representativeTarget)) {
             File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
 
             KotlinCompilerRunner.runK2JsCompiler(
@@ -134,7 +125,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                     environment,
                     outputItemCollector,
                     sourceFiles,
-                    getLibraryFilesAndDependencies(representativeTarget),
+                    JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget),
                     outputFile);
         }
         else {
@@ -228,51 +219,5 @@ public class KotlinBuilder extends ModuleLevelBuilder {
     @Override
     public List<String> getCompilableFileExtensions() {
         return COMPILABLE_FILE_EXTENSIONS;
-    }
-
-    private static boolean isJsKotlinModule(@NotNull ModuleBuildTarget target) {
-        Set<JpsLibrary> libraries = JpsUtil.getAllDependencies(target).getLibraries();
-        for (JpsLibrary library : libraries) {
-            for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                if (LibraryUtils.isJsRuntimeLibrary(JpsPathUtil.urlToFile(root.getUrl())))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    @NotNull
-    private static Set<String> getLibraryFilesAndDependencies(@NotNull ModuleBuildTarget target) {
-        Set<String> result = new HashSet<String>();
-        getLibraryPaths(target, result);
-        getDependencyModulesAndSources(target, result);
-        return result;
-    }
-
-    private static void getLibraryPaths(@NotNull ModuleBuildTarget target, Set<String> result) {
-        Set<JpsLibrary> libraries = JpsUtil.getAllDependencies(target).getLibraries();
-        for (JpsLibrary library : libraries) {
-            for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                String path = JpsPathUtil.urlToOsPath(root.getUrl());
-                if (path.endsWith(PathUtil.JS_LIB_JAR_NAME)) {
-                    result.add(path);
-                }
-            }
-        }
-    }
-
-    private static void getDependencyModulesAndSources(@NotNull final ModuleBuildTarget target, final Set<String> result) {
-        JpsUtil.getAllDependencies(target).processModules(new Consumer<JpsModule>() {
-            @Override
-            public void consume(JpsModule module) {
-                if (module == target.getModule() || module.getModuleType() != JpsJavaModuleType.INSTANCE) return;
-
-                result.add("@" + module.getName());
-
-                for (JpsModuleSourceRoot root : module.getSourceRoots(JavaSourceRootType.SOURCE)) {
-                    result.add(JpsPathUtil.urlToOsPath(root.getUrl()));
-                }
-            }
-        });
     }
 }

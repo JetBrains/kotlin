@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator.DependencyProvider;
-import static org.jetbrains.jet.jps.build.JpsUtil.getAllDependencies;
+import static org.jetbrains.jet.jps.build.JpsUtils.getAllDependencies;
 
 public class KotlinBuilderModuleScriptGenerator {
 
