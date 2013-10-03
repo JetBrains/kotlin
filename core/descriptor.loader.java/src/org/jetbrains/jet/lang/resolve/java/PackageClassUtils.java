@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -29,21 +28,25 @@ public final class PackageClassUtils {
     }
 
     // ex. <root> -> _DefaultPackage, a -> APackage, a.b -> BPackage
+    @NotNull
     public static String getPackageClassName(@NotNull FqName packageFQN) {
         if (packageFQN.isRoot()) {
             return DEFAULT_PACKAGE_CLASS_NAME;
         }
-        return StringUtil.capitalize(packageFQN.shortName().asString()) + PACKAGE_CLASS_NAME_SUFFIX;
+        return capitalizeNonEmptyString(packageFQN.shortName().asString()) + PACKAGE_CLASS_NAME_SUFFIX;
     }
 
+    @NotNull
+    private static String capitalizeNonEmptyString(@NotNull String s) {
+        return Character.isUpperCase(s.charAt(0)) ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    @NotNull
     public static FqName getPackageClassFqName(@NotNull FqName packageFQN) {
         return packageFQN.child(Name.identifier(getPackageClassName(packageFQN)));
     }
 
     public static boolean isPackageClassFqName(@NotNull FqName fqName) {
-        if (fqName.isRoot()) {
-            return false;
-        }
-        return getPackageClassFqName(fqName.parent()).equals(fqName);
+        return !fqName.isRoot() && getPackageClassFqName(fqName.parent()).equals(fqName);
     }
 }
