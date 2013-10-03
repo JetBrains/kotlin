@@ -295,4 +295,37 @@ class StringJVMTest {
         assertEquals(s.toByteArray().toString(), s.toByteArray(defaultCharset).toString())
         assertEquals(s.toByteArray().toString(), s.toByteArray(defaultCharset.name()).toString())
     }
+
+    test fun testReplaceAllClosure() {
+        val s = "test123zzz"
+        val result = s.replaceAll("\\d+") { (mr) ->
+            "[" + mr.group() + "]"
+        }
+        assertEquals("test[123]zzz", result)
+    }
+
+    test fun testReplaceAllClosureAtStart() {
+        val s = "123zzz"
+        val result = s.replaceAll("\\d+") { (mr) ->
+            "[" + mr.group() + "]"
+        }
+        assertEquals("[123]zzz", result)
+    }
+
+    test fun testReplaceAllClosureAtEnd() {
+        val s = "test123"
+        val result = s.replaceAll("\\d+") { (mr) ->
+            "[" + mr.group() + "]"
+        }
+        assertEquals("test[123]", result)
+    }
+
+    test fun testReplaceAllClosureEmpty() {
+        val s = ""
+        val result = s.replaceAll("\\d+") { (mr) ->
+            "x"
+        }
+        assertEquals("", result)
+
+    }
 }

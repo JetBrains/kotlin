@@ -524,3 +524,23 @@ public inline fun String.trimTrailing(): String {
     }
     return if (count < this.length) substring(0, count) else this
 }
+
+public fun String.replaceAll(regexp : String, body : (java.util.regex.MatchResult) -> String) : String {
+    val sb = StringBuilder(this.length())
+    val p = regexp.toRegex()
+    val m = p.matcher(this)
+
+    var lastIdx = 0
+    while (m.find()) {
+        sb.append(this, lastIdx, m.start())
+        sb.append(body(m.toMatchResult()))
+        lastIdx = m.end()
+    }	
+
+    sb.append(this, lastIdx, this.length())
+
+    return sb.toString()
+}
+
+
+
