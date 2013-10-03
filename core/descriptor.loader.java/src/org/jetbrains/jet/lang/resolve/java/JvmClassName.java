@@ -16,12 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class JvmClassName {
-
     @NotNull
     public static JvmClassName byInternalName(@NotNull String internalName) {
         return new JvmClassName(internalName);
@@ -32,7 +30,7 @@ public class JvmClassName {
      */
     @NotNull
     public static JvmClassName byFqNameWithoutInnerClasses(@NotNull FqName fqName) {
-        JvmClassName r = new JvmClassName(fqNameToInternalName(fqName));
+        JvmClassName r = new JvmClassName(fqName.asString().replace('.', '/'));
         r.fqName = fqName;
         return r;
     }
@@ -40,28 +38,6 @@ public class JvmClassName {
     @NotNull
     public static JvmClassName byFqNameWithoutInnerClasses(@NotNull String fqName) {
         return byFqNameWithoutInnerClasses(new FqName(fqName));
-    }
-
-    @NotNull
-    private static String encodeSpecialNames(@NotNull String str) {
-        String encodedObjectNames = StringUtil.replace(str, JvmAbi.CLASS_OBJECT_CLASS_NAME, CLASS_OBJECT_REPLACE_GUARD);
-        return StringUtil.replace(encodedObjectNames, JvmAbi.TRAIT_IMPL_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD);
-    }
-
-    @NotNull
-    private static String decodeSpecialNames(@NotNull String str) {
-        String decodedObjectNames = StringUtil.replace(str, CLASS_OBJECT_REPLACE_GUARD, JvmAbi.CLASS_OBJECT_CLASS_NAME);
-        return StringUtil.replace(decodedObjectNames, TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME);
-    }
-
-    @NotNull
-    private static String fqNameToInternalName(@NotNull FqName fqName) {
-        return fqName.asString().replace('.', '/');
-    }
-
-    @NotNull
-    private static String internalNameToFqName(@NotNull String name) {
-        return decodeSpecialNames(encodeSpecialNames(name).replace('$', '.').replace('/', '.'));
     }
 
     private final static String CLASS_OBJECT_REPLACE_GUARD = "<class_object>";
@@ -83,7 +59,14 @@ public class JvmClassName {
     @NotNull
     public FqName getFqNameForClassNameWithoutDollars() {
         if (fqName == null) {
-            fqName = new FqName(internalNameToFqName(internalName));
+            String fqName = internalName
+                    .replace(JvmAbi.CLASS_OBJECT_CLASS_NAME, CLASS_OBJECT_REPLACE_GUARD)
+                    .replace(JvmAbi.TRAIT_IMPL_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD)
+                    .replace('$', '.')
+                    .replace('/', '.')
+                    .replace(TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME)
+                    .replace(CLASS_OBJECT_REPLACE_GUARD, JvmAbi.CLASS_OBJECT_CLASS_NAME);
+            this.fqName = new FqName(fqName);
         }
         return fqName;
     }
@@ -95,7 +78,7 @@ public class JvmClassName {
 
     @Override
     public String toString() {
-        return getInternalName();
+        return internalName;
     }
 
     @Override
