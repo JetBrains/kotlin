@@ -5,8 +5,6 @@ JetFile: ValueParameterNoTypeRecovery.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Test')
-    TYPE_PARAMETER_LIST
-      <empty list>
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER

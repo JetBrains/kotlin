@@ -8,9 +8,7 @@ JetFile: PrimaryConstructorModifiers_ERR.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
-    PsiWhiteSpace('\n\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
+  PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST
       PsiElement(open)('open')
@@ -19,8 +17,6 @@ JetFile: PrimaryConstructorModifiers_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('AB')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PRIMARY_CONSTRUCTOR_MODIFIER_LIST
       PsiElement(private)('private')
     PsiErrorElement:Expecting primary constructor parameter list
@@ -48,8 +44,6 @@ JetFile: PrimaryConstructorModifiers_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A1')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n')

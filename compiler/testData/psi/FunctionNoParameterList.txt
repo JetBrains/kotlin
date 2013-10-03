@@ -6,8 +6,6 @@ JetFile: FunctionNoParameterList.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
@@ -23,8 +21,6 @@ JetFile: FunctionNoParameterList.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('B')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
@@ -43,8 +39,6 @@ JetFile: FunctionNoParameterList.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('C')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')

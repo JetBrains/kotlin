@@ -38,8 +38,6 @@ JetFile: LinkedList.kt
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Item')
-        TYPE_PARAMETER_LIST
-          <empty list>
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           VALUE_PARAMETER

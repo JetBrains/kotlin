@@ -211,8 +211,6 @@ JetFile: Comparison.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('ComparisonResult')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')

@@ -97,9 +97,9 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         doParsingTest("compiler/testData/psi/BlockCommentAtBeginningOfFile4.kt");
     }
     
-    @TestMetadata("ByCaluses.kt")
-    public void testByCaluses() throws Exception {
-        doParsingTest("compiler/testData/psi/ByCaluses.kt");
+    @TestMetadata("ByClauses.kt")
+    public void testByClauses() throws Exception {
+        doParsingTest("compiler/testData/psi/ByClauses.kt");
     }
     
     @TestMetadata("CallWithManyClosures.kt")

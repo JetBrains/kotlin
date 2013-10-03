@@ -6,8 +6,6 @@ JetFile: LocalProperty.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('B')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')

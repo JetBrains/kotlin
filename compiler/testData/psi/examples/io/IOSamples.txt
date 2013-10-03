@@ -54,8 +54,6 @@ JetFile: IOSamples.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('ICloseable')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
@@ -76,8 +74,6 @@ JetFile: IOSamples.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('JavaCloseableWrapper')
-    TYPE_PARAMETER_LIST
-      <empty list>
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER
@@ -203,8 +199,6 @@ JetFile: IOSamples.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('FileInput')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -448,8 +442,6 @@ JetFile: IOSamples.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('FileOutput')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST

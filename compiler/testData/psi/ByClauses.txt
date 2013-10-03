@@ -1,4 +1,4 @@
-JetFile: ByCaluses.kt
+JetFile: ByClauses.kt
   NAMESPACE_HEADER
     <empty list>
   CLASS
@@ -6,8 +6,6 @@ JetFile: ByCaluses.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -42,8 +40,6 @@ JetFile: ByCaluses.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -96,8 +92,6 @@ JetFile: ByCaluses.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -135,8 +129,6 @@ JetFile: ByCaluses.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -182,8 +174,6 @@ JetFile: ByCaluses.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -232,8 +222,6 @@ JetFile: ByCaluses.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -283,8 +271,6 @@ JetFile: ByCaluses.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST

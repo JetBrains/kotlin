@@ -6,8 +6,6 @@ JetFile: functionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n')
@@ -31,9 +29,7 @@ JetFile: functionTypes.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('B')
-    PsiWhiteSpace('\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
+  PsiWhiteSpace('\n')
   PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
@@ -44,8 +40,6 @@ JetFile: functionTypes.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('XXX')
-    TYPE_PARAMETER_LIST
-      <empty list>
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
@@ -702,8 +696,6 @@ JetFile: functionTypes.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('YYY')
-    TYPE_PARAMETER_LIST
-      <empty list>
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')

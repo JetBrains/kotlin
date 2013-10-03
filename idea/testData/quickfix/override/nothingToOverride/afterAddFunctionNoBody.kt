@@ -1,8 +1,8 @@
 // "Add 'open fun f()' to 'A'" "true"
-trait A
-{
+trait A {
     open fun f()
 }
+
 class B : A {
-    <caret>override fun f() {}
+    override fun f() {}
 }

@@ -258,8 +258,6 @@ JetFile: Imports_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')

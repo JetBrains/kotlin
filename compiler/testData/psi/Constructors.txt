@@ -6,8 +6,6 @@ JetFile: Constructors.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n')
@@ -20,8 +18,6 @@ JetFile: Constructors.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
-    TYPE_PARAMETER_LIST
-      <empty list>
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
@@ -43,8 +39,6 @@ JetFile: Constructors.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PRIMARY_CONSTRUCTOR_MODIFIER_LIST
       PsiElement(private)('private')
     PsiWhiteSpace(' ')

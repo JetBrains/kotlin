@@ -1001,8 +1001,6 @@ JetFile: SoftKeywords.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('F')
-    TYPE_PARAMETER_LIST
-      <empty list>
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER

@@ -6,8 +6,6 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f1')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -35,8 +33,6 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f2')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -71,8 +67,6 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f_tuple')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -115,8 +109,6 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('hof')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('   ')
     TYPE_REFERENCE
@@ -157,8 +149,6 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('hof2')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('   ')
     TYPE_REFERENCE
@@ -352,8 +342,6 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Runnable')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE

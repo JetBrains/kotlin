@@ -240,8 +240,6 @@ JetFile: Builder.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('AntBuilder')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
@@ -253,8 +251,6 @@ JetFile: Builder.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('ClassPathEntry')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
@@ -264,8 +260,6 @@ JetFile: Builder.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Module')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         DELEGATION_SPECIFIER_LIST
@@ -346,8 +340,6 @@ JetFile: Builder.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Library')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         DELEGATION_SPECIFIER_LIST

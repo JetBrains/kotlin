@@ -76,7 +76,6 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         doBuildTest("class C { class object { fun foo() {} }}",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=C fqn=C superNames=[]]\n" +
-                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
                     "    OBJECT_DECLARATION:PsiJetObjectStubImpl[class-object name=null fqName=null]\n" +
                     "      FUN:PsiJetFunctionStubImpl[name=foo]\n" +
                     "        VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
@@ -118,7 +117,6 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "}",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=More fqn=More superNames=[]]\n" +
-                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
                     "    PROPERTY:PsiJetPropertyStubImpl[val name=test typeText=Int bodyText=11]\n");
     }
 
@@ -147,7 +145,6 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "}\n",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]\n" +
-                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
                     "    PROPERTY:PsiJetPropertyStubImpl[val name=test typeText=null bodyText=12]\n" +
                     "    FUN:PsiJetFunctionStubImpl[name=more]\n" +
@@ -158,7 +155,6 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         doBuildTest("enum class Test { First\n Second\n }",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[enumClass name=Test fqn=Test superNames=[]]\n" +
-                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
                     "    ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=First fqn=Test.First superNames=[]]\n" +
                     "    ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=Second fqn=Test.Second superNames=[]]\n"
         );
@@ -167,17 +163,14 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testAnnotationClass() {
         doBuildTest("annotation class Test",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  CLASS:PsiJetClassStubImpl[isAnnotation name=Test fqn=Test superNames=[]]\n" +
-                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
+                    "  CLASS:PsiJetClassStubImpl[isAnnotation name=Test fqn=Test superNames=[]]\n");
     }
 
     public void testInnerClass() {
         doBuildTest("class A { inner class B { } }",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
-                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
-                    "    CLASS:PsiJetClassStubImpl[inner name=B fqn=A.B superNames=[]]\n" +
-                    "      TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
+                    "    CLASS:PsiJetClassStubImpl[inner name=B fqn=A.B superNames=[]]\n");
     }
 
     public void testNamedObject() {
@@ -190,8 +183,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         doBuildTest("Deprecated class Test {}",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]\n" +
-                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
-                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n");
     }
 
     public void testAnnotationOnFunction() {

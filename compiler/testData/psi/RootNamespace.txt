@@ -13,9 +13,7 @@ JetFile: RootNamespace.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('X')
-    PsiWhiteSpace('\n\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
+  PsiWhiteSpace('\n\n')
   PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')

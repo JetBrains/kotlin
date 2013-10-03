@@ -107,9 +107,7 @@ JetFile: ShortAnnotations.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
-    PsiWhiteSpace('\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
+  PsiWhiteSpace('\n')
   OBJECT_DECLARATION
     MODIFIER_LIST
       ANNOTATION_ENTRY
@@ -412,8 +410,6 @@ JetFile: ShortAnnotations.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('T')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -426,8 +422,6 @@ JetFile: ShortAnnotations.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
@@ -543,9 +537,7 @@ JetFile: ShortAnnotations.kt
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('A')
-        PsiWhiteSpace('\n  ')
-        TYPE_PARAMETER_LIST
-          <empty list>
+      PsiWhiteSpace('\n  ')
       OBJECT_DECLARATION
         MODIFIER_LIST
           ANNOTATION_ENTRY
@@ -848,8 +840,6 @@ JetFile: ShortAnnotations.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('T')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE

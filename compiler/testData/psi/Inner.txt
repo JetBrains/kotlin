@@ -6,8 +6,6 @@ JetFile: Inner.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Outer')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
@@ -18,7 +16,5 @@ JetFile: Inner.kt
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Inner')
-        PsiWhiteSpace('\n')
-        TYPE_PARAMETER_LIST
-          <empty list>
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

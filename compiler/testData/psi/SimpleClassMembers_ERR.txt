@@ -6,8 +6,6 @@ JetFile: SimpleClassMembers_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n    ')
@@ -16,8 +14,6 @@ JetFile: SimpleClassMembers_ERR.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
@@ -30,8 +26,6 @@ JetFile: SimpleClassMembers_ERR.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Bar')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
@@ -70,8 +64,6 @@ JetFile: SimpleClassMembers_ERR.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE

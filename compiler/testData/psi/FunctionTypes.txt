@@ -6,8 +6,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -44,8 +42,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -71,8 +67,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -103,8 +97,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -125,8 +117,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -166,8 +156,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -197,8 +185,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -219,8 +205,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -241,8 +225,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -300,8 +282,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -338,8 +318,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -389,8 +367,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -450,8 +426,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -478,8 +452,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -510,8 +482,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('  ')
     TYPE_REFERENCE
@@ -565,8 +535,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -603,8 +571,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -645,8 +611,6 @@ JetFile: FunctionTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE

@@ -544,8 +544,6 @@ JetFile: MultiVariableDeclarations.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('X')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
