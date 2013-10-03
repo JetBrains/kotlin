@@ -1,5 +1,7 @@
 <project name="Kotlin" default="dist">
 
+    <property file="resources/manifest.properties" />
+
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
     <!-- Set to false to disable compiler's @NotNull assertions. Speeds up the build -->
@@ -146,10 +148,10 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler Sources"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.sources}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -163,16 +165,16 @@
                          sourcepathref="compilerSources.path"
                          classpathref="classpath"
                          linksource="yes"
-                         windowtitle="Kotlin Compiler"/>
+                         windowtitle="${manifest.impl.title.kotlin.compiler}"/>
                 <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
                     <fileset dir="${output}/kotlin-compiler-javadoc"/>
                     <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
                     <manifest>
-                        <attribute name="Built-By" value="JetBrains"/>
+                        <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                        <attribute name="Implementation-Vendor" value="JetBrains"/>
-                        <attribute name="Implementation-Title" value="Kotlin Compiler Javadoc"/>
+                        <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                        <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.javadoc}"/>
                         <attribute name="Implementation-Version" value="${build.number}"/>
                     </manifest>
                 </jar>
@@ -181,10 +183,10 @@
             <else>
                 <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
                     <manifest>
-                        <attribute name="Built-By" value="JetBrains"/>
+                        <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                        <attribute name="Implementation-Vendor" value="JetBrains"/>
-                        <attribute name="Implementation-Title" value="Kotlin Compiler Javadoc"/>
+                        <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                        <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.javadoc}"/>
                         <attribute name="Implementation-Version" value="${build.number}"/>
                     </manifest>
                 </jar>
@@ -204,10 +206,10 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin JavaScript StdLib"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.javascript.stdlib}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -242,10 +244,10 @@
           <fileset dir="${output}/classes/preloader"/>
 
           <manifest>
-              <attribute name="Built-By" value="JetBrains"/>
+              <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-              <attribute name="Implementation-Vendor" value="JetBrains"/>
-              <attribute name="Implementation-Title" value="Kotlin Preloader"/>
+              <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+              <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.preloader}"/>
               <attribute name="Implementation-Version" value="${build.number}"/>
 
               <attribute name="Main-Class" value="org.jetbrains.jet.preloading.Preloader"/>
@@ -273,10 +275,10 @@
               <zipgroupfileset dir="${basedir}/dependencies" includes="cli-parser-1.1.1.jar"/>
 
               <manifest>
-                  <attribute name="Built-By" value="JetBrains"/>
+                  <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                  <attribute name="Implementation-Vendor" value="JetBrains"/>
-                  <attribute name="Implementation-Title" value="Kotlin Compiler"/>
+                  <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                  <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
                   <attribute name="Implementation-Version" value="${build.number}"/>
 
                   <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
@@ -430,10 +432,10 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler Ant Tasks"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.ant.task}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
                 <attribute name="Class-Path" value="kotlin-compiler.jar"/>
@@ -444,13 +446,13 @@
     <target name="jdkAnnotations">
         <pack_annotations jarfile="kotlin-jdk-annotations.jar"
                           annotationsdir="${basedir}/jdk-annotations"
-                          title="Kotlin Compiler JDK Annotations"/>
+                          title="${manifest.impl.title.kotlin.compiler.annotations.jdk}"/>
     </target>
 
     <target name="androidSdkAnnotations">
         <pack_annotations jarfile="kotlin-android-sdk-annotations.jar"
                           annotationsdir="${basedir}/android-sdk-annotations"
-                          title="Kotlin Compiler Android SDK Annotations"/>
+                          title="${manifest.impl.title.kotlin.compiler.annotations.android.sdk}"/>
     </target>
 
     <macrodef name="pack_annotations">
@@ -464,9 +466,9 @@
                 <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
                 <manifest>
-                  <attribute name="Built-By" value="JetBrains"/>
+                  <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                  <attribute name="Implementation-Vendor" value="JetBrains"/>
+                  <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
                   <attribute name="Implementation-Title" value="@{title}"/>
                   <attribute name="Implementation-Version" value="${build.number}"/>
                 </manifest>
@@ -486,10 +488,10 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Extended Annotations"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.annotations.extended}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -522,10 +524,10 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler Runtime + StdLib"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.and.stdlib}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -538,10 +540,10 @@
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler Runtime + StdLib Sources"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.runtime.and.stdlib.sources}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -561,10 +563,10 @@
             <fileset dir="${output}/classes/j2k" includes="org/jetbrains/jet/j2k/**"/>
 
             <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Java to Kotlin Converter"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.java2kotlin.converter}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
                 <attribute name="Main-Class" value="org.jetbrains.jet.j2k.JavaToKotlinTranslator"/>

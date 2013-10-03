@@ -16,21 +16,47 @@
 
 package org.jetbrains.jet.utils;
 
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class LibraryUtils {
-    public static final String VENDOR_JETBRAINS = "JetBrains";
+    private static final Logger LOG = Logger.getInstance(LibraryUtils.class);
 
-    public static final String TITLE_KOTLIN_RUNTIME_AND_STDLIB = "Kotlin Compiler Runtime + StdLib";
-    public static final String TITLE_KOTLIN_RUNTIME_AND_STDLIB_SOURCES = "Kotlin Compiler Runtime + StdLib Sources";
-    public static final String TITLE_KOTLIN_JAVASCRIPT_STDLIB = "Kotlin JavaScript StdLib";
+    public static final String TITLE_KOTLIN_JVM_RUNTIME_AND_STDLIB;
+    public static final String TITLE_KOTLIN_JAVASCRIPT_STDLIB;
+
+    static {
+        String jsStdLib = "";
+        String jvmStdLib = "";
+
+        InputStream manifestProperties = LibraryUtils.class.getResourceAsStream("/manifest.properties");
+        if (manifestProperties != null) {
+            try {
+                Properties properties = new Properties();
+                properties.load(manifestProperties);
+                jvmStdLib = properties.getProperty("manifest.impl.title.kotlin.jvm.runtime.and.stdlib");
+                jsStdLib = properties.getProperty("manifest.impl.title.kotlin.javascript.stdlib");
+            }
+            catch (IOException e) {
+                LOG.error(e);
+            }
+        }
+        else {
+            LOG.error("Resource 'manifest.properties' not found.");
+        }
+
+        TITLE_KOTLIN_JVM_RUNTIME_AND_STDLIB = jvmStdLib;
+        TITLE_KOTLIN_JAVASCRIPT_STDLIB = jsStdLib;
+    }
 
     private LibraryUtils() {}
 
@@ -71,6 +97,6 @@ public class LibraryUtils {
     }
 
     public static boolean isJvmRuntimeLibrary(@NotNull File library) {
-        return checkImplTitle(library, TITLE_KOTLIN_RUNTIME_AND_STDLIB);
+        return checkImplTitle(library, TITLE_KOTLIN_JVM_RUNTIME_AND_STDLIB);
     }
 }

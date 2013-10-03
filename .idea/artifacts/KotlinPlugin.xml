@@ -38,6 +38,7 @@
               <element id="module-output" name="cli-common" />
               <element id="module-output" name="util" />
               <element id="module-output" name="preloader" />
+              <element id="file-copy" path="$PROJECT_DIR$/resources/manifest.properties" />
             </element>
           </element>
           <element id="library" level="project" name="kotlin-runtime" />
