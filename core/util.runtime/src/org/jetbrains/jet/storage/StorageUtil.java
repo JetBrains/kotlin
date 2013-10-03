@@ -20,7 +20,8 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.WrappedValues;
+
+import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class StorageUtil {
     public static <T> NotNullLazyValue<T> createRecursionIntolerantLazyValueWithDefault(
@@ -28,12 +29,12 @@ public class StorageUtil {
             @NotNull Computable<T> compute
     ) {
         //noinspection unchecked
-        return LockBasedStorageManager.NO_LOCKS.createLazyValueWithPostCompute(
+        return NO_LOCKS.createLazyValueWithPostCompute(
                 compute,
-                new Function<Boolean, Object>() {
+                new Function<Boolean, T>() {
                     @Override
-                    public Object fun(Boolean firstTime) {
-                        if (firstTime) return WrappedValues.escapeThrowable(new ReenteringLazyValueComputationException());
+                    public T fun(Boolean firstTime) {
+                        if (firstTime) throw new ReenteringLazyValueComputationException();
                         return defaultValue;
                     }
                 },

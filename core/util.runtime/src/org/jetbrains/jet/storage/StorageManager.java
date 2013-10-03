@@ -46,13 +46,13 @@ public interface StorageManager {
      * @param onRecursiveCall is called if the computation calls itself recursively.
      *                        The parameter to it is {@code true} for the first call, {@code false} otherwise.
      *                        If {@code onRecursiveCall} is {@code null}, an exception will be thrown on a recursive call,
-     *                        otherwise it should return a result of WrappedValues.escapeThrowable() method
+     *                        otherwise it's executed and its result is returned
      * @param postCompute is called after the value is computed, but before any other thread sees it
      */
     @NotNull
     <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
             @NotNull Computable<T> computable,
-            @Nullable Function<Boolean, Object> onRecursiveCall,
+            @Nullable Function<Boolean, T> onRecursiveCall,
             @NotNull Consumer<T> postCompute
     );
 

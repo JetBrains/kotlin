@@ -4,7 +4,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import junit.framework.TestCase;
-import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -264,9 +263,9 @@ public class StorageManagerTest extends TestCase {
                             return rec.compute();
                         }
                     },
-                    new Function<Boolean, Object>() {
+                    new Function<Boolean, String>() {
                         @Override
-                        public Object fun(Boolean aBoolean) {
+                        public String fun(Boolean aBoolean) {
                             return "tolerant";
                         }
                     },
@@ -347,11 +346,11 @@ public class StorageManagerTest extends TestCase {
                             return rec.compute();
                         }
                     },
-                    new Function<Boolean, Object>() {
+                    new Function<Boolean, String>() {
                         @Override
-                        public Object fun(Boolean firstTime) {
+                        public String fun(Boolean firstTime) {
                             if (firstTime) {
-                                return WrappedValues.escapeThrowable(new ReenteringLazyValueComputationException());
+                                throw new ReenteringLazyValueComputationException();
                             }
                             return "second";
                         }

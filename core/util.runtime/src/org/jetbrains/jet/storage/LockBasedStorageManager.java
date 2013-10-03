@@ -84,7 +84,7 @@ public class LockBasedStorageManager implements StorageManager {
     ) {
         return new LockBasedNotNullLazyValue<T>(lock, computable) {
             @Override
-            protected Object recursionDetected(boolean firstTime) {
+            protected T recursionDetected(boolean firstTime) {
                 return onRecursiveCall;
             }
         };
@@ -94,13 +94,13 @@ public class LockBasedStorageManager implements StorageManager {
     @Override
     public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
             @NotNull Computable<T> computable,
-            final Function<Boolean, Object> onRecursiveCall,
+            final Function<Boolean, T> onRecursiveCall,
             @NotNull final Consumer<T> postCompute
     ) {
         return new LockBasedNotNullLazyValue<T>(lock, computable) {
             @Nullable
             @Override
-            protected Object recursionDetected(boolean firstTime) {
+            protected T recursionDetected(boolean firstTime) {
                 if (onRecursiveCall == null) {
                     return super.recursionDetected(firstTime);
                 }
@@ -125,7 +125,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable, final T onRecursiveCall) {
         return new LockBasedLazyValue<T>(lock, computable) {
             @Override
-            protected Object recursionDetected(boolean firstTime) {
+            protected T recursionDetected(boolean firstTime) {
                 return onRecursiveCall;
             }
         };
@@ -191,11 +191,11 @@ public class LockBasedStorageManager implements StorageManager {
 
                 if (_value == NotValue.COMPUTING) {
                     value = NotValue.RECURSION_WAS_DETECTED;
-                    return WrappedValues.unescapeThrowable(recursionDetected(/*firstTime = */ true));
+                    return recursionDetected(/*firstTime = */ true);
                 }
 
                 if (_value == NotValue.RECURSION_WAS_DETECTED) {
-                    return WrappedValues.unescapeThrowable(recursionDetected(/*firstTime = */ false));
+                    return recursionDetected(/*firstTime = */ false);
                 }
 
                 value = NotValue.COMPUTING;
@@ -220,12 +220,11 @@ public class LockBasedStorageManager implements StorageManager {
 
         /**
          * @param firstTime {@code true} when recursion has been just detected, {@code false} otherwise
-         * @return a value or wrapped exception, see WrappedValues
-         * @throws DO NOT throw exceptions from implementations of this method, instead return WrappedValues.escapeThrowable(exception)
+         * @return a value to be returned on a recursive call or subsequent calls
          */
         @Nullable
-        protected Object recursionDetected(boolean firstTime) {
-            return WrappedValues.escapeThrowable(new IllegalStateException("Recursive call in a lazy value"));
+        protected T recursionDetected(boolean firstTime) {
+            throw new IllegalStateException("Recursive call in a lazy value");
         }
 
         protected void postCompute(T value) {

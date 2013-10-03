@@ -50,7 +50,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.NullableLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.*;
 
@@ -397,10 +396,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                         }
                     }
                 },
-                new Function<Boolean, Object>() {
+                new Function<Boolean, Collection<JetType>>() {
                     @Override
-                    public Object fun(Boolean firstTime) {
-                        return WrappedValues.unescapeExceptionOrNull(Collections.emptyList());
+                    public Collection<JetType> fun(Boolean firstTime) {
+                        return Collections.emptyList();
                     }
                 },
                 new Consumer<Collection<JetType>>() {
