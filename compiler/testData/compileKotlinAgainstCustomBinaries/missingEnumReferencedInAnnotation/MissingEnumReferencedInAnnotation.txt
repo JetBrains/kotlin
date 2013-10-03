@@ -5,7 +5,7 @@ internal final annotation class Anno : jet.Annotation {
     internal final val e: [ERROR : test.E]
 }
 
-test.Anno(e = Unresolved enum entry: test.E.ENTRY: [ERROR : Unresolved enum entry: test.E.ENTRY]) internal open class Class {
+test.Anno(e = Unresolved enum entry: test/E.ENTRY: [ERROR : Unresolved enum entry: test/E.ENTRY]) internal open class Class {
     public constructor Class()
 }
 

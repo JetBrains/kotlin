@@ -36,12 +36,12 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -151,7 +151,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     ) {
         if (ignoreAnnotation(className)) return null;
 
-        final ClassDescriptor annotationClass = resolveAnnotationClass(className);
+        final ClassDescriptor annotationClass = resolveClass(className);
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
@@ -178,8 +178,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
             @NotNull
             private CompileTimeConstant<?> enumEntryValue(@NotNull JvmClassName enumClassName, @NotNull Name name) {
-                ClassDescriptor enumClass = javaClassResolver.resolveClass(enumClassName.getFqName(), IGNORE_KOTLIN_SOURCES);
-                if (enumClass != null && enumClass.getKind() == ClassKind.ENUM_CLASS) {
+                ClassDescriptor enumClass = resolveClass(enumClassName);
+                if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
                     ClassDescriptor classObject = enumClass.getClassObjectDescriptor();
                     if (classObject != null) {
                         Collection<VariableDescriptor> properties = classObject.getDefaultType().getMemberScope().getProperties(name);
@@ -191,7 +191,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                         }
                     }
                 }
-                return ErrorValue.create("Unresolved enum entry: " + enumClassName.getFqName() + "." + name);
+                return ErrorValue.create("Unresolved enum entry: " + enumClassName.getInternalName() + "." + name);
             }
 
             @Override
@@ -209,7 +209,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @NotNull
-    private ClassDescriptor resolveAnnotationClass(@NotNull JvmClassName className) {
+    private ClassDescriptor resolveClass(@NotNull JvmClassName className) {
         ClassDescriptor annotationClass = javaClassResolver.resolveClass(className.getFqName(), IGNORE_KOTLIN_SOURCES);
         return annotationClass != null ? annotationClass : ErrorUtils.getErrorClass();
     }

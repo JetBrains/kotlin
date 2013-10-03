@@ -86,6 +86,13 @@ public final class PsiCodegenPredictor {
             if (packageName == null) {
                 return null;
             }
+
+            if (declaration instanceof JetNamedFunction) {
+                JvmClassName packageClass = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(new FqName(packageName)));
+                Name name = ((JetNamedFunction) declaration).getNameAsName();
+                return name == null ? null : packageClass.getInternalName() + "$" + name.asString();
+            }
+
             parentInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageName).getInternalName();
         }
 
@@ -101,19 +108,12 @@ public final class PsiCodegenPredictor {
             return null;
         }
 
-        JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) declaration;
-        Name name = namedDeclaration.getNameAsName();
+        Name name = ((JetNamedDeclaration) declaration).getNameAsName();
         if (name == null) {
             return null;
         }
 
         if (declaration instanceof JetNamedFunction) {
-            if (parentDeclaration == null) {
-                FqName fqName = JvmClassName.byInternalName(parentInternalName).getFqName();
-                JvmClassName packageClass = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
-                return packageClass.getInternalName() + "$" + name.asString();
-            }
-
             if (!(parentDeclaration instanceof JetClass || parentDeclaration instanceof JetObjectDeclaration)) {
                 // Can't generate predefined name for internal functions
                 return null;
