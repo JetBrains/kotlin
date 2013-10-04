@@ -126,12 +126,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return first(classDescriptors.fun(name));
+        return first(classDescriptors.invoke(name));
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return first(objectDescriptors.fun(name));
+        return first(objectDescriptors.invoke(name));
     }
 
     private static <T> T first(@NotNull List<T> list) {
@@ -142,7 +142,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        return functionDescriptors.fun(name);
+        return functionDescriptors.invoke(name);
     }
 
     @NotNull
@@ -175,7 +175,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull Name name) {
-        return propertyDescriptors.fun(name);
+        return propertyDescriptors.invoke(name);
     }
 
     @NotNull
@@ -224,7 +224,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        return allDescriptors.compute().objects;
+        return allDescriptors.invoke().objects;
     }
 
     @Override
@@ -248,7 +248,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return allDescriptors.compute().all;
+        return allDescriptors.invoke().all;
     }
 
     @NotNull
@@ -275,7 +275,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
                 if (name != null) {
-                    result.all.addAll(classDescriptors.fun(name));
+                    result.all.addAll(classDescriptors.invoke(name));
                 }
             }
             else if (declaration instanceof JetFunction) {

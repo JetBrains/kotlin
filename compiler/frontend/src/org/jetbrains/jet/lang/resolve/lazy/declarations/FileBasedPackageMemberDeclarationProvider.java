@@ -71,7 +71,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
 
     @Override
     public Collection<FqName> getAllDeclaredPackages() {
-        return allDeclaredPackages.compute();
+        return allDeclaredPackages.invoke();
     }
 
     @NotNull

@@ -30,6 +30,6 @@ public class LazyScopeAdapter extends AbstractScopeAdapter {
     @NotNull
     @Override
     protected JetScope getWorkerScope() {
-        return scope.compute();
+        return scope.invoke();
     }
 }

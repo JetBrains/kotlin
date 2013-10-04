@@ -136,7 +136,7 @@ public class TypeDeserializer {
     private TypeConstructor typeConstructor(@NotNull ProtoBuf.Type.Constructor proto) {
         switch (proto.getKind()) {
             case CLASS:
-                ClassDescriptor classDescriptor = classDescriptors.fun(proto.getId());
+                ClassDescriptor classDescriptor = classDescriptors.invoke(proto.getId());
                 if (classDescriptor == null) return null;
 
                 return classDescriptor.getTypeConstructor();
@@ -227,7 +227,7 @@ public class TypeDeserializer {
         @NotNull
         @Override
         public TypeConstructor getConstructor() {
-            return constructor.compute();
+            return constructor.invoke();
         }
 
         @NotNull
@@ -254,7 +254,7 @@ public class TypeDeserializer {
         @NotNull
         @Override
         public JetScope getMemberScope() {
-            return memberScope.compute();
+            return memberScope.invoke();
         }
 
         @Override

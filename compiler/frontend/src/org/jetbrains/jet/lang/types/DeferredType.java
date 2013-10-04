@@ -54,7 +54,7 @@ public class DeferredType implements JetType {
 
     @NotNull
     public JetType getActualType() {
-        return lazyValue.compute();
+        return lazyValue.invoke();
     }
 
     @Override

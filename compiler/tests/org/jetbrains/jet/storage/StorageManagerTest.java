@@ -3,6 +3,8 @@ package org.jetbrains.jet.storage;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
+import jet.Function0;
+import jet.Function1;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -22,23 +24,23 @@ public class StorageManagerTest extends TestCase {
         m = new LockBasedStorageManager();
     }
 
-    public static <T> void doTestComputesOnce(Computable<T> v, T expected, Counter counter) throws Exception {
+    public static <T> void doTestComputesOnce(Function0<T> v, T expected, Counter counter) throws Exception {
         assert 0 == counter.getCount();
 
-        T result1 = v.compute();
-        T result2 = v.compute();
+        T result1 = v.invoke();
+        T result2 = v.invoke();
         assertEquals(1, counter.getCount());
         assertEquals(expected, result1);
         assertEquals(result1, result2);
     }
 
-    public static <T> void doTestExceptionPreserved(Computable<T> v, Class<? extends Throwable> expected, Counter counter)
+    public static <T> void doTestExceptionPreserved(Function0<T> v, Class<? extends Throwable> expected, Counter counter)
             throws Exception {
         assert 0 == counter.getCount();
 
         Throwable caught1 = null;
         try {
-            v.compute();
+            v.invoke();
             fail();
         }
         catch (Throwable e) {
@@ -46,7 +48,7 @@ public class StorageManagerTest extends TestCase {
         }
         Throwable caught2 = null;
         try {
-            v.compute();
+            v.invoke();
             fail();
         }
         catch (Throwable e) {
@@ -64,14 +66,14 @@ public class StorageManagerTest extends TestCase {
     public void testIsComputed() throws Exception {
         NotNullLazyValue<String> value = m.createLazyValue(new CounterValue());
         assertFalse(value.isComputed());
-        value.compute();
+        value.invoke();
         assertTrue(value.isComputed());
     }
 
     public void testIsNullableComputed() throws Exception {
         NullableLazyValue<String> value = m.createNullableLazyValue(new CounterValueNull());
         assertFalse(value.isComputed());
-        value.compute();
+        value.invoke();
         assertTrue(value.isComputed());
     }
 
@@ -80,7 +82,7 @@ public class StorageManagerTest extends TestCase {
         assertFalse(value.isComputed());
 
         try {
-            value.compute();
+            value.invoke();
         }
         catch (Exception ignored) {
         }
@@ -93,7 +95,7 @@ public class StorageManagerTest extends TestCase {
         assertFalse(value.isComputed());
 
         try {
-            value.compute();
+            value.invoke();
         }
         catch (Exception ignored) {
         }
@@ -168,13 +170,13 @@ public class StorageManagerTest extends TestCase {
             NotNullLazyValue<String> rec = m.createLazyValue(new Computable<String>() {
                 @Override
                 public String compute() {
-                    return rec.compute();
+                    return rec.invoke();
                 }
             });
         }
 
         try {
-            new C().rec.compute();
+            new C().rec.invoke();
             fail();
         }
         catch (IllegalStateException e) {
@@ -187,13 +189,13 @@ public class StorageManagerTest extends TestCase {
             NullableLazyValue<String> rec = m.createNullableLazyValue(new Computable<String>() {
                 @Override
                 public String compute() {
-                    return rec.compute();
+                    return rec.invoke();
                 }
             });
         }
 
         try {
-            new C().rec.compute();
+            new C().rec.invoke();
             fail();
         }
         catch (IllegalStateException e) {
@@ -206,13 +208,13 @@ public class StorageManagerTest extends TestCase {
             NotNullLazyValue<String> rec = m.createRecursionTolerantLazyValue(new Computable<String>() {
                 @Override
                 public String compute() {
-                    assertEquals("rec", rec.compute());
+                    assertEquals("rec", rec.invoke());
                     return "tolerant!";
                 }
             }, "rec");
         }
 
-        assertEquals("tolerant!", new C().rec.compute());
+        assertEquals("tolerant!", new C().rec.invoke());
     }
 
     public void testNullableRecursionTolerance() throws Exception {
@@ -220,13 +222,13 @@ public class StorageManagerTest extends TestCase {
             NullableLazyValue<String> rec = m.createRecursionTolerantNullableLazyValue(new Computable<String>() {
                 @Override
                 public String compute() {
-                    assertEquals(null, rec.compute());
+                    assertEquals(null, rec.invoke());
                     return "tolerant!";
                 }
             }, null);
         }
 
-        assertEquals("tolerant!", new C().rec.compute());
+        assertEquals("tolerant!", new C().rec.invoke());
     }
 
     public void testRecursionIntoleranceWithPostCompute() throws Exception {
@@ -236,7 +238,7 @@ public class StorageManagerTest extends TestCase {
                     new Computable<String>() {
                         @Override
                         public String compute() {
-                            return rec.compute();
+                            return rec.invoke();
                         }
                     },
                     null,
@@ -245,7 +247,7 @@ public class StorageManagerTest extends TestCase {
         }
 
         try {
-            new C().rec.compute();
+            new C().rec.invoke();
             fail();
         }
         catch (IllegalStateException e) {
@@ -260,7 +262,7 @@ public class StorageManagerTest extends TestCase {
                     new Computable<String>() {
                         @Override
                         public String compute() {
-                            return rec.compute();
+                            return rec.invoke();
                         }
                     },
                     new Function<Boolean, String>() {
@@ -280,8 +282,8 @@ public class StorageManagerTest extends TestCase {
         }
 
         C c = new C();
-        assertEquals("tolerant", c.rec.compute());
-        c.rec.compute();
+        assertEquals("tolerant", c.rec.invoke());
+        c.rec.invoke();
         assertEquals("postCompute() called more than once", 1, counter.getCount());
     }
 
@@ -306,8 +308,8 @@ public class StorageManagerTest extends TestCase {
                 }
         );
 
-        assertEquals(Arrays.asList("first", "postComputed"), v.compute());
-        v.compute();
+        assertEquals(Arrays.asList("first", "postComputed"), v.invoke());
+        v.invoke();
         assertEquals(1, counter.getCount());
     }
 
@@ -331,8 +333,8 @@ public class StorageManagerTest extends TestCase {
                 }
         );
 
-        assertEquals(Arrays.asList("first", "postComputed"), v.compute());
-        v.compute();
+        assertEquals(Arrays.asList("first", "postComputed"), v.invoke());
+        v.invoke();
         assertEquals(1, counter.getCount());
     }
 
@@ -343,7 +345,7 @@ public class StorageManagerTest extends TestCase {
                     new Computable<String>() {
                         @Override
                         public String compute() {
-                            return rec.compute();
+                            return rec.invoke();
                         }
                     },
                     new Function<Boolean, String>() {
@@ -366,23 +368,23 @@ public class StorageManagerTest extends TestCase {
 
         C c = new C();
         try {
-            c.rec.compute();
+            c.rec.invoke();
             fail();
         }
         catch (ReenteringLazyValueComputationException e) {
             // OK
         }
 
-        assertEquals("second", c.rec.compute());
+        assertEquals("second", c.rec.invoke());
     }
 
     // Utilities
 
-    private static <K, V> Computable<V> apply(final Function<K, V> f, final K x) {
-        return new Computable<V>() {
+    private static <K, V> Function0<V> apply(final Function1<K, V> f, final K x) {
+        return new Function0<V>() {
             @Override
-            public V compute() {
-                return f.fun(x);
+            public V invoke() {
+                return f.invoke(x);
             }
         };
     }

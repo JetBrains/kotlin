@@ -234,7 +234,7 @@ public class LazyImportScope implements JetScope {
 
     @NotNull
     private JetScope getImportScope(JetImportDirective directive, LookupMode lookupMode) {
-        return importedScopesProvider.fun(directive).scopeForMode(lookupMode);
+        return importedScopesProvider.invoke(directive).scopeForMode(lookupMode);
     }
 
     @Nullable

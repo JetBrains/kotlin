@@ -99,7 +99,7 @@ public class ResolveElementCache {
                 elementOfAdditionalResolve = jetElement;
             }
 
-            return additionalResolveCache.getValue().fun(elementOfAdditionalResolve);
+            return additionalResolveCache.getValue().invoke(elementOfAdditionalResolve);
         }
 
         JetParameter parameter = PsiTreeUtil.getTopmostParentOfType(jetElement, JetParameter.class);

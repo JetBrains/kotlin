@@ -65,7 +65,7 @@ public class ScopeProvider {
 
     @NotNull
     public JetScope getFileScope(JetFile file) {
-        return fileScopes.fun(file);
+        return fileScopes.invoke(file);
     }
 
     private JetScope createFileScope(JetFile file) {
@@ -88,7 +88,7 @@ public class ScopeProvider {
                                 packageDescriptor.getMemberScope(),
                                 rootPackageDescriptor.getMemberScope(),
                                 importsScope,
-                                defaultImportsScope.compute());
+                                defaultImportsScope.invoke());
     }
 
     private JetScope createScopeWithDefaultImports() {

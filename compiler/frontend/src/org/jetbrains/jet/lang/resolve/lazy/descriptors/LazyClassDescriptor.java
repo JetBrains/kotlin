@@ -175,7 +175,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     public JetScope getScopeForClassHeaderResolution() {
-        return scopeForClassHeaderResolution.compute();
+        return scopeForClassHeaderResolution.invoke();
     }
 
     @NotNull
@@ -195,7 +195,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     public JetScope getScopeForMemberDeclarationResolution() {
-        return scopeForMemberDeclarationResolution.compute();
+        return scopeForMemberDeclarationResolution.invoke();
     }
 
     @NotNull
@@ -218,7 +218,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     public JetScope getScopeForPropertyInitializerResolution() {
-        return scopeForPropertyInitializerResolution.compute();
+        return scopeForPropertyInitializerResolution.invoke();
     }
 
     @NotNull
@@ -263,7 +263,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor.compute();
+        return classObjectDescriptor.invoke();
     }
 
     @Nullable
@@ -323,12 +323,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     @NotNull
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        return thisAsReceiverParameter.compute();
+        return thisAsReceiverParameter.invoke();
     }
 
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
-        return annotations.compute();
+        return annotations.invoke();
     }
 
     @NotNull
@@ -427,13 +427,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         @NotNull
         @Override
         public List<TypeParameterDescriptor> getParameters() {
-            return parameters.compute();
+            return parameters.invoke();
         }
 
         @NotNull
         @Override
         public Collection<JetType> getSupertypes() {
-            return supertypes.compute();
+            return supertypes.invoke();
         }
 
         private void findAndDisconnectLoopsInTypeHierarchy(Collection<JetType> supertypes) {

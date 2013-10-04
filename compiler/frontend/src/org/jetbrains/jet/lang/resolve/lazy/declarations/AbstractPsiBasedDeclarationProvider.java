@@ -84,24 +84,24 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
 
     @Override
     public List<JetDeclaration> getAllDeclarations() {
-        return index.compute().allDeclarations;
+        return index.invoke().allDeclarations;
     }
 
     @NotNull
     @Override
     public List<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
-        return Lists.newArrayList(index.compute().functions.get(name));
+        return Lists.newArrayList(index.invoke().functions.get(name));
     }
 
     @NotNull
     @Override
     public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-        return Lists.newArrayList(index.compute().properties.get(name));
+        return Lists.newArrayList(index.invoke().properties.get(name));
     }
 
     @NotNull
     @Override
     public Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name) {
-        return index.compute().classesAndObjects.get(name);
+        return index.invoke().classesAndObjects.get(name);
     }
 }

@@ -58,7 +58,7 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     @Nullable
     @Override
     public ClassDescriptor findClass(@NotNull ClassId classId) {
-        return findClass.fun(classId);
+        return findClass.invoke(classId);
     }
 
     @Nullable

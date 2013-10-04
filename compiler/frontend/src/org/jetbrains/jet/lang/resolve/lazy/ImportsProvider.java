@@ -45,7 +45,7 @@ class ImportsProvider {
 
     @NotNull
     public List<JetImportDirective> getImports(@NotNull Name name) {
-        return importsCacheValue.compute().getImports(name);
+        return importsCacheValue.invoke().getImports(name);
     }
 
     @NotNull

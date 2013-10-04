@@ -16,15 +16,10 @@
 
 package org.jetbrains.jet.storage;
 
-import com.intellij.openapi.util.Computable;
 import jet.Function0;
 import org.jetbrains.annotations.Nullable;
 
-public interface NullableLazyValue<T> extends Computable<T>, Function0<T> {
-    @Override
-    @Nullable
-    T compute();
-
+public interface NullableLazyValue<T> extends Function0<T> {
     @Override
     @Nullable
     T invoke();

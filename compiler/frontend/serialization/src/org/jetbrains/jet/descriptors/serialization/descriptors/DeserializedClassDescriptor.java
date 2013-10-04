@@ -151,7 +151,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration.compute();
+        return containingDeclaration.invoke();
     }
 
     @NotNull
@@ -201,7 +201,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
-        return annotations.compute();
+        return annotations.invoke();
     }
 
     @Override
@@ -226,7 +226,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Nullable
     @Override
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor.compute();
+        return primaryConstructor.invoke();
     }
 
     @NotNull
@@ -306,7 +306,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Nullable
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor.compute();
+        return classObjectDescriptor.invoke();
     }
 
     @NotNull
@@ -463,7 +463,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         @Nullable
         @Override
         protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedClasses.findClass.fun(name);
+            return classDescriptor.nestedClasses.findClass.invoke(name);
         }
 
         @Override
@@ -474,7 +474,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         @Nullable
         @Override
         public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedObjects.findClass.fun(name);
+            return classDescriptor.nestedObjects.findClass.invoke(name);
         }
 
         @NotNull
@@ -504,7 +504,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         public Collection<ClassDescriptor> getAllDescriptors() {
             Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(declaredNames.size());
             for (Name name : declaredNames) {
-                ClassDescriptor descriptor = findClass.fun(name);
+                ClassDescriptor descriptor = findClass.invoke(name);
                 if (descriptor != null) {
                     result.add(descriptor);
                 }

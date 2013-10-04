@@ -237,7 +237,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             errorReporter.reportAnnotationLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
         }
 
-        List<AnnotationDescriptor> annotations = memberAnnotations.fun(kotlinClass).get(signature);
+        List<AnnotationDescriptor> annotations = memberAnnotations.invoke(kotlinClass).get(signature);
         return annotations == null ? Collections.<AnnotationDescriptor>emptyList() : annotations;
     }
 

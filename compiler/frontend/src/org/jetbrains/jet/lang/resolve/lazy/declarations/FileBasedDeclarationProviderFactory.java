@@ -102,7 +102,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     }
 
     /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
-        return index.compute().declaredPackages.contains(packageFqName);
+        return index.invoke().declaredPackages.contains(packageFqName);
     }
 
     /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
@@ -110,7 +110,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     }
 
     /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
-        return Collections2.filter(index.compute().declaredPackages, new Predicate<FqName>() {
+        return Collections2.filter(index.invoke().declaredPackages, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
                 return !fqName.isRoot() && fqName.parent().equals(parent);
@@ -124,9 +124,9 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
         }
 
         Collection<NavigatablePsiElement> resultElements = Lists.newArrayList();
-        for (FqName declaredPackage : index.compute().filesByPackage.keys()) {
+        for (FqName declaredPackage : index.invoke().filesByPackage.keys()) {
             if (QualifiedNamesUtil.isSubpackageOf(declaredPackage, fqName)) {
-                Collection<JetFile> files = index.compute().filesByPackage.get(declaredPackage);
+                Collection<JetFile> files = index.invoke().filesByPackage.get(declaredPackage);
                 resultElements.addAll(ContainerUtil.map(files, new Function<JetFile, NavigatablePsiElement>() {
                     @Override
                     public NavigatablePsiElement fun(JetFile file) {
@@ -141,7 +141,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     @Override
     public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-        return packageDeclarationProviders.fun(packageFqName);
+        return packageDeclarationProviders.invoke(packageFqName);
     }
 
     @Nullable
@@ -153,13 +153,13 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             return null;
         }
 
-        return new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.compute().filesByPackage.get(packageFqName));
+        return new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.invoke().filesByPackage.get(packageFqName));
     }
 
     @NotNull
     @Override
     public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
-        if (!index.compute().filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
+        if (!index.invoke().filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
             throw new IllegalStateException("This factory doesn't know about this class: " + classLikeInfo);
         }
 

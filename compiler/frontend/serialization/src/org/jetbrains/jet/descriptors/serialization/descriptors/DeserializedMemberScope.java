@@ -143,7 +143,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public final Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        return functions.fun(name);
+        return functions.invoke(name);
     }
 
     @NotNull
@@ -160,7 +160,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
-        return properties.fun(name);
+        return properties.invoke(name);
     }
 
     @Nullable
@@ -184,7 +184,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        return objectDescriptors.compute();
+        return objectDescriptors.invoke();
     }
 
     @Nullable
@@ -231,7 +231,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public final Collection<DeclarationDescriptor> getAllDescriptors() {
-        return allDescriptors.compute();
+        return allDescriptors.invoke();
     }
 
     @NotNull

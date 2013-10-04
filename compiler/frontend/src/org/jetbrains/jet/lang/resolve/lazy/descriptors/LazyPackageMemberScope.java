@@ -54,7 +54,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return packageDescriptors.fun(name);
+        return packageDescriptors.invoke(name);
     }
 
     @Nullable

@@ -181,11 +181,6 @@ public class LockBasedStorageManager implements StorageManager {
 
         @Override
         public T invoke() {
-            return compute();
-        }
-
-        @Override
-        public T compute() {
             Object _value = value;
             if (!(value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
 
@@ -245,8 +240,8 @@ public class LockBasedStorageManager implements StorageManager {
 
         @Override
         @NotNull
-        public T compute() {
-            T result = super.compute();
+        public T invoke() {
+            T result = super.invoke();
             assert result != null : "compute() returned null";
             return result;
         }
@@ -264,13 +259,8 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         @Override
-        public V invoke(K k) {
-            return fun(k);
-        }
-
-        @Override
         @Nullable
-        public V fun(@NotNull K input) {
+        public V invoke(@NotNull K input) {
             Object value = cache.get(input);
             if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
@@ -311,8 +301,8 @@ public class LockBasedStorageManager implements StorageManager {
 
         @NotNull
         @Override
-        public V fun(@NotNull K input) {
-            V result = super.fun(input);
+        public V invoke(@NotNull K input) {
+            V result = super.invoke(input);
             assert result != null : "compute() returned null";
             return result;
         }

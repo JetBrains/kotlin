@@ -106,7 +106,7 @@ public class FilteringClassLikeInfo implements JetClassLikeInfo {
     @Override
     @NotNull
     public List<JetDeclaration> getDeclarations() {
-        return filteredDeclarations.compute();
+        return filteredDeclarations.invoke();
     }
 
     @Override

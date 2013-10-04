@@ -143,7 +143,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
         @NotNull
         @Override
         public Collection<Name> getClassNames(@NotNull FqName packageName) {
-            return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? classNames.compute() : Collections.<Name>emptyList();
+            return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? classNames.invoke() : Collections.<Name>emptyList();
         }
     }
 }
