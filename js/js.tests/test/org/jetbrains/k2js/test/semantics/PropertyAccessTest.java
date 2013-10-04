@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.JsTestUtils;
 
 import java.util.List;
 
@@ -80,15 +79,19 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testInitInstanceProperties() throws Exception {
-        fooBoxTest(JsTestUtils.successOnEcmaV5());
+        fooBoxTest();
+    }
+
+    public void testInitValInConstructor() throws Exception {
+        checkFooBoxIsOk();
     }
 
     public void testEnumerable() throws Exception {
-        fooBoxTest(JsTestUtils.successOnEcmaV5());
+        fooBoxTest();
     }
 
     public void testOverloadedOverriddenFunctionPropertyName() throws Exception {
-        fooBoxTest(JsTestUtils.successOnEcmaV5());
+        fooBoxTest();
     }
 
     @Override

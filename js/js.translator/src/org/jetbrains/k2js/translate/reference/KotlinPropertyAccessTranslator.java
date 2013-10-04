@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
+
 /**
  * For properies /w accessors.
  */
@@ -78,7 +80,11 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @NotNull
     @Override
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        return translateAsSet(receiver, toSetTo);
+        if (propertyDescriptor.isVar()) {
+            return translateAsSet(receiver, toSetTo);
+        } else {
+            return assignmentToBackingField(context(), propertyDescriptor, toSetTo);
+        }
     }
 
     @Override
