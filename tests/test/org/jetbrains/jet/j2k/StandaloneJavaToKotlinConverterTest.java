@@ -31,9 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author ignatov
- */
 public class StandaloneJavaToKotlinConverterTest extends TestCase {
     private final String myDataPath;
     private final String myName;

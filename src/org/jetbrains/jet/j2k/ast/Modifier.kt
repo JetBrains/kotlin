@@ -16,9 +16,6 @@ package org.jetbrains.jet.j2k.ast
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * @author ignatov
- */
 public enum class Modifier(val name: String) {
     PUBLIC: Modifier("public")
     PROTECTED: Modifier("protected")

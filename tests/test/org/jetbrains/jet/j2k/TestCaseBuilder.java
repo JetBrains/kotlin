@@ -28,9 +28,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author ignatov
- */
 abstract class TestCaseBuilder {
     @NotNull
     private static final FilenameFilter emptyFilter = new FilenameFilter() {

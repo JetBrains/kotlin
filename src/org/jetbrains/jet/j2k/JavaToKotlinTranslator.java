@@ -34,9 +34,6 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-/**
- * @author ignatov
- */
 public class JavaToKotlinTranslator {
     private JavaToKotlinTranslator() {
     }
