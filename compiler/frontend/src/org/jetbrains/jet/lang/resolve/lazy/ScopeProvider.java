@@ -36,8 +36,6 @@ import org.jetbrains.jet.storage.NotNullLazyValue;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.storage.StorageManager.ReferenceKind.WEAK;
-
 public class ScopeProvider {
     private final ResolveSession resolveSession;
 
@@ -48,12 +46,12 @@ public class ScopeProvider {
     public ScopeProvider(@NotNull ResolveSession resolveSession) {
         this.resolveSession = resolveSession;
 
-        this.fileScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, JetScope>() {
+        this.fileScopes = resolveSession.getStorageManager().createWeaklyRetainedMemoizedFunction(new Function1<JetFile, JetScope>() {
             @Override
             public JetScope invoke(@NotNull JetFile file) {
                 return createFileScope(file);
             }
-        }, WEAK);
+        });
 
         this.defaultImportsScope = resolveSession.getStorageManager().createLazyValue(new Function0<JetScope>() {
             @Override

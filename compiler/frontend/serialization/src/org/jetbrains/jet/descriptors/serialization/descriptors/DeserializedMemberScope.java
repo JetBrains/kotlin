@@ -33,8 +33,6 @@ import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.*;
 
-import static org.jetbrains.jet.storage.StorageManager.ReferenceKind.STRONG;
-
 public abstract class DeserializedMemberScope implements JetScope {
 
     private static final Filter<ProtoBuf.Callable.CallableKind> FUNCTION = new Filter<ProtoBuf.Callable.CallableKind>() {
@@ -78,13 +76,13 @@ public abstract class DeserializedMemberScope implements JetScope {
             public Collection<FunctionDescriptor> invoke(Name name) {
                 return computeFunctions(name);
             }
-        }, STRONG);
+        });
         this.properties = storageManager.createMemoizedFunction(new Function1<Name, Collection<VariableDescriptor>>() {
             @Override
             public Collection<VariableDescriptor> invoke(Name name) {
                 return computeProperties(name);
             }
-        }, STRONG);
+        });
         this.allDescriptors = storageManager.createLazyValue(new Function0<Collection<DeclarationDescriptor>>() {
             @Override
             public Collection<DeclarationDescriptor> invoke() {

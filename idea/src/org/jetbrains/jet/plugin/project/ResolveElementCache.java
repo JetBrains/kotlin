@@ -39,13 +39,13 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -66,14 +66,14 @@ public class ResolveElementCache {
                             @Nullable
                             @Override
                             public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
-                                StorageManager manager = ResolveElementCache.this.resolveSession.getStorageManager();
+                                LazyResolveStorageManager manager = ResolveElementCache.this.resolveSession.getStorageManager();
                                 MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
-                                        manager.createMemoizedFunction(new Function1<JetElement, BindingContext>() {
+                                        manager.createWeaklyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext invoke(JetElement jetElement) {
                                                 return elementAdditionalResolve(jetElement);
                                             }
-                                        }, StorageManager.ReferenceKind.WEAK);
+                                        });
 
                                 return Result.create(elementsCacheFunction, PsiModificationTracker.MODIFICATION_COUNT);
                             }

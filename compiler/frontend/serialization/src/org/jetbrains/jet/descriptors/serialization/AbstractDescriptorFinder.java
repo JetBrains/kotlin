@@ -25,8 +25,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.StorageManager;
 
-import static org.jetbrains.jet.storage.StorageManager.ReferenceKind.STRONG;
-
 public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
@@ -52,7 +50,7 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
                 classDescriptorCreated(classDescriptor);
                 return classDescriptor;
             }
-        }, STRONG);
+        });
     }
 
     @Nullable

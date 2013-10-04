@@ -76,7 +76,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             public PackageMemberDeclarationProvider invoke(FqName fqName) {
                 return createPackageMemberDeclarationProvider(fqName);
             }
-        }, StorageManager.ReferenceKind.STRONG);
+        });
     }
 
     @NotNull

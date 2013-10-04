@@ -30,9 +30,9 @@ public interface StorageManager {
      * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
      */
     @NotNull
-    <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
+    <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute);
     @NotNull
-    <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
+    <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute);
 
     @NotNull
     <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<T> computable);
@@ -69,9 +69,4 @@ public interface StorageManager {
     <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Function0<T> computable, @NotNull Function1<T, Void> postCompute);
 
     <T> T compute(@NotNull Function0<T> computable);
-
-    enum ReferenceKind {
-        STRONG,
-        WEAK
-    }
 }

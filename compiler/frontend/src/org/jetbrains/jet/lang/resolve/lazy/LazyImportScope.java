@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
-import static org.jetbrains.jet.storage.StorageManager.ReferenceKind.STRONG;
 
 public class LazyImportScope implements JetScope {
     private final ResolveSession resolveSession;
@@ -135,7 +134,7 @@ public class LazyImportScope implements JetScope {
             public ImportDirectiveResolveCache invoke(JetImportDirective directive) {
                 return new ImportDirectiveResolveCache(directive);
             }
-        }, STRONG);
+        });
 
         NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
         if (rootPackageDescriptor == null) {

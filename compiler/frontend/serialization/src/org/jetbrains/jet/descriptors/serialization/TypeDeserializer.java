@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.storage.StorageManager.ReferenceKind.STRONG;
-
 public class TypeDeserializer {
 
     public interface TypeParameterResolver {
@@ -99,7 +97,7 @@ public class TypeDeserializer {
             public ClassDescriptor invoke(Integer fqNameIndex) {
                 return computeClassDescriptor(fqNameIndex);
             }
-        }, STRONG);
+        });
     }
 
     /* package */ DescriptorFinder getDescriptorFinder() {

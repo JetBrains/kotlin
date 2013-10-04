@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.storage;
 
-import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import jet.Function0;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -50,24 +49,30 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
-            @NotNull Function1<K, V> compute, @NotNull ReferenceKind valuesReferenceKind
+    public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute) {
+        return createMemoizedFunction(compute, new ConcurrentHashMap<K, Object>());
+    }
+
+    @NotNull
+    protected  <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
+            @NotNull Function1<K, V> compute,
+            @NotNull ConcurrentMap<K, Object> map
     ) {
-        ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
         return new MapBasedMemoizedFunctionToNotNull<K, V>(lock, map, compute);
     }
 
     @NotNull
     @Override
-    public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
-            @NotNull Function1<K, V> compute, @NotNull ReferenceKind valuesReferenceKind
-    ) {
-        ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
-        return new MapBasedMemoizedFunction<K, V>(lock, map, compute);
+    public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute) {
+        return createMemoizedFunctionWithNullableValues(compute, new ConcurrentHashMap<K, Object>());
     }
 
-    private static <K, V> ConcurrentMap<K, V> createConcurrentMap(ReferenceKind referenceKind) {
-        return (referenceKind == ReferenceKind.WEAK) ? new ConcurrentWeakValueHashMap<K, V>() : new ConcurrentHashMap<K, V>();
+    @NotNull
+    protected <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
+            @NotNull Function1<K, V> compute,
+            @NotNull ConcurrentMap<K, Object> map
+    ) {
+        return new MapBasedMemoizedFunction<K, V>(lock, map, compute);
     }
 
     @NotNull

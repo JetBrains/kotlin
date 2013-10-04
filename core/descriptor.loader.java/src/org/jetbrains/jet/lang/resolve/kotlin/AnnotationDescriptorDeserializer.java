@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -75,7 +74,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                                 return Collections.emptyMap();
                             }
                         }
-                    }, StorageManager.ReferenceKind.STRONG);
+                    });
 
     @Inject
     public void setJavaClassResolver(JavaClassResolver javaClassResolver) {

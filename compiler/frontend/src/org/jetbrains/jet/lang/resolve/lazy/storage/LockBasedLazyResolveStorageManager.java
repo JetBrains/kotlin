@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve.lazy.storage;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.util.containers.ConcurrentWeakValueHashMap;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -25,6 +27,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -32,6 +36,23 @@ import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
 public class LockBasedLazyResolveStorageManager extends LockBasedStorageManager implements LazyResolveStorageManager {
+
+    @Override
+    @NotNull
+    public <K, V> MemoizedFunctionToNotNull<K, V> createWeaklyRetainedMemoizedFunction(
+            @NotNull Function1<K, V> compute
+    ) {
+        return super.createMemoizedFunction(compute, new ConcurrentWeakValueHashMap<K, Object>());
+    }
+
+    @NotNull
+    @Override
+    public <K, V> MemoizedFunctionToNullable<K, V> createWeaklyRetainedMemoizedFunctionWithNullableValues(
+            @NotNull Function1<K, V> compute
+    ) {
+        return super.createMemoizedFunctionWithNullableValues(compute, new ConcurrentWeakValueHashMap<K, Object>());
+    }
+
     @NotNull
     @Override
     public BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace) {

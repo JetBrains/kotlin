@@ -9,8 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.storage.StorageManager.ReferenceKind.STRONG;
-
 public class StorageManagerTest extends TestCase {
 
     private StorageManager m;
@@ -102,31 +100,31 @@ public class StorageManagerTest extends TestCase {
 
     public void testFunctionComputesOnce() throws Exception {
         CounterFunction counter = new CounterFunction();
-        MemoizedFunctionToNotNull<String, String> f = m.createMemoizedFunction(counter, STRONG);
+        MemoizedFunctionToNotNull<String, String> f = m.createMemoizedFunction(counter);
         doTestComputesOnce(apply(f, "ok"), "ok1", counter);
     }
 
     public void testNullableFunctionComputesOnce() throws Exception {
         CounterFunction counter = new CounterFunction();
-        MemoizedFunctionToNullable<String, String> f = m.createMemoizedFunctionWithNullableValues(counter, STRONG);
+        MemoizedFunctionToNullable<String, String> f = m.createMemoizedFunctionWithNullableValues(counter);
         doTestComputesOnce(apply(f, "ok"), "ok1", counter);
     }
 
     public void testNullIsNotConfusedForNotComputedInFunction() throws Exception {
         CounterFunctionToNull counter = new CounterFunctionToNull();
-        MemoizedFunctionToNullable<String, String> f = m.createMemoizedFunctionWithNullableValues(counter, STRONG);
+        MemoizedFunctionToNullable<String, String> f = m.createMemoizedFunctionWithNullableValues(counter);
         doTestComputesOnce(apply(f, ""), null, counter);
     }
 
     public void testFunctionPreservesExceptions() throws Exception {
         ExceptionCounterFunction counter = new ExceptionCounterFunction();
-        MemoizedFunctionToNotNull<String, String> f = m.createMemoizedFunction(counter, STRONG);
+        MemoizedFunctionToNotNull<String, String> f = m.createMemoizedFunction(counter);
         doTestExceptionPreserved(apply(f, ""), UnsupportedOperationException.class, counter);
     }
 
     public void testNullableFunctionPreservesExceptions() throws Exception {
         ExceptionCounterFunction counter = new ExceptionCounterFunction();
-        MemoizedFunctionToNullable<String, String> f = m.createMemoizedFunctionWithNullableValues(counter, STRONG);
+        MemoizedFunctionToNullable<String, String> f = m.createMemoizedFunctionWithNullableValues(counter);
         doTestExceptionPreserved(apply(f, ""), UnsupportedOperationException.class, counter);
     }
 

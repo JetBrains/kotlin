@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
                     public NamespaceDescriptor invoke(Name name) {
                         return createPackageDescriptor(name);
                     }
-                }, StorageManager.ReferenceKind.STRONG);
+                });
     }
 
     @Override
