@@ -66,6 +66,11 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             return null;
         }
 
+        // TODO temporary not building light classes for local classes: e.g., they won't be visible in hierarchy
+        if (JetPsiUtil.getOutermostClassOrObject(classOrObject) == null) {
+            return null;
+        }
+
         String jvmInternalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
         if (jvmInternalName == null) return null;
 
