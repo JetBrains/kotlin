@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.storage;
+package org.jetbrains.jet.util;
 
 import jet.Function0;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.storage.NotNullLazyValue;
 
 import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 

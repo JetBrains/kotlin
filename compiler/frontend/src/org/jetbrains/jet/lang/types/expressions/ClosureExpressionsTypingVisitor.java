@@ -45,7 +45,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
-import static org.jetbrains.jet.storage.StorageUtil.createRecursionIntolerantLazyValueWithDefault;
+import static org.jetbrains.jet.util.StorageUtil.createRecursionIntolerantLazyValueWithDefault;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {

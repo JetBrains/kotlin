@@ -3,6 +3,7 @@ package org.jetbrains.jet.storage;
 import jet.Function0;
 import jet.Function1;
 import junit.framework.TestCase;
+import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
