@@ -18,6 +18,7 @@ package org.jetbrains.jet.storage;
 
 import jet.Function0;
 import jet.Function1;
+import jet.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -99,7 +100,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
             @NotNull Function0<T> computable,
             final Function1<Boolean, T> onRecursiveCall,
-            @NotNull final Function1<T, Void> postCompute
+            @NotNull final Function1<T, Unit> postCompute
     ) {
         return new LockBasedNotNullLazyValue<T>(lock, computable) {
             @Nullable
@@ -138,7 +139,7 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
-            @NotNull Function0<T> computable, @NotNull final Function1<T, Void> postCompute
+            @NotNull Function0<T> computable, @NotNull final Function1<T, Unit> postCompute
     ) {
         return new LockBasedLazyValue<T>(lock, computable) {
             @Override

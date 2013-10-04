@@ -18,6 +18,7 @@ package org.jetbrains.jet.storage;
 
 import jet.Function0;
 import jet.Function1;
+import jet.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,7 @@ public interface StorageManager {
      * @param valuesReferenceKind how to store the memoized values
      *
      * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
+     *       the value gets collected and then re-computed
      */
     @NotNull
     <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute);
@@ -41,7 +43,6 @@ public interface StorageManager {
     <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(@NotNull Function0<T> computable, @NotNull T onRecursiveCall);
 
     /**
-     * @param computable
      * @param onRecursiveCall is called if the computation calls itself recursively.
      *                        The parameter to it is {@code true} for the first call, {@code false} otherwise.
      *                        If {@code onRecursiveCall} is {@code null}, an exception will be thrown on a recursive call,
@@ -52,7 +53,7 @@ public interface StorageManager {
     <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
             @NotNull Function0<T> computable,
             @Nullable Function1<Boolean, T> onRecursiveCall,
-            @NotNull Function1<T, Void> postCompute
+            @NotNull Function1<T, Unit> postCompute
     );
 
     @NotNull
@@ -66,7 +67,7 @@ public interface StorageManager {
      * see it in between)
      */
     @NotNull
-    <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Function0<T> computable, @NotNull Function1<T, Void> postCompute);
+    <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Function0<T> computable, @NotNull Function1<T, Unit> postCompute);
 
     <T> T compute(@NotNull Function0<T> computable);
 }

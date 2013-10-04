@@ -2,6 +2,7 @@ package org.jetbrains.jet.storage;
 
 import jet.Function0;
 import jet.Function1;
+import jet.Unit;
 import junit.framework.TestCase;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
@@ -238,10 +239,10 @@ public class StorageManagerTest extends TestCase {
                         }
                     },
                     null,
-                    new Function1<String, Void>() {
+                    new Function1<String, Unit>() {
                         @Override
-                        public Void invoke(String s) {
-                            return null;
+                        public Unit invoke(String s) {
+                            return Unit.VALUE;
                         }
                     }
             );
@@ -272,12 +273,12 @@ public class StorageManagerTest extends TestCase {
                             return "tolerant";
                         }
                     },
-                    new Function1<String, Void>() {
+                    new Function1<String, Unit>() {
                         @Override
-                        public Void invoke(String s) {
+                        public Unit invoke(String s) {
                             counter.inc();
                             assertEquals("tolerant", s);
-                            return null;
+                            return Unit.VALUE;
                         }
                     }
             );
@@ -301,12 +302,12 @@ public class StorageManagerTest extends TestCase {
                     }
                 },
                 null,
-                new Function1<Collection<String>, Void>() {
+                new Function1<Collection<String>, Unit>() {
                     @Override
-                    public Void invoke(Collection<String> strings) {
+                    public Unit invoke(Collection<String> strings) {
                         counter.inc();
                         strings.add("postComputed");
-                        return null;
+                        return Unit.VALUE;
                     }
                 }
         );
@@ -327,12 +328,12 @@ public class StorageManagerTest extends TestCase {
                         return strings;
                     }
                 },
-                new Function1<Collection<String>, Void>() {
+                new Function1<Collection<String>, Unit>() {
                     @Override
-                    public Void invoke(Collection<String> strings) {
+                    public Unit invoke(Collection<String> strings) {
                         counter.inc();
                         strings.add("postComputed");
-                        return null;                        
+                        return Unit.VALUE;
                     }
                 }
         );
@@ -361,11 +362,11 @@ public class StorageManagerTest extends TestCase {
                             return "second";
                         }
                     },
-                    new Function1<String, Void>() {
+                    new Function1<String, Unit>() {
                         @Override
-                        public Void invoke(String s) {
+                        public Unit invoke(String s) {
                             fail("Recursion-tolerating value should not be post computed");
-                            return null;
+                            return Unit.VALUE;
                         }
                     }
             );

@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import jet.Function0;
 import jet.Function1;
+import jet.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -401,11 +402,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                         return Collections.emptyList();
                     }
                 },
-                new Function1<Collection<JetType>, Void>() {
+                new Function1<Collection<JetType>, Unit>() {
                     @Override
-                    public Void invoke(@NotNull Collection<JetType> supertypes) {
+                    public Unit invoke(@NotNull Collection<JetType> supertypes) {
                         findAndDisconnectLoopsInTypeHierarchy(supertypes);
-                        return null;
+                        return Unit.VALUE;
                     }
                 });
 
