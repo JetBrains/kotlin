@@ -186,8 +186,12 @@ public final class CallTranslator extends AbstractTranslator {
         return callType.constructCall(receiver, new CallType.CallConstructor() {
             @NotNull
             @Override
-            public JsExpression construct(@Nullable JsExpression receiver) {  // TODO: support super val access
-                assert receiver != null;
+            public JsExpression construct(@Nullable JsExpression receiver) {
+                assert receiver != null : "Receiver for superCall must be not null";
+                if (isDirectPropertyAccess()) {
+                    return superPropertyAccess(receiver, getPropertyName());
+                }
+
                 JsExpression qualifiedCallee = getQualifiedCallee(Namer.getRefToPrototype(receiver));
                 qualifiedCallee = Namer.getFunctionCallRef(qualifiedCallee);
                 List<JsExpression> arguments = new ArrayList<JsExpression>(CallTranslator.this.arguments.size() + 1);
@@ -196,6 +200,25 @@ public final class CallTranslator extends AbstractTranslator {
                 return new JsInvocation(qualifiedCallee, arguments);
             }
         }, context());
+    }
+
+    @NotNull
+    private JsStringLiteral getPropertyName() {
+        assert descriptor instanceof PropertyAccessorDescriptor;
+        String propertyName = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().getName().asString();
+        return context().program().getStringLiteral(propertyName);
+    }
+
+    @NotNull
+    private JsExpression superPropertyAccess(@NotNull JsExpression classRef, @NotNull JsStringLiteral propertyName) {
+        if (descriptor instanceof PropertyGetterDescriptor) {
+            assert arguments.isEmpty();
+            return new JsInvocation(context().namer().getCallGetProperty(), JsLiteral.THIS, classRef, propertyName);
+        } else {
+            assert descriptor instanceof PropertySetterDescriptor;
+            assert arguments.size() == 1;
+            return new JsInvocation(context().namer().getCallSetProperty(), JsLiteral.THIS, classRef, propertyName, arguments.get(0));
+        }
     }
 
     @NotNull

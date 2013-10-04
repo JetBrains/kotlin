@@ -236,6 +236,14 @@ var Kotlin = {};
         return obj;
     };
 
+    Kotlin.callGetter = function(thisObject, klass, propertyName) {
+        return klass.$metadata$.properties[propertyName].get.call(thisObject);
+    };
+
+    Kotlin.callSetter = function(thisObject, klass, propertyName, value) {
+        klass.$metadata$.properties[propertyName].set.call(thisObject, value);
+    };
+
     function isInheritanceFromTrait (objConstructor, trait) {
         if (isNativeClass(objConstructor) || objConstructor.$metadata$.classIndex < trait.$metadata$.classIndex) {
             return false;

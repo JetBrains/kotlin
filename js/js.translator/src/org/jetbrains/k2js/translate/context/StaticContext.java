@@ -44,6 +44,7 @@ import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
 
 /**
  * Aggregates all the static parts of the context.
@@ -300,6 +301,9 @@ public final class StaticContext {
                     String propertyName = propertyDescriptor.getName().asString();
 
                     if (!isExtension(propertyDescriptor)) {
+                        if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE) {
+                            propertyName = getMangledName(propertyDescriptor, propertyName);
+                        }
                         return declarePropertyOrPropertyAccessorName(descriptor, propertyName, false);
                     } else {
                         if (descriptor instanceof PropertyDescriptor) {

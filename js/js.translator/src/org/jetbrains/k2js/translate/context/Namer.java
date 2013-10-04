@@ -167,6 +167,10 @@ public final class Namer {
     private final JsName enumEntriesName;
     @NotNull
     private final JsExpression undefinedExpression;
+    @NotNull
+    private final JsExpression callGetProperty;
+    @NotNull
+    private final JsExpression callSetProperty;
 
     @NotNull
     private final JsName isTypeName;
@@ -178,6 +182,9 @@ public final class Namer {
 
         definePackage = kotlin("definePackage");
         defineRootPackage = kotlin("defineRootPackage");
+
+        callGetProperty = kotlin("callGetter");
+        callSetProperty = kotlin("callSetter");
 
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
         enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
@@ -287,5 +294,15 @@ public final class Namer {
     @NotNull
     public JsExpression getUndefinedExpression() {
         return undefinedExpression;
+    }
+
+    @NotNull
+    public JsExpression getCallGetProperty() {
+        return callGetProperty;
+    }
+
+    @NotNull
+    public JsExpression getCallSetProperty() {
+        return callSetProperty;
     }
 }

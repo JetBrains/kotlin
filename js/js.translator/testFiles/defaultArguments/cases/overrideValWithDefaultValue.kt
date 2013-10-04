@@ -1,7 +1,7 @@
 package foo
 
 open class A(open val bar: Int = 2) {
-    val barA = bar
+    val barA = $bar
 }
 
 class B(override val bar: Int = 3) : A()
