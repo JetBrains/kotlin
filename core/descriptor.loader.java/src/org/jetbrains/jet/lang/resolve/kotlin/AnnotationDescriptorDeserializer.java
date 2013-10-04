@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
@@ -61,7 +62,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     private final MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>> memberAnnotations =
             storageManager.createMemoizedFunction(
-                    new MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>>() {
+                    new Function<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>>() {
                         @NotNull
                         @Override
                         public Map<MemberSignature, List<AnnotationDescriptor>> fun(@NotNull KotlinJvmBinaryClass kotlinClass) {

@@ -17,10 +17,15 @@
 package org.jetbrains.jet.storage;
 
 import com.intellij.util.Function;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 
-public interface MemoizedFunctionToNotNull<P, R> extends Function<P, R> {
+public interface MemoizedFunctionToNotNull<P, R> extends Function<P, R>, Function1<P, R> {
     @Override
     @NotNull
     R fun(P p);
+
+    @Override
+    @NotNull
+    R invoke(P p);
 }

@@ -17,12 +17,17 @@
 package org.jetbrains.jet.storage;
 
 import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.Nullable;
 
-public interface NullableLazyValue<T> extends Computable<T> {
+public interface NullableLazyValue<T> extends Computable<T>, Function0<T> {
     @Override
     @Nullable
     T compute();
+
+    @Override
+    @Nullable
+    T invoke();
 
     // Needed for proper toString() behaviors
     boolean isComputed();

@@ -17,10 +17,15 @@
 package org.jetbrains.jet.storage;
 
 import com.intellij.util.Function;
+import jet.Function1;
 import org.jetbrains.annotations.Nullable;
 
-public interface MemoizedFunctionToNullable<P, R> extends Function<P, R> {
+public interface MemoizedFunctionToNullable<P, R> extends Function<P, R>, Function1<P, R> {
     @Override
     @Nullable
     R fun(P p);
+
+    @Override
+    @Nullable
+    R invoke(P p);
 }

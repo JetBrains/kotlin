@@ -17,12 +17,17 @@
 package org.jetbrains.jet.storage;
 
 import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 
-public interface NotNullLazyValue<T> extends Computable<T> {
+public interface NotNullLazyValue<T> extends Computable<T>, Function0<T> {
     @Override
     @NotNull
     T compute();
+
+    @Override
+    @NotNull
+    T invoke();
 
     // Needed for proper toString() behaviors
     boolean isComputed();

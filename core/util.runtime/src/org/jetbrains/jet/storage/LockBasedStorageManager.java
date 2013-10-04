@@ -180,6 +180,11 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         @Override
+        public T invoke() {
+            return compute();
+        }
+
+        @Override
         public T compute() {
             Object _value = value;
             if (!(value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
@@ -256,6 +261,11 @@ public class LockBasedStorageManager implements StorageManager {
             this.lock = lock;
             this.cache = map;
             this.compute = compute;
+        }
+
+        @Override
+        public V invoke(K k) {
+            return fun(k);
         }
 
         @Override
