@@ -13,6 +13,7 @@ import java.util.Collections
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
+import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
 
 public open class ExpressionVisitor(converter: Converter): StatementVisitor(converter) {
     {
@@ -219,7 +220,8 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         val insideSecondaryConstructor: Boolean = isInsideSecondaryConstructor(expression)
         val hasReceiver: Boolean = isFieldReference && insideSecondaryConstructor
         val isThis: Boolean = isThisExpression(expression)
-        val isNullable: Boolean = getConverter().typeToType(expression.getType()).nullable
+        val notNull = isResolvedToNotNull(expression)
+        val isNullable: Boolean = getConverter().typeToType(expression.getType(), notNull).nullable
         val className: String = getClassNameWithConstructor(expression)
         val referencedName = expression.getReferenceName()!!
         var identifier: Expression = Identifier(referencedName, isNullable)
@@ -260,6 +262,17 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         }
 
         myResult = CallChainExpression(getConverter().expressionToExpression(qualifier), identifier)
+    }
+
+    private fun isResolvedToNotNull(expression: PsiReference): Boolean {
+        val target = expression.resolve()
+        if (target is PsiEnumConstant) {
+            return true;
+        }
+        if (target is PsiModifierListOwner) {
+            return isAnnotatedAsNotNull(target.getModifierList());
+        }
+        return false;
     }
 
     public override fun visitSuperExpression(expression: PsiSuperExpression?): Unit {
