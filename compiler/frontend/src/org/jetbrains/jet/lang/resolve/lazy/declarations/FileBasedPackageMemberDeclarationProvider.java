@@ -16,15 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.NavigatablePsiElement;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 
@@ -46,9 +46,9 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
         this.fqName = _fqName;
         this.factory = _factory;
         this.packageFiles = packageFiles;
-        this.allDeclaredPackages = storageManager.createLazyValue(new Computable<Collection<FqName>>() {
+        this.allDeclaredPackages = storageManager.createLazyValue(new Function0<Collection<FqName>>() {
             @Override
-            public Collection<FqName> compute() {
+            public Collection<FqName> invoke() {
                 return factory.getAllDeclaredSubPackagesOf(fqName);
             }
         });

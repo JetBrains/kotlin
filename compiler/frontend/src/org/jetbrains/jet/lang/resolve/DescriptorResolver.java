@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -316,9 +317,9 @@ public class DescriptorResolver {
                         DeferredType.create(trace,
                                             createRecursionIntolerantLazyValueWithDefault(
                                                     ErrorUtils.createErrorType("Recursive dependency"),
-                                                    new Computable<JetType>() {
+                                                    new Function0<JetType>() {
                                                         @Override
-                                                        public JetType compute() {
+                                                        public JetType invoke() {
                                                             JetType type = expressionTypingServices
                                                                     .getBodyExpressionType(trace, scope, dataFlowInfo, function,
                                                                                            functionDescriptor);
@@ -1037,9 +1038,9 @@ public class DescriptorResolver {
                                 trace,
                                 createRecursionIntolerantLazyValueWithDefault(
                                         ErrorUtils.createErrorType("Recursive dependency"),
-                                        new Computable<JetType>() {
+                                        new Function0<JetType>() {
                                             @Override
-                                            public JetType compute() {
+                                            public JetType invoke() {
                                                 return resolveDelegatedPropertyType((PropertyDescriptor) variableDescriptor, scope,
                                                                                     propertyDelegateExpression, dataFlowInfo, trace);
                                             }
@@ -1056,9 +1057,9 @@ public class DescriptorResolver {
                     return DeferredType.create(trace,
                                                createRecursionIntolerantLazyValueWithDefault(
                                                        ErrorUtils.createErrorType("Recursive dependency"),
-                                                       new Computable<JetType>() {
+                                                       new Function0<JetType>() {
                                                            @Override
-                                                           public JetType compute() {
+                                                           public JetType invoke() {
                                                                JetType type =
                                                                        resolveInitializerType(scope, initializer, dataFlowInfo, trace);
 
@@ -1384,9 +1385,9 @@ public class DescriptorResolver {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "values should be created in enum class: " + enumClassDescriptor;
         return DescriptorFactory
-                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new Computable<JetType>() {
+                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new Function0<JetType>() {
                     @Override
-                    public JetType compute() {
+                    public JetType invoke() {
                         return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
                     }
                 }));
@@ -1401,9 +1402,9 @@ public class DescriptorResolver {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "valueOf should be created in enum class: " + enumClassDescriptor;
         return DescriptorFactory
-                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new Computable<JetType>() {
+                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new Function0<JetType>() {
                     @Override
-                    public JetType compute() {
+                    public JetType invoke() {
                         return enumClassDescriptor.getDefaultType();
                     }
                 }));

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import com.intellij.util.Function;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
@@ -38,9 +38,9 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     ) {
         this.annotationDeserializer = annotationDeserializer;
 
-        this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<ClassId, ClassDescriptor>() {
+        this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<ClassId, ClassDescriptor>() {
             @Override
-            public ClassDescriptor fun(ClassId classId) {
+            public ClassDescriptor invoke(ClassId classId) {
                 ClassData classData = getClassData(classId);
                 if (classData == null) {
                     return null;

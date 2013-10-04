@@ -19,20 +19,21 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
@@ -64,15 +65,15 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     ) {
         this.storageManager = storageManager;
         this.isPackageDeclaredExternally = isPackageDeclaredExternally;
-        this.index = storageManager.createLazyValue(new Computable<Index>() {
+        this.index = storageManager.createLazyValue(new Function0<Index>() {
             @Override
-            public Index compute() {
+            public Index invoke() {
                 return computeFilesByPackage(files);
             }
         });
-        this.packageDeclarationProviders = storageManager.createMemoizedFunctionWithNullableValues(new Function<FqName, PackageMemberDeclarationProvider>() {
+        this.packageDeclarationProviders = storageManager.createMemoizedFunctionWithNullableValues(new Function1<FqName, PackageMemberDeclarationProvider>() {
             @Override
-            public PackageMemberDeclarationProvider fun(FqName fqName) {
+            public PackageMemberDeclarationProvider invoke(FqName fqName) {
                 return createPackageMemberDeclarationProvider(fqName);
             }
         }, StorageManager.ReferenceKind.STRONG);

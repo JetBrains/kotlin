@@ -17,21 +17,21 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.storage.NotNullLazyValue;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,16 +48,16 @@ public class ScopeProvider {
     public ScopeProvider(@NotNull ResolveSession resolveSession) {
         this.resolveSession = resolveSession;
 
-        this.fileScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function<JetFile, JetScope>() {
+        this.fileScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, JetScope>() {
             @Override
-            public JetScope fun(@NotNull JetFile file) {
+            public JetScope invoke(@NotNull JetFile file) {
                 return createFileScope(file);
             }
         }, WEAK);
 
-        this.defaultImportsScope = resolveSession.getStorageManager().createLazyValue(new Computable<JetScope>() {
+        this.defaultImportsScope = resolveSession.getStorageManager().createLazyValue(new Function0<JetScope>() {
             @Override
-            public JetScope compute() {
+            public JetScope invoke() {
                 return createScopeWithDefaultImports();
             }
         });

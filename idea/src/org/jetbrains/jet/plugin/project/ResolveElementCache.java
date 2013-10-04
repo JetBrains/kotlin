@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.*;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
@@ -67,9 +68,9 @@ public class ResolveElementCache {
                             public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
                                 StorageManager manager = ResolveElementCache.this.resolveSession.getStorageManager();
                                 MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
-                                        manager.createMemoizedFunction(new com.intellij.util.Function<JetElement, BindingContext>() {
+                                        manager.createMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
-                                            public BindingContext fun(JetElement jetElement) {
+                                            public BindingContext invoke(JetElement jetElement) {
                                                 return elementAdditionalResolve(jetElement);
                                             }
                                         }, StorageManager.ReferenceKind.WEAK);

@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.storage;
 
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,20 +28,20 @@ public interface StorageManager {
      * @param valuesReferenceKind how to store the memoized values
      *
      * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
-     *       the value gets collected and then re-computed
      */
     @NotNull
-    <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
+    <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
     @NotNull
-    <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
+    <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
 
     @NotNull
-    <T> NotNullLazyValue<T> createLazyValue(@NotNull Computable<T> computable);
+    <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<T> computable);
 
     @NotNull
-    <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(@NotNull Computable<T> computable, @NotNull T onRecursiveCall);
+    <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(@NotNull Function0<T> computable, @NotNull T onRecursiveCall);
 
     /**
+     * @param computable
      * @param onRecursiveCall is called if the computation calls itself recursively.
      *                        The parameter to it is {@code true} for the first call, {@code false} otherwise.
      *                        If {@code onRecursiveCall} is {@code null}, an exception will be thrown on a recursive call,
@@ -51,25 +50,25 @@ public interface StorageManager {
      */
     @NotNull
     <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
-            @NotNull Computable<T> computable,
-            @Nullable Function<Boolean, T> onRecursiveCall,
-            @NotNull Consumer<T> postCompute
+            @NotNull Function0<T> computable,
+            @Nullable Function1<Boolean, T> onRecursiveCall,
+            @NotNull Function1<T, Void> postCompute
     );
 
     @NotNull
-    <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable);
+    <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Function0<T> computable);
 
     @NotNull
-    <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Computable<T> computable, @Nullable T onRecursiveCall);
+    <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Function0<T> computable, @Nullable T onRecursiveCall);
 
     /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */
     @NotNull
-    <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
+    <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Function0<T> computable, @NotNull Function1<T, Void> postCompute);
 
-    <T> T compute(@NotNull Computable<T> computable);
+    <T> T compute(@NotNull Function0<T> computable);
 
     enum ReferenceKind {
         STRONG,

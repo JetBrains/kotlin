@@ -20,12 +20,12 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.List;
@@ -70,9 +70,9 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
     private final NotNullLazyValue<Index> index;
 
     public AbstractPsiBasedDeclarationProvider(@NotNull StorageManager storageManager) {
-        index = storageManager.createLazyValue(new Computable<Index>() {
+        index = storageManager.createLazyValue(new Function0<Index>() {
             @Override
-            public Index compute() {
+            public Index invoke() {
                 Index index = new Index();
                 doCreateIndex(index);
                 return index;

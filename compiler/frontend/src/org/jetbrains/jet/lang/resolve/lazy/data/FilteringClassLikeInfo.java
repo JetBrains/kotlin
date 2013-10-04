@@ -19,15 +19,15 @@ package org.jetbrains.jet.lang.resolve.lazy.data;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
@@ -41,9 +41,9 @@ public class FilteringClassLikeInfo implements JetClassLikeInfo {
             @NotNull final Predicate<? super JetDeclaration> declarationFilter
     ) {
         this.delegate = delegate;
-        this.filteredDeclarations = storageManager.createLazyValue(new Computable<List<JetDeclaration>>() {
+        this.filteredDeclarations = storageManager.createLazyValue(new Function0<List<JetDeclaration>>() {
             @Override
-            public List<JetDeclaration> compute() {
+            public List<JetDeclaration> invoke() {
                 return Lists.newArrayList(Collections2.filter(delegate.getDeclarations(), declarationFilter));
             }
         });

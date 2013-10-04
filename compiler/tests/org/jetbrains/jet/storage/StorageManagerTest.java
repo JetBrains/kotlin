@@ -1,8 +1,5 @@
 package org.jetbrains.jet.storage;
 
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
 import jet.Function0;
 import jet.Function1;
 import junit.framework.TestCase;
@@ -167,9 +164,9 @@ public class StorageManagerTest extends TestCase {
 
     public void testRecursionIntolerance() throws Exception {
         class C {
-            NotNullLazyValue<String> rec = m.createLazyValue(new Computable<String>() {
+            NotNullLazyValue<String> rec = m.createLazyValue(new Function0<String>() {
                 @Override
-                public String compute() {
+                public String invoke() {
                     return rec.invoke();
                 }
             });
@@ -186,9 +183,9 @@ public class StorageManagerTest extends TestCase {
 
     public void testNullableRecursionIntolerance() throws Exception {
         class C {
-            NullableLazyValue<String> rec = m.createNullableLazyValue(new Computable<String>() {
+            NullableLazyValue<String> rec = m.createNullableLazyValue(new Function0<String>() {
                 @Override
-                public String compute() {
+                public String invoke() {
                     return rec.invoke();
                 }
             });
@@ -205,9 +202,9 @@ public class StorageManagerTest extends TestCase {
 
     public void testRecursionTolerance() throws Exception {
         class C {
-            NotNullLazyValue<String> rec = m.createRecursionTolerantLazyValue(new Computable<String>() {
+            NotNullLazyValue<String> rec = m.createRecursionTolerantLazyValue(new Function0<String>() {
                 @Override
-                public String compute() {
+                public String invoke() {
                     assertEquals("rec", rec.invoke());
                     return "tolerant!";
                 }
@@ -219,9 +216,9 @@ public class StorageManagerTest extends TestCase {
 
     public void testNullableRecursionTolerance() throws Exception {
         class C {
-            NullableLazyValue<String> rec = m.createRecursionTolerantNullableLazyValue(new Computable<String>() {
+            NullableLazyValue<String> rec = m.createRecursionTolerantNullableLazyValue(new Function0<String>() {
                 @Override
-                public String compute() {
+                public String invoke() {
                     assertEquals(null, rec.invoke());
                     return "tolerant!";
                 }
@@ -235,14 +232,19 @@ public class StorageManagerTest extends TestCase {
         @SuppressWarnings("unchecked")
         class C {
             NotNullLazyValue<String> rec = m.createLazyValueWithPostCompute(
-                    new Computable<String>() {
+                    new Function0<String>() {
                         @Override
-                        public String compute() {
+                        public String invoke() {
                             return rec.invoke();
                         }
                     },
                     null,
-                    Consumer.EMPTY_CONSUMER
+                    new Function1<String, Void>() {
+                        @Override
+                        public Void invoke(String s) {
+                            return null;
+                        }
+                    }
             );
         }
 
@@ -259,23 +261,24 @@ public class StorageManagerTest extends TestCase {
         final CounterImpl counter = new CounterImpl();
         class C {
             NotNullLazyValue<String> rec = m.createLazyValueWithPostCompute(
-                    new Computable<String>() {
+                    new Function0<String>() {
                         @Override
-                        public String compute() {
+                        public String invoke() {
                             return rec.invoke();
                         }
                     },
-                    new Function<Boolean, String>() {
+                    new Function1<Boolean, String>() {
                         @Override
-                        public String fun(Boolean aBoolean) {
+                        public String invoke(Boolean aBoolean) {
                             return "tolerant";
                         }
                     },
-                    new Consumer<String>() {
+                    new Function1<String, Void>() {
                         @Override
-                        public void consume(String s) {
+                        public Void invoke(String s) {
                             counter.inc();
                             assertEquals("tolerant", s);
+                            return null;
                         }
                     }
             );
@@ -290,20 +293,21 @@ public class StorageManagerTest extends TestCase {
     public void testPostComputeNoRecursion() throws Exception {
         final CounterImpl counter = new CounterImpl();
         NotNullLazyValue<Collection<String>> v = m.createLazyValueWithPostCompute(
-                new Computable<Collection<String>>() {
+                new Function0<Collection<String>>() {
                     @Override
-                    public Collection<String> compute() {
+                    public Collection<String> invoke() {
                         List<String> strings = new ArrayList<String>();
                         strings.add("first");
                         return strings;
                     }
                 },
                 null,
-                new Consumer<Collection<String>>() {
+                new Function1<Collection<String>, Void>() {
                     @Override
-                    public void consume(Collection<String> strings) {
+                    public Void invoke(Collection<String> strings) {
                         counter.inc();
                         strings.add("postComputed");
+                        return null;
                     }
                 }
         );
@@ -316,19 +320,20 @@ public class StorageManagerTest extends TestCase {
     public void testNullablePostComputeNoRecursion() throws Exception {
         final CounterImpl counter = new CounterImpl();
         NullableLazyValue<Collection<String>> v = m.createNullableLazyValueWithPostCompute(
-                new Computable<Collection<String>>() {
+                new Function0<Collection<String>>() {
                     @Override
-                    public Collection<String> compute() {
+                    public Collection<String> invoke() {
                         ArrayList<String> strings = new ArrayList<String>();
                         strings.add("first");
                         return strings;
                     }
                 },
-                new Consumer<Collection<String>>() {
+                new Function1<Collection<String>, Void>() {
                     @Override
-                    public void consume(Collection<String> strings) {
+                    public Void invoke(Collection<String> strings) {
                         counter.inc();
                         strings.add("postComputed");
+                        return null;                        
                     }
                 }
         );
@@ -342,25 +347,26 @@ public class StorageManagerTest extends TestCase {
         @SuppressWarnings("unchecked")
         class C {
             NotNullLazyValue<String> rec = m.createLazyValueWithPostCompute(
-                    new Computable<String>() {
+                    new Function0<String>() {
                         @Override
-                        public String compute() {
+                        public String invoke() {
                             return rec.invoke();
                         }
                     },
-                    new Function<Boolean, String>() {
+                    new Function1<Boolean, String>() {
                         @Override
-                        public String fun(Boolean firstTime) {
+                        public String invoke(Boolean firstTime) {
                             if (firstTime) {
                                 throw new ReenteringLazyValueComputationException();
                             }
                             return "second";
                         }
                     },
-                    new Consumer<String>() {
+                    new Function1<String, Void>() {
                         @Override
-                        public void consume(String s) {
+                        public Void invoke(String s) {
                             fail("Recursion-tolerating value should not be post computed");
+                            return null;
                         }
                     }
             );
@@ -407,9 +413,9 @@ public class StorageManagerTest extends TestCase {
         }
     }
 
-    private static class CounterValueNull extends CounterImpl implements Computable<String>, Counter {
+    private static class CounterValueNull extends CounterImpl implements Function0<String>, Counter {
         @Override
-        public String compute() {
+        public String invoke() {
             inc();
             return null;
         }
@@ -417,7 +423,7 @@ public class StorageManagerTest extends TestCase {
 
     private static class CounterValue extends CounterValueNull {
         @Override
-        public String compute() {
+        public String invoke() {
             inc();
             return "ok" + getCount();
         }
@@ -425,15 +431,15 @@ public class StorageManagerTest extends TestCase {
 
     private static class ExceptionCounterValue extends CounterValueNull {
         @Override
-        public String compute() {
+        public String invoke() {
             inc();
             throw new UnsupportedOperationException();
         }
     }
 
-    private static class CounterFunctionToNull extends CounterImpl implements Function<String, String>, Counter {
+    private static class CounterFunctionToNull extends CounterImpl implements Function1<String, String>, Counter {
         @Override
-        public String fun(String s) {
+        public String invoke(String s) {
             inc();
             return null;
         }
@@ -441,7 +447,7 @@ public class StorageManagerTest extends TestCase {
 
     private static class CounterFunction extends CounterFunctionToNull {
         @Override
-        public String fun(String s) {
+        public String invoke(String s) {
             inc();
             return s + getCount();
         }
@@ -449,7 +455,7 @@ public class StorageManagerTest extends TestCase {
 
     private static class ExceptionCounterFunction extends CounterFunctionToNull {
         @Override
-        public String fun(String s) {
+        public String invoke(String s) {
             inc();
             throw new UnsupportedOperationException();
         }

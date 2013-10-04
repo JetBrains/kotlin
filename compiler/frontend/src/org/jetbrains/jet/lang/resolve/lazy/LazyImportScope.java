@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Function;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.Importer;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -75,9 +75,9 @@ public class LazyImportScope implements JetScope {
                 return status.scope;
             }
 
-            return resolveSession.getStorageManager().compute(new Computable<JetScope>() {
+            return resolveSession.getStorageManager().compute(new Function0<JetScope>() {
                 @Override
-                public JetScope compute() {
+                public JetScope invoke() {
                     ImportResolveStatus cachedStatus = importResolveStatus;
                     if (cachedStatus != null && (cachedStatus.lookupMode == mode || cachedStatus.lookupMode == LookupMode.EVERYTHING)) {
                         return cachedStatus.scope;
@@ -130,9 +130,9 @@ public class LazyImportScope implements JetScope {
         this.traceForImportResolve = traceForImportResolve;
         this.debugName = debugName;
 
-        this.importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction(new Function<JetImportDirective, ImportDirectiveResolveCache>() {
+        this.importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetImportDirective, ImportDirectiveResolveCache>() {
             @Override
-            public ImportDirectiveResolveCache fun(JetImportDirective directive) {
+            public ImportDirectiveResolveCache invoke(JetImportDirective directive) {
                 return new ImportDirectiveResolveCache(directive);
             }
         }, STRONG);
@@ -165,9 +165,9 @@ public class LazyImportScope implements JetScope {
             final LookupMode lookupMode,
             final JetScopeSelectorUtil.ScopeByNameSelector<D> descriptorSelector
     ) {
-        return resolveSession.getStorageManager().compute(new Computable<D>() {
+        return resolveSession.getStorageManager().compute(new Function0<D>() {
             @Override
-            public D compute() {
+            public D invoke() {
                 for (JetImportDirective directive : importsProvider.getImports(name)) {
                     if (directive == directiveUnderResolve) {
                         // This is the recursion in imports analysis
@@ -191,9 +191,9 @@ public class LazyImportScope implements JetScope {
             final LookupMode lookupMode,
             final JetScopeSelectorUtil.ScopeByNameMultiSelector<D> descriptorsSelector
     ) {
-        return resolveSession.getStorageManager().compute(new Computable<Collection<D>>() {
+        return resolveSession.getStorageManager().compute(new Function0<Collection<D>>() {
             @Override
-            public Collection<D> compute() {
+            public Collection<D> invoke() {
                 Set<D> descriptors = Sets.newHashSet();
                 for (JetImportDirective directive : importsProvider.getImports(name)) {
                     if (directive == directiveUnderResolve) {
@@ -214,9 +214,9 @@ public class LazyImportScope implements JetScope {
             final LookupMode lookupMode,
             final JetScopeSelectorUtil.ScopeDescriptorSelector<D> descriptorsSelector
     ) {
-        return resolveSession.getStorageManager().compute(new Computable<Collection<D>>() {
+        return resolveSession.getStorageManager().compute(new Function0<Collection<D>>() {
             @Override
-            public Collection<D> compute() {
+            public Collection<D> invoke() {
                 Set<D> descriptors = Sets.newHashSet();
                 for (JetImportDirective directive : importsProvider.getAllImports()) {
                     if (directive == directiveUnderResolve) {

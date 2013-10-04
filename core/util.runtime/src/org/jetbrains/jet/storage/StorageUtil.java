@@ -16,29 +16,36 @@
 
 package org.jetbrains.jet.storage;
 
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 
 import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class StorageUtil {
+    private static final Function1 EMPTY_CONSUMER = new Function1<Object, Void>() {
+                @Override
+                public Void invoke(Object t) {
+                    return null;
+                }
+            };
+
+
     public static <T> NotNullLazyValue<T> createRecursionIntolerantLazyValueWithDefault(
             @NotNull final T defaultValue,
-            @NotNull Computable<T> compute
+            @NotNull Function0<T> compute
     ) {
         //noinspection unchecked
         return NO_LOCKS.createLazyValueWithPostCompute(
                 compute,
-                new Function<Boolean, T>() {
+                new Function1<Boolean, T>() {
                     @Override
-                    public T fun(Boolean firstTime) {
+                    public T invoke(Boolean firstTime) {
                         if (firstTime) throw new ReenteringLazyValueComputationException();
                         return defaultValue;
                     }
                 },
-                Consumer.EMPTY_CONSUMER
+                EMPTY_CONSUMER
         );
     }
 }

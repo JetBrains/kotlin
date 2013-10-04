@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Function;
 import gnu.trove.TIntObjectHashMap;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
@@ -26,12 +26,12 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,9 +94,9 @@ public class TypeDeserializer {
             typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor);
         }
 
-        this.classDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function<Integer, ClassDescriptor>() {
+        this.classDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function1<Integer, ClassDescriptor>() {
             @Override
-            public ClassDescriptor fun(Integer fqNameIndex) {
+            public ClassDescriptor invoke(Integer fqNameIndex) {
                 return computeClassDescriptor(fqNameIndex);
             }
         }, STRONG);
@@ -210,15 +210,15 @@ public class TypeDeserializer {
             this.typeProto = proto;
             this.arguments = typeArguments(proto.getArgumentList());
 
-            this.constructor = storageManager.createLazyValue(new Computable<TypeConstructor>() {
+            this.constructor = storageManager.createLazyValue(new Function0<TypeConstructor>() {
                 @Override
-                public TypeConstructor compute() {
+                public TypeConstructor invoke() {
                     return typeConstructor(typeProto);
                 }
             });
-            this.memberScope = storageManager.createLazyValue(new Computable<JetScope>() {
+            this.memberScope = storageManager.createLazyValue(new Function0<JetScope>() {
                 @Override
-                public JetScope compute() {
+                public JetScope invoke() {
                     return computeMemberScope();
                 }
             });

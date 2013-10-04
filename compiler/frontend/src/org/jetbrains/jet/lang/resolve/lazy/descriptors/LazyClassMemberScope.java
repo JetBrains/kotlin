@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -82,9 +82,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @NotNull LazyClassDescriptor thisClass
     ) {
         super(resolveSession, declarationProvider, thisClass);
-        this.primaryConstructor = resolveSession.getStorageManager().createNullableLazyValue(new Computable<ConstructorDescriptor>() {
+        this.primaryConstructor = resolveSession.getStorageManager().createNullableLazyValue(new Function0<ConstructorDescriptor>() {
             @Override
-            public ConstructorDescriptor compute() {
+            public ConstructorDescriptor invoke() {
                 return resolvePrimaryConstructor();
             }
         });
@@ -378,9 +378,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
         descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), resolveSession.getStorageManager().createLazyValue(
-                new Computable<JetType>() {
+                new Function0<JetType>() {
                     @Override
-                    public JetType compute() {
+                    public JetType invoke() {
                         return thisDescriptor.getDefaultType();
                     }
                 })

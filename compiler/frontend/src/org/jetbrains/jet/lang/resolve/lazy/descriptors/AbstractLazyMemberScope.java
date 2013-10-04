@@ -17,9 +17,10 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Computable;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -28,12 +29,12 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -71,35 +72,35 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         this.thisDescriptor = thisDescriptor;
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.classDescriptors = storageManager.createMemoizedFunction(new Function<Name, List<ClassDescriptor>>() {
+        this.classDescriptors = storageManager.createMemoizedFunction(new Function1<Name, List<ClassDescriptor>>() {
             @Override
-            public List<ClassDescriptor> fun(Name name) {
+            public List<ClassDescriptor> invoke(Name name) {
                 return resolveClassOrObjectDescriptor(name, false);
             }
         }, STRONG);
-        this.objectDescriptors = storageManager.createMemoizedFunction(new Function<Name, List<ClassDescriptor>>() {
+        this.objectDescriptors = storageManager.createMemoizedFunction(new Function1<Name, List<ClassDescriptor>>() {
             @Override
-            public List<ClassDescriptor> fun(Name name) {
+            public List<ClassDescriptor> invoke(Name name) {
                 return resolveClassOrObjectDescriptor(name, true);
             }
         }, STRONG);
 
-        this.functionDescriptors = storageManager.createMemoizedFunction(new Function<Name, Set<FunctionDescriptor>>() {
+        this.functionDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Set<FunctionDescriptor>>() {
             @Override
-            public Set<FunctionDescriptor> fun(Name name) {
+            public Set<FunctionDescriptor> invoke(Name name) {
                 return doGetFunctions(name);
             }
         }, STRONG);
-        this.propertyDescriptors = storageManager.createMemoizedFunction(new Function<Name, Set<VariableDescriptor>>() {
+        this.propertyDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Set<VariableDescriptor>>() {
             @Override
-            public Set<VariableDescriptor> fun(Name name) {
+            public Set<VariableDescriptor> invoke(Name name) {
                 return doGetProperties(name);
             }
         }, STRONG);
 
-        this.allDescriptors = storageManager.createLazyValue(new Computable<AllDescriptors>() {
+        this.allDescriptors = storageManager.createLazyValue(new Function0<AllDescriptors>() {
             @Override
-            public AllDescriptors compute() {
+            public AllDescriptors invoke() {
                 return computeAllDescriptors();
             }
         });

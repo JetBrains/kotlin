@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
@@ -224,9 +224,9 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
                             getTypeConstructor(),
                             TypeUtils.hasNullableLowerBound(this),
                             Collections.<TypeProjection>emptyList(),
-                            new LazyScopeAdapter(NO_LOCKS.createLazyValue(new Computable<JetScope>() {
+                            new LazyScopeAdapter(NO_LOCKS.createLazyValue(new Function0<JetScope>() {
                                 @Override
-                                public JetScope compute() {
+                                public JetScope invoke() {
                                     return getUpperBoundsAsType().getMemberScope();
                                 }
                             })));

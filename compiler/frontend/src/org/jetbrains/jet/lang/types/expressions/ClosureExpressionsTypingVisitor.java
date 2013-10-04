@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -69,9 +69,9 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
                     JetType defaultType = DeferredType.create(context.trace, createRecursionIntolerantLazyValueWithDefault(
                             ErrorUtils.createErrorType("Recursive dependency"),
-                            new Computable<JetType>() {
+                            new Function0<JetType>() {
                                 @Override
-                                public JetType compute() {
+                                public JetType invoke() {
                                     return descriptor.getDefaultType();
                                 }
                             }));

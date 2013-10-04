@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -240,9 +240,9 @@ public class TypeResolver {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
         else {
-            return new LazyScopeAdapter(NO_LOCKS.createLazyValue(new Computable<JetScope>() {
+            return new LazyScopeAdapter(NO_LOCKS.createLazyValue(new Function0<JetScope>() {
                 @Override
-                public JetScope compute() {
+                public JetScope invoke() {
                     return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
                 }
             }));

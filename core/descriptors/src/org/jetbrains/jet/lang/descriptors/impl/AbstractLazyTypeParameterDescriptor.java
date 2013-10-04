@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -65,27 +65,27 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
         this.name = name;
         this.reified = isReified;
 
-        this.typeConstructor = storageManager.createLazyValue(new Computable<TypeConstructor>() {
+        this.typeConstructor = storageManager.createLazyValue(new Function0<TypeConstructor>() {
             @Override
-            public TypeConstructor compute() {
+            public TypeConstructor invoke() {
                 return createTypeConstructor();
             }
         });
-        this.defaultType = storageManager.createLazyValue(new Computable<JetType>() {
+        this.defaultType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
-            public JetType compute() {
+            public JetType invoke() {
                 return createDefaultType(storageManager);
             }
         });
-        this.upperBounds = storageManager.createLazyValue(new Computable<Set<JetType>>() {
+        this.upperBounds = storageManager.createLazyValue(new Function0<Set<JetType>>() {
             @Override
-            public Set<JetType> compute() {
+            public Set<JetType> invoke() {
                 return resolveUpperBounds();
             }
         });
-        this.upperBoundsAsType = storageManager.createLazyValue(new Computable<JetType>() {
+        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
-            public JetType compute() {
+            public JetType invoke() {
                 return computeUpperBoundsAsType();
             }
         });
@@ -198,9 +198,9 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     @NotNull
     private JetType createDefaultType(@NotNull StorageManager storageManager) {
         return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(storageManager.createLazyValue(
-                new Computable<JetScope>() {
+                new Function0<JetScope>() {
                     @Override
-                    public JetScope compute() {
+                    public JetScope invoke() {
                         return getUpperBoundsAsType().getMemberScope();
                     }
                 }

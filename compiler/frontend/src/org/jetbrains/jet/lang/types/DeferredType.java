@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -38,7 +38,7 @@ public class DeferredType implements JetType {
         return deferredType;
     }
     
-    public static DeferredType create(BindingTrace trace, Computable<JetType> compute) {
+    public static DeferredType create(BindingTrace trace, Function0<JetType> compute) {
         return create(trace, LockBasedStorageManager.NO_LOCKS.createLazyValue(compute));
     }
 
