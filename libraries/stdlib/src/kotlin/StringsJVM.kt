@@ -529,7 +529,7 @@ public inline fun String.trimTrailing(): String {
   * Replaces every *regexp* occurence in the text with the value retruned by the given function *body* that can handle 
   * particular occurance using [[MatchResult]] provided.
   */
-public fun String.replaceAll(regexp: String, body : (java.util.regex.MatchResult) -> String) : String {
+public fun String.replaceAll(regexp: String, body: (java.util.regex.MatchResult) -> String) : String {
     val sb = StringBuilder(this.length())
     val p = regexp.toRegex()
     val m = p.matcher(this)
