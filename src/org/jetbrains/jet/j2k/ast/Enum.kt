@@ -22,13 +22,14 @@ public open class Enum(converter : Converter,
     override fun needOpenModifier() = false
 
     public override fun toKotlin() : String {
+        val primaryConstructorBody = primaryConstructorBodyToKotlin() ?: ""
         return modifiersToKotlin() +
             "enum class " + name.toKotlin() +
             primaryConstructorSignatureToKotlin() +
             typeParametersToKotlin() +
             implementTypesToKotlin() +
             " {\n" + membersExceptConstructors().toKotlin("\n") + "\n" +
-            primaryConstructorBodyToKotlin() +
-            "\npublic fun name()  : String { return \"\" }\npublic fun order() : Int { return 0 }\n}"
+            (if (primaryConstructorBody.isEmpty()) "" else primaryConstructorBody + "\n") +
+            "}"
     }
 }
