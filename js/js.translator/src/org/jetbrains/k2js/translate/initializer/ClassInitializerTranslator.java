@@ -117,7 +117,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         JsInvocation call = new JsInvocation(Namer.getFunctionCallRef(Namer.superMethodNameRef(ref)));
         call.getArguments().add(JsLiteral.THIS);
         call.getArguments().addAll(arguments);
-        initializerStatements.add(call.makeStmt());
+        initializerStatements.add(0, call.makeStmt());
     }
 
     @NotNull
