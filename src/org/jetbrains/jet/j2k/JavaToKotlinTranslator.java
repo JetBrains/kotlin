@@ -19,15 +19,14 @@ import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.core.JavaCoreProjectEnvironment;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiJavaFile;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.visitors.ClassVisitor;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +68,7 @@ public class JavaToKotlinTranslator {
         JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
         JavaCoreProjectEnvironment javaCoreEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 
-        javaCoreEnvironment.addJarToClassPath(findRtJar());
+        javaCoreEnvironment.addJarToClassPath(PathUtil.findRtJar());
         File annotations = findAnnotations();
         if (annotations != null && annotations.exists()) {
             javaCoreEnvironment.addJarToClassPath(annotations);
@@ -94,45 +93,6 @@ public class JavaToKotlinTranslator {
     }
 
     @Nullable
-    private static File findRtJar() {
-        String javaHome = System.getenv("JAVA_HOME");
-        File rtJar;
-        if (javaHome == null) {
-            rtJar = findActiveRtJar(true);
-
-            if (rtJar == null) {
-                throw new SetupJavaCoreEnvironmentException("JAVA_HOME environment variable needs to be defined");
-            }
-        }
-        else {
-            rtJar = findRtJar(javaHome);
-        }
-
-        if (rtJar == null || !rtJar.exists()) {
-            rtJar = findActiveRtJar(true);
-
-            if ((rtJar == null || !rtJar.exists())) {
-                throw new SetupJavaCoreEnvironmentException("No rt.jar found under JAVA_HOME=" + javaHome);
-            }
-        }
-        return rtJar;
-    }
-
-    @Nullable
-    private static File findRtJar(String javaHome) {
-        File rtJar = new File(javaHome, "jre/lib/rt.jar");
-        if (rtJar.exists()) {
-            return rtJar;
-        }
-
-        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
-        if (classesJar.exists()) {
-            return classesJar;
-        }
-        return null;
-    }
-
-    @Nullable
     private static File findAnnotations() {
         ClassLoader classLoader = JavaToKotlinTranslator.class.getClassLoader();
         while (classLoader != null) {
@@ -144,37 +104,6 @@ public class JavaToKotlinTranslator {
                     }
             }
             classLoader = classLoader.getParent();
-        }
-        return null;
-    }
-
-    @Nullable
-    private static File findActiveRtJar(boolean failOnError) {
-        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-        if (systemClassLoader instanceof URLClassLoader) {
-            URLClassLoader loader = (URLClassLoader) systemClassLoader;
-            for (URL url : loader.getURLs()) {
-                if ("file".equals(url.getProtocol())) {
-                    if (url.getFile().endsWith("/lib/rt.jar")) {
-                        return new File(url.getFile());
-                    }
-                    if (url.getFile().endsWith("/Classes/classes.jar")) {
-                        return new File(url.getFile()).getAbsoluteFile();
-                    }
-                }
-            }
-            if (failOnError) {
-                throw new SetupJavaCoreEnvironmentException("Could not find rt.jar in system class loader: " + StringUtil.join(loader.getURLs(), new Function<URL, String>() {
-                    @NotNull
-                    @Override
-                    public String fun(@NotNull URL url) {
-                        return url.toString() + "\n";
-                    }
-                }, ", "));
-            }
-        }
-        else if (failOnError) {
-            throw new SetupJavaCoreEnvironmentException("System class loader is not an URLClassLoader: " + systemClassLoader);
         }
         return null;
     }
