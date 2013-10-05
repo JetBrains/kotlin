@@ -7,7 +7,6 @@ import org.objectweb.asm.Type
 import org.objectweb.asm.tree.AbstractInsnNode
 import org.objectweb.asm.tree.FieldInsnNode
 import org.objectweb.asm.tree.IntInsnNode
-import org.objectweb.asm.tree.InvokeDynamicInsnNode
 import org.objectweb.asm.tree.LdcInsnNode
 import org.objectweb.asm.tree.MethodInsnNode
 import org.objectweb.asm.tree.MultiANewArrayInsnNode
@@ -25,13 +24,18 @@ trait EvalStrategy {
     fun isInsetanceOf(value: Value, targetType: Type): Boolean
 
     fun newArray(arrayType: Type, size: Int): Value
+    fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value
     fun getArrayLength(array: Value): Value
+    fun getArrayElement(array: Value, index: Value): Value
+    fun setArrayElement(array: Value, index: Value, newValue: Value)
 
     fun getStaticField(fieldDesc: String): Value
     fun setStaticField(fieldDesc: String, newValue: Value)
+    fun invokeStaticMethod(methodDesc: String, arguments: List<Value>): Value
 
     fun getField(instance: Value, fieldDesc: String): Value
     fun setField(instance: Value, fieldDesc: String, newValue: Value)
+    fun invokeMethod(instance: Value, methodDesc: String, arguments: List<Value>, invokespecial: Boolean = false): Value
 
     fun getLocalVariable(index: Int): Value
     fun setLocalVariable(index: Int, newValue: Value)
@@ -165,15 +169,6 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
             TABLESWITCH,
             LOOKUPSWITCH -> throw UnsupportedByteCodeException("Switch is not supported yet")
 
-            IRETURN,
-            LRETURN,
-            FRETURN,
-            DRETURN,
-            ARETURN -> {
-                evalStrategy.returnValue(value)
-                null
-            }
-
             PUTSTATIC -> {
                 evalStrategy.setStaticField((insn as FieldInsnNode).desc, value)
                 null
@@ -223,62 +218,164 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
         }
     }
 
-    override fun binaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value): Value {
+    override fun binaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value): Value? {
+        return when (insn.getOpcode()) {
+            IALOAD, BALOAD, CALOAD, SALOAD,
+            FALOAD, LALOAD, DALOAD,
+            AALOAD -> evalStrategy.getArrayElement(value1, value2)
+
+            IADD -> int(value1.int + value2.int)
+            ISUB -> int(value1.int - value2.int)
+            IMUL -> int(value1.int * value2.int)
+            IDIV -> int(value1.int / value2.int)
+            IREM -> int(value1.int % value2.int)
+            ISHL -> int(value1.int shl value2.int)
+            ISHR -> int(value1.int shr value2.int)
+            IUSHR -> int(value1.int ushr value2.int)
+            IAND -> int(value1.int and value2.int)
+            IOR -> int(value1.int or value2.int)
+            IXOR -> int(value1.int xor value2.int)
+
+            LADD -> long(value1.long + value2.long)
+            LSUB -> long(value1.long - value2.long)
+            LMUL -> long(value1.long * value2.long)
+            LDIV -> long(value1.long / value2.long)
+            LREM -> long(value1.long % value2.long)
+            LSHL -> long(value1.long shl value2.int)
+            LSHR -> long(value1.long shr value2.int)
+            LUSHR -> long(value1.long ushr value2.int)
+            LAND -> long(value1.long and value2.long)
+            LOR -> long(value1.long or value2.long)
+            LXOR -> long(value1.long xor value2.long)
+
+            FADD -> float(value1.float + value2.float)
+            FSUB -> float(value1.float - value2.float)
+            FMUL -> float(value1.float * value2.float)
+            FDIV -> float(value1.float / value2.float)
+            FREM -> float(value1.float % value2.float)
+
+            DADD -> double(value1.double + value2.double)
+            DSUB -> double(value1.double - value2.double)
+            DMUL -> double(value1.double * value2.double)
+            DDIV -> double(value1.double / value2.double)
+            DREM -> double(value1.double % value2.double)
+
+            LCMP -> {
+                val l1 = value1.long
+                val l2 = value2.long
+
+                int(when {
+                    l1 > l2 -> 1
+                    l1 == l2 -> 0
+                    else -> -1
+                })
+            }
+
+            FCMPL,
+            FCMPG -> {
+                val l1 = value1.float
+                val l2 = value2.float
+
+                int(when {
+                    l1 > l2 -> 1
+                    l1 == l2 -> 0
+                    l1 < l2 -> -1
+                    // one of them is NaN
+                    else -> if (insn.getOpcode() == FCMPG) 1 else -1
+                })
+            }
+
+            DCMPL,
+            DCMPG -> {
+                val l1 = value1.double
+                val l2 = value2.double
+
+                int(when {
+                    l1 > l2 -> 1
+                    l1 == l2 -> 0
+                    l1 < l2 -> -1
+                    // one of them is NaN
+                    else -> if (insn.getOpcode() == DCMPG) 1 else -1
+                })
+            }
+
+            IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
+                val label = (insn as JumpInsnNode).label.getLabel()
+                when (insn.getOpcode()) {
+                    IF_ICMPEQ -> if (value1.int == value2.int) evalStrategy.jump(label)
+                    IF_ICMPNE -> if (value1.int != value2.int) evalStrategy.jump(label)
+                    IF_ICMPLT -> if (value1.int < value2.int) evalStrategy.jump(label)
+                    IF_ICMPGT -> if (value1.int > value2.int) evalStrategy.jump(label)
+                    IF_ICMPLE -> if (value1.int <= value2.int) evalStrategy.jump(label)
+                    IF_ICMPGE -> if (value1.int >= value2.int) evalStrategy.jump(label)
+
+                    IF_ACMPEQ -> if (value1.obj == value2.obj) evalStrategy.jump(label)
+                    IF_ACMPNE -> if (value1.obj != value2.obj) evalStrategy.jump(label)
+                }
+                null
+            }
+
+            PUTFIELD -> {
+                evalStrategy.setField(value1, (insn as FieldInsnNode).desc, value2)
+                null
+            }
+
+            else -> throw UnsupportedByteCodeException("$insn")
+        }
+    }
+
+    override fun ternaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value, value3: Value): Value? {
+        return when (insn.getOpcode()) {
+            IASTORE, LASTORE, FASTORE, DASTORE, AASTORE, BASTORE, CASTORE, SASTORE -> {
+                evalStrategy.setArrayElement(value1, value2, value3)
+                null
+            }
+            else -> throw UnsupportedByteCodeException("$insn")
+        }
+    }
+
+    override fun naryOperation(insn: AbstractInsnNode, values: List<Value>): Value {
+        return when (insn.getOpcode()) {
+            MULTIANEWARRAY -> {
+                val node = insn as MultiANewArrayInsnNode
+                evalStrategy.newMultiDimensionalArray(Type.getType(node.desc), values.map { v -> v.int })
+            }
+
+            INVOKEVIRTUAL, INVOKESPECIAL, INVOKEINTERFACE -> {
+                val desc = (insn as MethodInsnNode).desc
+                evalStrategy.invokeMethod(
+                        values[0],
+                        desc,
+                        values.subList(1, values.size()),
+                        insn.getOpcode() == INVOKESPECIAL
+                )
+            }
+
+            INVOKESTATIC -> evalStrategy.invokeStaticMethod((insn as MethodInsnNode).desc, values)
+
+            INVOKEDYNAMIC -> throw UnsupportedByteCodeException("INVOKEDYNAMIC is not supported")
+            else -> throw UnsupportedByteCodeException("$insn")
+        }
+    }
+
+
+    override fun returnOperation(insn: AbstractInsnNode, value: Value, expected: Value) {
         when (insn.getOpcode()) {
-            IALOAD, BALOAD, CALOAD, SALOAD, IADD, ISUB, IMUL, IDIV, IREM, ISHL, ISHR, IUSHR, IAND, IOR, IXOR -> {
-                return Value.INT_VALUE
+            IRETURN,
+            LRETURN,
+            FRETURN,
+            DRETURN,
+            ARETURN -> {
+                // TODO: coercion, maybe?
+                evalStrategy.returnValue(value)
             }
-            FALOAD, FADD, FSUB, FMUL, FDIV, FREM -> {
-                return Value.FLOAT_VALUE
-            }
-            LALOAD, LADD, LSUB, LMUL, LDIV, LREM, LSHL, LSHR, LUSHR, LAND, LOR, LXOR -> {
-                return Value.LONG_VALUE
-            }
-            DALOAD, DADD, DSUB, DMUL, DDIV, DREM -> {
-                return Value.DOUBLE_VALUE
-            }
-            AALOAD -> {
-                return Value.REFERENCE_VALUE
-            }
-            LCMP, FCMPL, FCMPG, DCMPL, DCMPG -> {
-                return Value.INT_VALUE
-            }
-            IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE, PUTFIELD -> {
-                return null
-            }
-            else -> {
-                throw Error("Internal error.")
-            }
+
+            else -> throw UnsupportedByteCodeException("$insn")
         }
-    }
-
-    override fun ternaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value?, value3: Value): Value? {
-        return null
-    }
-
-    override fun naryOperation(insn: AbstractInsnNode, values: List<out Value>): Value {
-        val opcode = insn.getOpcode()!!
-        if (opcode == MULTIANEWARRAY) {
-            return newValue(Type.getType(((insn as MultiANewArrayInsnNode)).desc))
-        }
-        else if (opcode == INVOKEDYNAMIC) {
-            return newValue(Type.getReturnType(((insn as InvokeDynamicInsnNode)).desc))
-        }
-        else {
-            return newValue(Type.getReturnType(((insn as MethodInsnNode)).desc))
-        }
-    }
-
-
-    override fun returnOperation(insn: AbstractInsnNode?, value: Value, expected: Value?) {
-
     }
 
     override fun merge(v: Value, w: Value): Value {
-        if (!v.equals(w)) {
-            return Value.UNINITIALIZED_VALUE
-        }
-
-        return v
+        // We always remember the NEW value
+        return w
     }
 }
