@@ -118,16 +118,7 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
     override fun unaryOperation(insn: AbstractInsnNode, value: Value): Value? {
         return when (insn.getOpcode()) {
             INEG -> int(-value.int)
-            IINC -> {
-                val varIndex = (insn as IincInsnNode).`var`
-                evalStrategy.setLocalVariable(
-                        varIndex,
-                        int(evalStrategy.getLocalVariable(varIndex).int + insn.incr)
-                )
-
-                // TODO: don't know what to do here, returning what we got:
-                value
-            }
+            IINC -> int(value.int + (insn as IincInsnNode).incr)
             L2I -> int(value.long.toInt())
             F2I -> int(value.float.toInt())
             D2I -> int(value.double.toInt())
