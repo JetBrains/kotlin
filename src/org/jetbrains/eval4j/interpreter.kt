@@ -17,7 +17,7 @@ import org.objectweb.asm.Label
 
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
-trait EvalStrategy {
+trait Eval {
     fun loadClass(classType: Type): Value
     fun newInstance(classType: Type): Value
     fun checkCast(value: Value, targetType: Type): Value
@@ -39,14 +39,16 @@ trait EvalStrategy {
 
     fun getLocalVariable(index: Int): Value
     fun setLocalVariable(index: Int, newValue: Value)
+}
 
+trait Control {
     fun jump(label: Label)
 
     fun returnValue(value: Value)
     fun throwException(value: Value)
 }
 
-class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Value>(ASM4) {
+class EvalInterpreter(private val eval: Eval, private val control: Control) : Interpreter<Value>(ASM4) {
     override fun newValue(`type`: Type?): Value? {
         if (`type` == null) {
             return NOT_A_VALUE
@@ -95,7 +97,7 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
                     is Type -> {
                         val sort = (cst as Type).getSort()
                         when (sort) {
-                            Type.OBJECT, Type.ARRAY -> evalStrategy.loadClass(cst)
+                            Type.OBJECT, Type.ARRAY -> eval.loadClass(cst)
                             Type.METHOD -> throw UnsupportedByteCodeException("Mothod handles are not supported")
                             else -> throw UnsupportedByteCodeException("Illegal LDC constant " + cst)
                         }
@@ -105,8 +107,8 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
                 }
             }
             JSR -> LabelValue((insn as JumpInsnNode).label.getLabel())
-            GETSTATIC -> evalStrategy.getStaticField((insn as FieldInsnNode).desc)
-            NEW -> evalStrategy.newInstance(Type.getType((insn as TypeInsnNode).desc))
+            GETSTATIC -> eval.getStaticField((insn as FieldInsnNode).desc)
+            NEW -> eval.newInstance(Type.getType((insn as TypeInsnNode).desc))
             else -> throw UnsupportedByteCodeException("$insn")
         }
     }
@@ -144,14 +146,14 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
             IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
                 val label = (insn as JumpInsnNode).label.getLabel()
                 when (insn.getOpcode()) {
-                    IFEQ -> if (value.int == 0) evalStrategy.jump(label)
-                    IFNE -> if (value.int != 0) evalStrategy.jump(label)
-                    IFLT -> if (value.int < 0) evalStrategy.jump(label)
-                    IFGT -> if (value.int > 0) evalStrategy.jump(label)
-                    IFLE -> if (value.int <= 0) evalStrategy.jump(label)
-                    IFGE -> if (value.int >= 0) evalStrategy.jump(label)
-                    IFNULL -> if (value.obj == null) evalStrategy.jump(label)
-                    IFNONNULL -> if (value.obj != null) evalStrategy.jump(label)
+                    IFEQ -> if (value.int == 0) control.jump(label)
+                    IFNE -> if (value.int != 0) control.jump(label)
+                    IFLT -> if (value.int < 0) control.jump(label)
+                    IFGT -> if (value.int > 0) control.jump(label)
+                    IFLE -> if (value.int <= 0) control.jump(label)
+                    IFGE -> if (value.int >= 0) control.jump(label)
+                    IFNULL -> if (value.obj == null) control.jump(label)
+                    IFNONNULL -> if (value.obj != null) control.jump(label)
                 }
                 null
             }
@@ -161,11 +163,11 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
             LOOKUPSWITCH -> throw UnsupportedByteCodeException("Switch is not supported yet")
 
             PUTSTATIC -> {
-                evalStrategy.setStaticField((insn as FieldInsnNode).desc, value)
+                eval.setStaticField((insn as FieldInsnNode).desc, value)
                 null
             }
 
-            GETFIELD -> evalStrategy.getField(value, (insn as FieldInsnNode).desc)
+            GETFIELD -> eval.getField(value, (insn as FieldInsnNode).desc)
 
             NEWARRAY -> {
                 val typeStr = when ((insn as IntInsnNode).operand) {
@@ -179,27 +181,27 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
                     T_LONG    -> "[J"
                     else -> throw AnalyzerException(insn, "Invalid array type")
                 }
-                evalStrategy.newArray(Type.getType(typeStr), value.int)
+                eval.newArray(Type.getType(typeStr), value.int)
             }
             ANEWARRAY -> {
                 val desc = (insn as TypeInsnNode).desc
-                evalStrategy.newArray(Type.getType("[" + Type.getObjectType(desc)), value.int)
+                eval.newArray(Type.getType("[" + Type.getObjectType(desc)), value.int)
             }
-            ARRAYLENGTH -> evalStrategy.getArrayLength(value)
+            ARRAYLENGTH -> eval.getArrayLength(value)
 
             ATHROW -> {
-                evalStrategy.throwException(value)
+                control.throwException(value)
                 null
             }
 
             CHECKCAST -> {
                 val targetType = Type.getObjectType((insn as TypeInsnNode).desc)
-                evalStrategy.checkCast(value, targetType)
+                eval.checkCast(value, targetType)
             }
 
             INSTANCEOF -> {
                 val targetType = Type.getObjectType((insn as TypeInsnNode).desc)
-                boolean(evalStrategy.isInsetanceOf(value, targetType))
+                boolean(eval.isInsetanceOf(value, targetType))
             }
 
             // TODO: maybe just do nothing?
@@ -213,7 +215,7 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
         return when (insn.getOpcode()) {
             IALOAD, BALOAD, CALOAD, SALOAD,
             FALOAD, LALOAD, DALOAD,
-            AALOAD -> evalStrategy.getArrayElement(value1, value2)
+            AALOAD -> eval.getArrayElement(value1, value2)
 
             IADD -> int(value1.int + value2.int)
             ISUB -> int(value1.int - value2.int)
@@ -293,21 +295,21 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
             IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
                 val label = (insn as JumpInsnNode).label.getLabel()
                 when (insn.getOpcode()) {
-                    IF_ICMPEQ -> if (value1.int == value2.int) evalStrategy.jump(label)
-                    IF_ICMPNE -> if (value1.int != value2.int) evalStrategy.jump(label)
-                    IF_ICMPLT -> if (value1.int < value2.int) evalStrategy.jump(label)
-                    IF_ICMPGT -> if (value1.int > value2.int) evalStrategy.jump(label)
-                    IF_ICMPLE -> if (value1.int <= value2.int) evalStrategy.jump(label)
-                    IF_ICMPGE -> if (value1.int >= value2.int) evalStrategy.jump(label)
+                    IF_ICMPEQ -> if (value1.int == value2.int) control.jump(label)
+                    IF_ICMPNE -> if (value1.int != value2.int) control.jump(label)
+                    IF_ICMPLT -> if (value1.int < value2.int) control.jump(label)
+                    IF_ICMPGT -> if (value1.int > value2.int) control.jump(label)
+                    IF_ICMPLE -> if (value1.int <= value2.int) control.jump(label)
+                    IF_ICMPGE -> if (value1.int >= value2.int) control.jump(label)
 
-                    IF_ACMPEQ -> if (value1.obj == value2.obj) evalStrategy.jump(label)
-                    IF_ACMPNE -> if (value1.obj != value2.obj) evalStrategy.jump(label)
+                    IF_ACMPEQ -> if (value1.obj == value2.obj) control.jump(label)
+                    IF_ACMPNE -> if (value1.obj != value2.obj) control.jump(label)
                 }
                 null
             }
 
             PUTFIELD -> {
-                evalStrategy.setField(value1, (insn as FieldInsnNode).desc, value2)
+                eval.setField(value1, (insn as FieldInsnNode).desc, value2)
                 null
             }
 
@@ -318,7 +320,7 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
     override fun ternaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value, value3: Value): Value? {
         return when (insn.getOpcode()) {
             IASTORE, LASTORE, FASTORE, DASTORE, AASTORE, BASTORE, CASTORE, SASTORE -> {
-                evalStrategy.setArrayElement(value1, value2, value3)
+                eval.setArrayElement(value1, value2, value3)
                 null
             }
             else -> throw UnsupportedByteCodeException("$insn")
@@ -329,12 +331,12 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
         return when (insn.getOpcode()) {
             MULTIANEWARRAY -> {
                 val node = insn as MultiANewArrayInsnNode
-                evalStrategy.newMultiDimensionalArray(Type.getType(node.desc), values.map { v -> v.int })
+                eval.newMultiDimensionalArray(Type.getType(node.desc), values.map { v -> v.int })
             }
 
             INVOKEVIRTUAL, INVOKESPECIAL, INVOKEINTERFACE -> {
                 val desc = (insn as MethodInsnNode).desc
-                evalStrategy.invokeMethod(
+                eval.invokeMethod(
                         values[0],
                         desc,
                         values.subList(1, values.size()),
@@ -342,7 +344,7 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
                 )
             }
 
-            INVOKESTATIC -> evalStrategy.invokeStaticMethod((insn as MethodInsnNode).desc, values)
+            INVOKESTATIC -> eval.invokeStaticMethod((insn as MethodInsnNode).desc, values)
 
             INVOKEDYNAMIC -> throw UnsupportedByteCodeException("INVOKEDYNAMIC is not supported")
             else -> throw UnsupportedByteCodeException("$insn")
@@ -358,7 +360,7 @@ class EvalInterpreter(private val evalStrategy: EvalStrategy) : Interpreter<Valu
             DRETURN,
             ARETURN -> {
                 // TODO: coercion, maybe?
-                evalStrategy.returnValue(value)
+                control.returnValue(value)
             }
 
             else -> throw UnsupportedByteCodeException("$insn")
