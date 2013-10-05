@@ -1,0 +1,590 @@
+<root>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V merge(V, V)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Analyzer org.objectweb.asm.tree.analysis.Frame&lt;V&gt; newFrame(org.objectweb.asm.tree.analysis.Frame&lt;? extends V&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter void returnOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Frame org.objectweb.asm.tree.analysis.Frame&lt;V&gt; init(org.objectweb.asm.tree.analysis.Frame&lt;? extends V&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V merge(V, V) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends org.objectweb.asm.tree.analysis.BasicValue&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V copyOperation(org.objectweb.asm.tree.AbstractInsnNode, V) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter void returnOperation(org.objectweb.asm.tree.AbstractInsnNode, V, V) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicValue UNINITIALIZED_VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue merge(org.objectweb.asm.tree.analysis.SourceValue, org.objectweb.asm.tree.analysis.SourceValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier void returnOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends org.objectweb.asm.tree.analysis.BasicValue&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V, V, V) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier void returnOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue merge(org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value newOperation(org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicValue LONG_VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier org.objectweb.asm.tree.analysis.BasicValue getElementValue(org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier boolean isArrayValue(org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.SourceValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V, V, V) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier boolean isAssignableFrom(org.objectweb.asm.Type, org.objectweb.asm.Type) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Analyzer boolean newControlFlowExceptionEdge(int, org.objectweb.asm.tree.TryCatchBlockNode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends org.objectweb.asm.tree.analysis.BasicValue&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter void returnOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.SourceValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.SourceValue, org.objectweb.asm.tree.analysis.SourceValue, org.objectweb.asm.tree.analysis.SourceValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier org.objectweb.asm.Type getSuperClass(org.objectweb.asm.Type) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier boolean isSubTypeOf(org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V merge(V, V) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value newOperation(org.objectweb.asm.tree.AbstractInsnNode)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter void returnOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier boolean isSubTypeOf(org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.SourceValue, org.objectweb.asm.tree.analysis.SourceValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V, V, V) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Frame void execute(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Interpreter&lt;V&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue newOperation(org.objectweb.asm.tree.AbstractInsnNode)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.SourceValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Frame org.objectweb.asm.tree.analysis.Frame&lt;V&gt; init(org.objectweb.asm.tree.analysis.Frame&lt;? extends V&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicValue DOUBLE_VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends V&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V, V) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Frame boolean merge(org.objectweb.asm.tree.analysis.Frame&lt;? extends V&gt;, org.objectweb.asm.tree.analysis.Interpreter&lt;V&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Analyzer org.objectweb.asm.tree.analysis.Frame&lt;V&gt; newFrame(org.objectweb.asm.tree.analysis.Frame&lt;? extends V&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue getElementValue(org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue merge(org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends org.objectweb.asm.tree.analysis.SourceValue&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Frame Frame(org.objectweb.asm.tree.analysis.Frame&lt;? extends V&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Analyzer org.objectweb.asm.tree.analysis.Frame&lt;V&gt;[] analyze(java.lang.String, org.objectweb.asm.tree.MethodNode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue merge(org.objectweb.asm.tree.analysis.SourceValue, org.objectweb.asm.tree.analysis.SourceValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends org.objectweb.asm.tree.analysis.BasicValue&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier boolean isArrayValue(org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Analyzer org.objectweb.asm.tree.analysis.Frame&lt;V&gt; newFrame(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V, V) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier boolean isSubTypeOf(org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value newOperation(org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue merge(org.objectweb.asm.tree.analysis.SourceValue, org.objectweb.asm.tree.analysis.SourceValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V copyOperation(org.objectweb.asm.tree.AbstractInsnNode, V) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends org.objectweb.asm.tree.analysis.SourceValue&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.SourceValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue newOperation(org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue newOperation(org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.Value merge(org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicValue INT_VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicValue RETURNADDRESS_VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicValue REFERENCE_VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, V, V) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier java.lang.Class&lt;?&gt; getClass(org.objectweb.asm.Type) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicValue FLOAT_VALUE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier boolean isSubTypeOf(org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value unaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.Value binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value, org.objectweb.asm.tree.analysis.Value) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V newOperation(org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V copyOperation(org.objectweb.asm.tree.AbstractInsnNode, V)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicVerifier org.objectweb.asm.tree.analysis.BasicValue getElementValue(org.objectweb.asm.tree.analysis.BasicValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.Value copyOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.Value)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier boolean isInterface(org.objectweb.asm.Type) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.Interpreter V naryOperation(org.objectweb.asm.tree.AbstractInsnNode, java.util.List&lt;? extends V&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SourceInterpreter org.objectweb.asm.tree.analysis.SourceValue binaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.SourceValue, org.objectweb.asm.tree.analysis.SourceValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.SimpleVerifier org.objectweb.asm.tree.analysis.BasicValue merge(org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.analysis.BasicInterpreter org.objectweb.asm.tree.analysis.BasicValue ternaryOperation(org.objectweb.asm.tree.AbstractInsnNode, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue, org.objectweb.asm.tree.analysis.BasicValue) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+</root>

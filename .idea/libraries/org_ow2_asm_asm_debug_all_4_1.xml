@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="org.ow2.asm:asm-debug-all:4.1" type="repository">
+    <properties maven-id="org.ow2.asm:asm-debug-all:4.1" />
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations/org.ow2.asm_asm-debug-all_4.1" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
