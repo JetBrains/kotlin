@@ -168,7 +168,6 @@ fun interpreterLoop(
                     frame.execute(currentInsn, interpreter)
                 }
                 catch (e: ThrownFromEvalException) {
-                    // TODO: try/catch.finaly
                     val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                     if (handled != null) return handled
                     if (exceptionCaught(e.exception)) continue
