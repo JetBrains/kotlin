@@ -36,6 +36,14 @@ class TestData {
         return 2.0d;
     }
 
+    static Object returnNull() {
+        return null;
+    }
+
+    static String returnString() {
+        return "str";
+    }
+
     static int variable() {
         int i = 153;
         return i;
@@ -131,4 +139,5 @@ class TestData {
         }
         return i;
     }
+
 }

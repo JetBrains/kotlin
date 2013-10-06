@@ -19,6 +19,7 @@ class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
 trait Eval {
     fun loadClass(classType: Type): Value
+    fun loadString(str: String): Value
     fun newInstance(classType: Type): Value
     fun checkCast(value: Value, targetType: Type): Value
     fun isInsetanceOf(value: Value, targetType: Type): Boolean
@@ -83,7 +84,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                     is Float -> float(cst)
                     is Long -> long(cst)
                     is Double -> double(cst)
-                    is String -> obj(cst)
+                    is String -> eval.loadString(cst)
                     is Type -> {
                         val sort = (cst as Type).getSort()
                         when (sort) {

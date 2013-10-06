@@ -97,7 +97,7 @@ fun interpreterLoop(
                     IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
                         val value = frame.getStack(0)!!
                         val expectedType = Type.getReturnType(m.desc)
-                        if (value.asmType != expectedType) {
+                        if (value != NULL_VALUE && value.asmType != expectedType) {
                             assert(insnOpcode == IRETURN, "Only ints should be coerced")
 
                             val coerced = when (expectedType.getSort()) {

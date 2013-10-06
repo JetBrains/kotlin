@@ -58,7 +58,7 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
                     Type.LONG -> ValueReturned(long(result as Long))
                     Type.DOUBLE -> ValueReturned(double(result as Double))
                     Type.FLOAT -> ValueReturned(float(result as Float))
-                    Type.OBJECT -> ValueReturned(obj(result))
+                    Type.OBJECT -> ValueReturned(if (result == null) NULL_VALUE else ObjectValue(result, returnType))
                     else -> {
                         println("Unsupported result type: $returnType")
                         return null
@@ -92,6 +92,8 @@ object REFLECTION_EVAL : Eval {
     override fun loadClass(classType: Type): Value {
         throw UnsupportedOperationException()
     }
+    override fun loadString(str: String): Value = ObjectValue(str, Type.getType(javaClass<String>()))
+
     override fun newInstance(classType: Type): Value {
         throw UnsupportedOperationException()
     }

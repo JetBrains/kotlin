@@ -65,7 +65,7 @@ fun int(v: Int) = IntValue(v, Type.INT_TYPE)
 fun long(v: Long) = LongValue(v)
 fun float(v: Float) = FloatValue(v)
 fun double(v: Double) = DoubleValue(v)
-fun obj<T>(v: T, t: Type = if (v != null) Type.getType(v.javaClass) else Type.getType(javaClass<Any>())) = ObjectValue(v, t)
+//fun obj<T>(v: T, t: Type = if (v != null) Type.getType(v.javaClass) else Type.getType(javaClass<Any>())) = ObjectValue(v, t)
 
 val NULL_VALUE = ObjectValue(null, Type.getObjectType("null"))
 
