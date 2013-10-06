@@ -21,6 +21,11 @@ object NOT_A_VALUE: Value {
     override fun getSize(): Int = 1
 }
 
+object VOID_VALUE: Value {
+    override val asmType: Type = Type.VOID_TYPE
+    override val valid: Boolean = false
+}
+
 class NotInitialized(override val asmType: Type): Value {
     override val valid = false
 }
