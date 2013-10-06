@@ -38,14 +38,7 @@ trait Eval {
     fun invokeMethod(instance: Value, methodDesc: String, arguments: List<Value>, invokespecial: Boolean = false): Value
 }
 
-trait Control {
-    fun jump(label: LabelNode)
-
-    fun returnValue(value: Value)
-    fun throwException(value: Value)
-}
-
-class SingleInstructionInterpreter(private val eval: Eval, private val control: Control) : Interpreter<Value>(ASM4) {
+class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(ASM4) {
     override fun newValue(`type`: Type?): Value? {
         if (`type` == null) {
             return NOT_A_VALUE
@@ -141,17 +134,7 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             F2D -> double(value.float.toDouble())
 
             IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
-                val label = (insn as JumpInsnNode).label
-                when (insn.getOpcode()) {
-                    IFEQ -> if (value.int == 0) control.jump(label)
-                    IFNE -> if (value.int != 0) control.jump(label)
-                    IFLT -> if (value.int < 0) control.jump(label)
-                    IFGT -> if (value.int > 0) control.jump(label)
-                    IFLE -> if (value.int <= 0) control.jump(label)
-                    IFGE -> if (value.int >= 0) control.jump(label)
-                    IFNULL -> if (value.obj == null) control.jump(label)
-                    IFNONNULL -> if (value.obj != null) control.jump(label)
-                }
+                // Handled by interpreter loop, see checkUnaryCondition()
                 null
             }
 
@@ -187,7 +170,7 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             ARRAYLENGTH -> eval.getArrayLength(value)
 
             ATHROW -> {
-                control.throwException(value)
+                // Handled by interpreter loop
                 null
             }
 
@@ -205,6 +188,20 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             MONITORENTER, MONITOREXIT -> throw UnsupportedByteCodeException("Monitor instructions are not supported")
 
             else -> throw UnsupportedByteCodeException("$insn")
+        }
+    }
+
+    public fun checkUnaryCondition(value: Value, opcode: Int): Boolean {
+        return when (opcode) {
+            IFEQ -> value.int == 0
+            IFNE -> value.int != 0
+            IFLT -> value.int < 0
+            IFGT -> value.int > 0
+            IFLE -> value.int <= 0
+            IFGE -> value.int >= 0
+            IFNULL -> value.obj == null
+            IFNONNULL -> value.obj != null
+            else -> throw UnsupportedByteCodeException("Unknown opcode: $opcode")
         }
     }
 
@@ -290,18 +287,7 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             }
 
             IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
-                val label = (insn as JumpInsnNode).label
-                when (insn.getOpcode()) {
-                    IF_ICMPEQ -> if (value1.int == value2.int) control.jump(label)
-                    IF_ICMPNE -> if (value1.int != value2.int) control.jump(label)
-                    IF_ICMPLT -> if (value1.int < value2.int) control.jump(label)
-                    IF_ICMPGT -> if (value1.int > value2.int) control.jump(label)
-                    IF_ICMPLE -> if (value1.int <= value2.int) control.jump(label)
-                    IF_ICMPGE -> if (value1.int >= value2.int) control.jump(label)
-
-                    IF_ACMPEQ -> if (value1.obj == value2.obj) control.jump(label)
-                    IF_ACMPNE -> if (value1.obj != value2.obj) control.jump(label)
-                }
+                // Handled by interpreter loop, see checkBinaryCondition()
                 null
             }
 
@@ -311,6 +297,21 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             }
 
             else -> throw UnsupportedByteCodeException("$insn")
+        }
+    }
+
+    public fun checkBinaryCondition(value1: Value, value2: Value, opcode: Int): Boolean {
+        return when (opcode) {
+            IF_ICMPEQ -> value1.int == value2.int
+            IF_ICMPNE -> value1.int != value2.int
+            IF_ICMPLT -> value1.int < value2.int
+            IF_ICMPGT -> value1.int > value2.int
+            IF_ICMPLE -> value1.int <= value2.int
+            IF_ICMPGE -> value1.int >= value2.int
+
+            IF_ACMPEQ -> value1.obj == value2.obj
+            IF_ACMPNE -> value1.obj != value2.obj
+            else -> throw UnsupportedByteCodeException("Unknown opcode: $opcode")
         }
     }
 
@@ -357,7 +358,7 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             DRETURN,
             ARETURN -> {
                 // TODO: coercion, maybe?
-                control.returnValue(value)
+                // Handled by interpreter loop
             }
 
             else -> throw UnsupportedByteCodeException("$insn")
