@@ -147,7 +147,7 @@ object REFLECTION_EVAL : Eval {
         assertNotNull("Class not found: ${fieldDesc.ownerInternalName}", owner)
         val field = owner!!.findField(fieldDesc)
         assertNotNull("Field not found: $fieldDesc", field)
-        val result = field!!.set(null, newValue.obj)
+        field!!.set(null, newValue.obj)
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
