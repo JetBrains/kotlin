@@ -9,6 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="org.ow2.asm:asm-debug-all:4.1" level="project" />
+    <orderEntry type="library" name="junit:junit:4.11" level="project" />
   </component>
 </module>
 
