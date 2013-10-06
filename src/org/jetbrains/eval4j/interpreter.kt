@@ -20,8 +20,7 @@ trait Eval {
     fun loadClass(classType: Type): Value
     fun loadString(str: String): Value
     fun newInstance(classType: Type): Value
-    fun checkCast(value: Value, targetType: Type): Value
-    fun isInsetanceOf(value: Value, targetType: Type): Boolean
+    fun isInstanceOf(value: Value, targetType: Type): Boolean
 
     fun newArray(arrayType: Type, size: Int): Value
     fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value
@@ -176,12 +175,20 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
 
             CHECKCAST -> {
                 val targetType = Type.getObjectType((insn as TypeInsnNode).desc)
-                eval.checkCast(value, targetType)
+                if (eval.isInstanceOf(value, targetType)) {
+                    ObjectValue(value.obj, targetType)
+                }
+                else {
+                    throw ThrownFromEvalException(ObjectValue(
+                            ClassCastException("Value '$value' cannot be cast to $targetType"),
+                            Type.getType(javaClass<ClassCastException>())
+                    ))
+                }
             }
 
             INSTANCEOF -> {
                 val targetType = Type.getObjectType((insn as TypeInsnNode).desc)
-                boolean(eval.isInsetanceOf(value, targetType))
+                boolean(eval.isInstanceOf(value, targetType))
             }
 
             // TODO: maybe just do nothing?

@@ -111,11 +111,9 @@ object REFLECTION_EVAL : Eval {
         return NewObjectValue(_class, classType)
     }
 
-    override fun checkCast(value: Value, targetType: Type): Value {
-        throw UnsupportedOperationException()
-    }
-    override fun isInsetanceOf(value: Value, targetType: Type): Boolean {
-        throw UnsupportedOperationException()
+    override fun isInstanceOf(value: Value, targetType: Type): Boolean {
+        val _class = findClass(targetType.getInternalName())
+        return _class.isInstance(value.obj)
     }
 
     override fun newArray(arrayType: Type, size: Int): Value {

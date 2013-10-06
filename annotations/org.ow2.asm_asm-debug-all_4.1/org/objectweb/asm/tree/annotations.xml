@@ -386,6 +386,9 @@
     <item name='org.objectweb.asm.tree.MethodNode org.objectweb.asm.tree.LabelNode getLabelNode(org.objectweb.asm.Label) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.objectweb.asm.tree.MethodNode tryCatchBlocks'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.objectweb.asm.tree.MethodNode void accept(org.objectweb.asm.ClassVisitor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -549,6 +552,12 @@
         </annotation>
     </item>
     <item name='org.objectweb.asm.tree.TableSwitchInsnNode void accept(org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.TryCatchBlockNode end'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.tree.TryCatchBlockNode start'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.objectweb.asm.tree.TryCatchBlockNode void accept(org.objectweb.asm.MethodVisitor) 0'>

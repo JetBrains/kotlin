@@ -9,6 +9,8 @@ import org.objectweb.asm.tree.analysis.Interpreter
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.VarInsnNode
 import org.objectweb.asm.util.Printer
+import org.objectweb.asm.tree.TryCatchBlockNode
+import java.util.ArrayList
 
 trait InterpreterResult {
     fun toString(): String
@@ -62,11 +64,27 @@ fun interpreterLoop(
     }
 
     val interpreter = SingleInstructionInterpreter(eval)
-        var frame = initFrame(ownerClassInternalName, m, interpreter)
+    val frame = initFrame(ownerClassInternalName, m, interpreter)
+    val handlers = computeHandlers(m)
+
+    fun exceptionCaught(exceptionValue: Value): Boolean {
+        val catchBlocks = handlers[m.instructions.indexOf(currentInsn)] ?: listOf()
+        for (catch in catchBlocks) {
+            val exceptionTypeDesc = catch.`type`
+            if (exceptionTypeDesc != null) {
+                val exceptionType = Type.getType(exceptionTypeDesc)
+                if (eval.isInstanceOf(exceptionValue, exceptionType)) {
+                    frame.clearStack()
+                    frame.push(exceptionValue)
+                    goto(catch.handler)
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
     while (true) {
-        // TODO try-catch-finally support
-
         val insnOpcode = currentInsn.getOpcode()
         val insnType = currentInsn.getType()
 
@@ -134,11 +152,11 @@ fun interpreterLoop(
                         }
                     }
 
-                    // TODO: try/catch/finally
                     ATHROW -> {
                         val exceptionValue = frame.getStack(0)!!
                         val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
                         if (handled != null) return handled
+                        if (exceptionCaught(exceptionValue)) continue
                         return ExceptionThrown(exceptionValue)
                     }
 
@@ -153,6 +171,7 @@ fun interpreterLoop(
                     // TODO: try/catch.finaly
                     val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                     if (handled != null) return handled
+                    if (exceptionCaught(e.exception)) continue
                     return ExceptionThrown(e.exception)
                 }
             }
@@ -193,4 +212,21 @@ fun <V : org.objectweb.asm.tree.analysis.Value> initFrame(
     }
 
     return current
+}
+
+fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {
+    val insns = m.instructions
+    val handlers = Array<MutableList<TryCatchBlockNode>?>(insns.size()) {null}
+    for (tcb in m.tryCatchBlocks) {
+        val begin = insns.indexOf(tcb.start)
+        val end = insns.indexOf(tcb.end)
+        for (i in begin..end - 1) {
+            val insnHandlers = handlers[i] ?: ArrayList<TryCatchBlockNode>()
+            handlers[i] = insnHandlers
+
+            insnHandlers.add(tcb)
+        }
+    }
+
+    return handlers
 }

@@ -208,4 +208,44 @@ class TestData {
     static int constructorCallWithArgs() {
         return new C(10).y;
     }
+
+    static class MyEx extends RuntimeException {
+        final int x;
+
+        MyEx(int x) {
+            this.x = x;
+        }
+    }
+
+    static int tryCatch() {
+        try {
+            throw new MyEx(10);
+        }
+        catch (MyEx e) {
+            return e.x;
+        }
+    }
+
+    static int tryWiderCatch() {
+        int a = 10;
+        try {
+            if (a > 0) {
+                throw new MyEx(10);
+            }
+        } catch (Exception e) {
+            return ((MyEx) e).x;
+        }
+        return 2;
+    }
+
+    static int classCastException() {
+        Object a = "";
+        try {
+            Integer s = (Integer) a;
+        }
+        catch (ClassCastException e) {
+            return 1;
+        }
+        return 2;
+    }
 }
