@@ -45,7 +45,7 @@ trait Control {
     fun throwException(value: Value)
 }
 
-class EvalInterpreter(private val eval: Eval, private val control: Control) : Interpreter<Value>(ASM4) {
+class SingleInstructionInterpreter(private val eval: Eval, private val control: Control) : Interpreter<Value>(ASM4) {
     override fun newValue(`type`: Type?): Value? {
         if (`type` == null) {
             return NOT_A_VALUE
