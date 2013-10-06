@@ -17,6 +17,15 @@ class ValueReturned(val result: Value): InterpreterResult
 class AbnormalTermination(val message: String): InterpreterResult
 
 trait InterpretationEventHandler {
+
+    class object {
+        object NONE : InterpretationEventHandler {
+            override fun instructionProcessed(insn: AbstractInsnNode): InterpreterResult? = null
+            override fun exceptionThrown(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
+            override fun exceptionCaught(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
+        }
+    }
+
     // If a non-null value is returned, interpreter loop is terminated and that value is used as a result
     fun instructionProcessed(insn: AbstractInsnNode): InterpreterResult?
 
@@ -30,7 +39,7 @@ fun interpreterLoop(
         ownerClassInternalName: String,
         m: MethodNode,
         eval: Eval,
-        instructionHandler: (AbstractInsnNode) -> InterpreterResult?
+        handler: InterpretationEventHandler = InterpretationEventHandler.NONE
 ): InterpreterResult {
     val firstInsn = m.instructions.getFirst()
     if (firstInsn == null) return NOTHING_DONE
@@ -91,7 +100,12 @@ fun interpreterLoop(
                 }
 
                 // TODO: try/catch/finally
-                ATHROW -> return ExceptionThrown(frame.getStack(0)!!)
+                ATHROW -> {
+                    val exceptionValue = frame.getStack(0)!!
+                    val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
+                    if (handled != null) return handled
+                    return ExceptionThrown(exceptionValue)
+                }
             }
         }
 
@@ -100,10 +114,12 @@ fun interpreterLoop(
         }
         catch (e: ThrownFromEvalException) {
             // TODO: try/catch.finaly
+            val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
+            if (handled != null) return handled
             return ExceptionThrown(e.exception)
         }
 
-        val handled = instructionHandler(currentInsn)
+        val handled = handler.instructionProcessed(currentInsn)
         if (handled != null) return handled
 
         goto(currentInsn.getNext())
