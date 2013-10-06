@@ -83,7 +83,7 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
                     REFLECTION_EVAL
             )
 
-            assertEquals(value, expected)
+            assertEquals(expected, value)
         }
     }
 }
