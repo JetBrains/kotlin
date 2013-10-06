@@ -12,6 +12,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.Field
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Array as JArray
 
 fun suite(): TestSuite {
     val suite = TestSuite()
@@ -102,35 +103,80 @@ object REFLECTION_EVAL : Eval {
     val lookup = ReflectionLookup(javaClass<ReflectionLookup>().getClassLoader()!!)
 
     override fun loadClass(classType: Type): Value {
-        return ObjectValue(findClass(classType.getInternalName()), Type.getType(javaClass<Class<*>>()))
+        return ObjectValue(findClass(classType), Type.getType(javaClass<Class<*>>()))
     }
 
     override fun loadString(str: String): Value = ObjectValue(str, Type.getType(javaClass<String>()))
 
     override fun newInstance(classType: Type): Value {
-        val _class = findClass(classType.getInternalName())
+        val _class = findClass(classType)
         return NewObjectValue(_class, classType)
     }
 
     override fun isInstanceOf(value: Value, targetType: Type): Boolean {
-        val _class = findClass(targetType.getInternalName())
+        val _class = findClass(targetType)
         return _class.isInstance(value.obj)
     }
 
+    [suppress("UNCHECKED_CAST")]
     override fun newArray(arrayType: Type, size: Int): Value {
-        throw UnsupportedOperationException()
+        return ObjectValue(JArray.newInstance(findClass(arrayType).getComponentType() as Class<Any>, size), arrayType)
     }
+
     override fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value {
-        throw UnsupportedOperationException()
+        return ObjectValue(ArrayHelper.newMultiArray(findClass(arrayType.getElementType()), *dimensionSizes.copyToArray()), arrayType)
     }
+
     override fun getArrayLength(array: Value): Value {
-        throw UnsupportedOperationException()
+        return int(JArray.getLength(array.obj.checkNull()))
     }
+
     override fun getArrayElement(array: Value, index: Value): Value {
-        throw UnsupportedOperationException()
+        val asmType = array.asmType
+        val elementType = if (asmType.getDimensions() == 1) asmType.getElementType() else Type.getType(asmType.getDescriptor().substring(1))
+        val arr = array.obj.checkNull()
+        val ind = index.int
+        return when (elementType.getSort()) {
+            Type.BOOLEAN -> boolean(JArray.getBoolean(arr, ind))
+            Type.BYTE -> byte(JArray.getByte(arr, ind))
+            Type.SHORT -> short(JArray.getShort(arr, ind))
+            Type.CHAR -> char(JArray.getChar(arr, ind))
+            Type.INT -> int(JArray.getInt(arr, ind))
+            Type.LONG -> long(JArray.getLong(arr, ind))
+            Type.FLOAT -> float(JArray.getFloat(arr, ind))
+            Type.DOUBLE -> double(JArray.getDouble(arr, ind))
+            Type.OBJECT,
+            Type.ARRAY -> {
+                val value = JArray.get(arr, ind)
+                if (value == null) NULL_VALUE else ObjectValue(value, Type.getType(value.javaClass))
+            }
+            else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
+        }
     }
+
     override fun setArrayElement(array: Value, index: Value, newValue: Value) {
-        throw UnsupportedOperationException()
+        val arr = array.obj.checkNull()
+        val ind = index.int
+        if (array.asmType.getDimensions() > 1) {
+            JArray.set(arr, ind, newValue.obj)
+            return
+        }
+        val elementType = array.asmType.getElementType()
+        when (elementType.getSort()) {
+            Type.BOOLEAN -> JArray.setBoolean(arr, ind, newValue.boolean)
+            Type.BYTE -> JArray.setByte(arr, ind, newValue.int.toByte())
+            Type.SHORT -> JArray.setShort(arr, ind, newValue.int.toShort())
+            Type.CHAR -> JArray.setChar(arr, ind, newValue.int.toChar())
+            Type.INT -> JArray.setInt(arr, ind, newValue.int)
+            Type.LONG -> JArray.setLong(arr, ind, newValue.long)
+            Type.FLOAT -> JArray.setFloat(arr, ind, newValue.float)
+            Type.DOUBLE -> JArray.setDouble(arr, ind, newValue.double)
+            Type.OBJECT,
+            Type.ARRAY -> {
+                JArray.set(arr, ind, newValue.obj)
+            }
+            else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
+        }
     }
 
     fun <T> mayThrow(f: () -> T): T {
@@ -184,12 +230,12 @@ object REFLECTION_EVAL : Eval {
         return objectToValue(result, methodDesc.returnType)
     }
 
-    fun findClass(memberDesc: MemberDescription): Class<Any> = findClass(memberDesc.ownerInternalName)
+    fun findClass(memberDesc: MemberDescription): Class<Any> = findClass(Type.getObjectType(memberDesc.ownerInternalName))
 
-    fun findClass(internalName: String): Class<Any> {
-        val owner = lookup.findClass(internalName)
-        assertNotNull("Class not found: ${internalName}", owner)
-        return owner!!
+    fun findClass(asmType: Type): Class<Any> {
+        val owner = lookup.findClass(asmType)
+        assertNotNull("Class not found: ${asmType}", owner)
+        return owner as Class<Any>
     }
 
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
@@ -243,7 +289,21 @@ object REFLECTION_EVAL : Eval {
 
 class ReflectionLookup(val classLoader: ClassLoader) {
     [suppress("UNCHECKED_CAST")]
-    fun findClass(internalName: String): Class<Any>? = classLoader.loadClass(internalName.replace('/', '.')) as Class<Any>
+    fun findClass(asmType: Type): Class<*>? {
+        return when (asmType.getSort()) {
+            Type.BOOLEAN -> java.lang.Boolean.TYPE
+            Type.BYTE -> java.lang.Byte.TYPE
+            Type.SHORT -> java.lang.Short.TYPE
+            Type.CHAR -> java.lang.Character.TYPE
+            Type.INT -> java.lang.Integer.TYPE
+            Type.LONG -> java.lang.Long.TYPE
+            Type.FLOAT -> java.lang.Float.TYPE
+            Type.DOUBLE -> java.lang.Double.TYPE
+            Type.OBJECT -> classLoader.loadClass(asmType.getInternalName().replace('/', '.'))
+            Type.ARRAY -> Class.forName(asmType.getDescriptor().replace('/', '.'))
+            else -> throw UnsupportedOperationException("Unsupported type: $asmType")
+        }
+    }
 }
 
 [suppress("UNCHECKED_CAST")]

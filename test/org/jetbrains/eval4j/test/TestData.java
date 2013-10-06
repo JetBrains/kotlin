@@ -277,4 +277,184 @@ class TestData {
         }
         return 0;
     }
+
+    static Class<?> arrayClass() {
+        return int[].class;
+    }
+
+    static int arrayOfByte() {
+        byte[] a = new byte[] {1, 2, 3};
+        int sum = 0;
+        for (int i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static int arrayOfShort() {
+        short[] a = new short[] {1, 2, 3};
+        int sum = 0;
+        for (int i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static int arrayOfChar() {
+        char[] a = new char[] {1, 2, 3};
+        int sum = 0;
+        for (int i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static int arrayOfInt() {
+        int[] a = new int[] {1, 2, 3};
+        int sum = 0;
+        for (int i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static int arrayOfLong() {
+        long[] a = new long[] {1, 2, 3};
+        int sum = 0;
+        for (long i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static float arrayOfFloat() {
+        float[] a = new float[] {1, 2, 3};
+        float sum = 0;
+        for (float i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static double arrayOfDouble() {
+        double[] a = new double[] {1, 2, 3};
+        double sum = 0;
+        for (double i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static String arrayOfString() {
+        String[] a = new String[] {"1", "2", "3"};
+        String sum = "";
+        for (String i : a) {
+            sum += i;
+        }
+        return sum;
+    }
+
+    static int arrayOfByte2() {
+        byte[][] a = new byte[][] {{1}, {2}, {3}};
+        int sum = 0;
+        for (byte[] aa: a)
+            for (int i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static int arrayOfShort2() {
+        short[][] a = new short[][] {{1}, {2}, {3}};
+        int sum = 0;
+        for (short[] aa: a)
+            for (int i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static int arrayOfChar2() {
+        char[][] a = new char[][] {{1}, {2}, {3}};
+        int sum = 0;
+        for (char[] aa: a)
+            for (int i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static int arrayOfInt2() {
+        int[][] a = new int[][] {{1}, {2}, {3}};
+        int sum = 0;
+        for (int[] aa: a)
+            for (int i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static int arrayOfLong2() {
+        long[][] a = new long[][] {{1}, {2}, {3}};
+        int sum = 0;
+        for (long[] aa: a)
+            for (long i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static float arrayOfFloat2() {
+        float[][] a = new float[][] {{1}, {2}, {3}};
+        float sum = 0;
+        for (float[] aa: a)
+            for (float i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static double arrayOfDouble2() {
+        double[][] a = new double[][] {{1}, {2}, {3}};
+        double sum = 0;
+        for (double[] aa: a)
+            for (double i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static String arrayOfString2() {
+        String[][] a = new String[][] {{"1"}, {"2"}, {"3"}};
+        String sum = "";
+        for (String[] aa: a)
+            for (String i : aa) {
+                sum += i;
+            }
+        return sum;
+    }
+
+    static String multiArrayOfInt() {
+        int[][] a = new int[2][2];
+        String s = "";
+        for (int[] x : a)
+            for (int y : x) {
+                s += y;
+            }
+        return s;
+    }
+
+    static String multiArrayOfString() {
+        String[][] a = new String[2][2];
+        for (String[] x : a)
+            for (int i = 0; i < x.length; i++) {
+                x[i] = i + "";
+            }
+        String s = "";
+        for (String[] x : a)
+            for (String y : x) {
+                s += y;
+            }
+        return s;
+    }
 }
