@@ -248,4 +248,8 @@ class TestData {
         }
         return 2;
     }
+
+    static String classLiteral() {
+        return String.class.toString();
+    }
 }

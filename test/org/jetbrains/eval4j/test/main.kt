@@ -101,7 +101,7 @@ object REFLECTION_EVAL : Eval {
     val lookup = ReflectionLookup(javaClass<ReflectionLookup>().getClassLoader()!!)
 
     override fun loadClass(classType: Type): Value {
-        throw UnsupportedOperationException()
+        return ObjectValue(findClass(classType.getInternalName()), Type.getType(javaClass<Class<*>>()))
     }
 
     override fun loadString(str: String): Value = ObjectValue(str, Type.getType(javaClass<String>()))
