@@ -98,7 +98,7 @@ class TestData {
         }
     }
 
-    static int testSimpleFinally() {
+    static int simpleFinally() {
         int i = 5;
         try {
             return i;
@@ -108,7 +108,7 @@ class TestData {
         }
     }
 
-    static int testSimpleFinallyWithReturn() {
+    static int simpleFinallyWithReturn() {
         int i = 5;
         try {
             return i;
@@ -118,7 +118,7 @@ class TestData {
         }
     }
 
-    static int testSimpleFinallyWithContinueInLoop() {
+    static int simpleFinallyWithContinueInLoop() {
         int i = 5;
         while (true) {
             try {
@@ -131,7 +131,7 @@ class TestData {
         }
     }
 
-    static int testSimpleFinallyWithBreakInLoop() {
+    static int simpleFinallyWithBreakInLoop() {
         int i = 5;
         while (true) {
             try {
@@ -144,21 +144,21 @@ class TestData {
         return i;
     }
 
-    static Object testCall() {
+    static Object call() {
         return Integer.valueOf(1);
     }
 
-    static Object testCallWithObject() {
+    static Object callWithObject() {
         return String.valueOf("str");
     }
 
-    static Object testGetStaticField() {
+    static Object getStaticField() {
         return String.CASE_INSENSITIVE_ORDER;
     }
 
     static int FIELD = 0;
 
-    static int testPutStaticField() {
+    static int putStaticField() {
         FIELD = 5;
         int f1 = FIELD;
         FIELD = 6;
@@ -169,22 +169,30 @@ class TestData {
     static class C {
         int y = 15;
 
+        int getY() {
+            return y;
+        }
+
         static C newC() {
             return new C();
         }
     }
 
-    static int testGetInstanceField() {
+    static int getInstanceField() {
         return C.newC().y;
     }
 
-    static int testPutInstanceField() {
+    static int putInstanceField() {
         C c = C.newC();
         c.y = 5;
         int f1 = c.y;
         c.y = 6;
         int f2 = c.y;
         return f1 + f2;
+    }
+
+    static int instanceMethod() {
+        return C.newC().getY();
     }
 
 }

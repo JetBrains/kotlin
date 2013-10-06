@@ -185,7 +185,12 @@ object REFLECTION_EVAL : Eval {
     }
 
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
-        throw UnsupportedOperationException()
+        // TODO: INVOKESPECIAL
+        val obj = instance.obj
+        val method = obj.javaClass.findMethod(methodDesc)
+        assertNotNull("Method not found: $methodDesc", method)
+        val result = method!!.invoke(obj, *arguments.map { v -> v.obj }.copyToArray())
+        return objectToValue(result, methodDesc.returnType)
     }
 }
 
