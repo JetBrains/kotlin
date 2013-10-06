@@ -234,6 +234,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         KotlinJvmBinaryClass kotlinClass = findClassWithMemberAnnotations(container, proto, nameResolver);
         if (kotlinClass == null) {
             errorReporter.reportAnnotationLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
+            return Collections.emptyList();
         }
 
         List<AnnotationDescriptor> annotations = memberAnnotations.invoke(kotlinClass).get(signature);
