@@ -36,7 +36,7 @@ fun Class<*>.getInternalName(): String = Type.getType(this).getInternalName()
 
 fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
     var expected: InterpreterResult? = null
-    for (method in ownerClass.getMethods()) {
+    for (method in ownerClass.getDeclaredMethods()) {
         if (method.getName() == methodNode.name) {
             if ((method.getModifiers() and Modifier.STATIC) == 0) {
                 println("Skipping instance method: $method")
@@ -74,7 +74,7 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
         return null
     }
 
-    return object : TestCase(methodNode.name) {
+    return object : TestCase("test" + methodNode.name.capitalize()) {
 
         override fun runTest() {
             val value = interpreterLoop(

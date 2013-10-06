@@ -1,38 +1,38 @@
 package org.jetbrains.eval4j.test;
 
-public class TestData {
-    public static void testReturnVoid() {
+class TestData {
+    static void returnVoid() {
     }
 
-    public static boolean testReturnBoolean() {
+    static boolean returnBoolean() {
         return true;
     }
 
-    public static byte testReturnByte() {
+    static byte returnByte() {
         return 2;
     }
 
-    public static short testReturnShort() {
+    static short returnShort() {
         return 2;
     }
 
-    public static char testReturnChar() {
+    static char returnChar() {
         return '2';
     }
 
-    public static int testReturnInt() {
+    static int returnInt() {
         return 2;
     }
 
-    public static long testReturnLong() {
+    static long returnLong() {
         return 2;
     }
 
-    public static float testReturnFloat() {
+    static float returnFloat() {
         return 2.0f;
     }
 
-    public static double testReturnDouble() {
+    static double returnDouble() {
         return 2.0d;
     }
 }

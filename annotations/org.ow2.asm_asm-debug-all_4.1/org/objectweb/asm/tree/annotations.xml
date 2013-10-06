@@ -347,6 +347,9 @@
     <item name='org.objectweb.asm.tree.MethodNode instructions'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.objectweb.asm.tree.MethodNode name'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.objectweb.asm.tree.MethodNode org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
