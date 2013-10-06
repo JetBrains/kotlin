@@ -11,15 +11,6 @@ trait Value : org.objectweb.asm.tree.analysis.Value {
     override fun toString(): String
 }
 
-abstract class AbstractValue(
-        override val asmType: Type,
-        private val asString: String
-) : Value {
-    override val valid = true
-
-    override fun toString() = asString
-}
-
 object NOT_A_VALUE: Value {
     override val asmType = Type.getType("<invalid>")
     override val valid = false
@@ -39,13 +30,32 @@ class NotInitialized(override val asmType: Type): Value {
     override fun toString() = "NotInitialized: $asmType"
 }
 
-class IntValue(val value: Int, asmType: Type): AbstractValue(asmType, "$value")
-class LongValue(val value: Long): AbstractValue(Type.LONG_TYPE, "$value")
-class FloatValue(val value: Float): AbstractValue(Type.FLOAT_TYPE, "$value")
-class DoubleValue(val value: Double): AbstractValue(Type.DOUBLE_TYPE, "$value")
-class ObjectValue(val value: Any?, asmType: Type): AbstractValue(asmType, "$value")
+abstract class AbstractValue<V>(
+        public val value: V,
+        override val asmType: Type
+) : Value {
+    override val valid = true
 
-class LabelValue(val value: LabelNode): AbstractValue(Type.VOID_TYPE, "label: ${value.getLabel()}")
+    override fun toString() = "$value: $asmType"
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is AbstractValue<*>) return false
+
+        return value == other.value && asmType == other.asmType
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode() + 17 * asmType.hashCode()
+    }
+}
+
+class IntValue(value: Int, asmType: Type): AbstractValue<Int>(value, asmType)
+class LongValue(value: Long): AbstractValue<Long>(value, Type.LONG_TYPE)
+class FloatValue(value: Float): AbstractValue<Float>(value, Type.FLOAT_TYPE)
+class DoubleValue(value: Double): AbstractValue<Double>(value, Type.DOUBLE_TYPE)
+class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
+
+class LabelValue(value: LabelNode): AbstractValue<LabelNode>(value, Type.VOID_TYPE)
 
 fun boolean(v: Boolean) = IntValue(if (v) 1 else 0, Type.BOOLEAN_TYPE)
 fun byte(v: Byte) = IntValue(v.toInt(), Type.BYTE_TYPE)

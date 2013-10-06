@@ -18,7 +18,7 @@ class ExceptionThrown(val exception: Value): InterpreterResult {
     override fun toString(): String = "Thrown $exception"
 }
 
-class ValueReturned(val result: Value): InterpreterResult {
+data class ValueReturned(val result: Value): InterpreterResult {
     override fun toString(): String = "Returned $result"
 }
 
