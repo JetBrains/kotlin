@@ -59,7 +59,7 @@ class LongValue(value: Long): AbstractValue<Long>(value, Type.LONG_TYPE)
 class FloatValue(value: Float): AbstractValue<Float>(value, Type.FLOAT_TYPE)
 class DoubleValue(value: Double): AbstractValue<Double>(value, Type.DOUBLE_TYPE)
 class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
-class NewObjectValue(val _class: Class<Any?>, asmType: Type): AbstractValueBase<Any?>(asmType) {
+class NewObjectValue(val _class: Class<*>, asmType: Type): AbstractValueBase<Any?>(asmType) {
     override var value: Any? = null
 }
 

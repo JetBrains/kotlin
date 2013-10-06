@@ -182,6 +182,10 @@ class TestData {
         static C newC() {
             return new C();
         }
+
+        static void throwException() {
+            throw new RuntimeException();
+        }
     }
 
     static int getInstanceField() {
@@ -251,5 +255,26 @@ class TestData {
 
     static String classLiteral() {
         return String.class.toString();
+    }
+
+    static int callThrowingMethod() {
+        try {
+            C.throwException();
+        }
+        catch (RuntimeException e) {
+            return 1;
+        }
+        return 0;
+    }
+
+    static int NPE() {
+        try {
+            Object x = null;
+            x.toString();
+        }
+        catch (NullPointerException e) {
+            return 1;
+        }
+        return 0;
     }
 }
