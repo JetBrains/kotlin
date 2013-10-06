@@ -1,6 +1,5 @@
 package org.jetbrains.eval4j
 
-import org.objectweb.asm.tree.LabelNode
 import org.objectweb.asm.tree.AbstractInsnNode
 import org.objectweb.asm.tree.analysis.Frame
 import org.objectweb.asm.tree.MethodNode
@@ -95,7 +94,23 @@ fun interpreterLoop(
                     LOOKUPSWITCH -> UnsupportedByteCodeException("LOOKUPSWITCH is not supported yet")
                     TABLESWITCH -> UnsupportedByteCodeException("TABLESWITCH is not supported yet")
 
-                    IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> return ValueReturned(frame.getStack(0)!!)
+                    IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
+                        val value = frame.getStack(0)!!
+                        val expectedType = Type.getReturnType(m.desc)
+                        if (value.asmType != expectedType) {
+                            assert(insnOpcode == IRETURN, "Only ints should be coerced")
+
+                            val coerced = when (expectedType.getSort()) {
+                                Type.BOOLEAN -> boolean(value.boolean)
+                                Type.BYTE -> byte(value.int.toByte())
+                                Type.SHORT -> short(value.int.toShort())
+                                Type.CHAR -> char(value.int.toChar())
+                                else -> throw UnsupportedByteCodeException("Should not be coerced: $expectedType")
+                            }
+                            return ValueReturned(coerced)
+                        }
+                        return ValueReturned(value)
+                    }
                     RETURN -> return ValueReturned(VOID_VALUE)
                     IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
                         if (interpreter.checkUnaryCondition(frame.getStack(0)!!, insnOpcode)) {

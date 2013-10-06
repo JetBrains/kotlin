@@ -69,12 +69,7 @@ fun obj<T>(v: T, t: Type = if (v != null) Type.getType(v.javaClass) else Type.ge
 
 val NULL_VALUE = ObjectValue(null, Type.getObjectType("null"))
 
-val Value.boolean: Boolean
-    get(): Boolean {
-        assert(this.asmType == Type.BOOLEAN_TYPE)
-        return (this as IntValue).value == 1
-    }
-
+val Value.boolean: Boolean get() = (this as IntValue).value == 1
 val Value.int: Int get() = (this as IntValue).value
 val Value.long: Long get() = (this as LongValue).value
 val Value.float: Float get() = (this as FloatValue).value
