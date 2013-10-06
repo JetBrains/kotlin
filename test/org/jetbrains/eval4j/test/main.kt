@@ -8,6 +8,7 @@ import org.jetbrains.eval4j.*
 import org.junit.Assert.*
 import junit.framework.TestSuite
 import junit.framework.TestCase
+import java.lang.reflect.Method
 
 fun suite(): TestSuite {
     val suite = TestSuite()
@@ -48,23 +49,12 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
                 method.setAccessible(true)
                 val result = method.invoke(null)
                 val returnType = Type.getType(method.getReturnType()!!)
-                expected = when (returnType.getSort()) {
-                    Type.VOID -> ValueReturned(VOID_VALUE)
-                    Type.BOOLEAN -> ValueReturned(boolean(result as Boolean))
-                    Type.BYTE -> ValueReturned(byte(result as Byte))
-                    Type.SHORT -> ValueReturned(short(result as Short))
-                    Type.CHAR -> ValueReturned(char(result as Char))
-                    Type.INT -> ValueReturned(int(result as Int))
-                    Type.LONG -> ValueReturned(long(result as Long))
-                    Type.DOUBLE -> ValueReturned(double(result as Double))
-                    Type.FLOAT -> ValueReturned(float(result as Float))
-                    Type.OBJECT -> ValueReturned(if (result == null) NULL_VALUE else ObjectValue(result, returnType))
-                    else -> {
-                        println("Unsupported result type: $returnType")
-                        return null
-                    }
+                try {
+                    expected = ValueReturned(objectToValue(result, returnType))
                 }
-                println("Testing $method")
+                catch (e: UnsupportedOperationException) {
+                    println("Skipping $method: $e")
+                }
             }
         }
     }
@@ -88,7 +78,26 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
     }
 }
 
+fun objectToValue(obj: Any?, expectedType: Type): Value {
+    return when (expectedType.getSort()) {
+        Type.VOID -> VOID_VALUE
+        Type.BOOLEAN -> boolean(obj as Boolean)
+        Type.BYTE -> byte(obj as Byte)
+        Type.SHORT -> short(obj as Short)
+        Type.CHAR -> char(obj as Char)
+        Type.INT -> int(obj as Int)
+        Type.LONG -> long(obj as Long)
+        Type.DOUBLE -> double(obj as Double)
+        Type.FLOAT -> float(obj as Float)
+        Type.OBJECT -> if (obj == null) NULL_VALUE else ObjectValue(obj, expectedType)
+        else -> throw UnsupportedOperationException("Unsupported result type: $expectedType")
+    }
+}
+
 object REFLECTION_EVAL : Eval {
+
+    val lookup = ReflectionLookup(javaClass<ReflectionLookup>().getClassLoader()!!)
+
     override fun loadClass(classType: Type): Value {
         throw UnsupportedOperationException()
     }
@@ -103,6 +112,7 @@ object REFLECTION_EVAL : Eval {
     override fun isInsetanceOf(value: Value, targetType: Type): Boolean {
         throw UnsupportedOperationException()
     }
+
     override fun newArray(arrayType: Type, size: Int): Value {
         throw UnsupportedOperationException()
     }
@@ -118,22 +128,67 @@ object REFLECTION_EVAL : Eval {
     override fun setArrayElement(array: Value, index: Value, newValue: Value) {
         throw UnsupportedOperationException()
     }
+
     override fun getStaticField(fieldDesc: String): Value {
         throw UnsupportedOperationException()
     }
     override fun setStaticField(fieldDesc: String, newValue: Value) {
         throw UnsupportedOperationException()
     }
-    override fun invokeStaticMethod(methodDesc: String, arguments: List<Value>): Value {
-        throw UnsupportedOperationException()
+
+    override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
+        assertTrue(methodDesc.isStatic)
+        val owner = lookup.findClass(methodDesc.ownerInternalName)
+        assertNotNull("Class not found: ${methodDesc.ownerInternalName}", owner)
+        val method = owner!!.findMethod(methodDesc)
+        assertNotNull("Method not found: $methodDesc", method)
+        val result = method!!.invoke(null, *arguments.map { v -> v.obj }.copyToArray())
+        return objectToValue(result, methodDesc.returnType)
     }
+
     override fun getField(instance: Value, fieldDesc: String): Value {
         throw UnsupportedOperationException()
     }
     override fun setField(instance: Value, fieldDesc: String, newValue: Value) {
         throw UnsupportedOperationException()
     }
-    override fun invokeMethod(instance: Value, methodDesc: String, arguments: List<Value>, invokespecial: Boolean): Value {
+    override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
         throw UnsupportedOperationException()
     }
 }
+
+class ReflectionLookup(val classLoader: ClassLoader) {
+    [suppress("UNCHECKED_CAST")]
+    fun findClass(internalName: String): Class<Any?>? = classLoader.loadClass(internalName.replace('/', '.')) as Class<Any?>
+}
+
+[suppress("UNCHECKED_CAST")]
+fun Class<Any?>.findMethod(methodDesc: MethodDescription): Method? {
+    for (declared in getDeclaredMethods()) {
+        if (methodDesc.matches(declared)) return declared
+    }
+
+    val fromSuperClass = (getSuperclass() as Class<Any?>).findMethod(methodDesc)
+    if (fromSuperClass != null) return fromSuperClass
+
+    for (supertype in getInterfaces()) {
+        val fromSuper = (supertype as Class<Any?>).findMethod(methodDesc)
+        if (fromSuper != null) return fromSuper
+    }
+
+    return null
+}
+
+fun MethodDescription.matches(method: Method): Boolean {
+    if (name != method.getName()) return false
+
+    val methodParams = method.getParameterTypes()!!
+    if (parameterTypes.size() != methodParams.size) return false
+    for ((i, p) in parameterTypes.withIndices()) {
+        if (!p.matches(methodParams[i])) return false
+    }
+
+    return returnType.matches(method.getReturnType()!!)
+}
+
+fun Type.matches(_class: Class<*>): Boolean = this == Type.getType(_class)

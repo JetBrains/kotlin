@@ -144,4 +144,12 @@ class TestData {
         return i;
     }
 
+    static Object testCall() {
+        return Integer.valueOf(1);
+    }
+
+    static Object testCallWithObject() {
+        return String.valueOf("str");
+    }
+
 }

@@ -74,4 +74,4 @@ val Value.int: Int get() = (this as IntValue).value
 val Value.long: Long get() = (this as LongValue).value
 val Value.float: Float get() = (this as FloatValue).value
 val Value.double: Double get() = (this as DoubleValue).value
-val Value.obj: Any? get() = (this as ObjectValue).value
+val Value.obj: Any? get() = (this as AbstractValue<*>).value

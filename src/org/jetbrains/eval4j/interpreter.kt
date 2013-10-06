@@ -13,7 +13,27 @@ import org.objectweb.asm.tree.MultiANewArrayInsnNode
 import org.objectweb.asm.tree.TypeInsnNode
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.IincInsnNode
-import org.objectweb.asm.tree.LabelNode
+
+data class MethodDescription(
+        val ownerInternalName: String,
+        val name: String,
+        val desc: String,
+        val isStatic: Boolean
+)
+
+fun MethodDescription(insn: MethodInsnNode): MethodDescription =
+        MethodDescription(
+            insn.owner,
+            insn.name,
+            insn.desc,
+            insn.getOpcode() == INVOKESTATIC
+        )
+
+val MethodDescription.returnType: Type
+    get() = Type.getReturnType(desc)
+
+val MethodDescription.parameterTypes: List<Type>
+    get() = Type.getArgumentTypes(desc).toList()
 
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
@@ -32,11 +52,11 @@ trait Eval {
 
     fun getStaticField(fieldDesc: String): Value
     fun setStaticField(fieldDesc: String, newValue: Value)
-    fun invokeStaticMethod(methodDesc: String, arguments: List<Value>): Value
+    fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value
 
     fun getField(instance: Value, fieldDesc: String): Value
     fun setField(instance: Value, fieldDesc: String, newValue: Value)
-    fun invokeMethod(instance: Value, methodDesc: String, arguments: List<Value>, invokespecial: Boolean = false): Value
+    fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean = false): Value
 }
 
 class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(ASM4) {
@@ -334,16 +354,15 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             }
 
             INVOKEVIRTUAL, INVOKESPECIAL, INVOKEINTERFACE -> {
-                val desc = (insn as MethodInsnNode).desc
                 eval.invokeMethod(
                         values[0],
-                        desc,
+                        MethodDescription(insn as MethodInsnNode),
                         values.subList(1, values.size()),
                         insn.getOpcode() == INVOKESPECIAL
                 )
             }
 
-            INVOKESTATIC -> eval.invokeStaticMethod((insn as MethodInsnNode).desc, values)
+            INVOKESTATIC -> eval.invokeStaticMethod(MethodDescription(insn as MethodInsnNode), values)
 
             INVOKEDYNAMIC -> throw UnsupportedByteCodeException("INVOKEDYNAMIC is not supported")
             else -> throw UnsupportedByteCodeException("$insn")

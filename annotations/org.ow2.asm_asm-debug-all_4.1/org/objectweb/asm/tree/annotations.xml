@@ -329,6 +329,9 @@
     <item name='org.objectweb.asm.tree.MethodInsnNode desc'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.objectweb.asm.tree.MethodInsnNode name'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.objectweb.asm.tree.MethodInsnNode org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.objectweb.asm.tree.LabelNode,org.objectweb.asm.tree.LabelNode&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -337,6 +340,9 @@
         <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
             <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
         </annotation>
+    </item>
+    <item name='org.objectweb.asm.tree.MethodInsnNode owner'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.objectweb.asm.tree.MethodInsnNode void accept(org.objectweb.asm.MethodVisitor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
