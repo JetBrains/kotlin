@@ -14,27 +14,6 @@ import org.objectweb.asm.tree.TypeInsnNode
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.IincInsnNode
 
-data class MethodDescription(
-        val ownerInternalName: String,
-        val name: String,
-        val desc: String,
-        val isStatic: Boolean
-)
-
-fun MethodDescription(insn: MethodInsnNode): MethodDescription =
-        MethodDescription(
-            insn.owner,
-            insn.name,
-            insn.desc,
-            insn.getOpcode() == INVOKESTATIC
-        )
-
-val MethodDescription.returnType: Type
-    get() = Type.getReturnType(desc)
-
-val MethodDescription.parameterTypes: List<Type>
-    get() = Type.getArgumentTypes(desc).toList()
-
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
 trait Eval {
@@ -50,12 +29,12 @@ trait Eval {
     fun getArrayElement(array: Value, index: Value): Value
     fun setArrayElement(array: Value, index: Value, newValue: Value)
 
-    fun getStaticField(fieldDesc: String): Value
-    fun setStaticField(fieldDesc: String, newValue: Value)
+    fun getStaticField(fieldDesc: FieldDescription): Value
+    fun setStaticField(fieldDesc: FieldDescription, newValue: Value)
     fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value
 
-    fun getField(instance: Value, fieldDesc: String): Value
-    fun setField(instance: Value, fieldDesc: String, newValue: Value)
+    fun getField(instance: Value, fieldDesc: FieldDescription): Value
+    fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value)
     fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean = false): Value
 }
 
@@ -118,7 +97,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 }
             }
             JSR -> LabelValue((insn as JumpInsnNode).label)
-            GETSTATIC -> eval.getStaticField((insn as FieldInsnNode).desc)
+            GETSTATIC -> eval.getStaticField(FieldDescription(insn as FieldInsnNode))
             NEW -> eval.newInstance(Type.getType((insn as TypeInsnNode).desc))
             else -> throw UnsupportedByteCodeException("$insn")
         }
@@ -164,11 +143,11 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             LOOKUPSWITCH -> throw UnsupportedByteCodeException("Switch is not supported yet")
 
             PUTSTATIC -> {
-                eval.setStaticField((insn as FieldInsnNode).desc, value)
+                eval.setStaticField(FieldDescription(insn as FieldInsnNode), value)
                 null
             }
 
-            GETFIELD -> eval.getField(value, (insn as FieldInsnNode).desc)
+            GETFIELD -> eval.getField(value, FieldDescription(insn as FieldInsnNode))
 
             NEWARRAY -> {
                 val typeStr = when ((insn as IntInsnNode).operand) {
@@ -313,7 +292,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             }
 
             PUTFIELD -> {
-                eval.setField(value1, (insn as FieldInsnNode).desc, value2)
+                eval.setField(value1, FieldDescription(insn as FieldInsnNode), value2)
                 null
             }
 

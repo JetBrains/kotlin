@@ -152,4 +152,8 @@ class TestData {
         return String.valueOf("str");
     }
 
+    static Object testGetStaticField() {
+        return String.CASE_INSENSITIVE_ORDER;
+    }
+
 }

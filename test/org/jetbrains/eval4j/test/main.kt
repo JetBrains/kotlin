@@ -9,6 +9,8 @@ import org.junit.Assert.*
 import junit.framework.TestSuite
 import junit.framework.TestCase
 import java.lang.reflect.Method
+import java.lang.reflect.Field
+import kotlin.test.assertNotNull
 
 fun suite(): TestSuite {
     val suite = TestSuite()
@@ -129,11 +131,18 @@ object REFLECTION_EVAL : Eval {
         throw UnsupportedOperationException()
     }
 
-    override fun getStaticField(fieldDesc: String): Value {
-        throw UnsupportedOperationException()
+    override fun getStaticField(fieldDesc: FieldDescription): Value {
+        assertTrue(fieldDesc.isStatic)
+        val owner = lookup.findClass(fieldDesc.ownerInternalName)
+        assertNotNull("Class not found: ${fieldDesc.ownerInternalName}", owner)
+        val field = owner!!.findField(fieldDesc)
+        assertNotNull("Field not found: $fieldDesc", field)
+        val result = field!!.get(null)
+        return objectToValue(result, fieldDesc.fieldType)
     }
-    override fun setStaticField(fieldDesc: String, newValue: Value) {
-        throw UnsupportedOperationException()
+
+    override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
+        assertTrue(fieldDesc.isStatic)
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
@@ -146,10 +155,10 @@ object REFLECTION_EVAL : Eval {
         return objectToValue(result, methodDesc.returnType)
     }
 
-    override fun getField(instance: Value, fieldDesc: String): Value {
+    override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
         throw UnsupportedOperationException()
     }
-    override fun setField(instance: Value, fieldDesc: String, newValue: Value) {
+    override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
         throw UnsupportedOperationException()
     }
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
@@ -189,6 +198,29 @@ fun MethodDescription.matches(method: Method): Boolean {
     }
 
     return returnType.matches(method.getReturnType()!!)
+}
+
+[suppress("UNCHECKED_CAST")]
+fun Class<Any?>.findField(fieldDesc: FieldDescription): Field? {
+    for (declared in getDeclaredFields()) {
+        if (fieldDesc.matches(declared)) return declared
+    }
+
+    val fromSuperClass = (getSuperclass() as Class<Any?>).findField(fieldDesc)
+    if (fromSuperClass != null) return fromSuperClass
+
+    for (supertype in getInterfaces()) {
+        val fromSuper = (supertype as Class<Any?>).findField(fieldDesc)
+        if (fromSuper != null) return fromSuper
+    }
+
+    return null
+}
+
+fun FieldDescription.matches(field: Field): Boolean {
+    if (name != field.getName()) return false
+
+    return fieldType.matches(field.getType()!!)
 }
 
 fun Type.matches(_class: Class<*>): Boolean = this == Type.getType(_class)
