@@ -352,11 +352,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
 
     override fun returnOperation(insn: AbstractInsnNode, value: Value, expected: Value) {
         when (insn.getOpcode()) {
-            IRETURN,
-            LRETURN,
-            FRETURN,
-            DRETURN,
-            ARETURN -> {
+            IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
                 // TODO: coercion, maybe?
                 // Handled by interpreter loop
             }
