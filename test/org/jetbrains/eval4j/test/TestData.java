@@ -44,6 +44,10 @@ class TestData {
         return "str";
     }
 
+    static Object returnStringAsObject() {
+        return "str";
+    }
+
     static int variable() {
         int i = 153;
         return i;

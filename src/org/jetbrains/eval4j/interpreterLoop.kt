@@ -8,6 +8,7 @@ import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.tree.analysis.Interpreter
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.VarInsnNode
+import org.objectweb.asm.util.Printer
 
 trait InterpreterResult {
     fun toString(): String
@@ -97,8 +98,14 @@ fun interpreterLoop(
                     IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
                         val value = frame.getStack(0)!!
                         val expectedType = Type.getReturnType(m.desc)
-                        if (value != NULL_VALUE && value.asmType != expectedType) {
-                            assert(insnOpcode == IRETURN, "Only ints should be coerced")
+                        if (expectedType.getSort() == Type.OBJECT) {
+                            val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
+                                                ObjectValue(value.obj, expectedType)
+                                          else value
+                            return ValueReturned(coerced)
+                        }
+                        if (value.asmType != expectedType) {
+                            assert(insnOpcode == IRETURN, "Only ints should be coerced: " + Printer.OPCODES[insnOpcode])
 
                             val coerced = when (expectedType.getSort()) {
                                 Type.BOOLEAN -> boolean(value.boolean)
