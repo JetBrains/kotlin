@@ -67,56 +67,61 @@ fun interpreterLoop(
                 // skip to the next instruction
             }
 
-            else -> when (insnOpcode) {
-                GOTO -> {
-                    goto((currentInsn as JumpInsnNode).label)
-                    continue
-                }
-
-                RET -> {
-                    val varNode = currentInsn as VarInsnNode
-                    val address = frame.getLocal(varNode.`var`)
-                    goto((address as LabelValue).value)
-                    continue
-                }
-
-                // TODO: switch
-                LOOKUPSWITCH -> UnsupportedByteCodeException("LOOKUPSWITCH is not supported yet")
-                TABLESWITCH -> UnsupportedByteCodeException("TABLESWITCH is not supported yet")
-
-                IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> return ValueReturned(frame.getStack(0)!!)
-                RETURN -> return ValueReturned(VOID_VALUE)
-                IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
-                    if (interpreter.checkUnaryCondition(frame.getStack(0)!!, insnOpcode)) {
+            else -> {
+                when (insnOpcode) {
+                    GOTO -> {
                         goto((currentInsn as JumpInsnNode).label)
                         continue
                     }
-                }
-                IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
-                    if (interpreter.checkBinaryCondition(frame.getStack(0)!!, frame.getStack(1)!!, insnOpcode)) {
-                        goto((currentInsn as JumpInsnNode).label)
+
+                    RET -> {
+                        val varNode = currentInsn as VarInsnNode
+                        val address = frame.getLocal(varNode.`var`)
+                        goto((address as LabelValue).value)
                         continue
                     }
+
+                    // TODO: switch
+                    LOOKUPSWITCH -> UnsupportedByteCodeException("LOOKUPSWITCH is not supported yet")
+                    TABLESWITCH -> UnsupportedByteCodeException("TABLESWITCH is not supported yet")
+
+                    IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> return ValueReturned(frame.getStack(0)!!)
+                    RETURN -> return ValueReturned(VOID_VALUE)
+                    IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
+                        if (interpreter.checkUnaryCondition(frame.getStack(0)!!, insnOpcode)) {
+                            goto((currentInsn as JumpInsnNode).label)
+                            continue
+                        }
+                    }
+                    IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
+                        if (interpreter.checkBinaryCondition(frame.getStack(0)!!, frame.getStack(1)!!, insnOpcode)) {
+                            goto((currentInsn as JumpInsnNode).label)
+                            continue
+                        }
+                    }
+
+                    // TODO: try/catch/finally
+                    ATHROW -> {
+                        val exceptionValue = frame.getStack(0)!!
+                        val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
+                        if (handled != null) return handled
+                        return ExceptionThrown(exceptionValue)
+                    }
+
+                    // Workaround for a bug in Kotlin: NoPatterMatched exception is thrown otherwise!
+                    else -> {}
                 }
 
-                // TODO: try/catch/finally
-                ATHROW -> {
-                    val exceptionValue = frame.getStack(0)!!
-                    val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
+                try {
+                    frame.execute(currentInsn, interpreter)
+                }
+                catch (e: ThrownFromEvalException) {
+                    // TODO: try/catch.finaly
+                    val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                     if (handled != null) return handled
-                    return ExceptionThrown(exceptionValue)
+                    return ExceptionThrown(e.exception)
                 }
             }
-        }
-
-        try {
-            frame.execute(currentInsn, interpreter)
-        }
-        catch (e: ThrownFromEvalException) {
-            // TODO: try/catch.finaly
-            val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
-            if (handled != null) return handled
-            return ExceptionThrown(e.exception)
         }
 
         val handled = handler.instructionProcessed(currentInsn)
