@@ -156,4 +156,14 @@ class TestData {
         return String.CASE_INSENSITIVE_ORDER;
     }
 
+    static int FIELD = 0;
+
+    static int testPutStaticField() {
+        FIELD = 5;
+        int f1 = FIELD;
+        FIELD = 6;
+        int f2 = FIELD;
+        return f2 + f1;
+    }
+
 }

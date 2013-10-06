@@ -143,6 +143,11 @@ object REFLECTION_EVAL : Eval {
 
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
         assertTrue(fieldDesc.isStatic)
+        val owner = lookup.findClass(fieldDesc.ownerInternalName)
+        assertNotNull("Class not found: ${fieldDesc.ownerInternalName}", owner)
+        val field = owner!!.findField(fieldDesc)
+        assertNotNull("Field not found: $fieldDesc", field)
+        val result = field!!.set(null, newValue.obj)
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
