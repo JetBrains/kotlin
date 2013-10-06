@@ -62,4 +62,73 @@ class TestData {
             return 1;
         }
     }
+
+    static int loop() {
+        int i = 0;
+        while (i < 10) i++;
+        return i;
+    }
+
+    static int loopWithBreak() {
+        int i = 0;
+        while (true) {
+            if (i > 10) break;
+            i++;
+        }
+        return i;
+    }
+
+    static int loopWithReturn() {
+        int i = 0;
+        while (true) {
+            if (i > 10) return i;
+            i++;
+        }
+    }
+
+    static int testSimpleFinally() {
+        int i = 5;
+        try {
+            return i;
+        }
+        finally {
+            i = 3;
+        }
+    }
+
+    static int testSimpleFinallyWithReturn() {
+        int i = 5;
+        try {
+            return i;
+        }
+        finally {
+            return 3;
+        }
+    }
+
+    static int testSimpleFinallyWithContinueInLoop() {
+        int i = 5;
+        while (true) {
+            try {
+                if (i % 2 == 0) continue;
+                if (i > 10) return i;
+            }
+            finally {
+                i++;
+            }
+        }
+    }
+
+    static int testSimpleFinallyWithBreakInLoop() {
+        int i = 5;
+        while (true) {
+            try {
+                if (i % 2 == 0) break;
+            }
+            finally {
+                i++;
+            }
+        }
+        return i;
+    }
 }
