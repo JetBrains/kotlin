@@ -7,36 +7,45 @@ trait Value : org.objectweb.asm.tree.analysis.Value {
     val asmType: Type
     val valid: Boolean
     override fun getSize(): Int = asmType.getSize()
+
+    override fun toString(): String
 }
 
 abstract class AbstractValue(
-        override val asmType: Type
+        override val asmType: Type,
+        private val asString: String
 ) : Value {
     override val valid = true
+
+    override fun toString() = asString
 }
 
 object NOT_A_VALUE: Value {
     override val asmType = Type.getType("<invalid>")
     override val valid = false
     override fun getSize(): Int = 1
+
+    override fun toString() = "NOT_A_VALUE"
 }
 
 object VOID_VALUE: Value {
     override val asmType: Type = Type.VOID_TYPE
     override val valid: Boolean = false
+    override fun toString() = "VOID_VALUE"
 }
 
 class NotInitialized(override val asmType: Type): Value {
     override val valid = false
+    override fun toString() = "NotInitialized: $asmType"
 }
 
-class IntValue(val value: Int, asmType: Type): AbstractValue(asmType)
-class LongValue(val value: Long): AbstractValue(Type.LONG_TYPE)
-class FloatValue(val value: Float): AbstractValue(Type.FLOAT_TYPE)
-class DoubleValue(val value: Double): AbstractValue(Type.DOUBLE_TYPE)
-class ObjectValue(val value: Any?, asmType: Type): AbstractValue(asmType)
+class IntValue(val value: Int, asmType: Type): AbstractValue(asmType, "$value")
+class LongValue(val value: Long): AbstractValue(Type.LONG_TYPE, "$value")
+class FloatValue(val value: Float): AbstractValue(Type.FLOAT_TYPE, "$value")
+class DoubleValue(val value: Double): AbstractValue(Type.DOUBLE_TYPE, "$value")
+class ObjectValue(val value: Any?, asmType: Type): AbstractValue(asmType, "$value")
 
-class LabelValue(val value: LabelNode): AbstractValue(Type.VOID_TYPE)
+class LabelValue(val value: LabelNode): AbstractValue(Type.VOID_TYPE, "label: ${value.getLabel()}")
 
 fun boolean(v: Boolean) = IntValue(if (v) 1 else 0, Type.BOOLEAN_TYPE)
 fun byte(v: Byte) = IntValue(v.toInt(), Type.BYTE_TYPE)

@@ -10,11 +10,21 @@ import org.objectweb.asm.tree.analysis.Interpreter
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.VarInsnNode
 
-trait InterpreterResult
-object NOTHING_DONE: InterpreterResult
-class ExceptionThrown(val exception: Value): InterpreterResult
-class ValueReturned(val result: Value): InterpreterResult
-class AbnormalTermination(val message: String): InterpreterResult
+trait InterpreterResult {
+    fun toString(): String
+}
+
+class ExceptionThrown(val exception: Value): InterpreterResult {
+    override fun toString(): String = "Thrown $exception"
+}
+
+class ValueReturned(val result: Value): InterpreterResult {
+    override fun toString(): String = "Returned $result"
+}
+
+class AbnormalTermination(val message: String): InterpreterResult {
+    override fun toString(): String = "Terminated abnormally: $message"
+}
 
 trait InterpretationEventHandler {
 
@@ -42,7 +52,7 @@ fun interpreterLoop(
         handler: InterpretationEventHandler = InterpretationEventHandler.NONE
 ): InterpreterResult {
     val firstInsn = m.instructions.getFirst()
-    if (firstInsn == null) return NOTHING_DONE
+    if (firstInsn == null) throw IllegalArgumentException("Empty method")
 
     var currentInsn = firstInsn!!
 
