@@ -10,7 +10,6 @@ import junit.framework.TestSuite
 import junit.framework.TestCase
 import java.lang.reflect.Method
 import java.lang.reflect.Field
-import kotlin.test.assertNotNull
 
 fun suite(): TestSuite {
     val suite = TestSuite()
@@ -132,40 +131,59 @@ object REFLECTION_EVAL : Eval {
     }
 
     override fun getStaticField(fieldDesc: FieldDescription): Value {
-        assertTrue(fieldDesc.isStatic)
-        val owner = lookup.findClass(fieldDesc.ownerInternalName)
-        assertNotNull("Class not found: ${fieldDesc.ownerInternalName}", owner)
-        val field = owner!!.findField(fieldDesc)
-        assertNotNull("Field not found: $fieldDesc", field)
-        val result = field!!.get(null)
+        val result = findStaticField(fieldDesc).get(null)
         return objectToValue(result, fieldDesc.fieldType)
     }
 
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
+        findStaticField(fieldDesc).set(null, newValue.obj)
+    }
+
+    fun findStaticField(fieldDesc: FieldDescription): Field {
         assertTrue(fieldDesc.isStatic)
-        val owner = lookup.findClass(fieldDesc.ownerInternalName)
-        assertNotNull("Class not found: ${fieldDesc.ownerInternalName}", owner)
-        val field = owner!!.findField(fieldDesc)
+        val field = findClass(fieldDesc).findField(fieldDesc)
         assertNotNull("Field not found: $fieldDesc", field)
-        field!!.set(null, newValue.obj)
+        assertTrue("Field is not static: $field", (field!!.getModifiers() and Modifier.STATIC) != 0)
+        return field
     }
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
         assertTrue(methodDesc.isStatic)
-        val owner = lookup.findClass(methodDesc.ownerInternalName)
-        assertNotNull("Class not found: ${methodDesc.ownerInternalName}", owner)
-        val method = owner!!.findMethod(methodDesc)
+        val method = findClass(methodDesc).findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
         val result = method!!.invoke(null, *arguments.map { v -> v.obj }.copyToArray())
         return objectToValue(result, methodDesc.returnType)
     }
 
+    fun findClass(memberDesc: MemberDescription): Class<Any?> {
+        val owner = lookup.findClass(memberDesc.ownerInternalName)
+        assertNotNull("Class not found: ${memberDesc.ownerInternalName}", owner)
+        return owner!!
+    }
+
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
-        throw UnsupportedOperationException()
+        val obj = instance.obj
+        val field = findInstanceField(obj, fieldDesc)
+
+        return objectToValue(field.get(obj), fieldDesc.fieldType)
     }
+
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
-        throw UnsupportedOperationException()
+        val obj = instance.obj
+        val field = findInstanceField(obj, fieldDesc)
+
+        field.set(obj, newValue.obj)
     }
+
+    fun findInstanceField(obj: Any?, fieldDesc: FieldDescription): Field {
+        if (obj == null) throw NullPointerException()
+
+        val _class: Class<Any?> = obj.javaClass
+        val field = _class.findField(fieldDesc)
+        assertNotNull("Field not found: $fieldDesc", field)
+        return field!!
+    }
+
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
         throw UnsupportedOperationException()
     }

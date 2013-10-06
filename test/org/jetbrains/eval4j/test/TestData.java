@@ -166,4 +166,25 @@ class TestData {
         return f2 + f1;
     }
 
+    static class C {
+        int y = 15;
+
+        static C newC() {
+            return new C();
+        }
+    }
+
+    static int testGetInstanceField() {
+        return C.newC().y;
+    }
+
+    static int testPutInstanceField() {
+        C c = C.newC();
+        c.y = 5;
+        int f1 = c.y;
+        c.y = 6;
+        int f2 = c.y;
+        return f1 + f2;
+    }
+
 }
