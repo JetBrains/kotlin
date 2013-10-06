@@ -10,6 +10,7 @@ import junit.framework.TestSuite
 import junit.framework.TestCase
 import java.lang.reflect.Method
 import java.lang.reflect.Field
+import java.lang.reflect.Constructor
 
 fun suite(): TestSuite {
     val suite = TestSuite()
@@ -102,11 +103,14 @@ object REFLECTION_EVAL : Eval {
     override fun loadClass(classType: Type): Value {
         throw UnsupportedOperationException()
     }
+
     override fun loadString(str: String): Value = ObjectValue(str, Type.getType(javaClass<String>()))
 
     override fun newInstance(classType: Type): Value {
-        throw UnsupportedOperationException()
+        val _class = findClass(classType.getInternalName())
+        return NewObjectValue(_class, classType)
     }
+
     override fun checkCast(value: Value, targetType: Type): Value {
         throw UnsupportedOperationException()
     }
@@ -155,9 +159,11 @@ object REFLECTION_EVAL : Eval {
         return objectToValue(result, methodDesc.returnType)
     }
 
-    fun findClass(memberDesc: MemberDescription): Class<Any?> {
-        val owner = lookup.findClass(memberDesc.ownerInternalName)
-        assertNotNull("Class not found: ${memberDesc.ownerInternalName}", owner)
+    fun findClass(memberDesc: MemberDescription): Class<Any?> = findClass(memberDesc.ownerInternalName)
+
+    fun findClass(internalName: String): Class<Any?> {
+        val owner = lookup.findClass(internalName)
+        assertNotNull("Class not found: ${internalName}", owner)
         return owner!!
     }
 
@@ -185,7 +191,22 @@ object REFLECTION_EVAL : Eval {
     }
 
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
-        // TODO: INVOKESPECIAL
+        if (invokespecial) {
+            if (methodDesc.name == "<init>") {
+                // Constructor call
+                val _class = (instance as NewObjectValue)._class
+                val ctor = _class.findConstructor(methodDesc)
+                assertNotNull("Constructor not found: $methodDesc", ctor)
+                val args = arguments.map { v -> v.obj }.copyToArray()
+                val result = ctor!!.newInstance(*args)
+                instance.value = result
+                return objectToValue(result, instance.asmType)
+            }
+            else {
+                // TODO
+                throw UnsupportedOperationException("invokespecial is not suported yet")
+            }
+        }
         val obj = instance.obj
         val method = obj.javaClass.findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
@@ -216,6 +237,24 @@ fun Class<Any?>.findMethod(methodDesc: MethodDescription): Method? {
     return null
 }
 
+[suppress("UNCHECKED_CAST")]
+fun Class<Any?>.findConstructor(methodDesc: MethodDescription): Constructor<Any?>? {
+    for (declared in getDeclaredConstructors()) {
+        if (methodDesc.matches(declared)) return declared as Constructor<Any?>
+    }
+    return null
+}
+
+fun MethodDescription.matches(ctor: Constructor<*>): Boolean {
+    val methodParams = ctor.getParameterTypes()!!
+    if (parameterTypes.size() != methodParams.size) return false
+    for ((i, p) in parameterTypes.withIndices()) {
+        if (!p.matches(methodParams[i])) return false
+    }
+
+    return true;
+}
+
 fun MethodDescription.matches(method: Method): Boolean {
     if (name != method.getName()) return false
 
@@ -234,8 +273,11 @@ fun Class<Any?>.findField(fieldDesc: FieldDescription): Field? {
         if (fieldDesc.matches(declared)) return declared
     }
 
-    val fromSuperClass = (getSuperclass() as Class<Any?>).findField(fieldDesc)
-    if (fromSuperClass != null) return fromSuperClass
+    val superclass = getSuperclass()
+    if (superclass != null) {
+        val fromSuperClass = (superclass as Class<Any?>).findField(fieldDesc)
+        if (fromSuperClass != null) return fromSuperClass
+    }
 
     for (supertype in getInterfaces()) {
         val fromSuper = (supertype as Class<Any?>).findField(fieldDesc)

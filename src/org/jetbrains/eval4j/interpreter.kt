@@ -98,7 +98,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             }
             JSR -> LabelValue((insn as JumpInsnNode).label)
             GETSTATIC -> eval.getStaticField(FieldDescription(insn as FieldInsnNode))
-            NEW -> eval.newInstance(Type.getType((insn as TypeInsnNode).desc))
+            NEW -> eval.newInstance(Type.getObjectType((insn as TypeInsnNode).desc))
             else -> throw UnsupportedByteCodeException("$insn")
         }
     }

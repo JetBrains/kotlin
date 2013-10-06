@@ -30,11 +30,11 @@ class NotInitialized(override val asmType: Type): Value {
     override fun toString() = "NotInitialized: $asmType"
 }
 
-abstract class AbstractValue<V>(
-        public val value: V,
+abstract class AbstractValueBase<V>(
         override val asmType: Type
 ) : Value {
     override val valid = true
+    abstract val value: V
 
     override fun toString() = "$value: $asmType"
 
@@ -49,11 +49,19 @@ abstract class AbstractValue<V>(
     }
 }
 
+abstract class AbstractValue<V>(
+        override val value: V,
+        asmType: Type
+) : AbstractValueBase<V>(asmType)
+
 class IntValue(value: Int, asmType: Type): AbstractValue<Int>(value, asmType)
 class LongValue(value: Long): AbstractValue<Long>(value, Type.LONG_TYPE)
 class FloatValue(value: Float): AbstractValue<Float>(value, Type.FLOAT_TYPE)
 class DoubleValue(value: Double): AbstractValue<Double>(value, Type.DOUBLE_TYPE)
 class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
+class NewObjectValue(val _class: Class<Any?>, asmType: Type): AbstractValueBase<Any?>(asmType) {
+    override var value: Any? = null
+}
 
 class LabelValue(value: LabelNode): AbstractValue<LabelNode>(value, Type.VOID_TYPE)
 
@@ -74,4 +82,12 @@ val Value.int: Int get() = (this as IntValue).value
 val Value.long: Long get() = (this as LongValue).value
 val Value.float: Float get() = (this as FloatValue).value
 val Value.double: Double get() = (this as DoubleValue).value
-val Value.obj: Any? get() = (this as AbstractValue<*>).value
+val Value.obj: Any?
+    get(): Any? {
+        if (this is NewObjectValue) {
+            val v = value
+            if (v == null) throw IllegalStateException("Trying to access an unitialized object: $this")
+            return v
+        }
+        return (this as AbstractValue<*>).value
+    }

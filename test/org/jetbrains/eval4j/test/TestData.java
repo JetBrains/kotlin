@@ -169,6 +169,12 @@ class TestData {
     static class C {
         int y = 15;
 
+        C(int y) {
+            this.y = y;
+        }
+
+        C() {}
+
         int getY() {
             return y;
         }
@@ -195,4 +201,11 @@ class TestData {
         return C.newC().getY();
     }
 
+    static int constructorCallNoArgs() {
+        return new C().y;
+    }
+
+    static int constructorCallWithArgs() {
+        return new C(10).y;
+    }
 }
