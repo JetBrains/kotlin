@@ -114,12 +114,14 @@ fun interpreterLoop(
                     RETURN -> return ValueReturned(VOID_VALUE)
                     IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
                         if (interpreter.checkUnaryCondition(frame.getStack(0)!!, insnOpcode)) {
+                            frame.execute(currentInsn, interpreter)
                             goto((currentInsn as JumpInsnNode).label)
                             continue
                         }
                     }
                     IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
                         if (interpreter.checkBinaryCondition(frame.getStack(0)!!, frame.getStack(1)!!, insnOpcode)) {
+                            frame.execute(currentInsn, interpreter)
                             goto((currentInsn as JumpInsnNode).label)
                             continue
                         }

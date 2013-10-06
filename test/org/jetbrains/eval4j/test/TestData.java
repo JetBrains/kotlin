@@ -35,4 +35,31 @@ class TestData {
     static double returnDouble() {
         return 2.0d;
     }
+
+    static int variable() {
+        int i = 153;
+        return i;
+    }
+
+    static int unaryMinus() {
+        int i = 153;
+        return -i;
+    }
+
+    static int ifThen() {
+        boolean a = true;
+        if (a)
+            return 2;
+        return 1;
+    }
+
+    static int ifElse() {
+        boolean a = false;
+        if (a) {
+            return 2;
+        }
+        else {
+            return 1;
+        }
+    }
 }
