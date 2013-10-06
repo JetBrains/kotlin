@@ -70,9 +70,9 @@ fun interpreterLoop(
     fun exceptionCaught(exceptionValue: Value): Boolean {
         val catchBlocks = handlers[m.instructions.indexOf(currentInsn)] ?: listOf()
         for (catch in catchBlocks) {
-            val exceptionTypeDesc = catch.`type`
-            if (exceptionTypeDesc != null) {
-                val exceptionType = Type.getType(exceptionTypeDesc)
+            val exceptionTypeInternalName = catch.`type`
+            if (exceptionTypeInternalName != null) {
+                val exceptionType = Type.getObjectType(exceptionTypeInternalName)
                 if (eval.isInstanceOf(exceptionValue, exceptionType)) {
                     frame.clearStack()
                     frame.push(exceptionValue)
