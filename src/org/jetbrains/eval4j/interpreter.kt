@@ -36,9 +36,6 @@ trait Eval {
     fun getField(instance: Value, fieldDesc: String): Value
     fun setField(instance: Value, fieldDesc: String, newValue: Value)
     fun invokeMethod(instance: Value, methodDesc: String, arguments: List<Value>, invokespecial: Boolean = false): Value
-
-    fun getLocalVariable(index: Int): Value
-    fun setLocalVariable(index: Int, newValue: Value)
 }
 
 trait Control {
