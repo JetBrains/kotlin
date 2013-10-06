@@ -1,7 +1,7 @@
 package org.jetbrains.eval4j
 
 import org.objectweb.asm.Type
-import org.objectweb.asm.Label
+import org.objectweb.asm.tree.LabelNode
 
 trait Value : org.objectweb.asm.tree.analysis.Value {
     val asmType: Type
@@ -31,7 +31,7 @@ class FloatValue(val value: Float): AbstractValue(Type.FLOAT_TYPE)
 class DoubleValue(val value: Double): AbstractValue(Type.DOUBLE_TYPE)
 class ObjectValue(val value: Any?, asmType: Type): AbstractValue(asmType)
 
-class LabelValue(val value: Label): AbstractValue(Type.VOID_TYPE)
+class LabelValue(val value: LabelNode): AbstractValue(Type.VOID_TYPE)
 
 fun boolean(v: Boolean) = IntValue(if (v) 1 else 0, Type.BOOLEAN_TYPE)
 fun byte(v: Byte) = IntValue(v.toInt(), Type.BYTE_TYPE)

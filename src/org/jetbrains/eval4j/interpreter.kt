@@ -13,7 +13,7 @@ import org.objectweb.asm.tree.MultiANewArrayInsnNode
 import org.objectweb.asm.tree.TypeInsnNode
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.IincInsnNode
-import org.objectweb.asm.Label
+import org.objectweb.asm.tree.LabelNode
 
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
@@ -39,7 +39,7 @@ trait Eval {
 }
 
 trait Control {
-    fun jump(label: Label)
+    fun jump(label: LabelNode)
 
     fun returnValue(value: Value)
     fun throwException(value: Value)
@@ -103,7 +103,7 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
                     else -> throw UnsupportedByteCodeException("Illegal LDC constant " + cst)
                 }
             }
-            JSR -> LabelValue((insn as JumpInsnNode).label.getLabel())
+            JSR -> LabelValue((insn as JumpInsnNode).label)
             GETSTATIC -> eval.getStaticField((insn as FieldInsnNode).desc)
             NEW -> eval.newInstance(Type.getType((insn as TypeInsnNode).desc))
             else -> throw UnsupportedByteCodeException("$insn")
@@ -141,7 +141,7 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             F2D -> double(value.float.toDouble())
 
             IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
-                val label = (insn as JumpInsnNode).label.getLabel()
+                val label = (insn as JumpInsnNode).label
                 when (insn.getOpcode()) {
                     IFEQ -> if (value.int == 0) control.jump(label)
                     IFNE -> if (value.int != 0) control.jump(label)
@@ -290,7 +290,7 @@ class SingleInstructionInterpreter(private val eval: Eval, private val control: 
             }
 
             IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
-                val label = (insn as JumpInsnNode).label.getLabel()
+                val label = (insn as JumpInsnNode).label
                 when (insn.getOpcode()) {
                     IF_ICMPEQ -> if (value1.int == value2.int) control.jump(label)
                     IF_ICMPNE -> if (value1.int != value2.int) control.jump(label)
