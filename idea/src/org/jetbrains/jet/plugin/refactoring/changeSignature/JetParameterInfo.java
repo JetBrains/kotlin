@@ -76,7 +76,7 @@ public class JetParameterInfo implements ParameterInfo {
         return name;
     }
 
-    public String getInheritedName(boolean isInherited, @Nullable PsiElement inheritedFunction, @NotNull JetFunctionPlatformDescriptor baseFunction) {
+    public String getInheritedName(boolean isInherited, @Nullable PsiElement inheritedFunction, @NotNull JetMethodDescriptor baseFunction) {
         if (!(inheritedFunction instanceof JetFunction))
             return name;
 
@@ -165,7 +165,7 @@ public class JetParameterInfo implements ParameterInfo {
         this.valOrVar = valOrVar;
     }
 
-    public String getDeclarationSignature(boolean isInherited, PsiElement inheritedFunction, JetFunctionPlatformDescriptor baseFunction) {
+    public String getDeclarationSignature(boolean isInherited, PsiElement inheritedFunction, JetMethodDescriptor baseFunction) {
         StringBuilder buffer = new StringBuilder();
         JetValVar valVar = getValOrVar();
 

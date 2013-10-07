@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -33,12 +32,12 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureDialog;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetFunctionPlatformDescriptorImpl;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final JetCallElement callElement;
@@ -85,45 +84,43 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) callElement.getContainingFile()).getBindingContext();
-        JetFunctionPlatformDescriptorImpl platformDescriptor = new JetFunctionPlatformDescriptorImpl(functionDescriptor, element);
-        final List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-        List<? extends ValueArgument> arguments = callElement.getValueArguments();
-        JetNameValidator validator = JetNameValidator.getCollectingValidator(callElement.getProject());
+        boolean performSilently = !hasTypeMismatches && !(functionDescriptor instanceof ConstructorDescriptor) && !hasOtherUsages();
+        runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText(), performSilently);
+    }
 
-        for (int i = 0; i < arguments.size(); i ++) {
-            ValueArgument argument = arguments.get(i);
-            JetExpression expression = argument.getArgumentExpression();
-
-            if (i < parameters.size()) {
-                validator.validateName(parameters.get(i).getName().asString());
-                JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
-                JetType parameterType = parameters.get(i).getType();
-
-                if (argumentType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType))
-                    platformDescriptor.getParameters().get(i).setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(argumentType));
-            }
-            else {
-                JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
-
-                if (expression != null)
-                    parameterInfo.setDefaultValueText(expression.getText());
-
-                platformDescriptor.addParameter(parameterInfo);
-            }
-        }
-
-        JetChangeSignatureDialog dialog = new JetChangeSignatureDialog(project, platformDescriptor, callElement, getText()) {
+    private JetChangeSignatureConfiguration addParameterConfiguration() {
+        return new JetChangeSignatureConfiguration() {
             @Override
-            protected int getSelectedIdx() {
-                return parameters.size();
+            public void configure(
+                    @NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext
+            ) {
+                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+                List<? extends ValueArgument> arguments = callElement.getValueArguments();
+                JetNameValidator validator = JetNameValidator.getCollectingValidator(callElement.getProject());
+
+                for (int i = 0; i < arguments.size(); i ++) {
+                    ValueArgument argument = arguments.get(i);
+                    JetExpression expression = argument.getArgumentExpression();
+
+                    if (i < parameters.size()) {
+                        validator.validateName(parameters.get(i).getName().asString());
+                        JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
+                        JetType parameterType = parameters.get(i).getType();
+
+                        if (argumentType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType))
+                            changeSignatureData.getParameters().get(i).setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(argumentType));
+                    }
+                    else {
+                        JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
+
+                        if (expression != null)
+                            parameterInfo.setDefaultValueText(expression.getText());
+
+                        changeSignatureData.addParameter(parameterInfo);
+                    }
+                }
             }
         };
-
-        if (ApplicationManager.getApplication().isUnitTestMode() ||
-            !hasTypeMismatches && !(functionDescriptor instanceof ConstructorDescriptor) && !hasOtherUsages())
-            performRefactoringSilently(dialog);
-        else
-            dialog.show();
     }
 
     private boolean hasOtherUsages() {
