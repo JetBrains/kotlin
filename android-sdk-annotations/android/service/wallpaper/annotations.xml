@@ -1,23 +1,23 @@
 <root>
-    <item name='android.service.wallpaper.WallpaperService android.os.IBinder onBind(android.content.Intent) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.service.wallpaper.WallpaperService void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.service.wallpaper.WallpaperService SERVICE_INTERFACE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.service.wallpaper.WallpaperService.Engine void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.wallpaper.WallpaperService android.os.IBinder onBind(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.wallpaper.WallpaperService SERVICE_META_DATA'>
+    <item name='android.service.wallpaper.WallpaperService.Engine void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.wallpaper.WallpaperService.Engine android.view.SurfaceHolder getSurfaceHolder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.wallpaper.IWallpaperService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.wallpaper.IWallpaperConnection.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.wallpaper.IWallpaperEngine.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

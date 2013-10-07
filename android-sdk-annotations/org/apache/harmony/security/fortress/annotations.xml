@@ -1,0 +1,23 @@
+<root>
+    <item name='org.apache.harmony.security.fortress.Services void initServiceInfo(java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.Services int insertProviderAt(java.security.Provider, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.Engine java.lang.Object getInstance(java.lang.String, java.security.Provider, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.Engine org.apache.harmony.security.fortress.Engine.SpiAndProvider getInstance(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.Engine org.apache.harmony.security.fortress.Engine.SpiAndProvider getInstance(java.lang.String, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.Services java.util.List&lt;java.security.Provider&gt; getProvidersList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.Engine java.lang.Object getInstance(java.lang.String, java.security.Provider, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

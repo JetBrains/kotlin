@@ -1,0 +1,341 @@
+<root>
+    <item name='android.filterfw.core.SimpleFrameManager android.filterfw.core.Frame newFrame(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeFrame android.graphics.Bitmap getBitmap()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeFrame java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame void setData(java.nio.ByteBuffer, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter android.filterfw.core.InputPort getInputPort(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameManager android.filterfw.core.Frame duplicateFrameToTarget(android.filterfw.core.Frame, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeFrame void setInts(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeFrame void setDataFromFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter java.lang.String getFilterClassName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.VertexFrame void setDataFromFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrame java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SyncRunner SyncRunner(android.filterfw.core.FilterContext, android.filterfw.core.FilterGraph, java.lang.Class) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeFrame void setFloats(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrameManager android.filterfw.core.Frame releaseFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterFunction android.filterfw.core.Frame executeWithArgList(java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.StreamPort void pushFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat int readTargetString(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter void addFieldPort(java.lang.String, java.lang.reflect.Field, boolean, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FieldPort void setFieldFrame(android.filterfw.core.Frame, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterGraph void connect(android.filterfw.core.Filter, java.lang.String, android.filterfw.core.Filter, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter void pushOutput(java.lang.String, android.filterfw.core.Frame) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter android.filterfw.core.OutputPort getOutputPort(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameManager android.filterfw.core.Frame duplicateFrameToTarget(android.filterfw.core.Frame, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.ShaderProgram void setTargetRegion(android.filterfw.geometry.Quad) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterFactory android.filterfw.core.Filter createFilterByClass(java.lang.Class, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.ShaderProgram void process(android.filterfw.core.Frame[], android.filterfw.core.Frame) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.StreamPort void setFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.CachedFrameManager android.filterfw.core.Frame retainFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterPort java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.StreamPort void assignFrame(android.filterfw.core.Frame, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SyncRunner SyncRunner(android.filterfw.core.FilterContext, android.filterfw.core.FilterGraph, java.lang.Class) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Frame android.graphics.Bitmap convertBitmapToRGBA(android.graphics.Bitmap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame java.nio.ByteBuffer getData()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrame void setInts(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.AsyncRunner void setGraph(android.filterfw.core.FilterGraph) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterContext void setFrameManager(android.filterfw.core.FrameManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Frame void reset(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.CachedFrameManager android.filterfw.core.Frame releaseFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLEnvironment int registerSurfaceTexture(android.graphics.SurfaceTexture, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FinalPort void setFieldFrame(android.filterfw.core.Frame, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat java.lang.String targetToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Frame android.graphics.Bitmap convertBitmapToRGBA(android.graphics.Bitmap)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter void addProgramPort(java.lang.String, java.lang.String, java.lang.reflect.Field, java.lang.Class, boolean) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat java.lang.String metaDataToString(android.filterfw.core.KeyValueMap)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame java.lang.Object getObjectValue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrameManager android.filterfw.core.Frame newBoundFrame(android.filterfw.core.FrameFormat, int, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameManager android.filterfw.core.Frame duplicateFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.ShaderProgram void setSourceRegion(android.filterfw.geometry.Quad) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.OutputPort java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.KeyValueMap android.filterfw.core.KeyValueMap fromKeyValues(java.lang.Object...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.ProgramPort java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrameManager android.filterfw.core.Frame retainFrame(android.filterfw.core.Frame)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat java.lang.String dimensionsToString(int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeProgram void process(android.filterfw.core.Frame[], android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter void addProgramPort(java.lang.String, java.lang.String, java.lang.reflect.Field, java.lang.Class, boolean) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.CachedFrameManager android.filterfw.core.Frame retainFrame(android.filterfw.core.Frame)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Frame void setDataFromFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrame void setData(java.nio.ByteBuffer, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrameManager android.filterfw.core.Frame newBoundFrame(android.filterfw.core.FrameFormat, int, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SerializedFrame void setData(java.nio.ByteBuffer, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterSurfaceView FilterSurfaceView(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterFactory android.filterfw.core.Filter createFilterByClass(java.lang.Class, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterFactory android.filterfw.core.Filter createFilterByClassName(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame void setViewport(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeBuffer android.filterfw.core.NativeBuffer retain()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeProgram void setHostValue(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrameManager android.filterfw.core.Frame newFrame(android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FieldPort void pushFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.VertexFrame void setData(java.nio.ByteBuffer, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.ShaderProgram android.filterfw.core.ShaderProgram createIdentity(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.VertexFrame java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat java.lang.String baseTypeToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FieldPort java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat boolean mayBeCompatibleWith(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeFrame void setData(java.nio.ByteBuffer, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame void setBitmap(android.graphics.Bitmap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.KeyValueMap void setKeyValues(java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrame void setGenericObjectValue(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeFrame void setBitmap(android.graphics.Bitmap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FinalPort java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat android.filterfw.core.MutableFrameFormat mutableCopy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SyncRunner void processFilterNode(android.filterfw.core.Filter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameManager android.filterfw.core.Frame duplicateFrame(android.filterfw.core.Frame)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.CachedFrameManager android.filterfw.core.Frame newBoundFrame(android.filterfw.core.FrameFormat, int, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.StreamPort java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterPort void checkFrameManager(android.filterfw.core.Frame, android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.ShaderProgram void process(android.filterfw.core.Frame[], android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrameManager android.filterfw.core.Frame retainFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.CachedFrameManager android.filterfw.core.Frame newFrame(android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FieldPort void setFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrame void setFloats(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterContext void storeFrame(java.lang.String, android.filterfw.core.Frame) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.KeyValueMap android.filterfw.core.KeyValueMap fromKeyValues(java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.NativeBuffer android.filterfw.core.NativeBuffer mutableCopy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterSurfaceView void bindToListener(android.view.SurfaceHolder.Callback, android.filterfw.core.GLEnvironment) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame void setDataFromFrame(android.filterfw.core.Frame) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SerializedFrame java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.KeyValueMap java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Frame void setData(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterFunction android.filterfw.core.Frame execute(android.filterfw.core.KeyValueMap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterGraph void connect(android.filterfw.core.Filter, java.lang.String, android.filterfw.core.Filter, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter void initWithValueMap(android.filterfw.core.KeyValueMap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Filter void initWithAssignmentList(java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat android.filterfw.core.FrameFormat unspecified()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Frame void setData(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.GLFrame void reset(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FrameFormat boolean isCompatibleWith(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.FilterSurfaceView FilterSurfaceView(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.Frame void setFormat(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.core.SimpleFrame void setBitmap(android.graphics.Bitmap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

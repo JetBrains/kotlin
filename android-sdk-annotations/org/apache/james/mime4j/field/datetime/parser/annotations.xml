@@ -1,0 +1,104 @@
+<root>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream java.lang.String GetImage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream void ReInit(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream void ReInit(java.io.InputStream, java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser org.apache.james.mime4j.field.datetime.parser.DateTimeParser.Time time()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser void ReInit(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream void ReInit(java.io.InputStream, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.TokenMgrError java.lang.String LexicalError(boolean, int, int, int, java.lang.String, char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser org.apache.james.mime4j.field.datetime.DateTime parseLine()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser org.apache.james.mime4j.field.datetime.DateTime parseAll()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream void ReInit(java.io.InputStream, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.TokenMgrError java.lang.String LexicalError(boolean, int, int, int, java.lang.String, char) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser org.apache.james.mime4j.field.datetime.parser.DateTimeParser.Date date()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream void ReInit(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.Token org.apache.james.mime4j.field.datetime.parser.Token newToken(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParserTokenManager org.apache.james.mime4j.field.datetime.parser.Token jjFillToken()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser DateTimeParser(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser void ReInit(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.TokenMgrError TokenMgrError(boolean, int, int, int, java.lang.String, char, int) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream char[] GetSuffix(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream SimpleCharStream(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.TokenMgrError java.lang.String addEscapes(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParserTokenManager org.apache.james.mime4j.field.datetime.parser.Token getNextToken()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser org.apache.james.mime4j.field.datetime.DateTime date_time()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.TokenMgrError java.lang.String addEscapes(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser org.apache.james.mime4j.field.datetime.parser.ParseException generateParseException()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.DateTimeParser DateTimeParser(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.ParseException java.lang.String add_escapes(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.SimpleCharStream void ReInit(java.io.InputStream, java.lang.String, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.datetime.parser.ParseException java.lang.String add_escapes(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

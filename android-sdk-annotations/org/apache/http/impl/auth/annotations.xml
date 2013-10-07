@@ -1,0 +1,65 @@
+<root>
+    <item name='org.apache.http.impl.auth.RFC2617Scheme void parseChallenge(org.apache.http.util.CharArrayBuffer, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.NTLMScheme java.lang.String getSchemeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.NTLMScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.NTLMScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.NTLMScheme NTLMScheme(org.apache.http.impl.auth.NTLMEngine) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicScheme java.lang.String getSchemeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicSchemeFactory org.apache.http.auth.AuthScheme newInstance(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.AuthSchemeBase void processChallenge(org.apache.http.Header) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.RFC2617Scheme java.lang.String getParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.DigestScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.DigestScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, java.lang.String, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.DigestSchemeFactory org.apache.http.auth.AuthScheme newInstance(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.DigestScheme java.lang.String getSchemeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.DigestScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.BasicScheme org.apache.http.Header authenticate(org.apache.http.auth.Credentials, org.apache.http.HttpRequest) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.auth.NTLMScheme void parseChallenge(org.apache.http.util.CharArrayBuffer, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

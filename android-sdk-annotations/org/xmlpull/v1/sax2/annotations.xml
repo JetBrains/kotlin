@@ -1,0 +1,8 @@
+<root>
+    <item name='org.xmlpull.v1.sax2.Driver void parseSubTree(org.xmlpull.v1.XmlPullParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver void parse(org.xml.sax.InputSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

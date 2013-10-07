@@ -1,0 +1,83 @@
+<root>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl T engineGetKeySpec(java.security.Key, java.lang.Class&lt;T&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1withDSA_SignatureImpl boolean engineVerify(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl java.security.PublicKey engineGeneratePublic(java.security.spec.KeySpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAPrivateKeyImpl DSAPrivateKeyImpl(java.security.spec.DSAPrivateKeySpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1_MessageDigestImpl int engineDigest(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1PRNG_SecureRandomImpl void engineNextBytes(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl java.security.Key engineTranslateKey(java.security.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1withDSA_SignatureImpl void engineUpdate(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1PRNG_SecureRandomImpl byte[] engineGenerateSeed(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1PRNG_SecureRandomImpl void engineSetSeed(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1withDSA_SignatureImpl java.lang.Object engineGetParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1_MessageDigestImpl byte[] engineDigest()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAPublicKeyImpl DSAPublicKeyImpl(java.security.spec.X509EncodedKeySpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1withDSA_SignatureImpl byte[] engineSign()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1withDSA_SignatureImpl void engineInitSign(java.security.PrivateKey) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl java.security.PublicKey engineGeneratePublic(java.security.spec.KeySpec)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1_MessageDigestImpl java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAPrivateKeyImpl DSAPrivateKeyImpl(java.security.spec.PKCS8EncodedKeySpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl java.security.PrivateKey engineGeneratePrivate(java.security.spec.KeySpec)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl java.security.Key engineTranslateKey(java.security.Key)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl T engineGetKeySpec(java.security.Key, java.lang.Class&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl T engineGetKeySpec(java.security.Key, java.lang.Class&lt;T&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1withDSA_SignatureImpl void engineInitVerify(java.security.PublicKey) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAPublicKeyImpl DSAPublicKeyImpl(java.security.spec.DSAPublicKeySpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1withDSA_SignatureImpl boolean engineVerify(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.DSAKeyFactoryImpl java.security.PrivateKey engineGeneratePrivate(java.security.spec.KeySpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.crypto.SHA1_MessageDigestImpl void engineUpdate(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

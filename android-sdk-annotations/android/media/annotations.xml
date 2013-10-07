@@ -1,179 +1,359 @@
 <root>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_EXISTING_URI'>
+    <item name='android.media.ResampleInputStream int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_SHOW_SILENT'>
+    <item name='android.media.MediaExtractor android.media.MediaFormat getTrackFormat(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_PROCESSING_METHOD'>
+    <item name='android.media.MediaScanner MediaScanner(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_ALTITUDE'>
+    <item name='android.media.AsyncPlayer void setUsesWakeLock(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_IMAGE_LENGTH'>
+    <item name='android.media.MediaPlayer void setDataSource(android.content.Context, android.net.Uri, java.util.Map&lt;java.lang.String,java.lang.String&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager PROPERTY_OUTPUT_FRAMES_PER_BUFFER'>
+    <item name='android.media.ExifInterface ExifInterface(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_FRAME_RATE'>
+    <item name='android.media.MediaMuxer void writeSampleData(int, java.nio.ByteBuffer, android.media.MediaCodec.BufferInfo) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_PICKED_URI'>
+    <item name='android.media.RemoteDisplay android.media.RemoteDisplay listen(java.lang.String, android.media.RemoteDisplay.Listener, android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_DATETIME'>
+    <item name='android.media.MediaDrm android.media.MediaDrm.CryptoSession getCryptoSession(byte[], java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_CHANNEL_COUNT'>
+    <item name='android.media.MediaCrypto boolean isCryptoSchemeSupported(java.util.UUID) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_DATESTAMP'>
+    <item name='android.media.TimedText TimedText(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_AAC_PROFILE'>
+    <item name='android.media.MediaPlayer int setMetadataFilter(java.util.Set&lt;java.lang.Integer&gt;, java.util.Set&lt;java.lang.Integer&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager EXTRA_VIBRATE_SETTING'>
+    <item name='android.media.MediaPlayer android.os.Parcel newRequest()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager VIBRATE_SETTING_CHANGED_ACTION'>
+    <item name='android.media.AudioService.VolumeStreamState void setAllIndexes(android.media.AudioService.VolumeStreamState) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_FLAC_COMPRESSION_LEVEL'>
+    <item name='android.media.MediaRouter android.media.MediaRouter.RouteCategory createRouteCategory(int, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_DEFAULT_URI'>
+    <item name='android.media.MediaPlayer void setDataSource(java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager ACTION_RINGTONE_PICKER'>
+    <item name='android.media.MiniThumbFile android.media.MiniThumbFile instance(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager EXTRA_RINGER_MODE'>
+    <item name='android.media.MediaSyncEvent android.media.MediaSyncEvent setAudioSessionId(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager EXTRA_SCO_AUDIO_STATE'>
+    <item name='android.media.IAudioFocusDispatcher.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaPlayer MEDIA_MIMETYPE_TEXT_SUBRIP'>
+    <item name='android.media.MediaMuxer int addTrack(android.media.MediaFormat) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_HEIGHT'>
+    <item name='android.media.RemoteDisplay android.media.RemoteDisplay listen(java.lang.String, android.media.RemoteDisplay.Listener, android.os.Handler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_IS_ADTS'>
+    <item name='android.media.MediaMuxer void writeSampleData(int, java.nio.ByteBuffer, android.media.MediaCodec.BufferInfo) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_MODEL'>
+    <item name='android.media.DecoderCapabilities.VideoDecoder android.media.DecoderCapabilities.VideoDecoder valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_MIME'>
+    <item name='android.media.MediaRouter.RouteInfo java.lang.CharSequence getName(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_FOCAL_LENGTH'>
+    <item name='android.media.ThumbnailUtils android.graphics.Bitmap createImageThumbnail(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_WIDTH'>
+    <item name='android.media.MediaDrm MediaDrm(java.util.UUID) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_EXPOSURE_TIME'>
+    <item name='android.media.MediaCodec void configure(android.media.MediaFormat, android.view.Surface, android.media.MediaCrypto, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_I_FRAME_INTERVAL'>
+    <item name='android.media.MediaCodec android.media.MediaCodec createDecoderByType(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_DURATION'>
+    <item name='android.media.IRemoteControlDisplay.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_SAMPLE_RATE'>
+    <item name='android.media.MediaRouter.RouteCategory java.util.List&lt;android.media.MediaRouter.RouteInfo&gt; getRoutes(java.util.List&lt;android.media.MediaRouter.RouteInfo&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_CHANNEL_MASK'>
+    <item name='android.media.AudioManager void handleKeyUp(android.view.KeyEvent, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_APERTURE'>
+    <item name='android.media.FaceDetector.Face void getMidPoint(android.graphics.PointF) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_MAKE'>
+    <item name='android.media.MediaMetadataRetriever void setDataSource(java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_LATITUDE_REF'>
+    <item name='android.media.RemoteControlClient.MetadataEditor android.media.RemoteControlClient.MetadataEditor putBitmap(int, android.graphics.Bitmap)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_IMAGE_WIDTH'>
+    <item name='android.media.MediaFile java.lang.String getMimeTypeForFile(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_SHOW_DEFAULT'>
+    <item name='android.media.MediaRouter android.media.MediaRouter.UserRouteInfo createUserRoute(android.media.MediaRouter.RouteCategory)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_INCLUDE_DRM'>
+    <item name='android.media.SoundPool int load(android.content.Context, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_TITLE'>
+    <item name='android.media.MediaRouter.RouteCategory java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager ACTION_SCO_AUDIO_STATE_UPDATED'>
+    <item name='android.media.MediaCodecList android.media.MediaCodecInfo getCodecInfoAt(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.MediaFormat KEY_BIT_RATE'>
+    <item name='android.media.RemoteControlClient android.media.RemoteControlClient.MetadataEditor editMetadata(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager ACTION_AUDIO_BECOMING_NOISY'>
+    <item name='android.media.DecoderCapabilities java.util.List&lt;android.media.DecoderCapabilities.VideoDecoder&gt; getVideoDecoders()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_ALTITUDE_REF'>
+    <item name='android.media.AudioManager void handleKeyDown(android.view.KeyEvent, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_ORIENTATION'>
+    <item name='android.media.MediaMetadataRetriever void setDataSource(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager PROPERTY_OUTPUT_SAMPLE_RATE'>
+    <item name='android.media.MediaFile java.lang.String getFileTitle(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_LATITUDE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.ExifInterface TAG_ISO'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.ExifInterface TAG_GPS_LONGITUDE_REF'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.AudioManager RINGER_MODE_CHANGED_ACTION'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.MediaFormat KEY_COLOR_FORMAT'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.AudioManager EXTRA_VIBRATE_TYPE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.ExifInterface TAG_FLASH'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.MediaFormat KEY_MAX_INPUT_SIZE'>
+    <item name='android.media.RemoteControlClient RemoteControlClient(android.app.PendingIntent, android.os.Looper) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.MediaPlayer.TrackInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_LONGITUDE'>
+    <item name='android.media.MediaCodec android.media.MediaCodec createEncoderByType(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_GPS_TIMESTAMP'>
+    <item name='android.media.MediaPlayer void invoke(android.os.Parcel, android.os.Parcel) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.ExifInterface TAG_WHITE_BALANCE'>
+    <item name='android.media.DecoderCapabilities.VideoDecoder android.media.DecoderCapabilities.VideoDecoder valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.RingtoneManager EXTRA_RINGTONE_TYPE'>
+    <item name='android.media.MediaRouter.RouteCategory java.lang.CharSequence getName(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager EXTRA_SCO_AUDIO_PREVIOUS_STATE'>
+    <item name='android.media.MediaRouter.RouteGroup void addRoute(android.media.MediaRouter.RouteInfo, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.AudioManager ACTION_SCO_AUDIO_STATE_CHANGED'>
+    <item name='android.media.MediaScanner void scanMtpFile(java.lang.String, java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RemoteControlClient.MetadataEditor android.media.RemoteControlClient.MetadataEditor putLong(int, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaScanner void scanMtpFile(java.lang.String, java.lang.String, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaCodec android.media.MediaFormat getOutputFormat()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer void setDataSource(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioService int requestAudioFocus(int, int, android.os.IBinder, android.media.IAudioFocusDispatcher, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer void setWakeMode(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaCodec android.media.MediaCodecInfo getCodecInfo()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioService AudioService(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer void addTimedTextSource(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaSyncEvent android.media.MediaSyncEvent createEvent(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.IMediaScannerService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter void addRouteInt(android.media.MediaRouter.RouteInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MiniThumbFile android.media.MiniThumbFile instance(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter.RouteGroup void removeRoute(android.media.MediaRouter.RouteInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioRoutesInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioService void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.Metadata java.util.Set&lt;java.lang.Integer&gt; keySet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFile java.lang.String getFileTitle(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.IAudioService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaCodec android.media.MediaCodec createByCodecName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.Metadata boolean parse(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter android.media.MediaRouter.RouteCategory getSystemCategory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.DecoderCapabilities java.util.List&lt;android.media.DecoderCapabilities.AudioDecoder&gt; getAudioDecoders()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaInserter void insert(android.net.Uri, android.content.ContentValues) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaInserter void insertwithPriority(android.net.Uri, android.content.ContentValues) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaMetadataRetriever void setDataSource(android.content.Context, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter.RouteGroup java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaCrypto MediaCrypto(java.util.UUID, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat android.media.MediaFormat createVideoFormat(java.lang.String, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.IAudioRoutesObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter android.media.MediaRouter.RouteCategory createRouteCategory(java.lang.CharSequence, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioService android.media.AudioRoutesInfo startWatchingRoutes(android.media.IAudioRoutesObserver)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.IRemoteVolumeObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFile android.media.MediaFile.MediaFileType getFileType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer void addTimedTextSource(android.content.Context, android.net.Uri, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer int setMetadataFilter(java.util.Set&lt;java.lang.Integer&gt;, java.util.Set&lt;java.lang.Integer&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaExtractor void setDataSource(android.content.Context, android.net.Uri, java.util.Map&lt;java.lang.String,java.lang.String&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.IRingtonePlayer.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.JetPlayer boolean loadJetFile(android.content.res.AssetFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter void addUserRoute(android.media.MediaRouter.UserRouteInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaMuxer MediaMuxer(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter.RouteGroup void addRoute(android.media.MediaRouter.RouteInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaCodec.CryptoInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.Metadata java.util.Date getDate(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer android.os.Parcel getParcelParameter(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RemoteControlClient.MetadataEditor android.media.RemoteControlClient.MetadataEditor putString(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRouter.RouteInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaDrm boolean isCryptoSchemeSupported(java.util.UUID) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RemoteDisplay android.media.RemoteDisplay listen(java.lang.String, android.media.RemoteDisplay.Listener, android.os.Handler) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioManager void preDispatchKeyEvent(android.view.KeyEvent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RemoteControlClient android.media.IRemoteControlClient getIRemoteControlClient()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioSystem java.lang.String getDeviceName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioRoutesInfo AudioRoutesInfo(android.media.AudioRoutesInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.SoundPool int load(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaPlayer void setDataSource(android.content.Context, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.DecoderCapabilities.AudioDecoder android.media.DecoderCapabilities.AudioDecoder valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat android.media.MediaFormat createAudioFormat(java.lang.String, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.JetPlayer boolean queueJetSegmentMuteArray(int, int, int, int, boolean[], byte) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.IRemoteControlClient.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaFormat java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AmrInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.JetPlayer boolean setMuteArray(boolean[], boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.IMediaScannerListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.AudioRecord void startRecording(android.media.MediaSyncEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.MediaRecorder void setProfile(android.media.CamcorderProfile) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.DecoderCapabilities.AudioDecoder android.media.DecoderCapabilities.AudioDecoder valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.RemoteDisplay android.media.RemoteDisplay listen(java.lang.String, android.media.RemoteDisplay.Listener, android.os.Handler) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

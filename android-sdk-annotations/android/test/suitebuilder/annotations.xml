@@ -1,0 +1,92 @@
+<root>
+    <item name='android.test.suitebuilder.TestSuiteBuilder TestSuiteBuilder(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder addTestClassByName(java.lang.String, java.lang.String, android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestGrouping java.util.List&lt;android.test.suitebuilder.TestMethod&gt; getTests()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestGrouping getTestGrouping()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder includePackages(java.lang.String...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder includePackages(java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestMethod java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder addRequirements(java.util.List&lt;com.android.internal.util.Predicate&lt;android.test.suitebuilder.TestMethod&gt;&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.UnitTestSuiteBuilder UnitTestSuiteBuilder(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder addRequirements(com.android.internal.util.Predicate&lt;android.test.suitebuilder.TestMethod&gt;...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestMethod java.lang.String getEnclosingClassname()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder includeAllPackagesUnderHere()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestGrouping android.test.suitebuilder.TestGrouping removePackagesRecursive(java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestGrouping android.test.suitebuilder.TestGrouping addPackagesRecursive(java.lang.String...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestMethod TestMethod(java.lang.reflect.Method, java.lang.Class&lt;? extends junit.framework.TestCase&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestGrouping android.test.suitebuilder.TestGrouping removePackagesRecursive(java.lang.String...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestGrouping android.test.suitebuilder.TestGrouping addPackagesRecursive(java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestGrouping java.util.List&lt;java.lang.reflect.Method&gt; getTestMethods(java.lang.Class&lt;? extends junit.framework.TestCase&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder named(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.InstrumentationTestSuiteBuilder InstrumentationTestSuiteBuilder(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestGrouping java.util.List&lt;java.lang.reflect.Method&gt; getTestMethods(java.lang.Class&lt;? extends junit.framework.TestCase&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder excludePackages(java.lang.String...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestMethod TestMethod(junit.framework.TestCase) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestMethod TestMethod(java.lang.String, java.lang.Class&lt;? extends junit.framework.TestCase&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder addRequirements(com.android.internal.util.Predicate&lt;android.test.suitebuilder.TestMethod&gt;...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder addTestSuite(junit.framework.TestSuite)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestSuiteBuilder android.test.suitebuilder.TestSuiteBuilder excludePackages(java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestMethod TestMethod(java.lang.reflect.Method, java.lang.Class&lt;? extends junit.framework.TestCase&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.SmokeTestSuiteBuilder SmokeTestSuiteBuilder(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.suitebuilder.TestMethod java.lang.Class&lt;? extends junit.framework.TestCase&gt; getEnclosingClass()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

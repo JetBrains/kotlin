@@ -1,0 +1,26 @@
+<root>
+    <item name='android.support.v13.app.FragmentPagerAdapter boolean isViewFromObject(android.view.View, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v13.app.FragmentPagerAdapter java.lang.Object instantiateItem(android.view.ViewGroup, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v13.app.FragmentTabHost FragmentTabHost(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v13.app.FragmentTabHost void addTab(android.widget.TabHost.TabSpec, java.lang.Class&lt;?&gt;, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v13.app.FragmentTabHost FragmentTabHost(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v13.app.FragmentTabHost void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v13.app.FragmentTabHost android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v13.app.FragmentStatePagerAdapter boolean isViewFromObject(android.view.View, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

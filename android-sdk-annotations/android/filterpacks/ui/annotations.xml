@@ -1,0 +1,11 @@
+<root>
+    <item name='android.filterpacks.ui.SurfaceRenderFilter void prepare(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.ui.SurfaceRenderFilter void open(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.ui.SurfaceTargetFilter void prepare(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

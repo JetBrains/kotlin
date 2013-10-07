@@ -1,0 +1,431 @@
+<root>
+    <item name='org.apache.http.message.AbstractHttpMessage void addHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter void doFormatValue(org.apache.http.util.CharArrayBuffer, java.lang.String, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter int estimateProtocolVersionLen(org.apache.http.ProtocolVersion) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.ProtocolVersion createProtocolVersion(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpEntityEnclosingRequest BasicHttpEntityEnclosingRequest(org.apache.http.RequestLine) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.ProtocolVersion parseProtocolVersion(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderIterator BasicHeaderIterator(org.apache.http.Header[], java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElement BasicHeaderElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair parseNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter java.lang.String formatProtocolVersion(org.apache.http.ProtocolVersion, org.apache.http.message.LineFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpRequest BasicHttpRequest(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair parseNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer formatStatusLine(org.apache.http.util.CharArrayBuffer, org.apache.http.StatusLine)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicNameValuePair java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatHeaderElement(org.apache.http.util.CharArrayBuffer, org.apache.http.HeaderElement, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatElements(org.apache.http.util.CharArrayBuffer, org.apache.http.HeaderElement[], boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpEntityEnclosingRequest BasicHttpEntityEnclosingRequest(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter void doFormatRequestLine(org.apache.http.util.CharArrayBuffer, org.apache.http.RequestLine) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicStatusLine BasicStatusLine(org.apache.http.ProtocolVersion, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer formatStatusLine(org.apache.http.util.CharArrayBuffer, org.apache.http.StatusLine) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.StatusLine createStatusLine(org.apache.http.ProtocolVersion, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair parseNameValuePair(java.lang.String, org.apache.http.message.HeaderValueParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicRequestLine java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.StatusLine parseStatusLine(java.lang.String, org.apache.http.message.LineParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine createRequestLine(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair createNameValuePair(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicListHeaderIterator BasicListHeaderIterator(java.util.List, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair createNameValuePair(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.AbstractHttpMessage org.apache.http.Header[] getHeaders(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicStatusLine java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement createHeaderElement(java.lang.String, java.lang.String, org.apache.http.NameValuePair[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpResponse void setStatusLine(org.apache.http.ProtocolVersion, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair[] parseParameters(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpEntityEnclosingRequest BasicHttpEntityEnclosingRequest(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair parseNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor, char[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.Header parseHeader(org.apache.http.util.CharArrayBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.AbstractHttpMessage void setHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatHeaderElement(org.apache.http.util.CharArrayBuffer, org.apache.http.HeaderElement, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.HeaderGroup org.apache.http.Header[] getHeaders(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine parseRequestLine(java.lang.String, org.apache.http.message.LineParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatParameters(org.apache.http.util.CharArrayBuffer, org.apache.http.NameValuePair[], boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.StatusLine createStatusLine(org.apache.http.ProtocolVersion, int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BufferedHeader java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BufferedHeader org.apache.http.util.CharArrayBuffer getBuffer()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser void skipWhitespace(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter java.lang.String formatElements(org.apache.http.HeaderElement[], boolean, org.apache.http.message.HeaderValueFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter java.lang.String formatRequestLine(org.apache.http.RequestLine, org.apache.http.message.LineFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser boolean hasProtocolVersion(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair parseNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor, char[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicNameValuePair java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair[] parseParameters(java.lang.String, org.apache.http.message.HeaderValueParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine createRequestLine(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair[] parseParameters(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine parseRequestLine(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicRequestLine org.apache.http.ProtocolVersion getProtocolVersion()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.ProtocolVersion parseProtocolVersion(java.lang.String, org.apache.http.message.LineParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElement java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpResponse BasicHttpResponse(org.apache.http.ProtocolVersion, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter void doFormatHeader(org.apache.http.util.CharArrayBuffer, org.apache.http.Header) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicTokenIterator java.lang.String createToken(java.lang.String, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement parseHeaderElement(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpResponse void setStatusLine(org.apache.http.ProtocolVersion, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicRequestLine BasicRequestLine(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.ProtocolVersion parseProtocolVersion(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpRequest BasicHttpRequest(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.HeaderGroup org.apache.http.HeaderIterator iterator(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter void doFormatStatusLine(org.apache.http.util.CharArrayBuffer, org.apache.http.StatusLine) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine createRequestLine(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpResponse BasicHttpResponse(org.apache.http.StatusLine, org.apache.http.ReasonPhraseCatalog, java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.StatusLine parseStatusLine(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.AbstractHttpMessage void setParams(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter void doFormatHeader(org.apache.http.util.CharArrayBuffer, org.apache.http.Header) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement parseHeaderElement(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicTokenIterator BasicTokenIterator(org.apache.http.HeaderIterator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer initBuffer(org.apache.http.util.CharArrayBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.Header parseHeader(java.lang.String, org.apache.http.message.LineParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BufferedHeader BufferedHeader(org.apache.http.util.CharArrayBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer formatRequestLine(org.apache.http.util.CharArrayBuffer, org.apache.http.RequestLine) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.ProtocolVersion parseProtocolVersion(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatParameters(org.apache.http.util.CharArrayBuffer, org.apache.http.NameValuePair[], boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicRequestLine BasicRequestLine(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElement org.apache.http.NameValuePair getParameterByName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpRequest BasicHttpRequest(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter void doFormatStatusLine(org.apache.http.util.CharArrayBuffer, org.apache.http.StatusLine) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElement java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter java.lang.String formatParameters(org.apache.http.NameValuePair[], boolean, org.apache.http.message.HeaderValueFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.StatusLine parseStatusLine(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElementIterator BasicHeaderElementIterator(org.apache.http.HeaderIterator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatElements(org.apache.http.util.CharArrayBuffer, org.apache.http.HeaderElement[], boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine createRequestLine(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElement BasicHeaderElement(java.lang.String, java.lang.String, org.apache.http.NameValuePair[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine parseRequestLine(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.HeaderGroup org.apache.http.HeaderIterator iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicRequestLine BasicRequestLine(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.NameValuePair, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter org.apache.http.util.CharArrayBuffer formatNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.NameValuePair, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.HeaderGroup org.apache.http.message.HeaderGroup copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser boolean hasProtocolVersion(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpRequest BasicHttpRequest(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter java.lang.String formatHeader(org.apache.http.Header, org.apache.http.message.LineFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BufferedHeader java.lang.String getValue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicRequestLine java.lang.String getUri()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair parseNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor, char[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpResponse void setLocale(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicRequestLine java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer appendProtocolVersion(org.apache.http.util.CharArrayBuffer, org.apache.http.ProtocolVersion)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.RequestLine parseRequestLine(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement parseHeaderElement(java.lang.String, org.apache.http.message.HeaderValueParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter java.lang.String formatStatusLine(org.apache.http.StatusLine, org.apache.http.message.LineFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpEntityEnclosingRequest BasicHttpEntityEnclosingRequest(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement createHeaderElement(java.lang.String, java.lang.String, org.apache.http.NameValuePair[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpRequest BasicHttpRequest(org.apache.http.RequestLine) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.AbstractHttpMessage org.apache.http.HeaderIterator headerIterator(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.ParserCursor java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement[] parseElements(java.lang.String, org.apache.http.message.HeaderValueParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter java.lang.String formatNameValuePair(org.apache.http.NameValuePair, boolean, org.apache.http.message.HeaderValueFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueFormatter java.lang.String formatHeaderElement(org.apache.http.HeaderElement, boolean, org.apache.http.message.HeaderValueFormatter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BufferedHeader java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElementIterator BasicHeaderElementIterator(org.apache.http.HeaderIterator, org.apache.http.message.HeaderValueParser) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.AbstractHttpMessage org.apache.http.HeaderIterator headerIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicTokenIterator java.lang.String createToken(java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement[] parseElements(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpEntityEnclosingRequest BasicHttpEntityEnclosingRequest(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicStatusLine org.apache.http.ProtocolVersion getProtocolVersion()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer formatHeader(org.apache.http.util.CharArrayBuffer, org.apache.http.Header) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeader java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer appendProtocolVersion(org.apache.http.util.CharArrayBuffer, org.apache.http.ProtocolVersion) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter void doFormatRequestLine(org.apache.http.util.CharArrayBuffer, org.apache.http.RequestLine) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.StatusLine parseStatusLine(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.HeaderGroup java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpResponse BasicHttpResponse(org.apache.http.StatusLine) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineFormatter org.apache.http.util.CharArrayBuffer formatRequestLine(org.apache.http.util.CharArrayBuffer, org.apache.http.RequestLine)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicLineParser org.apache.http.Header parseHeader(org.apache.http.util.CharArrayBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeader BasicHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpResponse void setStatusLine(org.apache.http.StatusLine) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.NameValuePair parseNameValuePair(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderElementIterator BasicHeaderElementIterator(org.apache.http.HeaderIterator, org.apache.http.message.HeaderValueParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeader java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpRequest BasicHttpRequest(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement[] parseElements(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHttpEntityEnclosingRequest BasicHttpEntityEnclosingRequest(java.lang.String, java.lang.String, org.apache.http.ProtocolVersion) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicNameValuePair BasicNameValuePair(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.message.BasicHeaderValueParser org.apache.http.HeaderElement parseHeaderElement(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

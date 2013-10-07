@@ -1,47 +1,152 @@
 <root>
-    <item name='android.net.http.SslError java.lang.String getUrl()'>
+    <item name='android.net.http.SslCertificate java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.AndroidHttpClient android.net.http.AndroidHttpClient newInstance(java.lang.String)'>
+    <item name='android.net.http.AndroidHttpClientConnection void bind(java.net.Socket, org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslCertificate.DName java.lang.String getUName()'>
+    <item name='android.net.http.RequestQueue void queueRequest(android.net.http.Request, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.AndroidHttpClient android.net.http.AndroidHttpClient newInstance(java.lang.String, android.content.Context)'>
+    <item name='android.net.http.HttpResponseCache android.net.http.HttpResponseCache install(java.io.File, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClient long parseDate(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClient java.io.InputStream getUngzippedContent(org.apache.http.HttpEntity) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueRequest(java.lang.String, android.net.WebAddress, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueRequest(java.lang.String, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.SslCertificate android.view.View inflateCertificateView(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.ErrorStrings java.lang.String getString(int, android.content.Context) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClient void modifyRequestToAcceptGzipResponse(org.apache.http.HttpRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.CertificateChainValidator android.net.http.SslError verifyServerCertificates(byte[][], java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue RequestQueue(android.content.Context, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.http.SslCertificate SslCertificate(java.security.cert.X509Certificate) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslCertificate android.net.http.SslCertificate.DName getIssuedBy()'>
+    <item name='android.net.http.RequestHandle java.lang.String computeBasicAuthResponse(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslCertificate.DName java.lang.String getCName()'>
+    <item name='android.net.http.CertificateChainValidator android.net.http.SslError doHandshakeAndValidateServerCertificates(android.net.http.HttpsConnection, javax.net.ssl.SSLSocket, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslError SslError(int, java.security.cert.X509Certificate, java.lang.String) 2'>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueSynchronousRequest(java.lang.String, android.net.WebAddress, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslCertificate.DName java.lang.String getOName()'>
+    <item name='android.net.http.AndroidHttpClientConnection java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslError android.net.http.SslCertificate getCertificate()'>
+    <item name='android.net.http.AndroidHttpClient org.apache.http.entity.AbstractHttpEntity getCompressedEntity(byte[], android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueRequest(java.lang.String, android.net.WebAddress, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.HttpsConnection java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.http.SslCertificate android.net.http.SslCertificate.DName getIssuedTo()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslError SslError(int, android.net.http.SslCertificate, java.lang.String) 2'>
+    <item name='android.net.http.SslCertificate android.net.http.SslCertificate.DName getIssuedBy()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslCertificate.DName java.lang.String getDName()'>
+    <item name='android.net.http.AndroidHttpClientConnection org.apache.http.HttpEntity receiveResponseEntity(android.net.http.Headers)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslError SslError(int, android.net.http.SslCertificate) 1'>
+    <item name='android.net.http.AndroidHttpClient android.net.http.AndroidHttpClient newInstance(java.lang.String, android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.http.SslError SslError(int, android.net.http.SslCertificate, java.lang.String) 1'>
+    <item name='android.net.http.AndroidHttpClientConnection void sendRequestHeader(org.apache.http.HttpRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestHandle java.lang.String authorizationHeader(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClient void enableCurlLogging(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue void requeueRequest(android.net.http.Request) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.SslCertificate android.view.View inflateCertificateView(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.SslError SslError(int, java.security.cert.X509Certificate, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClientConnection org.apache.http.StatusLine parseResponseHeader(android.net.http.Headers)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.Headers void parseHeader(org.apache.http.util.CharArrayBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.SslError java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClientConnection org.apache.http.HttpEntity receiveResponseEntity(android.net.http.Headers) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueSynchronousRequest(java.lang.String, android.net.WebAddress, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClient android.net.http.AndroidHttpClient newInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueRequest(java.lang.String, android.net.WebAddress, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueRequest(java.lang.String, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.SslError android.net.http.SslError SslErrorFromChromiumErrorCode(int, android.net.http.SslCertificate, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClientConnection void bind(java.net.Socket, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClientConnection void sendRequestEntity(org.apache.http.HttpEntityEnclosingRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.AndroidHttpClient org.apache.http.entity.AbstractHttpEntity getCompressedEntity(byte[], android.content.ContentResolver)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.X509TrustManagerExtensions X509TrustManagerExtensions(javax.net.ssl.X509TrustManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue RequestQueue(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.ErrorStrings java.lang.String getString(int, android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.CertificateChainValidator android.net.http.CertificateChainValidator getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueSynchronousRequest(java.lang.String, android.net.WebAddress, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.RequestQueue android.net.http.RequestHandle queueRequest(java.lang.String, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;, android.net.http.EventHandler, java.io.InputStream, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.http.SslError SslError(int, java.security.cert.X509Certificate) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

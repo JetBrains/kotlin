@@ -1,0 +1,185 @@
+<root>
+    <item name='android.filterpacks.imageproc.ResizeFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ImageSlicer void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.DrawRectFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ContrastFilter android.filterfw.core.Program getNativeProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToGrayFilter android.filterfw.core.Program getShaderProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.TintFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBAFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.FillLightFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBAFilter android.filterfw.core.FrameFormat getConvertedFormat(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.CropFilter void createProgram(android.filterfw.core.FilterContext, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.CropFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToPackedGrayFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToPackedGrayFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.BitmapSource void fieldPortValueUpdated(java.lang.String, android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ResizeFilter void createProgram(android.filterfw.core.FilterContext, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBAFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ColorTemperatureFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.CrossProcessFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.BrightnessFilter android.filterfw.core.Program getNativeProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.NegativeFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.FisheyeFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.BrightnessFilter android.filterfw.core.Program getShaderProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.StraightenFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ContrastFilter android.filterfw.core.Program getShaderProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.DuotoneFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.BitmapSource void loadImage(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.FlipFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.CropFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.SimpleImageFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.RedEyeFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.AutoFixFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBFilter android.filterfw.core.FrameFormat getConvertedFormat(android.filterfw.core.FrameFormat) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.CropRectFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBFilter android.filterfw.core.FrameFormat getConvertedFormat(android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.SepiaFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.Invert android.filterfw.core.Program getNativeProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.PosterizeFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.VignetteFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.BlackWhiteFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.BlendFilter android.filterfw.core.Program getShaderProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.Invert android.filterfw.core.Program getShaderProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.BitmapOverlayFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.DocumentaryFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.GrainFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBFilter void createProgram(android.filterfw.core.FilterContext, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBAFilter android.filterfw.core.FrameFormat getConvertedFormat(android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.SharpenFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.AutoFixFilter void prepare(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBAFilter void createProgram(android.filterfw.core.FilterContext, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ImageCombineFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToPackedGrayFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.LomoishFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.DrawOverlayFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.RotateFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.CropFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.AlphaBlendFilter android.filterfw.core.Program getShaderProgram(android.filterfw.core.FilterContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.SaturateFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.imageproc.ToRGBAFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

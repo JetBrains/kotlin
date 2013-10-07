@@ -1,0 +1,44 @@
+<root>
+    <item name='org.apache.http.impl.entity.EntitySerializer java.io.OutputStream doSerialize(org.apache.http.io.SessionOutputBuffer, org.apache.http.HttpMessage)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntitySerializer void serialize(org.apache.http.io.SessionOutputBuffer, org.apache.http.HttpMessage, org.apache.http.HttpEntity) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntityDeserializer EntityDeserializer(org.apache.http.entity.ContentLengthStrategy) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntityDeserializer org.apache.http.HttpEntity deserialize(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpMessage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntityDeserializer org.apache.http.HttpEntity deserialize(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpMessage)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntityDeserializer org.apache.http.entity.BasicHttpEntity doDeserialize(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpMessage) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntityDeserializer org.apache.http.entity.BasicHttpEntity doDeserialize(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpMessage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntitySerializer void serialize(org.apache.http.io.SessionOutputBuffer, org.apache.http.HttpMessage, org.apache.http.HttpEntity) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntitySerializer void serialize(org.apache.http.io.SessionOutputBuffer, org.apache.http.HttpMessage, org.apache.http.HttpEntity) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntityDeserializer org.apache.http.HttpEntity deserialize(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpMessage) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.StrictContentLengthStrategy long determineLength(org.apache.http.HttpMessage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.LaxContentLengthStrategy long determineLength(org.apache.http.HttpMessage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntitySerializer EntitySerializer(org.apache.http.entity.ContentLengthStrategy) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.entity.EntityDeserializer org.apache.http.entity.BasicHttpEntity doDeserialize(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpMessage)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -1,0 +1,32 @@
+<root>
+    <item name='org.apache.harmony.dalvik.ddmc.ChunkHandler org.apache.harmony.dalvik.ddmc.Chunk createFailChunk(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.ChunkHandler void putString(java.nio.ByteBuffer, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.DdmServer void registerHandler(int, org.apache.harmony.dalvik.ddmc.ChunkHandler) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.ChunkHandler java.nio.ByteBuffer wrapChunk(org.apache.harmony.dalvik.ddmc.Chunk) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.Chunk Chunk(int, java.nio.ByteBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.DdmServer void sendChunk(org.apache.harmony.dalvik.ddmc.Chunk) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.ChunkHandler java.nio.ByteBuffer wrapChunk(org.apache.harmony.dalvik.ddmc.Chunk)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.ChunkHandler java.lang.String name(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.ChunkHandler int type(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.dalvik.ddmc.ChunkHandler java.lang.String getString(java.nio.ByteBuffer, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

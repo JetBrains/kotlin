@@ -1,0 +1,113 @@
+<root>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point rotatedAround(android.filterfw.geometry.Point, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point minus(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point minus(android.filterfw.geometry.Point)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Quad android.filterfw.geometry.Quad translated(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle fromCenterVerticalAxis(android.filterfw.geometry.Point, android.filterfw.geometry.Point, android.filterfw.geometry.Point) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point plus(android.filterfw.geometry.Point) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point normalize()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point mult(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Quad scaled(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point rotated(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point float distanceTo(android.filterfw.geometry.Point) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Quad android.filterfw.geometry.Quad translated(android.filterfw.geometry.Point)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Point center()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle fromRotatedRect(android.filterfw.geometry.Point, android.filterfw.geometry.Point, float) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Quad android.filterfw.geometry.Quad scaled(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle fromRotatedRect(android.filterfw.geometry.Point, android.filterfw.geometry.Point, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point scaledTo(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Quad android.filterfw.geometry.Quad translated(android.filterfw.geometry.Point) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point times(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Quad java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle Rectangle(android.filterfw.geometry.Point, android.filterfw.geometry.Point) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point minus(android.filterfw.geometry.Point) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle scaled(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Quad scaled(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle Rectangle(android.filterfw.geometry.Point, android.filterfw.geometry.Point) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle scaled(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle fromCenterVerticalAxis(android.filterfw.geometry.Point, android.filterfw.geometry.Point, android.filterfw.geometry.Point)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Quad android.filterfw.geometry.Quad scaled(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle fromCenterVerticalAxis(android.filterfw.geometry.Point, android.filterfw.geometry.Point, android.filterfw.geometry.Point) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point plus(android.filterfw.geometry.Point)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle fromRotatedRect(android.filterfw.geometry.Point, android.filterfw.geometry.Point, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Rectangle android.filterfw.geometry.Rectangle fromCenterVerticalAxis(android.filterfw.geometry.Point, android.filterfw.geometry.Point, android.filterfw.geometry.Point) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point plus(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point rotatedAround(android.filterfw.geometry.Point, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Point android.filterfw.geometry.Point rotated90(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.geometry.Quad android.filterfw.geometry.Rectangle boundingBox()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

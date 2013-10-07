@@ -1,0 +1,5 @@
+<root>
+    <item name='android.filterpacks.performance.Throughput java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

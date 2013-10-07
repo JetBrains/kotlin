@@ -1,0 +1,143 @@
+<root>
+    <item name='org.apache.xalan.processor.XSLTElementProcessor void characters(org.apache.xalan.processor.StylesheetHandler, char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorExsltFunction void appendAndPush(org.apache.xalan.processor.StylesheetHandler, org.apache.xalan.templates.ElemTemplateElement) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorCharacters void endElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl java.lang.Object getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorStylesheetElement org.apache.xalan.templates.Stylesheet getStylesheetRoot(org.apache.xalan.processor.StylesheetHandler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorText void endElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorInclude void startElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorLRE org.apache.xalan.templates.Stylesheet getStylesheetRoot(org.apache.xalan.processor.StylesheetHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorLRE org.apache.xalan.templates.Stylesheet getStylesheetRoot(org.apache.xalan.processor.StylesheetHandler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorExsltFunction void startElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl void setFeature(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorExsltFunction void endElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorLRE void endElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl org.xml.sax.XMLFilter newXMLFilter(javax.xml.transform.Source) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorText void appendAndPush(org.apache.xalan.processor.StylesheetHandler, org.apache.xalan.templates.ElemTemplateElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorExsltFuncResult void startElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl void setAttribute(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl javax.xml.transform.sax.TransformerHandler newTransformerHandler(javax.xml.transform.Source) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorTemplateElem void appendAndPush(org.apache.xalan.processor.StylesheetHandler, org.apache.xalan.templates.ElemTemplateElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorExsltFunction void startElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl boolean getFeature(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl javax.xml.transform.Transformer newTransformer()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl javax.xml.transform.sax.TransformerHandler newTransformerHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl javax.xml.transform.Templates newTemplates(javax.xml.transform.Source) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorCharacters void startNonText(org.apache.xalan.processor.StylesheetHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorExsltFunction void appendAndPush(org.apache.xalan.processor.StylesheetHandler, org.apache.xalan.templates.ElemTemplateElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.StylesheetHandler void fatalError(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorCharacters void characters(org.apache.xalan.processor.StylesheetHandler, char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorInclude void parse(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorStylesheetElement void endElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.StylesheetHandler org.apache.xpath.XPath createXPath(java.lang.String, org.apache.xalan.templates.ElemTemplateElement)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorTemplateElem void startElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorImport java.lang.String getStylesheetInclErr()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl void setAttribute(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.StylesheetHandler void setDocumentLocator(org.xml.sax.Locator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorStylesheetElement org.apache.xalan.templates.Stylesheet getStylesheetRoot(org.apache.xalan.processor.StylesheetHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorStylesheetElement void startElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorText void appendAndPush(org.apache.xalan.processor.StylesheetHandler, org.apache.xalan.templates.ElemTemplateElement) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.StylesheetHandler void warning(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.StylesheetHandler org.apache.xpath.XPath createXPath(java.lang.String, org.apache.xalan.templates.ElemTemplateElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.StylesheetHandler StylesheetHandler(org.apache.xalan.processor.TransformerFactoryImpl) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl javax.xml.transform.sax.TemplatesHandler newTemplatesHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorTemplateElem void endElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.StylesheetHandler void error(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorInclude java.lang.String getStylesheetInclErr()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.TransformerFactoryImpl java.lang.Object getAttribute(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.processor.ProcessorLRE void startElement(org.apache.xalan.processor.StylesheetHandler, java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

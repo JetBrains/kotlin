@@ -1,0 +1,5 @@
+<root>
+    <item name='javax.microedition.khronos.egl.EGLContext javax.microedition.khronos.egl.EGL getEGL()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

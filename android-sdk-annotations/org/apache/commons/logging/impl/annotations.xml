@@ -1,0 +1,65 @@
+<root>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl java.lang.String[] getAttributeNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.util.Set keySet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl void setAttribute(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.util.Enumeration keys()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl org.apache.commons.logging.Log getInstance(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.lang.Object get(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.SimpleLog void write(java.lang.StringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl void removeAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.util.Set entrySet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl java.lang.ClassLoader getClassLoader(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl org.apache.commons.logging.Log getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.util.Enumeration elements()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.lang.Object put(java.lang.Object, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl java.lang.Object getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl org.apache.commons.logging.Log getInstance(java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.LogFactoryImpl org.apache.commons.logging.Log getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.lang.Object remove(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable boolean containsKey(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.lang.Object put(java.lang.Object, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.impl.WeakHashtable java.util.Collection values()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

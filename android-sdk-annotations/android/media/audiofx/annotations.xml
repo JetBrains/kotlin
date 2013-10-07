@@ -1,26 +1,146 @@
 <root>
-    <item name='android.media.audiofx.AudioEffect ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION'>
+    <item name='android.media.audiofx.Equalizer int[] getBandFreqRange(short)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.audiofx.AudioEffect EXTRA_AUDIO_SESSION'>
+    <item name='android.media.audiofx.BassBoost.Settings Settings(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.audiofx.AudioEffect EFFECT_INSERT'>
+    <item name='android.media.audiofx.AudioEffect.Descriptor Descriptor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.audiofx.AudioEffect EXTRA_PACKAGE_NAME'>
+    <item name='android.media.audiofx.AudioEffect int getParameter(int[], int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.audiofx.AudioEffect ACTION_CLOSE_AUDIO_EFFECT_CONTROL_SESSION'>
+    <item name='android.media.audiofx.Virtualizer void setProperties(android.media.audiofx.Virtualizer.Settings) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.audiofx.AudioEffect ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL'>
+    <item name='android.media.audiofx.Equalizer.Settings java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.audiofx.AudioEffect EXTRA_CONTENT_TYPE'>
+    <item name='android.media.audiofx.AudioEffect AudioEffect(java.util.UUID, java.util.UUID, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.audiofx.AudioEffect EFFECT_AUXILIARY'>
+    <item name='android.media.audiofx.AudioEffect int getParameter(byte[], byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.PresetReverb android.media.audiofx.PresetReverb.Settings getProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int setParameter(int[], short[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int byteArrayToInt(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.BassBoost.Settings java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int byteArrayToInt(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect AudioEffect(java.util.UUID, java.util.UUID, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.Virtualizer.Settings Settings(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.PresetReverb void setProperties(android.media.audiofx.PresetReverb.Settings) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.EnvironmentalReverb.Settings java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.Virtualizer android.media.audiofx.Virtualizer.Settings getProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int setParameter(byte[], byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.Equalizer.Settings Settings(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.EnvironmentalReverb.Settings Settings(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int command(int, byte[], byte[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.BassBoost void setProperties(android.media.audiofx.BassBoost.Settings) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.Equalizer void setProperties(android.media.audiofx.Equalizer.Settings) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect.Descriptor Descriptor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.PresetReverb.Settings java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int getParameter(int, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int getParameter(byte[], byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int getParameter(int, int[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.EnvironmentalReverb android.media.audiofx.EnvironmentalReverb.Settings getProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.BassBoost android.media.audiofx.BassBoost.Settings getProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int setParameter(int[], int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect byte[] concatArrays(byte[]...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect short byteArrayToShort(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int getParameter(int[], byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.Equalizer android.media.audiofx.Equalizer.Settings getProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int setParameter(int, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.Equalizer short[] getBandLevelRange()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int setParameter(int[], byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.EnvironmentalReverb void setProperties(android.media.audiofx.EnvironmentalReverb.Settings) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect byte[] concatArrays(byte[]...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.Virtualizer.Settings java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int command(int, byte[], byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int getParameter(int, short[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int getParameter(int[], short[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect short byteArrayToShort(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.AudioEffect int setParameter(byte[], byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.audiofx.PresetReverb.Settings Settings(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

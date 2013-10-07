@@ -1,35 +1,290 @@
 <root>
-    <item name='android.location.LocationManager PASSIVE_PROVIDER'>
+    <item name='android.location.Location void distanceBetween(double, double, double, double, float[]) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Location void dump(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void removeGeofence(android.location.Geofence, android.app.PendingIntent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Location double convert(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Criteria java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Geofence java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestSingleUpdate(java.lang.String, android.location.LocationListener, android.os.Looper) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Geofence android.location.Geofence createCircle(double, double, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest createFromDeprecatedProvider(java.lang.String, long, float, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(java.lang.String, long, float, android.app.PendingIntent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.location.Address void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.location.LocationManager KEY_PROXIMITY_ENTERING'>
+    <item name='android.location.LocationManager void requestSingleUpdate(android.location.Criteria, android.app.PendingIntent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(android.location.LocationRequest, android.app.PendingIntent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(long, float, android.location.Criteria, android.app.PendingIntent) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationProvider LocationProvider(java.lang.String, com.android.internal.location.ProviderProperties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Geocoder Geocoder(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Location float bearingTo(android.location.Location) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(java.lang.String, long, float, android.location.LocationListener, android.os.Looper) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setProvider(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.IGeofenceProvider.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(android.location.LocationRequest, android.location.LocationListener, android.os.Looper) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Geocoder java.util.List&lt;android.location.Address&gt; getFromLocationName(java.lang.String, int, double, double, double, double) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Geocoder Geocoder(android.content.Context, java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestSingleUpdate(android.location.Criteria, android.location.LocationListener, android.os.Looper) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.IGpsStatusProvider.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.GeocoderParams void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void addGeofence(android.location.LocationRequest, android.location.Geofence, android.app.PendingIntent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(java.lang.String, long, float, android.location.LocationListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.IGeocodeProvider.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setExpireIn(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Location java.lang.String convert(double, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.ICountryDetector.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setFastestInterval(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.location.Criteria void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.location.LocationManager KEY_STATUS_CHANGED'>
+    <item name='android.location.LocationManager void requestSingleUpdate(java.lang.String, android.app.PendingIntent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.location.LocationManager GPS_PROVIDER'>
+    <item name='android.location.Country Country(android.location.Country) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.location.LocationManager PROVIDERS_CHANGED_ACTION'>
+    <item name='android.location.Location void set(android.location.Location) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.location.LocationManager NETWORK_PROVIDER'>
+    <item name='android.location.LocationRequest android.location.LocationRequest createFromDeprecatedCriteria(android.location.Criteria, long, float, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.location.LocationManager KEY_PROVIDER_ENABLED'>
+    <item name='android.location.Address java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.location.LocationManager KEY_LOCATION_CHANGED'>
+    <item name='android.location.Geocoder Geocoder(android.content.Context, java.util.Locale) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Country void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager java.lang.String getBestProvider(android.location.Criteria, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setNumUpdates(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Location float distanceTo(android.location.Location) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager android.location.LocationProvider getProvider(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(long, float, android.location.Criteria, android.location.LocationListener, android.os.Looper) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void removeProximityAlert(android.app.PendingIntent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(java.lang.String, long, float, android.location.LocationListener) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Country Country(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void addTestProvider(java.lang.String, boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(java.lang.String, long, float, android.location.LocationListener, android.os.Looper) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationProvider java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void addGeofence(android.location.LocationRequest, android.location.Geofence, android.app.PendingIntent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setInterval(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.GeocoderParams GeocoderParams(android.content.Context, java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest create()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.IGpsGeofenceHardware.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setExpireAt(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager boolean isProviderEnabled(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.ILocationListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setSmallestDisplacement(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestSingleUpdate(java.lang.String, android.app.PendingIntent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest LocationRequest(android.location.LocationRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setQuality(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Geocoder java.util.List&lt;android.location.Address&gt; getFromLocationName(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void removeUpdates(android.location.LocationListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager android.location.Location getLastKnownLocation(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest setProvider(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest createFromDeprecatedProvider(java.lang.String, long, float, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Criteria Criteria(android.location.Criteria) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager java.util.List&lt;java.lang.String&gt; getProviders(android.location.Criteria, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestSingleUpdate(java.lang.String, android.location.LocationListener, android.os.Looper) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.ILocationManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void removeGeofence(android.location.Geofence, android.app.PendingIntent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.IGpsStatusListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Country java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(long, float, android.location.Criteria, android.location.LocationListener, android.os.Looper) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void setTestProviderLocation(java.lang.String, android.location.Location) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void addProximityAlert(double, double, float, long, android.app.PendingIntent) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.ICountryListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Location java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest android.location.LocationRequest createFromDeprecatedCriteria(android.location.Criteria, long, float, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestSingleUpdate(android.location.Criteria, android.location.LocationListener, android.os.Looper) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationRequest java.lang.String qualityToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Location Location(android.location.Location) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(long, float, android.location.Criteria, android.app.PendingIntent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.INetInitiatedListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestSingleUpdate(android.location.Criteria, android.app.PendingIntent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void requestLocationUpdates(java.lang.String, long, float, android.app.PendingIntent) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void removeUpdates(android.app.PendingIntent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager void removeAllGeofences(android.app.PendingIntent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.Geofence void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.location.Location void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.location.LocationManager android.location.GpsStatus getGpsStatus(android.location.GpsStatus)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

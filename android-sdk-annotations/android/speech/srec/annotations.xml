@@ -1,0 +1,41 @@
+<root>
+    <item name='android.speech.srec.WaveHeader android.speech.srec.WaveHeader setBitsPerSample(short)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.WaveHeader android.speech.srec.WaveHeader setSampleRate(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.WaveHeader int write(java.io.OutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.Recognizer void putAudio(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.Recognizer java.lang.String eventToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.MicrophoneInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.Recognizer.Grammar Grammar(android.speech.srec.Recognizer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.WaveHeader android.speech.srec.WaveHeader setFormat(short)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.UlawEncoderInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.WaveHeader android.speech.srec.WaveHeader setNumChannels(short)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.WaveHeader java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.WaveHeader android.speech.srec.WaveHeader setNumBytes(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.srec.WaveHeader int read(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

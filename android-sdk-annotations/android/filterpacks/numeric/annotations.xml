@@ -1,0 +1,5 @@
+<root>
+    <item name='android.filterpacks.numeric.SinWaveFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

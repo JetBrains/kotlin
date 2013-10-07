@@ -1,155 +1,239 @@
 <root>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_DISCOVERY_FINISHED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_SCAN_MODE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_NAME_CHANGED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createRfcommSocketToServiceRecord(java.util.UUID)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_CLASS_CHANGED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothHeadset ACTION_VENDOR_SPECIFIC_HEADSET_EVENT'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_PREVIOUS_SCAN_MODE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothDevice void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothDevice EXTRA_DEVICE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_PREVIOUS_CONNECTION_STATE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_PREVIOUS_STATE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothSocket java.io.InputStream getInputStream()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_DISCOVERY_STARTED'>
+    <item name='android.bluetooth.IBluetoothPan.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.bluetooth.BluetoothSocket java.io.OutputStream getOutputStream()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothClass void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.bluetooth.BluetoothGattServer boolean connect(android.bluetooth.BluetoothDevice, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothHealthAppConfiguration void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.bluetooth.BluetoothGattServer boolean removeService(android.bluetooth.BluetoothGattService) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothDevice getRemoteDevice(java.lang.String)'>
+    <item name='android.bluetooth.BluetoothGattServer boolean sendResponse(android.bluetooth.BluetoothDevice, int, int, int, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_REQUEST_ENABLE'>
+    <item name='android.bluetooth.IBluetooth.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothDevice getRemoteDevice(byte[])'>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothServerSocket listenUsingInsecureRfcommWithServiceRecord(java.lang.String, java.util.UUID)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_ACL_DISCONNECT_REQUESTED'>
+    <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createRfcommSocket(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothHeadset EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD'>
+    <item name='android.bluetooth.BluetoothUuid boolean isHeadset(android.os.ParcelUuid) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_CONNECTION_STATE_CHANGED'>
+    <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createRfcommSocketToServiceRecord(java.util.UUID)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothHealthCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothServerSocket listenUsingScoOn()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGattCharacteristic boolean addDescriptor(android.bluetooth.BluetoothGattDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothUuid boolean isAudioSink(android.os.ParcelUuid) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGatt boolean readDescriptor(android.bluetooth.BluetoothGattDescriptor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createInsecureRfcommSocketToServiceRecord(java.util.UUID)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice EXTRA_BOND_STATE'>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothServerSocket listenUsingRfcommOn(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice EXTRA_PREVIOUS_BOND_STATE'>
+    <item name='android.bluetooth.BluetoothGatt java.util.List&lt;android.bluetooth.BluetoothGattService&gt; getServices()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothHeadset EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_CMD_TYPE'>
+    <item name='android.bluetooth.IBluetoothA2dp.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_STATE_CHANGED'>
+    <item name='android.bluetooth.BluetoothDevice void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_STATE'>
+    <item name='android.bluetooth.BluetoothTetheringDataTracker android.net.NetworkInfo getNetworkInfo()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice EXTRA_NAME'>
+    <item name='android.bluetooth.BluetoothServerSocket android.bluetooth.BluetoothSocket accept(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_LOCAL_NAME'>
+    <item name='android.bluetooth.BluetoothSocket java.io.InputStream getInputStream()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice EXTRA_RSSI'>
+    <item name='android.bluetooth.BluetoothTetheringDataTracker void startMonitoring(android.content.Context, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothA2dp ACTION_CONNECTION_STATE_CHANGED'>
+    <item name='android.bluetooth.IBluetoothHeadsetPhone.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_DISCOVERABLE_DURATION'>
+    <item name='android.bluetooth.BluetoothUuid int getServiceIdentifierFromParcelUuid(android.os.ParcelUuid) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothProfile EXTRA_STATE'>
+    <item name='android.bluetooth.BluetoothUuid boolean isNap(android.os.ParcelUuid) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothHeadset ACTION_CONNECTION_STATE_CHANGED'>
+    <item name='android.bluetooth.IBluetoothManager.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_FOUND'>
+    <item name='android.bluetooth.BluetoothClass void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothHeadset ACTION_AUDIO_STATE_CHANGED'>
+    <item name='android.bluetooth.IBluetoothInputDevice.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_ACL_CONNECTED'>
+    <item name='android.bluetooth.BluetoothHealthAppConfiguration void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_SCAN_MODE_CHANGED'>
+    <item name='android.bluetooth.BluetoothServerSocket android.bluetooth.BluetoothSocket accept()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter EXTRA_CONNECTION_STATE'>
+    <item name='android.bluetooth.BluetoothGatt void abortReliableWrite(android.bluetooth.BluetoothDevice) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_ACL_DISCONNECTED'>
+    <item name='android.bluetooth.BluetoothGattCharacteristic boolean setValue(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_LOCAL_NAME_CHANGED'>
+    <item name='android.bluetooth.BluetoothUuid boolean isAudioSource(android.os.ParcelUuid) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice EXTRA_CLASS'>
+    <item name='android.bluetooth.BluetoothTetheringDataTracker java.lang.String getTcpBufferSizesPropName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_UUID'>
+    <item name='android.bluetooth.BluetoothManager android.bluetooth.BluetoothGattServer openGattServer(android.content.Context, android.bluetooth.BluetoothGattServerCallback) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothHeadset EXTRA_VENDOR_SPECIFIC_HEADSET_EVENT_ARGS'>
+    <item name='android.bluetooth.BluetoothUuid boolean isBnep(android.os.ParcelUuid) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothAdapter ACTION_REQUEST_DISCOVERABLE'>
+    <item name='android.bluetooth.IBluetoothPbap.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothA2dp ACTION_PLAYING_STATE_CHANGED'>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothServerSocket listenUsingRfcommWithServiceRecord(java.lang.String, java.util.UUID)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothHeadset VENDOR_SPECIFIC_HEADSET_EVENT_COMPANY_ID_CATEGORY'>
+    <item name='android.bluetooth.BluetoothPbap BluetoothPbap(android.content.Context, android.bluetooth.BluetoothPbap.ServiceListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice EXTRA_UUID'>
+    <item name='android.bluetooth.IBluetoothHeadset.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothDevice ACTION_BOND_STATE_CHANGED'>
+    <item name='android.bluetooth.BluetoothPbap boolean doesClassMatchSink(android.bluetooth.BluetoothClass) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.bluetooth.BluetoothProfile EXTRA_PREVIOUS_STATE'>
+    <item name='android.bluetooth.BluetoothGattService boolean addCharacteristic(android.bluetooth.BluetoothGattCharacteristic) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothTetheringDataTracker android.net.LinkCapabilities getLinkCapabilities()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothGattCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothUuid boolean isHandsfree(android.os.ParcelUuid) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGatt boolean writeDescriptor(android.bluetooth.BluetoothGattDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGattServer boolean notifyCharacteristicChanged(android.bluetooth.BluetoothDevice, android.bluetooth.BluetoothGattCharacteristic, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHealthAppConfiguration java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothUuid boolean isInputDevice(android.os.ParcelUuid) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothStateChangeCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothServerSocket listenUsingEncryptedRfcommOn(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothClass java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGatt boolean readCharacteristic(android.bluetooth.BluetoothGattCharacteristic) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothServerSocket listenUsingInsecureRfcommOn(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothHeadset boolean isBluetoothVoiceDialingEnabled(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothManager android.bluetooth.BluetoothGattServer openGattServer(android.content.Context, android.bluetooth.BluetoothGattServerCallback) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothDevice getRemoteDevice(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothManagerCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothA2dp java.lang.String stateToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothHealth.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createScoSocket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGatt boolean setCharacteristicNotification(android.bluetooth.BluetoothGattCharacteristic, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothUuid boolean isPanu(android.os.ParcelUuid) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothUuid boolean isAvrcpController(android.os.ParcelUuid) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGattServer void cancelConnection(android.bluetooth.BluetoothDevice) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothDevice getRemoteDevice(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothServerSocket listenUsingEncryptedRfcommWithServiceRecord(java.lang.String, java.util.UUID)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothTetheringDataTracker android.net.LinkProperties getLinkProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothGatt.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothUuid boolean isAvrcpTarget(android.os.ParcelUuid) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.IBluetoothGattServerCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothAdapter android.bluetooth.BluetoothDevice getRemoteDevice(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothUuid boolean isAdvAudioDist(android.os.ParcelUuid) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGatt boolean writeCharacteristic(android.bluetooth.BluetoothGattCharacteristic) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothDevice android.bluetooth.BluetoothSocket createInsecureRfcommSocket(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.bluetooth.BluetoothGattServer boolean addService(android.bluetooth.BluetoothGattService) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -1,0 +1,5 @@
+<root>
+    <item name='org.apache.harmony.kernel.vm.StringUtils java.lang.String combineStrings(java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

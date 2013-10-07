@@ -1,14 +1,218 @@
 <root>
-    <item name='android.security.KeyChain EXTRA_PKCS12'>
+    <item name='android.security.IKeyChainAliasCallback.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.security.KeyChain EXTRA_NAME'>
+    <item name='android.security.AndroidKeyStore java.security.Key engineGetKey(java.lang.String, char[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.security.KeyChain EXTRA_CERTIFICATE'>
+    <item name='android.security.KeyStore.State android.security.KeyStore.State valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.security.KeyChain ACTION_STORAGE_CHANGED'>
+    <item name='android.security.AndroidKeyPairGenerator void initialize(java.security.spec.AlgorithmParameterSpec, java.security.SecureRandom) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec KeyPairGeneratorSpec(android.content.Context, java.lang.String, java.lang.String, int, java.security.spec.AlgorithmParameterSpec, javax.security.auth.x500.X500Principal, java.math.BigInteger, java.util.Date, java.util.Date, int) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain android.content.Intent createInstallIntent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain java.security.PrivateKey getPrivateKey(android.content.Context, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain java.security.PrivateKey getPrivateKey(android.content.Context, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore void engineSetCertificateEntry(java.lang.String, java.security.cert.Certificate) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.IKeyChainService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec java.util.Date getStartDate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyStore android.security.KeyStore.State state()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec android.content.Context getContext()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore void engineSetKeyEntry(java.lang.String, java.security.Key, char[], java.security.cert.Certificate[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec java.util.Date getEndDate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain android.security.KeyChain.KeyChainConnection bind(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyStore.State android.security.KeyStore.State valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.Credentials java.util.List&lt;java.security.cert.X509Certificate&gt; convertFromPem(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore void engineSetEntry(java.lang.String, java.security.KeyStore.Entry, java.security.KeyStore.ProtectionParameter) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec KeyPairGeneratorSpec(android.content.Context, java.lang.String, java.lang.String, int, java.security.spec.AlgorithmParameterSpec, javax.security.auth.x500.X500Principal, java.math.BigInteger, java.util.Date, java.util.Date, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setStartDate(java.util.Date) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.Credentials byte[] convertToPem(java.security.cert.Certificate...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyStore android.security.KeyStore getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.IKeystoreService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec KeyPairGeneratorSpec(android.content.Context, java.lang.String, java.lang.String, int, java.security.spec.AlgorithmParameterSpec, javax.security.auth.x500.X500Principal, java.math.BigInteger, java.util.Date, java.util.Date, int) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyPairGenerator java.security.KeyPair generateKeyPair()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyStoreParameter.Builder android.security.KeyStoreParameter build()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.SystemKeyStore byte[] generateNewKey(int, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyStoreParameter.Builder Builder(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.Credentials java.util.List&lt;java.security.cert.X509Certificate&gt; convertFromPem(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder Builder(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setSerialNumber(java.math.BigInteger) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain void choosePrivateKeyAlias(android.app.Activity, android.security.KeyChainAliasCallback, java.lang.String[], java.security.Principal[], java.lang.String, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setStartDate(java.util.Date)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setEncryptionRequired()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore java.util.Date engineGetCreationDate(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain boolean isKeyAlgorithmSupported(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setAlias(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setKeySize(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec KeyPairGeneratorSpec(android.content.Context, java.lang.String, java.lang.String, int, java.security.spec.AlgorithmParameterSpec, javax.security.auth.x500.X500Principal, java.math.BigInteger, java.util.Date, java.util.Date, int) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore boolean engineIsCertificateEntry(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore boolean engineIsKeyEntry(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore java.security.cert.Certificate engineGetCertificate(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setAlgorithmParameterSpec(java.security.spec.AlgorithmParameterSpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setAlgorithmParameterSpec(java.security.spec.AlgorithmParameterSpec)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.Credentials byte[] convertToPem(java.security.cert.Certificate...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setKeyType(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec java.math.BigInteger getSerialNumber()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore boolean engineContainsAlias(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setAlias(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore java.util.Enumeration&lt;java.lang.String&gt; engineAliases()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec build()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain void choosePrivateKeyAlias(android.app.Activity, android.security.KeyChainAliasCallback, java.lang.String[], java.security.Principal[], java.lang.String, int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain java.security.cert.X509Certificate[] getCertificateChain(android.content.Context, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyStoreParameter.Builder android.security.KeyStoreParameter.Builder setEncryptionRequired(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec javax.security.auth.x500.X500Principal getSubjectDN()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore java.security.cert.Certificate[] engineGetCertificateChain(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setSubject(javax.security.auth.x500.X500Principal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore void engineDeleteEntry(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain android.security.KeyChain.KeyChainConnection bind(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec KeyPairGeneratorSpec(android.content.Context, java.lang.String, java.lang.String, int, java.security.spec.AlgorithmParameterSpec, javax.security.auth.x500.X500Principal, java.math.BigInteger, java.util.Date, java.util.Date, int) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setEndDate(java.util.Date)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore void engineSetKeyEntry(java.lang.String, java.security.Key, char[], java.security.cert.Certificate[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setSubject(javax.security.auth.x500.X500Principal)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore void engineSetEntry(java.lang.String, java.security.KeyStore.Entry, java.security.KeyStore.ProtectionParameter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.AndroidKeyStore void engineSetCertificateEntry(java.lang.String, java.security.cert.Certificate) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain boolean isBoundKeyAlgorithm(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyChain java.security.cert.X509Certificate[] getCertificateChain(android.content.Context, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setEndDate(java.util.Date) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setSerialNumber(java.math.BigInteger)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.SystemKeyStore java.lang.String generateNewKeyHexString(int, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.security.KeyPairGeneratorSpec.Builder android.security.KeyPairGeneratorSpec.Builder setKeyType(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

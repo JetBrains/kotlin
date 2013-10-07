@@ -2,160 +2,10 @@
     <item name='android.text.style.LeadingMarginSpan.Standard Standard(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.UnderlineSpan void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LeadingMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 11'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.ReplacementSpan void draw(android.graphics.Canvas, java.lang.CharSequence, int, int, float, int, int, int, android.graphics.Paint) 8'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LeadingMarginSpan.Standard void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.DrawableMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LeadingMarginSpan.Standard void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 11'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.MetricAffectingSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.StrikethroughSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.ForegroundColorSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.SuggestionSpan ACTION_SUGGESTION_PICKED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.TypefaceSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.IconMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.AbsoluteSizeSpan AbsoluteSizeSpan(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.BackgroundColorSpan BackgroundColorSpan(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.BulletSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.DrawableMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 11'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.SuperscriptSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.ImageSpan ImageSpan(android.content.Context, android.net.Uri) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.IconMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.ReplacementSpan void draw(android.graphics.Canvas, java.lang.CharSequence, int, int, float, int, int, int, android.graphics.Paint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.TypefaceSpan TypefaceSpan(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.SuggestionSpan SUGGESTION_SPAN_PICKED_HASHCODE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.BulletSpan BulletSpan(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.QuoteSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.SubscriptSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.ScaleXSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.URLSpan void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.StyleSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.DynamicDrawableSpan void draw(android.graphics.Canvas, java.lang.CharSequence, int, int, float, int, int, int, android.graphics.Paint) 8'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.RasterizerSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LeadingMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.IconMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.AbsoluteSizeSpan void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.RelativeSizeSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.StyleSpan void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.DynamicDrawableSpan void draw(android.graphics.Canvas, java.lang.CharSequence, int, int, float, int, int, int, android.graphics.Paint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.SuggestionSpan SUGGESTION_SPAN_PICKED_AFTER'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.MaskFilterSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.IconMarginSpan void chooseHeight(java.lang.CharSequence, int, int, int, int, android.graphics.Paint.FontMetricsInt) 5'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.SubscriptSpan void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.TextAppearanceSpan TextAppearanceSpan(android.content.Context, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.StyleSpan StyleSpan(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.BackgroundColorSpan void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LeadingMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.AbsoluteSizeSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.QuoteSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 11'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.DrawableMarginSpan void chooseHeight(java.lang.CharSequence, int, int, int, int, android.graphics.Paint.FontMetricsInt) 5'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.BackgroundColorSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.URLSpan URLSpan(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LineHeightSpan void chooseHeight(java.lang.CharSequence, int, int, int, int, android.graphics.Paint.FontMetricsInt) 5'>
+    <item name='android.text.style.SpellCheckSpan SpellCheckSpan(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.LocaleSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LineHeightSpan void chooseHeight(java.lang.CharSequence, int, int, int, int, android.graphics.Paint.FontMetricsInt) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.RelativeSizeSpan RelativeSizeSpan(android.os.Parcel) 0'>
@@ -173,22 +23,19 @@
     <item name='android.text.style.RelativeSizeSpan void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.BulletSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.style.AbsoluteSizeSpan void updateMeasureState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.DrawableMarginSpan void chooseHeight(java.lang.CharSequence, int, int, int, int, android.graphics.Paint.FontMetricsInt) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.style.SpellCheckSpan void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.style.SuperscriptSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.ReplacementSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LeadingMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
+    <item name='android.text.style.StrikethroughSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.ScaleXSpan ScaleXSpan(android.os.Parcel) 0'>
@@ -197,16 +44,40 @@
     <item name='android.text.style.ClickableSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.SuggestionSpan SuggestionSpan(android.content.Context, java.util.Locale, java.lang.String[], int, java.lang.Class&lt;?&gt;) 2'>
+    <item name='android.text.style.ForegroundColorSpan void updateDrawState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.TypefaceSpan void updateMeasureState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.IconMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.SuggestionSpan SuggestionSpan(java.util.Locale, java.lang.String[], int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.ReplacementSpan void updateMeasureState(android.text.TextPaint) 0'>
+    <item name='android.text.style.SuggestionSpan SuggestionSpan(android.content.Context, java.util.Locale, java.lang.String[], int, java.lang.Class&lt;?&gt;) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.AbsoluteSizeSpan AbsoluteSizeSpan(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.BackgroundColorSpan BackgroundColorSpan(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.SuggestionSpan SuggestionSpan(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.SuggestionRangeSpan void updateDrawState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.BulletSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.SuperscriptSpan void updateMeasureState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.DrawableMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 11'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.RelativeSizeSpan void updateDrawState(android.text.TextPaint) 0'>
@@ -215,10 +86,19 @@
     <item name='android.text.style.IconMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 11'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.BulletSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 11'>
+    <item name='android.text.style.MetricAffectingSpan android.text.style.CharacterStyle getUnderlying()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.ScaleXSpan void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.ImageSpan ImageSpan(android.content.Context, android.net.Uri) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.IconMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.TypefaceSpan TypefaceSpan(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.QuoteSpan void writeToParcel(android.os.Parcel, int) 0'>
@@ -227,7 +107,13 @@
     <item name='android.text.style.AlignmentSpan.Standard Standard(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.CharacterStyle void updateDrawState(android.text.TextPaint) 0'>
+    <item name='android.text.style.SubscriptSpan void updateMeasureState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.BulletSpan BulletSpan(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.QuoteSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.LocaleSpan void writeToParcel(android.os.Parcel, int) 0'>
@@ -236,25 +122,43 @@
     <item name='android.text.style.QuoteSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.CharacterStyle android.text.style.CharacterStyle wrap(android.text.style.CharacterStyle)'>
+    <item name='android.text.style.ScaleXSpan void updateMeasureState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.URLSpan void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.SuggestionSpan void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.style.CharacterStyle android.text.style.CharacterStyle getUnderlying()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.StyleSpan void updateMeasureState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.style.ForegroundColorSpan void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.MetricAffectingSpan android.text.style.MetricAffectingSpan getUnderlying()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.IconMarginSpan void chooseHeight(java.lang.CharSequence, int, int, int, int, android.graphics.Paint.FontMetricsInt) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.StrikethroughSpan void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.text.style.SuggestionRangeSpan void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.SuggestionSpan SUGGESTION_SPAN_PICKED_BEFORE'>
+    <item name='android.text.style.RasterizerSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.ScaleXSpan void updateDrawState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.AbsoluteSizeSpan void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.SubscriptSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.ForegroundColorSpan ForegroundColorSpan(android.os.Parcel) 0'>
@@ -263,13 +167,13 @@
     <item name='android.text.style.DrawableMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.SubscriptSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.style.SuggestionSpan SuggestionSpan(android.content.Context, java.lang.String[], int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.ImageSpan ImageSpan(android.content.Context, android.net.Uri, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.RelativeSizeSpan void updateMeasureState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.TypefaceSpan void writeToParcel(android.os.Parcel, int) 0'>
@@ -278,13 +182,16 @@
     <item name='android.text.style.LocaleSpan LocaleSpan(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.LeadingMarginSpan.Standard void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
+    <item name='android.text.style.StyleSpan void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.SuggestionSpan void updateDrawState(android.text.TextPaint) 0'>
+    <item name='android.text.style.DynamicDrawableSpan void draw(android.graphics.Canvas, java.lang.CharSequence, int, int, float, int, int, int, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.EasyEditSpan void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.MaskFilterSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.TextAppearanceSpan TextAppearanceSpan(android.content.Context, int) 0'>
@@ -296,46 +203,49 @@
     <item name='android.text.style.QuoteSpan QuoteSpan(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.ClickableSpan void onClick(android.view.View) 0'>
+    <item name='android.text.style.CharacterStyle android.text.style.CharacterStyle wrap(android.text.style.CharacterStyle)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.DrawableMarginSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 0'>
+    <item name='android.text.style.EasyEditSpan EasyEditSpan(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.TextAppearanceSpan TextAppearanceSpan(android.content.Context, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.StyleSpan StyleSpan(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.BulletSpan void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.SuperscriptSpan void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.BulletSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.style.StyleSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.TextAppearanceSpan void updateDrawState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.QuoteSpan void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 7'>
+    <item name='android.text.style.BackgroundColorSpan void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.TypefaceSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.style.SuggestionRangeSpan SuggestionRangeSpan(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.style.TextAppearanceSpan void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.AbsoluteSizeSpan void updateDrawState(android.text.TextPaint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.style.LeadingMarginSpan.Standard void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.style.TextAppearanceSpan void updateMeasureState(android.text.TextPaint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.style.LeadingMarginSpan.Standard void drawLeadingMargin(android.graphics.Canvas, android.graphics.Paint, int, int, int, int, int, java.lang.CharSequence, int, int, boolean, android.text.Layout) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.style.TextAppearanceSpan TextAppearanceSpan(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.BackgroundColorSpan void updateDrawState(android.text.TextPaint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.style.URLSpan URLSpan(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

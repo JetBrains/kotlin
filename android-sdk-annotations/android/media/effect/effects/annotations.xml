@@ -1,0 +1,5 @@
+<root>
+    <item name='android.media.effect.effects.BackDropperEffect void setParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

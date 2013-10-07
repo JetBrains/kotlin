@@ -2,121 +2,94 @@
     <item name='android.appwidget.AppWidgetProvider void onReceive(android.content.Context, android.content.Intent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_BIND'>
+    <item name='android.appwidget.AppWidgetHostView AppWidgetHostView(android.content.Context, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetManager EXTRA_APPWIDGET_OPTIONS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_DISABLED'>
+    <item name='android.appwidget.AppWidgetHostView AppWidgetHostView(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.appwidget.AppWidgetHostView void prepareView(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_ENABLED'>
+    <item name='android.appwidget.AppWidgetProviderInfo java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetHostView boolean drawChild(android.graphics.Canvas, android.view.View, long) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_DELETED'>
+    <item name='android.appwidget.AppWidgetManager void unbindRemoteViewsService(int, android.content.Intent, android.os.UserHandle) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.appwidget.AppWidgetHostView android.graphics.Rect getDefaultPaddingForWidget(android.content.Context, android.content.ComponentName, android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetProviderInfo java.lang.Object clone()'>
+    <item name='android.appwidget.AppWidgetHostView android.view.View getDefaultView()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetManager OPTION_APPWIDGET_MAX_HEIGHT'>
+    <item name='android.appwidget.AppWidgetManager android.appwidget.AppWidgetManager getInstance(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHost AppWidgetHost(android.content.Context, int, android.widget.RemoteViews.OnClickHandler, android.os.Looper) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.appwidget.AppWidgetHostView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetManager EXTRA_APPWIDGET_ID'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager EXTRA_APPWIDGET_IDS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager EXTRA_CUSTOM_EXTRAS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager META_DATA_APPWIDGET_PROVIDER'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager EXTRA_CUSTOM_INFO'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_OPTIONS_CHANGED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_UPDATE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_CONFIGURE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager android.appwidget.AppWidgetManager getInstance(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager OPTION_APPWIDGET_MIN_HEIGHT'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHost AppWidgetHost(android.content.Context, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager EXTRA_APPWIDGET_PROVIDER'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHost android.appwidget.AppWidgetHostView createView(android.content.Context, int, android.appwidget.AppWidgetProviderInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHostView void dispatchSaveInstanceState(android.util.SparseArray&lt;android.os.Parcelable&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager ACTION_APPWIDGET_PICK'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHostView void dispatchRestoreInstanceState(android.util.SparseArray&lt;android.os.Parcelable&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager OPTION_APPWIDGET_MAX_WIDTH'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetProvider void onReceive(android.content.Context, android.content.Intent) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHostView android.graphics.Rect getDefaultPaddingForWidget(android.content.Context, android.content.ComponentName, android.graphics.Rect) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHostView boolean drawChild(android.graphics.Canvas, android.view.View, long) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHost void onProviderChanged(int, android.appwidget.AppWidgetProviderInfo) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetProviderInfo android.appwidget.AppWidgetProviderInfo clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetManager OPTION_APPWIDGET_HOST_CATEGORY'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetProviderInfo AppWidgetProviderInfo(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetHostView android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.appwidget.AppWidgetProviderInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.appwidget.AppWidgetManager java.util.List&lt;android.appwidget.AppWidgetProviderInfo&gt; getInstalledProviders(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.appwidget.AppWidgetHostView android.widget.FrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.appwidget.AppWidgetManager OPTION_APPWIDGET_MIN_WIDTH'>
+    <item name='android.appwidget.AppWidgetProviderInfo android.appwidget.AppWidgetProviderInfo clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHost android.appwidget.AppWidgetHostView createView(android.content.Context, int, android.appwidget.AppWidgetProviderInfo)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHostView android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHost android.appwidget.AppWidgetHostView onCreateView(android.content.Context, int, android.appwidget.AppWidgetProviderInfo)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetManager java.util.List&lt;android.appwidget.AppWidgetProviderInfo&gt; getInstalledProviders()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHost AppWidgetHost(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetProviderInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHostView android.view.View getErrorView()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHostView void dispatchSaveInstanceState(android.util.SparseArray&lt;android.os.Parcelable&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHostView AppWidgetHostView(android.content.Context, android.widget.RemoteViews.OnClickHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHostView void dispatchRestoreInstanceState(android.util.SparseArray&lt;android.os.Parcelable&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHost void onProviderChanged(int, android.appwidget.AppWidgetProviderInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHostView android.graphics.Rect getDefaultPaddingForWidget(android.content.Context, android.content.ComponentName, android.graphics.Rect)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetProviderInfo AppWidgetProviderInfo(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHost android.appwidget.AppWidgetHostView onCreateView(android.content.Context, int, android.appwidget.AppWidgetProviderInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetProviderInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetHost AppWidgetHost(android.content.Context, int, android.widget.RemoteViews.OnClickHandler, android.os.Looper) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.appwidget.AppWidgetManager void bindRemoteViewsService(int, android.content.Intent, android.os.IBinder, android.os.UserHandle) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

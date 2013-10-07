@@ -1,0 +1,65 @@
+<root>
+    <item name='org.apache.xml.utils.res.XResources_zh_CN java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResourceBundle org.apache.xml.utils.res.XResourceBundle loadResourceBundle(java.lang.String, java.util.Locale) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResourceBundle java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_ja_JP_A java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_el java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_zh_TW java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_hy java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_ja_JP_HI java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_cy java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_fr java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_en java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_ka java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_es java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_sv java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_ja_JP_I java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_he java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_it java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_de java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_ja_JP_HA java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResources_ko java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.res.XResourceBundle org.apache.xml.utils.res.XResourceBundle loadResourceBundle(java.lang.String, java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

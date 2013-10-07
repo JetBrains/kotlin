@@ -1,0 +1,56 @@
+<root>
+    <item name='org.apache.xpath.patterns.StepPattern org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern int getLastPos(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.UnionPattern void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.FunctionPattern org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern boolean executePredicates(org.apache.xpath.XPathContext, org.apache.xml.dtm.DTM, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.FunctionPattern org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.FunctionPattern org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, int, org.apache.xml.dtm.DTM, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.NodeTest org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern int getProximityPosition(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern org.apache.xpath.objects.XObject executeRelativePathPattern(org.apache.xpath.XPathContext, org.apache.xml.dtm.DTM, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern void setExpression(org.apache.xpath.Expression) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.ContextMatchStepPattern org.apache.xpath.objects.XObject executeRelativePathPattern(org.apache.xpath.XPathContext, org.apache.xpath.patterns.StepPattern) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.ContextMatchStepPattern org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern void setRelativePathPattern(org.apache.xpath.patterns.StepPattern) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.StepPattern double getMatchScore(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.patterns.NodeTest org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

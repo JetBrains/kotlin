@@ -1,0 +1,11 @@
+<root>
+    <item name='org.bouncycastle.jcajce.provider.util.AsymmetricAlgorithmProvider void registerOid(org.bouncycastle.jcajce.provider.config.ConfigurableProvider, org.bouncycastle.asn1.ASN1ObjectIdentifier, java.lang.String, org.bouncycastle.jcajce.provider.util.AsymmetricKeyInfoConverter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.util.AsymmetricAlgorithmProvider void addSignatureAlgorithm(org.bouncycastle.jcajce.provider.config.ConfigurableProvider, java.lang.String, java.lang.String, java.lang.String, org.bouncycastle.asn1.ASN1ObjectIdentifier) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.util.AsymmetricAlgorithmProvider void registerOidAlgorithmParameters(org.bouncycastle.jcajce.provider.config.ConfigurableProvider, org.bouncycastle.asn1.ASN1ObjectIdentifier, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

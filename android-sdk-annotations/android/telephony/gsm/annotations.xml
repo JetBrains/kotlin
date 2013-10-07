@@ -1,17 +1,62 @@
 <root>
-    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_1'>
+    <item name='android.telephony.gsm.SmsMessage.SubmitPdu SubmitPdu(com.android.internal.telephony.SmsMessageBase.SubmitPduBase) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_2'>
+    <item name='android.telephony.gsm.SmsMessage int[] calculateLength(java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_0'>
+    <item name='android.telephony.gsm.SmsMessage.MessageClass android.telephony.gsm.SmsMessage.MessageClass valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.gsm.SmsMessage.MessageClass CLASS_3'>
+    <item name='android.telephony.gsm.SmsMessage android.telephony.gsm.SmsMessage createFromPdu(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.gsm.SmsMessage.MessageClass UNKNOWN'>
+    <item name='android.telephony.gsm.SmsMessage android.telephony.gsm.SmsMessage.SubmitPdu getSubmitPdu(java.lang.String, java.lang.String, short, byte[], boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage android.telephony.gsm.SmsMessage.SubmitPdu getSubmitPdu(java.lang.String, java.lang.String, java.lang.String, boolean, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage android.telephony.gsm.SmsMessage.SubmitPdu getSubmitPdu(java.lang.String, java.lang.String, java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage int[] calculateLength(java.lang.CharSequence, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage int[] calculateLength(java.lang.CharSequence, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage.SubmitPdu java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.GsmCellLocation GsmCellLocation(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsManager java.util.ArrayList&lt;java.lang.String&gt; divideMessage(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage int[] calculateLength(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsManager java.util.ArrayList&lt;java.lang.String&gt; divideMessage(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.GsmCellLocation java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsManager void sendDataMessage(java.lang.String, java.lang.String, short, byte[], android.app.PendingIntent, android.app.PendingIntent) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsManager void sendMultipartTextMessage(java.lang.String, java.lang.String, java.util.ArrayList&lt;java.lang.String&gt;, java.util.ArrayList&lt;android.app.PendingIntent&gt;, java.util.ArrayList&lt;android.app.PendingIntent&gt;) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsManager java.util.ArrayList&lt;android.telephony.SmsMessage&gt; getAllMessagesFromSim()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.GsmCellLocation void fillInNotifierBundle(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.gsm.SmsMessage.MessageClass android.telephony.gsm.SmsMessage.MessageClass valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

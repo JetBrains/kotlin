@@ -1,0 +1,11 @@
+<root>
+    <item name='org.apache.harmony.security.pkcs10.CertificationRequestInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs10.CertificationRequest byte[] getSignature()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs10.CertificationRequest CertificationRequest(org.apache.harmony.security.pkcs10.CertificationRequestInfo, org.apache.harmony.security.x509.AlgorithmIdentifier, byte[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

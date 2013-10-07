@@ -1,0 +1,59 @@
+<root>
+    <item name='org.apache.http.cookie.CookiePathComparator int compare(org.apache.http.cookie.Cookie, org.apache.http.cookie.Cookie) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieSpecRegistry org.apache.http.cookie.CookieSpec getCookieSpec(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookiePathComparator int compare(org.apache.http.cookie.Cookie, org.apache.http.cookie.Cookie) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieIdentityComparator int compare(java.lang.Object, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieIdentityComparator int compare(java.lang.Object, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieOrigin CookieOrigin(java.lang.String, int, java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieOrigin java.lang.String getHost()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieSpecRegistry void register(java.lang.String, org.apache.http.cookie.CookieSpecFactory) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieOrigin CookieOrigin(java.lang.String, int, java.lang.String, boolean) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieOrigin java.lang.String getPath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieIdentityComparator int compare(org.apache.http.cookie.Cookie, org.apache.http.cookie.Cookie) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieSpecRegistry void register(java.lang.String, org.apache.http.cookie.CookieSpecFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieIdentityComparator int compare(org.apache.http.cookie.Cookie, org.apache.http.cookie.Cookie) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookiePathComparator int compare(java.lang.Object, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieSpecRegistry java.util.List&lt;java.lang.String&gt; getSpecNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieOrigin java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieSpecRegistry void unregister(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookieSpecRegistry org.apache.http.cookie.CookieSpec getCookieSpec(java.lang.String, org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.cookie.CookiePathComparator int compare(java.lang.Object, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

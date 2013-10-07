@@ -1,0 +1,32 @@
+<root>
+    <item name='org.apache.harmony.security.x509.tsp.TimeStampReq java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.TSTInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.PKIFailureInfo org.apache.harmony.security.x509.tsp.PKIFailureInfo getInstance(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.PKIStatus org.apache.harmony.security.x509.tsp.PKIStatus getInstance(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.PKIFailureInfo org.apache.harmony.security.x509.tsp.PKIFailureInfo valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.PKIStatusInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.TimeStampResp java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.PKIFailureInfo org.apache.harmony.security.x509.tsp.PKIFailureInfo valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.PKIStatus org.apache.harmony.security.x509.tsp.PKIStatus valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.tsp.PKIStatus org.apache.harmony.security.x509.tsp.PKIStatus valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

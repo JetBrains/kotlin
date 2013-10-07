@@ -1,0 +1,29 @@
+<root>
+    <item name='org.bouncycastle.crypto.CipherKeyGenerator void init(org.bouncycastle.crypto.KeyGenerationParameters) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.StreamBlockCipher StreamBlockCipher(org.bouncycastle.crypto.BlockCipher) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.PBEParametersGenerator byte[] PKCS5PasswordToUTF8Bytes(char[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.PBEParametersGenerator byte[] PKCS12PasswordToBytes(char[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.BufferedBlockCipher BufferedBlockCipher(org.bouncycastle.crypto.BlockCipher) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.StreamBlockCipher void processBytes(byte[], int, int, byte[], int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.PBEParametersGenerator byte[] PKCS5PasswordToBytes(char[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.BufferedBlockCipher int doFinal(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.CipherKeyGenerator byte[] generateKey()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

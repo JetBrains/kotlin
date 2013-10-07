@@ -1,0 +1,110 @@
+<root>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLImpl byte[] getEncoded()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLImpl X509CRLImpl(org.apache.harmony.security.x509.CertificateList) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLEntryImpl byte[] getEncoded()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl java.util.Date getNotAfter()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl java.util.Date getNotBefore()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl X509CertImpl(org.apache.harmony.security.x509.Certificate) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.Cache void put(long, byte[], java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl void checkValidity(java.util.Date) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLEntryImpl X509CRLEntryImpl(org.apache.harmony.security.x509.TBSCertList.RevokedCertificate, javax.security.auth.x500.X500Principal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.Cache java.lang.Object get(long, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.CRL engineGenerateCRL(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertPathImpl java.util.List&lt;java.security.cert.X509Certificate&gt; getCertificates()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLImpl byte[] getTBSCertList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl java.security.Principal getSubjectDN()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLImpl byte[] getSignature()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.util.Collection&lt;? extends java.security.cert.CRL&gt; engineGenerateCRLs(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.CRL engineGenerateCRL(java.io.InputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertPathImpl X509CertPathImpl(java.util.List&lt;? extends java.security.cert.Certificate&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.CertPath engineGenerateCertPath(java.util.List&lt;? extends java.security.cert.Certificate&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLImpl java.security.cert.X509CRLEntry getRevokedCertificate(java.security.cert.X509Certificate) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLImpl java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.util.Collection&lt;? extends java.security.cert.CRL&gt; engineGenerateCRLs(java.io.InputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.util.Collection&lt;? extends java.security.cert.Certificate&gt; engineGenerateCertificates(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.Certificate engineGenerateCertificate(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.CertPath engineGenerateCertPath(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.util.Collection&lt;? extends java.security.cert.Certificate&gt; engineGenerateCertificates(java.io.InputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl void verify(java.security.PublicKey, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.CertPath engineGenerateCertPath(java.util.List&lt;? extends java.security.cert.Certificate&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLImpl void verify(java.security.PublicKey, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.CertPath engineGenerateCertPath(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl javax.security.auth.x500.X500Principal getSubjectX500Principal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl javax.security.auth.x500.X500Principal getIssuerX500Principal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertFactoryImpl java.security.cert.Certificate engineGenerateCertificate(java.io.InputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CertImpl java.security.Principal getIssuerDN()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.provider.cert.X509CRLEntryImpl java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

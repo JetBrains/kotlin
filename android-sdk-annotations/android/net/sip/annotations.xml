@@ -1,11 +1,155 @@
 <root>
+    <item name='android.net.sip.SipManager android.net.sip.SipAudioCall makeAudioCall(java.lang.String, java.lang.String, android.net.sip.SipAudioCall.Listener, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription android.net.sip.SimpleSessionDescription.Media newMedia(java.lang.String, int, int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription.Media java.lang.String[] getFormats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipManager newInstance(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setProfileName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription java.lang.String[] getBandwidthTypes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipAudioCall SipAudioCall(android.content.Context, android.net.sip.SipProfile) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager void open(android.net.sip.SipProfile, android.app.PendingIntent, android.net.sip.SipRegistrationListener) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipSession.State java.lang.String toString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription java.lang.String[] getAttributeNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipSession getSessionFor(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setProtocol(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setOutboundProxy(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipAudioCall takeAudioCall(android.content.Intent, android.net.sip.SipAudioCall.Listener)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setPassword(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder Builder(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager java.lang.String getOfferSessionDescription(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile java.lang.String getUriString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription SimpleSessionDescription(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.content.Intent createIncomingCallBroadcast(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipAudioCall makeAudioCall(android.net.sip.SipProfile, android.net.sip.SipProfile, android.net.sip.SipAudioCall.Listener, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipErrorCode java.lang.String toString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager void register(android.net.sip.SipProfile, int, android.net.sip.SipRegistrationListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.sip.SipProfile void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.sip.SipManager EXTRA_CALL_ID'>
+    <item name='android.net.sip.SipManager boolean isSipWifiOnly(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.sip.SipManager EXTRA_OFFER_SD'>
+    <item name='android.net.sip.SipProfile.Builder Builder(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager java.lang.String getCallId(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription.Media java.lang.String[] getBandwidthTypes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipAudioCall makeAudioCall(java.lang.String, java.lang.String, android.net.sip.SipAudioCall.Listener, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setAutoRegistration(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager boolean isApiSupported(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipAudioCall takeAudioCall(android.content.Intent, android.net.sip.SipAudioCall.Listener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.ISipSession.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.ISipSessionListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager void unregister(android.net.sip.SipProfile, android.net.sip.SipRegistrationListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setDisplayName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription.Media java.lang.String[] getAttributeNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder Builder(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setSendKeepAlive(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription java.lang.String encode()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setPort(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription android.net.sip.SimpleSessionDescription.Media[] getMedia()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder android.net.sip.SipProfile.Builder setAuthUserName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipAudioCall makeAudioCall(java.lang.String, java.lang.String, android.net.sip.SipAudioCall.Listener, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager boolean isVoipSupported(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager android.net.sip.SipSession createSipSession(android.net.sip.SipProfile, android.net.sip.SipSession.Listener)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipProfile.Builder Builder(android.net.sip.SipProfile) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.ISipService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipManager void open(android.net.sip.SipProfile, android.app.PendingIntent, android.net.sip.SipRegistrationListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SipAudioCall void makeCall(android.net.sip.SipProfile, android.net.sip.SipSession, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.sip.SimpleSessionDescription.Media int[] getRtpPayloadTypes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

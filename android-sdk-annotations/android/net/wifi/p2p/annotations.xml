@@ -1,47 +1,197 @@
 <root>
-    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_STATE_CHANGED_ACTION'>
+    <item name='android.net.wifi.p2p.WifiP2pConfig java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pDeviceList void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.net.wifi.p2p.WifiP2pInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pConfig void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList WifiP2pDeviceList(java.util.ArrayList&lt;android.net.wifi.p2p.WifiP2pDevice&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.net.wifi.p2p.WifiP2pManager void requestConnectionInfo(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_WIFI_STATE'>
+    <item name='android.net.wifi.p2p.WifiP2pManager void setDnsSdResponseListeners(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.DnsSdServiceResponseListener, android.net.wifi.p2p.WifiP2pManager.DnsSdTxtRecordListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_THIS_DEVICE_CHANGED_ACTION'>
+    <item name='android.net.wifi.p2p.WifiP2pGroup boolean removeClient(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_DISCOVERY_CHANGED_ACTION'>
+    <item name='android.net.wifi.p2p.WifiP2pGroup WifiP2pGroup(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.p2p.WifiP2pGroup void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_DISCOVERY_STATE'>
+    <item name='android.net.wifi.p2p.WifiP2pManager void addServiceRequest(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceRequest, android.net.wifi.p2p.WifiP2pManager.ActionListener) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_NETWORK_INFO'>
+    <item name='android.net.wifi.p2p.WifiP2pManager void removeLocalService(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceInfo, android.net.wifi.p2p.WifiP2pManager.ActionListener) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_CONNECTION_CHANGED_ACTION'>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList boolean remove(android.net.wifi.p2p.WifiP2pDeviceList) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_WIFI_P2P_DEVICE'>
+    <item name='android.net.wifi.p2p.WifiP2pService.P2pStatus android.net.wifi.p2p.WifiP2pService.P2pStatus valueOf(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager EXTRA_WIFI_P2P_INFO'>
+    <item name='android.net.wifi.p2p.WifiP2pManager void stopPeerDiscovery(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pConfig WifiP2pConfig(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pWfdInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void addLocalService(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceInfo, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pService.P2pStatus android.net.wifi.p2p.WifiP2pService.P2pStatus valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pWfdInfo void readFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDevice WifiP2pDevice(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pConfig void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void setUpnpServiceResponseListener(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.UpnpServiceResponseListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void removeLocalService(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceInfo, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void deletePersistentGroup(android.net.wifi.p2p.WifiP2pManager.Channel, int, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.IWifiP2pManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pGroup java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void setServiceResponseListener(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ServiceResponseListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void setDeviceName(android.net.wifi.p2p.WifiP2pManager.Channel, java.lang.String, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.p2p.WifiP2pDevice void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.p2p.WifiP2pManager WIFI_P2P_PEERS_CHANGED_ACTION'>
+    <item name='android.net.wifi.p2p.WifiP2pGroupList java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void removeServiceRequest(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceRequest, android.net.wifi.p2p.WifiP2pManager.ActionListener) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void discoverPeers(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pService void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDevice void update(android.net.wifi.p2p.WifiP2pDevice) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void requestGroupInfo(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.GroupInfoListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void connect(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pConfig, android.net.wifi.p2p.WifiP2pManager.ActionListener) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void createGroup(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void cancelConnect(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void startWps(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.WpsInfo, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList boolean remove(android.net.wifi.p2p.WifiP2pDevice) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pWfdInfo java.lang.String getDeviceInfoHex()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDevice java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pWfdInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void setWFDInfo(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pWfdInfo, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pGroup java.util.Collection&lt;android.net.wifi.p2p.WifiP2pDevice&gt; getClientList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void requestPeers(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.PeerListListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void removeServiceRequest(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceRequest, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pGroupList void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pService android.os.Messenger getMessenger()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList void update(android.net.wifi.p2p.WifiP2pDevice) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void clearLocalServices(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pProvDiscEvent WifiP2pProvDiscEvent(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void removeGroup(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void addServiceRequest(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceRequest, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void connect(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pConfig, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void discoverServices(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void requestPersistentGroupInfo(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.PersistentGroupInfoListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pService.P2pStatus android.net.wifi.p2p.WifiP2pService.P2pStatus valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pDeviceList java.util.Collection&lt;android.net.wifi.p2p.WifiP2pDevice&gt; getDeviceList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pGroup void addClient(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void clearServiceRequests(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.WifiP2pManager.ActionListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pManager void addLocalService(android.net.wifi.p2p.WifiP2pManager.Channel, android.net.wifi.p2p.nsd.WifiP2pServiceInfo, android.net.wifi.p2p.WifiP2pManager.ActionListener) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.WifiP2pProvDiscEvent java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

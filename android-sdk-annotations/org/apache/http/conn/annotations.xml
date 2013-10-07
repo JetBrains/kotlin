@@ -1,0 +1,35 @@
+<root>
+    <item name='org.apache.http.conn.BasicManagedEntity java.io.InputStream getContent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.EofSensorInputStream EofSensorInputStream(java.io.InputStream, org.apache.http.conn.EofSensorWatcher) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket createSocket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.BasicEofSensorWatcher BasicEofSensorWatcher(org.apache.http.conn.ManagedClientConnection, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory org.apache.http.conn.MultihomePlainSocketFactory getSocketFactory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.BasicManagedEntity BasicManagedEntity(org.apache.http.HttpEntity, org.apache.http.conn.ManagedClientConnection, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.BasicManagedEntity BasicManagedEntity(org.apache.http.HttpEntity, org.apache.http.conn.ManagedClientConnection, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory boolean isSecure(java.net.Socket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

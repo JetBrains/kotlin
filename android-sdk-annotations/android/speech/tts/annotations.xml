@@ -1,77 +1,35 @@
 <root>
-    <item name='android.speech.tts.TextToSpeech.Engine EXTRA_UNAVAILABLE_VOICES'>
+    <item name='android.speech.tts.TtsEngines java.lang.String[] parseLocalePref(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.tts.TextToSpeechService android.os.IBinder onBind(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech int isLanguageAvailable(java.util.Locale) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine KEY_PARAM_PAN'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.speech.tts.SynthesisRequest android.os.Bundle getParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.SynthesisRequest SynthesisRequest(java.lang.String, android.os.Bundle) 1'>
+    <item name='android.speech.tts.ITextToSpeechCallback.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech.Engine KEY_FEATURE_NETWORK_SYNTHESIS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine KEY_PARAM_UTTERANCE_ID'>
+    <item name='android.speech.tts.TextToSpeech int addSpeech(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.tts.TextToSpeech java.util.List&lt;android.speech.tts.TextToSpeech.EngineInfo&gt; getEngines()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech.Engine ACTION_CHECK_TTS_DATA'>
+    <item name='android.speech.tts.TtsEngines java.util.List&lt;android.speech.tts.TextToSpeech.EngineInfo&gt; getEngines()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech.Engine INTENT_ACTION_TTS_SERVICE'>
+    <item name='android.speech.tts.TextToSpeech.EngineInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech.Engine KEY_FEATURE_EMBEDDED_SYNTHESIS'>
+    <item name='android.speech.tts.SynthesisRequest SynthesisRequest(java.lang.String, android.os.Bundle) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech.Engine EXTRA_CHECK_VOICE_DATA_FOR'>
+    <item name='android.speech.tts.TextToSpeech int addEarcon(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech.Engine EXTRA_VOICE_DATA_ROOT_DIRECTORY'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine ACTION_TTS_DATA_INSTALLED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine EXTRA_VOICE_DATA_FILES'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine EXTRA_TTS_DATA_INSTALLED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine KEY_PARAM_STREAM'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine KEY_PARAM_VOLUME'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech ACTION_TTS_QUEUE_PROCESSING_COMPLETED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine SERVICE_META_DATA'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech java.util.Set&lt;java.lang.String&gt; getFeatures(java.util.Locale) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine ACTION_INSTALL_TTS_DATA'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine EXTRA_VOICE_DATA_FILES_INFO'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.Engine EXTRA_AVAILABLE_VOICES'>
+    <item name='android.speech.tts.ITextToSpeechService.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

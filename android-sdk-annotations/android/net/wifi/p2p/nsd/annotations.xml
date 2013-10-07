@@ -1,8 +1,83 @@
 <root>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pUpnpServiceRequest android.net.wifi.p2p.nsd.WifiP2pUpnpServiceRequest newInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pUpnpServiceInfo android.net.wifi.p2p.nsd.WifiP2pUpnpServiceInfo newInstance(java.lang.String, java.lang.String, java.util.List&lt;java.lang.String&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest newInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceResponse java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceInfo WifiP2pServiceInfo(java.util.List&lt;java.lang.String&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest newInstance(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pUpnpServiceRequest android.net.wifi.p2p.nsd.WifiP2pUpnpServiceRequest newInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pUpnpServiceResponse java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.wifi.p2p.nsd.WifiP2pServiceRequest void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest newInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest newInstance(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceRequest android.net.wifi.p2p.nsd.WifiP2pServiceRequest newInstance(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceResponse java.util.List&lt;android.net.wifi.p2p.nsd.WifiP2pServiceResponse&gt; newInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pUpnpServiceRequest android.net.wifi.p2p.nsd.WifiP2pUpnpServiceRequest newInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pUpnpServiceInfo android.net.wifi.p2p.nsd.WifiP2pUpnpServiceInfo newInstance(java.lang.String, java.lang.String, java.util.List&lt;java.lang.String&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest newInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo newInstance(java.lang.String, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceRequest android.net.wifi.p2p.nsd.WifiP2pServiceRequest newInstance(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceResponse java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.wifi.p2p.nsd.WifiP2pServiceInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceResponse java.util.Map&lt;java.lang.String,java.lang.String&gt; getTxtRecord()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo newInstance(java.lang.String, java.lang.String, java.util.Map&lt;java.lang.String,java.lang.String&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceResponse.Status java.lang.String toString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest newInstance(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceRequest java.lang.String getSupplicantQuery()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pUpnpServiceInfo android.net.wifi.p2p.nsd.WifiP2pUpnpServiceInfo newInstance(java.lang.String, java.lang.String, java.util.List&lt;java.lang.String&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.p2p.nsd.WifiP2pServiceResponse void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

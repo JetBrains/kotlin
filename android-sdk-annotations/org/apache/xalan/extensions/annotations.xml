@@ -1,0 +1,20 @@
+<root>
+    <item name='org.apache.xalan.extensions.ExtensionsTable void addExtensionNamespace(java.lang.String, org.apache.xalan.extensions.ExtensionHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.extensions.ExtensionsTable java.lang.Object extFunction(org.apache.xpath.functions.FuncExtFunction, java.util.Vector, org.apache.xalan.extensions.ExpressionContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.extensions.ExtensionsTable void addExtensionNamespace(java.lang.String, org.apache.xalan.extensions.ExtensionHandler) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.extensions.ExtensionNamespacesManager void registerExtension(org.apache.xalan.extensions.ExtensionNamespaceSupport) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.extensions.ExtensionNamespacesManager int namespaceIndex(java.lang.String, java.util.Vector) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.extensions.ExtensionsTable org.apache.xalan.extensions.ExtensionHandler get(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -1,0 +1,5 @@
+<root>
+    <item name='android.support.v4.os.ParcelableCompat android.os.Parcelable.Creator&lt;T&gt; newCreator(android.support.v4.os.ParcelableCompatCreatorCallbacks&lt;T&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

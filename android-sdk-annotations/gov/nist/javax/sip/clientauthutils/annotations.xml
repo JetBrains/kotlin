@@ -1,0 +1,23 @@
+<root>
+    <item name='gov.nist.javax.sip.clientauthutils.AuthenticationHelperImpl void setAuthenticationHeaders(javax.sip.message.Request) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.clientauthutils.AuthenticationHelperImpl AuthenticationHelperImpl(gov.nist.javax.sip.SipStackImpl, gov.nist.javax.sip.clientauthutils.SecureAccountManager, javax.sip.header.HeaderFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.clientauthutils.AuthenticationHelperImpl AuthenticationHelperImpl(gov.nist.javax.sip.SipStackImpl, gov.nist.javax.sip.clientauthutils.AccountManager, javax.sip.header.HeaderFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.clientauthutils.AuthenticationHelperImpl void removeCachedAuthenticationHeaders(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.clientauthutils.AuthenticationHelperImpl javax.sip.ClientTransaction handleChallenge(javax.sip.message.Response, javax.sip.ClientTransaction, javax.sip.SipProvider, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.clientauthutils.AuthenticationHelperImpl javax.sip.ClientTransaction handleChallenge(javax.sip.message.Response, javax.sip.ClientTransaction, javax.sip.SipProvider, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.clientauthutils.AuthenticationHelperImpl javax.sip.ClientTransaction handleChallenge(javax.sip.message.Response, javax.sip.ClientTransaction, javax.sip.SipProvider, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
