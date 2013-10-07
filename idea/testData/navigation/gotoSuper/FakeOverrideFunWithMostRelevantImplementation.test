@@ -1,0 +1,28 @@
+// FILE: before.kt
+trait A {
+    fun f() {}
+}
+
+trait B : A {
+    override fun f() {}
+}
+
+trait C : B, A
+
+class SomeClass() : C {
+    override fun <caret>f() {}
+}
+// FILE: after.kt
+trait A {
+    fun f() {}
+}
+
+trait B : A {
+    override fun <caret>f() {}
+}
+
+trait C : B, A
+
+class SomeClass() : C {
+    override fun f() {}
+}

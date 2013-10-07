@@ -41,6 +41,31 @@ public class JetGotoSuperTestGenerated extends JetAbstractGotoSuperTest {
         doTest("idea/testData/navigation/gotoSuper/ClassSimple.test");
     }
     
+    @TestMetadata("DelegatedFun.test")
+    public void testDelegatedFun() throws Exception {
+        doTest("idea/testData/navigation/gotoSuper/DelegatedFun.test");
+    }
+    
+    @TestMetadata("DelegatedProperty.test")
+    public void testDelegatedProperty() throws Exception {
+        doTest("idea/testData/navigation/gotoSuper/DelegatedProperty.test");
+    }
+    
+    @TestMetadata("FakeOverrideFun.test")
+    public void testFakeOverrideFun() throws Exception {
+        doTest("idea/testData/navigation/gotoSuper/FakeOverrideFun.test");
+    }
+    
+    @TestMetadata("FakeOverrideFunWithMostRelevantImplementation.test")
+    public void testFakeOverrideFunWithMostRelevantImplementation() throws Exception {
+        doTest("idea/testData/navigation/gotoSuper/FakeOverrideFunWithMostRelevantImplementation.test");
+    }
+    
+    @TestMetadata("FakeOverrideProperty.test")
+    public void testFakeOverrideProperty() throws Exception {
+        doTest("idea/testData/navigation/gotoSuper/FakeOverrideProperty.test");
+    }
+    
     @TestMetadata("FunctionSimple.test")
     public void testFunctionSimple() throws Exception {
         doTest("idea/testData/navigation/gotoSuper/FunctionSimple.test");

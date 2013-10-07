@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -36,6 +37,7 @@ import org.jetbrains.jet.util.slicedmap.Slices;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.AMBIGUOUS_LABEL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
@@ -49,7 +51,7 @@ public class BindingContextUtils {
         public DeclarationDescriptor normalize(DeclarationDescriptor declarationDescriptor) {
             if (declarationDescriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callable = (CallableMemberDescriptor) declarationDescriptor;
-                if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                if (callable.getKind() != DECLARATION) {
                     throw new IllegalStateException("non-declaration descriptors should be filtered out earlier: " + callable);
                 }
             }
@@ -169,7 +171,7 @@ public class BindingContextUtils {
 
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
-        if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+        if (callable.getKind() == SYNTHESIZED) {
             CallableMemberDescriptor original = callable.getOriginal();
             if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
                 DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
@@ -178,7 +180,7 @@ public class BindingContextUtils {
             return null;
         }
 
-        if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+        if (callable.getKind() == DECLARATION) {
             return doGetDescriptorToDeclaration(context, callable.getOriginal());
         }
 
@@ -194,7 +196,7 @@ public class BindingContextUtils {
 
     @NotNull
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
-        if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+        if (callable.getKind() == SYNTHESIZED) {
             CallableMemberDescriptor original = callable.getOriginal();
             if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
                 DeclarationDescriptor base = ((SynthesizedCallableMemberDescriptor<?>) original).getBaseForSynthesized();
@@ -203,7 +205,7 @@ public class BindingContextUtils {
             return Collections.emptyList();
         }
 
-        if (callable.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+        if (callable.getKind() == DECLARATION) {
             PsiElement psiElement = doGetDescriptorToDeclaration(context, callable);
             return psiElement != null ? Lists.newArrayList(psiElement) : Lists.<PsiElement>newArrayList();
         }
@@ -224,7 +226,7 @@ public class BindingContextUtils {
     public static void recordFunctionDeclarationToDescriptor(@NotNull BindingTrace trace,
             @NotNull PsiElement psiElement, @NotNull SimpleFunctionDescriptor function) {
 
-        if (function.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+        if (function.getKind() != DECLARATION) {
             throw new IllegalArgumentException("function of kind " + function.getKind() + " cannot have declaration");
         }
 
@@ -332,5 +334,27 @@ public class BindingContextUtils {
             }
         }
         return false;
+    }
+
+    @NotNull
+    public static Set<CallableMemberDescriptor> getDirectlyOverriddenDeclarations(@NotNull CallableMemberDescriptor descriptor) {
+        Set<CallableMemberDescriptor> result = Sets.newHashSet();
+        Set<? extends CallableMemberDescriptor> overriddenDescriptors = descriptor.getOverriddenDescriptors();
+        for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
+            CallableMemberDescriptor.Kind kind = overriddenDescriptor.getKind();
+            if (kind == DECLARATION) {
+                result.add(overriddenDescriptor);
+            }
+            else if (kind == FAKE_OVERRIDE || kind == DELEGATION) {
+                result.addAll(getDirectlyOverriddenDeclarations(overriddenDescriptor));
+            }
+            else if (kind == SYNTHESIZED) {
+                //do nothing
+            }
+            else {
+                throw new AssertionError("Unexpected callable kind " + kind);
+            }
+        }
+        return OverridingUtil.filterOverrides(result);
     }
 }
