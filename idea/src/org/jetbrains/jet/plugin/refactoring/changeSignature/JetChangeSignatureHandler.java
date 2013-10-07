@@ -31,27 +31,21 @@ import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
+import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
+
 public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     @Nullable
-    @Override
-    public PsiElement findTargetMember(PsiFile file, Editor editor) {
-        return findTargetMember(file.findElementAt(editor.getCaretModel().getOffset()));
-    }
-
-    @Nullable
-    @Override
-    public PsiElement findTargetMember(PsiElement element) {
+    public static PsiElement findTargetForRefactoring(@NotNull PsiElement element) {
         if (PsiTreeUtil.getParentOfType(element, JetParameterList.class) != null) {
             return PsiTreeUtil.getParentOfType(element, JetFunction.class, JetClass.class);
         }
@@ -62,33 +56,75 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         }
 
         PsiElement elementParent = element.getParent();
-        if (elementParent instanceof JetNamedFunction && ((JetNamedFunction)elementParent).getNameIdentifier()==element) {
+        if (elementParent instanceof JetNamedFunction && ((JetNamedFunction) elementParent).getNameIdentifier() == element) {
             return elementParent;
         }
-        if (elementParent instanceof JetClass && ((JetClass)elementParent).getNameIdentifier()==element) {
+        if (elementParent instanceof JetClass && ((JetClass) elementParent).getNameIdentifier() == element) {
             return elementParent;
         }
 
         JetCallElement call = PsiTreeUtil.getParentOfType(element, JetCallExpression.class, JetDelegatorToSuperCall.class);
-        if (call != null) {
-            JetExpression receiverExpr = call instanceof JetCallExpression ? call.getCalleeExpression() :
-                                         ((JetDelegatorToSuperCall)call).getCalleeExpression().getConstructorReferenceExpression();
+        if (call == null) {
+            return null;
+        }
+        JetExpression receiverExpr = call instanceof JetCallExpression ? call.getCalleeExpression() :
+                                     ((JetDelegatorToSuperCall) call).getCalleeExpression().getConstructorReferenceExpression();
 
-            if (receiverExpr instanceof JetSimpleNameExpression) {
-                BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) receiverExpr);
+        if (receiverExpr instanceof JetSimpleNameExpression) {
+            BindingContext bindingContext =
+                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+            DeclarationDescriptor descriptor =
+                    bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) receiverExpr);
 
-                if (descriptor != null) {
-                    PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-
-                    if (declaration instanceof JetNamedFunction || declaration instanceof JetClass) {
-                        return declaration;
-                    }
-                }
+            if (descriptor instanceof ClassDescriptor || descriptor instanceof FunctionDescriptor) {
+                return receiverExpr;
             }
         }
 
         return null;
+    }
+
+    public static void invokeChangeSignature(
+            @NotNull PsiElement element,
+            @NotNull PsiElement context,
+            @NotNull Project project,
+            @Nullable Editor editor
+    ) {
+        BindingContext bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+        FunctionDescriptor functionDescriptor = findDescriptor(element, project, editor, bindingContext);
+        if (functionDescriptor == null) {
+            return;
+        }
+        runChangeSignature(project, functionDescriptor, emptyConfiguration(), bindingContext, context, null, false);
+    }
+
+    @TestOnly
+    public static JetChangeSignatureConfiguration getConfiguration() {
+        return emptyConfiguration();
+    }
+
+    private static JetChangeSignatureConfiguration emptyConfiguration() {
+        return new JetChangeSignatureConfiguration() {
+            @Override
+            public void configure(
+                    @NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext
+            ) {
+                //do nothing
+            }
+        };
+    }
+
+    @Nullable
+    @Override
+    public PsiElement findTargetMember(PsiFile file, Editor editor) {
+        return findTargetMember(file.findElementAt(editor.getCaretModel().getOffset()));
+    }
+
+    @Nullable
+    @Override
+    public PsiElement findTargetMember(PsiElement element) {
+        return findTargetForRefactoring(element);
     }
 
     @Override
@@ -99,12 +135,9 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             element = LangDataKeys.PSI_ELEMENT.getData(dataContext);
         }
 
-        if (element != null) {
-            JetChangeSignatureDialog dialog = createDialog(element, file.findElementAt(editor.getCaretModel().getOffset()), project, editor);
-
-            if (dialog != null) {
-                dialog.show();
-            }
+        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
+        if (element != null && elementAtCaret != null) {
+            invokeChangeSignature(element, elementAtCaret, project, editor);
         }
     }
 
@@ -112,32 +145,45 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, @Nullable DataContext dataContext) {
         if (elements.length != 1) return;
         Editor editor = dataContext != null ? PlatformDataKeys.EDITOR.getData(dataContext) : null;
-        JetChangeSignatureDialog dialog = createDialog(elements[0], elements[0], project, editor);
-
-        if (dialog != null) {
-            dialog.show();
-        }
+        invokeChangeSignature(elements[0], elements[0], project, editor);
     }
 
     @Nullable
-    public static JetChangeSignatureDialog createDialog(@NotNull PsiElement element, PsiElement context, Project project, Editor editor) {
-        if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null;
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile)element.getContainingFile()).getBindingContext();
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+    @Override
+    public String getTargetNotFoundMessage() {
+        return JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name");
+    }
 
+    @Nullable
+    public static FunctionDescriptor findDescriptor(
+            @NotNull PsiElement element,
+            @NotNull Project project,
+            @Nullable Editor editor,
+            BindingContext bindingContext
+    ) {
+        if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null;
+
+        DeclarationDescriptor descriptor;
+        if (element instanceof JetSimpleNameExpression) {
+            descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) element);
+        } else {
+            descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        }
         if (descriptor instanceof ClassDescriptor) {
             descriptor = ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
         }
-        if (descriptor instanceof FunctionDescriptorImpl) {
+        if (descriptor instanceof FunctionDescriptor) {
             for (ValueParameterDescriptor parameter : ((FunctionDescriptor) descriptor).getValueParameters()) {
                 if (parameter.getVarargElementType() != null) {
                     String message = JetRefactoringBundle.message("error.cant.refactor.vararg.functions");
-                    CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HelpID.CHANGE_SIGNATURE);
+                    CommonRefactoringUtil.showErrorHint(project, editor, message,
+                                                        REFACTORING_NAME,
+                                                        HelpID.CHANGE_SIGNATURE);
                     return null;
                 }
             }
 
-            return new JetChangeSignatureDialog(project, new JetFunctionPlatformDescriptorImpl((FunctionDescriptor) descriptor, element), context);
+            return (FunctionDescriptor) descriptor;
         }
         else {
             String message = RefactoringBundle.getCannotRefactorMessage(JetRefactoringBundle.message(
@@ -145,11 +191,5 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HelpID.CHANGE_SIGNATURE);
             return null;
         }
-    }
-
-    @Nullable
-    @Override
-    public String getTargetNotFoundMessage() {
-        return JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name");
     }
 }

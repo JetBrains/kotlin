@@ -389,6 +389,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/changeSignature/beforeChangeFunctionLiteralParameters2.kt");
         }
         
+        @TestMetadata("beforeComplexHierarchy.kt")
+        public void testComplexHierarchy() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeComplexHierarchy.kt");
+        }
+        
+        @TestMetadata("beforeComplexHierarchyHead.kt")
+        public void testComplexHierarchyHead() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeComplexHierarchyHead.kt");
+        }
+        
+        @TestMetadata("beforeComplexHierarchyTail.kt")
+        public void testComplexHierarchyTail() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeComplexHierarchyTail.kt");
+        }
+        
+        @TestMetadata("beforeLinearHierarchy.kt")
+        public void testLinearHierarchy() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeLinearHierarchy.kt");
+        }
+        
         @TestMetadata("beforeRemoveConstructorParameter.kt")
         public void testRemoveConstructorParameter() throws Exception {
             doTest("idea/testData/quickfix/changeSignature/beforeRemoveConstructorParameter.kt");
