@@ -57,8 +57,12 @@ import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.m
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
-    public JsNode visitConstantExpression(@NotNull JetConstantExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
+        return translateConstantExpression(expression, context).source(expression);
+    }
+
+    @NotNull
+    private static JsNode translateConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
 
         // TODO: workaround for default parameters translation. Will be fixed later.
@@ -96,6 +100,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (value instanceof Character) {
             return context.program().getStringLiteral(value.toString());
         }
+
         throw new AssertionError(message(expression, "Unsupported constant expression"));
     }
 
