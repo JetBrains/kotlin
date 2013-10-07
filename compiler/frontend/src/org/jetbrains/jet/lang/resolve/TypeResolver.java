@@ -264,7 +264,7 @@ public class TypeResolver {
                 List<TypeParameterDescriptor> parameters = constructor.getParameters();
                 if (parameters.size() > i) {
                     TypeParameterDescriptor parameterDescriptor = parameters.get(i);
-                    arguments.add(SubstitutionUtils.makeStarProjection(parameterDescriptor));
+                    arguments.add(TypeUtils.makeStarProjection(parameterDescriptor));
                 }
                 else {
                     arguments.add(new TypeProjectionImpl(OUT_VARIANCE, ErrorUtils.createErrorType("*")));

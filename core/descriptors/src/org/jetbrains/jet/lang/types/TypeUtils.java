@@ -547,10 +547,16 @@ public class TypeUtils {
         return builder.toString();
     }
 
+    @NotNull
+    public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
+        return new TypeProjectionImpl(parameterDescriptor.getVariance() == Variance.OUT_VARIANCE
+                                      ? Variance.INVARIANT
+                                      : Variance.OUT_VARIANCE, parameterDescriptor.getUpperBoundsAsType());
+    }
+
     @Nullable
     public static JetType commonSupertypeForNumberTypes(@NotNull Collection<JetType> numberLowerBounds) {
         if (numberLowerBounds.isEmpty()) return null;
-        assert !numberLowerBounds.isEmpty();
         Set<JetType> intersectionOfSupertypes = getIntersectionOfSupertypes(numberLowerBounds);
         JetType primitiveNumberType = getDefaultPrimitiveNumberType(intersectionOfSupertypes);
         if (primitiveNumberType != null) {

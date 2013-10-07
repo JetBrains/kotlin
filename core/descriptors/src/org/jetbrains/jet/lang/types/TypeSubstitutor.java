@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -72,18 +74,33 @@ public class TypeSubstitutor {
 
     /** No assertion for immediate recursion */
     public static TypeSubstitutor createUnsafe(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        Map<TypeConstructor, TypeProjection> cleanContext = SubstitutionUtils.removeTrivialSubstitutions(substitutionContext);
+        Map<TypeConstructor, TypeProjection> cleanContext = removeTrivialSubstitutions(substitutionContext);
         return create(new MapToTypeSubstitutionAdapter(cleanContext));
     }
 
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        Map<TypeConstructor, TypeProjection> cleanContext = SubstitutionUtils.removeTrivialSubstitutions(substitutionContext);
-        //SubstitutionUtils.assertNotImmediatelyRecursive(cleanContext);
-        return createUnsafe(cleanContext);
+        return createUnsafe(removeTrivialSubstitutions(substitutionContext));
     }
 
     public static TypeSubstitutor create(@NotNull JetType context) {
-        return create(SubstitutionUtils.buildSubstitutionContext(context));
+        return create(buildSubstitutionContext(context.getConstructor().getParameters(), context.getArguments()));
+    }
+
+    @NotNull
+    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(
+            @NotNull List<TypeParameterDescriptor> parameters,
+            @NotNull List<? extends TypeProjection> contextArguments
+    ) {
+        Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
+        if (parameters.size() != contextArguments.size()) {
+            throw new IllegalArgumentException("type parameter count != context arguments: \n" +
+                                               "parameters=" + parameters + "\n" +
+                                               "contextArgs=" + contextArguments);
+        }
+        for (int i = 0, size = parameters.size(); i < size; i++) {
+            parameterValues.put(parameters.get(i).getTypeConstructor(), contextArguments.get(i));
+        }
+        return parameterValues;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +173,8 @@ public class TypeSubstitutor {
                 case OUT_IN_IN_POSITION:
                     throw new SubstitutionException("Out-projection in in-position");
                 case IN_IN_OUT_POSITION:
-                    return SubstitutionUtils.makeStarProjection(typeParameter);
+                    //noinspection ConstantConditions
+                    return TypeUtils.makeStarProjection(typeParameter);
                 case NO_CONFLICT:
                     boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
                     JetType substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
@@ -199,13 +217,29 @@ public class TypeSubstitutor {
                     break;
                 case OUT_IN_IN_POSITION:
                 case IN_IN_OUT_POSITION:
-                    substitutedTypeArgument = SubstitutionUtils.makeStarProjection(typeParameter);
+                    substitutedTypeArgument = TypeUtils.makeStarProjection(typeParameter);
                     break;
             }
 
             substitutedArguments.add(substitutedTypeArgument);
         }
         return substitutedArguments;
+    }
+
+    @NotNull
+    private static Map<TypeConstructor, TypeProjection> removeTrivialSubstitutions(@NotNull Map<TypeConstructor, TypeProjection> context) {
+        Map<TypeConstructor, TypeProjection> clean = new HashMap<TypeConstructor, TypeProjection>(context);
+        boolean changed = false;
+        for (Iterator<Map.Entry<TypeConstructor, TypeProjection>> iterator = clean.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<TypeConstructor, TypeProjection> entry = iterator.next();
+            TypeConstructor key = entry.getKey();
+            TypeProjection value = entry.getValue();
+            if (key == value.getType().getConstructor() && value.getProjectionKind() == Variance.INVARIANT) {
+                iterator.remove();
+                changed = true;
+            }
+        }
+        return changed ? clean : context;
     }
 
     private static Variance combine(Variance typeParameterVariance, Variance projectionKind) {
@@ -218,7 +252,7 @@ public class TypeSubstitutor {
     private enum VarianceConflictType {
         NO_CONFLICT,
         IN_IN_OUT_POSITION,
-        OUT_IN_IN_POSITION;
+        OUT_IN_IN_POSITION
     }
 
     private static VarianceConflictType conflictType(Variance position, Variance argument) {

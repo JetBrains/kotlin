@@ -114,7 +114,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         if (typeArguments.isEmpty()) return getScopeForMemberLookup();
 
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils.buildSubstitutionContext(typeParameters, typeArguments);
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.buildSubstitutionContext(typeParameters, typeArguments);
 
         // Unsafe substitutor is OK, because no recursion can hurt us upon a trivial substitution:
         // all the types are written explicitly in the code already, they can not get infinite.

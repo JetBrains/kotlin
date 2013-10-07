@@ -182,7 +182,7 @@ public class CastDiagnosticsUtil {
             if (value == null) {
                 substitution.put(
                         variable.getTypeConstructor(),
-                        SubstitutionUtils.makeStarProjection(variable)
+                        TypeUtils.makeStarProjection(variable)
                 );
                 allArgumentsInferred = false;
             }
