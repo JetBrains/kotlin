@@ -1,20 +1,20 @@
 <root>
-    <item name='android.media.effect.SizeChangeEffect SizeChangeEffect(android.media.effect.EffectContext, java.lang.String, java.lang.Class, java.lang.String, java.lang.String, java.lang.Object...) 5'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.media.effect.FilterEffect android.filterfw.core.Frame frameFromTexture(int, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.media.effect.SizeChangeEffect SizeChangeEffect(android.media.effect.EffectContext, java.lang.String, java.lang.Class, java.lang.String, java.lang.String, java.lang.Object...) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.media.effect.SingleFilterEffect SingleFilterEffect(android.media.effect.EffectContext, java.lang.String, java.lang.Class, java.lang.String, java.lang.String, java.lang.Object...) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.effect.EffectContext android.media.effect.EffectContext createWithCurrentGlContext()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.effect.SizeChangeEffect SizeChangeEffect(android.media.effect.EffectContext, java.lang.String, java.lang.Class, java.lang.String, java.lang.String, java.lang.Object...) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.effect.SingleFilterEffect SingleFilterEffect(android.media.effect.EffectContext, java.lang.String, java.lang.Class, java.lang.String, java.lang.String, java.lang.Object...) 5'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.effect.EffectContext android.media.effect.EffectContext createWithCurrentGlContext()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

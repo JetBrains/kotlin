@@ -1,11 +1,11 @@
 <root>
-    <item name='android.filterpacks.videoproc.BackDropperFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.filterpacks.videoproc.BackDropperFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterpacks.videoproc.BackDropperFilter void fieldPortValueUpdated(java.lang.String, android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.videoproc.BackDropperFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

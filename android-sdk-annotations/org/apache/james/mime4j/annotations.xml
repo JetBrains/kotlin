@@ -1,4 +1,7 @@
 <root>
+    <item name='org.apache.james.mime4j.LogFactory org.apache.james.mime4j.Log getLog(java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.james.mime4j.EOLConvertingInputStream EOLConvertingInputStream(java.io.InputStream, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -18,9 +21,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.EOLConvertingInputStream EOLConvertingInputStream(java.io.InputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.LogFactory org.apache.james.mime4j.Log getLog(java.lang.Class)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.CloseShieldInputStream int read(byte[], int, int) 0'>

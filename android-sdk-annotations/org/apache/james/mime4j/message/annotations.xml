@@ -8,13 +8,16 @@
     <item name='org.apache.james.mime4j.message.Multipart void setBodyParts(java.util.List&lt;org.apache.james.mime4j.message.BodyPart&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.james.mime4j.message.Header java.util.List&lt;org.apache.james.mime4j.field.Field&gt; getFields()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.james.mime4j.message.Header java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.message.Header java.util.List&lt;org.apache.james.mime4j.field.Field&gt; getFields(java.lang.String) 0'>
+    <item name='org.apache.james.mime4j.message.Multipart java.util.List&lt;org.apache.james.mime4j.message.BodyPart&gt; getBodyParts()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.message.Header java.util.List&lt;org.apache.james.mime4j.field.Field&gt; getFields(java.lang.String)'>
+    <item name='org.apache.james.mime4j.message.Header java.util.List&lt;org.apache.james.mime4j.field.Field&gt; getFields(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.message.Multipart void addBodyPart(org.apache.james.mime4j.message.BodyPart) 0'>
@@ -26,10 +29,7 @@
     <item name='org.apache.james.mime4j.message.BodyPart void writeTo(java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.message.Multipart java.util.List&lt;org.apache.james.mime4j.message.BodyPart&gt; getBodyParts()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.message.Header java.util.List&lt;org.apache.james.mime4j.field.Field&gt; getFields()'>
+    <item name='org.apache.james.mime4j.message.Header java.util.List&lt;org.apache.james.mime4j.field.Field&gt; getFields(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.message.Message void writeTo(java.io.OutputStream) 0'>

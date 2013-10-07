@@ -1,4 +1,7 @@
 <root>
+    <item name='android.filterpacks.base.RetargetFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.filterpacks.base.InputStreamSource void process(android.filterfw.core.FilterContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -9,9 +12,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterpacks.base.GLTextureTarget void process(android.filterfw.core.FilterContext) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.filterpacks.base.RetargetFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterpacks.base.RetargetFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>

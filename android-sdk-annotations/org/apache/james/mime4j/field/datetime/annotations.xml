@@ -1,8 +1,8 @@
 <root>
-    <item name='org.apache.james.mime4j.field.datetime.DateTime java.util.Date convertToDate(int, int, int, int, int, int, int)'>
+    <item name='org.apache.james.mime4j.field.datetime.DateTime java.util.Date getDate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.field.datetime.DateTime java.util.Date getDate()'>
+    <item name='org.apache.james.mime4j.field.datetime.DateTime java.util.Date convertToDate(int, int, int, int, int, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.datetime.DateTime org.apache.james.mime4j.field.datetime.DateTime parse(java.lang.String)'>

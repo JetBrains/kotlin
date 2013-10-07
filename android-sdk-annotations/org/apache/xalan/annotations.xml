@@ -1,11 +1,11 @@
 <root>
-    <item name='org.apache.xalan.Version java.lang.String getProduct()'>
+    <item name='org.apache.xalan.Version java.lang.String getImplementationLanguage()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.Version java.lang.String getVersion()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.Version java.lang.String getImplementationLanguage()'>
+    <item name='org.apache.xalan.Version java.lang.String getProduct()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -2,13 +2,7 @@
     <item name='org.apache.xalan.templates.ElemForEach org.apache.xml.dtm.DTMIterator sortNodes(org.apache.xpath.XPathContext, java.util.Vector, org.apache.xml.dtm.DTMIterator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemVariable createGlobalPseudoVarDecl(org.apache.xml.utils.QName, org.apache.xalan.templates.StylesheetRoot, org.apache.xpath.axes.LocPathIterator)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.OutputProperties void setQNameProperties(org.apache.xml.utils.QName, java.util.Vector) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemTemplateElement org.w3c.dom.NodeList getChildNodes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemVariable createLocalPseudoVarDecl(org.apache.xml.utils.QName, org.apache.xalan.templates.ElemTemplateElement, org.apache.xpath.axes.LocPathIterator) 2'>
@@ -38,7 +32,25 @@
     <item name='org.apache.xalan.templates.OutputProperties org.apache.xml.utils.QName getQNameProperty(org.apache.xml.utils.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemNumber java.lang.String long2roman(long, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemLiteralResult java.lang.String getPrefix()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemExsltFuncResult java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.XUnresolvedVariableSimple org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemLiteralResult.Attribute org.w3c.dom.Node cloneNode(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemIf void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemExsltFunction java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemExsltFunction void execute(org.apache.xalan.transformer.TransformerImpl, org.apache.xpath.objects.XObject[]) 1'>
@@ -65,13 +77,10 @@
     <item name='org.apache.xalan.templates.RedundentExprEliminator boolean isAbsolute(org.apache.xpath.axes.LocPathIterator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemVariable org.apache.xpath.objects.XObject getValue(org.apache.xalan.transformer.TransformerImpl, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.StylesheetRoot StylesheetRoot(org.apache.xalan.processor.XSLTSchema, javax.xml.transform.ErrorListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xpath.axes.LocPathIterator changePartToRef(org.apache.xml.utils.QName, org.apache.xpath.axes.WalkingIterator, int, boolean)'>
+    <item name='org.apache.xalan.templates.ElemAttribute java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemWithParam void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
@@ -89,13 +98,19 @@
     <item name='org.apache.xalan.templates.ElemValueOf org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.XUnresolvedVariable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemParam ElemParam(org.apache.xalan.templates.ElemParam) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties void setBooleanProperty(org.apache.xml.utils.QName, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.KeyDeclaration java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemVariable java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemFallback java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.StylesheetRoot org.apache.xalan.templates.ElemTemplate getTemplateComposed(org.apache.xpath.XPathContext, int, org.apache.xml.utils.QName, boolean, org.apache.xml.dtm.DTM) 4'>
@@ -104,19 +119,22 @@
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xpath.axes.WalkingIterator createIteratorFromSteps(org.apache.xpath.axes.WalkingIterator, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemChoose org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+    <item name='org.apache.xalan.templates.ElemText java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemExsltFunction void execute(org.apache.xalan.transformer.TransformerImpl, org.apache.xpath.objects.XObject[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.KeyDeclaration java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemVariable ElemVariable(org.apache.xalan.templates.ElemVariable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemLiteralResult java.lang.String getPrefix()'>
+    <item name='org.apache.xalan.templates.FuncKey org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemTemplateElement java.lang.String getLocalName()'>
+    <item name='org.apache.xalan.templates.ElemNumber java.lang.String tradAlphaCount(long, org.apache.xml.utils.res.XResourceBundle)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemForEach org.apache.xml.dtm.DTMIterator sortNodes(org.apache.xpath.XPathContext, java.util.Vector, org.apache.xml.dtm.DTMIterator) 2'>
@@ -134,13 +152,13 @@
     <item name='org.apache.xalan.templates.ElemForEach void setSelect(org.apache.xpath.XPath) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemLiteralResult org.w3c.dom.NamedNodeMap getAttributes()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemTemplateElement java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemElement void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xpath.axes.WalkingIterator createIteratorFromSteps(org.apache.xpath.axes.WalkingIterator, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemMessage java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemTemplate void endCompose(org.apache.xalan.templates.StylesheetRoot) 0'>
@@ -158,6 +176,9 @@
     <item name='org.apache.xalan.templates.ElemAttributeSet void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemVariable org.apache.xpath.objects.XObject getValue(org.apache.xalan.transformer.TransformerImpl, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemChoose org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -167,16 +188,10 @@
     <item name='org.apache.xalan.templates.ElemVariablePsuedo void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemChoose java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.AVTPartXPath AVTPartXPath(java.lang.String, org.apache.xml.utils.PrefixResolver, org.apache.xpath.compiler.XPathParser, org.apache.xpath.XPathFactory, org.apache.xpath.XPathContext) 4'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.DecimalFormatProperties java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.Stylesheet org.apache.xalan.templates.StylesheetComposed getStylesheetComposed()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemOtherwise java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.Stylesheet void setNonXslTopLevel(org.apache.xml.utils.QName, java.lang.Object) 0'>
@@ -185,7 +200,10 @@
     <item name='org.apache.xalan.templates.ElemComment void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemForEach org.apache.xalan.templates.ElemTemplateElement getTemplateMatch()'>
+    <item name='org.apache.xalan.templates.ElemChoose org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemCopyOf java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.NamespaceAlias void recompose(org.apache.xalan.templates.StylesheetRoot) 0'>
@@ -197,19 +215,22 @@
     <item name='org.apache.xalan.templates.ElemNumber java.lang.String int2singlealphaCount(long, org.apache.xml.utils.res.CharArrayWrapper) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemTemplateElement java.lang.String getTagName()'>
+    <item name='org.apache.xalan.templates.XUnresolvedVariableSimple java.lang.String getTypeString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemVariable java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.FuncDocument org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemText java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemApplyTemplates java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemTemplateElement getElemFromExpression(org.apache.xpath.Expression) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemForEach org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemTemplateElement getElemFromExpression(org.apache.xpath.Expression)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xpath.axes.LocPathIterator changePartToRef(org.apache.xml.utils.QName, org.apache.xpath.axes.WalkingIterator, int, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemNumber int getPreviousNode(org.apache.xpath.XPathContext, int) 0'>
@@ -224,19 +245,10 @@
     <item name='org.apache.xalan.templates.ElemExtensionDecl void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemCallTemplate org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemComment java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemPI org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.FuncDocument void error(org.apache.xpath.XPathContext, java.lang.String, java.lang.Object[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemSort java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.TemplateList org.apache.xalan.templates.ElemTemplate getTemplateFast(org.apache.xpath.XPathContext, int, int, org.apache.xml.utils.QName, int, boolean, org.apache.xml.dtm.DTM) 6'>
@@ -254,19 +266,13 @@
     <item name='org.apache.xalan.templates.TemplateList org.apache.xalan.templates.ElemTemplate getTemplate(org.apache.xml.utils.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemValueOf java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemChoose java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.FuncKey org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemSort org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.StylesheetRoot java.text.DecimalFormatSymbols getDecimalFormatComposed(org.apache.xml.utils.QName) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.XUnresolvedVariable java.lang.String getTypeString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemCopy void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
@@ -293,6 +299,9 @@
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xpath.axes.LocPathIterator changePartToRef(org.apache.xml.utils.QName, org.apache.xpath.axes.WalkingIterator, int, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemForEach java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.OutputProperties void copyFrom(java.util.Properties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -308,19 +317,10 @@
     <item name='org.apache.xalan.templates.FuncFormatNumb org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemFallback java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemPI java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.XUnresolvedVariableSimple java.lang.String getTypeString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.OutputProperties int getIntProperty(org.apache.xml.utils.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemComment org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+    <item name='org.apache.xalan.templates.Stylesheet org.apache.xalan.templates.StylesheetComposed getStylesheetComposed()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.FuncFormatNumb void warn(org.apache.xpath.XPathContext, java.lang.String, java.lang.Object[]) 0'>
@@ -338,13 +338,25 @@
     <item name='org.apache.xalan.templates.OutputProperties java.lang.String getProperty(org.apache.xml.utils.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemCopy java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemWithParam java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemTemplateElement void setEndLocaterInfo(javax.xml.transform.SourceLocator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemSort java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator boolean stepsEqual(org.apache.xpath.axes.WalkingIterator, org.apache.xpath.axes.WalkingIterator, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemNumber java.lang.String int2singlealphaCount(long, org.apache.xml.utils.res.CharArrayWrapper)'>
+    <item name='org.apache.xalan.templates.OutputProperties java.util.Properties getDefaultMethodProperties(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemTemplateElement org.w3c.dom.NodeList getChildNodes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemNumber void int2alphaCount(long, org.apache.xml.utils.res.CharArrayWrapper, org.apache.xml.utils.FastStringBuffer) 2'>
@@ -353,7 +365,7 @@
     <item name='org.apache.xalan.templates.OutputProperties boolean getBooleanProperty(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.Stylesheet java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemElement java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemValueOf void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
@@ -362,28 +374,13 @@
     <item name='org.apache.xalan.templates.OutputProperties void setProperty(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemExsltFuncResult java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemCallTemplate org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemComment org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.StylesheetRoot javax.xml.transform.Transformer newTransformer()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemElement java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemTemplateElement void exprAddChild(org.apache.xpath.ExpressionNode, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemLiteralResult.Attribute org.w3c.dom.Node cloneNode(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemPI org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemNumber java.lang.String long2roman(long, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties void setQNameProperties(org.apache.xml.utils.QName, java.util.Vector) 1'>
@@ -392,10 +389,10 @@
     <item name='org.apache.xalan.templates.OutputProperties void setQNameProperty(java.lang.String, org.apache.xml.utils.QName) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.OutputProperties org.apache.xml.utils.QName getQNameProperty(java.lang.String) 0'>
+    <item name='org.apache.xalan.templates.ElemParam java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemParam java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.OutputProperties org.apache.xml.utils.QName getQNameProperty(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.KeyDeclaration void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
@@ -413,13 +410,7 @@
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemVariable createPseudoVarDecl(org.apache.xalan.templates.ElemTemplateElement, org.apache.xpath.axes.LocPathIterator, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemIf java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemApplyImport void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.Stylesheet org.apache.xalan.templates.Stylesheet getStylesheet()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.FuncKey org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
@@ -431,7 +422,13 @@
     <item name='org.apache.xalan.templates.OutputProperties void copyFrom(java.util.Properties, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.AVTPartXPath java.lang.String getSimpleString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemApplyImport org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.FuncFormatNumb org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator int oldFindAndEliminateRedundant(int, int, org.apache.xpath.ExpressionOwner, org.apache.xalan.templates.ElemTemplateElement, java.util.Vector) 2'>
@@ -443,22 +440,13 @@
     <item name='org.apache.xalan.templates.ElemElement void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.OutputProperties java.util.Properties getDefaultMethodProperties(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemParam void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties OutputProperties(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemMessage java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemCopy java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.AVTPartXPath java.lang.String getSimpleString()'>
+    <item name='org.apache.xalan.templates.ElemLiteralResult org.w3c.dom.NamedNodeMap getAttributes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.TemplateList org.apache.xalan.templates.ElemTemplate getTemplate(org.apache.xpath.XPathContext, int, org.apache.xml.utils.QName, boolean, org.apache.xml.dtm.DTM) 4'>
@@ -470,10 +458,19 @@
     <item name='org.apache.xalan.templates.ElemParam void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.FuncDocument org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemCallTemplate void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemCopyOf org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemTemplateElement java.lang.String getTagName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemWithParam org.apache.xpath.objects.XObject getValue(org.apache.xalan.transformer.TransformerImpl, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemTemplateElement void callVisitors(org.apache.xalan.templates.XSLTVisitor) 0'>
@@ -482,13 +479,13 @@
     <item name='org.apache.xalan.templates.ElemApplyTemplates void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemExsltFunction java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemNumber java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.StylesheetRoot javax.xml.transform.Transformer newTransformer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemWithParam org.apache.xpath.objects.XObject getValue(org.apache.xalan.transformer.TransformerImpl, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemNumber java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemForEach void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
@@ -503,9 +500,6 @@
     <item name='org.apache.xalan.templates.ElemForEach void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemWithParam org.apache.xpath.objects.XObject getValue(org.apache.xalan.transformer.TransformerImpl, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemMessage void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -518,6 +512,9 @@
     <item name='org.apache.xalan.templates.ElemTemplateElement void setPrefixes(org.xml.sax.helpers.NamespaceSupport) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemPI org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator int oldFindAndEliminateRedundant(int, int, org.apache.xpath.ExpressionOwner, org.apache.xalan.templates.ElemTemplateElement, java.util.Vector) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -527,10 +524,10 @@
     <item name='org.apache.xalan.templates.ElemTextLiteral void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemWhen java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemLiteralResult void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemLiteralResult void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
+    <item name='org.apache.xalan.templates.ElemText org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.StylesheetRoot org.apache.xalan.templates.ElemTemplate getTemplateComposed(org.apache.xpath.XPathContext, int, org.apache.xml.utils.QName, int, int, boolean, org.apache.xml.dtm.DTM) 6'>
@@ -542,16 +539,13 @@
     <item name='org.apache.xalan.templates.ElemVariable void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemTemplateElement getElemFromExpression(org.apache.xpath.Expression)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemVariable addVarDeclToElem(org.apache.xalan.templates.ElemTemplateElement, org.apache.xpath.axes.LocPathIterator, org.apache.xalan.templates.ElemVariable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties void setIntProperty(org.apache.xml.utils.QName, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemForEach java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemCallTemplate java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties org.apache.xml.utils.QName getQNameProperty(java.lang.String, java.util.Properties) 1'>
@@ -572,25 +566,22 @@
     <item name='org.apache.xalan.templates.Stylesheet void replaceTemplate(org.apache.xalan.templates.ElemTemplate, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemLiteralResult.Attribute org.w3c.dom.NodeList getChildNodes()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemVariable void recompose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemApplyTemplates java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemForEach org.apache.xml.dtm.DTMIterator sortNodes(org.apache.xpath.XPathContext, java.util.Vector, org.apache.xml.dtm.DTMIterator)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemText org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+    <item name='org.apache.xalan.templates.ElemIf java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemSort void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xpath.axes.WalkingIterator createIteratorFromSteps(org.apache.xpath.axes.WalkingIterator, int)'>
+    <item name='org.apache.xalan.templates.ElemComment org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemTemplateElement org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+    <item name='org.apache.xalan.templates.ElemTemplate java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties org.apache.xml.utils.QName getQNameProperty(java.lang.String, java.util.Properties) 0'>
@@ -599,7 +590,13 @@
     <item name='org.apache.xalan.templates.ElemIf void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.XUnresolvedVariableSimple org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xalan.templates.ElemNumber java.lang.String int2singlealphaCount(long, org.apache.xml.utils.res.CharArrayWrapper)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemComment java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemPI java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.AVTPartXPath void evaluate(org.apache.xpath.XPathContext, org.apache.xml.utils.FastStringBuffer, int, org.apache.xml.utils.PrefixResolver) 0'>
@@ -608,19 +605,28 @@
     <item name='org.apache.xalan.templates.ElemVariable boolean accept(org.apache.xalan.templates.XSLTVisitor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemTemplate org.apache.xalan.templates.StylesheetComposed getStylesheetComposed()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.OutputProperties java.lang.String getProperty(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemNumber void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemAttribute java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.Stylesheet org.apache.xalan.templates.Stylesheet getStylesheet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemTemplateElement java.lang.String getLocalName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemTextLiteral java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.ElemOtherwise java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator boolean visitPredicate(org.apache.xpath.ExpressionOwner, org.apache.xpath.Expression) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemCopyOf java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.FuncDocument org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
@@ -635,10 +641,13 @@
     <item name='org.apache.xalan.templates.ElemNumber int getTargetNode(org.apache.xpath.XPathContext, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.OutputProperties java.util.Vector getQNameProperties(org.apache.xml.utils.QName) 0'>
+    <item name='org.apache.xalan.templates.ElemValueOf java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.XUnresolvedVariable java.lang.String getTypeString()'>
+    <item name='org.apache.xalan.templates.ElemAttributeSet java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.OutputProperties java.util.Vector getQNameProperties(org.apache.xml.utils.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.Stylesheet void setTemplate(org.apache.xalan.templates.ElemTemplate) 0'>
@@ -647,7 +656,7 @@
     <item name='org.apache.xalan.templates.ElemCopyOf void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemTemplate java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemTemplateElement org.w3c.dom.Node appendChild(org.w3c.dom.Node)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator boolean visitTopLevelInstruction(org.apache.xalan.templates.ElemTemplateElement) 0'>
@@ -659,22 +668,25 @@
     <item name='org.apache.xalan.templates.ElemTemplateElement int compareTo(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemNumber java.lang.String tradAlphaCount(long, org.apache.xml.utils.res.XResourceBundle)'>
+    <item name='org.apache.xalan.templates.ElemUse void setUseAttributeSets(java.util.Vector) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemUse void setUseAttributeSets(java.util.Vector) 0'>
+    <item name='org.apache.xalan.templates.ElemApplyImport java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.DecimalFormatProperties void recompose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemTemplateElement org.w3c.dom.Node appendChild(org.w3c.dom.Node)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.VarNameCollector boolean visitVariableRef(org.apache.xpath.ExpressionOwner, org.apache.xpath.operations.Variable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemTemplateElement org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemExsltFuncResult void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.DecimalFormatProperties java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
@@ -695,13 +707,19 @@
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemVariable createGlobalPseudoVarDecl(org.apache.xml.utils.QName, org.apache.xalan.templates.StylesheetRoot, org.apache.xpath.axes.LocPathIterator) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.FuncFormatNumb org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xalan.templates.ElemTemplateElement java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemSort void setSelect(org.apache.xpath.XPath) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.AVTPartSimple void evaluate(org.apache.xpath.XPathContext, org.apache.xml.utils.FastStringBuffer, int, org.apache.xml.utils.PrefixResolver) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.Stylesheet java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemVariable createGlobalPseudoVarDecl(org.apache.xml.utils.QName, org.apache.xalan.templates.StylesheetRoot, org.apache.xpath.axes.LocPathIterator)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemAttributeSet org.apache.xalan.templates.ElemTemplateElement appendChildElem(org.apache.xalan.templates.ElemTemplateElement) 0'>
@@ -713,25 +731,16 @@
     <item name='org.apache.xalan.templates.OutputProperties boolean isLegalPropertyKey(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemCallTemplate java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemVariable org.apache.xpath.objects.XObject getValue(org.apache.xalan.transformer.TransformerImpl, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemVariable org.apache.xpath.objects.XObject getValue(org.apache.xalan.transformer.TransformerImpl, int) 0'>
+    <item name='org.apache.xalan.templates.ElemWhen java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator org.apache.xalan.templates.ElemTemplateElement getPrevElementWithinContext(org.apache.xalan.templates.ElemTemplateElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemAttributeSet java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemTemplate org.apache.xalan.templates.StylesheetComposed getStylesheetComposed()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemTemplateElement org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.TemplateList org.apache.xalan.templates.TemplateList.TemplateWalker getWalker()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator void diagnoseLineNumber(org.apache.xpath.Expression) 0'>
@@ -746,12 +755,6 @@
     <item name='org.apache.xalan.templates.ElemVariable void setParentElem(org.apache.xalan.templates.ElemTemplateElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemTextLiteral java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.XUnresolvedVariable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemApplyTemplates void execute(org.apache.xalan.transformer.TransformerImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -761,16 +764,19 @@
     <item name='org.apache.xalan.templates.ElemWhen void compose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.templates.ElemLiteralResult.Attribute org.w3c.dom.NodeList getChildNodes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.templates.ElemLiteralResult void setXmlSpace(org.apache.xalan.templates.AVT) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemNumber org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemAttributeSet void recompose(org.apache.xalan.templates.StylesheetRoot) 0'>
+    <item name='org.apache.xalan.templates.ElemForEach org.apache.xalan.templates.ElemTemplateElement getTemplateMatch()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemApplyImport java.lang.String getNodeName()'>
+    <item name='org.apache.xalan.templates.ElemAttributeSet void recompose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.RedundentExprEliminator boolean visitInstruction(org.apache.xalan.templates.ElemTemplateElement) 0'>
@@ -779,19 +785,13 @@
     <item name='org.apache.xalan.templates.OutputProperties void setQNameProperty(org.apache.xml.utils.QName, org.apache.xml.utils.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemWithParam java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.templates.ElemCallTemplate void endCompose(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.OutputProperties void copyFrom(org.apache.xalan.templates.OutputProperties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.templates.ElemForEach org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.templates.ElemForEach org.apache.xml.dtm.DTMIterator sortNodes(org.apache.xpath.XPathContext, java.util.Vector, org.apache.xml.dtm.DTMIterator)'>
+    <item name='org.apache.xalan.templates.TemplateList org.apache.xalan.templates.TemplateList.TemplateWalker getWalker()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.templates.ElemForEach org.apache.xalan.templates.ElemTemplateElement appendChild(org.apache.xalan.templates.ElemTemplateElement) 0'>

@@ -2,19 +2,19 @@
     <item name='org.apache.xml.dtm.DTMManager org.apache.xml.dtm.DTMManager newInstance(org.apache.xml.utils.XMLStringFactory)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.dtm.DTMException java.lang.String getMessageAndLocation()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.dtm.DTMConfigurationException DTMConfigurationException(java.lang.Throwable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.DTMException java.lang.String getMessageAndLocation()'>
+    <item name='org.apache.xml.dtm.DTMException java.lang.Throwable initCause(java.lang.Throwable)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.DTMException DTMException(java.lang.Throwable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.DTMException void printStackTrace(java.io.PrintStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.dtm.DTMException java.lang.Throwable initCause(java.lang.Throwable)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

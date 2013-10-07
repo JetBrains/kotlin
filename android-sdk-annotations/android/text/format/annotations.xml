@@ -1,50 +1,23 @@
 <root>
-    <item name='android.text.format.DateUtils java.lang.String formatElapsedTime(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat java.text.DateFormat getLongDateFormat(android.content.Context)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat java.text.DateFormat getTimeFormat(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat java.text.DateFormat getTimeFormat(android.content.Context)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.format.DateFormat char[] getDateFormatOrder(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeDateTimeString(android.content.Context, long, long, long, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateUtils java.lang.String formatElapsedTime(java.lang.StringBuilder, long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateUtils java.util.Formatter formatDateRange(android.content.Context, java.util.Formatter, long, long, int) 1'>
+    <item name='android.text.format.DateUtils java.lang.CharSequence formatSameDayTime(long, long, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.DateFormat java.lang.String getTimeFormatString(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, long) 0'>
+    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Calendar) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.DateFormat java.text.DateFormat getDateFormatForSetting(android.content.Context, java.lang.String)'>
+    <item name='android.text.format.DateUtils java.lang.String formatDateRange(android.content.Context, long, long, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Date) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.Time void clear(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.Time boolean parse(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat char[] getDateFormatOrder(android.content.Context)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateUtils java.lang.CharSequence formatSameDayTime(long, long, int, int)'>
+    <item name='android.text.format.Time java.lang.String format2445()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.DateFormat java.lang.String getBestDateTimePattern(java.util.Locale, java.lang.String) 0'>
@@ -53,61 +26,25 @@
     <item name='android.text.format.Time int compare(android.text.format.Time, android.text.format.Time) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.Formatter java.lang.String formatFileSize(android.content.Context, long)'>
+    <item name='android.text.format.DateFormat char[] getDateFormatOrder(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.DateFormat boolean is24HourFormat(android.content.Context) 0'>
+    <item name='android.text.format.DateUtils java.lang.String formatElapsedTime(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.Time boolean before(android.text.format.Time) 0'>
+    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeTimeSpanString(android.content.Context, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time java.lang.String format(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.DateUtils java.lang.CharSequence formatDuration(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.Time void set(android.text.format.Time) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.Time boolean after(android.text.format.Time) 0'>
+    <item name='android.text.format.DateFormat java.text.DateFormat getMediumDateFormat(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Calendar) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Calendar)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeTimeSpanString(android.content.Context, long, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Date) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.Time Time(android.text.format.Time) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateUtils java.lang.String formatDateTime(android.content.Context, long, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat java.text.DateFormat getDateFormat(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.Time Time(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.Formatter java.lang.String formatShortFileSize(android.content.Context, long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateFormat java.text.DateFormat getDateFormatForSetting(android.content.Context, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateUtils java.util.Formatter formatDateRange(android.content.Context, java.util.Formatter, long, long, int, java.lang.String) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.Time int compare(android.text.format.Time, android.text.format.Time) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeTimeSpanString(android.content.Context, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.DateUtils java.util.Formatter formatDateRange(android.content.Context, java.util.Formatter, long, long, int, java.lang.String)'>
@@ -116,25 +53,109 @@
     <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Date)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, long)'>
+    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeDateTimeString(android.content.Context, long, long, long, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.DateFormat java.text.DateFormat getMediumDateFormat(android.content.Context)'>
+    <item name='android.text.format.Time Time(android.text.format.Time) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.DateUtils java.lang.String formatDateRange(android.content.Context, long, long, int)'>
+    <item name='android.text.format.Time Time(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.text.DateFormat getDateFormatForSetting(android.content.Context, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeTimeSpanString(android.content.Context, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time int compare(android.text.format.Time, android.text.format.Time) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Formatter java.lang.String formatFileSize(android.content.Context, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.text.DateFormat getTimeFormat(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.Time boolean parse3339(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.format.Time boolean isEpoch(android.text.format.Time) 0'>
+    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.text.DateFormat getTimeFormat(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateUtils java.util.Formatter formatDateRange(android.content.Context, java.util.Formatter, long, long, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.format.DateFormat java.text.DateFormat getDateFormat(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.format.DateUtils java.lang.String formatDateTime(android.content.Context, long, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time void clear(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time boolean parse(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat boolean is24HourFormat(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time java.lang.String format3339(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeDateTimeString(android.content.Context, long, long, long, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time boolean before(android.text.format.Time) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.text.DateFormat getLongDateFormat(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time void set(android.text.format.Time) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time boolean after(android.text.format.Time) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeTimeSpanString(android.content.Context, long, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.format.DateUtils java.util.Formatter formatDateRange(android.content.Context, java.util.Formatter, long, long, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Date) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.text.DateFormat getDateFormat(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.lang.CharSequence format(java.lang.CharSequence, java.util.Calendar)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateUtils java.util.Formatter formatDateRange(android.content.Context, java.util.Formatter, long, long, int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateUtils java.lang.CharSequence getRelativeTimeSpanString(android.content.Context, long, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateUtils java.lang.String formatElapsedTime(java.lang.StringBuilder, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.DateFormat java.text.DateFormat getDateFormatForSetting(android.content.Context, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Formatter java.lang.String formatShortFileSize(android.content.Context, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.format.Time boolean isEpoch(android.text.format.Time) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

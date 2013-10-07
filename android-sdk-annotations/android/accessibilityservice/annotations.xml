@@ -1,17 +1,20 @@
 <root>
-    <item name='android.accessibilityservice.AccessibilityServiceInfo java.util.List&lt;android.accessibilityservice.AccessibilityServiceInfo.CapabilityInfo&gt; getCapabilityInfos()'>
+    <item name='android.accessibilityservice.AccessibilityServiceInfo java.lang.String feedbackTypeToString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accessibilityservice.IAccessibilityServiceClient.Stub android.os.IBinder asBinder()'>
+    <item name='android.accessibilityservice.AccessibilityService android.os.IBinder onBind(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accessibilityservice.AccessibilityServiceInfo void updateDynamicallyConfigurableProperties(android.accessibilityservice.AccessibilityServiceInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accessibilityservice.AccessibilityServiceInfo java.lang.String loadDescription(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accessibilityservice.AccessibilityService.IAccessibilityServiceClientWrapper void executeMessage(android.os.Message) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accessibilityservice.AccessibilityService android.os.IBinder onBind(android.content.Intent)'>
+    <item name='android.accessibilityservice.IAccessibilityServiceConnection.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accessibilityservice.AccessibilityServiceInfo void setComponentName(android.content.ComponentName) 0'>
@@ -20,22 +23,25 @@
     <item name='android.accessibilityservice.AccessibilityServiceInfo AccessibilityServiceInfo(android.content.pm.ResolveInfo, android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accessibilityservice.AccessibilityServiceInfo AccessibilityServiceInfo(android.content.pm.ResolveInfo, android.content.Context) 1'>
+    <item name='android.accessibilityservice.IAccessibilityServiceClient.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accessibilityservice.AccessibilityServiceInfo java.lang.String feedbackTypeToString(int)'>
+    <item name='android.accessibilityservice.AccessibilityServiceInfo AccessibilityServiceInfo(android.content.pm.ResolveInfo, android.content.Context) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accessibilityservice.AccessibilityServiceInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accessibilityservice.AccessibilityServiceInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.accessibilityservice.AccessibilityServiceInfo java.lang.String capabilityToString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accessibilityservice.IAccessibilityServiceConnection.Stub android.os.IBinder asBinder()'>
+    <item name='android.accessibilityservice.AccessibilityServiceInfo java.util.List&lt;android.accessibilityservice.AccessibilityServiceInfo.CapabilityInfo&gt; getCapabilityInfos()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accessibilityservice.AccessibilityService android.os.IBinder onBind(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accessibilityservice.AccessibilityServiceInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

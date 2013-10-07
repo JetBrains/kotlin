@@ -68,6 +68,9 @@
     <item name='org.ccil.cowan.tagsoup.Element boolean canContain(org.ccil.cowan.tagsoup.Element) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.ccil.cowan.tagsoup.ElementType java.lang.String localName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.ccil.cowan.tagsoup.PYXWriter PYXWriter(java.io.Writer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -105,9 +108,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.ccil.cowan.tagsoup.ElementType ElementType(java.lang.String, int, int, int, org.ccil.cowan.tagsoup.Schema) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.ccil.cowan.tagsoup.ElementType java.lang.String localName(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.ccil.cowan.tagsoup.PYXWriter void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>

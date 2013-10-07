@@ -5,22 +5,22 @@
     <item name='org.apache.http.conn.ssl.AbstractVerifier void verify(java.lang.String, java.lang.String[], java.lang.String[], boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.conn.ssl.SSLSocketFactory org.apache.http.conn.ssl.SSLSocketFactory getSocketFactory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.conn.ssl.AbstractVerifier boolean acceptableCountryWildcard(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.ssl.AbstractVerifier void verify(java.lang.String, javax.net.ssl.SSLSocket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.ssl.StrictHostnameVerifier java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.conn.ssl.AbstractVerifier java.lang.String[] getCNs(java.security.cert.X509Certificate) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.ssl.AllowAllHostnameVerifier java.lang.String toString()'>
+    <item name='org.apache.http.conn.ssl.BrowserCompatHostnameVerifier java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.ssl.BrowserCompatHostnameVerifier java.lang.String toString()'>
+    <item name='org.apache.http.conn.ssl.StrictHostnameVerifier java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.ssl.SSLSocketFactory boolean isSecure(java.net.Socket) 0'>
@@ -32,13 +32,13 @@
     <item name='org.apache.http.conn.ssl.AbstractVerifier int countDots(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.ssl.SSLSocketFactory org.apache.http.conn.ssl.SSLSocketFactory getSocketFactory()'>
+    <item name='org.apache.http.conn.ssl.SSLSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 5'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.ssl.SSLSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.ssl.SSLSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 5'>
+    <item name='org.apache.http.conn.ssl.AllowAllHostnameVerifier java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.ssl.AbstractVerifier void verify(java.lang.String, java.security.cert.X509Certificate) 1'>

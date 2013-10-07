@@ -47,6 +47,9 @@
     <item name='org.apache.http.protocol.RequestDate void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.BasicHttpProcessor org.apache.http.protocol.BasicHttpProcessor copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.HttpRequestHandlerRegistry boolean matchUriRequestPattern(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -56,9 +59,6 @@
     <item name='org.apache.http.protocol.HttpRequestHandlerRegistry void register(java.lang.String, org.apache.http.protocol.HttpRequestHandler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doReceiveResponse(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.protocol.SyncBasicHttpContext java.lang.Object getAttribute(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -66,9 +66,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.ResponseConnControl void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.ResponseDate void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
@@ -116,6 +113,9 @@
     <item name='org.apache.http.protocol.HttpService void handleRequest(org.apache.http.HttpServerConnection, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doReceiveResponse(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.HttpRequestHandlerRegistry void setHandlers(java.util.Map) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -146,9 +146,6 @@
     <item name='org.apache.http.protocol.BasicHttpContext java.lang.Object removeAttribute(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.BasicHttpProcessor org.apache.http.protocol.BasicHttpProcessor copy()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor boolean canResponseHaveBody(org.apache.http.HttpRequest, org.apache.http.HttpResponse) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -162,6 +159,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.UriPatternMatcher void setHandlers(java.util.Map) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.UriPatternMatcher java.lang.Object lookup(java.lang.String) 0'>

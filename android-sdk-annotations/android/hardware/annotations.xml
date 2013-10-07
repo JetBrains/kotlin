@@ -1,4 +1,7 @@
 <root>
+    <item name='android.hardware.Sensor java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.SerialPort void open(android.os.ParcelFileDescriptor, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -8,13 +11,10 @@
     <item name='android.hardware.SystemSensorManager boolean registerListenerImpl(android.hardware.SensorEventListener, android.hardware.Sensor, int, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.SensorManager float[] getOrientation(float[], float[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.hardware.Camera.Parameters android.hardware.Camera.Size getJpegThumbnailSize()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.SensorManager java.util.List&lt;android.hardware.Sensor&gt; getSensorList(int)'>
+    <item name='android.hardware.SensorManager float[] getOrientation(float[], float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.SensorManager void getRotationMatrixFromVector(float[], float[]) 1'>
@@ -29,7 +29,10 @@
     <item name='android.hardware.SerialPort void write(java.nio.ByteBuffer, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.Camera android.hardware.Camera open(int)'>
+    <item name='android.hardware.Camera void getCameraInfo(int, android.hardware.Camera.CameraInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.ISerialManager.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.SensorManager boolean getRotationMatrix(float[], float[], float[], float[]) 2'>
@@ -38,10 +41,7 @@
     <item name='android.hardware.SensorManager void getQuaternionFromVector(float[], float[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.ISerialManager.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.Sensor java.lang.String toString()'>
+    <item name='android.hardware.SensorManager java.util.List&lt;android.hardware.Sensor&gt; getSensorList(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.Camera.Parameters void set(java.lang.String, java.lang.String) 0'>
@@ -50,7 +50,7 @@
     <item name='android.hardware.SensorManager boolean remapCoordinateSystem(float[], int, int, float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.Camera.Parameters java.util.List&lt;java.lang.Integer&gt; getSupportedPreviewFormats()'>
+    <item name='android.hardware.SystemSensorManager java.util.List&lt;android.hardware.Sensor&gt; getFullSensorList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.Camera.Parameters java.lang.String flatten()'>
@@ -59,34 +59,46 @@
     <item name='android.hardware.SensorManager void getRotationMatrixFromVector(float[], float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.SensorManager float[] getOrientation(float[], float[])'>
+    <item name='android.hardware.Camera.Parameters void setColorEffect(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters java.util.List&lt;java.lang.Integer&gt; getSupportedPreviewFormats()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.Camera.Parameters void getPreviewFpsRange(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.Camera android.hardware.Camera.Parameters getParameters()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.SensorManager float getInclination(float[]) 0'>
+    <item name='android.hardware.Camera.Parameters void setFlashMode(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.SensorManager float[] getOrientation(float[], float[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.SensorManager float getInclination(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.SensorManager void getAngleChange(float[], float[], float[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.Camera.Parameters java.util.List&lt;java.lang.Integer&gt; getSupportedPictureFormats()'>
+    <item name='android.hardware.Camera android.hardware.Camera.Parameters getParameters()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.SystemSensorManager java.util.List&lt;android.hardware.Sensor&gt; getFullSensorList()'>
+    <item name='android.hardware.Camera.Parameters void setAntibanding(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.Camera android.hardware.Camera.Parameters getEmptyParameters()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.Camera.Parameters void setSceneMode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.ISerialManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.SystemSensorManager SystemSensorManager(android.content.Context, android.os.Looper) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setWhiteBalance(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.SensorManager boolean getRotationMatrix(float[], float[], float[], float[]) 3'>
@@ -101,10 +113,28 @@
     <item name='android.hardware.SensorManager void getAngleChange(float[], float[], float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.Camera android.hardware.Camera open(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.SerialPort int read(java.nio.ByteBuffer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.Camera.Parameters void setFocusMode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.SensorManager float[] getOrientation(float[], float[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void set(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.SensorManager void getQuaternionFromVector(float[], float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters java.util.List&lt;java.lang.Integer&gt; getSupportedPictureFormats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.Camera.Parameters void setGpsProcessingMethod(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -2,10 +2,10 @@
     <item name='org.bouncycastle.asn1.util.ASN1Dump java.lang.String dumpAsString(java.lang.Object, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.util.ASN1Dump java.lang.String dumpAsString(java.lang.Object, boolean) 0'>
+    <item name='org.bouncycastle.asn1.util.ASN1Dump java.lang.String dumpAsString(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.util.ASN1Dump java.lang.String dumpAsString(java.lang.Object)'>
+    <item name='org.bouncycastle.asn1.util.ASN1Dump java.lang.String dumpAsString(java.lang.Object, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.util.ASN1Dump java.lang.String dumpAsString(java.lang.Object) 0'>

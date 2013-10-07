@@ -8,6 +8,9 @@
     <item name='org.apache.harmony.security.x501.Name Name(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x501.AttributeTypeAndValue org.apache.harmony.security.utils.ObjectIdentifier getObjectIdentifier(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x501.AttributeValue void appendQEString(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -15,9 +18,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x501.AttributeTypeAndValue void appendName(java.lang.String, java.lang.StringBuilder) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x501.AttributeTypeAndValue org.apache.harmony.security.utils.ObjectIdentifier getObjectIdentifier(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x501.Name javax.security.auth.x500.X500Principal getX500Principal()'>

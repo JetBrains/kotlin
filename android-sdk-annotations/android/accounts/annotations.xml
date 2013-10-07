@@ -5,13 +5,13 @@
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;java.lang.Boolean&gt; removeAccount(android.accounts.Account, android.accounts.AccountManagerCallback&lt;java.lang.Boolean&gt;, android.os.Handler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, android.os.Bundle, boolean, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accounts.AccountManager java.lang.String getUserData(android.accounts.Account, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accounts.Account java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.accounts.AccountManager android.content.Intent newChooseAccountIntent(android.accounts.Account, java.util.ArrayList&lt;android.accounts.Account&gt;, java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String[], android.os.Bundle)'>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; addAccount(java.lang.String, java.lang.String, java.lang.String[], android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager void setAuthToken(android.accounts.Account, java.lang.String, java.lang.String) 1'>
@@ -44,22 +44,19 @@
     <item name='android.accounts.ChooseTypeAndAccountActivity void onSaveInstanceState(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; confirmCredentials(android.accounts.Account, android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, boolean, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager android.accounts.Account[] getSharedAccounts(android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accounts.AbstractAccountAuthenticator android.os.Bundle getAccountRemovalAllowed(android.accounts.AccountAuthenticatorResponse, android.accounts.Account)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; confirmCredentialsAsUser(android.accounts.Account, android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler, android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager void addOnAccountsUpdatedListener(android.accounts.OnAccountsUpdateListener, android.os.Handler, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.accounts.AuthenticatorDescription java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager void setUserData(android.accounts.Account, java.lang.String, java.lang.String) 1'>
@@ -77,9 +74,6 @@
     <item name='android.accounts.AccountManager java.lang.String getUserData(android.accounts.Account, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accounts.IAccountAuthenticator.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.accounts.GrantCredentialsPermissionActivity void onClick(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -89,10 +83,19 @@
     <item name='android.accounts.AccountManager void clearPassword(android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accounts.IAccountAuthenticatorResponse.Stub android.os.IBinder asBinder()'>
+    <item name='android.accounts.IAccountAuthenticator.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;java.lang.Boolean&gt; removeAccount(android.accounts.Account, android.accounts.AccountManagerCallback&lt;java.lang.Boolean&gt;, android.os.Handler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, boolean, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager java.lang.String peekAuthToken(android.accounts.Account, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthTokenByFeatures(java.lang.String, java.lang.String, java.lang.String[], android.app.Activity, android.os.Bundle, android.os.Bundle, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AuthenticatorDescription AuthenticatorDescription(java.lang.String, java.lang.String, int, int, int, int) 0'>
@@ -113,13 +116,13 @@
     <item name='android.accounts.AccountManager void setUserData(android.accounts.Account, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthTokenByFeatures(java.lang.String, java.lang.String, java.lang.String[], android.app.Activity, android.os.Bundle, android.os.Bundle, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.accounts.AuthenticatorDescription android.accounts.AuthenticatorDescription newKey(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; confirmCredentialsAsUser(android.accounts.Account, android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler, android.os.UserHandle) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AbstractAccountAuthenticator android.os.Bundle getAccountRemovalAllowed(android.accounts.AccountAuthenticatorResponse, android.accounts.Account)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountAndUser java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler) 0'>
@@ -128,10 +131,19 @@
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;java.lang.Boolean&gt; hasFeatures(android.accounts.Account, java.lang.String[], android.accounts.AccountManagerCallback&lt;java.lang.Boolean&gt;, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accounts.IAccountManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AuthenticatorDescription java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accounts.AuthenticatorDescription android.accounts.AuthenticatorDescription newKey(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager java.lang.String blockingGetAuthToken(android.accounts.Account, java.lang.String, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, boolean, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler) 0'>
@@ -140,13 +152,7 @@
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, android.os.Bundle, boolean, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accounts.IAccountManager.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.accounts.AuthenticatorDescription void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.accounts.AccountAndUser java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager boolean addSharedAccount(android.accounts.Account, android.os.UserHandle) 1'>
@@ -155,16 +161,19 @@
     <item name='android.accounts.AccountAuthenticatorResponse AccountAuthenticatorResponse(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accounts.AuthenticatorDescription android.accounts.AuthenticatorDescription newKey(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; getAuthToken(android.accounts.Account, java.lang.String, android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.accounts.IAccountManagerResponse.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.accounts.Account[]&gt; getAccountsByTypeAndFeatures(java.lang.String, java.lang.String[], android.accounts.AccountManagerCallback&lt;android.accounts.Account[]&gt;, android.os.Handler) 0'>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;java.lang.Boolean&gt; hasFeatures(android.accounts.Account, java.lang.String[], android.accounts.AccountManagerCallback&lt;java.lang.Boolean&gt;, android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager void setAuthToken(android.accounts.Account, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.accounts.Account[]&gt; getAccountsByTypeAndFeatures(java.lang.String, java.lang.String[], android.accounts.AccountManagerCallback&lt;android.accounts.Account[]&gt;, android.os.Handler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.Account void writeToParcel(android.os.Parcel, int) 0'>
@@ -176,10 +185,22 @@
     <item name='android.accounts.AccountManager java.lang.String blockingGetAuthToken(android.accounts.Account, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accounts.AccountManager android.content.Intent newChooseAccountIntent(android.accounts.Account, java.util.ArrayList&lt;android.accounts.Account&gt;, java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String[], android.os.Bundle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountAuthenticatorResponse void onResult(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accounts.AccountManager void removeOnAccountsUpdatedListener(android.accounts.OnAccountsUpdateListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accounts.IAccountManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; addAccount(java.lang.String, java.lang.String, java.lang.String[], android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; editProperties(java.lang.String, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; editProperties(java.lang.String, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler) 0'>
@@ -194,7 +215,19 @@
     <item name='android.accounts.AccountManagerResponse AccountManagerResponse(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;android.os.Bundle&gt; updateCredentials(android.accounts.Account, java.lang.String, android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback&lt;android.os.Bundle&gt;, android.os.Handler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.accounts.AccountManager android.accounts.AccountManagerFuture&lt;java.lang.String&gt; getAuthTokenLabel(java.lang.String, java.lang.String, android.accounts.AccountManagerCallback&lt;java.lang.String&gt;, android.os.Handler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.IAccountAuthenticatorResponse.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.Account java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.accounts.IAccountManagerResponse.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.accounts.AccountManager boolean addAccountExplicitly(android.accounts.Account, java.lang.String, android.os.Bundle) 0'>

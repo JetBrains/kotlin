@@ -2,6 +2,9 @@
     <item name='org.apache.commons.io.FileUtils void moveDirectory(java.io.File, java.io.File) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.InputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.FileUtils org.apache.commons.io.LineIterator lineIterator(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -11,19 +14,25 @@
     <item name='org.apache.commons.io.FileUtils void copyDirectory(java.io.File, java.io.File, java.io.FileFilter, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.FileUtils java.io.File[] toFiles(java.net.URL[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.FileUtils void writeStringToFile(java.io.File, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.CopyUtils void copy(java.io.InputStream, java.io.Writer, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils org.apache.commons.io.LineIterator lineIterator(java.io.File)'>
+    <item name='org.apache.commons.io.IOUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.InputStream, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.CopyUtils void copy(java.lang.String, java.io.OutputStream) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils int readSwappedUnsignedShort(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils java.util.zip.Checksum checksum(java.io.File, java.util.zip.Checksum)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void forceDelete(java.io.File) 0'>
@@ -42,6 +51,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOUtils void copy(java.io.Reader, java.io.OutputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils java.lang.String toString(java.io.Reader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils org.apache.commons.io.LineIterator lineIterator(java.io.InputStream, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void forceDeleteOnExit(java.io.File) 0'>
@@ -65,15 +80,6 @@
     <item name='org.apache.commons.io.EndianUtils int readSwappedUnsignedShort(byte[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils java.lang.String readFileToString(java.io.File)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.FileUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.File, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOUtils java.io.InputStream toInputStream(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.CopyUtils void copy(java.io.InputStream, java.io.Writer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -81,12 +87,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOUtils java.io.InputStream toInputStream(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.FileUtils java.io.FileOutputStream openOutputStream(java.io.File)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.Reader, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils int readSwappedInteger(java.io.InputStream) 0'>
@@ -101,19 +101,28 @@
     <item name='org.apache.commons.io.IOUtils char[] toCharArray(java.io.InputStream, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.File)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.FileUtils void moveDirectory(java.io.File, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void writeLines(java.io.File, java.lang.String, java.util.Collection&lt;java.lang.Object&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.IOUtils char[] toCharArray(java.io.InputStream, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.FileUtils boolean isFileOlder(java.io.File, java.util.Date) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils void writeSwappedDouble(java.io.OutputStream, double) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.Reader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils java.lang.String toString(java.io.InputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.HexDump void dump(byte[], long, java.io.OutputStream, int) 2'>
@@ -123,9 +132,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils boolean waitFor(java.io.File, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.FileDeleteStrategy java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils boolean isFileOlder(java.io.File, java.io.File) 1'>
@@ -155,12 +161,6 @@
     <item name='org.apache.commons.io.FileUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.File, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileCleaner org.apache.commons.io.FileCleaningTracker getInstance()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.FileUtils java.util.Collection&lt;java.io.File&gt; listFiles(java.io.File, java.lang.String[], boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.FileUtils boolean isFileNewer(java.io.File, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -185,7 +185,13 @@
     <item name='org.apache.commons.io.CopyUtils int copy(java.io.InputStream, java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.FileUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.File)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.FileUtils void copyDirectory(java.io.File, java.io.File, java.io.FileFilter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOCase org.apache.commons.io.IOCase forName(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOCase boolean checkEquals(java.lang.String, java.lang.String) 1'>
@@ -197,19 +203,16 @@
     <item name='org.apache.commons.io.FileUtils void moveFile(java.io.File, java.io.File) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils java.io.FileInputStream openInputStream(java.io.File)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.FileUtils boolean isFileNewer(java.io.File, java.io.File) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.FileUtils byte[] readFileToByteArray(java.io.File)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils boolean contentEquals(java.io.File, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils void writeSwappedLong(byte[], int, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils java.lang.String toString(byte[], java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void cleanDirectory(java.io.File) 0'>
@@ -239,22 +242,22 @@
     <item name='org.apache.commons.io.FileUtils boolean contentEquals(java.io.File, java.io.File) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.InputStream)'>
+    <item name='org.apache.commons.io.FileDeleteStrategy java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils org.apache.commons.io.LineIterator lineIterator(java.io.File, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOCase boolean checkEquals(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils org.apache.commons.io.LineIterator lineIterator(java.io.File, java.lang.String)'>
+    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.Reader)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils byte[] readFileToByteArray(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOUtils long copyLarge(java.io.InputStream, java.io.OutputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.InputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileSystemUtils long freeSpaceKb(java.lang.String) 0'>
@@ -269,25 +272,19 @@
     <item name='org.apache.commons.io.FileUtils java.io.File[] convertFileCollectionToFileArray(java.util.Collection&lt;java.io.File&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils java.util.zip.Checksum checksum(java.io.File, java.util.zip.Checksum)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.FileUtils void copyFile(java.io.File, java.io.File, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils java.lang.String toString(byte[])'>
+    <item name='org.apache.commons.io.FileUtils void copyFile(java.io.File, java.io.File, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils void copyFile(java.io.File, java.io.File, boolean) 0'>
+    <item name='org.apache.commons.io.IOUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.InputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils void writeSwappedInteger(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void writeByteArrayToFile(java.io.File, byte[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileCleaner void track(java.lang.String, java.lang.Object, org.apache.commons.io.FileDeleteStrategy) 0'>
@@ -302,13 +299,16 @@
     <item name='org.apache.commons.io.CopyUtils void copy(java.lang.String, java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils java.lang.String toString(java.io.InputStream, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.CopyUtils void copy(java.lang.String, java.io.Writer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.IOUtils java.lang.String toString(java.io.InputStream, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.FileUtils boolean isFileNewer(java.io.File, java.util.Date) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils byte[] readFileToByteArray(java.io.File)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void moveToDirectory(java.io.File, java.io.File, boolean) 1'>
@@ -320,13 +320,13 @@
     <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.Reader) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.IOUtils char[] toCharArray(java.io.Reader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.InputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOUtils java.io.InputStream toInputStream(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void copyFile(java.io.File, java.io.File) 1'>
@@ -338,16 +338,7 @@
     <item name='org.apache.commons.io.IOUtils org.apache.commons.io.LineIterator lineIterator(java.io.Reader) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils java.lang.String byteCountToDisplaySize(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.FileUtils java.util.zip.Checksum checksum(java.io.File, java.util.zip.Checksum) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.FileUtils java.util.Collection&lt;java.io.File&gt; listFiles(java.io.File, org.apache.commons.io.filefilter.IOFileFilter, org.apache.commons.io.filefilter.IOFileFilter)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOCase org.apache.commons.io.IOCase forName(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void copyDirectory(java.io.File, java.io.File) 0'>
@@ -377,9 +368,6 @@
     <item name='org.apache.commons.io.CopyUtils void copy(java.lang.String, java.io.Writer) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.Reader)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.CopyUtils void copy(byte[], java.io.OutputStream) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -396,6 +384,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.CopyUtils void copy(byte[], java.io.OutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils java.io.InputStream toInputStream(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOUtils org.apache.commons.io.LineIterator lineIterator(java.io.InputStream, java.lang.String) 0'>
@@ -416,9 +407,6 @@
     <item name='org.apache.commons.io.FileDeleteStrategy boolean doDelete(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils org.apache.commons.io.LineIterator lineIterator(java.io.Reader)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.IOCase boolean checkEndsWith(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -431,16 +419,19 @@
     <item name='org.apache.commons.io.FileUtils void copyDirectoryToDirectory(java.io.File, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.FileUtils java.io.FileOutputStream openOutputStream(java.io.File)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.FileUtils void touch(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.CopyUtils void copy(byte[], java.io.Writer, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils void moveFileToDirectory(java.io.File, java.io.File, boolean) 0'>
+    <item name='org.apache.commons.io.FileUtils java.util.Collection&lt;java.io.File&gt; listFiles(java.io.File, java.lang.String[], boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils java.lang.String toString(java.io.InputStream)'>
+    <item name='org.apache.commons.io.FileUtils void moveFileToDirectory(java.io.File, java.io.File, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils java.lang.String readFileToString(java.io.File) 0'>
@@ -458,22 +449,19 @@
     <item name='org.apache.commons.io.FileUtils java.lang.String readFileToString(java.io.File, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.InputStream, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.FileUtils void copyFileToDirectory(java.io.File, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileCleaner void track(java.io.File, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils java.lang.String readFileToString(java.io.File, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.IOUtils java.io.InputStream toInputStream(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils org.apache.commons.io.LineIterator lineIterator(java.io.File, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.Reader, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils void writeSwappedLong(java.io.OutputStream, long) 0'>
@@ -485,16 +473,13 @@
     <item name='org.apache.commons.io.IOCase boolean checkRegionMatches(java.lang.String, int, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils char[] toCharArray(java.io.Reader)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.IOUtils void copy(java.io.Reader, java.io.OutputStream) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileCleaningTracker void track(java.io.File, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils java.lang.String toString(java.io.Reader)'>
+    <item name='org.apache.commons.io.FileUtils java.net.URL[] toURLs(java.io.File[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOCase int checkCompareTo(java.lang.String, java.lang.String) 0'>
@@ -515,10 +500,19 @@
     <item name='org.apache.commons.io.IOUtils long copyLarge(java.io.Reader, java.io.Writer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.FileUtils java.io.File[] toFiles(java.net.URL[])'>
+    <item name='org.apache.commons.io.FileUtils java.lang.String byteCountToDisplaySize(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils java.lang.String toString(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOCase boolean checkStartsWith(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils java.util.Collection&lt;java.io.File&gt; listFiles(java.io.File, org.apache.commons.io.filefilter.IOFileFilter, org.apache.commons.io.filefilter.IOFileFilter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils java.io.FileInputStream openInputStream(java.io.File)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.IOUtils java.lang.String toString(byte[], java.lang.String) 0'>
@@ -530,7 +524,7 @@
     <item name='org.apache.commons.io.IOUtils void copy(java.io.Reader, java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils char[] toCharArray(java.io.InputStream, java.lang.String)'>
+    <item name='org.apache.commons.io.IOUtils char[] toCharArray(java.io.InputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils java.net.URL[] toURLs(java.io.File[]) 0'>
@@ -539,16 +533,19 @@
     <item name='org.apache.commons.io.IOCase int checkCompareTo(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils char[] toCharArray(java.io.InputStream)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOUtils java.lang.String toString(byte[], java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.FileUtils void moveFileToDirectory(java.io.File, java.io.File, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void copyURLToFile(java.net.URL, java.io.File) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils org.apache.commons.io.LineIterator lineIterator(java.io.File)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils java.lang.String readFileToString(java.io.File, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.IOUtils java.io.InputStream toInputStream(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils void writeSwappedFloat(java.io.OutputStream, float) 0'>
@@ -558,6 +555,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.CopyUtils void copy(java.io.InputStream, java.io.Writer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileCleaner org.apache.commons.io.FileCleaningTracker getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.FileUtils java.lang.String readFileToString(java.io.File)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void copyFileToDirectory(java.io.File, java.io.File, boolean) 1'>
@@ -573,9 +576,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils long readSwappedLong(byte[], int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.FileUtils java.net.URL[] toURLs(java.io.File[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void writeLines(java.io.File, java.util.Collection&lt;java.lang.Object&gt;) 0'>
@@ -596,13 +596,13 @@
     <item name='org.apache.commons.io.FileCleaningTracker void track(java.io.File, java.lang.Object, org.apache.commons.io.FileDeleteStrategy) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.IOUtils org.apache.commons.io.LineIterator lineIterator(java.io.Reader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.EndianUtils void writeSwappedShort(byte[], int, short) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.CopyUtils void copy(java.io.Reader, java.io.OutputStream) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.IOUtils org.apache.commons.io.LineIterator lineIterator(java.io.InputStream, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.FileUtils void forceMkdir(java.io.File) 0'>
@@ -614,10 +614,10 @@
     <item name='org.apache.commons.io.FileUtils void copyDirectory(java.io.File, java.io.File, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.IOUtils byte[] toByteArray(java.io.Reader)'>
+    <item name='org.apache.commons.io.EndianUtils short readSwappedShort(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.io.EndianUtils short readSwappedShort(java.io.InputStream) 0'>
+    <item name='org.apache.commons.io.FileUtils java.util.List&lt;java.lang.String&gt; readLines(java.io.File, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.EndianUtils void writeSwappedInteger(java.io.OutputStream, int) 0'>

@@ -2,52 +2,64 @@
     <item name='org.bouncycastle.asn1.x500.AttributeTypeAndValue org.bouncycastle.asn1.x500.AttributeTypeAndValue getInstance(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.x500.RDN[] getRDNs(org.bouncycastle.asn1.ASN1ObjectIdentifier)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier[], java.lang.String[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.ASN1ObjectIdentifier[] getAttributeTypes()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500Name build()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.x500.X500Name X500Name(org.bouncycastle.asn1.x500.X500NameStyle, org.bouncycastle.asn1.x500.X500Name) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier[], org.bouncycastle.asn1.ASN1Encodable[])'>
+    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier, org.bouncycastle.asn1.ASN1Encodable)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.x500.AttributeTypeAndValue[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.x500.AttributeTypeAndValue[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.asn1.x500.RDN RDN(org.bouncycastle.asn1.x500.AttributeTypeAndValue[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.asn1.x500.RDN org.bouncycastle.asn1.x500.AttributeTypeAndValue[] getTypesAndValues()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.x500.DirectoryString org.bouncycastle.asn1.x500.DirectoryString getInstance(org.bouncycastle.asn1.ASN1TaggedObject, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.x500.RDN[] getRDNs()'>
+    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.ASN1Primitive toASN1Primitive()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.x500.DirectoryString DirectoryString(java.lang.String) 0'>
+    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier[], org.bouncycastle.asn1.ASN1Encodable[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier[], java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.x500.RDN[] getRDNs(org.bouncycastle.asn1.ASN1ObjectIdentifier)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.asn1.x500.DirectoryString DirectoryString(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addRDN(org.bouncycastle.asn1.x500.AttributeTypeAndValue)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.x500.RDN[] getRDNs()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.ASN1ObjectIdentifier[] getAttributeTypes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.asn1.x500.X500Name X500Name(org.bouncycastle.asn1.x500.X500NameStyle, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.x500.AttributeTypeAndValue[])'>
+    <item name='org.bouncycastle.asn1.x500.AttributeTypeAndValue org.bouncycastle.asn1.ASN1Primitive toASN1Primitive()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.x500.X500Name void setDefaultStyle(org.bouncycastle.asn1.x500.X500NameStyle) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.x500.X500Name org.bouncycastle.asn1.ASN1Primitive toASN1Primitive()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier[], java.lang.String[]) 1'>
@@ -59,19 +71,7 @@
     <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier[], org.bouncycastle.asn1.ASN1Encodable[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.x500.RDN org.bouncycastle.asn1.x500.AttributeTypeAndValue[] getTypesAndValues()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.x500.AttributeTypeAndValue org.bouncycastle.asn1.ASN1Primitive toASN1Primitive()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addMultiValuedRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier[], java.lang.String[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addRDN(org.bouncycastle.asn1.ASN1ObjectIdentifier, org.bouncycastle.asn1.ASN1Encodable)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500NameBuilder addRDN(org.bouncycastle.asn1.x500.AttributeTypeAndValue)'>
+    <item name='org.bouncycastle.asn1.x500.X500NameBuilder org.bouncycastle.asn1.x500.X500Name build()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.x500.AttributeTypeAndValue org.bouncycastle.asn1.x500.AttributeTypeAndValue getInstance(java.lang.Object)'>

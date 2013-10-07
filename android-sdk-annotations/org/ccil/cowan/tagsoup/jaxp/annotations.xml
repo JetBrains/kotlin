@@ -11,13 +11,13 @@
     <item name='org.ccil.cowan.tagsoup.jaxp.SAXParserImpl org.xml.sax.Parser getParser()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl javax.xml.parsers.SAXParser newSAXParser()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.ccil.cowan.tagsoup.jaxp.SAXParserImpl java.lang.Object getProperty(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl void setFeature(java.lang.String, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.ccil.cowan.tagsoup.jaxp.SAXFactoryImpl javax.xml.parsers.SAXParser newSAXParser()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.ccil.cowan.tagsoup.jaxp.SAXParserImpl org.xml.sax.XMLReader getXMLReader()'>

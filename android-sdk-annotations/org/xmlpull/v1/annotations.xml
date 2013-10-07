@@ -2,13 +2,13 @@
     <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlSerializer newSerializer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlPullParserFactory newInstance()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlPullParserFactory newInstance(java.lang.String, java.lang.Class)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlPullParser newPullParser()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlPullParserFactory newInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

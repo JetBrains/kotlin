@@ -1,7 +1,4 @@
 <root>
-    <item name='android.mtp.MtpStorage java.lang.String getPath()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.mtp.MtpDatabase void removeStorage(android.mtp.MtpStorage) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -9,6 +6,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.mtp.MtpStorage java.lang.String getDescription()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.mtp.MtpStorage java.lang.String getPath()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.mtp.MtpStorage MtpStorage(android.os.storage.StorageVolume, android.content.Context) 1'>

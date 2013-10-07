@@ -1,29 +1,23 @@
 <root>
-    <item name='org.bouncycastle.util.Strings java.lang.String toLowerCase(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.util.BigIntegers byte[] asUnsignedByteArray(int, java.math.BigInteger) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.BigIntegers byte[] asUnsignedByteArray(java.math.BigInteger) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.BigIntegers byte[] asUnsignedByteArray(int, java.math.BigInteger)'>
+    <item name='org.bouncycastle.util.Strings byte[] toUTF8ByteArray(char[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Strings byte[] toUTF8ByteArray(char[])'>
+    <item name='org.bouncycastle.util.Strings byte[] toUTF8ByteArray(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.IPAddress boolean isValidIPv6(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Strings java.lang.String fromUTF8ByteArray(byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.util.Arrays long[] copyOf(long[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Arrays char[] copyOf(char[], int)'>
+    <item name='org.bouncycastle.util.Arrays long[] copyOf(long[], int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Strings byte[] toByteArray(java.lang.String) 0'>
@@ -32,13 +26,10 @@
     <item name='org.bouncycastle.util.Strings java.lang.String fromByteArray(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Arrays byte[] copyOfRange(byte[], int, int)'>
+    <item name='org.bouncycastle.util.Strings java.lang.String[] split(java.lang.String, char)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.IPAddress boolean isValid(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Arrays byte[] copyOf(byte[], int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Strings java.lang.String toUpperCase(java.lang.String) 0'>
@@ -51,9 +42,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.CollectionStore CollectionStore(java.util.Collection) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Strings char[] asCharArray(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.IPAddress boolean isValidIPv4WithNetmask(java.lang.String) 0'>
@@ -71,7 +59,7 @@
     <item name='org.bouncycastle.util.Arrays byte[] copyOfRange(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Strings java.lang.String[] split(java.lang.String, char)'>
+    <item name='org.bouncycastle.util.BigIntegers java.math.BigInteger createRandomInRange(java.math.BigInteger, java.math.BigInteger, java.security.SecureRandom)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Arrays int hashCode(short[][]) 0'>
@@ -83,55 +71,46 @@
     <item name='org.bouncycastle.util.Arrays void fill(byte[], byte) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.BigIntegers java.math.BigInteger createRandomInRange(java.math.BigInteger, java.math.BigInteger, java.security.SecureRandom)'>
+    <item name='org.bouncycastle.util.Strings byte[] toByteArray(char[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Strings java.lang.String toLowerCase(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.CollectionStore java.util.Collection getMatches(org.bouncycastle.util.Selector)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Strings byte[] toByteArray(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Strings byte[] toUTF8ByteArray(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Arrays java.math.BigInteger[] copyOf(java.math.BigInteger[], int)'>
+    <item name='org.bouncycastle.util.Strings java.lang.String fromByteArray(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Arrays int[] copyOfRange(int[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.util.BigIntegers byte[] asUnsignedByteArray(int, java.math.BigInteger)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.util.Strings void toUTF8ByteArray(char[], java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Strings java.lang.String fromByteArray(byte[])'>
+    <item name='org.bouncycastle.util.Arrays java.math.BigInteger[] copyOfRange(java.math.BigInteger[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Strings byte[] toUTF8ByteArray(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.util.Strings char[] asCharArray(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.util.Strings byte[] toByteArray(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.util.Arrays int hashCode(int[][]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.BigIntegers byte[] asUnsignedByteArray(java.math.BigInteger)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Arrays long[] copyOfRange(long[], int, int)'>
+    <item name='org.bouncycastle.util.Arrays byte[] copyOf(byte[], int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.BigIntegers java.math.BigInteger createRandomInRange(java.math.BigInteger, java.math.BigInteger, java.security.SecureRandom) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Strings java.lang.String toUpperCase(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Strings byte[] toByteArray(char[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.util.Arrays java.math.BigInteger[] copyOfRange(java.math.BigInteger[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Arrays void fill(long[], long) 0'>
@@ -155,22 +134,40 @@
     <item name='org.bouncycastle.util.Arrays int[] copyOf(int[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.util.Arrays java.math.BigInteger[] copyOf(java.math.BigInteger[], int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.util.BigIntegers byte[] asUnsignedByteArray(java.math.BigInteger)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.util.Arrays void fill(int[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.util.Arrays byte[] copyOfRange(byte[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Strings byte[] toUTF8ByteArray(char[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Arrays int[] copyOf(int[], int)'>
+    <item name='org.bouncycastle.util.BigIntegers java.math.BigInteger createRandomInRange(java.math.BigInteger, java.math.BigInteger, java.security.SecureRandom) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.BigIntegers java.math.BigInteger createRandomInRange(java.math.BigInteger, java.math.BigInteger, java.security.SecureRandom) 0'>
+    <item name='org.bouncycastle.util.CollectionStore java.util.Collection getMatches(org.bouncycastle.util.Selector)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Arrays java.math.BigInteger[] copyOfRange(java.math.BigInteger[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.util.Arrays int[] copyOf(int[], int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.util.Arrays long[] copyOfRange(long[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.util.Strings char[] asCharArray(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.util.Arrays char[] copyOf(char[], int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.util.Arrays java.math.BigInteger[] copyOf(java.math.BigInteger[], int) 0'>
@@ -179,7 +176,10 @@
     <item name='org.bouncycastle.util.Arrays int[] copyOfRange(int[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.Arrays long[] copyOf(long[], int)'>
+    <item name='org.bouncycastle.util.Strings java.lang.String toLowerCase(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.util.Strings java.lang.String fromUTF8ByteArray(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

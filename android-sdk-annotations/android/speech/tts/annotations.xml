@@ -1,26 +1,23 @@
 <root>
-    <item name='android.speech.tts.TtsEngines java.lang.String[] parseLocalePref(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.speech.tts.TextToSpeechService android.os.IBinder onBind(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.SynthesisRequest android.os.Bundle getParams()'>
+    <item name='android.speech.tts.TextToSpeech int isLanguageAvailable(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.tts.TtsEngines java.lang.String[] parseLocalePref(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.tts.ITextToSpeechCallback.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.TextToSpeech int addSpeech(java.lang.String, java.lang.String) 1'>
+    <item name='android.speech.tts.ITextToSpeechService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.tts.SynthesisRequest android.os.Bundle getParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.tts.TextToSpeech java.util.List&lt;android.speech.tts.TextToSpeech.EngineInfo&gt; getEngines()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TtsEngines java.util.List&lt;android.speech.tts.TextToSpeech.EngineInfo&gt; getEngines()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.tts.TextToSpeech.EngineInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.tts.SynthesisRequest SynthesisRequest(java.lang.String, android.os.Bundle) 1'>
@@ -29,7 +26,19 @@
     <item name='android.speech.tts.TextToSpeech int addEarcon(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.tts.ITextToSpeechService.Stub android.os.IBinder asBinder()'>
+    <item name='android.speech.tts.TtsEngines java.util.List&lt;android.speech.tts.TextToSpeech.EngineInfo&gt; getEngines()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.tts.TextToSpeech int addSpeech(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.tts.ITextToSpeechService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.tts.TextToSpeech java.util.Set&lt;java.lang.String&gt; getFeatures(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.tts.TextToSpeech.EngineInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -1,11 +1,11 @@
 <root>
+    <item name='android.service.notification.StatusBarNotification java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.service.notification.StatusBarNotification android.app.Notification getNotification()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.notification.StatusBarNotification StatusBarNotification(java.lang.String, int, java.lang.String, int, int, int, android.app.Notification) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.service.notification.StatusBarNotification java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.notification.INotificationListener.Stub android.os.IBinder asBinder()'>
@@ -20,13 +20,10 @@
     <item name='android.service.notification.StatusBarNotification StatusBarNotification(java.lang.String, java.lang.String, int, java.lang.String, int, int, int, android.app.Notification, android.os.UserHandle, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.notification.StatusBarNotification java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.service.notification.StatusBarNotification StatusBarNotification(java.lang.String, int, java.lang.String, int, int, int, android.app.Notification, android.os.UserHandle) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.notification.StatusBarNotification android.service.notification.StatusBarNotification clone()'>
+    <item name='android.service.notification.StatusBarNotification android.service.notification.StatusBarNotification cloneLight()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.notification.StatusBarNotification StatusBarNotification(java.lang.String, int, java.lang.String, int, int, int, android.app.Notification, android.os.UserHandle) 7'>
@@ -44,10 +41,13 @@
     <item name='android.service.notification.StatusBarNotification void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.service.notification.StatusBarNotification java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.service.notification.StatusBarNotification StatusBarNotification(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.notification.StatusBarNotification android.service.notification.StatusBarNotification cloneLight()'>
+    <item name='android.service.notification.StatusBarNotification android.service.notification.StatusBarNotification clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.notification.StatusBarNotification StatusBarNotification(java.lang.String, java.lang.String, int, java.lang.String, int, int, int, android.app.Notification, android.os.UserHandle) 8'>

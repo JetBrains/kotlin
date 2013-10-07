@@ -5,6 +5,9 @@
     <item name='org.apache.http.client.utils.URLEncodedUtils java.lang.String format(java.util.List&lt;? extends org.apache.http.NameValuePair&gt;, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.client.utils.URLEncodedUtils java.util.List&lt;org.apache.http.NameValuePair&gt; parse(org.apache.http.HttpEntity)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.client.utils.URIUtils java.net.URI resolve(java.net.URI, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -17,43 +20,40 @@
     <item name='org.apache.http.client.utils.URIUtils java.net.URI resolve(java.net.URI, java.net.URI) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.utils.URLEncodedUtils java.util.List&lt;org.apache.http.NameValuePair&gt; parse(org.apache.http.HttpEntity)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.client.utils.URIUtils java.net.URI rewriteURI(java.net.URI, org.apache.http.HttpHost) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.utils.URIUtils java.net.URI rewriteURI(java.net.URI, org.apache.http.HttpHost, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.utils.URIUtils java.net.URI resolve(java.net.URI, java.net.URI)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.utils.URLEncodedUtils java.lang.String format(java.util.List&lt;? extends org.apache.http.NameValuePair&gt;, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.utils.URLEncodedUtils java.util.List&lt;org.apache.http.NameValuePair&gt; parse(org.apache.http.HttpEntity) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.utils.URIUtils java.net.URI resolve(java.net.URI, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.client.utils.URIUtils java.net.URI rewriteURI(java.net.URI, org.apache.http.HttpHost)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.client.utils.URLEncodedUtils java.util.List&lt;org.apache.http.NameValuePair&gt; parse(org.apache.http.HttpEntity) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.client.utils.URIUtils java.net.URI resolve(java.net.URI, java.net.URI) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.utils.URLEncodedUtils java.util.List&lt;org.apache.http.NameValuePair&gt; parse(java.net.URI, java.lang.String)'>
+    <item name='org.apache.http.client.utils.URLEncodedUtils java.lang.String format(java.util.List&lt;? extends org.apache.http.NameValuePair&gt;, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.utils.URIUtils java.net.URI resolve(java.net.URI, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.client.utils.URIUtils java.net.URI rewriteURI(java.net.URI, org.apache.http.HttpHost, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.utils.URLEncodedUtils java.util.List&lt;org.apache.http.NameValuePair&gt; parse(java.net.URI, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.client.utils.URLEncodedUtils boolean isEncoded(org.apache.http.HttpEntity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.client.utils.URIUtils java.net.URI createURI(java.lang.String, java.lang.String, int, java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.utils.URIUtils java.net.URI resolve(java.net.URI, java.net.URI)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.utils.URIUtils java.net.URI rewriteURI(java.net.URI, org.apache.http.HttpHost, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

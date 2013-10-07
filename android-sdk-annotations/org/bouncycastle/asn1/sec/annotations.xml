@@ -2,16 +2,19 @@
     <item name='org.bouncycastle.asn1.sec.SECNamedCurves org.bouncycastle.asn1.x9.X9ECParameters getByName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.asn1.sec.ECPrivateKey java.math.BigInteger getKey()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.asn1.sec.ECPrivateKeyStructure ECPrivateKeyStructure(java.math.BigInteger, org.bouncycastle.asn1.ASN1Encodable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.sec.ECPrivateKeyStructure ECPrivateKeyStructure(java.math.BigInteger, org.bouncycastle.asn1.DERBitString, org.bouncycastle.asn1.ASN1Encodable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.asn1.sec.ECPrivateKeyStructure java.math.BigInteger getKey()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.asn1.sec.SECNamedCurves org.bouncycastle.asn1.x9.X9ECParameters getByOID(org.bouncycastle.asn1.ASN1ObjectIdentifier) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.asn1.sec.ECPrivateKey java.math.BigInteger getKey()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.sec.ECPrivateKey ECPrivateKey(java.math.BigInteger, org.bouncycastle.asn1.DERBitString, org.bouncycastle.asn1.ASN1Object) 0'>
@@ -27,9 +30,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.sec.SECNamedCurves java.util.Enumeration getNames()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.asn1.sec.ECPrivateKeyStructure java.math.BigInteger getKey()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.asn1.sec.SECNamedCurves org.bouncycastle.asn1.ASN1ObjectIdentifier getOID(java.lang.String) 0'>

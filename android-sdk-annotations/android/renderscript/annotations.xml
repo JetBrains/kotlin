@@ -1,4 +1,10 @@
 <root>
+    <item name='android.renderscript.Type.CubemapFace android.renderscript.Type.CubemapFace valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Matrix3f subMatrix3f()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Allocation void copyFrom(float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -8,13 +14,25 @@
     <item name='android.renderscript.Element android.renderscript.Element I16_2(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.AllocationAdapter android.renderscript.AllocationAdapter create2D(android.renderscript.RenderScript, android.renderscript.Allocation)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ScriptIntrinsicBlend android.renderscript.ScriptIntrinsicBlend create(android.renderscript.RenderScript, android.renderscript.Element)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Element android.renderscript.Element I16_3(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setDitherEnabled(boolean)'>
+    <item name='android.renderscript.Script.LaunchOptions android.renderscript.Script.LaunchOptions setX(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Sampler.Value android.renderscript.Sampler.Value valueOf(java.lang.String)'>
+    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder addTriangle(int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Matrix2f subMatrix2f()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.RenderScript.Priority android.renderscript.RenderScript.Priority valueOf(java.lang.String) 0'>
@@ -24,15 +42,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachClear(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Element android.renderscript.Element createPixel(android.renderscript.RenderScript, android.renderscript.Element.DataType, android.renderscript.Element.DataKind)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Matrix4f subMatrix4f()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addU8(android.renderscript.Short4) 0'>
@@ -47,7 +56,16 @@
     <item name='android.renderscript.ProgramRaster android.renderscript.ProgramRaster CULL_NONE(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder setShader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Value android.renderscript.Sampler.Value valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.ProgramStore.BlendSrcFunc android.renderscript.ProgramStore.BlendSrcFunc valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh create(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ProgramVertex.Builder android.renderscript.ProgramVertex.Builder addInput(android.renderscript.Element) 0'>
@@ -56,7 +74,7 @@
     <item name='android.renderscript.Font android.renderscript.Font create(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, android.renderscript.Font.Style, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder setShader(android.content.res.Resources, int)'>
+    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicYuvToRGB android.renderscript.ScriptIntrinsicYuvToRGB create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
@@ -68,22 +86,31 @@
     <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup.Builder addConnection(android.renderscript.Type, android.renderscript.Script.KernelID, android.renderscript.Script.FieldID) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.ProgramRaster.CullMode android.renderscript.ProgramRaster.CullMode valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Allocation void copy1DRangeFromUnchecked(int, int, short[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, android.renderscript.Allocation.MipmapControl, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Path.Primitive android.renderscript.Path.Primitive valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder android.renderscript.ProgramFragmentFixedFunction.Builder setPointSpriteTexCoordinateReplacement(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSrcOut(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramRaster.Builder android.renderscript.ProgramRaster.Builder setCullMode(android.renderscript.ProgramRaster.CullMode)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ScriptIntrinsicLUT android.renderscript.ScriptIntrinsicLUT create(android.renderscript.RenderScript, android.renderscript.Element)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Element android.renderscript.Element F32_4(android.renderscript.RenderScript) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder android.renderscript.ProgramFragmentFixedFunction.Builder setVaryingColor(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addI64(android.renderscript.Long2) 0'>
@@ -92,19 +119,13 @@
     <item name='android.renderscript.Element android.renderscript.Element U64(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Type.Builder android.renderscript.Type create()'>
+    <item name='android.renderscript.ProgramRaster.Builder android.renderscript.ProgramRaster create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptIntrinsicConvolve3x3 android.renderscript.ScriptIntrinsicConvolve3x3 create(android.renderscript.RenderScript, android.renderscript.Element)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Long4 subLong4()'>
+    <item name='android.renderscript.FieldPacker byte[] getData()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Font android.renderscript.Font create(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, android.renderscript.Font.Style, float) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element MATRIX_2X2(android.renderscript.RenderScript) 0'>
@@ -113,28 +134,37 @@
     <item name='android.renderscript.ScriptIntrinsic3DLUT android.renderscript.ScriptIntrinsic3DLUT create(android.renderscript.RenderScript, android.renderscript.Element) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Script.LaunchOptions android.renderscript.Script.LaunchOptions setY(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.AllocationAdapter void subElementData(int, int, android.renderscript.FieldPacker) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copyFromUnchecked(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Matrix3f subMatrix3f()'>
+    <item name='android.renderscript.Script.LaunchOptions android.renderscript.Script.LaunchOptions setZ(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element U16(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation void copyFrom(short[]) 0'>
+    <item name='android.renderscript.AllocationAdapter android.renderscript.AllocationAdapter create1D(android.renderscript.RenderScript, android.renderscript.Allocation)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setMipmaps(boolean)'>
+    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh.AllocationBuilder addIndexSetType(android.renderscript.Mesh.Primitive)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Allocation void copyFrom(short[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element I16(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlur android.renderscript.ScriptIntrinsicBlur create(android.renderscript.RenderScript, android.renderscript.Element) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachClear(android.renderscript.Allocation, android.renderscript.Allocation) 1'>
@@ -149,6 +179,9 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Element.DataKind android.renderscript.Element.DataKind valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Element android.renderscript.Element MATRIX_4X4(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -158,13 +191,13 @@
     <item name='android.renderscript.RSTextureView android.renderscript.RenderScriptGL createRenderScriptGL(android.renderscript.RenderScriptGL.SurfaceConfig) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Element android.renderscript.Element createVector(android.renderscript.RenderScript, android.renderscript.Element.DataType, int)'>
+    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addVertexType(android.renderscript.Element, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setBlendFunc(android.renderscript.ProgramStore.BlendSrcFunc, android.renderscript.ProgramStore.BlendDstFunc)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsic3DLUT android.renderscript.ScriptIntrinsic3DLUT create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Matrix2f float[] getArray()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Sampler android.renderscript.Sampler WRAP_LINEAR_MIP_LINEAR(android.renderscript.RenderScript) 0'>
@@ -194,13 +227,16 @@
     <item name='android.renderscript.ScriptIntrinsicColorMatrix void setColorMatrix(android.renderscript.Matrix4f) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup.Builder addKernel(android.renderscript.Script.KernelID)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.ProgramFragmentFixedFunction.Builder android.renderscript.ProgramFragmentFixedFunction create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.ScriptIntrinsicColorMatrix android.renderscript.ScriptIntrinsicColorMatrix create(android.renderscript.RenderScript, android.renderscript.Element)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Script void setTimeZone(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Short4 subShort4()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FileA3D.EntryType android.renderscript.FileA3D.EntryType valueOf(java.lang.String) 0'>
@@ -218,10 +254,10 @@
     <item name='android.renderscript.FieldPacker void addI8(android.renderscript.Byte2) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.RSTextureView android.renderscript.RenderScriptGL createRenderScriptGL(android.renderscript.RenderScriptGL.SurfaceConfig)'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createFromBitmapResource(android.renderscript.RenderScript, android.content.res.Resources, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createFromBitmapResource(android.renderscript.RenderScript, android.content.res.Resources, int) 0'>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Script void setVar(int, android.renderscript.FieldPacker, android.renderscript.Element, int[]) 1'>
@@ -233,28 +269,25 @@
     <item name='android.renderscript.ScriptIntrinsicConvolve3x3 android.renderscript.ScriptIntrinsicConvolve3x3 create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptIntrinsicBlur android.renderscript.ScriptIntrinsicBlur create(android.renderscript.RenderScript, android.renderscript.Element)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.ScriptIntrinsicBlend android.renderscript.ScriptIntrinsicBlend create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramRaster.Builder android.renderscript.ProgramRaster create()'>
+    <item name='android.renderscript.ProgramVertex.Builder android.renderscript.ProgramVertex create()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Byte4 subByte4()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachDstOut(android.renderscript.Allocation, android.renderscript.Allocation) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh create()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder android.renderscript.ProgramFragmentFixedFunction.Builder setPointSpriteTexCoordinateReplacement(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh create()'>
+    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup.Builder addKernel(android.renderscript.Script.KernelID)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copyFrom(android.graphics.Bitmap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Path android.renderscript.Path createStaticPath(android.renderscript.RenderScript, android.renderscript.Path.Primitive, float, android.renderscript.Allocation)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap) 6'>
@@ -263,13 +296,7 @@
     <item name='android.renderscript.Script void setVar(int, android.renderscript.FieldPacker, android.renderscript.Element, int[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptIntrinsicConvolve5x5 android.renderscript.ScriptIntrinsicConvolve5x5 create(android.renderscript.RenderScript, android.renderscript.Element)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 3'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Float2 subFloat2()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder addConstant(android.renderscript.Type) 0'>
@@ -281,7 +308,7 @@
     <item name='android.renderscript.Allocation.MipmapControl android.renderscript.Allocation.MipmapControl valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Font android.renderscript.Font createFromFile(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, float)'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Int3 subInt3()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addF32(android.renderscript.Float2) 0'>
@@ -290,19 +317,10 @@
     <item name='android.renderscript.Element android.renderscript.Element I64_3(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.RSTextureView RSTextureView(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.ProgramStore android.renderscript.ProgramStore BLEND_ALPHA_DEPTH_TEST(android.renderscript.RenderScript) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ProgramVertex.Builder android.renderscript.ProgramVertex create()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, android.renderscript.RenderScript.ContextType)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addIndexSetType(android.renderscript.Type, android.renderscript.Mesh.Primitive)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Script.FieldBase void init(android.renderscript.RenderScript, int) 0'>
@@ -311,7 +329,19 @@
     <item name='android.renderscript.Allocation void copyFrom(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setDepthMaskEnabled(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramVertexFixedFunction.Builder android.renderscript.ProgramVertexFixedFunction create()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.RSSurfaceView android.renderscript.RenderScriptGL createRenderScriptGL(android.renderscript.RenderScriptGL.SurfaceConfig) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ScriptIntrinsicConvolve3x3 android.renderscript.ScriptIntrinsicConvolve3x3 create(android.renderscript.RenderScript, android.renderscript.Element)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element android.renderscript.Element createVector(android.renderscript.RenderScript, android.renderscript.Element.DataType, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 2'>
@@ -320,13 +350,19 @@
     <item name='android.renderscript.AllocationAdapter void subData(int, android.renderscript.FieldPacker) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.RSSurfaceView RSSurfaceView(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setY(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Element android.renderscript.Element U8_3(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Sampler android.renderscript.Sampler CLAMP_NEAREST(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh.AllocationBuilder addIndexSetType(android.renderscript.Mesh.Primitive)'>
+    <item name='android.renderscript.Element.Builder android.renderscript.Element.Builder add(android.renderscript.Element, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element PROGRAM_VERTEX(android.renderscript.RenderScript) 0'>
@@ -338,7 +374,7 @@
     <item name='android.renderscript.RSTextureView RSTextureView(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder setTexture(float, float)'>
+    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromFile(android.renderscript.RenderScript, java.io.File)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicColorMatrix android.renderscript.ScriptIntrinsicColorMatrix create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
@@ -347,7 +383,13 @@
     <item name='android.renderscript.Allocation void copy1DRangeFrom(int, int, int[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.RSSurfaceView void surfaceChanged(android.view.SurfaceHolder, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSubtract(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Primitive android.renderscript.Mesh.Primitive valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachMultiply(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
@@ -356,13 +398,7 @@
     <item name='android.renderscript.RSSurfaceView RSSurfaceView(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromFile(android.renderscript.RenderScript, java.io.File)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Font android.renderscript.Font createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int, float) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addI16(android.renderscript.Short2) 0'>
@@ -372,6 +408,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Float3 subFloat3()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachXor(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
@@ -386,16 +425,19 @@
     <item name='android.renderscript.ProgramRaster.CullMode android.renderscript.ProgramRaster.CullMode valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation void setFromFieldPacker(int, int, android.renderscript.FieldPacker) 2'>
+    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setX(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Short4 subShort4()'>
+    <item name='android.renderscript.Allocation void setFromFieldPacker(int, int, android.renderscript.FieldPacker) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSubtract(android.renderscript.Allocation, android.renderscript.Allocation) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font android.renderscript.Font createFromFile(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, float)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromAsset(android.renderscript.RenderScript, android.content.res.AssetManager, java.lang.String) 0'>
@@ -405,6 +447,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createFromString(android.renderscript.RenderScript, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder setShader(android.content.res.Resources, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptGroup void setOutput(android.renderscript.Script.KernelID, android.renderscript.Allocation) 0'>
@@ -419,13 +464,16 @@
     <item name='android.renderscript.Allocation void copy3DRangeFrom(int, int, int, int, int, int, float[]) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder setNormal(float, float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.FieldPacker void addF64(android.renderscript.Double2) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element F64_3(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramFragment.Builder android.renderscript.ProgramFragment create()'>
+    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, int, android.renderscript.RenderScript.ContextType) 2'>
@@ -443,6 +491,9 @@
     <item name='android.renderscript.Sampler android.renderscript.Sampler MIRRORED_REPEAT_NEAREST(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.RenderScript.Priority android.renderscript.RenderScript.Priority valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -455,25 +506,16 @@
     <item name='android.renderscript.FieldPacker void addI32(android.renderscript.Int2) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker byte[] getData()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createFromString(android.renderscript.RenderScript, java.lang.String, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachDstOver(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Int3 subInt3()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Type.CubemapFace android.renderscript.Type.CubemapFace valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder android.renderscript.ProgramFragmentFixedFunction.Builder setTexture(android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode, android.renderscript.ProgramFragmentFixedFunction.Builder.Format, int)'>
+    <item name='android.renderscript.Matrix4f float[] getArray()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicLUT android.renderscript.ScriptIntrinsicLUT create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
@@ -482,10 +524,10 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Matrix4f float[] getArray()'>
+    <item name='android.renderscript.Element android.renderscript.Element I8_4(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Element android.renderscript.Element I8_4(android.renderscript.RenderScript) 0'>
+    <item name='android.renderscript.Matrix2f float[] getArray()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element A_8(android.renderscript.RenderScript) 0'>
@@ -497,7 +539,7 @@
     <item name='android.renderscript.Element android.renderscript.Element I32_4(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramRaster.Builder android.renderscript.ProgramRaster.Builder setPointSpriteEnabled(boolean)'>
+    <item name='android.renderscript.RSSurfaceView void surfaceCreated(android.view.SurfaceHolder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element ELEMENT(android.renderscript.RenderScript) 0'>
@@ -506,7 +548,13 @@
     <item name='android.renderscript.ScriptIntrinsicColorMatrix android.renderscript.ScriptIntrinsicColorMatrix create(android.renderscript.RenderScript, android.renderscript.Element) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Int4 subInt4()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Allocation void copy1DRangeFromUnchecked(int, int, int[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramRaster.Builder android.renderscript.ProgramRaster.Builder setPointSpriteEnabled(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachDstAtop(android.renderscript.Allocation, android.renderscript.Allocation) 1'>
@@ -527,6 +575,9 @@
     <item name='android.renderscript.Element android.renderscript.Element F32(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.RenderScript.ContextType android.renderscript.RenderScript.ContextType valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.ScriptIntrinsicLUT android.renderscript.ScriptIntrinsicLUT create(android.renderscript.RenderScript, android.renderscript.Element) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -542,43 +593,49 @@
     <item name='android.renderscript.ScriptIntrinsicColorMatrix void setColorMatrix(android.renderscript.Matrix3f) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setColorMaskEnabled(boolean, boolean, boolean, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap) 3'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ScriptIntrinsic3DLUT android.renderscript.ScriptIntrinsic3DLUT create(android.renderscript.RenderScript, android.renderscript.Element)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder addTexture(android.renderscript.Program.TextureType, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Font android.renderscript.Font createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptIntrinsicBlur android.renderscript.ScriptIntrinsicBlur create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
+    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramVertexFixedFunction.Builder android.renderscript.ProgramVertexFixedFunction create()'>
+    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder addTexture(android.renderscript.Program.TextureType, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ScriptIntrinsicBlur android.renderscript.ScriptIntrinsicBlur create(android.renderscript.RenderScript, android.renderscript.Element) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Font.Style android.renderscript.Font.Style valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Int2 subInt2()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Element android.renderscript.Element MATRIX4X4(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramVertexFixedFunction.Builder android.renderscript.ProgramVertexFixedFunction.Builder setTextureMatrixEnable(boolean)'>
+    <item name='android.renderscript.Element android.renderscript.Element createPixel(android.renderscript.RenderScript, android.renderscript.Element.DataType, android.renderscript.Element.DataKind)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element SCRIPT(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setYuvFormat(int)'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Type.Builder android.renderscript.Type create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element createPixel(android.renderscript.RenderScript, android.renderscript.Element.DataType, android.renderscript.Element.DataKind) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, android.renderscript.RenderScript.ContextType)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copy2DRangeFrom(int, int, int, int, byte[]) 4'>
@@ -587,22 +644,22 @@
     <item name='android.renderscript.ProgramVertexFixedFunction.Constants void setTexture(android.renderscript.Matrix4f) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, int, android.renderscript.RenderScript.ContextType)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element F32_2(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.RSTextureView android.renderscript.RenderScriptGL createRenderScriptGL(android.renderscript.RenderScriptGL.SurfaceConfig)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createSized(android.renderscript.RenderScript, android.renderscript.Element, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation void copyFrom(byte[]) 0'>
+    <item name='android.renderscript.RSSurfaceView android.renderscript.RenderScriptGL createRenderScriptGL(android.renderscript.RenderScriptGL.SurfaceConfig)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, android.renderscript.Allocation.MipmapControl, int)'>
+    <item name='android.renderscript.Allocation void copyFrom(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromFile(android.renderscript.RenderScript, java.io.File) 1'>
@@ -620,10 +677,10 @@
     <item name='android.renderscript.Allocation void copy2DRangeFrom(int, int, int, int, android.renderscript.Allocation, int, int) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramStore.BlendSrcFunc android.renderscript.ProgramStore.BlendSrcFunc valueOf(java.lang.String)'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createSized(android.renderscript.RenderScript, android.renderscript.Element, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createSized(android.renderscript.RenderScript, android.renderscript.Element, int, int)'>
+    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setDitherEnabled(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addU8(android.renderscript.Short2) 0'>
@@ -632,13 +689,13 @@
     <item name='android.renderscript.Element android.renderscript.Element U64_3(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setX(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Byte4 subByte4()'>
+    <item name='android.renderscript.Font.Style android.renderscript.Font.Style valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptC ScriptC(android.renderscript.RenderScript, android.content.res.Resources, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, int, android.renderscript.RenderScript.ContextType)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ProgramVertexFixedFunction.Constants void setProjection(android.renderscript.Matrix4f) 0'>
@@ -653,7 +710,7 @@
     <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromFile(android.renderscript.RenderScript, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptIntrinsicColorMatrix android.renderscript.ScriptIntrinsicColorMatrix create(android.renderscript.RenderScript, android.renderscript.Element)'>
+    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder addVertex(float, float)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 1'>
@@ -662,16 +719,7 @@
     <item name='android.renderscript.Allocation void setFromFieldPacker(int, android.renderscript.FieldPacker) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Int4 subInt4()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.RenderScript.ContextType android.renderscript.RenderScript.ContextType valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.AllocationAdapter android.renderscript.AllocationAdapter create1D(android.renderscript.RenderScript, android.renderscript.Allocation)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setZ(int)'>
+    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromFile(android.renderscript.RenderScript, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element I32_3(android.renderscript.RenderScript) 0'>
@@ -683,10 +731,19 @@
     <item name='android.renderscript.Font android.renderscript.Font createFromFile(android.renderscript.RenderScript, android.content.res.Resources, java.io.File, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addIndexSetType(android.renderscript.Mesh.Primitive)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Allocation void copy1DRangeFrom(int, int, byte[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element ALLOCATION(android.renderscript.RenderScript) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Byte3 subByte3()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addIndexSetType(android.renderscript.Type, android.renderscript.Mesh.Primitive)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ProgramRaster android.renderscript.ProgramRaster CULL_BACK(android.renderscript.RenderScript) 0'>
@@ -698,79 +755,61 @@
     <item name='android.renderscript.Element.DataType android.renderscript.Element.DataType valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Int2 subInt2()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation void copyFromUnchecked(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder addTriangle(int, int, int)'>
+    <item name='android.renderscript.ProgramFragment.Builder android.renderscript.ProgramFragment create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addI16(android.renderscript.Short3) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh.AllocationBuilder addIndexSetAllocation(android.renderscript.Allocation, android.renderscript.Mesh.Primitive)'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Long3 subLong3()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element.DataKind android.renderscript.Element.DataKind valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Script android.renderscript.Script.FieldID createFieldID(int, android.renderscript.Element)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Element android.renderscript.Element I8_2(android.renderscript.RenderScript) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramRaster.Builder android.renderscript.ProgramRaster.Builder setCullMode(android.renderscript.ProgramRaster.CullMode)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Font android.renderscript.Font createFromFile(android.renderscript.RenderScript, android.content.res.Resources, java.io.File, float) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Script android.renderscript.Script.FieldID createFieldID(int, android.renderscript.Element)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Element android.renderscript.Element PROGRAM_STORE(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromFile(android.renderscript.RenderScript, java.lang.String)'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element I8_3(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramStore.BlendDstFunc android.renderscript.ProgramStore.BlendDstFunc valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Element.Builder android.renderscript.Element create()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createSized(android.renderscript.RenderScript, android.renderscript.Element, int)'>
+    <item name='android.renderscript.ScriptIntrinsicYuvToRGB android.renderscript.ScriptIntrinsicYuvToRGB create(android.renderscript.RenderScript, android.renderscript.Element)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Script android.renderscript.Script.KernelID createKernelID(int, int, android.renderscript.Element, android.renderscript.Element)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Font android.renderscript.Font create(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, android.renderscript.Font.Style, float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder addConstant(android.renderscript.Type)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.ScriptC ScriptC(android.renderscript.RenderScript, android.content.res.Resources, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder addTexture(android.renderscript.Program.TextureType)'>
+    <item name='android.renderscript.Element.Builder android.renderscript.Element.Builder add(android.renderscript.Element, java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Float3 subFloat3()'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Short2 subShort2()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Path android.renderscript.Path createStaticPath(android.renderscript.RenderScript, android.renderscript.Path.Primitive, float, android.renderscript.Allocation)'>
+    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachAdd(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Double4 subDouble4()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.AllocationAdapter void setFace(android.renderscript.Type.CubemapFace) 0'>
@@ -782,13 +821,13 @@
     <item name='android.renderscript.Sampler android.renderscript.Sampler MIRRORED_REPEAT_LINEAR_MIP_LINEAR(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Short3 subShort3()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Sampler android.renderscript.Sampler CLAMP_LINEAR_MIP_LINEAR(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copy1DRangeFromUnchecked(int, int, float[]) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FileA3D.EntryType android.renderscript.FileA3D.EntryType valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSrcIn(android.renderscript.Allocation, android.renderscript.Allocation) 1'>
@@ -797,7 +836,7 @@
     <item name='android.renderscript.Element android.renderscript.Element RGB_888(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Font.Style android.renderscript.Font.Style valueOf(java.lang.String)'>
+    <item name='android.renderscript.Font android.renderscript.Font createFromFile(android.renderscript.RenderScript, android.content.res.Resources, java.io.File, float)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element FONT(android.renderscript.RenderScript) 0'>
@@ -809,31 +848,28 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.ScriptIntrinsicConvolve5x5 android.renderscript.ScriptIntrinsicConvolve5x5 create(android.renderscript.RenderScript, android.renderscript.Element)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.RSSurfaceView RSSurfaceView(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ProgramStore android.renderscript.ProgramStore BLEND_ALPHA_DEPTH_NONE(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Double2 subDouble2()'>
+    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setYuvFormat(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramVertex.Builder android.renderscript.ProgramVertex.Builder addInput(android.renderscript.Element)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createFromString(android.renderscript.RenderScript, java.lang.String, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup create()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Element.DataType android.renderscript.Element.DataType valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ScriptIntrinsicBlend android.renderscript.ScriptIntrinsicBlend create(android.renderscript.RenderScript, android.renderscript.Element)'>
+    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setZ(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element createVector(android.renderscript.RenderScript, android.renderscript.Element.DataType, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ScriptIntrinsicBlur android.renderscript.ScriptIntrinsicBlur create(android.renderscript.RenderScript, android.renderscript.Element)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Allocation.MipmapControl android.renderscript.Allocation.MipmapControl valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSrcIn(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
@@ -842,16 +878,10 @@
     <item name='android.renderscript.Element android.renderscript.Element MESH(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Script.LaunchOptions android.renderscript.Script.LaunchOptions setZ(int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder setShader(android.content.res.Resources, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Script.FieldBase void init(android.renderscript.RenderScript, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setBlendFunc(android.renderscript.ProgramStore.BlendSrcFunc, android.renderscript.ProgramStore.BlendDstFunc)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Script void getVarV(int, android.renderscript.FieldPacker) 1'>
@@ -860,7 +890,13 @@
     <item name='android.renderscript.FieldPacker void addMatrix(android.renderscript.Matrix3f) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Float4 subFloat4()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSrcAtop(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ScriptIntrinsicLUT android.renderscript.ScriptIntrinsicLUT create(android.renderscript.RenderScript, android.renderscript.Element)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element PROGRAM_RASTER(android.renderscript.RenderScript) 0'>
@@ -869,31 +905,25 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder addVertex(float, float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Script.LaunchOptions android.renderscript.Script.LaunchOptions setX(int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation void copy2DRangeFrom(int, int, int, int, int[]) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Sampler.Value android.renderscript.Sampler.Value valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Double3 subDouble3()'>
+    <item name='android.renderscript.Matrix3f float[] getArray()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copy2DRangeFrom(int, int, android.graphics.Bitmap) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler android.renderscript.Sampler WRAP_LINEAR(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element createVector(android.renderscript.RenderScript, android.renderscript.Element.DataType, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ProgramStore.DepthFunc android.renderscript.ProgramStore.DepthFunc valueOf(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Sampler android.renderscript.Sampler WRAP_LINEAR(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element RGBA_4444(android.renderscript.RenderScript) 0'>
@@ -923,15 +953,6 @@
     <item name='android.renderscript.Element android.renderscript.Element I64(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Long3 subLong3()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addIndexSetType(android.renderscript.Element, int, android.renderscript.Mesh.Primitive)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup.Builder addConnection(android.renderscript.Type, android.renderscript.Script.KernelID, android.renderscript.Script.FieldID)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation void copy1DRangeFrom(int, int, android.renderscript.Allocation, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -941,25 +962,43 @@
     <item name='android.renderscript.FieldPacker void addI32(android.renderscript.Int4) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Path android.renderscript.Path createStaticPath(android.renderscript.RenderScript, android.renderscript.Path.Primitive, float, android.renderscript.Allocation) 3'>
+    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setFaces(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Element.Builder android.renderscript.Element.Builder add(android.renderscript.Element, java.lang.String)'>
+    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addVertexType(android.renderscript.Type)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Path android.renderscript.Path createStaticPath(android.renderscript.RenderScript, android.renderscript.Path.Primitive, float, android.renderscript.Allocation) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copy2DRangeFrom(int, int, int, int, short[]) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder addTexture(android.renderscript.Program.TextureType)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Element android.renderscript.Element U32_4(android.renderscript.RenderScript) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font android.renderscript.Font createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int, float)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ProgramVertexFixedFunction void bindConstants(android.renderscript.ProgramVertexFixedFunction.Constants) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setMipmaps(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSrc(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.Element.DataType android.renderscript.Element.DataType valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Allocation void copy3DRangeFrom(int, int, int, int, int, int, android.renderscript.Allocation, int, int, int) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.BlendDstFunc android.renderscript.ProgramStore.BlendDstFunc valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptC ScriptC(int, android.renderscript.RenderScript) 1'>
@@ -971,13 +1010,7 @@
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachDstIn(android.renderscript.Allocation, android.renderscript.Allocation) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup.Builder addConnection(android.renderscript.Type, android.renderscript.Script.KernelID, android.renderscript.Script.KernelID)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Byte2 subByte2()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addIndexSetType(android.renderscript.Mesh.Primitive)'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Font android.renderscript.Font createFromAsset(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, float) 1'>
@@ -1004,12 +1037,6 @@
     <item name='android.renderscript.Element android.renderscript.Element U32_2(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Sampler.Builder android.renderscript.Sampler create()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.AllocationAdapter android.renderscript.AllocationAdapter create2D(android.renderscript.RenderScript, android.renderscript.Allocation)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Element android.renderscript.Element I64_2(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1022,16 +1049,16 @@
     <item name='android.renderscript.Font android.renderscript.Font createFromAsset(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Script.LaunchOptions android.renderscript.Script.LaunchOptions setY(int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Font android.renderscript.Font createFromAsset(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, float)'>
+    <item name='android.renderscript.ProgramVertex.Builder android.renderscript.ProgramVertex.Builder addInput(android.renderscript.Element)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addF64(android.renderscript.Double4) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.RSSurfaceView android.renderscript.RenderScriptGL createRenderScriptGL(android.renderscript.RenderScriptGL.SurfaceConfig)'>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder android.renderscript.ProgramFragmentFixedFunction.Builder setTexture(android.renderscript.ProgramFragmentFixedFunction.Builder.EnvMode, android.renderscript.ProgramFragmentFixedFunction.Builder.Format, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setColorMaskEnabled(boolean, boolean, boolean, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copy1DRangeFrom(int, int, short[]) 2'>
@@ -1041,6 +1068,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setDepthFunc(android.renderscript.ProgramStore.DepthFunc)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Path android.renderscript.Path createStaticPath(android.renderscript.RenderScript, android.renderscript.Path.Primitive, float, android.renderscript.Allocation) 1'>
@@ -1055,19 +1085,31 @@
     <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, android.renderscript.RenderScript.ContextType) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Element android.renderscript.Element F32_3(android.renderscript.RenderScript) 0'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.RenderScript.Priority android.renderscript.RenderScript.Priority valueOf(java.lang.String)'>
+    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder setTexture(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Element android.renderscript.Element F32_3(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsic3DLUT void setLUT(android.renderscript.Allocation) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Sampler android.renderscript.Sampler CLAMP_LINEAR(android.renderscript.RenderScript) 0'>
+    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup.Builder addConnection(android.renderscript.Type, android.renderscript.Script.KernelID, android.renderscript.Script.FieldID)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder addVertex(float, float, float)'>
+    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.Format android.renderscript.ProgramFragmentFixedFunction.Builder.Format valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh.AllocationBuilder addIndexSetAllocation(android.renderscript.Allocation, android.renderscript.Mesh.Primitive)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Long4 subLong4()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler android.renderscript.Sampler CLAMP_LINEAR(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Program.BaseProgramBuilder void initProgram(android.renderscript.Program) 0'>
@@ -1079,7 +1121,7 @@
     <item name='android.renderscript.Font android.renderscript.Font createFromFile(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, float) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Float4 subFloat4()'>
+    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder setColor(float, float, float, float)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ProgramStore android.renderscript.ProgramStore BLEND_NONE_DEPTH_NONE(android.renderscript.RenderScript) 0'>
@@ -1088,7 +1130,7 @@
     <item name='android.renderscript.Element android.renderscript.Element TYPE(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramRaster.CullMode android.renderscript.ProgramRaster.CullMode valueOf(java.lang.String)'>
+    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromAsset(android.renderscript.RenderScript, android.content.res.AssetManager, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addI32(android.renderscript.Int3) 0'>
@@ -1124,7 +1166,7 @@
     <item name='android.renderscript.Matrix4f void load(android.renderscript.Matrix3f) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ScriptIntrinsicYuvToRGB android.renderscript.ScriptIntrinsicYuvToRGB create(android.renderscript.RenderScript, android.renderscript.Element)'>
+    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addIndexSetType(android.renderscript.Element, int, android.renderscript.Mesh.Primitive)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.AllocationAdapter android.renderscript.AllocationAdapter create2D(android.renderscript.RenderScript, android.renderscript.Allocation) 1'>
@@ -1136,10 +1178,10 @@
     <item name='android.renderscript.Allocation void copy3DRangeFrom(int, int, int, int, int, int, int[]) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramStore.DepthFunc android.renderscript.ProgramStore.DepthFunc valueOf(java.lang.String)'>
+    <item name='android.renderscript.Allocation void copyTo(android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation void copyTo(android.graphics.Bitmap) 0'>
+    <item name='android.renderscript.ScriptIntrinsic3DLUT android.renderscript.ScriptIntrinsic3DLUT create(android.renderscript.RenderScript, android.renderscript.Element)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addU64(android.renderscript.Long3) 0'>
@@ -1151,10 +1193,10 @@
     <item name='android.renderscript.ProgramStore.BlendDstFunc android.renderscript.ProgramStore.BlendDstFunc valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 7'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Matrix4f subMatrix4f()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore create()'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 7'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.RSTextureView RSTextureView(android.content.Context) 0'>
@@ -1169,19 +1211,16 @@
     <item name='android.renderscript.FieldPacker void addU8(android.renderscript.Short3) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setDepthFunc(android.renderscript.ProgramStore.DepthFunc)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.renderscript.Allocation.MipmapControl, int) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addI8(android.renderscript.Byte4) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.AllocationAdapter void subData1D(int, int, byte[]) 2'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Double2 subDouble2()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Font android.renderscript.Font createFromResource(android.renderscript.RenderScript, android.content.res.Resources, int, float)'>
+    <item name='android.renderscript.AllocationAdapter void subData1D(int, int, byte[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptGroup void setInput(android.renderscript.Script.KernelID, android.renderscript.Allocation) 0'>
@@ -1193,13 +1232,25 @@
     <item name='android.renderscript.Element android.renderscript.Element U8_2(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup create()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.RenderScriptGL RenderScriptGL(android.content.Context, android.renderscript.RenderScriptGL.SurfaceConfig) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Float2 subFloat2()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Matrix2f void load(android.renderscript.Matrix2f) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Path.Primitive android.renderscript.Path.Primitive valueOf(java.lang.String)'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Long2 subLong2()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font android.renderscript.Font createFromAsset(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.ProgramStore.DepthFunc android.renderscript.ProgramStore.DepthFunc valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addU64(android.renderscript.Long4) 0'>
@@ -1214,16 +1265,7 @@
     <item name='android.renderscript.FieldPacker void addI64(android.renderscript.Long3) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder.Format android.renderscript.ProgramFragmentFixedFunction.Builder.Format valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.ProgramStore.Builder android.renderscript.ProgramStore.Builder setDepthMaskEnabled(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Element android.renderscript.Element I32_2(android.renderscript.RenderScript) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Short2 subShort2()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.RenderScriptGL RenderScriptGL(android.content.Context, android.renderscript.RenderScriptGL.SurfaceConfig) 1'>
@@ -1232,16 +1274,10 @@
     <item name='android.renderscript.Element android.renderscript.Element U16_2(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.Primitive android.renderscript.Mesh.Primitive valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.Element android.renderscript.Element U8_4(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, android.renderscript.Allocation.MipmapControl, int) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicConvolve5x5 android.renderscript.ScriptIntrinsicConvolve5x5 create(android.renderscript.RenderScript, android.renderscript.Element) 0'>
@@ -1253,28 +1289,19 @@
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSrcOut(android.renderscript.Allocation, android.renderscript.Allocation) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh create(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.FieldPacker void addU32(android.renderscript.Long4) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addU32(android.renderscript.Long3) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Font android.renderscript.Font createFromFile(android.renderscript.RenderScript, android.content.res.Resources, java.io.File, float)'>
+    <item name='android.renderscript.FileA3D.EntryType android.renderscript.FileA3D.EntryType valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FileA3D android.renderscript.FileA3D createFromAsset(android.renderscript.RenderScript, android.content.res.AssetManager, java.lang.String)'>
+    <item name='android.renderscript.ScriptGroup.Builder android.renderscript.ScriptGroup.Builder addConnection(android.renderscript.Type, android.renderscript.Script.KernelID, android.renderscript.Script.KernelID)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder setColor(float, float, float, float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder setNormal(float, float, float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder setShader(java.lang.String)'>
+    <item name='android.renderscript.ProgramVertexFixedFunction.Builder android.renderscript.ProgramVertexFixedFunction.Builder setTextureMatrixEnable(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker FieldPacker(byte[]) 0'>
@@ -1286,13 +1313,7 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, android.renderscript.Allocation.MipmapControl, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Matrix2f subMatrix2f()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Element.Builder android.renderscript.Element.Builder add(android.renderscript.Element, java.lang.String, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.RenderScript android.renderscript.RenderScript create(android.content.Context, int)'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Double3 subDouble3()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Matrix3f void load(android.renderscript.Matrix3f) 0'>
@@ -1319,6 +1340,9 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.renderscript.FieldPacker android.renderscript.Byte2 subByte2()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.renderscript.Type.Builder Builder(android.renderscript.RenderScript, android.renderscript.Element) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1334,19 +1358,13 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, android.renderscript.Allocation.MipmapControl, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Long2 subLong2()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createCubemapFromCubeFaces(android.renderscript.RenderScript, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap, android.graphics.Bitmap)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh.AllocationBuilder addVertexAllocation(android.renderscript.Allocation)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setY(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.renderscript.FieldPacker void addU16(android.renderscript.Int2) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createFromString(android.renderscript.RenderScript, java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Sampler.Builder android.renderscript.Sampler create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Allocation void copy1DRangeFromUnchecked(int, int, byte[]) 2'>
@@ -1355,10 +1373,7 @@
     <item name='android.renderscript.Allocation void copy3DRangeFrom(int, int, int, int, int, int, short[]) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Byte3 subByte3()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Matrix3f float[] getArray()'>
+    <item name='android.renderscript.ProgramStore.BlendSrcFunc android.renderscript.ProgramStore.BlendSrcFunc valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element RGBA_8888(android.renderscript.RenderScript) 0'>
@@ -1370,22 +1385,22 @@
     <item name='android.renderscript.Allocation android.renderscript.Allocation createFromBitmap(android.renderscript.RenderScript, android.graphics.Bitmap) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Program.TextureType android.renderscript.Program.TextureType valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation.MipmapControl android.renderscript.Allocation.MipmapControl valueOf(java.lang.String)'>
+    <item name='android.renderscript.Mesh.TriangleMeshBuilder android.renderscript.Mesh.TriangleMeshBuilder addVertex(float, float, float)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addU16(android.renderscript.Int4) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.ProgramFragmentFixedFunction.Builder android.renderscript.ProgramFragmentFixedFunction.Builder setVaryingColor(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Type.Builder android.renderscript.Type.Builder setFaces(boolean)'>
+    <item name='android.renderscript.FieldPacker android.renderscript.Double4 subDouble4()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Element android.renderscript.Element PROGRAM_FRAGMENT(android.renderscript.RenderScript) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Font android.renderscript.Font create(android.renderscript.RenderScript, android.content.res.Resources, java.lang.String, android.renderscript.Font.Style, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.renderscript.Program.BaseProgramBuilder android.renderscript.Program.BaseProgramBuilder addConstant(android.renderscript.Type)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.Sampler android.renderscript.Sampler WRAP_NEAREST(android.renderscript.RenderScript) 0'>
@@ -1394,25 +1409,22 @@
     <item name='android.renderscript.Element android.renderscript.Element F64(android.renderscript.RenderScript) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addVertexType(android.renderscript.Type)'>
+    <item name='android.renderscript.Program.TextureType android.renderscript.Program.TextureType valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.ScriptIntrinsicBlend void forEachSrcOver(android.renderscript.Allocation, android.renderscript.Allocation) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Mesh.Builder android.renderscript.Mesh.Builder addVertexType(android.renderscript.Element, int)'>
+    <item name='android.renderscript.Mesh.AllocationBuilder android.renderscript.Mesh.AllocationBuilder addVertexAllocation(android.renderscript.Allocation)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.Element.DataKind android.renderscript.Element.DataKind valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.renderscript.Allocation android.renderscript.Allocation createTyped(android.renderscript.RenderScript, android.renderscript.Type, int)'>
+    <item name='android.renderscript.Element.Builder android.renderscript.Element create()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.renderscript.FieldPacker void addF32(android.renderscript.Float4) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.renderscript.FieldPacker android.renderscript.Short3 subShort3()'>
+    <item name='android.renderscript.Allocation android.renderscript.Allocation createSized(android.renderscript.RenderScript, android.renderscript.Element, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

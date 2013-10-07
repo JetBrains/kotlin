@@ -1,5 +1,5 @@
 <root>
-    <item name='android.net.wifi.WifiSsid java.lang.String toString()'>
+    <item name='android.net.wifi.WifiSsid byte[] getOctets()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiManager void connect(android.net.wifi.WifiConfiguration, android.net.wifi.WifiManager.ActionListener) 0'>
@@ -8,16 +8,19 @@
     <item name='android.net.wifi.WpsResult.Status android.net.wifi.WpsResult.Status valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.wifi.WifiConfiguration.IpAssignment android.net.wifi.WifiConfiguration.IpAssignment valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager.WifiLock java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.wifi.SupplicantState android.net.wifi.SupplicantState valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
+    <item name='android.net.wifi.WifiInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiManager void save(android.net.wifi.WifiConfiguration, android.net.wifi.WifiManager.ActionListener) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getClientCertificateAlias()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.ScanResult void writeToParcel(android.os.Parcel, int) 0'>
@@ -29,19 +32,28 @@
     <item name='android.net.wifi.WifiWatchdogStateMachine void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.SupplicantState android.net.wifi.SupplicantState valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.wifi.WifiSsid android.net.wifi.WifiSsid createFromAsciiEncoded(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiConfiguration.ProxySettings android.net.wifi.WifiConfiguration.ProxySettings valueOf(java.lang.String)'>
+    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiSsid android.net.wifi.WifiSsid createFromAsciiEncoded(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiStateMachine boolean syncSaveConfig(com.android.internal.util.AsyncChannel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiStateMachine android.net.DhcpResults syncGetDhcpResults()'>
+    <item name='android.net.wifi.WpsResult java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getClientCertificateAlias()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiStateMachine java.lang.String syncGetWifiApStateByName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiManager android.net.wifi.WifiManager.MulticastLock createMulticastLock(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiWatchdogStateMachine android.net.wifi.WifiWatchdogStateMachine makeWifiWatchdogStateMachine(android.content.Context) 0'>
@@ -50,19 +62,34 @@
     <item name='android.net.wifi.WifiInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.wifi.WifiManager android.net.wifi.WifiManager.WifiLock createWifiLock(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiInfo java.lang.String getSSID()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiStateTracker java.lang.String getTcpBufferSizesPropName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.SupplicantState android.net.wifi.SupplicantState valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.ScanResult java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiStateMachine android.net.DhcpResults syncGetDhcpResults()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.wifi.WifiStateMachine boolean syncRemoveNetwork(com.android.internal.util.AsyncChannel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiSsid void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiStateMachine java.lang.String syncGetWifiStateByName()'>
+    <item name='android.net.wifi.WifiSsid java.lang.String getHexString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiManager android.net.wifi.WifiManager.WifiLock createWifiLock(int, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WpsResult java.lang.String toString()'>
+    <item name='android.net.wifi.WifiManager android.net.wifi.WifiManager.WifiLock createWifiLock(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiStateMachine java.util.List&lt;android.net.wifi.WifiConfiguration&gt; syncGetConfiguredNetworks(com.android.internal.util.AsyncChannel) 0'>
@@ -71,19 +98,22 @@
     <item name='android.net.wifi.WifiNative boolean p2pServiceDel(android.net.wifi.p2p.nsd.WifiP2pServiceInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiStateMachine android.os.Messenger getMessenger()'>
+    <item name='android.net.wifi.WifiManager.MulticastLock java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiStateTracker android.net.LinkProperties getLinkProperties()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiStateTracker java.lang.String getTcpBufferSizesPropName()'>
+    <item name='android.net.wifi.WifiStateMachine android.os.Messenger getMessenger()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiSsid android.net.wifi.WifiSsid createFromHex(java.lang.String)'>
+    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getCaCertificateAlias()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiStateMachine java.lang.String syncGetWifiApStateByName()'>
+    <item name='android.net.wifi.IWifiManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiSsid java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiStateMachine void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
@@ -92,79 +122,55 @@
     <item name='android.net.wifi.WifiStateMachine int syncAddOrUpdateNetwork(com.android.internal.util.AsyncChannel, android.net.wifi.WifiConfiguration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiStateTracker android.net.NetworkInfo getNetworkInfo()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.wifi.RssiPacketCountInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiStateMachine java.lang.String getConfigFile()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WpsResult.Status android.net.wifi.WpsResult.Status valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiConfiguration void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiManager android.net.wifi.WifiManager.WifiLock createWifiLock(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiSsid android.net.wifi.WifiSsid createFromAsciiEncoded(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiConfiguration.IpAssignment android.net.wifi.WifiConfiguration.IpAssignment valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiManager.MulticastLock java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiStateMachine java.util.List&lt;android.net.wifi.ScanResult&gt; syncGetScanResultsList()'>
+    <item name='android.net.wifi.WifiStateMachine java.lang.String syncGetWifiStateByName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiNative boolean p2pServiceAdd(android.net.wifi.p2p.nsd.WifiP2pServiceInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.wifi.WpsResult.Status android.net.wifi.WpsResult.Status valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.wifi.WpsInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getPassword()'>
+    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getAnonymousIdentity()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiEnterpriseConfig WifiEnterpriseConfig(android.net.wifi.WifiEnterpriseConfig) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.ScanResult java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiSsid java.lang.String getHexString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.wifi.WpsResult void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getSubjectMatch()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WpsInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getIdentity()'>
+    <item name='android.net.wifi.WifiConfiguration.ProxySettings android.net.wifi.WifiConfiguration.ProxySettings valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiEnterpriseConfig void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getSubjectMatch()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiSsid android.net.wifi.WifiSsid createFromHex(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.wifi.WifiConfiguration.ProxySettings android.net.wifi.WifiConfiguration.ProxySettings valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiManager android.net.wifi.WifiManager.MulticastLock createMulticastLock(java.lang.String)'>
+    <item name='android.net.wifi.WifiStateMachine java.util.List&lt;android.net.wifi.ScanResult&gt; syncGetScanResultsList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiStateMachine boolean syncEnableNetwork(com.android.internal.util.AsyncChannel, int, boolean) 0'>
@@ -173,37 +179,34 @@
     <item name='android.net.wifi.WifiConfiguration.IpAssignment android.net.wifi.WifiConfiguration.IpAssignment valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiManager.WifiLock java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getAnonymousIdentity()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getCaCertificateAlias()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.wifi.WifiManager void startWps(android.net.wifi.WpsInfo, android.net.wifi.WifiManager.WpsListener) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.WifiSsid byte[] getOctets()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.SupplicantState void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.wifi.WifiInfo java.lang.String getSSID()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.wifi.IWifiManager.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.wifi.WifiWatchdogStateMachine android.net.wifi.WifiWatchdogStateMachine makeWifiWatchdogStateMachine(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.IWifiManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiStateMachine java.lang.String getConfigFile()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getIdentity()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiEnterpriseConfig java.lang.String getPassword()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiConfiguration java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.SupplicantState boolean isHandshakeState(android.net.wifi.SupplicantState) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wifi.WifiStateTracker android.net.NetworkInfo getNetworkInfo()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.wifi.WifiStateMachine boolean syncPingSupplicant(com.android.internal.util.AsyncChannel) 0'>

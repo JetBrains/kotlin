@@ -5,31 +5,55 @@
     <item name='android.net.NetworkStats android.net.NetworkStats subtract(android.net.NetworkStats, android.net.NetworkStats, android.net.NetworkStats.NonMonotonicObserver&lt;C&gt;, C) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.NetworkUtils java.net.InetAddress numericToInetAddress(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.INetworkManagementEventObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.NetworkStatsHistory.ParcelUtils long[] readLongArray(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAmpAndSpaceLegal()'>
+    <item name='android.net.LinkSocket android.net.LinkCapabilities getCapabilities(java.util.Set&lt;java.lang.Integer&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.SSLCertificateSocketFactory void setSoWriteTimeout(java.net.Socket, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties java.lang.String toString()'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder path(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getUrlLegal()'>
+    <item name='android.net.NetworkStatsHistory android.net.NetworkStatsHistory.Entry getValues(int, android.net.NetworkStatsHistory.Entry)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri android.net.Uri getCanonicalUri()'>
+    <item name='android.net.SSLCertificateSocketFactory javax.net.ssl.SSLSocketFactory getDefault(int, android.net.SSLSessionCache)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties java.util.Collection&lt;java.net.InetAddress&gt; getDnses()'>
+    <item name='android.net.NetworkPolicy java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.MailTo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder setMtu(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStats android.net.NetworkStats subtract(android.net.NetworkStats) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButWhitespaceLegal()'>
+    <item name='android.net.EthernetDataTracker android.net.LinkCapabilities getLinkCapabilities()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.INetworkPolicyManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats android.net.NetworkStats addValues(android.net.NetworkStats.Entry)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats int[] getUniqueUids()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.BaseNetworkStateTracker android.net.LinkProperties getLinkProperties()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.SSLCertificateSocketFactory void setHostname(java.net.Socket, java.lang.String) 0'>
@@ -38,13 +62,7 @@
     <item name='android.net.NetworkStatsHistory.DataStreamUtils void writeVarLong(java.io.DataOutputStream, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.InetAddress, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStatsHistory android.net.NetworkStatsHistory.Entry getValues(int, android.net.NetworkStatsHistory.Entry)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotal(android.net.NetworkStats.Entry, int)'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder appendEncodedPath(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.LocalSocketAddress.Namespace android.net.LocalSocketAddress.Namespace valueOf(java.lang.String) 0'>
@@ -53,22 +71,22 @@
     <item name='android.net.DhcpResults void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties boolean isIdenticalRoutes(android.net.LinkProperties) 0'>
+    <item name='android.net.LinkProperties java.util.Collection&lt;android.net.LinkProperties&gt; getStackedLinks()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedPath(java.lang.String)'>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LinkProperties boolean isIdenticalRoutes(android.net.LinkProperties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateWifi(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.DummyDataStateTracker java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.NetworkPolicy NetworkPolicy(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkInfo.State android.net.NetworkInfo.State valueOf(java.lang.String)'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder scheme(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkIdentity android.net.NetworkIdentity buildNetworkIdentity(android.content.Context, android.net.NetworkState) 1'>
@@ -77,58 +95,76 @@
     <item name='android.net.NetworkStatsHistory NetworkStatsHistory(java.io.DataInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.TrafficStats android.net.NetworkStats stopDataProfiling(android.content.Context)'>
+    <item name='android.net.NetworkStats android.net.NetworkStats subtract(android.net.NetworkStats)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats int[] getUniqueUids()'>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addRoute(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats groupedByUid()'>
+    <item name='android.net.Uri void writeToParcel(android.os.Parcel, android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.MobileDataStateTracker android.net.LinkProperties getLinkProperties()'>
+    <item name='android.net.INetworkStatsSession.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LinkProperties java.util.Collection&lt;java.net.InetAddress&gt; getDnses()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.VpnService boolean protect(java.net.DatagramSocket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder query(java.lang.String)'>
+    <item name='android.net.LinkProperties java.util.Collection&lt;android.net.RouteInfo&gt; getAllRoutes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobileWildcard()'>
+    <item name='android.net.VpnService android.content.Intent prepare(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkUtils java.net.InetAddress hexToInet6Address(java.lang.String)'>
+    <item name='android.net.DnsPinger java.util.List&lt;java.net.InetAddress&gt; getDnsList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.BaseNetworkStateTracker void startMonitoring(android.content.Context, android.os.Handler) 0'>
+    <item name='android.net.BaseNetworkStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.lang.String, int, java.net.InetAddress, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addAddress(java.net.InetAddress, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.LinkSocket android.net.LinkCapabilities getCapabilities(java.util.Set&lt;java.lang.Integer&gt;)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotal(android.net.NetworkStats.Entry)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateWifi()'>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getUrlAndSpaceLegal()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.VpnService.Builder android.net.VpnService.Builder setSession(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.TrafficStats void tagSocket(java.net.Socket) 0'>
+    <item name='android.net.RouteInfo java.net.InetAddress getGateway()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.InterfaceConfiguration java.lang.String toString()'>
+    <item name='android.net.DummyDataStateTracker android.net.LinkProperties getLinkProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri android.net.Uri parse(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.BaseNetworkStateTracker void startMonitoring(android.content.Context, android.os.Handler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Proxy java.net.Proxy getProxy(android.content.Context, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllIllegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder opaquePart(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats.Entry java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedFragment(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.WebAddress java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Proxy int getPort(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.TrafficStats void tagSocket(java.net.Socket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStats android.net.NetworkStats subtract(android.net.NetworkStats, android.net.NetworkStats, android.net.NetworkStats.NonMonotonicObserver&lt;C&gt;, C) 1'>
@@ -137,10 +173,16 @@
     <item name='android.net.Uri boolean getBooleanQueryParameter(java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.CaptivePortalTracker android.net.CaptivePortalTracker makeCaptivePortalTracker(android.content.Context, android.net.IConnectivityManager)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.NetworkStats NetworkStats(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStatsHistory.DataStreamUtils long[] readVarLongArray(java.io.DataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.RouteInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.UrlQuerySanitizer void registerParameters(java.lang.String[], android.net.UrlQuerySanitizer.ValueSanitizer) 0'>
@@ -149,19 +191,7 @@
     <item name='android.net.Proxy void validate(java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri android.net.Uri normalizeScheme()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri android.net.Uri withAppendedPath(android.net.Uri, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.NetworkStats void combineAllValues(android.net.NetworkStats) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.MailTo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addSearchDomain(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.BaseNetworkStateTracker void startMonitoring(android.content.Context, android.os.Handler) 1'>
@@ -170,73 +200,58 @@
     <item name='android.net.SSLCertificateSocketFactory void setAlpnProtocols(byte[][]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.lang.String, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats addValues(java.lang.String, int, int, int, long, long, long, long, long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedQuery(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.NetworkTemplate void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.DummyDataStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.Uri java.util.List&lt;java.lang.String&gt; getQueryParameters(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder scheme(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.LinkProperties boolean isIdenticalAddresses(android.net.LinkProperties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButNulAndAngleBracketsLegal()'>
+    <item name='android.net.Uri java.util.Set&lt;java.lang.String&gt; getQueryParameterNames()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer java.util.Set&lt;java.lang.String&gt; getParameterSet()'>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getUrlLegal()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStatsHistory.ParcelUtils void writeLongArray(android.os.Parcel, long[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory org.apache.http.conn.ssl.SSLSocketFactory getHttpSocketFactory(int, android.net.SSLSessionCache)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.VpnService.Builder Builder(android.net.VpnService) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats combineValues(java.lang.String, int, int, int, long, long, long, long, long)'>
+    <item name='android.net.LocalSocket android.net.LocalSocketAddress getRemoteSocketAddress()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkUtils java.net.InetAddress intToInetAddress(int)'>
+    <item name='android.net.NetworkStatsHistory android.net.NetworkStatsHistory.Entry getValues(long, long, android.net.NetworkStatsHistory.Entry)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStatsHistory.DataStreamUtils long[] readFullLongArray(java.io.DataInputStream)'>
+    <item name='android.net.Uri android.net.Uri normalizeScheme()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedQuery(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicy NetworkPolicy(android.net.NetworkTemplate, int, java.lang.String, long, long, boolean) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButNulLegal()'>
+    <item name='android.net.LinkProperties java.util.Collection&lt;java.net.InetAddress&gt; getAddresses()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder appendQueryParameter(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.LinkProperties boolean isIdenticalStackedLinks(android.net.LinkProperties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LocalSocketAddress.Namespace android.net.LocalSocketAddress.Namespace valueOf(java.lang.String)'>
+    <item name='android.net.Uri android.net.Uri fromParts(java.lang.String, java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.MobileDataStateTracker java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.BaseNetworkStateTracker android.net.NetworkInfo getNetworkInfo()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Proxy org.apache.http.conn.routing.HttpRoutePlanner getAndroidProxySelectorRoutePlanner(android.content.Context)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder appendEncodedPath(java.lang.String)'>
+    <item name='android.net.DummyDataStateTracker java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.UrlQuerySanitizer void parseEntry(java.lang.String, java.lang.String) 0'>
@@ -245,13 +260,34 @@
     <item name='android.net.Uri int compareTo(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.LinkProperties.CompareResult java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.DhcpInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.INetworkStatsSession.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LocalSocketAddress.Namespace android.net.LocalSocketAddress.Namespace valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobile4g(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.VpnService.Builder android.net.VpnService.Builder addRoute(java.net.InetAddress, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder path(java.lang.String)'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder query(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats subtract(android.net.NetworkStats)'>
+    <item name='android.net.LocalSocket java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LocalServerSocket android.net.LocalSocket accept()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats android.net.NetworkStats combineValues(android.net.NetworkStats.Entry)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicy NetworkPolicy(android.net.NetworkTemplate, int, java.lang.String, long, long, long, long, boolean, boolean) 0'>
@@ -260,31 +296,28 @@
     <item name='android.net.LinkAddress void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.NetworkInfo.State android.net.NetworkInfo.State valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.RouteInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.RouteInfo android.net.LinkAddress getDestination()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats addValues(android.net.NetworkStats.Entry)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.SSLCertificateSocketFactory void setUseSessionTickets(java.net.Socket, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.INetworkStatsSession.Stub android.os.IBinder asBinder()'>
+    <item name='android.net.LinkProperties java.util.Collection&lt;java.lang.String&gt; getAllInterfaceNames()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats java.lang.String tagToString(int)'>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.lang.String, int, java.net.InetAddress, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder setMtu(int)'>
+    <item name='android.net.NetworkStats android.net.NetworkStats withoutUids(int[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getUrlAndSpaceLegal()'>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addDnsServer(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties java.util.Collection&lt;android.net.RouteInfo&gt; getAllRoutes()'>
+    <item name='android.net.NetworkInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStatsHistory.DataStreamUtils void writeVarLongArray(java.io.DataOutputStream, long[], int) 0'>
@@ -293,7 +326,7 @@
     <item name='android.net.ConnectivityManager boolean requestRouteToHostAddress(int, java.net.InetAddress) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder authority(java.lang.String)'>
+    <item name='android.net.UrlQuerySanitizer void parseEntry(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkInfo.State android.net.NetworkInfo.State valueOf(java.lang.String) 0'>
@@ -308,13 +341,16 @@
     <item name='android.net.Uri int compareTo(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotal(android.net.NetworkStats.Entry, java.util.HashSet&lt;java.lang.String&gt;)'>
+    <item name='android.net.EthernetDataTracker java.lang.String getTcpBufferSizesPropName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory javax.net.ssl.SSLSocketFactory getDefault(int, android.net.SSLSessionCache)'>
+    <item name='android.net.NetworkUtils java.net.InetAddress hexToInet6Address(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.EthernetDataTracker android.net.LinkProperties getLinkProperties()'>
+    <item name='android.net.UrlQuerySanitizer java.util.Set&lt;java.lang.String&gt; getParameterSet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkTemplate java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.InterfaceConfiguration void clearFlag(java.lang.String) 0'>
@@ -323,16 +359,13 @@
     <item name='android.net.NetworkTemplate boolean matches(android.net.NetworkIdentity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.IConnectivityManager.Stub android.os.IBinder asBinder()'>
+    <item name='android.net.MobileDataStateTracker android.net.LinkProperties getLinkProperties()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicy NetworkPolicy(android.net.NetworkTemplate, int, java.lang.String, long, long, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats java.lang.String setToString(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.DummyDataStateTracker android.net.LinkProperties getLinkProperties()'>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder setConfigureIntent(android.app.PendingIntent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.UrlQuerySanitizer void parseUrl(java.lang.String) 0'>
@@ -341,19 +374,22 @@
     <item name='android.net.NetworkQuotaInfo NetworkQuotaInfo(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.INetworkManagementEventObserver.Stub android.os.IBinder asBinder()'>
+    <item name='android.net.NetworkStats android.net.NetworkStats combineValues(java.lang.String, int, int, int, long, long, long, long, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri java.lang.String toSafeString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.MailTo android.net.MailTo parse(java.lang.String)'>
+    <item name='android.net.Proxy org.apache.http.conn.routing.HttpRoutePlanner getAndroidProxySelectorRoutePlanner(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.Uri android.net.Uri fromParts(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties java.util.Collection&lt;android.net.LinkAddress&gt; getLinkAddresses()'>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAmpLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats android.net.NetworkStats groupedByUid()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateWifiWildcard()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicyManager long computeNextCycleBoundary(long, android.net.NetworkPolicy) 1'>
@@ -362,16 +398,10 @@
     <item name='android.net.Uri java.util.List&lt;java.lang.String&gt; getQueryParameters(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.DhcpStateMachine android.net.DhcpStateMachine makeDhcpStateMachine(android.content.Context, com.android.internal.util.StateMachine, java.lang.String)'>
+    <item name='android.net.NetworkStats java.lang.String setToString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.ProxyProperties java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addDnsServer(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.LocalServerSocket android.net.LocalSocket accept()'>
+    <item name='android.net.NetworkStats android.net.NetworkStats addValues(java.lang.String, int, int, int, long, long, long, long, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicyManager long computeLastCycleBoundary(long, android.net.NetworkPolicy) 1'>
@@ -380,31 +410,10 @@
     <item name='android.net.NetworkPolicy NetworkPolicy(android.net.NetworkTemplate, int, java.lang.String, long, long, long, long, boolean, boolean) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties android.net.LinkProperties.CompareResult&lt;android.net.LinkAddress&gt; compareAddresses(android.net.LinkProperties)'>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addAddress(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder clearQuery()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats groupedByIface()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStatsHistory java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri android.net.Uri fromParts(java.lang.String, java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.MobileDataStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.LinkCapabilities java.util.Set&lt;java.lang.Integer&gt; keySet()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats.Entry java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder appendPath(java.lang.String)'>
+    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobile3gLower(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.ProxyProperties void writeToParcel(android.os.Parcel, int) 0'>
@@ -413,28 +422,43 @@
     <item name='android.net.NetworkStatsHistory NetworkStatsHistory(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkSocket android.net.LinkProperties getLinkProperties()'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedPath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.DummyDataStateTracker java.lang.String getTcpBufferSizesPropName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkInfo.DetailedState android.net.NetworkInfo.DetailedState valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStatsHistory.DataStreamUtils long[] readFullLongArray(java.io.DataInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats combineValues(java.lang.String, int, int, long, long, long, long, long)'>
+    <item name='android.net.INetworkPolicyManager.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri build()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.ProxyProperties java.net.Proxy makeProxy()'>
+    <item name='android.net.TrafficStats android.net.NetworkStats stopDataProfiling(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkState NetworkState(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkUtils java.net.InetAddress getNetworkPart(java.net.InetAddress, int)'>
+    <item name='android.net.NetworkStatsHistory java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addDnsServer(java.net.InetAddress)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.INetworkStatsService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder authority(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.SSLCertificateSocketFactory void setNpnProtocols(byte[][]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.Socket, java.lang.String, int, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.TrafficStats void untagSocket(java.net.Socket) 0'>
@@ -449,13 +473,10 @@
     <item name='android.net.NetworkUtils java.lang.String[] makeStrings(java.util.Collection&lt;java.net.InetAddress&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder appendQueryParameter(java.lang.String, java.lang.String)'>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAmpAndSpaceLegal()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStatsHistory android.net.NetworkStatsHistory.Entry getValues(long, long, android.net.NetworkStatsHistory.Entry)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats subtract(android.net.NetworkStats, android.net.NetworkStats, android.net.NetworkStats.NonMonotonicObserver&lt;C&gt;, C)'>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.LinkProperties void writeToParcel(android.os.Parcel, int) 0'>
@@ -467,13 +488,13 @@
     <item name='android.net.NetworkStatsHistory void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.INetworkStatsService.Stub android.os.IBinder asBinder()'>
+    <item name='android.net.InterfaceConfiguration java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri android.net.Uri parse(java.lang.String)'>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButNulAndAngleBracketsLegal()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkTemplate java.lang.String toString()'>
+    <item name='android.net.SSLCertificateSocketFactory javax.net.SocketFactory getDefault(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkUtils int inetAddressToInt(java.net.Inet4Address) 0'>
@@ -482,19 +503,22 @@
     <item name='android.net.SSLCertificateSocketFactory byte[] getAlpnSelectedProtocol(java.net.Socket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.WebAddress java.lang.String toString()'>
+    <item name='android.net.LinkCapabilities android.net.LinkCapabilities createNeedsMap(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkInfo java.lang.String toString()'>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addAddress(java.net.InetAddress, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.ConnectivityManager ConnectivityManager(android.net.IConnectivityManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotal(android.net.NetworkStats.Entry)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.LinkCapabilities void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.EthernetDataTracker java.lang.String getTcpBufferSizesPropName()'>
+    <item name='android.net.Uri.Builder android.net.Uri build()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.UrlQuerySanitizer void parseQuery(java.lang.String) 0'>
@@ -503,67 +527,61 @@
     <item name='android.net.LinkProperties boolean isIdenticalHttpProxy(android.net.LinkProperties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.Socket, java.lang.String, int, boolean)'>
+    <item name='android.net.LinkCapabilities java.util.Set&lt;java.util.Map.Entry&lt;java.lang.Integer,java.lang.String&gt;&gt; entrySet()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotalIncludingTags(android.net.NetworkStats.Entry)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder opaquePart(java.lang.String)'>
+    <item name='android.net.UrlQuerySanitizer java.lang.String unescape(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.InterfaceConfiguration void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties.CompareResult java.lang.String toString()'>
+    <item name='android.net.Uri android.net.Uri withAppendedPath(android.net.Uri, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkIdentity android.net.NetworkIdentity buildNetworkIdentity(android.content.Context, android.net.NetworkState)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotal(android.net.NetworkStats.Entry, java.util.HashSet&lt;java.lang.String&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkUtils java.net.InetAddress getNetworkPart(java.net.InetAddress, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkInfo.DetailedState android.net.NetworkInfo.DetailedState valueOf(java.lang.String)'>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateWifiWildcard()'>
+    <item name='android.net.NetworkStats android.net.NetworkStats clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.INetworkPolicyListener.Stub android.os.IBinder asBinder()'>
+    <item name='android.net.NetworkStats java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicyManager void dumpPolicy(java.io.PrintWriter, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties java.util.Collection&lt;java.net.InetAddress&gt; getAddresses()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Proxy java.net.Proxy getProxy(android.content.Context, java.lang.String)'>
+    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateWifi()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStatsHistory void writeToStream(java.io.DataOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.SSLCertificateSocketFactory javax.net.ssl.SSLSocketFactory getInsecure(int, android.net.SSLSessionCache)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.NetworkStats void dump(java.lang.String, java.io.PrintWriter) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkCapabilities java.util.Set&lt;java.util.Map.Entry&lt;java.lang.Integer,java.lang.String&gt;&gt; entrySet()'>
+    <item name='android.net.UrlQuerySanitizer java.util.List&lt;android.net.UrlQuerySanitizer.ParameterValuePair&gt; getParameterList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.VpnService.Builder android.net.VpnService.Builder addAddress(java.net.InetAddress, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.BaseNetworkStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkPolicy java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.NetworkStatsHistory void dump(com.android.internal.util.IndentingPrintWriter, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri android.net.Uri fromFile(java.io.File)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.SSLCertificateSocketFactory javax.net.ssl.SSLSocketFactory getInsecure(int, android.net.SSLSessionCache)'>
+    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getValues(int, android.net.NetworkStats.Entry)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStats android.net.NetworkStats addValues(android.net.NetworkStats.Entry) 0'>
@@ -572,34 +590,22 @@
     <item name='android.net.InterfaceConfiguration boolean hasFlag(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.MobileDataStateTracker java.lang.String getTcpBufferSizesPropName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addRoute(java.lang.String, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.Uri android.net.Uri fromFile(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties android.net.LinkProperties.CompareResult&lt;android.net.RouteInfo&gt; compareRoutes(android.net.LinkProperties)'>
+    <item name='android.net.NetworkUtils java.lang.String[] makeStrings(java.util.Collection&lt;java.net.InetAddress&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LocalSocket java.lang.String toString()'>
+    <item name='android.net.LinkSocket java.util.Set&lt;java.lang.Integer&gt; getTrackedCapabilities()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress, int)'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedOpaquePart(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.RouteInfo java.net.InetAddress getGateway()'>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getSpaceLegal()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStatsHistory android.net.NetworkStatsHistory.Entry getValues(long, long, long, android.net.NetworkStatsHistory.Entry)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobile3gLower(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobileAll(java.lang.String)'>
+    <item name='android.net.LinkProperties android.net.LinkProperties.CompareResult&lt;java.net.InetAddress&gt; compareDnses(android.net.LinkProperties)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkConfig NetworkConfig(java.lang.String) 0'>
@@ -608,43 +614,61 @@
     <item name='android.net.NetworkStats android.net.NetworkStats combineValues(android.net.NetworkStats.Entry) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.NetworkInfo.DetailedState android.net.NetworkInfo.DetailedState valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer java.lang.String unescape(java.lang.String)'>
+    <item name='android.net.NetworkInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats clone()'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedAuthority(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.RouteInfo java.lang.String toString()'>
+    <item name='android.net.RouteInfo android.net.LinkAddress getDestination()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotal(android.net.NetworkStats.Entry, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.EthernetDataTracker android.net.LinkProperties getLinkProperties()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addRoute(java.net.InetAddress, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.EthernetDataTracker void startMonitoring(android.content.Context, android.os.Handler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.EthernetDataTracker android.net.LinkCapabilities getLinkCapabilities()'>
+    <item name='android.net.MobileDataStateTracker java.lang.String getTcpBufferSizesPropName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStatsHistory void recordHistory(android.net.NetworkStatsHistory, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory byte[] getNpnSelectedProtocol(java.net.Socket) 0'>
+    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateEthernet()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.DhcpResults java.lang.String toString()'>
+    <item name='android.net.NetworkIdentity java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getTotalIncludingTags(android.net.NetworkStats.Entry)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory byte[] getNpnSelectedProtocol(java.net.Socket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicyManager void dumpRules(java.io.PrintWriter, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Proxy void validate(java.lang.String, java.lang.String, java.lang.String) 1'>
+    <item name='android.net.BaseNetworkStateTracker android.net.NetworkInfo getNetworkInfo()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.DummyDataStateTracker java.lang.String getTcpBufferSizesPropName()'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder clearQuery()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStatsHistory android.net.NetworkStatsHistory.Entry getValues(long, long, long, android.net.NetworkStatsHistory.Entry)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Proxy void validate(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicyManager NetworkPolicyManager(android.net.INetworkPolicyManager) 0'>
@@ -653,13 +677,13 @@
     <item name='android.net.SSLSessionCache SSLSessionCache(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkSocket java.util.Set&lt;java.lang.Integer&gt; getTrackedCapabilities()'>
+    <item name='android.net.DhcpStateMachine android.net.DhcpStateMachine makeDhcpStateMachine(android.content.Context, com.android.internal.util.StateMachine, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties android.net.LinkProperties.CompareResult&lt;java.net.InetAddress&gt; compareDnses(android.net.LinkProperties)'>
+    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobileAll(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats combineValues(android.net.NetworkStats.Entry)'>
+    <item name='android.net.Uri android.net.Uri fromFile(java.io.File)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.WebAddress WebAddress(java.lang.String) 0'>
@@ -668,25 +692,34 @@
     <item name='android.net.UrlQuerySanitizer java.lang.String unescape(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.MobileDataStateTracker java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.NetworkStatsHistory void recordEntireHistory(android.net.NetworkStatsHistory) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties java.util.Collection&lt;java.lang.String&gt; getAllInterfaceNames()'>
+    <item name='android.net.LinkProperties android.net.LinkProperties.CompareResult&lt;android.net.LinkAddress&gt; compareAddresses(android.net.LinkProperties)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkUtils java.net.InetAddress hexToInet6Address(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.DnsPinger java.util.List&lt;java.net.InetAddress&gt; getDnsList()'>
+    <item name='android.net.NetworkStats android.net.NetworkStats combineValues(java.lang.String, int, int, long, long, long, long, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats java.lang.String toString()'>
+    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobileWildcard()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LinkProperties java.util.Collection&lt;android.net.LinkAddress&gt; getLinkAddresses()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ProxyProperties java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButWhitespaceLegal()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.Uri java.lang.String getQueryParameter(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder fragment(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStatsHistory NetworkStatsHistory(android.net.NetworkStatsHistory, long) 0'>
@@ -695,31 +728,25 @@
     <item name='android.net.InterfaceConfiguration void setFlag(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateMobile4g(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.LinkAddress LinkAddress(java.net.InetAddress, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicy void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllButNulLegal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.Uri android.net.Uri parse(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkCapabilities java.util.Collection&lt;java.lang.String&gt; values()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.LinkCapabilities android.net.LinkCapabilities createNeedsMap(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats withoutUids(int[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.LinkProperties boolean isIdenticalInterfaceName(android.net.LinkProperties) 0'>
+    <item name='android.net.NetworkStats java.lang.String tagToString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.Proxy void validate(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LinkProperties boolean isIdenticalInterfaceName(android.net.LinkProperties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.LocalSocket void connect(android.net.LocalSocketAddress) 0'>
@@ -731,25 +758,31 @@
     <item name='android.net.UrlQuerySanitizer UrlQuerySanitizer(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkProperties java.util.Collection&lt;android.net.LinkProperties&gt; getStackedLinks()'>
+    <item name='android.net.Uri android.net.Uri getCanonicalUri()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats.Entry void add(android.net.NetworkStats.Entry) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.BaseNetworkStateTracker android.net.LinkProperties getLinkProperties()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkIdentity java.lang.String toString()'>
+    <item name='android.net.LinkProperties android.net.LinkProperties.CompareResult&lt;android.net.RouteInfo&gt; compareRoutes(android.net.LinkProperties)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.LinkProperties java.util.Collection&lt;android.net.RouteInfo&gt; getRoutes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAllIllegal()'>
+    <item name='android.net.NetworkStats.Entry void add(android.net.NetworkStats.Entry) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri java.util.Set&lt;java.lang.String&gt; getQueryParameterNames()'>
+    <item name='android.net.NetworkStats android.net.NetworkStats addIfaceValues(java.lang.String, long, long, long, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LinkProperties java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder fragment(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory org.apache.http.conn.ssl.SSLSocketFactory getHttpSocketFactory(int, android.net.SSLSessionCache)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.ProxyProperties java.net.Proxy makeProxy()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.SSLCertificateSocketFactory void verifyHostname(java.net.Socket, java.lang.String) 0'>
@@ -758,34 +791,37 @@
     <item name='android.net.NetworkStatsHistory void recordData(long, long, android.net.NetworkStats.Entry) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.LinkCapabilities java.lang.String toString()'>
+    <item name='android.net.Uri.Builder android.net.Uri.Builder appendPath(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getSpaceLegal()'>
+    <item name='android.net.LinkCapabilities java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.DhcpInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedFragment(java.lang.String)'>
+    <item name='android.net.INetworkManagementEventObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LinkCapabilities java.util.Collection&lt;java.lang.String&gt; values()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkQuotaInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.NetworkUtils java.net.InetAddress intToInetAddress(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.INetworkPolicyListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStatsHistory.DataStreamUtils long[] readFullLongArray(java.io.DataInputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.DhcpResults java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.NetworkPolicyManager android.net.NetworkPolicyManager from(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkUtils java.lang.String[] makeStrings(java.util.Collection&lt;java.net.InetAddress&gt;)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.UrlQuerySanitizer android.net.UrlQuerySanitizer.ValueSanitizer getAmpLegal()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.CaptivePortalTracker android.net.CaptivePortalTracker makeCaptivePortalTracker(android.content.Context, android.net.IConnectivityManager)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.DhcpInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.LinkProperties boolean isIdenticalDnses(android.net.LinkProperties) 0'>
@@ -794,70 +830,61 @@
     <item name='android.net.NetworkStatsHistory long randomLong(java.util.Random, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addAddress(java.lang.String, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats.Entry getValues(int, android.net.NetworkStats.Entry)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedAuthority(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.net.LinkAddress java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkStats android.net.NetworkStats addIfaceValues(java.lang.String, long, long, long, long)'>
+    <item name='android.net.NetworkStats android.net.NetworkStats groupedByIface()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkIdentity android.net.NetworkIdentity buildNetworkIdentity(android.content.Context, android.net.NetworkState)'>
+    <item name='android.net.Proxy java.lang.String getHost(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.MailTo android.net.MailTo parse(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addRoute(java.net.InetAddress, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.UrlQuerySanitizer java.util.List&lt;android.net.UrlQuerySanitizer.ParameterValuePair&gt; getParameterList()'>
+    <item name='android.net.NetworkStats android.net.NetworkStats subtract(android.net.NetworkStats, android.net.NetworkStats, android.net.NetworkStats.NonMonotonicObserver&lt;C&gt;, C)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkPolicyManager void snapToCycleDay(android.text.format.Time, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory javax.net.SocketFactory getDefault(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.Uri.Builder android.net.Uri.Builder encodedOpaquePart(java.lang.String)'>
+    <item name='android.net.IConnectivityManager.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.ConnectivityManager android.net.ConnectivityManager from(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.INetworkPolicyManager.Stub android.os.IBinder asBinder()'>
+    <item name='android.net.INetworkStatsService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.NetworkTemplate android.net.NetworkTemplate buildTemplateEthernet()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.DummyDataStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
+    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addSearchDomain(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkState void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket()'>
+    <item name='android.net.NetworkUtils java.net.InetAddress getNetworkPart(java.net.InetAddress, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder setConfigureIntent(android.app.PendingIntent)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.NetworkUtils java.net.InetAddress numericToInetAddress(java.lang.String)'>
+    <item name='android.net.MailTo android.net.MailTo parse(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.NetworkStats void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.net.VpnService.Builder android.net.VpnService.Builder addDnsServer(java.net.InetAddress)'>
+    <item name='android.net.Uri android.net.Uri.Builder buildUpon()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.NetworkStats java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.SSLCertificateSocketFactory java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.Uri java.lang.String toSafeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.IConnectivityManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.MobileDataStateTracker void startMonitoring(android.content.Context, android.os.Handler) 1'>
@@ -866,7 +893,16 @@
     <item name='android.net.VpnService boolean protect(java.net.Socket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.net.LinkCapabilities java.util.Set&lt;java.lang.Integer&gt; keySet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.net.VpnService.Builder android.net.VpnService.Builder addDnsServer(java.net.InetAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.MobileDataStateTracker android.net.LinkCapabilities getLinkCapabilities()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.LinkSocket android.net.LinkProperties getLinkProperties()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -11,6 +11,9 @@
     <item name='org.bouncycastle.jcajce.provider.keystore.pkcs12.PKCS12KeyStoreSpi void engineStore(java.security.KeyStore.LoadStoreParameter) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.jcajce.provider.keystore.pkcs12.PKCS12KeyStoreSpi java.util.Enumeration engineAliases()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.jcajce.provider.keystore.pkcs12.PKCS12KeyStoreSpi java.util.Date engineGetCreationDate(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -42,9 +45,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.keystore.pkcs12.PKCS12KeyStoreSpi java.security.cert.Certificate engineGetCertificate(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.jcajce.provider.keystore.pkcs12.PKCS12KeyStoreSpi java.util.Enumeration engineAliases()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

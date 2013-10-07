@@ -1,50 +1,53 @@
 <root>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression lte(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression gte(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.compiler.XPathParser void initXPath(org.apache.xpath.compiler.Compiler, java.lang.String, org.apache.xml.utils.PrefixResolver) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression union(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression gt(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.compiler.XPathParser void initMatchPattern(org.apache.xpath.compiler.Compiler, java.lang.String, org.apache.xml.utils.PrefixResolver) 1'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression and(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression or(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression gte(int)'>
+    <item name='org.apache.xpath.compiler.XPathParser void initMatchPattern(org.apache.xpath.compiler.Compiler, java.lang.String, org.apache.xml.utils.PrefixResolver) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression notequals(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression plus(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression neg(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression minus(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression mod(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression lt(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression equals(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression union(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression variable(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression mult(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression bool(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.compiler.XPathParser void initXPath(org.apache.xpath.compiler.Compiler, java.lang.String, org.apache.xml.utils.PrefixResolver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression string(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression mod(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression locationPath(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression mult(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression div(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression number(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression variable(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.compiler.XPathParser void initMatchPattern(org.apache.xpath.compiler.Compiler, java.lang.String, org.apache.xml.utils.PrefixResolver) 0'>
@@ -53,28 +56,25 @@
     <item name='org.apache.xpath.compiler.OpMap int getNextOpPos(int[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression div(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression string(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression and(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression lte(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression lt(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression notequals(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression number(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression neg(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression plus(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression gt(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.compiler.XPathParser java.lang.String dumpRemainingTokenQueue()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression minus(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression bool(int)'>
+    <item name='org.apache.xpath.compiler.Compiler org.apache.xpath.Expression equals(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

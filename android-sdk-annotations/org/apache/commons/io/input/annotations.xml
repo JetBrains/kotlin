@@ -1,14 +1,8 @@
 <root>
-    <item name='org.apache.commons.io.input.ClassLoaderObjectInputStream java.lang.Class resolveClass(java.io.ObjectStreamClass)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.io.input.ProxyInputStream int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.input.ClassLoaderObjectInputStream ClassLoaderObjectInputStream(java.lang.ClassLoader, java.io.InputStream) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.io.input.CharSequenceReader java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.input.ProxyInputStream ProxyInputStream(java.io.InputStream) 0'>
@@ -65,7 +59,13 @@
     <item name='org.apache.commons.io.input.CountingInputStream CountingInputStream(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.io.input.ClassLoaderObjectInputStream java.lang.Class resolveClass(java.io.ObjectStreamClass)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.io.input.CountingInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.io.input.CharSequenceReader java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.io.input.ProxyReader ProxyReader(java.io.Reader) 0'>

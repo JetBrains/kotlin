@@ -1,17 +1,20 @@
 <root>
+    <item name='android.service.textservice.SpellCheckerService.Session android.view.textservice.SuggestionsInfo[] onGetSuggestionsMultiple(android.view.textservice.TextInfo[], int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.service.textservice.SpellCheckerService android.os.IBinder onBind(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.textservice.SpellCheckerService.SentenceLevelAdapter.SentenceTextInfoParams SentenceTextInfoParams(android.view.textservice.TextInfo, java.util.ArrayList&lt;android.service.textservice.SpellCheckerService.SentenceLevelAdapter.SentenceWordItem&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.textservice.SpellCheckerService.Session android.view.textservice.SuggestionsInfo[] onGetSuggestionsMultiple(android.view.textservice.TextInfo[], int, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.service.textservice.SpellCheckerService.Session android.view.textservice.SuggestionsInfo[] onGetSuggestionsMultiple(android.view.textservice.TextInfo[], int, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.service.textservice.SpellCheckerService.Session android.view.textservice.SentenceSuggestionsInfo[] onGetSentenceSuggestionsMultiple(android.view.textservice.TextInfo[], int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.textservice.SpellCheckerService android.os.IBinder onBind(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.textservice.SpellCheckerService.Session android.view.textservice.SuggestionsInfo[] onGetSuggestionsMultiple(android.view.textservice.TextInfo[], int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

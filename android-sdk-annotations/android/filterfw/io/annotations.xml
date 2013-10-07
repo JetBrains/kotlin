@@ -1,11 +1,5 @@
 <root>
-    <item name='android.filterfw.io.PatternScanner java.lang.String eat(java.util.regex.Pattern, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.filterfw.io.TextGraphReader android.filterfw.core.FilterGraph readGraphString(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.filterfw.io.PatternScanner java.lang.String unexpectedTokenMessage(java.lang.String)'>
+    <item name='android.filterfw.io.TextGraphReader android.filterfw.core.KeyValueMap readKeyValueAssignments(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterfw.io.PatternScanner java.lang.String tryEat(java.util.regex.Pattern) 0'>
@@ -20,10 +14,16 @@
     <item name='android.filterfw.io.GraphReader void addReferencesByKeysAndValues(java.lang.Object...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.filterfw.io.TextGraphReader android.filterfw.core.KeyValueMap readKeyValueAssignments(java.lang.String)'>
+    <item name='android.filterfw.io.TextGraphReader android.filterfw.core.FilterGraph readGraphString(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.io.PatternScanner java.lang.String eat(java.util.regex.Pattern, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterfw.io.PatternScanner java.lang.String eat(java.util.regex.Pattern, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.io.PatternScanner java.lang.String unexpectedTokenMessage(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterfw.io.PatternScanner void skip(java.util.regex.Pattern) 0'>

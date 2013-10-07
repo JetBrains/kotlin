@@ -1,14 +1,26 @@
 <root>
-    <item name='org.apache.xml.serializer.utils.AttList java.lang.String getType(java.lang.String, java.lang.String)'>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_pl java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_ca java.lang.Object[][] getContents()'>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_cs java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_tr java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_sl java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_sv java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.utils.XML11Char boolean isXML11ValidNmtoken(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_hu java.lang.Object[][] getContents()'>
+    <item name='org.apache.xml.serializer.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_ru java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.utils.XML11Char boolean isXML11ValidNCName(java.lang.String) 0'>
@@ -17,13 +29,22 @@
     <item name='org.apache.xml.serializer.utils.XMLChar boolean isValidNmtoken(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_pl java.lang.Object[][] getContents()'>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_sk java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.StringToIntTable java.lang.String[] keys()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.utils.XMLChar boolean isValidNCName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_ru java.lang.Object[][] getContents()'>
+    <item name='org.apache.xml.serializer.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_ca java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.utils.DOM2Helper java.lang.String getLocalNameOfNode(org.w3c.dom.Node) 0'>
@@ -35,73 +56,52 @@
     <item name='org.apache.xml.serializer.utils.XML11Char boolean isXML11ValidName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_de java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.AttList java.lang.String getType(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xml.serializer.utils.SerializerMessages_pt_BR java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.utils.SerializerMessages_ko java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.StringToIntTable java.lang.String[] keys()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_fr java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.AttList java.lang.String getType(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_sk java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_zh java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.DOM2Helper java.lang.String getNamespaceOfNode(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_sv java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.XMLChar boolean isValidName(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_tr java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_it java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_sl java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_zh_TW java.lang.Object[][] getContents()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.utils.SerializerMessages_cs java.lang.Object[][] getContents()'>
+    <item name='org.apache.xml.serializer.utils.AttList java.lang.String getType(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.utils.SerializerMessages_ja java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_zh java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_fr java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_de java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_it java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_zh_TW java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.DOM2Helper java.lang.String getNamespaceOfNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.AttList java.lang.String getType(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.XMLChar boolean isValidName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.utils.AttList java.lang.String getType(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.serializer.utils.SerializerMessages_es java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.WrappedRuntimeException WrappedRuntimeException(java.lang.Exception) 0'>
+    <item name='org.apache.xml.serializer.utils.SerializerMessages_hu java.lang.Object[][] getContents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String)'>
+    <item name='org.apache.xml.serializer.utils.WrappedRuntimeException WrappedRuntimeException(java.lang.Exception) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

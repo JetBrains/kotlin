@@ -1,11 +1,14 @@
 <root>
+    <item name='org.apache.http.impl.cookie.CookieSpecBase java.lang.String getDefaultPath(org.apache.http.cookie.CookieOrigin)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.cookie.CookieSpecBase void validate(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.BasicExpiresHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 1'>
+    <item name='org.apache.http.impl.cookie.RFC2965Spec org.apache.http.Header getVersionHeader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.BrowserCompatSpec java.util.List&lt;org.apache.http.Header&gt; formatCookies(java.util.List&lt;org.apache.http.cookie.Cookie&gt;)'>
+    <item name='org.apache.http.impl.cookie.BasicExpiresHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2965VersionAttributeHandler void validate(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
@@ -27,6 +30,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BasicExpiresHandler BasicExpiresHandler(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.cookie.BasicClientCookie java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.DateUtils java.lang.String formatDate(java.util.Date, java.lang.String) 1'>
@@ -71,12 +77,6 @@
     <item name='org.apache.http.impl.cookie.DateUtils java.lang.String formatDate(java.util.Date) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.NetscapeDraftHeaderParser org.apache.http.HeaderElement parseHeader(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.RFC2109SpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.impl.cookie.BrowserCompatSpec java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.Header, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -86,7 +86,7 @@
     <item name='org.apache.http.impl.cookie.RFC2965Spec void formatCookieAsVer(org.apache.http.util.CharArrayBuffer, org.apache.http.cookie.Cookie, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.RFC2109Spec java.util.List&lt;org.apache.http.Header&gt; formatCookies(java.util.List&lt;org.apache.http.cookie.Cookie&gt;)'>
+    <item name='org.apache.http.impl.cookie.BestMatchSpec org.apache.http.Header getVersionHeader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BrowserCompatSpec java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.Header, org.apache.http.cookie.CookieOrigin) 1'>
@@ -104,9 +104,6 @@
     <item name='org.apache.http.impl.cookie.CookieSpecBase boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.AbstractCookieSpec org.apache.http.cookie.CookieAttributeHandler getAttribHandler(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.impl.cookie.RFC2109Spec void formatCookieAsVer(org.apache.http.util.CharArrayBuffer, org.apache.http.cookie.Cookie, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -119,16 +116,25 @@
     <item name='org.apache.http.impl.cookie.BestMatchSpec boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.cookie.RFC2965SpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.cookie.RFC2965Spec boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.BasicClientCookie2 java.lang.Object clone()'>
+    <item name='org.apache.http.impl.cookie.CookieSpecBase java.lang.String getDefaultDomain(org.apache.http.cookie.CookieOrigin)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BestMatchSpec java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.Header, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.RFC2965SpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
+    <item name='org.apache.http.impl.cookie.NetscapeDraftHeaderParser org.apache.http.HeaderElement parseHeader(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.cookie.BestMatchSpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.cookie.BrowserCompatSpec java.util.List&lt;org.apache.http.Header&gt; formatCookies(java.util.List&lt;org.apache.http.cookie.Cookie&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BasicPathHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
@@ -158,6 +164,9 @@
     <item name='org.apache.http.impl.cookie.BasicSecureHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.cookie.CookieSpecBase java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.HeaderElement[], org.apache.http.cookie.CookieOrigin)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.cookie.RFC2965PortAttributeHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -170,28 +179,31 @@
     <item name='org.apache.http.impl.cookie.BestMatchSpec boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.cookie.BasicClientCookie java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.cookie.NetscapeDomainHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.DateUtils java.lang.String formatDate(java.util.Date, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.CookieSpecBase java.lang.String getDefaultPath(org.apache.http.cookie.CookieOrigin)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.BasicSecureHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.CookieSpecBase java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.HeaderElement[], org.apache.http.cookie.CookieOrigin) 0'>
+    <item name='org.apache.http.impl.cookie.BasicClientCookie java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.NetscapeDraftSpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.RFC2965DomainAttributeHandler void validate(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
+    <item name='org.apache.http.impl.cookie.BasicSecureHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.CookieSpecBase java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.HeaderElement[], org.apache.http.cookie.CookieOrigin)'>
+    <item name='org.apache.http.impl.cookie.BasicClientCookie2 java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.cookie.CookieSpecBase java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.HeaderElement[], org.apache.http.cookie.CookieOrigin) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.cookie.RFC2965DomainAttributeHandler void validate(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2965Spec void validate(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
@@ -203,13 +215,13 @@
     <item name='org.apache.http.impl.cookie.RFC2109DomainHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.cookie.AbstractCookieSpec org.apache.http.cookie.CookieAttributeHandler getAttribHandler(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.cookie.DateUtils java.util.Date parseDate(java.lang.String, java.lang.String[], java.util.Date) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.BasicClientCookie java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.BasicClientCookie java.lang.String toString()'>
+    <item name='org.apache.http.impl.cookie.RFC2109SpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2965PortAttributeHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
@@ -224,16 +236,13 @@
     <item name='org.apache.http.impl.cookie.BasicDomainHandler void validate(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.BrowserCompatSpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.impl.cookie.RFC2109DomainHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2109VersionHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.NetscapeDraftSpec java.util.List&lt;org.apache.http.Header&gt; formatCookies(java.util.List&lt;org.apache.http.cookie.Cookie&gt;)'>
+    <item name='org.apache.http.impl.cookie.RFC2109Spec java.util.List&lt;org.apache.http.Header&gt; formatCookies(java.util.List&lt;org.apache.http.cookie.Cookie&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BasicClientCookie2 BasicClientCookie2(java.lang.String, java.lang.String) 0'>
@@ -242,10 +251,16 @@
     <item name='org.apache.http.impl.cookie.DateUtils java.util.Date parseDate(java.lang.String, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.cookie.RFC2965Spec java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.Header, org.apache.http.cookie.CookieOrigin)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.cookie.RFC2965DomainAttributeHandler boolean match(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2965Spec java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.Header, org.apache.http.cookie.CookieOrigin) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.cookie.NetscapeDraftSpec java.util.List&lt;org.apache.http.Header&gt; formatCookies(java.util.List&lt;org.apache.http.cookie.Cookie&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2965VersionAttributeHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 0'>
@@ -255,9 +270,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2109DomainHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.RFC2965Spec java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.Header, org.apache.http.cookie.CookieOrigin)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BestMatchSpec java.util.List&lt;org.apache.http.cookie.Cookie&gt; parse(org.apache.http.Header, org.apache.http.cookie.CookieOrigin) 1'>
@@ -270,9 +282,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.NetscapeDraftHeaderParser org.apache.http.HeaderElement parseHeader(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.RFC2965Spec org.apache.http.Header getVersionHeader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2965VersionAttributeHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 1'>
@@ -290,12 +299,6 @@
     <item name='org.apache.http.impl.cookie.RFC2109DomainHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.cookie.CookieSpecBase java.lang.String getDefaultDomain(org.apache.http.cookie.CookieOrigin)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.BasicClientCookie java.lang.String getName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.impl.cookie.AbstractCookieSpec void registerAttribHandler(java.lang.String, org.apache.http.cookie.CookieAttributeHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -306,9 +309,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BasicPathHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.BestMatchSpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.RFC2109DomainHandler void validate(org.apache.http.cookie.Cookie, org.apache.http.cookie.CookieOrigin) 1'>
@@ -326,13 +326,13 @@
     <item name='org.apache.http.impl.cookie.BasicSecureHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.cookie.BrowserCompatSpecFactory org.apache.http.cookie.CookieSpec newInstance(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.cookie.NetscapeDraftHeaderParser org.apache.http.HeaderElement parseHeader(org.apache.http.util.CharArrayBuffer, org.apache.http.message.ParserCursor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.CookieSpecBase java.lang.String getDefaultPath(org.apache.http.cookie.CookieOrigin) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.cookie.BestMatchSpec org.apache.http.Header getVersionHeader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.cookie.BasicMaxAgeHandler void parse(org.apache.http.cookie.SetCookie, java.lang.String) 0'>

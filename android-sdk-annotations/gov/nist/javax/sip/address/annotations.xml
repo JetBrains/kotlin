@@ -11,13 +11,7 @@
     <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.SipURI createSipURI(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.SipUri java.lang.String getUserAtHostPort()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.address.TelephoneNumber java.lang.StringBuffer encode(java.lang.StringBuffer) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.address.SipUri java.lang.StringBuffer encode(java.lang.StringBuffer)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.SipUri void setMAddrParam(java.lang.String) 0'>
@@ -26,37 +20,37 @@
     <item name='gov.nist.javax.sip.address.TelephoneNumber void removeParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.Authority java.lang.String encode()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.address.GenericURI java.lang.StringBuffer encode(java.lang.StringBuffer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(java.lang.String, javax.sip.address.URI) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.SipURI createSipURI(java.lang.String)'>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(java.lang.String, javax.sip.address.URI)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.SipURI createSipURI(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.TelephoneNumber java.lang.String getParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(java.lang.String, javax.sip.address.URI)'>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.TelURL createTelURL(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.URI createURI(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.SipUri java.lang.String toString()'>
+    <item name='gov.nist.javax.sip.address.SipUri java.lang.String getUserAtHost()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.address.Authority java.lang.StringBuffer encode(java.lang.StringBuffer)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.TelURLImpl java.lang.String encode()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.address.Authority java.lang.StringBuffer encode(java.lang.StringBuffer)'>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.NetObject boolean equals(java.lang.Object) 0'>
@@ -65,28 +59,22 @@
     <item name='gov.nist.javax.sip.address.SipUri java.lang.String getParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.URI createURI(java.lang.String)'>
+    <item name='gov.nist.javax.sip.address.Authority java.lang.String encode()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.TelephoneNumber java.lang.String encode()'>
+    <item name='gov.nist.javax.sip.address.SipUri java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressImpl java.lang.String encode()'>
+    <item name='gov.nist.javax.sip.address.UserInfo java.lang.String encode()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.TelURL createTelURL(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.GenericURI java.lang.StringBuffer encode(java.lang.StringBuffer)'>
+    <item name='gov.nist.javax.sip.address.UserInfo java.lang.StringBuffer encode(java.lang.StringBuffer)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.SipURI createSipURI(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.address.TelURLImpl java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.address.SipUri java.lang.String encode()'>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(javax.sip.address.URI)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.SipUri void setQHeader(gov.nist.core.NameValue) 0'>
@@ -98,16 +86,13 @@
     <item name='gov.nist.javax.sip.address.SipUri void setScheme(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.TelURLImpl java.lang.StringBuffer encode(java.lang.StringBuffer)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.address.SipUri boolean hasParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.TelephoneNumber void deleteParm(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.UserInfo java.lang.StringBuffer encode(java.lang.StringBuffer)'>
+    <item name='gov.nist.javax.sip.address.TelURLImpl java.lang.String encode()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.SipUri void setDefaultParm(java.lang.String, java.lang.Object) 0'>
@@ -116,16 +101,16 @@
     <item name='gov.nist.javax.sip.address.TelURLImpl void removeParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress()'>
+    <item name='gov.nist.javax.sip.address.TelephoneNumber java.lang.StringBuffer encode(java.lang.StringBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.address.SipUri java.lang.String encode()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.SipUri void setTransportParam(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.SipUri void setUriParameter(gov.nist.core.NameValue) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.TelURL createTelURL(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.Authority java.lang.StringBuffer encode(java.lang.StringBuffer) 0'>
@@ -137,10 +122,13 @@
     <item name='gov.nist.javax.sip.address.SipUri void setParameter(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(javax.sip.address.URI)'>
+    <item name='gov.nist.javax.sip.address.SipUri java.lang.String getUserAtHostPort()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.UserInfo java.lang.String encode()'>
+    <item name='gov.nist.javax.sip.address.TelURLImpl java.lang.StringBuffer encode(java.lang.StringBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.address.TelephoneNumber java.lang.String encode()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.TelephoneNumber boolean hasParm(java.lang.String) 0'>
@@ -152,10 +140,13 @@
     <item name='gov.nist.javax.sip.address.SipUri void setHost(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.UserInfo boolean equals(java.lang.Object) 0'>
+    <item name='gov.nist.javax.sip.address.GenericURI java.lang.StringBuffer encode(java.lang.StringBuffer)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.SipUri java.lang.String getUserAtHost()'>
+    <item name='gov.nist.javax.sip.address.AddressImpl java.lang.String encode()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.address.UserInfo boolean equals(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.RFC2396UrlDecoder java.lang.String decode(java.lang.String) 0'>
@@ -164,22 +155,31 @@
     <item name='gov.nist.javax.sip.address.UserInfo java.lang.StringBuffer encode(java.lang.StringBuffer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.address.SipUri java.lang.StringBuffer encode(java.lang.StringBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.URI createURI(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.address.AddressImpl void removeParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(java.lang.String)'>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.Address createAddress(javax.sip.address.URI) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.address.TelephoneNumber java.lang.StringBuffer encode(java.lang.StringBuffer)'>
+    <item name='gov.nist.javax.sip.address.AddressFactoryImpl javax.sip.address.SipURI createSipURI(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.GenericURI GenericURI(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.TelURLImpl java.lang.StringBuffer encode(java.lang.StringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.address.TelURLImpl java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.address.RFC2396UrlDecoder java.lang.String decode(java.lang.String)'>

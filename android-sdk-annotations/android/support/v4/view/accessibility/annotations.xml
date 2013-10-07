@@ -1,8 +1,11 @@
 <root>
-    <item name='android.support.v4.view.accessibility.AccessibilityNodeInfoCompat android.support.v4.view.accessibility.AccessibilityNodeInfoCompat obtain(android.support.v4.view.accessibility.AccessibilityNodeInfoCompat) 0'>
+    <item name='android.support.v4.view.accessibility.AccessibilityEventCompat android.support.v4.view.accessibility.AccessibilityRecordCompat getRecord(android.view.accessibility.AccessibilityEvent, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.accessibility.AccessibilityRecordCompat android.support.v4.view.accessibility.AccessibilityRecordCompat obtain()'>
+    <item name='android.support.v4.view.accessibility.AccessibilityEventCompat android.support.v4.view.accessibility.AccessibilityRecordCompat asRecord(android.view.accessibility.AccessibilityEvent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.view.accessibility.AccessibilityNodeInfoCompat android.support.v4.view.accessibility.AccessibilityNodeInfoCompat obtain(android.support.v4.view.accessibility.AccessibilityNodeInfoCompat) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.accessibility.AccessibilityRecordCompat android.support.v4.view.accessibility.AccessibilityRecordCompat obtain(android.support.v4.view.accessibility.AccessibilityRecordCompat)'>
@@ -11,16 +14,13 @@
     <item name='android.support.v4.view.accessibility.AccessibilityNodeInfoCompat java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.accessibility.AccessibilityEventCompat android.support.v4.view.accessibility.AccessibilityRecordCompat getRecord(android.view.accessibility.AccessibilityEvent, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.accessibility.AccessibilityEventCompat void appendRecord(android.view.accessibility.AccessibilityEvent, android.support.v4.view.accessibility.AccessibilityRecordCompat) 1'>
+    <item name='android.support.v4.view.accessibility.AccessibilityRecordCompat android.support.v4.view.accessibility.AccessibilityRecordCompat obtain()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.accessibility.AccessibilityNodeInfoCompat java.util.List&lt;android.support.v4.view.accessibility.AccessibilityNodeInfoCompat&gt; findAccessibilityNodeInfosByText(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.accessibility.AccessibilityEventCompat android.support.v4.view.accessibility.AccessibilityRecordCompat asRecord(android.view.accessibility.AccessibilityEvent)'>
+    <item name='android.support.v4.view.accessibility.AccessibilityEventCompat void appendRecord(android.view.accessibility.AccessibilityEvent, android.support.v4.view.accessibility.AccessibilityRecordCompat) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.accessibility.AccessibilityRecordCompat android.support.v4.view.accessibility.AccessibilityRecordCompat obtain(android.support.v4.view.accessibility.AccessibilityRecordCompat) 0'>

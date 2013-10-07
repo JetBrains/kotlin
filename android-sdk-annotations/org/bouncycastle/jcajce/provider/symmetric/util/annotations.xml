@@ -8,10 +8,19 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher byte[] engineWrap(java.security.Key) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseSecretKeyFactory javax.crypto.SecretKey engineTranslateKey(javax.crypto.SecretKey)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.PBE.Util org.bouncycastle.crypto.CipherParameters makePBEMacParameters(org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey, java.security.spec.AlgorithmParameterSpec) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher byte[] engineDoFinal(byte[], int, int)'>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters java.security.spec.AlgorithmParameterSpec localEngineGetParameterSpec(java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey java.lang.String getFormat()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher byte[] engineDoFinal(byte[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher void engineSetMode(java.lang.String) 0'>
@@ -26,16 +35,10 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher int engineGetKeySize(java.security.Key) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseSecretKeyFactory javax.crypto.SecretKey engineTranslateKey(javax.crypto.SecretKey)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher BaseBlockCipher(org.bouncycastle.crypto.BufferedBlockCipher, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.PBE.Util org.bouncycastle.crypto.CipherParameters makePBEParameters(org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey, java.security.spec.AlgorithmParameterSpec, java.lang.String) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.PBESecretKeyFactory javax.crypto.SecretKey engineGenerateSecret(java.security.spec.KeySpec)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseAlgorithmParameters java.security.spec.AlgorithmParameterSpec engineGetParameterSpec(java.lang.Class) 0'>
@@ -44,13 +47,7 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters void engineInit(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters java.lang.String engineToString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher java.security.Key engineUnwrap(byte[], java.lang.String, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseMac byte[] engineDoFinal()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.PBESecretKeyFactory javax.crypto.SecretKey engineGenerateSecret(java.security.spec.KeySpec) 0'>
@@ -62,7 +59,7 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher void engineInit(int, java.security.Key, java.security.AlgorithmParameters, java.security.SecureRandom) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseKeyGenerator javax.crypto.SecretKey engineGenerateKey()'>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters java.lang.String engineToString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher void engineInit(int, java.security.Key, java.security.spec.AlgorithmParameterSpec, java.security.SecureRandom) 1'>
@@ -74,13 +71,16 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher void engineSetPadding(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters java.security.spec.AlgorithmParameterSpec localEngineGetParameterSpec(java.lang.Class)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher byte[] engineDoFinal(byte[], int, int)'>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher byte[] engineUpdate(byte[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher java.security.Key engineUnwrap(byte[], java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseSecretKeyFactory javax.crypto.SecretKey engineGenerateSecret(java.security.spec.KeySpec)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher byte[] engineDoFinal(byte[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseSecretKeyFactory java.security.spec.KeySpec engineGetKeySpec(javax.crypto.SecretKey, java.lang.Class) 0'>
@@ -107,9 +107,6 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher void engineSetPadding(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey char[] getPassword()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher BaseBlockCipher(org.bouncycastle.jcajce.provider.symmetric.util.BlockCipherProvider) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -119,13 +116,10 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher BaseStreamCipher(org.bouncycastle.crypto.BlockCipher, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseSecretKeyFactory javax.crypto.SecretKey engineGenerateSecret(java.security.spec.KeySpec)'>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey char[] getPassword()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseBlockCipher void engineInit(int, java.security.Key, java.security.AlgorithmParameters, java.security.SecureRandom) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher byte[] engineUpdate(byte[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.PBE.Util org.bouncycastle.crypto.CipherParameters makePBEParameters(javax.crypto.spec.PBEKeySpec, int, int, int, int) 0'>
@@ -143,19 +137,25 @@
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher void engineInit(int, java.security.Key, java.security.SecureRandom) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseMac byte[] engineDoFinal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher void engineInit(int, java.security.Key, java.security.SecureRandom) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseSecretKeyFactory java.security.spec.KeySpec engineGetKeySpec(javax.crypto.SecretKey, java.lang.Class) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BCPBEKey java.lang.String getFormat()'>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.PBESecretKeyFactory javax.crypto.SecretKey engineGenerateSecret(java.security.spec.KeySpec)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.IvAlgorithmParameters void engineInit(java.security.spec.AlgorithmParameterSpec) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseStreamCipher void engineSetMode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.symmetric.util.BaseKeyGenerator javax.crypto.SecretKey engineGenerateKey()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

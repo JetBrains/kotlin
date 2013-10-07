@@ -1,17 +1,17 @@
 <root>
-    <item name='android.net.rtp.RtpStream java.net.InetAddress getLocalAddress()'>
+    <item name='android.net.rtp.AudioCodec android.net.rtp.AudioCodec[] getCodecs()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.rtp.AudioStream AudioStream(java.net.InetAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.rtp.RtpStream java.net.InetAddress getLocalAddress()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.rtp.RtpStream void associate(java.net.InetAddress, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.net.rtp.AudioStream void setCodec(android.net.rtp.AudioCodec) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.net.rtp.AudioCodec android.net.rtp.AudioCodec[] getCodecs()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -1,8 +1,17 @@
 <root>
-    <item name='android.provider.MediaStore.Video.Media android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.Settings.System void getConfiguration(android.content.ContentResolver, android.content.res.Configuration) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Settings.System void getConfiguration(android.content.ContentResolver, android.content.res.Configuration) 1'>
+    <item name='android.provider.Browser boolean canClearHistory(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Genres.Members android.net.Uri getContentUri(java.lang.String, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUriForPath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.BrowserContract.SyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.People android.net.Uri addToGroup(android.content.ContentResolver, long, long) 0'>
@@ -14,31 +23,52 @@
     <item name='android.provider.UserDictionary.Words void addWord(android.content.Context, java.lang.String, int, java.lang.String, java.util.Locale) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Genres.Members android.net.Uri getContentUri(java.lang.String, long)'>
+    <item name='android.provider.Telephony.Sms.Sent android.net.Uri addMessage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String, java.lang.Long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Telephony.Sms.Sent android.net.Uri addMessage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String, java.lang.Long) 0'>
+    <item name='android.provider.Settings.Secure int getInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void clearSearches(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Email java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System int getInt(android.content.ContentResolver, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.CalendarContract.CalendarAlerts android.net.Uri insert(android.content.ContentResolver, long, long, long, long, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.BrowserContract.Settings boolean isSyncEnabled(android.content.Context) 0'>
+    <item name='android.provider.Settings.System void getConfiguration(android.content.ContentResolver, android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void deleteHistoryTimeFrame(android.content.ContentResolver, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.SyncStateContract.Helpers void update(android.content.ContentProviderClient, android.net.Uri, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.BrowserContract.Settings boolean isSyncEnabled(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.CalendarContract.CalendarAlerts boolean alarmExists(android.content.ContentResolver, long, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUriForPath(java.lang.String) 0'>
+    <item name='android.provider.Telephony.Sms.Draft android.net.Uri addMessage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String, java.lang.Long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.SyncStateContract.Helpers byte[] get(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Telephony.Sms.Draft android.net.Uri addMessage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String, java.lang.Long) 0'>
+    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUriForPath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Relation java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.SipAddress java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.People android.database.Cursor queryGroups(android.content.ContentResolver, long) 0'>
@@ -47,25 +77,40 @@
     <item name='android.provider.ContactsContract.QuickContact android.content.Intent composeQuickContactsIntent(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.System boolean putConfiguration(android.content.ContentResolver, android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Telephony.Mms java.lang.String getMessageBoxName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Contacts.People void setPhotoData(android.content.ContentResolver, android.net.Uri, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files android.net.Uri getMtpObjectsUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure float getFloat(android.content.ContentResolver, java.lang.String, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Sms.Draft boolean saveMessage(android.content.ContentResolver, android.net.Uri, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Video.Thumbnails android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.Settings.System int getInt(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.BrowserContract.SyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[])'>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Im java.lang.CharSequence getProtocolLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.CalendarContract.EventsEntity android.content.EntityIterator newEntityIterator(android.database.Cursor, android.content.ContentResolver)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.Contacts.ContactMethods java.lang.String encodeCustomImProtocol(java.lang.String)'>
+    <item name='android.provider.Settings.Secure float getFloat(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.Contacts void markAsContacted(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, long, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.VoicemailContract.Status android.net.Uri buildSourceUri(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.Data android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 0'>
@@ -80,10 +125,22 @@
     <item name='android.provider.MediaStore.Audio.Playlists.Members boolean moveItem(android.content.ContentResolver, long, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.MediaStore.Video.Media android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder setLimit(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Browser android.database.Cursor getAllVisitedUrls(android.content.ContentResolver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, long, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.CalendarContract.CalendarAlerts long findNextAlarmTime(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.CalendarContract.EventsEntity android.content.EntityIterator newEntityIterator(android.database.Cursor, android.content.ContentProviderClient)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.People void setPhotoData(android.content.ContentResolver, android.net.Uri, byte[]) 1'>
@@ -92,19 +149,22 @@
     <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newUpdateOperation(android.net.Uri, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder setContactId(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.provider.Applications android.database.Cursor search(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.ProfileSyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[])'>
+    <item name='android.provider.Settings.System long getLong(android.content.ContentResolver, java.lang.String, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.QuickContact android.content.Intent composeQuickContactsIntent(android.content.Context, android.graphics.Rect, android.net.Uri, int, java.lang.String[])'>
+    <item name='android.provider.Settings.Global int getInt(android.content.ContentResolver, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Sms.Intents android.telephony.SmsMessage[] getMessagesFromIntent(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore android.net.Uri getMediaScannerUri()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.ContactMethods java.lang.CharSequence getDisplayLabel(android.content.Context, int, int, java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.SyncStateContract.Helpers byte[] get(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 2'>
@@ -113,31 +173,52 @@
     <item name='android.provider.ContactsContract.Data android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Images.Thumbnails android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.ContactsContract.Contacts android.net.Uri getLookupUri(long, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean putString(android.content.ContentResolver, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.CallLog.Calls android.net.Uri addCall(com.android.internal.telephony.CallerInfo, android.content.Context, java.lang.String, int, int, long, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Browser java.lang.String[] getVisitedHistory(android.content.ContentResolver)'>
+    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder builder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global long getLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global long getLong(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.Bookmarks android.net.Uri add(android.content.ContentResolver, android.content.Intent, java.lang.String, java.lang.String, char, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Playlists.Members android.net.Uri getContentUri(java.lang.String, long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.provider.SyncStateContract.Helpers android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Files android.net.Uri getMtpObjectsUri(java.lang.String, long)'>
+    <item name='android.provider.Settings.NameValueTable boolean putString(android.content.ContentResolver, android.net.Uri, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Files android.net.Uri getMtpObjectsUri(java.lang.String)'>
+    <item name='android.provider.Browser java.lang.String[] getVisitedHistory(android.content.ContentResolver)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Telephony.Sms.Intents android.telephony.SmsMessage[] getMessagesFromIntent(android.content.Intent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System boolean putLong(android.content.ContentResolver, java.lang.String, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.NameValueTable android.net.Uri getUriFor(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.RawContacts android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.MediaStore.Images.Media android.graphics.Bitmap getBitmap(android.content.ContentResolver, android.net.Uri) 0'>
@@ -146,19 +227,22 @@
     <item name='android.provider.ContactsContract.SyncState android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Settings.NameValueTable android.net.Uri getUriFor(android.net.Uri, java.lang.String)'>
+    <item name='android.provider.Settings.Global java.lang.String getBluetoothHeadsetPriorityKey(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.SyncState android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.accounts.Account) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global float getFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.NameValueTable boolean putString(android.content.ContentResolver, android.net.Uri, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.Bookmarks android.net.Uri add(android.content.ContentResolver, android.content.Intent, java.lang.String, java.lang.String, char, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.People android.net.Uri addToGroup(android.content.ContentResolver, long, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.Telephony.Mms java.lang.String getMessageBoxName(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor queryMiniThumbnails(android.content.ContentResolver, android.net.Uri, int, java.lang.String[]) 1'>
@@ -170,7 +254,16 @@
     <item name='android.provider.ContactsContract.ProfileSyncState android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.System java.lang.String getString(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Telephony.Sms android.net.Uri addMessageToUri(android.content.ContentResolver, android.net.Uri, java.lang.String, java.lang.String, java.lang.String, java.lang.Long, boolean, boolean, long) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.BrowserContract.SyncState void set(android.content.ContentProviderClient, android.accounts.Account, byte[]) 1'>
@@ -179,22 +272,19 @@
     <item name='android.provider.MediaStore.Images.Media android.graphics.Bitmap getBitmap(android.content.ContentResolver, android.net.Uri) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.SyncStateContract.Helpers android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.provider.ContactsContract.ProfileSyncState void set(android.content.ContentProviderClient, android.accounts.Account, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.QuickContact android.content.Intent composeQuickContactsIntent(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[])'>
+    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.net.Uri build()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.QuickContact android.content.Intent composeQuickContactsIntent(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Files android.net.Uri getMtpReferencesUri(java.lang.String, long)'>
+    <item name='android.provider.MediaStore.Video.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Video.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long) 0'>
+    <item name='android.provider.Settings.Secure long getLong(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.MediaStore.Video android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 1'>
@@ -206,6 +296,9 @@
     <item name='android.provider.ContactsContract.QuickContact void showQuickContact(android.content.Context, android.graphics.Rect, android.net.Uri, int, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Im java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor queryMiniThumbnail(android.content.ContentResolver, long, int, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -213,9 +306,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Sms android.net.Uri addMessageToUri(android.content.ContentResolver, android.net.Uri, java.lang.String, java.lang.String, java.lang.String, java.lang.Long, boolean, boolean) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.CalendarContract.CalendarEntity android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.CommonDataKinds.Phone java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence) 0'>
@@ -227,58 +317,91 @@
     <item name='android.provider.Settings.System boolean putConfiguration(android.content.ContentResolver, android.content.res.Configuration) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.BrowserContract.SyncState void set(android.content.ContentProviderClient, android.accounts.Account, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.ProfileSyncState void set(android.content.ContentProviderClient, android.accounts.Account, byte[]) 1'>
+    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri, boolean) 1'>
+    <item name='android.provider.ContactsContract.ProfileSyncState void set(android.content.ContentProviderClient, android.accounts.Account, byte[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.CalendarContract.CalendarAlerts void scheduleAlarm(android.content.Context, android.app.AlarmManager, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Telephony.Sms.Intents android.telephony.SmsMessage[] getMessagesFromIntent(android.content.Intent)'>
+    <item name='android.provider.Contacts.ContactMethods java.lang.String encodePredefinedImProtocol(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.NameValueTable android.net.Uri getUriFor(android.net.Uri, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.BrowserContract.Bookmarks android.net.Uri buildFolderUri(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists android.net.Uri getContentUri(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Threads long getOrCreateThreadId(android.content.Context, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.CommonDataKinds.Phone java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence, java.lang.CharSequence[]) 0'>
+    <item name='android.provider.MediaStore.Audio.Artists android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean putFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newUpdateOperation(android.net.Uri, byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.System void getMovedKeys(java.util.HashSet&lt;java.lang.String&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Phone java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence, java.lang.CharSequence[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global float getFloat(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Telephony.Threads long getOrCreateThreadId(android.content.Context, java.util.Set&lt;java.lang.String&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Albums android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.ContactsContract.QuickContact android.content.Intent composeQuickContactsIntent(android.content.Context, android.graphics.Rect, android.net.Uri, int, java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder setContactId(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Sms android.net.Uri addMessageToUri(android.content.ContentResolver, android.net.Uri, java.lang.String, java.lang.String, java.lang.String, java.lang.Long, boolean, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Contacts android.net.Uri getLookupUri(long, java.lang.String)'>
+    <item name='android.provider.Settings.Global java.lang.String getBluetoothA2dpSinkPriorityKey(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Files android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.MediaStore.Audio.Genres android.net.Uri getContentUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Organizations java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.People void markAsContacted(android.content.ContentResolver, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Downloads void removeAllDownloadsByPackage(android.content.Context, java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.provider.Settings.System void clearConfiguration(android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.VoicemailContract.Voicemails android.net.Uri buildSourceUri(java.lang.String)'>
+    <item name='android.provider.Downloads void removeAllDownloadsByPackage(android.content.Context, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global boolean putString(android.content.ContentResolver, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.Global java.lang.String getBluetoothInputDevicePriorityKey(java.lang.String) 0'>
@@ -290,6 +413,9 @@
     <item name='android.provider.Browser void sendString(android.content.Context, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.System boolean putFloat(android.content.ContentResolver, java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.ContactsContract.SyncState byte[] get(android.content.ContentProviderClient, android.accounts.Account) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -299,16 +425,16 @@
     <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Settings.Global java.lang.String getBluetoothA2dpSinkPriorityKey(java.lang.String) 0'>
+    <item name='android.provider.ContactsContract.SyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.QuickContact void showQuickContact(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[]) 0'>
+    <item name='android.provider.Settings.Global java.lang.String getBluetoothA2dpSinkPriorityKey(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.System void getNonLegacyMovedKeys(java.util.HashSet&lt;java.lang.String&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Artists android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.ContactsContract.QuickContact void showQuickContact(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.SyncStateContract.Helpers void set(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 0'>
@@ -317,13 +443,13 @@
     <item name='android.provider.Settings.System boolean putConfigurationForUser(android.content.ContentResolver, android.content.res.Configuration, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder addParameter(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.ContactsContract.SyncState void set(android.content.ContentProviderClient, android.accounts.Account, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.MediaStore.Images.Media java.lang.String insertImage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.Settings.Global java.lang.String getBluetoothA2dpSinkPriorityKey(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.Global java.lang.String getBluetoothHeadsetPriorityKey(java.lang.String) 0'>
@@ -332,16 +458,22 @@
     <item name='android.provider.Contacts.People java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.System boolean getShowGTalkServiceStatus(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Contacts.People android.net.Uri createPersonInMyContactsGroup(android.content.ContentResolver, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files android.net.Uri getContentUri(java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.BrowserContract.Settings void setSyncEnabled(android.content.Context, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.SyncState byte[] get(android.content.ContentProviderClient, android.accounts.Account) 0'>
+    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Contacts java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 1'>
+    <item name='android.provider.ContactsContract.SyncState byte[] get(android.content.ContentProviderClient, android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.People long tryGetMyContactsGroupId(android.content.ContentResolver) 0'>
@@ -353,22 +485,16 @@
     <item name='android.provider.ContactsContract.QuickContact void showQuickContact(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUri(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.provider.CalendarContract.Instances android.database.Cursor query(android.content.ContentResolver, java.lang.String[], long, long, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.ProfileSyncState byte[] get(android.content.ContentProviderClient, android.accounts.Account) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Settings.Global java.lang.String getBluetoothHeadsetPriorityKey(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.provider.ContactsContract.SyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Artists.Albums android.net.Uri getContentUri(java.lang.String, long)'>
+    <item name='android.provider.UserDictionary.Words void addWord(android.content.Context, java.lang.String, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String) 0'>
@@ -377,16 +503,25 @@
     <item name='android.provider.SyncStateContract.Helpers android.net.Uri insert(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Contacts.ContactMethods java.lang.String encodePredefinedImProtocol(int)'>
+    <item name='android.provider.Settings.Global java.lang.String getBluetoothInputDevicePriorityKey(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Genres android.net.Uri getContentUriForAudioId(java.lang.String, int)'>
+    <item name='android.provider.MediaStore.Images.Media java.lang.String insertImage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure void setLocationProviderEnabled(android.content.ContentResolver, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.Bookmarks java.lang.CharSequence getTitle(android.content.Context, android.database.Cursor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.Global java.lang.String getString(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newSetOperation(android.net.Uri, android.accounts.Account, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Video.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, int, android.graphics.BitmapFactory.Options) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.ProfileSyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[]) 0'>
@@ -395,28 +530,61 @@
     <item name='android.provider.MediaStore.Images.Thumbnails android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.SyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[])'>
+    <item name='android.provider.Settings.Secure boolean putInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails android.graphics.Bitmap getThumbnail(android.content.ContentResolver, long, int, android.graphics.BitmapFactory.Options) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean isLocationProviderEnabled(android.content.ContentResolver, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Settings.System void getConfigurationForUser(android.content.ContentResolver, android.content.res.Configuration, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.System long getLong(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Playlists.Members android.net.Uri getContentUri(java.lang.String, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Telephony.Sms.Inbox android.net.Uri addMessage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String, java.lang.Long, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure java.lang.String getString(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Sms.Outbox android.net.Uri addMessage(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String, java.lang.Long, boolean, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.System boolean putInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files android.net.Uri getMtpObjectsUri(java.lang.String, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newUpdateOperation(android.net.Uri, byte[])'>
+    <item name='android.provider.Settings.Secure long getLong(android.content.ContentResolver, java.lang.String, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.DrmStore void enforceAccessDrmPermission(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newSetOperation(android.net.Uri, android.accounts.Account, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Applications android.net.Uri componentNameToUri(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence, java.lang.CharSequence[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.SearchRecentSuggestions SearchRecentSuggestions(android.content.Context, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.StructuredPostal java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.CalendarContract.Instances android.database.Cursor query(android.content.ContentResolver, java.lang.String[], long, long) 0'>
@@ -434,31 +602,37 @@
     <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newSetOperation(android.net.Uri, android.accounts.Account, byte[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.BrowserContract.Bookmarks android.net.Uri buildFolderUri(long)'>
+    <item name='android.provider.Settings.System float getFloat(android.content.ContentResolver, java.lang.String, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Images.Media android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.Settings.Secure boolean isLocationProviderEnabled(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder setLimit(int)'>
+    <item name='android.provider.Contacts.People android.graphics.Bitmap loadContactPhoto(android.content.Context, android.net.Uri, int, android.graphics.BitmapFactory.Options) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder builder()'>
+    <item name='android.provider.ContactsContract.QuickContact android.content.Intent composeQuickContactsIntent(android.content.Context, android.view.View, android.net.Uri, int, java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global boolean putLong(android.content.ContentResolver, java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Files android.net.Uri getMtpReferencesUri(java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.SyncStateContract.Helpers android.net.Uri insert(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.VoicemailContract.Status android.net.Uri buildSourceUri(java.lang.String)'>
+    <item name='android.provider.CalendarContract.CalendarEntity android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Mms java.lang.String extractAddrSpec(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Contacts.People java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 0'>
+    <item name='android.provider.MediaStore.Audio.Genres android.net.Uri getContentUriForAudioId(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.net.Uri build()'>
+    <item name='android.provider.Contacts.People java.io.InputStream openContactPhotoInputStream(android.content.ContentResolver, android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.BrowserContract.SyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[]) 0'>
@@ -467,10 +641,19 @@
     <item name='android.provider.ContactsContract.SyncState void set(android.content.ContentProviderClient, android.accounts.Account, byte[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Contacts.ContactMethods java.lang.String encodeCustomImProtocol(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global boolean putInt(android.content.ContentResolver, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.BrowserContract.SyncState android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.People android.net.Uri addToMyContactsGroup(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.Groups android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.BrowserContract.SyncState byte[] get(android.content.ContentProviderClient, android.accounts.Account) 1'>
@@ -479,43 +662,61 @@
     <item name='android.provider.CalendarContract.Reminders android.database.Cursor query(android.content.ContentResolver, long, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Genres android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.SearchRecentSuggestions void truncateHistory(android.content.ContentResolver, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.ContactsContract.CommonDataKinds.Organization java.lang.CharSequence getTypeLabel(android.content.res.Resources, int, java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void clearHistory(android.content.ContentResolver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Sms android.database.Cursor query(android.content.ContentResolver, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.Secure int getInt(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Global int getInt(android.content.ContentResolver, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Contacts.Presence void setPresenceIcon(android.widget.ImageView, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.Secure void getMovedKeys(java.util.HashSet&lt;java.lang.String&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Contacts.Settings void setSetting(android.content.ContentResolver, java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Settings.Secure void getMovedKeys(java.util.HashSet&lt;java.lang.String&gt;) 0'>
+    <item name='android.provider.Settings.Global boolean putFloat(android.content.ContentResolver, java.lang.String, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.CallLog.Calls java.lang.String getLastOutgoingCall(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.ContactsContract.ProfileSyncState android.content.ContentProviderOperation newSetOperation(android.accounts.Account, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.BrowserContract.SyncState android.util.Pair&lt;android.net.Uri,byte[]&gt; getWithUri(android.content.ContentProviderClient, android.accounts.Account) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Settings.Secure boolean putLong(android.content.ContentResolver, java.lang.String, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.BrowserContract.SyncState byte[] get(android.content.ContentProviderClient, android.accounts.Account) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Browser void saveBookmark(android.content.Context, java.lang.String, java.lang.String) 0'>
+    <item name='android.provider.Settings java.lang.String getGTalkDeviceId(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Mms android.database.Cursor query(android.content.ContentResolver, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Settings java.lang.String getGTalkDeviceId(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.SyncStateContract.Helpers android.content.ContentProviderOperation newSetOperation(android.net.Uri, android.accounts.Account, byte[])'>
+    <item name='android.provider.Browser void saveBookmark(android.content.Context, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Mms android.database.Cursor query(android.content.ContentResolver, java.lang.String[], java.lang.String, java.lang.String) 0'>
@@ -524,37 +725,43 @@
     <item name='android.provider.Settings.Bookmarks android.content.Intent getIntentForShortcut(android.content.ContentResolver, char) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Settings.Global java.lang.String getBluetoothInputDevicePriorityKey(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.ContactsContract.RawContacts android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder android.provider.ContactsContract.Contacts.AggregationSuggestions.Builder addParameter(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.provider.MediaStore.Images.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long) 0'>
+    <item name='android.provider.CalendarContract.EventDays android.database.Cursor query(android.content.ContentResolver, int, int, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.Telephony.Sms.Draft boolean saveMessage(android.content.ContentResolver, android.net.Uri, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.MediaStore.Images.Thumbnails void cancelThumbnailRequest(android.content.ContentResolver, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.ContactsContract.Directory void notifyDirectoryChange(android.content.ContentResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Albums android.net.Uri getContentUri(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.RawContacts android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.provider.Settings.System void setShowGTalkServiceStatus(android.content.ContentResolver, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Browser void updateVisitedHistory(android.content.ContentResolver, java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.provider.Browser android.database.Cursor getAllBookmarks(android.content.ContentResolver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.Applications android.net.Uri componentNameToUri(java.lang.String, java.lang.String)'>
+    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUri(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore android.net.Uri getMediaScannerUri()'>
+    <item name='android.provider.ContactsContract.Contacts android.net.Uri lookupContact(android.content.ContentResolver, android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Media android.net.Uri getContentUriForPath(java.lang.String)'>
+    <item name='android.provider.Settings.System boolean putString(android.content.ContentResolver, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.Contacts.Phones java.lang.CharSequence getDisplayLabel(android.content.Context, int, java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
@@ -572,28 +779,37 @@
     <item name='android.provider.SyncStateContract.Helpers void set(android.content.ContentProviderClient, android.net.Uri, android.accounts.Account, byte[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.CalendarContract.EventsEntity android.content.EntityIterator newEntityIterator(android.database.Cursor, android.content.ContentProviderClient)'>
+    <item name='android.provider.VoicemailContract.Voicemails android.net.Uri buildSourceUri(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.ContactsContract.Groups android.content.EntityIterator newEntityIterator(android.database.Cursor)'>
+    <item name='android.provider.CalendarContract.EventsEntity android.content.EntityIterator newEntityIterator(android.database.Cursor, android.content.ContentResolver)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media java.lang.String insertImage(android.content.ContentResolver, android.graphics.Bitmap, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Images.Media android.net.Uri getContentUri(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.RawContacts android.net.Uri getContactLookupUri(android.content.ContentResolver, android.net.Uri) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore java.lang.String getVersion(android.content.Context) 0'>
+    <item name='android.provider.Browser void truncateHistory(android.content.ContentResolver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Audio.Playlists android.net.Uri getContentUri(java.lang.String)'>
+    <item name='android.provider.MediaStore java.lang.String getVersion(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.ContactsContract.Contacts android.net.Uri getLookupUri(android.content.ContentResolver, android.net.Uri) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Files android.net.Uri getContentUri(java.lang.String, long)'>
+    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 1'>
+    <item name='android.provider.Settings.System float getFloat(android.content.ContentResolver, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.provider.MediaStore.Audio.Artists.Albums android.net.Uri getContentUri(java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.provider.MediaStore.Images.Media android.database.Cursor query(android.content.ContentResolver, android.net.Uri, java.lang.String[]) 0'>

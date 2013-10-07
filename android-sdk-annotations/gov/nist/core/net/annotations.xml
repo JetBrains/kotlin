@@ -2,31 +2,28 @@
     <item name='gov.nist.core.net.DefaultNetworkLayer java.net.DatagramSocket createDatagramSocket(int, java.net.InetAddress) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.core.net.SslNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress, int)'>
+    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.DatagramSocket createDatagramSocket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.ServerSocket createServerSocket(int, int, java.net.InetAddress)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.core.net.SslNetworkLayer SslNetworkLayer(java.lang.String, java.lang.String, char[], java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.core.net.SslNetworkLayer SslNetworkLayer(java.lang.String, java.lang.String, char[], java.lang.String) 3'>
+    <item name='gov.nist.core.net.SslNetworkLayer java.net.DatagramSocket createDatagramSocket(int, java.net.InetAddress)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.core.net.SslNetworkLayer SslNetworkLayer(java.lang.String, java.lang.String, char[], java.lang.String) 0'>
+    <item name='gov.nist.core.net.SslNetworkLayer SslNetworkLayer(java.lang.String, java.lang.String, char[], java.lang.String) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.core.net.SslNetworkLayer java.net.ServerSocket createServerSocket(int, int, java.net.InetAddress)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.DatagramSocket createDatagramSocket(int, java.net.InetAddress)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.core.net.SslNetworkLayer java.net.DatagramSocket createDatagramSocket()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.core.net.SslNetworkLayer java.net.DatagramSocket createDatagramSocket(int, java.net.InetAddress)'>
+    <item name='gov.nist.core.net.SslNetworkLayer SslNetworkLayer(java.lang.String, java.lang.String, char[], java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.core.net.SslNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress)'>
@@ -35,16 +32,19 @@
     <item name='gov.nist.core.net.SslNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress)'>
+    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.DatagramSocket createDatagramSocket(int, java.net.InetAddress)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.DatagramSocket createDatagramSocket()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.ServerSocket createServerSocket(int, int, java.net.InetAddress)'>
+    <item name='gov.nist.core.net.SslNetworkLayer java.net.DatagramSocket createDatagramSocket()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.core.net.DefaultNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.core.net.SslNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int, java.net.InetAddress, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.core.net.DefaultNetworkLayer java.net.Socket createSocket(java.net.InetAddress, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

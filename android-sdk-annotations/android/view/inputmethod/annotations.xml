@@ -2,13 +2,16 @@
     <item name='android.view.inputmethod.ExtractedTextRequest void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.view.inputmethod.InputMethodManager com.android.internal.view.IInputContext getInputContext()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.view.inputmethod.CompletionInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputMethodSubtype java.lang.String getLocale()'>
+    <item name='android.view.inputmethod.InputMethodInfo java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputBinding java.lang.String toString()'>
+    <item name='android.view.inputmethod.InputMethodManager com.android.internal.view.IInputMethodClient getClient()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.InputMethodSubtype void writeToParcel(android.os.Parcel, int) 0'>
@@ -23,7 +26,31 @@
     <item name='android.view.inputmethod.InputMethodInfo InputMethodInfo(android.content.Context, android.content.pm.ResolveInfo) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.view.inputmethod.InputMethodSession void dispatchKeyEvent(int, android.view.KeyEvent, android.view.inputmethod.InputMethodSession.EventCallback) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputBinding java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethodManager void focusIn(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethod void revokeSession(android.view.inputmethod.InputMethodSession) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.BaseInputConnection void removeComposingSpans(android.text.Spannable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.view.inputmethod.InputMethodInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.BaseInputConnection BaseInputConnection(android.view.View, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethod void changeInputMethodSubtype(android.view.inputmethod.InputMethodSubtype) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.CompletionInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.InputMethodInfo android.content.ComponentName getComponent()'>
@@ -32,28 +59,22 @@
     <item name='android.view.inputmethod.CorrectionInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputMethodManager void focusIn(android.view.View) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.inputmethod.BaseInputConnection void removeComposingSpans(android.text.Spannable) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.inputmethod.BaseInputConnection BaseInputConnection(android.view.View, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.inputmethod.InputMethodManager com.android.internal.view.IInputContext getInputContext()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.view.inputmethod.CorrectionInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputMethodManager java.util.Map&lt;android.view.inputmethod.InputMethodInfo,java.util.List&lt;android.view.inputmethod.InputMethodSubtype&gt;&gt; getShortcutInputMethodsAndSubtypes()'>
+    <item name='android.view.inputmethod.InputMethod void setSessionEnabled(android.view.inputmethod.InputMethodSession, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethod void bindInput(android.view.inputmethod.InputBinding) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethodInfo InputMethodInfo(android.content.Context, android.content.pm.ResolveInfo, java.util.Map&lt;java.lang.String,java.util.List&lt;android.view.inputmethod.InputMethodSubtype&gt;&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.EditorInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputMethodInfo InputMethodInfo(android.content.Context, android.content.pm.ResolveInfo, java.util.Map&lt;java.lang.String,java.util.List&lt;android.view.inputmethod.InputMethodSubtype&gt;&gt;) 0'>
+    <item name='android.view.inputmethod.InputMethodManager java.util.Map&lt;android.view.inputmethod.InputMethodInfo,java.util.List&lt;android.view.inputmethod.InputMethodSubtype&gt;&gt; getShortcutInputMethodsAndSubtypes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.EditorInfo void dump(android.util.Printer, java.lang.String) 0'>
@@ -62,34 +83,37 @@
     <item name='android.view.inputmethod.BaseInputConnection void setComposingSpans(android.text.Spannable, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.view.inputmethod.InputMethod void createSession(android.view.inputmethod.InputMethod.SessionCallback) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.view.inputmethod.InputMethodInfo void dump(android.util.Printer, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.BaseInputConnection int getComposingSpanEnd(android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.CompletionInfo java.lang.String toString()'>
+    <item name='android.view.inputmethod.InputMethodInfo android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.InputMethodManager void onWindowFocus(android.view.View, android.view.View, int, boolean, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputMethodManager com.android.internal.view.IInputMethodClient getClient()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.inputmethod.InputMethodSubtype java.lang.CharSequence getDisplayName(android.content.Context, java.lang.String, android.content.pm.ApplicationInfo)'>
+    <item name='android.view.inputmethod.InputMethodSubtype java.lang.String getMode()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.InputMethodInfo InputMethodInfo(android.content.Context, android.content.pm.ResolveInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputMethodSubtype java.lang.String getExtraValue()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.view.inputmethod.InputBinding void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.view.inputmethod.InputMethodSubtype java.lang.CharSequence getDisplayName(android.content.Context, java.lang.String, android.content.pm.ApplicationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.view.inputmethod.BaseInputConnection int getComposingSpanStart(android.text.Spannable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethodInfo InputMethodInfo(android.content.pm.ResolveInfo, boolean, java.lang.String, java.util.List&lt;android.view.inputmethod.InputMethodSubtype&gt;, int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.inputmethod.BaseInputConnection void setComposingSpans(android.text.Spannable) 0'>
@@ -98,13 +122,16 @@
     <item name='android.view.inputmethod.InputBinding InputBinding(android.view.inputmethod.InputConnection, android.view.inputmethod.InputBinding) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.inputmethod.InputMethodInfo InputMethodInfo(android.content.pm.ResolveInfo, boolean, java.lang.String, java.util.List&lt;android.view.inputmethod.InputMethodSubtype&gt;, int, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.inputmethod.InputMethodSubtype java.lang.String getMode()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.view.inputmethod.InputMethodInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethodSubtype java.lang.String getLocale()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethodSubtype java.lang.CharSequence getDisplayName(android.content.Context, java.lang.String, android.content.pm.ApplicationInfo)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.inputmethod.InputMethodSubtype java.lang.String getExtraValue()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

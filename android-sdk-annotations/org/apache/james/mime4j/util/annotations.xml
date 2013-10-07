@@ -2,10 +2,10 @@
     <item name='org.apache.james.mime4j.util.PartialInputStream int read(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.CharsetUtil boolean isDecodingSupported(java.lang.String) 0'>
+    <item name='org.apache.james.mime4j.util.CharsetUtil java.nio.charset.Charset getCharset(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.CharsetUtil java.nio.charset.Charset getCharset(java.lang.String)'>
+    <item name='org.apache.james.mime4j.util.CharsetUtil boolean isDecodingSupported(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.util.PositionInputStream int read(byte[]) 0'>

@@ -5,16 +5,13 @@
     <item name='org.apache.commons.codec.language.RefinedSoundex java.lang.Object encode(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.codec.language.DoubleMetaphone.DoubleMetaphoneResult java.lang.String getPrimary()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.codec.language.Metaphone java.lang.Object encode(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.language.DoubleMetaphone.DoubleMetaphoneResult void append(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.language.Metaphone java.lang.String encode(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.language.DoubleMetaphone.DoubleMetaphoneResult java.lang.String getPrimary()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.language.DoubleMetaphone.DoubleMetaphoneResult void appendPrimary(java.lang.String) 0'>
@@ -26,16 +23,19 @@
     <item name='org.apache.commons.codec.language.Soundex java.lang.Object encode(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.language.Metaphone java.lang.String metaphone(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.commons.codec.language.DoubleMetaphone.DoubleMetaphoneResult void append(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.language.Metaphone java.lang.Object encode(java.lang.Object) 0'>
+    <item name='org.apache.commons.codec.language.Metaphone java.lang.String encode(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.language.DoubleMetaphone.DoubleMetaphoneResult java.lang.String getAlternate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.language.Metaphone java.lang.String metaphone(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.language.Metaphone java.lang.Object encode(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.language.DoubleMetaphone java.lang.Object encode(java.lang.Object) 0'>

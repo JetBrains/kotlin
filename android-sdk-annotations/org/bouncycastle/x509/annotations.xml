@@ -2,6 +2,9 @@
     <item name='org.bouncycastle.x509.X509V1CertificateGenerator void setIssuerDN(org.bouncycastle.asn1.x509.X509Name) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getTrustedACIssuers()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.x509.ExtendedPKIXParameters ExtendedPKIXParameters(java.util.Set) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -11,25 +14,25 @@
     <item name='org.bouncycastle.x509.X509V1CertificateGenerator void setSubjectDN(javax.security.auth.x500.X500Principal) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters ExtendedPKIXBuilderParameters(java.util.Set, org.bouncycastle.util.Selector) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.security.SecureRandom)'>
+    <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters org.bouncycastle.x509.ExtendedPKIXParameters getInstance(java.security.cert.PKIXParameters)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509CRLStoreSelector java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.AttributeCertificateHolder AttributeCertificateHolder(org.bouncycastle.jce.X509Principal, java.math.BigInteger) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.AttributeCertificateIssuer java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters org.bouncycastle.x509.ExtendedPKIXParameters getInstance(java.security.cert.PKIXParameters)'>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.security.SecureRandom)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.AttributeCertificateHolder AttributeCertificateHolder(java.security.cert.X509Certificate) 0'>
@@ -38,10 +41,19 @@
     <item name='org.bouncycastle.x509.X509V2AttributeCertificate void checkValidity(java.util.Date) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.List getStores()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void setSubjectUniqueID(boolean[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509Attribute org.bouncycastle.asn1.ASN1Primitive toASN1Primitive()'>
+    <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters java.util.Set getExcludedCerts()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters org.bouncycastle.x509.ExtendedPKIXParameters getInstance(java.security.cert.PKIXParameters)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void copyAndAddExtension(java.lang.String, boolean, java.security.cert.X509Certificate) 2'>
@@ -50,22 +62,22 @@
     <item name='org.bouncycastle.x509.X509Store org.bouncycastle.x509.X509Store getInstance(java.lang.String, org.bouncycastle.x509.X509StoreParameters, java.security.Provider) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.x509.X509Attribute X509Attribute(java.lang.String, org.bouncycastle.asn1.ASN1Encodable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509Store org.bouncycastle.x509.X509Store getInstance(java.lang.String, org.bouncycastle.x509.X509StoreParameters)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509CollectionStoreParameters java.util.Collection getCollection()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void setSubjectDN(javax.security.auth.x500.X500Principal) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509Attribute org.bouncycastle.asn1.ASN1Encodable[] getValues()'>
+    <item name='org.bouncycastle.x509.X509Store org.bouncycastle.x509.X509Store getInstance(java.lang.String, org.bouncycastle.x509.X509StoreParameters, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void setIssuerUniqueID(boolean[]) 0'>
@@ -74,22 +86,25 @@
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(java.lang.String, boolean, byte[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.security.SecureRandom)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters void setParams(java.security.cert.PKIXParameters) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V2AttributeCertificate org.bouncycastle.x509.X509Attribute[] getAttributes()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.List getAdditionalStores()'>
+    <item name='org.bouncycastle.x509.X509CertStoreSelector org.bouncycastle.x509.X509CertStoreSelector getInstance(java.security.cert.X509CertSelector)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509CollectionStoreParameters java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.AttributeCertificateHolder java.lang.Object clone()'>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.security.SecureRandom)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V1CertificateGenerator void setSerialNumber(java.math.BigInteger) 0'>
@@ -98,13 +113,10 @@
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void copyAndAddExtension(org.bouncycastle.asn1.DERObjectIdentifier, boolean, java.security.cert.X509Certificate) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.security.SecureRandom)'>
+    <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void setIssuerDN(javax.security.auth.x500.X500Principal) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509Store org.bouncycastle.x509.X509Store getInstance(java.lang.String, org.bouncycastle.x509.X509StoreParameters, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(org.bouncycastle.asn1.DERObjectIdentifier, boolean, org.bouncycastle.asn1.ASN1Encodable) 2'>
@@ -122,31 +134,31 @@
     <item name='org.bouncycastle.x509.X509Store org.bouncycastle.x509.X509Store getInstance(java.lang.String, org.bouncycastle.x509.X509StoreParameters) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.security.SecureRandom)'>
+    <item name='org.bouncycastle.x509.X509V2AttributeCertificate org.bouncycastle.x509.AttributeCertificateHolder getHolder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void setPublicKey(java.security.PublicKey) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getProhibitedACAttributes()'>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(java.lang.String, boolean, org.bouncycastle.asn1.ASN1Encodable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(java.lang.String, boolean, org.bouncycastle.asn1.ASN1Encodable) 0'>
+    <item name='org.bouncycastle.x509.X509V2AttributeCertificate org.bouncycastle.x509.X509Attribute[] getAttributes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.ExtendedPKIXParameters org.bouncycastle.x509.ExtendedPKIXParameters getInstance(java.security.cert.PKIXParameters) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V2AttributeCertificate org.bouncycastle.x509.AttributeCertificateIssuer getIssuer()'>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.AttributeCertificateHolder AttributeCertificateHolder(javax.security.auth.x500.X500Principal, java.math.BigInteger) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509CollectionStoreParameters java.util.Collection getCollection()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.List getStores()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void setSerialNumber(java.math.BigInteger) 0'>
@@ -158,46 +170,28 @@
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void setSubjectDN(org.bouncycastle.asn1.x509.X509Name) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.x509.AttributeCertificateIssuer AttributeCertificateIssuer(org.bouncycastle.asn1.x509.AttCertIssuer) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String, java.security.SecureRandom)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getAttrCertCheckers()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.AttributeCertificateHolder AttributeCertificateHolder(javax.security.auth.x500.X500Principal) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String)'>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters java.util.Set getExcludedCerts()'>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509CRLStoreSelector java.lang.Object clone()'>
+    <item name='org.bouncycastle.x509.X509V2AttributeCertificate org.bouncycastle.x509.AttributeCertificateIssuer getIssuer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V1CertificateGenerator void setPublicKey(java.security.PublicKey) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.security.SecureRandom)'>
+    <item name='org.bouncycastle.x509.X509CollectionStoreParameters java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V2AttributeCertificate org.bouncycastle.x509.AttributeCertificateHolder getHolder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.lang.Object clone()'>
+    <item name='org.bouncycastle.x509.AttributeCertificateIssuer java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void copyAndAddExtension(java.lang.String, boolean, java.security.cert.X509Certificate) 0'>
@@ -209,10 +203,10 @@
     <item name='org.bouncycastle.x509.ExtendedPKIXParameters void setParams(java.security.cert.PKIXParameters) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509CRLStoreSelector org.bouncycastle.x509.X509CRLStoreSelector getInstance(java.security.cert.X509CRLSelector)'>
+    <item name='org.bouncycastle.x509.X509Attribute org.bouncycastle.asn1.ASN1Primitive toASN1Primitive()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey)'>
+    <item name='org.bouncycastle.x509.X509CRLStoreSelector org.bouncycastle.x509.X509CRLStoreSelector getInstance(java.security.cert.X509CRLSelector)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(java.lang.String, boolean, byte[]) 0'>
@@ -221,31 +215,25 @@
     <item name='org.bouncycastle.x509.AttributeCertificateHolder AttributeCertificateHolder(javax.security.auth.x500.X500Principal, java.math.BigInteger) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXBuilderParameters org.bouncycastle.x509.ExtendedPKIXParameters getInstance(java.security.cert.PKIXParameters)'>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.List getAdditionalStores()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509CRLStoreSelector org.bouncycastle.x509.X509CRLStoreSelector getInstance(java.security.cert.X509CRLSelector) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getNecessaryACAttributes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.x509.X509V2AttributeCertificate void verify(java.security.PublicKey, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getTrustedACIssuers()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509CollectionStoreParameters java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generateX509Certificate(java.security.PrivateKey, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.lang.String)'>
+    <item name='org.bouncycastle.x509.X509Store org.bouncycastle.x509.X509Store getInstance(java.lang.String, org.bouncycastle.x509.X509StoreParameters, java.security.Provider)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void copyAndAddExtension(org.bouncycastle.asn1.DERObjectIdentifier, boolean, java.security.cert.X509Certificate) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getNecessaryACAttributes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.AttributeCertificateHolder AttributeCertificateHolder(int, java.lang.String, java.lang.String, byte[]) 1'>
@@ -260,10 +248,16 @@
     <item name='org.bouncycastle.x509.X509Attribute X509Attribute(java.lang.String, org.bouncycastle.asn1.ASN1EncodableVector) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509CertStoreSelector org.bouncycastle.x509.X509CertStoreSelector getInstance(java.security.cert.X509CertSelector)'>
+    <item name='org.bouncycastle.x509.X509V1CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.x509.X509Store org.bouncycastle.x509.X509Store getInstance(java.lang.String, org.bouncycastle.x509.X509StoreParameters, java.security.Provider)'>
+    <item name='org.bouncycastle.x509.X509Attribute org.bouncycastle.asn1.ASN1Encodable[] getValues()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.AttributeCertificateHolder java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.X509V3CertificateGenerator java.security.cert.X509Certificate generate(java.security.PrivateKey, java.security.SecureRandom)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(org.bouncycastle.asn1.DERObjectIdentifier, boolean, org.bouncycastle.asn1.ASN1Encodable) 0'>
@@ -275,6 +269,9 @@
     <item name='org.bouncycastle.x509.X509V2AttributeCertificate X509V2AttributeCertificate(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getAttrCertCheckers()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(org.bouncycastle.asn1.DERObjectIdentifier, boolean, byte[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -282,6 +279,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.X509V3CertificateGenerator void addExtension(java.lang.String, boolean, org.bouncycastle.asn1.ASN1Encodable) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.x509.ExtendedPKIXParameters java.util.Set getProhibitedACAttributes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

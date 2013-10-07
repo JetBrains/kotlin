@@ -1,5 +1,11 @@
 <root>
+    <item name='gov.nist.javax.sip.stack.HopImpl java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Request createPrack(javax.sip.message.Response) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPClientTransaction createClientTransaction(gov.nist.javax.sip.message.SIPRequest, gov.nist.javax.sip.stack.MessageChannel)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageChannel boolean equals(java.lang.Object) 0'>
@@ -17,13 +23,10 @@
     <item name='gov.nist.javax.sip.stack.UDPMessageChannel void sendMessage(byte[], java.net.InetAddress, int, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.core.HostPort getPeerHostPort()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageChannel TLSMessageChannel(java.net.InetAddress, int, gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.TLSMessageProcessor) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.DefaultMessageLogFactory gov.nist.javax.sip.LogRecord createLogRecord(java.lang.String, java.lang.String, java.lang.String, long, boolean, java.lang.String, java.lang.String, java.lang.String, long)'>
+    <item name='gov.nist.javax.sip.stack.UDPMessageChannel java.lang.String getTransport()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPServerTransaction boolean isMessagePartOfTransaction(gov.nist.javax.sip.message.SIPMessage) 0'>
@@ -38,9 +41,6 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack java.net.SocketAddress obtainLocalAddress(java.net.InetAddress, int, java.net.InetAddress, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.MessageChannel java.lang.String getKey(java.net.InetAddress, int, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog gov.nist.javax.sip.stack.SIPDialog createFromNOTIFY(gov.nist.javax.sip.stack.SIPClientTransaction, gov.nist.javax.sip.stack.SIPTransaction) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -48,6 +48,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageChannel void sendMessage(byte[], java.net.InetAddress, int, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.DefaultMessageLogFactory gov.nist.javax.sip.LogRecord createLogRecord(java.lang.String, java.lang.String, java.lang.String, long, boolean, java.lang.String, java.lang.String, java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.UDPMessageChannel UDPMessageChannel(gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.UDPMessageProcessor) 1'>
@@ -59,16 +62,7 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void putPendingTransaction(gov.nist.javax.sip.stack.SIPServerTransaction) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.DefaultMessageLogFactory gov.nist.javax.sip.LogRecord createLogRecord(java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String, java.lang.String, long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Request createRequest(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageProcessor void remove(gov.nist.javax.sip.stack.TLSMessageChannel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransaction gov.nist.javax.sip.header.Via getViaHeader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TCPMessageChannel TCPMessageChannel(java.net.InetAddress, int, gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.TCPMessageProcessor) 2'>
@@ -89,6 +83,9 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void putInMergeTable(gov.nist.javax.sip.stack.SIPServerTransaction, gov.nist.javax.sip.message.SIPRequest) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.TCPMessageChannel java.lang.String getTransport()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPTransaction findTransaction(gov.nist.javax.sip.message.SIPMessage, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -99,12 +96,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TCPMessageProcessor TCPMessageProcessor(java.net.InetAddress, gov.nist.javax.sip.stack.SIPTransactionStack, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.HopImpl java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.TCPMessageProcessor java.lang.String getTransport()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void removePendingTransaction(gov.nist.javax.sip.stack.SIPServerTransaction) 0'>
@@ -122,13 +113,16 @@
     <item name='gov.nist.javax.sip.stack.SIPDialog SIPDialog(gov.nist.javax.sip.stack.SIPTransaction) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPDialog createDialog(gov.nist.javax.sip.stack.SIPTransaction)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.TCPMessageChannel void processMessage(gov.nist.javax.sip.message.SIPMessage) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPDialog SIPDialog(gov.nist.javax.sip.stack.SIPClientTransaction, gov.nist.javax.sip.message.SIPResponse) 0'>
+    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.javax.sip.header.Via getViaHeader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPServerTransaction gov.nist.javax.sip.stack.MessageChannel getResponseChannel()'>
+    <item name='gov.nist.javax.sip.stack.SIPDialog SIPDialog(gov.nist.javax.sip.stack.SIPClientTransaction, gov.nist.javax.sip.message.SIPResponse) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TCPMessageChannel TCPMessageChannel(java.net.InetAddress, int, gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.TCPMessageProcessor) 3'>
@@ -140,9 +134,6 @@
     <item name='gov.nist.javax.sip.stack.SIPDialog void sendReliableProvisionalResponse(javax.sip.message.Response) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPClientTransaction gov.nist.javax.sip.stack.MessageChannel getRequestChannel()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.SIPServerTransaction SIPServerTransaction(gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.MessageChannel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -150,6 +141,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.UDPMessageChannel UDPMessageChannel(gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.UDPMessageProcessor, java.net.DatagramPacket) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.SIPClientTransaction javax.sip.message.Request createCancel()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void dialogErrorEvent(gov.nist.javax.sip.stack.SIPDialogErrorEvent) 0'>
@@ -167,10 +161,10 @@
     <item name='gov.nist.javax.sip.stack.UDPMessageChannel UDPMessageChannel(java.net.InetAddress, int, gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.UDPMessageProcessor) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPServerTransaction boolean equals(java.lang.Object) 0'>
+    <item name='gov.nist.javax.sip.stack.SIPClientTransaction gov.nist.javax.sip.stack.MessageChannel getRequestChannel()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPDialog createDialog(gov.nist.javax.sip.stack.SIPTransaction)'>
+    <item name='gov.nist.javax.sip.stack.SIPServerTransaction boolean equals(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog SIPDialog(gov.nist.javax.sip.SipProviderImpl, gov.nist.javax.sip.message.SIPResponse) 1'>
@@ -185,19 +179,16 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack javax.sip.Dialog getJoinDialog(gov.nist.javax.sip.header.extensions.JoinHeader) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Request createAck(long)'>
+    <item name='gov.nist.javax.sip.stack.TLSMessageChannel java.lang.String getTransport()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPClientTransaction void setDialog(gov.nist.javax.sip.stack.SIPDialog, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.core.HostPort getPeerHostPort()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.SIPServerTransaction void setOriginalRequest(gov.nist.javax.sip.message.SIPRequest) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.SIPClientTransaction javax.sip.message.Request createCancel()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.SIPClientTransaction javax.sip.message.Request createAck()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.UDPMessageProcessor UDPMessageProcessor(java.net.InetAddress, gov.nist.javax.sip.stack.SIPTransactionStack, int) 1'>
@@ -218,22 +209,19 @@
     <item name='gov.nist.javax.sip.stack.MessageChannel void sendMessage(gov.nist.javax.sip.message.SIPMessage, javax.sip.address.Hop) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPClientTransaction createClientTransaction(gov.nist.javax.sip.message.SIPRequest, gov.nist.javax.sip.stack.MessageChannel)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor java.lang.String getTransport()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageProcessor gov.nist.javax.sip.stack.MessageChannel createMessageChannel(gov.nist.core.HostPort) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPDialog createDialog(gov.nist.javax.sip.SipProviderImpl, gov.nist.javax.sip.message.SIPResponse)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.UDPMessageChannel void handleException(java.text.ParseException, gov.nist.javax.sip.message.SIPMessage, java.lang.Class, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.TCPMessageProcessor java.lang.String getTransport()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog void sendRequest(javax.sip.ClientTransaction, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor gov.nist.javax.sip.stack.MessageChannel createMessageChannel(gov.nist.core.HostPort)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.UDPMessageChannel UDPMessageChannel(java.net.InetAddress, int, gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.UDPMessageProcessor) 3'>
@@ -257,10 +245,10 @@
     <item name='gov.nist.javax.sip.stack.HandshakeCompletedListenerImpl HandshakeCompletedListenerImpl(gov.nist.javax.sip.stack.TLSMessageChannel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor UDPMessageProcessor(java.net.InetAddress, gov.nist.javax.sip.stack.SIPTransactionStack, int) 0'>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack java.util.Collection&lt;javax.sip.Dialog&gt; getDialogs(javax.sip.DialogState)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.TCPMessageChannel java.lang.String getTransport()'>
+    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor UDPMessageProcessor(java.net.InetAddress, gov.nist.javax.sip.stack.SIPTransactionStack, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.MessageChannel java.lang.String getKey(gov.nist.core.HostPort, java.lang.String) 0'>
@@ -272,10 +260,10 @@
     <item name='gov.nist.javax.sip.stack.SIPTransaction void setEncapsulatedChannel(gov.nist.javax.sip.stack.MessageChannel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack void addForkedClientTransaction(gov.nist.javax.sip.stack.SIPClientTransaction) 0'>
+    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor gov.nist.javax.sip.stack.MessageChannel createMessageChannel(java.net.InetAddress, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.TLSMessageChannel java.lang.String getTransport()'>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack void addForkedClientTransaction(gov.nist.javax.sip.stack.SIPClientTransaction) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog void sendRequest(javax.sip.ClientTransaction) 0'>
@@ -284,25 +272,22 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.MessageProcessor createMessageProcessor(java.net.InetAddress, int, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor gov.nist.javax.sip.stack.MessageChannel createMessageChannel(java.net.InetAddress, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void removeDialog(gov.nist.javax.sip.stack.SIPDialog) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void putDialog(gov.nist.javax.sip.stack.SIPDialog) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack java.util.Collection&lt;javax.sip.Dialog&gt; getDialogs(javax.sip.DialogState)'>
+    <item name='gov.nist.javax.sip.stack.DefaultRouter void fixStrictRouting(gov.nist.javax.sip.message.SIPRequest) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.DefaultRouter void fixStrictRouting(gov.nist.javax.sip.message.SIPRequest) 0'>
+    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.core.HostPort getHostPort()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog void addTransaction(gov.nist.javax.sip.stack.SIPTransaction) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor gov.nist.javax.sip.stack.MessageChannel createMessageChannel(gov.nist.core.HostPort)'>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.MessageProcessor createMessageProcessor(java.net.InetAddress, int, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.MessageProcessor MessageProcessor(java.net.InetAddress, int, java.lang.String, gov.nist.javax.sip.stack.SIPTransactionStack) 0'>
@@ -320,7 +305,7 @@
     <item name='gov.nist.javax.sip.stack.MessageProcessor void setListeningPoint(gov.nist.javax.sip.ListeningPointImpl) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.MessageProcessor createMessageProcessor(java.net.InetAddress, int, java.lang.String)'>
+    <item name='gov.nist.javax.sip.stack.MessageChannel java.lang.String getKey(java.net.InetAddress, int, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TCPMessageChannel void sendMessage(gov.nist.javax.sip.message.SIPMessage) 0'>
@@ -330,6 +315,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.MessageChannel java.lang.String createBadReqRes(java.lang.String, java.text.ParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPDialog createDialog(gov.nist.javax.sip.SipProviderImpl, gov.nist.javax.sip.message.SIPResponse)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Request createAck(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageChannel void processMessage(gov.nist.javax.sip.message.SIPMessage) 0'>
@@ -345,9 +336,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageChannel TLSMessageChannel(java.net.Socket, gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.TLSMessageProcessor) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.core.HostPort getViaHostPort()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void addTransaction(gov.nist.javax.sip.stack.SIPClientTransaction) 0'>
@@ -389,6 +377,9 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPClientTransaction getForkedTransaction(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Response createReliableProvisionalResponse(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.TCPMessageChannel void handleException(java.text.ParseException, gov.nist.javax.sip.message.SIPMessage, java.lang.Class, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -404,6 +395,12 @@
     <item name='gov.nist.javax.sip.stack.TLSMessageChannel void sendMessage(gov.nist.javax.sip.message.SIPMessage) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.MessageChannel java.lang.String getKey(gov.nist.core.HostPort, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.SIPServerTransaction gov.nist.javax.sip.stack.MessageChannel getResponseChannel()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageChannel void handleException(java.text.ParseException, gov.nist.javax.sip.message.SIPMessage, java.lang.Class, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -416,13 +413,13 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.ServerResponseInterface newSIPServerResponse(gov.nist.javax.sip.message.SIPResponse, gov.nist.javax.sip.stack.MessageChannel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Response createReliableProvisionalResponse(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.MessageProcessor void initialize(java.net.InetAddress, int, gov.nist.javax.sip.stack.SIPTransactionStack) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog void sendAck(javax.sip.message.Request) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.DefaultMessageLogFactory gov.nist.javax.sip.LogRecord createLogRecord(java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String, java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Request createRequest(java.lang.String) 0'>
@@ -443,13 +440,16 @@
     <item name='gov.nist.javax.sip.stack.SIPServerTransaction void sendMessage(gov.nist.javax.sip.message.SIPMessage) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.UDPMessageProcessor java.lang.String getTransport()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.SIPDialog gov.nist.javax.sip.stack.SIPDialog createFromNOTIFY(gov.nist.javax.sip.stack.SIPClientTransaction, gov.nist.javax.sip.stack.SIPTransaction)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.TLSMessageProcessor TLSMessageProcessor(java.net.InetAddress, gov.nist.javax.sip.stack.SIPTransactionStack, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.MessageChannel createMessageChannel(gov.nist.javax.sip.message.SIPRequest, gov.nist.javax.sip.stack.MessageProcessor, javax.sip.address.Hop) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.SIPDialog gov.nist.javax.sip.stack.SIPDialog createFromNOTIFY(gov.nist.javax.sip.stack.SIPClientTransaction, gov.nist.javax.sip.stack.SIPTransaction)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void removeTransactionHash(gov.nist.javax.sip.stack.SIPTransaction) 0'>
@@ -467,19 +467,10 @@
     <item name='gov.nist.javax.sip.stack.MessageProcessor void setIpAddress(java.net.InetAddress) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.UDPMessageChannel java.lang.String getTransport()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.MessageChannel java.lang.String getKey(gov.nist.core.HostPort, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.stack.DefaultMessageLogFactory gov.nist.javax.sip.LogRecord createLogRecord(java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String, java.lang.String, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.javax.sip.header.Via getViaHeader()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack java.util.Collection&lt;javax.sip.Dialog&gt; getDialogs()'>
+    <item name='gov.nist.javax.sip.stack.SIPClientTransaction javax.sip.message.Request createAck()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.stack.SIPDialog void setLastResponse(gov.nist.javax.sip.stack.SIPTransaction, gov.nist.javax.sip.message.SIPResponse) 1'>
@@ -500,6 +491,9 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.MessageChannel createMessageChannel(gov.nist.javax.sip.message.SIPRequest, gov.nist.javax.sip.stack.MessageProcessor, javax.sip.address.Hop) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack java.util.Collection&lt;javax.sip.Dialog&gt; getDialogs()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.UDPMessageProcessor gov.nist.javax.sip.stack.MessageChannel createMessageChannel(gov.nist.core.HostPort) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -512,6 +506,9 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack void mapTransaction(gov.nist.javax.sip.stack.SIPServerTransaction) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.core.HostPort getViaHostPort()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='gov.nist.javax.sip.stack.SIPClientTransaction SIPClientTransaction(gov.nist.javax.sip.stack.SIPTransactionStack, gov.nist.javax.sip.stack.MessageChannel) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -521,10 +518,13 @@
     <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.ServerRequestInterface newSIPServerRequest(gov.nist.javax.sip.message.SIPRequest, gov.nist.javax.sip.stack.MessageChannel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.MessageChannel gov.nist.core.HostPort getHostPort()'>
+    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPServerTransaction findMergedTransaction(gov.nist.javax.sip.message.SIPRequest) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='gov.nist.javax.sip.stack.SIPTransactionStack gov.nist.javax.sip.stack.SIPServerTransaction findMergedTransaction(gov.nist.javax.sip.message.SIPRequest) 0'>
+    <item name='gov.nist.javax.sip.stack.SIPDialog javax.sip.message.Request createRequest(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.stack.SIPTransaction gov.nist.javax.sip.header.Via getViaHeader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

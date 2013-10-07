@@ -1,11 +1,5 @@
 <root>
-    <item name='org.apache.xpath.operations.Gte org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.NotEquals org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.Number org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject)'>
+    <item name='org.apache.xpath.operations.Variable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Mult org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
@@ -14,19 +8,28 @@
     <item name='org.apache.xpath.operations.Operation void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.operations.Lt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.operations.Quo org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Operation void setLeftRight(org.apache.xpath.Expression, org.apache.xpath.Expression) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Minus org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+    <item name='org.apache.xpath.operations.Div org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.NotEquals org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Or org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Bool org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Div org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.Neg org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Number org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject) 0'>
@@ -35,13 +38,19 @@
     <item name='org.apache.xpath.operations.Plus org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Variable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xpath.operations.UnaryOperation void setRight(org.apache.xpath.Expression) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.operations.Equals org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Gt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.operations.VariableSafeAbsRef org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Plus org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Variable void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
@@ -59,7 +68,7 @@
     <item name='org.apache.xpath.operations.Quo org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Or org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.operations.Gte org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Div org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
@@ -77,16 +86,13 @@
     <item name='org.apache.xpath.operations.String org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Gt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xpath.operations.UnaryOperation void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Equals org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Plus org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+    <item name='org.apache.xpath.operations.Mult org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Lte org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
@@ -96,6 +102,18 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Variable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Neg org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Number org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Variable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.operations.Mod org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Neg org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject) 0'>
@@ -110,25 +128,19 @@
     <item name='org.apache.xpath.operations.Mod org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Mod org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xpath.operations.Gt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Variable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.operations.Lte org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Lt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.operations.Minus org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.operations.NotEquals org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.Quo org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.Equals org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Mult org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
@@ -140,13 +152,7 @@
     <item name='org.apache.xpath.operations.UnaryOperation void setExpression(org.apache.xpath.Expression) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Lt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.Div org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.Mult org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+    <item name='org.apache.xpath.operations.Quo org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Minus org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
@@ -155,22 +161,16 @@
     <item name='org.apache.xpath.operations.Operation void setLeftRight(org.apache.xpath.Expression, org.apache.xpath.Expression) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Gt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xpath.operations.And org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.operations.Lte org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject)'>
+    <item name='org.apache.xpath.operations.Gt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Bool org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.NotEquals org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.operations.Bool org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.operations.Lt org.apache.xpath.objects.XObject operate(org.apache.xpath.objects.XObject, org.apache.xpath.objects.XObject) 1'>

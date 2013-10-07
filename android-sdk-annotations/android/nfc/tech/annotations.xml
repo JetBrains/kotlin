@@ -2,6 +2,9 @@
     <item name='android.nfc.tech.NfcBarcode android.nfc.tech.NfcBarcode get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.tech.Ndef java.lang.String getType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.tech.MifareClassic MifareClassic(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -36,9 +39,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.Ndef android.nfc.tech.Ndef get(android.nfc.Tag) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.nfc.tech.Ndef java.lang.String getType()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.NfcA android.nfc.tech.NfcA get(android.nfc.Tag) 0'>

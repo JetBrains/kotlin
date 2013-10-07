@@ -1,74 +1,47 @@
 <root>
-    <item name='android.support.v4.app.NotificationCompat.BigTextStyle android.support.v4.app.NotificationCompat.BigTextStyle setBigContentTitle(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setText(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.Fragment java.lang.String getString(int)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setFullScreenIntent(android.app.PendingIntent, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.ActivityCompat void startActivityForResult(android.app.Activity, android.content.Intent, int, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ActivityOptionsCompat android.support.v4.app.ActivityOptionsCompat makeThumbnailScaleUpAnimation(android.view.View, android.graphics.Bitmap, int, int)'>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder create(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailTo(java.lang.String[])'>
+    <item name='android.support.v4.app.NotificationCompat.InboxStyle android.support.v4.app.NotificationCompat.InboxStyle addLine(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailBcc(java.lang.String[])'>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(android.content.ComponentName)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat.IntentReader android.support.v4.app.ShareCompat.IntentReader from(android.app.Activity)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder from(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ActivityOptionsCompat android.support.v4.app.ActivityOptionsCompat makeCustomAnimation(android.content.Context, int, int)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setPriority(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setNumber(int)'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailTo(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addNextIntent(android.content.Intent)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentInfo(java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setAutoCancel(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ListFragment android.view.View onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addStream(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.NavUtils android.content.Intent getParentActivityIntent(android.content.Context, java.lang.Class&lt;?&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentIntent(android.app.PendingIntent)'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailBcc(java.lang.String[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.InboxStyle android.support.v4.app.NotificationCompat.InboxStyle setBigContentTitle(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentText(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder create(android.content.Context)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSubText(java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setTicker(java.lang.CharSequence, android.widget.RemoteViews)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.DialogFragment android.app.Dialog onCreateDialog(android.os.Bundle)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailCc(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder addAction(int, java.lang.CharSequence, android.app.PendingIntent)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ActivityOptionsCompat android.support.v4.app.ActivityOptionsCompat makeScaleUpAnimation(android.view.View, int, int, int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setWhen(long)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setOnlyAlertOnce(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.NavUtils java.lang.String getParentActivityName(android.content.Context, android.content.ComponentName) 0'>
@@ -77,61 +50,67 @@
     <item name='android.support.v4.app.FragmentStatePagerAdapter boolean isViewFromObject(android.view.View, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentText(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.Fragment android.support.v4.app.Fragment instantiate(android.content.Context, java.lang.String, android.os.Bundle)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.BigTextStyle android.support.v4.app.NotificationCompat.BigTextStyle setSummaryText(java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailCc(java.lang.String[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(android.app.Activity)'>
+    <item name='android.support.v4.app.Fragment java.lang.String getString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.FragmentTabHost void addTab(android.widget.TabHost.TabSpec, java.lang.Class&lt;?&gt;, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.app.FragmentStatePagerAdapter java.lang.Object instantiateItem(android.view.ViewGroup, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.app.FragmentPagerAdapter boolean isViewFromObject(android.view.View, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle bigLargeIcon(android.graphics.Bitmap)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setLargeIcon(android.graphics.Bitmap)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailBcc(java.lang.String)'>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addNextIntent(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setPriority(int)'>
+    <item name='android.support.v4.app.ActivityOptionsCompat android.support.v4.app.ActivityOptionsCompat makeCustomAnimation(android.content.Context, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setDeleteIntent(android.app.PendingIntent)'>
+    <item name='android.support.v4.app.Fragment java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setEmailBcc(java.lang.String[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setText(java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NavUtils java.lang.String getParentActivityName(android.app.Activity) 0'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentTitle(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder from(android.app.Activity)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.app.NavUtils java.lang.String getParentActivityName(android.app.Activity) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setDefaults(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setVibrate(long[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.FragmentActivity android.support.v4.app.FragmentManager getSupportFragmentManager()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.app.ActivityCompat void startActivity(android.app.Activity, android.content.Intent, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.InboxStyle android.support.v4.app.NotificationCompat.InboxStyle setSummaryText(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.Fragment android.support.v4.app.Fragment instantiate(android.content.Context, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.ShareCompat.IntentReader android.support.v4.app.ShareCompat.IntentReader from(android.app.Activity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(java.lang.Class&lt;?&gt;) 0'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentIntent(android.app.PendingIntent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(java.lang.Class&lt;?&gt;)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setUsesChronometer(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(java.lang.Class&lt;?&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.Fragment void registerForContextMenu(android.view.View) 0'>
@@ -140,37 +119,37 @@
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailTo(java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setOnlyAlertOnce(boolean)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSound(android.net.Uri, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setStyle(android.support.v4.app.NotificationCompat.Style)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.FragmentActivity void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(android.app.Activity)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.app.FragmentTabHost void onRestoreInstanceState(android.os.Parcelable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.content.Intent[] getIntents()'>
+    <item name='android.support.v4.app.FragmentActivity boolean onKeyDown(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setOngoing(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.FragmentTabHost android.os.Parcelable onSaveInstanceState()'>
+    <item name='android.support.v4.app.NotificationCompat.BigTextStyle android.support.v4.app.NotificationCompat.BigTextStyle setSummaryText(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.FragmentActivity boolean onMenuItemSelected(int, android.view.MenuItem) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailTo(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setStream(android.net.Uri)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle setSummaryText(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder addAction(int, java.lang.CharSequence, android.app.PendingIntent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.ShareCompat void configureMenuItem(android.view.Menu, int, android.support.v4.app.ShareCompat.IntentBuilder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle setBigContentTitle(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.FragmentPagerAdapter java.lang.Object instantiateItem(android.view.ViewGroup, int) 0'>
@@ -179,64 +158,76 @@
     <item name='android.support.v4.app.DialogFragment int show(android.support.v4.app.FragmentTransaction, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentTitle(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.NotificationCompat.BigTextStyle android.support.v4.app.NotificationCompat.BigTextStyle setBigContentTitle(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.Fragment void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setDeleteIntent(android.app.PendingIntent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder from(android.app.Activity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSound(android.net.Uri, int)'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailCc(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.content.Intent createChooserIntent()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle setBigContentTitle(java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addNextIntentWithParentStack(android.content.Intent)'>
+    <item name='android.support.v4.app.ActivityOptionsCompat android.support.v4.app.ActivityOptionsCompat makeThumbnailScaleUpAnimation(android.view.View, android.graphics.Bitmap, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.Fragment.SavedState void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setChooserTitle(int)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSmallIcon(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(android.content.ComponentName)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setNumber(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.FragmentTabHost FragmentTabHost(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle bigPicture(android.graphics.Bitmap)'>
+    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle bigLargeIcon(android.graphics.Bitmap)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setEmailCc(java.lang.String[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addNextIntentWithParentStack(android.content.Intent) 0'>
+    <item name='android.support.v4.app.NotificationCompat.BigTextStyle android.support.v4.app.NotificationCompat.BigTextStyle bigText(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContent(android.widget.RemoteViews)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSubText(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.TaskStackBuilder java.util.Iterator&lt;android.content.Intent&gt; iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.app.Fragment java.lang.String getString(int, java.lang.Object...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.Fragment java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setStyle(android.support.v4.app.NotificationCompat.Style)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSmallIcon(int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setEmailTo(java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailTo(java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.InboxStyle android.support.v4.app.NotificationCompat.InboxStyle setBigContentTitle(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addNextIntentWithParentStack(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle bigPicture(android.graphics.Bitmap)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSound(android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setOngoing(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.FragmentTabHost android.os.Parcelable onSaveInstanceState()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.NavUtils android.content.Intent getParentActivityIntent(android.content.Context, android.content.ComponentName) 0'>
@@ -245,34 +236,46 @@
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailBcc(java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat java.lang.String getCallingPackage(android.app.Activity) 0'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setTicker(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.Fragment android.support.v4.app.Fragment instantiate(android.content.Context, java.lang.String)'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setHtmlText(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat java.lang.String getCallingPackage(android.app.Activity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.Fragment void unregisterForContextMenu(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setTicker(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setEmailBcc(java.lang.String[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setVibrate(long[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ShareCompat.IntentReader android.support.v4.app.ShareCompat.IntentReader from(android.app.Activity)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.ShareCompat android.content.ComponentName getCallingActivity(android.app.Activity) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.Fragment android.support.v4.app.Fragment instantiate(android.content.Context, java.lang.String, android.os.Bundle)'>
+    <item name='android.support.v4.app.ListFragment android.view.View onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setType(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setStream(android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.InboxStyle android.support.v4.app.NotificationCompat.InboxStyle setSummaryText(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat android.content.ComponentName getCallingActivity(android.app.Activity) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setEmailCc(java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setProgress(int, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailCc(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setSubject(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.FragmentTabHost FragmentTabHost(android.content.Context, android.util.AttributeSet) 0'>
@@ -281,73 +284,79 @@
     <item name='android.support.v4.app.FragmentActivity void onSaveInstanceState(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.Fragment java.lang.CharSequence getText(int)'>
+    <item name='android.support.v4.app.TaskStackBuilder android.content.Intent[] getIntents()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSmallIcon(int)'>
+    <item name='android.support.v4.app.ActivityOptionsCompat android.support.v4.app.ActivityOptionsCompat makeScaleUpAnimation(android.view.View, int, int, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.InboxStyle android.support.v4.app.NotificationCompat.InboxStyle addLine(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setAutoCancel(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addStream(android.net.Uri)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setWhen(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setHtmlText(java.lang.String)'>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addNextIntentWithParentStack(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.DialogFragment void show(android.support.v4.app.FragmentManager, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.TaskStackBuilder java.util.Iterator&lt;android.content.Intent&gt; iterator()'>
+    <item name='android.support.v4.app.NotificationCompat.BigPictureStyle android.support.v4.app.NotificationCompat.BigPictureStyle setSummaryText(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.BigTextStyle android.support.v4.app.NotificationCompat.BigTextStyle bigText(java.lang.CharSequence)'>
+    <item name='android.support.v4.app.TaskStackBuilder android.support.v4.app.TaskStackBuilder addParentStack(java.lang.Class&lt;?&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.Fragment java.lang.String getString(int, java.lang.Object...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.FragmentStatePagerAdapter java.lang.Object instantiateItem(android.view.ViewGroup, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.app.ActionBarDrawerToggle ActionBarDrawerToggle(android.app.Activity, android.support.v4.widget.DrawerLayout, int, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setLargeIcon(android.graphics.Bitmap)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.ActivityCompat void finishAffinity(android.app.Activity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setSubject(java.lang.String)'>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setContentInfo(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSmallIcon(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.Fragment java.lang.CharSequence getText(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailCc(java.lang.String[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.NavUtils android.content.Intent getParentActivityIntent(android.content.Context, java.lang.Class&lt;?&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setProgress(int, int, boolean)'>
+    <item name='android.support.v4.app.FragmentTabHost FragmentTabHost(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.content.Intent createChooserIntent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.FragmentActivity void onConfigurationChanged(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setTicker(java.lang.CharSequence, android.widget.RemoteViews)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setChooserTitle(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder setChooserTitle(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setFullScreenIntent(android.app.PendingIntent, boolean)'>
+    <item name='android.support.v4.app.DialogFragment android.app.Dialog onCreateDialog(android.os.Bundle)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.app.FragmentActivity android.support.v4.app.FragmentManager getSupportFragmentManager()'>
+    <item name='android.support.v4.app.ShareCompat.IntentBuilder android.support.v4.app.ShareCompat.IntentBuilder addEmailBcc(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setLights(int, int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setDefaults(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setUsesChronometer(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.app.NotificationCompat.Builder android.support.v4.app.NotificationCompat.Builder setSound(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

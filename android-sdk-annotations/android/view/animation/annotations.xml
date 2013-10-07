@@ -1,17 +1,5 @@
 <root>
-    <item name='android.view.animation.RotateAnimation RotateAnimation(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeOutAnimation(android.content.Context, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnticipateOvershootInterpolator AnticipateOvershootInterpolator(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnimationSet android.view.animation.AnimationSet clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnimationUtils android.view.animation.Interpolator loadInterpolator(android.content.Context, int) 0'>
+    <item name='android.view.animation.ScaleAnimation ScaleAnimation(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.CycleInterpolator CycleInterpolator(android.content.Context, android.util.AttributeSet) 0'>
@@ -20,16 +8,16 @@
     <item name='android.view.animation.LayoutAnimationController void setInterpolator(android.content.Context, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.Animation android.view.animation.Animation clone()'>
+    <item name='android.view.animation.DecelerateInterpolator DecelerateInterpolator(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.LayoutAnimationController LayoutAnimationController(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.AnimationSet AnimationSet(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.AlphaAnimation AlphaAnimation(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnimationSet boolean getTransformation(long, android.view.animation.Transformation) 1'>
+    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeInAnimation(android.content.Context, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.Animation Animation(android.content.Context, android.util.AttributeSet) 0'>
@@ -41,34 +29,139 @@
     <item name='android.view.animation.AnticipateInterpolator AnticipateInterpolator(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.LayoutAnimationController long getDelayForView(android.view.View) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.GridLayoutAnimationController GridLayoutAnimationController(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeInChildBottomAnimation(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.LayoutAnimationController android.view.animation.Animation getAnimationForView(android.view.View) 0'>
+    <item name='android.view.animation.LayoutAnimationController long getDelayForView(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.AccelerateInterpolator AccelerateInterpolator(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.LayoutAnimationController int getTransformedIndex(android.view.animation.LayoutAnimationController.AnimationParameters) 0'>
+    <item name='android.view.animation.AnimationSet void addAnimation(android.view.animation.Animation) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.ScaleAnimation void applyTransformation(float, android.view.animation.Transformation) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.Animation void getInvalidateRegion(int, int, int, int, android.graphics.RectF, android.view.animation.Transformation) 5'>
+    <item name='android.view.animation.Animation Animation(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AlphaAnimation AlphaAnimation(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnticipateOvershootInterpolator AnticipateOvershootInterpolator(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.LayoutAnimationController LayoutAnimationController(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.TranslateAnimation TranslateAnimation(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.CycleInterpolator CycleInterpolator(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Transformation void compose(android.view.animation.Transformation) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationSet android.view.animation.AnimationSet clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationSet android.view.animation.Animation clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationSet AnimationSet(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationUtils android.view.animation.LayoutAnimationController loadLayoutAnimation(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnticipateInterpolator AnticipateInterpolator(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.RotateAnimation void applyTransformation(float, android.view.animation.Transformation) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.LayoutAnimationController void setAnimation(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationSet java.util.List&lt;android.view.animation.Animation&gt; getAnimations()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Animation boolean getTransformation(long, android.view.animation.Transformation, float) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.GridLayoutAnimationController GridLayoutAnimationController(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AccelerateInterpolator AccelerateInterpolator(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.GridLayoutAnimationController long getDelayForView(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Animation void getInvalidateRegion(int, int, int, int, android.graphics.RectF, android.view.animation.Transformation) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.AnimationSet java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.view.animation.TranslateAnimation void applyTransformation(float, android.view.animation.Transformation) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Transformation void toShortString(java.lang.StringBuilder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.RotateAnimation RotateAnimation(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeOutAnimation(android.content.Context, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationUtils android.view.animation.Interpolator loadInterpolator(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnticipateOvershootInterpolator AnticipateOvershootInterpolator(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Transformation java.lang.String toShortString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AlphaAnimation AlphaAnimation(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationSet boolean getTransformation(long, android.view.animation.Transformation) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.OvershootInterpolator OvershootInterpolator(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.GridLayoutAnimationController GridLayoutAnimationController(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AccelerateInterpolator AccelerateInterpolator(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeOutAnimation(android.content.Context, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.LayoutAnimationController android.view.animation.Animation getAnimationForView(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Animation boolean getTransformation(long, android.view.animation.Transformation) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.LayoutAnimationController int getTransformedIndex(android.view.animation.LayoutAnimationController.AnimationParameters) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Animation void getInvalidateRegion(int, int, int, int, android.graphics.RectF, android.view.animation.Transformation) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Transformation java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.view.animation.AnimationUtils android.view.animation.Animation loadAnimation(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.animation.Animation android.view.animation.Animation clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeInAnimation(android.content.Context, boolean) 0'>
@@ -80,70 +173,34 @@
     <item name='android.view.animation.ScaleAnimation ScaleAnimation(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.DecelerateInterpolator DecelerateInterpolator(android.content.Context, android.util.AttributeSet) 0'>
+    <item name='android.view.animation.RotateAnimation RotateAnimation(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeInAnimation(android.content.Context, boolean)'>
+    <item name='android.view.animation.DecelerateInterpolator DecelerateInterpolator(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.Transformation void postCompose(android.view.animation.Transformation) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.AnimationSet android.view.animation.Animation clone()'>
+    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeInChildBottomAnimation(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.LayoutAnimationController LayoutAnimationController(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.Transformation void compose(android.view.animation.Transformation) 0'>
+    <item name='android.view.animation.Animation void applyTransformation(float, android.view.animation.Transformation) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.OvershootInterpolator OvershootInterpolator(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.Animation java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnimationUtils android.view.animation.LayoutAnimationController loadLayoutAnimation(android.content.Context, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.RotateAnimation void applyTransformation(float, android.view.animation.Transformation) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.Transformation java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.LayoutAnimationController void setAnimation(android.content.Context, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeOutAnimation(android.content.Context, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.view.animation.AlphaAnimation void applyTransformation(float, android.view.animation.Transformation) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.AnimationUtils android.view.animation.Animation makeInChildBottomAnimation(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.Transformation void printShortString(java.io.PrintWriter) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.animation.GridLayoutAnimationController long getDelayForView(android.view.View) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.Animation void getInvalidateRegion(int, int, int, int, android.graphics.RectF, android.view.animation.Transformation) 4'>
+    <item name='android.view.animation.Animation java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.animation.TranslateAnimation TranslateAnimation(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.TranslateAnimation void applyTransformation(float, android.view.animation.Transformation) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.Transformation void toShortString(java.lang.StringBuilder) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.view.animation.Transformation java.lang.String toShortString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

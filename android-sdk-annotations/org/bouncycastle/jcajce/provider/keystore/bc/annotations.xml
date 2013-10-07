@@ -5,10 +5,10 @@
     <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi javax.crypto.Cipher makePBECipher(java.lang.String, int, char[], byte[], int) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi javax.crypto.Cipher makePBECipher(java.lang.String, int, char[], byte[], int)'>
+    <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi java.security.cert.Certificate engineGetCertificate(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi java.security.cert.Certificate engineGetCertificate(java.lang.String) 0'>
+    <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi javax.crypto.Cipher makePBECipher(java.lang.String, int, char[], byte[], int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi boolean engineIsCertificateEntry(java.lang.String) 0'>
@@ -23,13 +23,13 @@
     <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi boolean engineIsKeyEntry(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi java.util.Enumeration engineAliases()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi boolean engineContainsAlias(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi void engineDeleteEntry(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi java.util.Enumeration engineAliases()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi java.util.Date engineGetCreationDate(java.lang.String) 0'>

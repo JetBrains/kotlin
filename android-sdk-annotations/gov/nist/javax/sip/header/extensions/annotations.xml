@@ -1,7 +1,4 @@
 <root>
-    <item name='gov.nist.javax.sip.header.extensions.References java.lang.String getName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='gov.nist.javax.sip.header.extensions.References void removeParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -15,6 +12,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.header.extensions.References void setParameter(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='gov.nist.javax.sip.header.extensions.References java.lang.String getName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='gov.nist.javax.sip.header.extensions.Replaces void setFromTag(java.lang.String) 0'>

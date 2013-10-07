@@ -1,20 +1,14 @@
 <root>
-    <item name='org.bouncycastle.crypto.modes.CBCBlockCipher java.lang.String getAlgorithmName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.crypto.modes.OFBBlockCipher java.lang.String getAlgorithmName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.crypto.modes.OFBBlockCipher org.bouncycastle.crypto.BlockCipher getUnderlyingCipher()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.CFBBlockCipher int decryptBlock(byte[], int, byte[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.crypto.modes.SICBlockCipher java.lang.String getAlgorithmName()'>
+    <item name='org.bouncycastle.crypto.modes.GCMBlockCipher java.lang.String getAlgorithmName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.crypto.modes.CCMBlockCipher byte[] processPacket(byte[], int, int)'>
+    <item name='org.bouncycastle.crypto.modes.CCMBlockCipher byte[] getMac()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.CBCBlockCipher CBCBlockCipher(org.bouncycastle.crypto.BlockCipher) 0'>
@@ -26,10 +20,13 @@
     <item name='org.bouncycastle.crypto.modes.CFBBlockCipher int decryptBlock(byte[], int, byte[], int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.crypto.modes.CFBBlockCipher java.lang.String getAlgorithmName()'>
+    <item name='org.bouncycastle.crypto.modes.CFBBlockCipher int processBlock(byte[], int, byte[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.crypto.modes.CFBBlockCipher int processBlock(byte[], int, byte[], int) 0'>
+    <item name='org.bouncycastle.crypto.modes.CCMBlockCipher byte[] processPacket(byte[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.modes.CFBBlockCipher java.lang.String getAlgorithmName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.CCMBlockCipher void processAADBytes(byte[], int, int) 0'>
@@ -47,7 +44,7 @@
     <item name='org.bouncycastle.crypto.modes.CTSBlockCipher int doFinal(byte[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.crypto.modes.GCMBlockCipher java.lang.String getAlgorithmName()'>
+    <item name='org.bouncycastle.crypto.modes.CCMBlockCipher java.lang.String getAlgorithmName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.CCMBlockCipher void init(boolean, org.bouncycastle.crypto.CipherParameters) 1'>
@@ -57,9 +54,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.GCMBlockCipher GCMBlockCipher(org.bouncycastle.crypto.BlockCipher, org.bouncycastle.crypto.modes.gcm.GCMMultiplier) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.crypto.modes.CCMBlockCipher byte[] getMac()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.GCMBlockCipher GCMBlockCipher(org.bouncycastle.crypto.BlockCipher) 0'>
@@ -80,16 +74,22 @@
     <item name='org.bouncycastle.crypto.modes.OFBBlockCipher int processBlock(byte[], int, byte[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.crypto.modes.OFBBlockCipher java.lang.String getAlgorithmName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.crypto.modes.CCMBlockCipher int processBytes(byte[], int, int, byte[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.crypto.modes.CCMBlockCipher java.lang.String getAlgorithmName()'>
+    <item name='org.bouncycastle.crypto.modes.CBCBlockCipher java.lang.String getAlgorithmName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.SICBlockCipher void init(boolean, org.bouncycastle.crypto.CipherParameters) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.crypto.modes.OFBBlockCipher int processBlock(byte[], int, byte[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.crypto.modes.SICBlockCipher java.lang.String getAlgorithmName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

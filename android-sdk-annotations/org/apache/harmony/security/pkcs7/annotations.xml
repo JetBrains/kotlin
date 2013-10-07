@@ -2,16 +2,16 @@
     <item name='org.apache.harmony.security.pkcs7.SignerInfo java.math.BigInteger getSerialNumber()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.pkcs7.SignerInfo javax.security.auth.x500.X500Principal getIssuer()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.pkcs7.SignerInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.pkcs7.ContentInfo java.lang.String toString()'>
+    <item name='org.apache.harmony.security.pkcs7.SignedData java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.pkcs7.SignedData java.lang.String toString()'>
+    <item name='org.apache.harmony.security.pkcs7.SignerInfo javax.security.auth.x500.X500Principal getIssuer()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

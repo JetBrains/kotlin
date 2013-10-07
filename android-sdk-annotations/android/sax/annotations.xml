@@ -2,19 +2,16 @@
     <item name='android.sax.Element android.sax.Element getChild(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.sax.Element android.sax.Element requireChild(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.sax.Element android.sax.Element getChild(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.sax.Element android.sax.Element getChild(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.sax.Element java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.sax.Element android.sax.Element requireChild(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.sax.Element java.lang.String toString()'>
+    <item name='android.sax.Element android.sax.Element getChild(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.sax.Element android.sax.Element getChild(java.lang.String, java.lang.String) 0'>
@@ -27,6 +24,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.sax.RootElement org.xml.sax.ContentHandler getContentHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.sax.Element android.sax.Element requireChild(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.sax.Element android.sax.Element requireChild(java.lang.String, java.lang.String) 0'>

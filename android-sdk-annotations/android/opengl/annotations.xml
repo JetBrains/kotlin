@@ -44,19 +44,19 @@
     <item name='android.opengl.GLSurfaceView void queueEvent(java.lang.Runnable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture createTexture(java.io.InputStream)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.opengl.GLU void gluOrtho2D(javax.microedition.khronos.opengles.GL10, float, float, float, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.Matrix void setRotateM(float[], int, float, float, float, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.opengl.GLUtils int getInternalFormat(android.graphics.Bitmap) 0'>
+    <item name='android.opengl.GLSurfaceView GLSurfaceView(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.opengl.ETC1Util void writeTexture(android.opengl.ETC1Util.ETC1Texture, java.io.OutputStream) 0'>
+    <item name='android.opengl.GLSurfaceView void surfaceCreated(android.view.SurfaceHolder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.opengl.GLUtils int getInternalFormat(android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLUtils java.lang.String getEGLErrorString(int)'>
@@ -65,10 +65,16 @@
     <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture compressTexture(java.nio.Buffer, int, int, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.opengl.ETC1Util void writeTexture(android.opengl.ETC1Util.ETC1Texture, java.io.OutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.opengl.GLES20 void glVertexAttribPointer(int, int, int, boolean, int, java.nio.Buffer) 5'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.Matrix void frustumM(float[], int, float, float, float, float, float, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.opengl.GLSurfaceView void surfaceChanged(android.view.SurfaceHolder, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLUtils void texSubImage2D(int, int, int, int, android.graphics.Bitmap, int, int) 4'>
@@ -90,6 +96,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLUtils void texImage2D(int, int, int, android.graphics.Bitmap, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture createTexture(java.io.InputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.Matrix void perspectiveM(float[], int, float, float, float, float) 0'>

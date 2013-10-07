@@ -1,4 +1,7 @@
 <root>
+    <item name='org.bouncycastle.x509.extension.X509ExtensionUtil java.util.Collection getIssuerAlternativeNames(java.security.cert.X509Certificate)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.x509.extension.AuthorityKeyIdentifierStructure AuthorityKeyIdentifierStructure(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -12,9 +15,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure SubjectKeyIdentifierStructure(java.security.PublicKey) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.x509.extension.X509ExtensionUtil java.util.Collection getIssuerAlternativeNames(java.security.cert.X509Certificate)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.x509.extension.X509ExtensionUtil org.bouncycastle.asn1.ASN1Primitive fromExtensionValue(byte[]) 0'>

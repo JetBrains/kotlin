@@ -1,11 +1,5 @@
 <root>
-    <item name='org.bouncycastle.jce.PrincipalUtil org.bouncycastle.jce.X509Principal getSubjectX509Principal(java.security.cert.X509Certificate)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.jce.PKCS10CertificationRequest PKCS10CertificationRequest(org.bouncycastle.asn1.ASN1Sequence) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.jce.PrincipalUtil org.bouncycastle.jce.X509Principal getIssuerX509Principal(java.security.cert.X509Certificate)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jce.PKCS10CertificationRequest PKCS10CertificationRequest(java.lang.String, javax.security.auth.x500.X500Principal, java.security.PublicKey, org.bouncycastle.asn1.ASN1Set, java.security.PrivateKey) 0'>
@@ -38,6 +32,9 @@
     <item name='org.bouncycastle.jce.PKCS10CertificationRequest PKCS10CertificationRequest(java.lang.String, org.bouncycastle.asn1.x509.X509Name, java.security.PublicKey, org.bouncycastle.asn1.ASN1Set, java.security.PrivateKey) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.jce.PrincipalUtil org.bouncycastle.jce.X509Principal getSubjectX509Principal(java.security.cert.X509Certificate)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.jce.PrincipalUtil org.bouncycastle.jce.X509Principal getSubjectX509Principal(java.security.cert.X509Certificate) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -60,6 +57,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jce.PKCS10CertificationRequest PKCS10CertificationRequest(java.lang.String, javax.security.auth.x500.X500Principal, java.security.PublicKey, org.bouncycastle.asn1.ASN1Set, java.security.PrivateKey, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.bouncycastle.jce.PrincipalUtil org.bouncycastle.jce.X509Principal getIssuerX509Principal(java.security.cert.X509Certificate)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.bouncycastle.jce.X509Principal X509Principal(java.util.Vector, java.util.Vector) 1'>

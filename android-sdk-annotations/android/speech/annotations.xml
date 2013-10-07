@@ -2,19 +2,19 @@
     <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context, android.content.ComponentName)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.IRecognitionListener.Stub android.os.IBinder asBinder()'>
+    <item name='android.speech.RecognitionService android.os.IBinder onBind(android.content.Intent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.RecognitionService android.os.IBinder onBind(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.RecognizerIntent android.content.Intent getVoiceDetailsIntent(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.IRecognitionService.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context, android.content.ComponentName) 0'>
@@ -24,6 +24,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.SpeechRecognizer boolean isRecognitionAvailable(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.IRecognitionService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.IRecognitionListener.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>
