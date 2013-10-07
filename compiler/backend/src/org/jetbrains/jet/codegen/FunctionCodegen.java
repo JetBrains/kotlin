@@ -121,7 +121,7 @@ public class FunctionCodegen extends GenerationStateAware {
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
         if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;
 
-        generateParameterAnnotations(functionDescriptor, mv);
+        generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
 
         generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
 
@@ -141,9 +141,25 @@ public class FunctionCodegen extends GenerationStateAware {
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, typeMapper);
     }
 
-    private void generateParameterAnnotations(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodVisitor mv) {
-        for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
-            AnnotationCodegen.forParameter(parameter.getIndex(), mv, typeMapper).genAnnotations(parameter);
+    private void generateParameterAnnotations(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmSignature
+    ) {
+        Iterator<ValueParameterDescriptor> iterator = functionDescriptor.getValueParameters().iterator();
+        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
+
+        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
+            JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
+            if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
+                markEnumConstructorParameterAsSynthetic(mv, i);
+                continue;
+            }
+
+            if (kind == JvmMethodParameterKind.VALUE) {
+                ValueParameterDescriptor parameter = iterator.next();
+                AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter);
+            }
         }
     }
 
@@ -159,8 +175,7 @@ public class FunctionCodegen extends GenerationStateAware {
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
             if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
-                // We shouldn't generate annotations for invisible in runtime parameters otherwise we get bad
-                // RuntimeInvisibleParameterAnnotations error in javac
+                markEnumConstructorParameterAsSynthetic(mv, i);
                 continue;
             }
 
@@ -197,6 +212,14 @@ public class FunctionCodegen extends GenerationStateAware {
             }
             av.visitEnd();
         }
+    }
+
+    private static void markEnumConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
+        // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
+        // see MethodWriter.visitParameterAnnotation()
+
+        AnnotationVisitor av = mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true);
+        av.visitEnd();
     }
 
     @Nullable

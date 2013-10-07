@@ -107,6 +107,16 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
+    public void testAnnotationForParamInInstanceExtensionFunction() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("class A() { fun String.x([Deprecated] i: Int) {}}");
+        Class<?> aClass = generateClass("A");
+        Method x = aClass.getMethod("x", String.class, int.class);
+        assertNotNull(x);
+        // Get annotations for first real parameter
+        Annotation[] annotations = x.getParameterAnnotations()[1];
+        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+    }
+
     public void testParamInConstructor() throws NoSuchFieldException, NoSuchMethodException {
         loadText("class A ([Deprecated] x: Int) {}");
         Class<?> aClass = generateClass("A");
@@ -114,6 +124,27 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(constructor);
         // Get annotations for first parameter
         Annotation[] annotations = constructor.getParameterAnnotations()[0];
+        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+    }
+
+    public void testParamInEnumConstructor() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("enum class E([Deprecated] p: String)");
+        Class<?> klass = generateClass("E");
+        Constructor constructor = klass.getDeclaredConstructor(String.class, int.class, String.class);
+        assertNotNull(constructor);
+        // Get annotations for first parameter
+        Annotation[] annotations = constructor.getParameterAnnotations()[0];
+        assertNotNull(getDeprecatedAnnotationFromList(annotations));
+    }
+
+    public void testParamInInnerConstructor() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("class Outer { inner class Inner([Deprecated] x: Int) }");
+        Class<?> outer = generateClass("Outer");
+        Class<?> inner = outer.getDeclaredClasses()[0];
+        Constructor constructor = inner.getDeclaredConstructor(outer, int.class);
+        assertNotNull(constructor);
+        // Get annotations for first real parameter
+        Annotation[] annotations = constructor.getParameterAnnotations()[1];
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
