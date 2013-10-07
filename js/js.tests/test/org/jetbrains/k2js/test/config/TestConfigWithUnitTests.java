@@ -48,6 +48,6 @@ public class TestConfigWithUnitTests extends TestConfig {
             @NotNull EcmaVersion version,
             @NotNull List<JetFile> files,
             @NotNull BindingContext context) {
-        super(project, version, files, context);
+        super(project, version, files, context, false);
     }
 }
