@@ -98,7 +98,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.INTERNAL_ERROR;
         }
 
-        MainCallParameters mainCallParameters = arguments.createMainCallParameters();
+        MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
         return translateAndGenerateOutputFile(mainCallParameters, environmentForJS, config, outputFile);
     }
 
@@ -161,6 +161,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         else {
             // lets discover the JS library definitions on the classpath
             return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion, arguments.sourcemap);
+        }
+    }
+
+    public static MainCallParameters createMainCallParameters(String main) {
+        if ("noCall".equals(main)) {
+            return MainCallParameters.noCall();
+        }
+        else {
+            return MainCallParameters.mainWithoutArguments();
         }
     }
 }

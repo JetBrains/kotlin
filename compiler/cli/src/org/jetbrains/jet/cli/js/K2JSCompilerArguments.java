@@ -19,7 +19,6 @@ package org.jetbrains.jet.cli.js;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.CommonCompilerArguments;
-import org.jetbrains.k2js.facade.MainCallParameters;
 
 
 /**
@@ -48,15 +47,5 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Override
     public String getSrc() {
         throw new IllegalStateException();
-    }
-
-    public MainCallParameters createMainCallParameters() {
-        if ("noCall".equals(main)) {
-            return MainCallParameters.noCall();
-        }
-        else {
-            // TODO should we pass the arguments to the compiler?
-            return MainCallParameters.mainWithoutArguments();
-        }
     }
 }
