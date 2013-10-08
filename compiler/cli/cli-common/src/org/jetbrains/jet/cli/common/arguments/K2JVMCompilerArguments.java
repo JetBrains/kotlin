@@ -15,10 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.jet.cli.jvm;
+package org.jetbrains.jet.cli.common.arguments;
 
 import com.sampullara.cli.Argument;
-import org.jetbrains.jet.cli.CommonCompilerArguments;
 
 import java.util.List;
 
@@ -27,8 +26,6 @@ import java.util.List;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
-
-
     // TODO ideally we'd unify this with 'src' to just having a single field that supports multiple files/dirs
     private List<String> sourceDirs;
 

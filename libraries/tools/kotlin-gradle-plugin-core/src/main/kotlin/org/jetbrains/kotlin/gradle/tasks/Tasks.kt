@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.KSpec
 import java.io.File
 import org.gradle.api.GradleException
@@ -16,6 +14,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.file.SourceDirectorySet
 import java.util.ArrayList
 import org.apache.commons.io.FilenameUtils
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation

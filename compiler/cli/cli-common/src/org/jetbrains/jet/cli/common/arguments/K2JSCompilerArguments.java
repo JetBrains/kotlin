@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.js;
+package org.jetbrains.jet.cli.common.arguments;
 
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.CommonCompilerArguments;
-
 
 /**
  * NOTE: for now K2JSCompiler supports only minimal amount of parameters required to launch it from the plugin.

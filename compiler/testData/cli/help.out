@@ -1,4 +1,4 @@
-Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+Usage: org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
   -jar [String] jar file name
   -src [String] source file or directory (allows many paths separated by the system path separator)
   -classpath [String] classpath to use when compiling

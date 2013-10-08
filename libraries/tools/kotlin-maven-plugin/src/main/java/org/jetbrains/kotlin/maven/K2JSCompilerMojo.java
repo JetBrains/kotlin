@@ -21,9 +21,9 @@ import com.google.common.io.InputSupplier;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.jetbrains.jet.cli.common.CLICompiler;
-import org.jetbrains.jet.cli.common.CompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
-import org.jetbrains.jet.cli.js.K2JSCompilerArguments;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.k2js.config.MetaInfServices;
 

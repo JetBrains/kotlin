@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.common;
+package org.jetbrains.jet.cli.common.arguments;
 
-import com.google.common.collect.Lists;
+import com.intellij.util.SmartList;
 
 import java.util.List;
 
 public abstract class CompilerArguments {
-    public List<String> freeArgs = Lists.newArrayList();
+    public List<String> freeArgs = new SmartList<String>();
 
     public abstract boolean isHelp();
     public abstract boolean isTags();

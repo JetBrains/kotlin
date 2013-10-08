@@ -3,7 +3,7 @@ package test.kotlin.kdoc
 import java.io.File
 import kotlin.test.assertTrue
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
 import org.junit.Test
 
