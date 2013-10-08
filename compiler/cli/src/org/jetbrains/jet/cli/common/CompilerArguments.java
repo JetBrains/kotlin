@@ -17,26 +17,10 @@
 package org.jetbrains.jet.cli.common;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public abstract class CompilerArguments {
-    @NotNull
-    private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
-
-    @NotNull
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    /**
-     * Sets the compiler plugins to be used when working with the {@link org.jetbrains.jet.cli.CLICompiler}
-     */
-    public void setCompilerPlugins(@NotNull List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
-    }
-
     public List<String> freeArgs = Lists.newArrayList();
 
     public abstract boolean isHelp();

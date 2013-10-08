@@ -24,9 +24,9 @@ class HtmlVisitorTest {
         args.kotlinHome = "../../../dist/kotlinc"
         args.setSrc(srcDir.toString())
         args.setOutputDir(File(dir, "target/classes-htmldocs").toString())
-        args.getCompilerPlugins().add(HtmlCompilerPlugin())
 
         val compiler = K2JVMCompiler()
+        compiler.getCompilerPlugins().add(HtmlCompilerPlugin())
         compiler.exec(System.out, args)
     }
 }

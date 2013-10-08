@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.common;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
@@ -26,10 +27,23 @@ import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.PrintStream;
+import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
 public abstract class CLICompiler<A extends CompilerArguments> {
+
+    @NotNull
+    private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
+
+    @NotNull
+    public List<CompilerPlugin> getCompilerPlugins() {
+        return compilerPlugins;
+    }
+
+    public void setCompilerPlugins(@NotNull List<CompilerPlugin> compilerPlugins) {
+        this.compilerPlugins = compilerPlugins;
+    }
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
@@ -85,7 +99,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      */
     //TODO: add parameter annotations when KT-1863 is resolved
     protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, arguments.getCompilerPlugins());
+        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, compilerPlugins);
     }
 
     @NotNull
