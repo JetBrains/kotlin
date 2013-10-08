@@ -80,17 +80,6 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
 
     @Nullable
     @Override
-    public NamespaceDescriptor getPackageDescriptor(@NotNull final Name shortName) {
-        return computableWithProcessingCancel(new Computable<NamespaceDescriptor>() {
-            @Override
-            public NamespaceDescriptor compute() {
-                return resolveSession.getPackageDescriptor(shortName);
-            }
-        });
-    }
-
-    @Nullable
-    @Override
     public NamespaceDescriptor getPackageDescriptorByFqName(final FqName fqName) {
         return computableWithProcessingCancel(new Computable<NamespaceDescriptor>() {
             @Override

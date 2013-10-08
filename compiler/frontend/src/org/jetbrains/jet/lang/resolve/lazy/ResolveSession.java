@@ -144,18 +144,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     @Override
     @Nullable
-    public NamespaceDescriptor getPackageDescriptor(@NotNull Name shortName) {
-        return rootPackage.getMemberScope().getNamespace(shortName);
-    }
-
-    @Override
-    @Nullable
     public NamespaceDescriptor getPackageDescriptorByFqName(FqName fqName) {
         if (fqName.isRoot()) {
             return rootPackage;
         }
         List<Name> names = fqName.pathSegments();
-        NamespaceDescriptor current = getPackageDescriptor(names.get(0));
+        NamespaceDescriptor current = rootPackage.getMemberScope().getNamespace(names.get(0));
         if (current == null) return null;
         for (Name name : names.subList(1, names.size())) {
             current = current.getMemberScope().getNamespace(name);

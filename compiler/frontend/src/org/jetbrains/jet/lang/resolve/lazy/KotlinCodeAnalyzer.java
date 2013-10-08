@@ -32,9 +32,6 @@ public interface KotlinCodeAnalyzer {
     ModuleDescriptor getRootModuleDescriptor();
 
     @Nullable
-    NamespaceDescriptor getPackageDescriptor(@NotNull Name shortName);
-
-    @Nullable
     NamespaceDescriptor getPackageDescriptorByFqName(FqName fqName);
 
     @NotNull
