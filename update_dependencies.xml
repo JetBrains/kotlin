@@ -149,6 +149,12 @@
 
         <!-- CLI Parser -->
         <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.1"/>
+
+        <!-- Bootstrap compiler -->
+        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+             dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
+        <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
+        <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
     </target>
 
     <macrodef name="get-asm4-and-rename-packages">
