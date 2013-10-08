@@ -43,4 +43,13 @@ public final class Util {
             throw new RuntimeException(String.format("Failed to resolve canonical file of [%s]: %s", f, e), e);
         }
     }
+
+    public static String[] getPaths(String[] paths) {
+        String[] result = new String[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            String path = paths[i];
+            result[i] = getPath(new File(path));
+        }
+        return result;
+    }
 }

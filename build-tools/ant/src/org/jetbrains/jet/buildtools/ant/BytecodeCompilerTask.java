@@ -20,9 +20,11 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.jetbrains.jet.buildtools.core.BytecodeCompiler;
+import org.jetbrains.jet.buildtools.core.Util;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 
 import java.io.File;
+import java.util.Arrays;
 
 import static org.jetbrains.jet.buildtools.core.Util.getPath;
 
@@ -40,7 +42,7 @@ public class BytecodeCompilerTask extends Task {
     private File output;
     private File jar;
     private File stdlib;
-    private File src;
+    private Path src;
     private File module;
     private Path compileClasspath;
     private boolean includeRuntime = true;
@@ -57,8 +59,15 @@ public class BytecodeCompilerTask extends Task {
         this.stdlib = stdlib;
     }
 
-    public void setSrc(File src) {
+    public void setSrc(Path src) {
         this.src = src;
+    }
+
+    public Path createSrc() {
+        if (src == null) {
+            src = new Path(getProject());
+        }
+        return src.createPath();
     }
 
     public void setModule(File module) {
@@ -121,10 +130,10 @@ public class BytecodeCompilerTask extends Task {
                 throw new CompileEnvironmentException("\"output\" or \"jar\" should be specified");
             }
 
-            String source = getPath(this.src);
+            String[] source = Util.getPaths(this.src.list());
             String destination = getPath(this.output != null ? this.output : this.jar);
 
-            log(String.format("Compiling [%s] => [%s]", source, destination));
+            log(String.format("Compiling [%s] => [%s]", Arrays.toString(source), destination));
 
             if (this.output != null) {
                 compiler.sourcesToDir(source, destination, stdlibPath, classpath);

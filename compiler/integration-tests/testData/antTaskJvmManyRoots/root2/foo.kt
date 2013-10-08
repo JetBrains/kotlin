@@ -1,0 +1,3 @@
+package Hello
+
+fun foo() {}

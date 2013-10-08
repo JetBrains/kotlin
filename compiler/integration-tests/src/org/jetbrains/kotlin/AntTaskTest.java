@@ -23,13 +23,22 @@ import java.io.File;
 import static junit.framework.Assert.assertEquals;
 
 public class AntTaskTest extends KotlinIntegrationTestBase {
-    @Test
-    public void antTaskJvm() throws Exception {
+    private void doAntTest() throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
         String runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar").getAbsolutePath();
 
         assertEquals("compilation failed", 0, runAnt("build.log", "build.xml"));
         runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "Hello.HelloPackage");
+    }
+
+    @Test
+    public void antTaskJvm() throws Exception {
+        doAntTest();
+    }
+
+    @Test
+    public void antTaskJvmManyRoots() throws Exception {
+        doAntTest();
     }
 
     @Override
