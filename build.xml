@@ -33,7 +33,7 @@
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
-    <taskdef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${boostrap.compiler.home}/lib/kotlin-ant.jar"/>
+    <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${boostrap.compiler.home}/lib/kotlin-ant.jar"/>
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
     <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
@@ -310,15 +310,10 @@
 
         <cleandir dir="${output}/classes/compiler"/>
 
-        <kotlinc output="${output}/classes/compiler">
-          <src refid="compilerSources.path"/>
-          <classpath refid="classpath"/>
-        </kotlinc>
-
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"  target="${java.target}">
+            <withKotlin/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
-            <classpath path="${output}/classes/compiler"/>
         </javac2>
 
         <pack_compiler jarfile="${output}/kotlin-compiler-before-shrink.jar"/>
