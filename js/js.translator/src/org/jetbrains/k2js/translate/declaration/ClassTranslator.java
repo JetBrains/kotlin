@@ -124,23 +124,17 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     public JsInvocation translate(@NotNull TranslationContext declarationContext) {
-        JsInvocation createInvocation = context().namer().classCreateInvocation(descriptor);
-        translate(createInvocation, declarationContext);
-        return createInvocation;
-    }
-
-    private void translate(@NotNull JsInvocation createInvocation, @NotNull TranslationContext context) {
-        addSuperclassReferences(createInvocation);
-        addClassOwnDeclarations(createInvocation.getArguments(), context);
+        return context().namer().classCreateInvocation(descriptor, getClassCreateInvocationArguments(declarationContext));
     }
 
     private boolean isTrait() {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
-    private void addClassOwnDeclarations(@NotNull List<JsExpression> invocationArguments, @NotNull TranslationContext declarationContext) {
-        final List<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
+    private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
+        List<JsExpression> invocationArguments = new ArrayList<JsExpression>();
 
+        final List<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
         final List<JsPropertyInitializer> staticProperties = new SmartList<JsPropertyInitializer>();
         boolean isTopLevelDeclaration = context() == declarationContext;
         final JsNameRef qualifiedReference;
@@ -170,6 +164,7 @@ public final class ClassTranslator extends AbstractTranslator {
                     });
         }
 
+        invocationArguments.add(getSuperclassReferences());
         if (!isTrait()) {
             JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod();
             invocationArguments.add(initializer.getBody().getStatements().isEmpty() ? JsLiteral.NULL : initializer);
@@ -201,6 +196,7 @@ public final class ClassTranslator extends AbstractTranslator {
             invocationArguments.add(new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, qualifiedReference));
             invocationArguments.add(new JsObjectLiteral(staticProperties, true));
         }
+        return invocationArguments;
     }
 
     private void mayBeAddEnumEntry(@NotNull List<JsPropertyInitializer> enumEntryList,
@@ -218,25 +214,16 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    private void addSuperclassReferences(@NotNull JsInvocation jsClassDeclaration) {
+    private JsExpression getSuperclassReferences() {
         List<JsExpression> superClassReferences = getSupertypesNameReferences();
         if (superClassReferences.isEmpty()) {
-            jsClassDeclaration.getArguments().add(JsLiteral.NULL);
-            return;
+            return JsLiteral.NULL;
         }
-
-        List<JsExpression> expressions;
-        if (superClassReferences.size() > 1) {
-            JsArrayLiteral arrayLiteral = new JsArrayLiteral();
-            jsClassDeclaration.getArguments().add(arrayLiteral);
-            expressions = arrayLiteral.getExpressions();
+        else if (superClassReferences.size() == 1) {
+            return superClassReferences.get(0);
         }
         else {
-            expressions = jsClassDeclaration.getArguments();
-        }
-
-        for (JsExpression superClassReference : superClassReferences) {
-            expressions.add(superClassReference);
+            return new JsArrayLiteral(superClassReferences);
         }
     }
 

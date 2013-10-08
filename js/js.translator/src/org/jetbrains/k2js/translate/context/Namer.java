@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import java.util.List;
+
 /**
  * Encapuslates different types of constants and naming conventions.
  */
@@ -271,18 +273,18 @@ public final class Namer {
     }
 
     @NotNull
-    public JsInvocation classCreateInvocation(@NotNull ClassDescriptor descriptor) {
+    public JsInvocation classCreateInvocation(@NotNull ClassDescriptor descriptor, @NotNull List<JsExpression> arguments) {
         switch (descriptor.getKind()) {
             case TRAIT:
-                return new JsInvocation(traitCreationMethodReference());
+                return new JsInvocation(traitCreationMethodReference(), arguments);
 
             case OBJECT:
             case CLASS_OBJECT:
             case ENUM_ENTRY:
-                return new JsInvocation(objectCreationMethodReference());
+                return new JsInvocation(objectCreationMethodReference(), arguments);
 
             default:
-                return new JsInvocation(classCreationMethodReference());
+                return new JsInvocation(classCreationMethodReference(), arguments);
         }
     }
 
