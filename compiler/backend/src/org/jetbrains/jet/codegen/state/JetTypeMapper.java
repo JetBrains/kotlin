@@ -267,12 +267,13 @@ public class JetTypeMapper extends BindingTraceAware {
             }
         }
 
+        boolean projectionsAllowed = kind != JetTypeMapperMode.SUPER_TYPE;
         if (known != null) {
             if (kind == JetTypeMapperMode.VALUE) {
                 return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             }
-            else if (kind == JetTypeMapperMode.TYPE_PARAMETER) {
-                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, arrayParameter);
+            else if (kind == JetTypeMapperMode.TYPE_PARAMETER || kind == JetTypeMapperMode.SUPER_TYPE) {
+                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, arrayParameter, projectionsAllowed);
             }
             else if (kind == JetTypeMapperMode.TRAIT_IMPL) {
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
@@ -345,7 +346,7 @@ public class JetTypeMapper extends BindingTraceAware {
                 asmType = descriptorAsmType;
             }
 
-            writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed);
+            writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
 
             checkValidType(asmType);
             return asmType;
@@ -386,7 +387,8 @@ public class JetTypeMapper extends BindingTraceAware {
             BothSignatureWriter signatureVisitor,
             Type asmType,
             JetType jetType,
-            Variance howThisTypeIsUsed
+            Variance howThisTypeIsUsed,
+            boolean projectionsAllowed
     ) {
         if (signatureVisitor != null) {
             signatureVisitor.writeClassBegin(asmType);
@@ -395,11 +397,13 @@ public class JetTypeMapper extends BindingTraceAware {
             for (TypeParameterDescriptor parameter : jetType.getConstructor().getParameters()) {
                 TypeProjection argument = arguments.get(parameter.getIndex());
 
-                Variance projectionKind = getEffectiveVariance(
-                        parameter.getVariance(),
-                        argument.getProjectionKind(),
-                        howThisTypeIsUsed
-                );
+                Variance projectionKind = projectionsAllowed
+                                          ? getEffectiveVariance(
+                                                    parameter.getVariance(),
+                                                    argument.getProjectionKind(),
+                                                    howThisTypeIsUsed
+                                            )
+                                          : Variance.INVARIANT;
                 signatureVisitor.writeTypeArgument(projectionKind);
 
                 mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
@@ -434,7 +438,7 @@ public class JetTypeMapper extends BindingTraceAware {
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull Variance howThisTypeIsUsed
     ) {
-        return mapKnownAsmType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, false);
+        return mapKnownAsmType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, false, true);
     }
 
     private Type mapKnownAsmType(
@@ -442,7 +446,8 @@ public class JetTypeMapper extends BindingTraceAware {
             Type asmType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull Variance howThisTypeIsUsed,
-            boolean arrayParameter
+            boolean arrayParameter,
+            boolean allowProjections
     ) {
         if (signatureVisitor != null) {
             if (jetType.getArguments().isEmpty()) {
@@ -452,7 +457,7 @@ public class JetTypeMapper extends BindingTraceAware {
                 signatureVisitor.writeAsmType(asmType);
             }
             else {
-                writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed);
+                writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, allowProjections);
             }
         }
         checkValidType(asmType);

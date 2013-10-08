@@ -366,7 +366,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 signatureVisitor.writeClassEnd();
             }
             else {
-                typeMapper.mapType(superClassType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                typeMapper.mapType(superClassType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
             }
             signatureVisitor.writeSuperclassEnd();
         }
@@ -381,7 +381,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 if (isInterface(superClassDescriptor)) {
                     signatureVisitor.writeInterface();
-                    Type jvmName = typeMapper.mapType(superType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                    Type jvmName = typeMapper.mapType(superType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
                     signatureVisitor.writeInterfaceEnd();
                     superInterfacesLinkedHashSet.add(jvmName.getInternalName());
                 }

@@ -186,6 +186,11 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             doTest("compiler/testData/writeSignature/declarationSiteVariance/InOfOutInOutPosition.kt");
         }
         
+        @TestMetadata("MappedSupertypeWithVariance.kt")
+        public void testMappedSupertypeWithVariance() throws Exception {
+            doTest("compiler/testData/writeSignature/declarationSiteVariance/MappedSupertypeWithVariance.kt");
+        }
+        
         @TestMetadata("OutInInPosition.kt")
         public void testOutInInPosition() throws Exception {
             doTest("compiler/testData/writeSignature/declarationSiteVariance/OutInInPosition.kt");
@@ -239,6 +244,21 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         @TestMetadata("PropertySetterOut.kt")
         public void testPropertySetterOut() throws Exception {
             doTest("compiler/testData/writeSignature/declarationSiteVariance/PropertySetterOut.kt");
+        }
+        
+        @TestMetadata("SuperClassWithVariance.kt")
+        public void testSuperClassWithVariance() throws Exception {
+            doTest("compiler/testData/writeSignature/declarationSiteVariance/SuperClassWithVariance.kt");
+        }
+        
+        @TestMetadata("SuperTraitWithVariance.kt")
+        public void testSuperTraitWithVariance() throws Exception {
+            doTest("compiler/testData/writeSignature/declarationSiteVariance/SuperTraitWithVariance.kt");
+        }
+        
+        @TestMetadata("SuperTypeWithVarianceInArguments.kt")
+        public void testSuperTypeWithVarianceInArguments() throws Exception {
+            doTest("compiler/testData/writeSignature/declarationSiteVariance/SuperTypeWithVarianceInArguments.kt");
         }
         
     }
