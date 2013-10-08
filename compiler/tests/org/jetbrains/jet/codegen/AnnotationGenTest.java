@@ -85,7 +85,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNull(scrClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
-    public void testAnnotationForParamInGlobalFunction() throws Exception {
+    public void testAnnotationForParamInTopLevelFunction() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("fun x([Deprecated] i: Int) {}");
         Class<?> packageClass = getPackageClass(loader);
         Method packageClassMethod = packageClass.getMethod("x", int.class);
@@ -97,7 +97,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(getDeprecatedAnnotationFromList(srcClassMethod.getParameterAnnotations()[0]));
     }
 
-    public void testAnnotationForParamInLocalFunction() throws NoSuchFieldException, NoSuchMethodException {
+    public void testAnnotationForParamInInstanceFunction() throws NoSuchFieldException, NoSuchMethodException {
         loadText("class A() { fun x([Deprecated] i: Int) {}}");
         Class<?> aClass = generateClass("A");
         Method x = aClass.getMethod("x", int.class);
