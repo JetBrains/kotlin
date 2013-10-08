@@ -36,7 +36,6 @@ import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +53,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
     @Override
     @NotNull
-    protected ExitCode doExecute(K2JVMCompilerArguments arguments, MessageCollector messageCollector, Disposable rootDisposable) {
+    protected ExitCode doExecute(
+            @NotNull K2JVMCompilerArguments arguments,
+            @NotNull MessageCollector messageCollector,
+            @NotNull Disposable rootDisposable
+    ) {
         KotlinPaths paths = arguments.kotlinHome != null
                                 ? new KotlinPathsFromHomeDir(new File(arguments.kotlinHome))
                                 : PathUtil.getKotlinPathsForCompiler();
@@ -164,21 +167,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @Override
     protected K2JVMCompilerArguments createArguments() {
         return new K2JVMCompilerArguments();
-    }
-
-    // TODO this method is here only to workaround KT-2498
-    @Override
-    protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
-        super.configureEnvironment(configuration, arguments);
-    }
-
-    //TODO: Hacked! Be sure that our kotlin stuff builds correctly before you remove.
-    // our compiler throws method not found error
-    // probably relates to KT-1863... well, may be not
-    @NotNull
-    @Override
-    public ExitCode exec(@NotNull PrintStream errStream, @NotNull K2JVMCompilerArguments arguments) {
-        return super.exec(errStream, arguments);
     }
 
     @NotNull

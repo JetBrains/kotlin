@@ -67,7 +67,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     @Override
-    protected ExitCode doExecute(K2JSCompilerArguments arguments, MessageCollector messageCollector, Disposable rootDisposable) {
+    protected ExitCode doExecute(
+            @NotNull K2JSCompilerArguments arguments,
+            @NotNull MessageCollector messageCollector,
+            @NotNull Disposable rootDisposable
+    ) {
         if (arguments.sourceFiles == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -sourceFiles", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;

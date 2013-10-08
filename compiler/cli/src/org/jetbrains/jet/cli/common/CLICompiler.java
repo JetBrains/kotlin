@@ -97,7 +97,6 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      * Strategy method to configure the environment, allowing compiler
      * based tools to customise their own plugins
      */
-    //TODO: add parameter annotations when KT-1863 is resolved
     protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
         configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, compilerPlugins);
     }
@@ -158,9 +157,8 @@ public abstract class CLICompiler<A extends CompilerArguments> {
         }
     }
 
-    //TODO: can't declare parameters as not null due to KT-1863
     @NotNull
-    protected abstract ExitCode doExecute(A arguments, MessageCollector messageCollector, Disposable rootDisposable);
+    protected abstract ExitCode doExecute(@NotNull A arguments, @NotNull MessageCollector messageCollector, @NotNull Disposable rootDisposable);
 
     //TODO: can we make it private?
     @NotNull
