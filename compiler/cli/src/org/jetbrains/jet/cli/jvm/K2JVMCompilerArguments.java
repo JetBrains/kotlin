@@ -43,7 +43,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "jar", description = "jar file name")
     public String jar;
 
-    @Argument(value = "src", description = "source file or directory")
+    @Argument(value = "src", description = "source file or directory (allows many paths separated by the system path separator)")
     public String src;
 
     @Argument(value = "classpath", description = "classpath to use when compiling")
