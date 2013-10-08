@@ -21,7 +21,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.Processor;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -605,21 +604,6 @@ public class TypeUtils {
             }
         }
         return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
-    }
-
-    @NotNull
-    public static Pair<Collection<JetType>, Collection<JetType>> filterNumberTypes(@NotNull Collection<JetType> types) {
-        Collection<JetType> numberTypes = Sets.newLinkedHashSet();
-        Collection<JetType> otherTypes = Sets.newLinkedHashSet();
-        for (JetType type : types) {
-            if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
-                numberTypes.add(type);
-            }
-            else {
-                otherTypes.add(type);
-            }
-        }
-        return Pair.create(otherTypes, numberTypes);
     }
 
     public static List<TypeConstructor> topologicallySortSuperclassesAndRecordAllInstances(
