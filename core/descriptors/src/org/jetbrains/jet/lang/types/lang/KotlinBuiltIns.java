@@ -24,10 +24,14 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.EnumValue;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
@@ -36,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.io.IOException;
 import java.util.*;
@@ -377,6 +380,15 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getDataClassAnnotation() {
         return getBuiltInClassByName("data");
+    }
+
+    public ClassDescriptor getNoinlineClassAnnotation() {
+        return getBuiltInClassByName("noinline");
+    }
+
+    @NotNull
+    public ClassDescriptor getInlineClassAnnotation() {
+        return getBuiltInClassByName("inline");
     }
 
     @NotNull
@@ -943,7 +955,7 @@ public class KotlinBuiltIns {
         return containsAnnotation(declarationDescriptor, getDeprecatedAnnotation());
     }
 
-    private static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
+    static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
         if (annotations != null) {
             for (AnnotationDescriptor annotation : annotations) {

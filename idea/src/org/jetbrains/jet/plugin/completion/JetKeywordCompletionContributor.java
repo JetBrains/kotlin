@@ -237,7 +237,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(InTopFilter.class.getName(), new InTopFilter(),
                                         ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
                                         FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
-                                        IMPORT_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                                        IMPORT_KEYWORD, INTERNAL_KEYWORD,
                                         OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
                                         PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD, TRAIT_KEYWORD,
                                         TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
@@ -247,13 +247,13 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 new AndFilter(
                         new SuperParentFilter(new ClassFilter(JetModifierList.class)),
                         new NotFilter(new InTypeParameterFirstChildFilter())),
-                ABSTRACT_KEYWORD, FINAL_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                ABSTRACT_KEYWORD, FINAL_KEYWORD, INTERNAL_KEYWORD,
                 OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
 
         registerScopeKeywordsCompletion(InClassBodyFilter.class.getName(), new InClassBodyFilter(),
                                         ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
                                         FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
-                                        INLINE_KEYWORD, INTERNAL_KEYWORD,
+                                        INTERNAL_KEYWORD,
                                         OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                                         PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD, TRAIT_KEYWORD,
                                         TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
@@ -264,7 +264,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
                                         FALSE_KEYWORD, FINALLY_KEYWORD, FOR_KEYWORD, FUN_KEYWORD,
                                         GET_KEYWORD, IF_KEYWORD,
-                                        IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                                        IN_KEYWORD, INTERNAL_KEYWORD,
                                         IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
                                         PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
                                         RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,

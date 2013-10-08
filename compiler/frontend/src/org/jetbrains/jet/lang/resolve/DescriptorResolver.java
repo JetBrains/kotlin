@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -340,7 +341,7 @@ public class DescriptorResolver {
         Modality modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, hasBody));
         Visibility visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor));
         JetModifierList modifierList = function.getModifierList();
-        boolean isInline = (modifierList != null) && modifierList.hasModifier(JetTokens.INLINE_KEYWORD);
+        boolean isInline = KotlinBuiltIns.getInstance().getInlineType(functionDescriptor) != InlineStrategy.NOT_INLINE;
         functionDescriptor.initialize(
                 receiverType,
                 getExpectedThisObjectIfNeeded(containingDescriptor),
