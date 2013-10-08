@@ -9,6 +9,9 @@
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
     <property name="generate.javadoc" value="true"/>
 
+    <property name="boostrap.home" value="dependencies/bootstrap-compiler"/>
+    <property name="boostrap.compiler.home" value="${boostrap.home}/Kotlin/kotlinc"/>
+
     <property name="output.relative" value="dist"/>
     <property name="output" value="${basedir}/${output.relative}"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
@@ -19,6 +22,7 @@
     <property name="java.target" value="1.6"/>
 
     <path id="classpath">
+        <fileset dir="${boostrap.compiler.home}" includes="lib/kotlin-runtime.jar"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
 
@@ -29,6 +33,7 @@
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
+    <taskdef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${boostrap.compiler.home}/lib/kotlin-ant.jar"/>
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
     <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
@@ -304,9 +309,16 @@
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
 
         <cleandir dir="${output}/classes/compiler"/>
+
+        <kotlinc output="${output}/classes/compiler">
+          <src refid="compilerSources.path"/>
+          <classpath refid="classpath"/>
+        </kotlinc>
+
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"  target="${java.target}">
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
+            <classpath path="${output}/classes/compiler"/>
         </javac2>
 
         <pack_compiler jarfile="${output}/kotlin-compiler-before-shrink.jar"/>
