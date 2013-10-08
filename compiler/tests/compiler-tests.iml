@@ -11,7 +11,6 @@
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="module" module-name="runtime" />
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="jet.as.java.psi" />
     <orderEntry type="library" name="idea-full" level="project" />
