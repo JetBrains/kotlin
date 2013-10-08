@@ -148,7 +148,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
-    protected Class generateClass(@NotNull String name) {
+    protected Class<?> generateClass(@NotNull String name) {
         try {
             return createClassLoader(generateClassesInFile()).loadClass(name);
         } catch (ClassNotFoundException e) {
