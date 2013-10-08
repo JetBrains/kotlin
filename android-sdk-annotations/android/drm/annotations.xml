@@ -14,13 +14,13 @@
     <item name='android.drm.DrmRights DrmRights(java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmUtils android.drm.DrmUtils.ExtendedMetadataParser getExtendedMetadataParser(byte[])'>
+    <item name='android.drm.DrmManagerClient java.lang.String[] getAvailableDrmEngines()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.drm.DrmManagerClient int acquireRights(android.drm.DrmInfoRequest) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmManagerClient java.lang.String[] getAvailableDrmEngines()'>
+    <item name='android.drm.DrmUtils android.drm.DrmUtils.ExtendedMetadataParser getExtendedMetadataParser(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.drm.DrmManagerClient android.drm.DrmConvertedStatus convertData(int, byte[]) 1'>
@@ -38,13 +38,13 @@
     <item name='android.drm.DrmUtils android.drm.DrmUtils.ExtendedMetadataParser getExtendedMetadataParser(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmSupportInfo java.util.Iterator&lt;java.lang.String&gt; getMimeTypeIterator()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.drm.DrmRights DrmRights(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.drm.DrmManagerClient android.content.ContentValues getConstraints(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmSupportInfo java.util.Iterator&lt;java.lang.String&gt; getMimeTypeIterator()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.drm.DrmManagerClient int checkRightsStatus(java.lang.String, int) 0'>

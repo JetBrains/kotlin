@@ -2,37 +2,64 @@
     <item name='org.apache.james.mime4j.util.PartialInputStream int read(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.CharsetUtil java.nio.charset.Charset getCharset(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.james.mime4j.util.CharsetUtil boolean isDecodingSupported(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.PositionInputStream int read(byte[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.util.CharsetUtil java.lang.String toJavaCharset(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.util.CharsetUtil boolean isEncodingSupported(java.lang.String) 0'>
+    <item name='org.apache.james.mime4j.util.TempPath org.apache.james.mime4j.util.TempFile createTempFile()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.util.PartialInputStream int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.TempStorage void setInstance(org.apache.james.mime4j.util.TempStorage) 0'>
+    <item name='org.apache.james.mime4j.util.CharsetUtil java.lang.String toMimeCharset(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.CharsetUtil java.lang.String toMimeCharset(java.lang.String) 0'>
+    <item name='org.apache.james.mime4j.util.TempPath org.apache.james.mime4j.util.TempPath createTempPath()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.util.PositionInputStream int read(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.CharsetUtil boolean isWhitespace(java.lang.String) 0'>
+    <item name='org.apache.james.mime4j.util.PartialInputStream PartialInputStream(java.io.InputStream, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.util.PartialInputStream PartialInputStream(java.io.InputStream, long, long) 0'>
+    <item name='org.apache.james.mime4j.util.TempFile java.lang.String getAbsolutePath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.CharsetUtil java.nio.charset.Charset getCharset(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.TempFile java.io.OutputStream getOutputStream()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.CharsetUtil java.lang.String toJavaCharset(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.PositionInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.TempPath org.apache.james.mime4j.util.TempPath createTempPath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.CharsetUtil boolean isEncodingSupported(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.TempPath org.apache.james.mime4j.util.TempFile createTempFile(java.lang.String, java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.TempFile java.io.InputStream getInputStream()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.TempStorage void setInstance(org.apache.james.mime4j.util.TempStorage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.TempPath org.apache.james.mime4j.util.TempFile createTempFile(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.TempPath java.lang.String getAbsolutePath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.util.CharsetUtil boolean isWhitespace(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

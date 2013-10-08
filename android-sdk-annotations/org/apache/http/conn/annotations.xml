@@ -1,35 +1,107 @@
 <root>
-    <item name='org.apache.http.conn.MultihomePlainSocketFactory org.apache.http.conn.MultihomePlainSocketFactory getSocketFactory()'>
+    <item name='org.apache.http.conn.OperatedClientConnection void update(java.net.Socket, org.apache.http.HttpHost, boolean, org.apache.http.params.HttpParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.BasicManagedEntity java.io.InputStream getContent()'>
+    <item name='org.apache.http.conn.OperatedClientConnection void update(java.net.Socket, org.apache.http.HttpHost, boolean, org.apache.http.params.HttpParams) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 5'>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.EofSensorInputStream EofSensorInputStream(java.io.InputStream, org.apache.http.conn.EofSensorWatcher) 0'>
+    <item name='org.apache.http.conn.ConnectionKeepAliveStrategy long getKeepAliveDuration(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket createSocket()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.BasicEofSensorWatcher BasicEofSensorWatcher(org.apache.http.conn.ManagedClientConnection, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 1'>
+    <item name='org.apache.http.conn.ClientConnectionOperator void updateSecureConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.BasicManagedEntity BasicManagedEntity(org.apache.http.HttpEntity, org.apache.http.conn.ManagedClientConnection, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.conn.ManagedClientConnection void tunnelTarget(boolean, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.BasicManagedEntity void writeTo(java.io.OutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.EofSensorInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionOperator void openConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionManager org.apache.http.conn.ClientConnectionRequest requestConnection(org.apache.http.conn.routing.HttpRoute, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket createSocket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionOperator void openConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ManagedClientConnection void layerProtocol(org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.BasicEofSensorWatcher BasicEofSensorWatcher(org.apache.http.conn.ManagedClientConnection, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionRequest org.apache.http.conn.ManagedClientConnection getConnection(long, java.util.concurrent.TimeUnit)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.BasicManagedEntity java.io.InputStream getContent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionManager void closeIdleConnections(long, java.util.concurrent.TimeUnit) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory org.apache.http.conn.MultihomePlainSocketFactory getSocketFactory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ManagedClientConnection void tunnelProxy(org.apache.http.HttpHost, boolean, org.apache.http.params.HttpParams) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.EofSensorInputStream EofSensorInputStream(java.io.InputStream, org.apache.http.conn.EofSensorWatcher) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionOperator org.apache.http.conn.OperatedClientConnection createConnection()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionManager void releaseConnection(org.apache.http.conn.ManagedClientConnection, long, java.util.concurrent.TimeUnit) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionOperator void updateSecureConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ManagedClientConnection void tunnelProxy(org.apache.http.HttpHost, boolean, org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.conn.BasicManagedEntity BasicManagedEntity(org.apache.http.HttpEntity, org.apache.http.conn.ManagedClientConnection, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.MultihomePlainSocketFactory boolean isSecure(java.net.Socket) 0'>
+    <item name='org.apache.http.conn.ClientConnectionOperator void openConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams)'>
+    <item name='org.apache.http.conn.ManagedClientConnection void open(org.apache.http.conn.routing.HttpRoute, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.EofSensorInputStream int read(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.OperatedClientConnection void openCompleted(boolean, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ClientConnectionOperator void updateSecureConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.ManagedClientConnection void open(org.apache.http.conn.routing.HttpRoute, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.MultihomePlainSocketFactory boolean isSecure(java.net.Socket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

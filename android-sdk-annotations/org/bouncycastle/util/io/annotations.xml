@@ -1,7 +1,4 @@
 <root>
-    <item name='org.bouncycastle.util.io.Streams byte[] readAllLimited(java.io.InputStream, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.bouncycastle.util.io.Streams byte[] readAll(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -17,6 +14,9 @@
     <item name='org.bouncycastle.util.io.TeeInputStream int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.util.io.Streams byte[] readAllLimited(java.io.InputStream, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.util.io.Streams void pipeAll(java.io.InputStream, java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -29,10 +29,10 @@
     <item name='org.bouncycastle.util.io.Streams long pipeAllLimited(java.io.InputStream, long, java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.io.Streams byte[] readAll(java.io.InputStream)'>
+    <item name='org.bouncycastle.util.io.Streams void drain(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.bouncycastle.util.io.Streams void drain(java.io.InputStream) 0'>
+    <item name='org.bouncycastle.util.io.Streams byte[] readAll(java.io.InputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

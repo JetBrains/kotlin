@@ -2,7 +2,49 @@
     <item name='org.xmlpull.v1.sax2.Driver void parseSubTree(org.xmlpull.v1.XmlPullParser) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.xmlpull.v1.sax2.Driver java.lang.String getType(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.xmlpull.v1.sax2.Driver void parse(org.xml.sax.InputSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver int getIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver boolean getFeature(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver int getIndex(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver void setContentHandler(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver int getIndex(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver java.lang.String getValue(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver void setProperty(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver java.lang.String getType(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver java.lang.String getValue(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver java.lang.String getValue(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver java.lang.Object getProperty(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver void setFeature(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.sax2.Driver java.lang.String getType(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

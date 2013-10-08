@@ -20,13 +20,16 @@
     <item name='org.apache.xpath.jaxp.XPathExpressionImpl java.lang.Object evaluate(org.xml.sax.InputSource, javax.xml.namespace.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.jaxp.JAXPVariableStack org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xpath.XPathContext, org.apache.xml.utils.QName) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.jaxp.XPathImpl void setXPathVariableResolver(javax.xml.xpath.XPathVariableResolver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.jaxp.XPathImpl java.lang.Object evaluate(java.lang.String, java.lang.Object, javax.xml.namespace.QName) 0'>
+    <item name='org.apache.xpath.jaxp.JAXPVariableStack org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xpath.XPathContext, org.apache.xml.utils.QName)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.jaxp.XPathFactoryImpl javax.xml.xpath.XPath newXPath()'>
+    <item name='org.apache.xpath.jaxp.XPathImpl java.lang.Object evaluate(java.lang.String, java.lang.Object, javax.xml.namespace.QName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.jaxp.XPathFactoryImpl void setFeature(java.lang.String, boolean) 0'>
@@ -44,10 +47,10 @@
     <item name='org.apache.xpath.jaxp.XPathImpl java.lang.String evaluate(java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.jaxp.XPathImpl java.lang.Object evaluate(java.lang.String, java.lang.Object, javax.xml.namespace.QName) 2'>
+    <item name='org.apache.xpath.jaxp.XPathImpl java.lang.String evaluate(java.lang.String, org.xml.sax.InputSource) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.jaxp.XPathImpl java.lang.String evaluate(java.lang.String, org.xml.sax.InputSource) 1'>
+    <item name='org.apache.xpath.jaxp.XPathImpl java.lang.Object evaluate(java.lang.String, java.lang.Object, javax.xml.namespace.QName) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.jaxp.XPathFactoryImpl boolean getFeature(java.lang.String) 0'>
@@ -57,6 +60,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.jaxp.XPathImpl java.lang.Object evaluate(java.lang.String, org.xml.sax.InputSource, javax.xml.namespace.QName) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.jaxp.JAXPPrefixResolver java.lang.String getNamespaceForPrefix(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.jaxp.XPathFactoryImpl javax.xml.xpath.XPath newXPath()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.jaxp.JAXPExtensionsProvider java.lang.Object extFunction(java.lang.String, java.lang.String, java.util.Vector, java.lang.Object) 1'>
@@ -74,16 +83,13 @@
     <item name='org.apache.xpath.jaxp.XPathExpressionImpl java.lang.Object evaluate(java.lang.Object, javax.xml.namespace.QName) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.jaxp.XPathImpl javax.xml.xpath.XPathExpression compile(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xpath.jaxp.JAXPVariableStack org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xpath.XPathContext, org.apache.xml.utils.QName) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.jaxp.XPathImpl java.lang.String evaluate(java.lang.String, org.xml.sax.InputSource) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.jaxp.JAXPVariableStack org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xpath.XPathContext, org.apache.xml.utils.QName)'>
+    <item name='org.apache.xpath.jaxp.XPathImpl javax.xml.xpath.XPathExpression compile(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.jaxp.XPathFactoryImpl void setXPathFunctionResolver(javax.xml.xpath.XPathFunctionResolver) 0'>

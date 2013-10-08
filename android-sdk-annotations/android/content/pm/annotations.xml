@@ -1,89 +1,59 @@
 <root>
-    <item name='android.content.pm.ActivityInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.pm.XmlSerializerAndParser T createFromXml(org.xmlpull.v1.XmlPullParser)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageManager android.content.pm.PackageInfo getPackageArchiveInfo(java.lang.String, int) 0'>
+    <item name='android.content.pm.VerifierDeviceIdentity android.content.pm.VerifierDeviceIdentity generate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageParser.PermissionGroup java.lang.String toString()'>
+    <item name='android.content.pm.IPackageMoveObserver.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageParser.Instrumentation java.lang.String toString()'>
+    <item name='android.content.pm.PackageManager android.content.pm.ResolveInfo resolveActivityAsUser(android.content.Intent, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageParser.Provider Provider(android.content.pm.PackageParser.ParseComponentArgs, android.content.pm.ProviderInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ApplicationInfo android.content.pm.ApplicationInfo getApplicationInfo()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser.ServiceIntentInfo java.lang.String toString()'>
+    <item name='android.content.pm.PackageManager android.content.pm.ActivityInfo getReceiverInfo(android.content.ComponentName, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.ConfigurationInfo ConfigurationInfo(android.content.pm.ConfigurationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageUserState PackageUserState(android.content.pm.PackageUserState) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageStats java.lang.String toString()'>
+    <item name='android.content.pm.PackageParser.ServiceIntentInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.ActivityInfo void dump(android.util.Printer, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ServiceInfo void dump(android.util.Printer, java.lang.String) 0'>
+    <item name='android.content.pm.LimitedLengthInputStream int read(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ResolveInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.VerifierDeviceIdentity java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ParceledListSlice void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.pm.RegisteredServicesCache V parseServiceAttributes(android.content.res.Resources, java.lang.String, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.UserInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo void dumpFront(android.util.Printer, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.IPackageStatsObserver.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageItemInfo android.graphics.drawable.Drawable loadDefaultIcon(android.content.pm.PackageManager) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.ApplicationInfo ApplicationInfo(android.content.pm.ApplicationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ServiceInfo java.lang.String toString()'>
+    <item name='android.content.pm.ComponentInfo android.graphics.drawable.Drawable loadDefaultIcon(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageParser.Permission java.lang.String toString()'>
+    <item name='android.content.pm.IPackageManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageItemInfo android.graphics.drawable.Drawable loadLogo(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PermissionGroupInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.pm.ContainerEncryptionParams java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo void dumpBack(android.util.Printer, java.lang.String) 0'>
+    <item name='android.content.pm.ResolveInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ActivityInfo java.lang.String toString()'>
+    <item name='android.content.pm.IPackageManager void querySyncProviders(java.util.List&lt;java.lang.String&gt;, java.util.List&lt;android.content.pm.ProviderInfo&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.VerifierDeviceIdentity android.content.pm.VerifierDeviceIdentity parse(java.lang.String)'>
+    <item name='android.content.pm.ApplicationInfo android.graphics.drawable.Drawable loadDefaultIcon(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageParser.Component Component(android.content.pm.PackageParser.ParsePackageItemArgs, android.content.pm.PackageItemInfo) 0'>
@@ -92,25 +62,394 @@
     <item name='android.content.pm.Signature Signature(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageManager java.lang.String getDataDirForUser(int, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.IPackageInstallObserver.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ApplicationInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.VerifierDeviceIdentity android.content.pm.VerifierDeviceIdentity generate()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.ComponentInfo ComponentInfo(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PermissionInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ConfigurationInfo java.lang.String toString()'>
+    <item name='android.content.pm.PackageManager android.graphics.drawable.Drawable getActivityLogo(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.VerifierInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageInstallObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Component Component(android.content.pm.PackageParser.Component&lt;II&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo android.content.res.XmlResourceParser loadXmlMetaData(android.content.pm.PackageManager, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.VerifierInfo VerifierInfo(java.lang.String, java.security.PublicKey) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ActivityInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(android.content.pm.ResolveInfo, android.content.pm.ResolveInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.RegisteredServicesCache V parseServiceAttributes(android.content.res.Resources, java.lang.String, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryBroadcastReceivers(android.content.Intent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager void querySyncProviders(java.util.List&lt;java.lang.String&gt;, java.util.List&lt;android.content.pm.ProviderInfo&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.MacAuthenticatedInputStream MacAuthenticatedInputStream(java.io.InputStream, javax.crypto.Mac) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.pm.ResolveInfo resolveService(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.lang.String[] currentToCanonicalPackageNames(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentServicesAsUser(android.content.Intent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageInstallObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo PackageItemInfo(android.content.pm.PackageItemInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.lang.String getDataDirForUser(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.RegisteredServicesCache void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.VerifierDeviceIdentity android.content.pm.VerifierDeviceIdentity parse(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(android.content.pm.ResolveInfo, android.content.pm.ResolveInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.FeatureInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager void replacePreferredActivity(android.content.IntentFilter, int, android.content.ComponentName[], android.content.ComponentName) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.pm.ServiceInfo getServiceInfo(android.content.ComponentName, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser android.content.pm.Signature stringToSignature(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.Signature void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.Signature boolean areExactMatch(android.content.pm.Signature[], android.content.pm.Signature[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.PermissionInfo&gt; queryPermissionsByGroup(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(android.content.pm.PackageItemInfo, android.content.pm.PackageItemInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.UserInfo UserInfo(android.content.pm.UserInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageInfoLite void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Instrumentation Instrumentation(android.content.pm.PackageParser.ParsePackageItemArgs, android.content.pm.InstrumentationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.pm.ApplicationInfo getApplicationInfo(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager void removePermission(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentActivitiesAsUser(android.content.Intent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Instrumentation java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageStats PackageStats(android.content.pm.PackageStats) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.Signature char[] toChars(char[], int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.PackageLite PackageLite(java.lang.String, int, int, java.util.List&lt;android.content.pm.VerifierInfo&gt;) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentServices(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ComponentInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.FeatureInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PermissionInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.ActivityIntentInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo PackageItemInfo(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, byte[], long, long, long) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ServiceInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser android.content.pm.PackageParser.Package parsePackage(java.io.File, java.lang.String, android.util.DisplayMetrics, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PermissionGroupInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ComponentInfo void dumpBack(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ComponentInfo void dumpFront(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PermissionInfo java.lang.String protectionToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.VerificationParams java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ResolveInfo android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageDeleteObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ApplicationInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.Intent buildPermissionRequestIntent(java.lang.String...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ConfigurationInfo java.lang.String getGlEsVersion()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageStatsObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.lang.CharSequence getApplicationLabel(android.content.pm.ApplicationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, byte[], long, long, long) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.graphics.drawable.Drawable getApplicationLogo(android.content.pm.ApplicationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager java.lang.String[] canonicalToCurrentPackageNames(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Provider java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageMoveObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ResolveInfo void dump(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ApplicationInfo android.content.pm.ApplicationInfo getApplicationInfo()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PermissionGroupInfo PermissionGroupInfo(android.content.pm.PermissionGroupInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.pm.ResolveInfo resolveActivity(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ProviderInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.Intent buildPermissionRequestIntent(java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.Signature byte[] toByteArray()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager void clearApplicationUserData(java.lang.String, android.content.pm.IPackageDataObserver, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ApplicationInfo void dump(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ServiceInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Activity java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser android.content.pm.Signature stringToSignature(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryBroadcastReceivers(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Permission java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(android.content.pm.PackageItemInfo, android.content.pm.PackageItemInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.pm.InstrumentationInfo getInstrumentationInfo(android.content.ComponentName, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager java.lang.String[] currentToCanonicalPackageNames(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.LabeledIntent void readFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ServiceInfo ServiceInfo(android.content.pm.ServiceInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ManifestDigest void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ComponentInfo java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageMoveObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ConfigurationInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageDataObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.LabeledIntent java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageInstallObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.VerifierDeviceIdentity android.content.pm.VerifierDeviceIdentity parse(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.graphics.drawable.Drawable getActivityIcon(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ActivityInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.FeatureInfo java.lang.String getGlEsVersion()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.pm.PackageInfo getPackageArchiveInfo(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.graphics.drawable.Drawable getApplicationIcon(android.content.pm.ApplicationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.RegisteredServicesCache.ServiceInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Provider Provider(android.content.pm.PackageParser.ParseComponentArgs, android.content.pm.ProviderInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.XmlSerializerAndParser void writeAsXml(T, org.xmlpull.v1.XmlSerializer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageUserState PackageUserState(android.content.pm.PackageUserState) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ServiceInfo void dump(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ResolveInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ParceledListSlice void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager int getPreferredActivities(java.util.List&lt;android.content.IntentFilter&gt;, java.util.List&lt;android.content.ComponentName&gt;, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo void dumpFront(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo android.graphics.drawable.Drawable loadDefaultIcon(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ContainerEncryptionParams java.security.spec.AlgorithmParameterSpec getEncryptionSpec()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageDeleteObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.XmlSerializerAndParser void writeAsXml(T, org.xmlpull.v1.XmlSerializer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageDataObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PermissionGroupInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageItemInfo void dumpBack(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.IPackageManager int getPreferredActivities(java.util.List&lt;android.content.IntentFilter&gt;, java.util.List&lt;android.content.ComponentName&gt;, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.ApplicationInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.PermissionGroup java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PathPermission PathPermission(android.os.Parcel) 0'>
@@ -125,97 +464,43 @@
     <item name='android.content.pm.PackageParser.Component Component(android.content.pm.PackageParser.ParseComponentArgs, android.content.pm.ComponentInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.VerifierInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser.Component Component(android.content.pm.PackageParser.Component&lt;II&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.PermissionGroupInfo java.lang.CharSequence loadDescription(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.IPackageManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+    <item name='android.content.pm.ConfigurationInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.FeatureInfo java.lang.String getGlEsVersion()'>
+    <item name='android.content.pm.PackageInfoLite java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo android.content.res.XmlResourceParser loadXmlMetaData(android.content.pm.PackageManager, java.lang.String) 0'>
+    <item name='android.content.pm.ProviderInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.VerifierInfo VerifierInfo(java.lang.String, java.security.PublicKey) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.VerificationParams java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.IPackageDeleteObserver.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ApplicationInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(android.content.pm.ResolveInfo, android.content.pm.ResolveInfo) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PermissionInfo java.lang.String protectionToString(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.InstrumentationInfo java.lang.String toString()'>
+    <item name='android.content.pm.IPackageDataObserver.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.InstrumentationInfo InstrumentationInfo(android.content.pm.InstrumentationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageParser.Activity java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.ApplicationInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageParser.Package java.lang.String toString()'>
+    <item name='android.content.pm.XmlSerializerAndParser T createFromXml(org.xmlpull.v1.XmlPullParser) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.Signature java.lang.String toCharsString()'>
+    <item name='android.content.pm.PackageManager android.content.pm.ActivityInfo getActivityInfo(android.content.ComponentName, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.VerificationParams void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.MacAuthenticatedInputStream MacAuthenticatedInputStream(java.io.InputStream, javax.crypto.Mac) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ResolveInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.Signature char[] toChars(char[], int[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageItemInfo PackageItemInfo(android.content.pm.PackageItemInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser.ActivityIntentInfo java.lang.String toString()'>
+    <item name='android.content.pm.PackageManager android.content.pm.PackageInfo getPackageInfo(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.LabeledIntent android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.RegisteredServicesCache void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[], int) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.FeatureInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(android.content.pm.ResolveInfo, android.content.pm.ResolveInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.FeatureInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageItemInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.pm.Signature char[] toChars()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.Signature Signature(byte[]) 0'>
@@ -227,40 +512,19 @@
     <item name='android.content.pm.ActivityInfo ActivityInfo(android.content.pm.ActivityInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ProviderInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser.Service java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser android.content.pm.Signature stringToSignature(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.Signature void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.pm.IPackageManager void replacePreferredActivity(android.content.IntentFilter, int, android.content.ComponentName[], android.content.ComponentName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageStats void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.Signature boolean areExactMatch(android.content.pm.Signature[], android.content.pm.Signature[]) 1'>
+    <item name='android.content.pm.PackageManager int getPreferredActivities(java.util.List&lt;android.content.IntentFilter&gt;, java.util.List&lt;android.content.ComponentName&gt;, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(android.content.pm.PackageItemInfo, android.content.pm.PackageItemInfo) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.UserInfo UserInfo(android.content.pm.UserInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageInfoLite void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageManager android.content.Intent buildPermissionRequestIntent(java.lang.String...)'>
+    <item name='android.content.pm.PackageManager java.lang.String[] canonicalToCurrentPackageNames(java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.MacAuthenticatedInputStream int read(byte[], int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser.Instrumentation Instrumentation(android.content.pm.PackageParser.ParsePackageItemArgs, android.content.pm.InstrumentationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageStats PackageStats(android.os.Parcel) 0'>
@@ -269,22 +533,22 @@
     <item name='android.content.pm.VerifierDeviceIdentity void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageStats PackageStats(android.content.pm.PackageStats) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser.PackageLite PackageLite(java.lang.String, int, int, java.util.List&lt;android.content.pm.VerifierInfo&gt;) 3'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.PackageParser android.content.pm.PackageInfo generatePackageInfo(android.content.pm.PackageParser.Package, int[], int, long, long, java.util.HashSet&lt;java.lang.String&gt;, android.content.pm.PackageUserState) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ComponentInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.pm.LimitedLengthInputStream int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.LabeledIntent void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.LimitedLengthInputStream int read(byte[]) 0'>
+    <item name='android.content.pm.IPackageStatsObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageParser.Service java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager int getPreferredActivities(java.util.List&lt;android.content.IntentFilter&gt;, java.util.List&lt;android.content.ComponentName&gt;, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.RegisteredServicesCache java.util.Collection&lt;android.content.pm.RegisteredServicesCache.ServiceInfo&lt;V&gt;&gt; getAllServices(int)'>
@@ -293,40 +557,10 @@
     <item name='android.content.pm.UserInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo PackageItemInfo(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.IPackageManager.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, byte[], long, long, long) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser android.content.pm.PackageParser.Package parsePackage(java.io.File, java.lang.String, android.util.DisplayMetrics, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.IPackageMoveObserver.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageParser.Provider java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.VerifierInfo VerifierInfo(java.lang.String, java.security.PublicKey) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ComponentInfo void dumpBack(android.util.Printer, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.LabeledIntent LabeledIntent(android.content.Intent, java.lang.String, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ComponentInfo void dumpFront(android.util.Printer, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.InstrumentationInfo void writeToParcel(android.os.Parcel, int) 0'>
@@ -335,55 +569,52 @@
     <item name='android.content.pm.ComponentInfo ComponentInfo(android.content.pm.ComponentInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ResolveInfo android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
+    <item name='android.content.pm.ApplicationInfo.DisplayNameComparator int compare(android.content.pm.ApplicationInfo, android.content.pm.ApplicationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageParser android.content.pm.PackageInfo generatePackageInfo(android.content.pm.PackageParser.Package, int[], int, long, long, java.util.HashSet&lt;java.lang.String&gt;, android.content.pm.PackageUserState, int) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ApplicationInfo.DisplayNameComparator int compare(android.content.pm.ApplicationInfo, android.content.pm.ApplicationInfo) 0'>
+    <item name='android.content.pm.PackageManager android.content.pm.PermissionGroupInfo getPermissionGroupInfo(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ResolveInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 1'>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentActivities(android.content.Intent, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.FeatureInfo FeatureInfo(android.content.pm.FeatureInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.RegisteredServicesCache.ServiceInfo java.lang.String toString()'>
+    <item name='android.content.pm.PackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentActivityOptions(android.content.ComponentName, android.content.Intent[], android.content.Intent, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageCleanItem void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageInfoLite java.lang.String toString()'>
+    <item name='android.content.pm.IPackageStatsObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey) 1'>
+    <item name='android.content.pm.Signature java.lang.String toCharsString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ContainerEncryptionParams ContainerEncryptionParams(java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.SecretKey, byte[], long, long, long) 1'>
+    <item name='android.content.pm.InstrumentationInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageParser.Service Service(android.content.pm.PackageParser.ParseComponentArgs, android.content.pm.ServiceInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ResolveInfo void dump(android.util.Printer, java.lang.String) 0'>
+    <item name='android.content.pm.IPackageDeleteObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(java.lang.Object, java.lang.Object) 1'>
+    <item name='android.content.pm.PackageParser.Package java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.UserInfo android.os.UserHandle getUserHandle()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.ContainerEncryptionParams void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PermissionGroupInfo PermissionGroupInfo(android.content.pm.PermissionGroupInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.ProviderInfo ProviderInfo(android.content.pm.ProviderInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ProviderInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.LabeledIntent LabeledIntent(android.content.Intent, java.lang.String, java.lang.CharSequence, int) 0'>
@@ -392,103 +623,55 @@
     <item name='android.content.pm.ApplicationInfo.DisplayNameComparator int compare(android.content.pm.ApplicationInfo, android.content.pm.ApplicationInfo) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageManager android.content.Intent buildPermissionRequestIntent(java.lang.String...) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.Signature byte[] toByteArray()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.IPackageDataObserver.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ApplicationInfo void dump(android.util.Printer, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.ApplicationInfo java.lang.CharSequence loadDescription(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.pm.PackageManager android.content.pm.ProviderInfo getProviderInfo(android.content.ComponentName, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageItemInfo android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ServiceInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.pm.PackageManager android.content.pm.PermissionInfo getPermissionInfo(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.LabeledIntent LabeledIntent(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageItemInfo.DisplayNameComparator int compare(android.content.pm.PackageItemInfo, android.content.pm.PackageItemInfo) 0'>
+    <item name='android.content.pm.VerifierDeviceIdentity java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.Signature char[] toChars()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PermissionGroupInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.LabeledIntent void readFromParcel(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ServiceInfo ServiceInfo(android.content.pm.ServiceInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ContainerEncryptionParams java.security.spec.AlgorithmParameterSpec getEncryptionSpec()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ComponentInfo java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ManifestDigest void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ContainerEncryptionParams java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ConfigurationInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PackageInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ResolveInfo ResolveInfo(android.content.pm.ResolveInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.PermissionInfo java.lang.String toString()'>
+    <item name='android.content.pm.PackageManager android.content.res.Resources getResourcesForApplication(android.content.pm.ApplicationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageParser.Provider Provider(android.content.pm.PackageParser.Provider) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.UserInfo android.os.UserHandle getUserHandle()'>
+    <item name='android.content.pm.ResolveInfo ResolveInfo(android.content.pm.ResolveInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PathPermission void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.ConfigurationInfo java.lang.String getGlEsVersion()'>
+    <item name='android.content.pm.PackageStats java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PermissionInfo java.lang.CharSequence loadDescription(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.LabeledIntent java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.pm.LimitedLengthInputStream LimitedLengthInputStream(java.io.InputStream, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.VerifierDeviceIdentity android.content.pm.VerifierDeviceIdentity parse(java.lang.String) 0'>
+    <item name='android.content.pm.PackageManager void removePermission(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageParser.Activity Activity(android.content.pm.PackageParser.ParseComponentArgs, android.content.pm.ActivityInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.pm.PackageParser android.content.pm.Signature stringToSignature(java.lang.String)'>
+    <item name='android.content.pm.ManifestDigest java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.pm.PackageParser boolean collectCertificates(android.content.pm.PackageParser.Package, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.pm.ManifestDigest java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

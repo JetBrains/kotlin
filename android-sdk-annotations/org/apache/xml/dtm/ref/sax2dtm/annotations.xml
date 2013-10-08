@@ -1,8 +1,11 @@
 <root>
-    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.PrecedingIterator org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.InputSource resolveEntity(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.DescendantIterator org.apache.xml.dtm.DTMAxisIterator reset()'>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void setProperty(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void processingInstruction(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void setIncrementalSAXSource(org.apache.xml.dtm.ref.IncrementalSAXSource) 0'>
@@ -11,13 +14,19 @@
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2RTFDTM SAX2RTFDTM(org.apache.xml.dtm.DTMManager, javax.xml.transform.Source, int, org.apache.xml.dtm.DTMWSFilter, org.apache.xml.utils.XMLStringFactory, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.EntityResolver getEntityResolver()'>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void error(org.xml.sax.SAXParseException) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.DTDHandler getDTDHandler()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 SAX2DTM2(org.apache.xml.dtm.DTMManager, javax.xml.transform.Source, int, org.apache.xml.dtm.DTMWSFilter, org.apache.xml.utils.XMLStringFactory, boolean) 0'>
@@ -26,13 +35,16 @@
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 java.lang.String copyElement(int, int, org.apache.xml.serializer.SerializationHandler) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM int getElementById(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.ErrorHandler getErrorHandler()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 SAX2DTM2(org.apache.xml.dtm.DTMManager, javax.xml.transform.Source, int, org.apache.xml.dtm.DTMWSFilter, org.apache.xml.utils.XMLStringFactory, boolean, int, boolean, boolean, boolean) 0'>
@@ -41,10 +53,22 @@
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void copyAttribute(int, int, org.apache.xml.serializer.SerializationHandler) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.ParentIterator org.apache.xml.dtm.DTMAxisIterator setNodeType(int)'>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.ErrorHandler getErrorHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void endEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void processingInstruction(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM SAX2DTM(org.apache.xml.dtm.DTMManager, javax.xml.transform.Source, int, org.apache.xml.dtm.DTMWSFilter, org.apache.xml.utils.XMLStringFactory, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void warning(org.xml.sax.SAXParseException) 0'>
@@ -56,10 +80,16 @@
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void processingInstruction(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.DTDHandler getDTDHandler()'>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void fatalError(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void startEntity(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.AncestorIterator org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
@@ -68,19 +98,40 @@
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void setDocumentLocator(org.xml.sax.Locator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.EntityResolver getEntityResolver()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void setIDAttribute(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.AncestorIterator org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.PrecedingIterator org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.DescendantIterator org.apache.xml.dtm.DTMAxisIterator reset()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM org.xml.sax.ext.DeclHandler getDeclHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2 void processingInstruction(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM SAX2DTM(org.apache.xml.dtm.DTMManager, javax.xml.transform.Source, int, org.apache.xml.dtm.DTMWSFilter, org.apache.xml.utils.XMLStringFactory, boolean, int, boolean, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM2.ParentIterator org.apache.xml.dtm.DTMAxisIterator setNodeType(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.sax2dtm.SAX2DTM void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

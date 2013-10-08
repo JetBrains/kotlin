@@ -5,16 +5,10 @@
     <item name='org.apache.harmony.security.utils.AlgNameMapper java.lang.String normalize(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.utils.Array java.lang.String getBytesAsString(byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.utils.AlgNameMapper boolean isOID(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.utils.Array java.lang.String toString(byte[], java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.utils.AlgNameMapper java.lang.String normalize(java.lang.String)'>
+    <item name='org.apache.harmony.security.utils.Array java.lang.String getBytesAsString(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.utils.ObjectIdentifier void validateOid(int[]) 0'>
@@ -32,6 +26,9 @@
     <item name='org.apache.harmony.security.utils.ObjectIdentifier ObjectIdentifier(int[], java.lang.String, java.lang.Object) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.utils.AlgNameMapper java.lang.String normalize(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.utils.ObjectIdentifier ObjectIdentifier(int[], java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -39,6 +36,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.utils.ObjectIdentifier int[] getOid()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.utils.Array java.lang.String toString(byte[], java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.utils.ObjectIdentifier int hashIntArray(int[]) 0'>

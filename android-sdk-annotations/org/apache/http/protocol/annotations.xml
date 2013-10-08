@@ -1,17 +1,32 @@
 <root>
-    <item name='org.apache.http.protocol.HttpRequestExecutor void preProcess(org.apache.http.HttpRequest, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 1'>
+    <item name='org.apache.http.protocol.HttpContext void setAttribute(java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doSendRequest(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor void postProcess(org.apache.http.HttpResponse, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 1'>
+    <item name='org.apache.http.protocol.HttpRequestExecutor void preProcess(org.apache.http.HttpRequest, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.BasicHttpProcessor void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.RequestDate void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.RequestExpectContinue void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.HttpRequestInterceptorList void setInterceptors(java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.ResponseConnControl void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpService void handleException(org.apache.http.HttpException, org.apache.http.HttpResponse) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.ResponseConnControl void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
+    <item name='org.apache.http.protocol.HttpRequestExecutor void postProcess(org.apache.http.HttpResponse, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.UriPatternMatcher void register(java.lang.String, java.lang.Object) 0'>
@@ -23,10 +38,19 @@
     <item name='org.apache.http.protocol.HttpRequestHandlerRegistry void register(java.lang.String, org.apache.http.protocol.HttpRequestHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.RequestUserAgent void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.DefaultedHttpContext void setAttribute(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.RequestConnControl void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.UriPatternMatcher void register(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.SyncBasicHttpContext void setAttribute(java.lang.String, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.ResponseContent void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
@@ -38,6 +62,12 @@
     <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doReceiveResponse(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.HttpContext java.lang.Object removeAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.ResponseServer void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor void preProcess(org.apache.http.HttpRequest, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -47,7 +77,13 @@
     <item name='org.apache.http.protocol.RequestDate void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.BasicHttpProcessor org.apache.http.protocol.BasicHttpProcessor copy()'>
+    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.HttpContext java.lang.Object getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.BasicHttpProcessor void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpRequestHandlerRegistry boolean matchUriRequestPattern(java.lang.String, java.lang.String) 0'>
@@ -62,13 +98,16 @@
     <item name='org.apache.http.protocol.SyncBasicHttpContext java.lang.Object getAttribute(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor void postProcess(org.apache.http.HttpResponse, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.protocol.ResponseConnControl void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.HttpRequestExecutor void postProcess(org.apache.http.HttpResponse, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.ResponseDate void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.RequestConnControl void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.BasicHttpContext java.lang.Object getAttribute(java.lang.String) 0'>
@@ -86,16 +125,22 @@
     <item name='org.apache.http.protocol.UriPatternMatcher boolean matchUriRequestPattern(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 2'>
+    <item name='org.apache.http.protocol.BasicHttpProcessor org.apache.http.protocol.BasicHttpProcessor copy()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpService void setHttpProcessor(org.apache.http.protocol.HttpProcessor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpService void setResponseFactory(org.apache.http.HttpResponseFactory) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doSendRequest(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.BasicHttpProcessor void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 1'>
@@ -110,13 +155,22 @@
     <item name='org.apache.http.protocol.BasicHttpProcessor void setInterceptors(java.util.List) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.RequestContent void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.ResponseDate void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.DefaultedHttpContext java.lang.Object getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.HttpService void handleRequest(org.apache.http.HttpServerConnection, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doReceiveResponse(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
+    <item name='org.apache.http.protocol.HttpRequestHandlerRegistry void setHandlers(java.util.Map) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestHandlerRegistry void setHandlers(java.util.Map) 0'>
+    <item name='org.apache.http.protocol.HttpResponseInterceptorList void setInterceptors(java.util.List) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doSendRequest(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 0'>
@@ -128,13 +182,22 @@
     <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor void postProcess(org.apache.http.HttpResponse, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 0'>
+    <item name='org.apache.http.protocol.BasicHttpProcessor void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doReceiveResponse(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.RequestTargetHost void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.RequestExpectContinue void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.RequestTargetHost void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+    <item name='org.apache.http.protocol.HttpRequestExecutor void postProcess(org.apache.http.HttpResponse, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.HttpContext void setAttribute(java.lang.String, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpRequestHandlerRegistry org.apache.http.protocol.HttpRequestHandler lookup(java.lang.String) 0'>
@@ -146,7 +209,13 @@
     <item name='org.apache.http.protocol.BasicHttpContext java.lang.Object removeAttribute(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.BasicHttpContext void setAttribute(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor boolean canResponseHaveBody(org.apache.http.HttpRequest, org.apache.http.HttpResponse) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.DefaultedHttpContext void setAttribute(java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpRequestExecutor void preProcess(org.apache.http.HttpRequest, org.apache.http.protocol.HttpProcessor, org.apache.http.protocol.HttpContext) 2'>
@@ -161,7 +230,7 @@
     <item name='org.apache.http.protocol.UriPatternMatcher void setHandlers(java.util.Map) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse execute(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext)'>
+    <item name='org.apache.http.protocol.DefaultedHttpContext java.lang.Object removeAttribute(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.UriPatternMatcher java.lang.Object lookup(java.lang.String) 0'>
@@ -170,10 +239,16 @@
     <item name='org.apache.http.protocol.HttpRequestExecutor org.apache.http.HttpResponse doReceiveResponse(org.apache.http.HttpRequest, org.apache.http.HttpClientConnection, org.apache.http.protocol.HttpContext) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.protocol.ResponseContent void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.protocol.HttpService HttpService(org.apache.http.protocol.HttpProcessor, org.apache.http.ConnectionReuseStrategy, org.apache.http.HttpResponseFactory) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.protocol.HttpService void handleRequest(org.apache.http.HttpServerConnection, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.protocol.HttpRequestHandlerResolver org.apache.http.protocol.HttpRequestHandler lookup(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

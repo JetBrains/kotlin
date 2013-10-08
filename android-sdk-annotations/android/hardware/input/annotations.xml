@@ -5,34 +5,28 @@
     <item name='android.hardware.input.KeyboardLayout int compareTo(android.hardware.input.KeyboardLayout) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.input.InputManager void addKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 1'>
+    <item name='android.hardware.input.IInputManager void removeKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.input.InputManager void unregisterInputDeviceListener(android.hardware.input.InputManager.InputDeviceListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.input.InputManager void setPointerSpeed(android.content.Context, int) 0'>
+    <item name='android.hardware.input.IInputManager android.hardware.input.KeyboardLayout getKeyboardLayout(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.input.IInputManager.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.input.InputManager void registerInputDeviceListener(android.hardware.input.InputManager.InputDeviceListener, android.os.Handler) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.input.IInputDevicesChangedListener.Stub android.os.IBinder asBinder()'>
+    <item name='android.hardware.input.IInputDevicesChangedListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.input.InputManager java.lang.String getCurrentKeyboardLayoutForInputDevice(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.input.IInputManager void setCurrentKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.input.InputManager android.hardware.input.KeyboardLayout getKeyboardLayout(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.input.InputManager boolean injectInputEvent(android.view.InputEvent, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.input.InputManager android.os.Vibrator getInputDeviceVibrator(int)'>
+    <item name='android.hardware.input.IInputManager void registerInputDevicesChangedListener(android.hardware.input.IInputDevicesChangedListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.input.InputManager boolean[] deviceHasKeys(int[])'>
@@ -41,19 +35,13 @@
     <item name='android.hardware.input.IInputManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.input.InputManager android.view.InputDevice getInputDeviceByDescriptor(java.lang.String) 0'>
+    <item name='android.hardware.input.IInputManager boolean hasKeys(int, int, int[], boolean[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.input.InputManager boolean[] deviceHasKeys(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.input.KeyboardLayout int compareTo(java.lang.Object) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.hardware.input.InputManager java.lang.String[] getKeyboardLayoutsForInputDevice(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.input.InputManager void setCurrentKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.input.InputManager void removeKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 1'>
@@ -62,13 +50,79 @@
     <item name='android.hardware.input.InputManager void setCurrentKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.input.InputManager void removeKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
+    <item name='android.hardware.input.InputManager android.os.Vibrator getInputDeviceVibrator(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputDevicesChangedListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.input.InputManager void addKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.input.InputManager void addKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager void setPointerSpeed(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager void removeKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager void registerInputDeviceListener(android.hardware.input.InputManager.InputDeviceListener, android.os.Handler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager void vibrate(int, long[], int, android.os.IBinder) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager void addKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager void setCurrentKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager boolean injectInputEvent(android.view.InputEvent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.input.InputManager int[] getInputDeviceIds()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager android.view.InputDevice getInputDeviceByDescriptor(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputDevicesChangedListener void onInputDevicesChanged(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager void addKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.KeyboardLayout int compareTo(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager void setCurrentKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager boolean hasKeys(int, int, int[], boolean[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputDevicesChangedListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager boolean injectInputEvent(android.view.InputEvent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.InputManager void removeKeyboardLayoutForInputDevice(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager java.lang.String[] getKeyboardLayoutsForInputDevice(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.input.IInputManager java.lang.String getCurrentKeyboardLayoutForInputDevice(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

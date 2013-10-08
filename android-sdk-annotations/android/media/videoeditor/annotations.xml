@@ -1,5 +1,11 @@
 <root>
+    <item name='android.media.videoeditor.VideoEditorImpl android.media.videoeditor.Transition removeTransition(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.media.videoeditor.VideoEditorImpl java.util.List&lt;android.media.videoeditor.AudioTrack&gt; getAllAudioTracks()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.Overlay java.util.Map&lt;java.lang.String,java.lang.String&gt; getUserAttributes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.MediaItem void addOverlay(android.media.videoeditor.Overlay) 0'>
@@ -14,46 +20,67 @@
     <item name='android.media.videoeditor.EffectKenBurns EffectKenBurns(android.media.videoeditor.MediaItem, java.lang.String, android.graphics.Rect, android.graphics.Rect, long, long) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.MediaItem java.lang.String getFilename()'>
+    <item name='android.media.videoeditor.VideoEditorImpl java.util.List&lt;android.media.videoeditor.Transition&gt; getAllTransitions()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor void startPreview(android.view.SurfaceHolder, long, long, boolean, int, android.media.videoeditor.VideoEditor.PreviewProgressListener) 5'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.AudioTrack AudioTrack(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.MediaProperties int[] getAllSupportedAspectRatios()'>
+    <item name='android.media.videoeditor.VideoEditor void export(java.lang.String, int, int, int, int, android.media.videoeditor.VideoEditor.ExportProgressListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.TransitionAlpha java.lang.String getMaskFilename()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor void export(java.lang.String, int, int, android.media.videoeditor.VideoEditor.ExportProgressListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditorFactory android.media.videoeditor.VideoEditor create(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.MediaVideoItem void addEffect(android.media.videoeditor.Effect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.VideoEditorImpl java.util.List&lt;android.media.videoeditor.MediaItem&gt; getAllMediaItems()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.media.videoeditor.VideoEditorImpl void startPreview(android.view.SurfaceHolder, long, long, boolean, int, android.media.videoeditor.VideoEditor.PreviewProgressListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.VideoEditorFactory android.media.videoeditor.VideoEditor load(java.lang.String, boolean)'>
+    <item name='android.media.videoeditor.MediaArtistNativeHelper.Version android.media.videoeditor.MediaArtistNativeHelper.Version getVersion()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.VideoEditorImpl android.media.videoeditor.AudioTrack removeAudioTrack(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.videoeditor.OverlayFrame OverlayFrame(android.media.videoeditor.MediaItem, java.lang.String, android.graphics.Bitmap, long, long) 0'>
+    <item name='android.media.videoeditor.Overlay android.media.videoeditor.MediaItem getMediaItem()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.MediaProperties android.util.Pair&lt;java.lang.Integer,java.lang.Integer&gt;[] getSupportedResolutions(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.media.videoeditor.OverlayFrame OverlayFrame(android.media.videoeditor.MediaItem, java.lang.String, android.graphics.Bitmap, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.media.videoeditor.Overlay Overlay(android.media.videoeditor.MediaItem, java.lang.String, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.MediaProperties int[] getSupportedVideoCodecs()'>
+    <item name='android.media.videoeditor.MediaItem android.graphics.Bitmap[] getThumbnailList(int, int, long, long, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.AudioTrack java.lang.String getFilename()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditorImpl java.util.List&lt;android.media.videoeditor.MediaItem&gt; getAllMediaItems()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor java.util.List&lt;android.media.videoeditor.AudioTrack&gt; getAllAudioTracks()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.MediaProperties int[] getSupportedAudioCodecs()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.MediaItem java.lang.String getFilename()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.EffectKenBurns EffectKenBurns(android.media.videoeditor.MediaItem, java.lang.String, android.graphics.Rect, android.graphics.Rect, long, long) 3'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.videoeditor.MediaArtistNativeHelper.Version android.media.videoeditor.MediaArtistNativeHelper.Version getVersion()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.VideoEditorImpl void startPreview(android.view.SurfaceHolder, long, long, boolean, int, android.media.videoeditor.VideoEditor.PreviewProgressListener) 5'>
@@ -65,16 +92,10 @@
     <item name='android.media.videoeditor.MediaItem MediaItem(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.VideoEditorFactory android.media.videoeditor.VideoEditor create(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.media.videoeditor.AudioTrack AudioTrack(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.TransitionAlpha TransitionAlpha(java.lang.String, android.media.videoeditor.MediaItem, android.media.videoeditor.MediaItem, long, int, java.lang.String, int, boolean) 5'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.videoeditor.MediaItem android.graphics.Bitmap[] getThumbnailList(int, int, long, long, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.MediaImageItem MediaImageItem(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String, long, int) 0'>
@@ -83,7 +104,7 @@
     <item name='android.media.videoeditor.MediaVideoItem MediaVideoItem(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.MediaProperties int[] getSupportedVideoFileFormat()'>
+    <item name='android.media.videoeditor.MediaProperties int[] getAllSupportedAspectRatios()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.EffectColor EffectColor(android.media.videoeditor.MediaItem, java.lang.String, long, long, int, int) 0'>
@@ -92,34 +113,46 @@
     <item name='android.media.videoeditor.MediaVideoItem long renderFrame(android.view.SurfaceHolder, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.Overlay java.util.Map&lt;java.lang.String,java.lang.String&gt; getUserAttributes()'>
+    <item name='android.media.videoeditor.VideoEditor void startPreview(android.view.SurfaceHolder, long, long, boolean, int, android.media.videoeditor.VideoEditor.PreviewProgressListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor long renderPreviewFrame(android.view.SurfaceHolder, long, android.media.videoeditor.VideoEditor.OverlayData) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.MediaProperties int[] getSupportedVideoFileFormat()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.VideoEditorFactory android.media.videoeditor.VideoEditor create(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.VideoEditorImpl java.util.List&lt;android.media.videoeditor.Transition&gt; getAllTransitions()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.videoeditor.EffectKenBurns EffectKenBurns(android.media.videoeditor.MediaItem, java.lang.String, android.graphics.Rect, android.graphics.Rect, long, long) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.videoeditor.MediaItem java.util.List&lt;android.media.videoeditor.Effect&gt; getAllEffects()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.media.videoeditor.TransitionAlpha java.lang.String getMaskFilename()'>
+    <item name='android.media.videoeditor.VideoEditor void addAudioTrack(android.media.videoeditor.AudioTrack) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.MediaItem java.util.List&lt;android.media.videoeditor.Overlay&gt; getAllOverlays()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.media.videoeditor.EffectKenBurns EffectKenBurns(android.media.videoeditor.MediaItem, java.lang.String, android.graphics.Rect, android.graphics.Rect, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor android.media.videoeditor.Transition removeTransition(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor void clearSurface(android.view.SurfaceHolder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor java.util.List&lt;android.media.videoeditor.Transition&gt; getAllTransitions()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.media.videoeditor.Effect Effect(android.media.videoeditor.MediaItem, java.lang.String, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.MediaProperties int[] getSupportedAudioCodecs()'>
+    <item name='android.media.videoeditor.MediaItem java.util.List&lt;android.media.videoeditor.Effect&gt; getAllEffects()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.Overlay android.media.videoeditor.MediaItem getMediaItem()'>
+    <item name='android.media.videoeditor.VideoEditor void addTransition(android.media.videoeditor.Transition) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.MediaProperties int[] getSupportedVideoCodecs()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.MediaItem MediaItem(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String, int) 2'>
@@ -134,13 +167,22 @@
     <item name='android.media.videoeditor.VideoEditorImpl void addTransition(android.media.videoeditor.Transition) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.AudioTrack java.lang.String getFilename()'>
+    <item name='android.media.videoeditor.VideoEditorImpl android.media.videoeditor.AudioTrack removeAudioTrack(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.MediaImageItem MediaImageItem(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String, long, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.VideoEditorImpl android.media.videoeditor.Transition removeTransition(java.lang.String)'>
+    <item name='android.media.videoeditor.VideoEditor void addMediaItem(android.media.videoeditor.MediaItem) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditorFactory android.media.videoeditor.VideoEditor load(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.MediaProperties int[] getSupportedVideoBitrates()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.media.videoeditor.VideoEditor android.media.videoeditor.AudioTrack removeAudioTrack(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.media.videoeditor.VideoEditorImpl void clearSurface(android.view.SurfaceHolder) 0'>
@@ -152,7 +194,7 @@
     <item name='android.media.videoeditor.MediaVideoItem MediaVideoItem(android.media.videoeditor.VideoEditor, java.lang.String, java.lang.String, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.media.videoeditor.MediaProperties int[] getSupportedVideoBitrates()'>
+    <item name='android.media.videoeditor.VideoEditor java.util.List&lt;android.media.videoeditor.MediaItem&gt; getAllMediaItems()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

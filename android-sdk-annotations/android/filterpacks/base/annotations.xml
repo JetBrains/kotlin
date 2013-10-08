@@ -1,5 +1,5 @@
 <root>
-    <item name='android.filterpacks.base.RetargetFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
+    <item name='android.filterpacks.base.FrameBranch android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterpacks.base.InputStreamSource void process(android.filterfw.core.FilterContext) 0'>
@@ -8,19 +8,49 @@
     <item name='android.filterpacks.base.ObjectSource void fieldPortValueUpdated(java.lang.String, android.filterfw.core.FilterContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.filterpacks.base.FrameBranch void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.filterpacks.base.RetargetFilter void process(android.filterfw.core.FilterContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterpacks.base.GLTextureTarget void process(android.filterfw.core.FilterContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.filterpacks.base.RetargetFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.FrameSource void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.OutputStreamTarget void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.filterpacks.base.RetargetFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.CallbackFilter void prepare(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.NullFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.CallbackFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.GLTextureSource void process(android.filterfw.core.FilterContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterpacks.base.FrameFetch void process(android.filterfw.core.FilterContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.filterpacks.base.FrameStore void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.ObjectSource void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.base.GLTextureSource void fieldPortValueUpdated(java.lang.String, android.filterfw.core.FilterContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

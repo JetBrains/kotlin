@@ -1,29 +1,38 @@
 <root>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toUpperCase()'>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getExpandedElementName(org.w3c.dom.Element)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault boolean startsWith(java.lang.String, int) 0'>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Attr setAttributeNodeNS(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Text createTextNode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList java.lang.String getValue(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DOM2Helper org.w3c.dom.Element getElementByID(java.lang.String, org.w3c.dom.Document) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.StringToIntTable java.lang.String[] keys()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.URI java.lang.String getPath(boolean, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.ObjectStack ObjectStack(org.apache.xml.utils.ObjectStack) 0'>
+    <item name='org.apache.xml.utils.XMLString int lastIndexOf(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toLowerCase(java.util.Locale) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.NodeVector void appendNodes(org.apache.xml.utils.NodeVector) 0'>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString fixWhiteSpace(boolean, boolean, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName QName(java.lang.String, java.util.Stack, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.NodeVector void appendNodes(org.apache.xml.utils.NodeVector) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Comment createComment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName java.lang.String getPrefixPart(java.lang.String) 0'>
@@ -32,34 +41,31 @@
     <item name='org.apache.xml.utils.DefaultErrorHandler void error(javax.xml.transform.TransformerException) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper boolean isNamespaceNode(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.DOMBuilder void comment(char[], int, int) 0'>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toLowerCase()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName QName(java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString substring(int)'>
+    <item name='org.apache.xml.utils.DOMBuilder void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Attr setAttributeNode(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString boolean endsWith(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.PrefixResolver java.lang.String getNamespaceForPrefix(java.lang.String, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList java.lang.String getType(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XML11Char boolean isXML11ValidNCName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.NamespaceSupport2 java.util.Enumeration getDeclaredPrefixes()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.XMLStringDefault int compareToIgnoreCase(org.apache.xml.utils.XMLString) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getExpandedElementName(org.w3c.dom.Element) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.DefaultErrorHandler void warning(org.xml.sax.SAXParseException) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.TreeWalker void endNode(org.w3c.dom.Node) 0'>
+    <item name='org.apache.xml.utils.XMLStringDefault boolean equals(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DefaultErrorHandler void warning(javax.xml.transform.TransformerException) 0'>
@@ -68,40 +74,40 @@
     <item name='org.apache.xml.utils.URI URI(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getUnparsedEntityURI(java.lang.String, org.w3c.dom.Document) 1'>
+    <item name='org.apache.xml.utils.SystemIDResolver java.lang.String getAbsoluteURIFromRelative(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper void getNodeData(org.w3c.dom.Node, org.apache.xml.utils.FastStringBuffer) 0'>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Element getElementById(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toLowerCase()'>
+    <item name='org.apache.xml.utils.UnImplNode java.lang.Object getUserData(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMBuilder void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+    <item name='org.apache.xml.utils.XMLString boolean equalsIgnoreCase(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getExpandedAttributeName(org.w3c.dom.Attr)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.DOMHelper org.w3c.dom.Node getParentOfNode(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.IntStack java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.XMLStringDefault int indexOf(java.lang.String, int) 0'>
+    <item name='org.apache.xml.utils.PrefixResolver java.lang.String getNamespaceForPrefix(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName QName(java.lang.String, java.lang.String, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getNodeData(org.w3c.dom.Node)'>
+    <item name='org.apache.xml.utils.DOMBuilder void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode java.lang.String getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.IntStack java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getExpandedAttributeName(org.w3c.dom.Attr)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLCharacterRecognizer boolean isWhiteSpace(java.lang.StringBuffer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName QName(java.lang.String, java.lang.String) 1'>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString substring(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DOM2Helper java.lang.String getNamespaceOfNode(org.w3c.dom.Node) 0'>
@@ -110,118 +116,88 @@
     <item name='org.apache.xml.utils.URI URI(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.ObjectVector java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.QName QName(java.lang.String, org.apache.xml.utils.PrefixResolver) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xml.utils.URI URI(org.apache.xml.utils.URI) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.AttList java.lang.String getType(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DOMHelper java.lang.String getExpandedAttributeName(org.w3c.dom.Attr) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName QName(java.lang.String, java.util.Stack) 0'>
+    <item name='org.apache.xml.utils.XMLString void dispatchCharactersEvents(org.xml.sax.ContentHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.FastStringBuffer java.lang.String toString()'>
+    <item name='org.apache.xml.utils.XMLString boolean startsWith(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toUpperCase(java.util.Locale) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault boolean equals(org.apache.xml.utils.XMLString) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.DOM2Helper org.w3c.dom.Node getParentOfNode(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.ObjectStack java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString concat(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.PrefixResolverDefault java.lang.String getNamespaceForPrefix(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.NamespaceSupport2 java.util.Enumeration getPrefixes(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString trim()'>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Attr removeAttributeNode(org.w3c.dom.Attr) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName java.lang.String getLocalPart(java.lang.String)'>
+    <item name='org.apache.xml.utils.IntVector java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList int getIndex(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName QName(java.lang.String, org.w3c.dom.Element, org.apache.xml.utils.PrefixResolver, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.ObjectVector ObjectVector(org.apache.xml.utils.ObjectVector) 0'>
+    <item name='org.apache.xml.utils.StylesheetPIHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLChar boolean isValidName(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.XMLString int compareTo(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.ObjectVector ObjectVector(org.apache.xml.utils.ObjectVector) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName java.lang.String getLocalPart(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String, java.lang.String)'>
+    <item name='org.apache.xml.utils.AttList java.lang.String getType(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.URI URI(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString substring(int, int)'>
+    <item name='org.apache.xml.utils.DOMBuilder void endEntity(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.WrappedRuntimeException WrappedRuntimeException(java.lang.Exception) 0'>
+    <item name='org.apache.xml.utils.XMLStringDefault boolean equalsIgnoreCase(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName org.apache.xml.utils.QName getQNameFromString(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString toLowerCase(java.util.Locale)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.ThreadControllerWrapper.ThreadController void waitThread(java.lang.Thread, java.lang.Runnable) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.QName java.lang.String getPrefixFromXMLNSDecl(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.QName org.apache.xml.utils.QName getQNameFromString(java.lang.String)'>
+    <item name='org.apache.xml.utils.StylesheetPIHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName QName(java.lang.String, org.apache.xml.utils.PrefixResolver, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.ThreadControllerWrapper void waitThread(java.lang.Thread, java.lang.Runnable) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getUniqueID(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.XMLStringDefault int lastIndexOf(java.lang.String, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString fixWhiteSpace(boolean, boolean, boolean)'>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString concat(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLStringDefault boolean startsWith(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault int indexOf(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.AttList int getIndex(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.FastStringBuffer java.lang.String getOneChunkString(int, int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.URI java.lang.String toString()'>
+    <item name='org.apache.xml.utils.XMLStringFactory org.apache.xml.utils.XMLString emptystr()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XML11Char boolean isXML11ValidQName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault void dispatchCharactersEvents(org.xml.sax.ContentHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.PrefixResolverDefault java.lang.String getNamespaceForPrefix(java.lang.String, org.w3c.dom.Node) 0'>
@@ -233,34 +209,22 @@
     <item name='org.apache.xml.utils.URI URI(java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.AttList java.lang.String getType(java.lang.String)'>
+    <item name='org.apache.xml.utils.DOMHelper org.w3c.dom.Element getElementByID(java.lang.String, org.w3c.dom.Document) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName java.lang.String getPrefixFromXMLNSDecl(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.NamespaceSupport2 java.util.Enumeration getPrefixes()'>
+    <item name='org.apache.xml.utils.XMLStringFactory org.apache.xml.utils.XMLString newstr(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.FastStringBuffer java.lang.String getString(int, int)'>
+    <item name='org.apache.xml.utils.XMLString int indexOf(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLReaderManager org.apache.xml.utils.XMLReaderManager getInstance()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.NamespaceSupport2 boolean declarePrefix(java.lang.String, java.lang.String) 0'>
+    <item name='org.apache.xml.utils.XMLString boolean startsWith(org.apache.xml.utils.XMLString) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.NamespaceSupport2 java.lang.String[] processName(java.lang.String, java.lang.String[], boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.AttList java.lang.String getType(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.IntVector IntVector(org.apache.xml.utils.IntVector) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.IntStack IntStack(org.apache.xml.utils.IntStack) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName boolean isXMLNSDecl(java.lang.String) 0'>
@@ -272,22 +236,22 @@
     <item name='org.apache.xml.utils.DefaultErrorHandler void printLocation(java.io.PrintWriter, java.lang.Throwable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XML11Char boolean isXML11ValidNmtoken(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString substring(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault int lastIndexOf(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Node removeChild(org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XML11Char boolean isXML11ValidName(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.DOMBuilder void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName QName(java.lang.String) 0'>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.CDATASection createCDATASection(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getUniqueID(org.w3c.dom.Node)'>
+    <item name='org.apache.xml.utils.AttList java.lang.String getType(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getNodeData(org.w3c.dom.Node) 0'>
+    <item name='org.apache.xml.utils.XMLString int indexOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DefaultErrorHandler DefaultErrorHandler(java.io.PrintStream) 0'>
@@ -296,19 +260,325 @@
     <item name='org.apache.xml.utils.XMLStringDefault boolean endsWith(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName QName(java.lang.String, java.lang.String, java.lang.String, boolean) 2'>
+    <item name='org.apache.xml.utils.SAXSourceLocator SAXSourceLocator(javax.xml.transform.SourceLocator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.SAXSourceLocator SAXSourceLocator(javax.xml.transform.SourceLocator) 0'>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString toLowerCase()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLChar boolean isValidQName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.ThreadControllerWrapper.ThreadController java.lang.Thread run(java.lang.Runnable, int)'>
+    <item name='org.apache.xml.utils.ObjectStack java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DefaultErrorHandler void printLocation(java.io.PrintStream, org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode void removeAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.FastStringBuffer java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName QName(java.lang.String, org.w3c.dom.Element, org.apache.xml.utils.PrefixResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList java.lang.String getType(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString trim()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList java.lang.String getValue(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList int getIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString boolean startsWith(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.StylesheetPIHandler void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getNamespaceForPrefix(java.lang.String, org.w3c.dom.Element) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName java.lang.String getLocalPart(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString toLowerCase(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName org.apache.xml.utils.QName getQNameFromString(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.NamespaceSupport2 java.util.Enumeration getPrefixes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString int compareToIgnoreCase(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.SystemIDResolver java.lang.String getAbsoluteURI(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString int indexOf(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString boolean equals(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMBuilder void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault void getChars(int, int, char[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.FastStringBuffer java.lang.String getOneChunkString(int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault boolean startsWith(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.URI java.lang.String getPath(boolean, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.ObjectStack ObjectStack(org.apache.xml.utils.ObjectStack) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString boolean startsWith(org.apache.xml.utils.XMLString, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper boolean isNamespaceNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault int compareToIgnoreCase(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getExpandedElementName(org.w3c.dom.Element) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DefaultErrorHandler void warning(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString void dispatchAsComment(org.xml.sax.ext.LexicalHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.TreeWalker void endNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName java.lang.String getPrefixPart(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMBuilder void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMBuilder void startEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString trim()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.FastStringBuffer java.lang.String getString(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper void getNodeData(org.w3c.dom.Node, org.apache.xml.utils.FastStringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getUnparsedEntityURI(java.lang.String, org.w3c.dom.Document) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMBuilder void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper org.w3c.dom.Node getParentOfNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString toUpperCase(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString boolean equals(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault int indexOf(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode boolean isSupported(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString substring(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getNodeData(org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.StylesheetPIHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toUpperCase()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName QName(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName QName(java.lang.String, org.apache.xml.utils.PrefixResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString concat(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName QName(java.lang.String, java.util.Stack) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault boolean equals(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOM2Helper org.w3c.dom.Node getParentOfNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList java.lang.String getType(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DefaultErrorHandler void fatalError(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMBuilder void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.PrefixResolverDefault java.lang.String getNamespaceForPrefix(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.NamespaceSupport2 java.util.Enumeration getDeclaredPrefixes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.ObjectVector java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.StylesheetPIHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLChar boolean isValidName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString concat(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.WrappedRuntimeException WrappedRuntimeException(java.lang.Exception) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString void getChars(int, int, char[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName java.lang.String getPrefixFromXMLNSDecl(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName org.apache.xml.utils.QName getQNameFromString(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.ThreadControllerWrapper.ThreadController void waitThread(java.lang.Thread, java.lang.Runnable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.ThreadControllerWrapper java.lang.Thread runThread(java.lang.Runnable, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLReaderManager org.apache.xml.utils.XMLReaderManager getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.ThreadControllerWrapper void waitThread(java.lang.Thread, java.lang.Runnable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getUniqueID(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault int lastIndexOf(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.StringToIntTable java.lang.String[] keys()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault int indexOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode void setIdAttributeNode(org.w3c.dom.Attr, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode java.lang.Object setUserData(java.lang.String, java.lang.Object, org.w3c.dom.UserDataHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toLowerCase(java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getLocalNameOfNode(org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList java.lang.String getType(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.AttList java.lang.String getLocalName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.NamespaceSupport2 boolean declarePrefix(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString int lastIndexOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Node renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.IntVector IntVector(org.apache.xml.utils.IntVector) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.IntStack IntStack(org.apache.xml.utils.IntStack) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString substring(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringFactory org.apache.xml.utils.XMLString newstr(org.apache.xml.utils.FastStringBuffer, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.URI java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XML11Char boolean isXML11ValidNmtoken(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault int lastIndexOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Node importNode(org.w3c.dom.Node, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XML11Char boolean isXML11ValidName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName QName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString toUpperCase()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getNodeData(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString fixWhiteSpace(boolean, boolean, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.QName QName(java.lang.String, java.lang.String, java.lang.String, boolean) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLStringDefault boolean startsWith(org.apache.xml.utils.XMLString, int) 0'>
@@ -320,28 +590,34 @@
     <item name='org.apache.xml.utils.SAXSourceLocator SAXSourceLocator(org.xml.sax.SAXParseException) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toUpperCase(java.util.Locale)'>
+    <item name='org.apache.xml.utils.XMLString org.apache.xml.utils.XMLString toUpperCase(java.util.Locale)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.IntVector java.lang.Object clone()'>
+    <item name='org.apache.xml.utils.DOMBuilder void processingInstruction(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getLocalNameOfNode(org.w3c.dom.Node)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.ThreadControllerWrapper java.lang.Thread runThread(java.lang.Runnable, int)'>
+    <item name='org.apache.xml.utils.DOMBuilder void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLChar boolean isValidNCName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.utils.DefaultErrorHandler void error(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringFactory org.apache.xml.utils.XMLString newstr(char[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.utils.XMLStringDefault int compareTo(org.apache.xml.utils.XMLString) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName QName(java.lang.String, org.w3c.dom.Element, org.apache.xml.utils.PrefixResolver) 0'>
+    <item name='org.apache.xml.utils.UnImplNode org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DOMHelper java.lang.String getLocalNameOfNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.DOMHelper java.lang.String getUniqueID(org.w3c.dom.Node)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DOMHelper org.w3c.dom.Node getRootNode(org.w3c.dom.Node) 0'>
@@ -353,40 +629,31 @@
     <item name='org.apache.xml.utils.URI void setScheme(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.QName java.lang.String getPrefixPart(java.lang.String)'>
+    <item name='org.apache.xml.utils.URI java.lang.String getSchemeSpecificPart()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLStringDefault int indexOf(org.apache.xml.utils.XMLString) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.URI java.lang.String getSchemeSpecificPart()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xml.utils.FastStringBuffer void sendSAXComment(org.xml.sax.ext.LexicalHandler, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.StylesheetPIHandler void processingInstruction(java.lang.String, java.lang.String) 0'>
+    <item name='org.apache.xml.utils.StylesheetPIHandler void processingInstruction(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getNamespaceForPrefix(java.lang.String, org.w3c.dom.Element) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.NamespaceSupport2 java.util.Enumeration getPrefixes(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toLowerCase(java.util.Locale)'>
+    <item name='org.apache.xml.utils.XMLStringDefault void dispatchAsComment(org.xml.sax.ext.LexicalHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLStringDefault boolean startsWith(org.apache.xml.utils.XMLString) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString concat(java.lang.String)'>
+    <item name='org.apache.xml.utils.DOMBuilder void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.XMLStringDefault org.apache.xml.utils.XMLString toUpperCase(java.util.Locale)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.DefaultErrorHandler void printLocation(java.io.PrintStream, javax.xml.transform.TransformerException) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.utils.SystemIDResolver java.lang.String getAbsoluteURIFromRelative(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.QName QName(java.lang.String, java.lang.String, boolean) 1'>
@@ -398,10 +665,13 @@
     <item name='org.apache.xml.utils.SAXSourceLocator SAXSourceLocator(org.xml.sax.Locator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.AttList java.lang.String getLocalName(int)'>
+    <item name='org.apache.xml.utils.AttList java.lang.String getValue(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.utils.DOMHelper java.lang.String getExpandedElementName(org.w3c.dom.Element)'>
+    <item name='org.apache.xml.utils.DOMBuilder void setDocumentLocator(org.xml.sax.Locator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.utils.ThreadControllerWrapper.ThreadController java.lang.Thread run(java.lang.Runnable, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.utils.XMLChar boolean isValidNmtoken(java.lang.String) 0'>

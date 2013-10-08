@@ -1,23 +1,17 @@
 <root>
-    <item name='android.animation.PropertyValuesHolder void setIntValues(int...) 0'>
+    <item name='android.animation.FloatEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofPropertyValuesHolder(android.animation.PropertyValuesHolder...)'>
+    <item name='android.animation.PropertyValuesHolder void setIntValues(int...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.FloatEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.PropertyValuesHolder java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofInt(java.lang.Object, java.lang.String, int...)'>
+    <item name='android.animation.Keyframe java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofFloat(android.util.Property&lt;?,java.lang.Float&gt;, float...) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.Animator java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofObject(android.animation.TypeEvaluator, java.lang.Object...)'>
@@ -26,34 +20,49 @@
     <item name='android.animation.IntEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofObject(java.lang.String, android.animation.TypeEvaluator, java.lang.Object...)'>
+    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofFloat(float...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.AnimatorSet android.animation.AnimatorSet setDuration(long)'>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofKeyframe(java.lang.String, android.animation.Keyframe...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.IntEvaluator java.lang.Integer evaluate(float, java.lang.Integer, java.lang.Integer) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.Keyframe android.animation.Keyframe ofObject(float, java.lang.Object)'>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofObject(android.util.Property, android.animation.TypeEvaluator&lt;V&gt;, V...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator clone()'>
+    <item name='android.animation.Animator.AnimatorListener void onAnimationEnd(android.animation.Animator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator android.animation.ValueAnimator setDuration(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofFloat(java.lang.String, float...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ValueAnimator android.animation.Animator setDuration(long)'>
+    <item name='android.animation.Keyframe android.animation.Keyframe clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.FloatEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object)'>
+    <item name='android.animation.Keyframe android.animation.Keyframe ofObject(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.Keyframe void setValue(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofInt(java.lang.Object, java.lang.String, int...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.Animator java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.LayoutTransition void showChild(android.view.ViewGroup, android.view.View, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator setDuration(long)'>
+    <item name='android.animation.PropertyValuesHolder java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.AnimatorSet.Builder android.animation.AnimatorSet.Builder after(android.animation.Animator)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofKeyframe(android.util.Property, android.animation.Keyframe...) 1'>
@@ -62,37 +71,49 @@
     <item name='android.animation.RectEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.TypeEvaluator T evaluate(float, T, T)'>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofPropertyValuesHolder(java.lang.Object, android.animation.PropertyValuesHolder...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofInt(android.util.Property&lt;?,java.lang.Integer&gt;, int...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.Animator android.animation.Animator clone()'>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofFloat(T, android.util.Property&lt;T,java.lang.Float&gt;, float...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.AnimatorSet.Builder android.animation.AnimatorSet.Builder before(android.animation.Animator)'>
+    <item name='android.animation.AnimatorListenerAdapter void onAnimationEnd(android.animation.Animator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator android.animation.ValueAnimator setDuration(long)'>
+    <item name='android.animation.Keyframe android.animation.Keyframe ofObject(float, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.IntEvaluator java.lang.Integer evaluate(float, java.lang.Integer, java.lang.Integer) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.AnimatorSet java.util.ArrayList&lt;android.animation.Animator&gt; getChildAnimations()'>
+    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofPropertyValuesHolder(android.animation.PropertyValuesHolder...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator java.lang.Object clone()'>
+    <item name='android.animation.ValueAnimator android.animation.Animator clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.ObjectAnimator void setProperty(android.util.Property) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.animation.IntEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.animation.FloatEvaluator java.lang.Float evaluate(float, java.lang.Number, java.lang.Number) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.animation.Keyframe java.lang.Object getValue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofInt(T, android.util.Property&lt;T,java.lang.Integer&gt;, int...) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator void setIntValues(int...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofFloat(java.lang.String, float...) 1'>
@@ -101,55 +122,40 @@
     <item name='android.animation.RectEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.IntEvaluator java.lang.Integer evaluate(float, java.lang.Integer, java.lang.Integer)'>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofObject(java.lang.Object, java.lang.String, android.animation.TypeEvaluator, java.lang.Object...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.LayoutTransition void removeChild(android.view.ViewGroup, android.view.View) 1'>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofObject(T, android.util.Property&lt;T,V&gt;, android.animation.TypeEvaluator&lt;V&gt;, V...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.AnimatorSet java.util.ArrayList&lt;android.animation.Animator&gt; getChildAnimations()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.LayoutTransition void hideChild(android.view.ViewGroup, android.view.View, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.Keyframe android.animation.Keyframe ofFloat(float, float)'>
+    <item name='android.animation.AnimatorSet.Builder android.animation.AnimatorSet.Builder before(android.animation.Animator)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofKeyframe(java.lang.String, android.animation.Keyframe...)'>
+    <item name='android.animation.LayoutTransition void removeChild(android.view.ViewGroup, android.view.View) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ValueAnimator java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ValueAnimator void setFloatValues(float...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofObject(android.util.Property, android.animation.TypeEvaluator&lt;V&gt;, V...) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ArgbEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object)'>
+    <item name='android.animation.ValueAnimator android.animation.ValueAnimator setDuration(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.LayoutTransition void hideChild(android.view.ViewGroup, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.Keyframe android.animation.Keyframe ofInt(float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ValueAnimator java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.AnimatorSet android.animation.AnimatorSet clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.Keyframe android.animation.Keyframe ofObject(float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.animation.PropertyValuesHolder void setFloatValues(float...) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ValueAnimator android.animation.Animator clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofFloat(float...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofInt(java.lang.String, int...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.IntEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.FloatEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 1'>
@@ -158,22 +164,13 @@
     <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofObject(T, android.util.Property&lt;T,V&gt;, android.animation.TypeEvaluator&lt;V&gt;, V...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.animation.ValueAnimator.AnimatorUpdateListener void onAnimationUpdate(android.animation.ValueAnimator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.animation.AnimatorInflater android.animation.Animator loadAnimator(android.content.Context, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.AnimatorSet.Builder android.animation.AnimatorSet.Builder after(android.animation.Animator)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.Keyframe android.animation.Keyframe ofFloat(float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ObjectAnimator android.animation.Animator setDuration(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofFloat(android.util.Property&lt;?,java.lang.Float&gt;, float...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ObjectAnimator java.lang.String toString()'>
+    <item name='android.animation.ObjectAnimator android.animation.Animator clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.LayoutTransition void hideChild(android.view.ViewGroup, android.view.View, int) 0'>
@@ -182,58 +179,70 @@
     <item name='android.animation.IntEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofFloat(java.lang.Object, java.lang.String, float...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofPropertyValuesHolder(java.lang.Object, android.animation.PropertyValuesHolder...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofObject(T, android.util.Property&lt;T,V&gt;, android.animation.TypeEvaluator&lt;V&gt;, V...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofKeyframe(android.util.Property, android.animation.Keyframe...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.AnimatorSet android.animation.Animator setDuration(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofFloat(T, android.util.Property&lt;T,java.lang.Float&gt;, float...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.PropertyValuesHolder void setObjectValues(java.lang.Object...) 0'>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator setDuration(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.AnimatorSet.Builder android.animation.AnimatorSet.Builder with(android.animation.Animator)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ArgbEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 1'>
+    <item name='android.animation.RectEvaluator android.graphics.Rect evaluate(float, android.graphics.Rect, android.graphics.Rect)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofObject(java.lang.Object, java.lang.String, android.animation.TypeEvaluator, java.lang.Object...)'>
+    <item name='android.animation.ValueAnimator android.animation.ValueAnimator clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.RectEvaluator android.graphics.Rect evaluate(float, android.graphics.Rect, android.graphics.Rect) 2'>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofFloat(java.lang.Object, java.lang.String, float...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ValueAnimator java.lang.Object clone()'>
+    <item name='android.animation.TypeEvaluator T evaluate(float, T, T)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofInt(java.lang.String, int...) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ValueAnimator android.animation.ValueAnimator setDuration(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofPropertyValuesHolder(android.animation.PropertyValuesHolder...) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.AnimatorSet.Builder android.animation.AnimatorSet.Builder after(long)'>
+    <item name='android.animation.Keyframe android.animation.Keyframe ofInt(float, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.Animator android.animation.Animator setDuration(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.animation.AnimatorSet.Builder android.animation.AnimatorSet.Builder after(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.PropertyValuesHolder void setObjectValues(java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ArgbEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ValueAnimator android.animation.Animator setDuration(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.Keyframe android.animation.Keyframe ofFloat(float, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.RectEvaluator android.graphics.Rect evaluate(float, android.graphics.Rect, android.graphics.Rect) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ValueAnimator void setIntValues(int...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.animation.FloatEvaluator java.lang.Float evaluate(float, java.lang.Number, java.lang.Number)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofObject(java.lang.String, android.animation.TypeEvaluator, java.lang.Object...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofFloat(android.util.Property&lt;?,java.lang.Float&gt;, float...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofInt(java.lang.String, int...) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.AnimatorSet android.animation.Animator clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofPropertyValuesHolder(android.animation.PropertyValuesHolder...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.LayoutTransition void layoutChange(android.view.ViewGroup) 0'>
@@ -248,46 +257,49 @@
     <item name='android.animation.LayoutTransition void removeChild(android.view.ViewGroup, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.animation.AnimatorSet android.animation.AnimatorSet clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.AnimatorSet java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.animation.TypeEvaluator T evaluate(float, T, T) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.RectEvaluator android.graphics.Rect evaluate(float, android.graphics.Rect, android.graphics.Rect) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator android.animation.Animator clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofObject(android.util.Property, android.animation.TypeEvaluator&lt;V&gt;, V...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.RectEvaluator android.graphics.Rect evaluate(float, android.graphics.Rect, android.graphics.Rect)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.Keyframe android.animation.Keyframe ofInt(float, int)'>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofInt(android.util.Property&lt;?,java.lang.Integer&gt;, int...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.RectEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ValueAnimator android.animation.ValueAnimator clone()'>
+    <item name='android.animation.IntEvaluator java.lang.Integer evaluate(float, java.lang.Integer, java.lang.Integer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.Keyframe android.animation.Keyframe ofInt(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.Keyframe android.animation.Keyframe ofFloat(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofKeyframe(java.lang.String, android.animation.Keyframe...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofInt(int...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.animation.AnimatorSet android.animation.Animator clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.animation.FloatEvaluator java.lang.Float evaluate(float, java.lang.Number, java.lang.Number) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.ObjectAnimator android.animation.ValueAnimator clone()'>
+    <item name='android.animation.ValueAnimator java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.AnimatorSet java.lang.Object clone()'>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofInt(java.lang.String, int...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.AnimatorSet android.animation.AnimatorSet setDuration(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.ValueAnimator void setValues(android.animation.PropertyValuesHolder...) 0'>
@@ -302,13 +314,34 @@
     <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofFloat(T, android.util.Property&lt;T,java.lang.Float&gt;, float...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofInt(android.util.Property&lt;?,java.lang.Integer&gt;, int...)'>
+    <item name='android.animation.ObjectAnimator void setFloatValues(float...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.Animator android.animation.Animator clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator android.animation.Animator setDuration(long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.LayoutTransition void addChild(android.view.ViewGroup, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.animation.PropertyValuesHolder android.animation.PropertyValuesHolder ofKeyframe(android.util.Property, android.animation.Keyframe...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.AnimatorSet android.animation.Animator setDuration(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.animation.ObjectAnimator android.animation.ObjectAnimator ofInt(T, android.util.Property&lt;T,java.lang.Integer&gt;, int...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ObjectAnimator android.animation.ValueAnimator clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ArgbEvaluator java.lang.Object evaluate(float, java.lang.Object, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.animation.ValueAnimator android.animation.ValueAnimator ofInt(int...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.animation.LayoutTransition void showChild(android.view.ViewGroup, android.view.View) 0'>

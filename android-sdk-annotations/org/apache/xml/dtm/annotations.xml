@@ -1,20 +1,65 @@
 <root>
-    <item name='org.apache.xml.dtm.DTMManager org.apache.xml.dtm.DTMManager newInstance(org.apache.xml.utils.XMLStringFactory)'>
+    <item name='org.apache.xml.dtm.DTMException java.lang.String getMessageAndLocation()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.DTMException java.lang.String getMessageAndLocation()'>
+    <item name='org.apache.xml.dtm.DTMManager org.apache.xml.dtm.DTM createDocumentFragment()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTMIterator void setRoot(int, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.DTMConfigurationException DTMConfigurationException(java.lang.Throwable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.dtm.DTMManager org.apache.xml.dtm.DTMManager newInstance(org.apache.xml.utils.XMLStringFactory)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTMManager boolean release(org.apache.xml.dtm.DTM, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.dtm.DTMException java.lang.Throwable initCause(java.lang.Throwable)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTM void setProperty(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTM int getExpandedTypeID(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTMException void printStackTrace(java.io.PrintStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTM int getExpandedTypeID(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTMIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTM boolean isSupported(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTMAxisIterator org.apache.xml.dtm.DTMAxisIterator reset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTM void setFeature(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTMManager org.apache.xml.dtm.DTM getDTM(javax.xml.transform.Source, boolean, org.apache.xml.dtm.DTMWSFilter, boolean, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTM int getElementById(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTM java.lang.String getLocalNameFromExpandedNameID(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.DTMAxisIterator org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.DTMException DTMException(java.lang.Throwable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.DTMException void printStackTrace(java.io.PrintStream) 0'>
+    <item name='org.apache.xml.dtm.DTMException void printStackTrace(java.io.PrintWriter) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

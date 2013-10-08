@@ -1,32 +1,23 @@
 <root>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.CommentImpl java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Text createTextNode(java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.NodeList getChildNodes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.CharacterDataImpl void appendDataTo(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.NodeList getChildNodes()'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node importNode(org.w3c.dom.Node, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DOMImplementationImpl org.w3c.dom.Document createDocument(java.lang.String, java.lang.String, org.w3c.dom.DocumentType)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.xml.dom.CharacterDataImpl void setData(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.NodeList getElementsByTagNameNS(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentTypeImpl DocumentTypeImpl(org.apache.harmony.xml.dom.DocumentImpl, java.lang.String, java.lang.String, java.lang.String) 1'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Text createTextNode(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.TextImpl TextImpl(org.apache.harmony.xml.dom.DocumentImpl, java.lang.String) 1'>
@@ -35,31 +26,166 @@
     <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.Attr removeAttributeNode(org.w3c.dom.Attr) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.ElementImpl void setIdAttributeNode(org.w3c.dom.Attr, boolean) 0'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node insertChildAt(org.w3c.dom.Node, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl boolean canSetParameter(java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.AttrImpl createAttributeNS(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node appendChild(org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.DocumentFragmentImpl createDocumentFragment()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentFragmentImpl java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Element createElementNS(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.AttrImpl void setValue(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl java.lang.String getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.NodeList getElementsByTagNameNS(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.Attr setAttributeNodeNS(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl boolean isSupported(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.TextImpl java.lang.String getWholeText()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl void setParameter(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DOMErrorImpl org.w3c.dom.DOMLocator getLocation()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CommentImpl createComment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl java.lang.Object getUserData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.CharacterDataImpl java.lang.String getNodeValue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.NodeList getElementsByTagNameNS(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CDATASectionImpl createCDATASection(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl java.lang.Object getParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.CharacterDataImpl java.lang.String substringData(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.CDATASectionImpl CDATASectionImpl(org.apache.harmony.xml.dom.DocumentImpl, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.CDATASectionImpl java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.EntityReference createEntityReference(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl void setParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node importNode(org.w3c.dom.Node, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.ElementImpl createElement(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node appendChild(org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.Attr removeAttributeNode(org.w3c.dom.Attr)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl.ElementAttrNamedNodeMapImpl org.w3c.dom.Node setNamedItemNS(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DOMImplementationImpl boolean hasFeature(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Comment createComment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node removeChild(org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.CDATASectionImpl org.apache.harmony.xml.dom.TextImpl replaceWithText()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Attr createAttribute(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.ProcessingInstructionImpl createProcessingInstruction(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node removeChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl void normalize(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CDATASectionImpl createCDATASection(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl void removeAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentTypeImpl DocumentTypeImpl(org.apache.harmony.xml.dom.DocumentImpl, java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.NodeList getElementsByTagName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.ElementImpl void setIdAttributeNode(org.w3c.dom.Attr, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.ElementImpl createElementNS(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.TextImpl java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl org.w3c.dom.DOMStringList getParameterNames()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.TextImpl org.w3c.dom.Text splitText(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node insertChildAt(org.w3c.dom.Node, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node importNode(org.w3c.dom.Node, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.CharacterDataImpl java.lang.String getData()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DOMImplementationImpl org.w3c.dom.DocumentType createDocumentType(java.lang.String, java.lang.String, java.lang.String) 0'>
@@ -68,187 +194,115 @@
     <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.Attr setAttributeNode(org.w3c.dom.Attr) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentFragmentImpl java.lang.String getNodeName()'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Element getElementById(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.DocumentFragmentImpl createDocumentFragment()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.EntityReference createEntityReference(java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.TextImpl java.lang.String getNodeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node insertChildAt(org.w3c.dom.Node, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.CDATASection createCDATASection(java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.ProcessingInstructionImpl void setData(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DOMErrorImpl org.w3c.dom.DOMLocator getLocation()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Element createElementNS(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.NodeImpl java.lang.Object setUserData(java.lang.String, java.lang.Object, org.w3c.dom.UserDataHandler) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Attr createAttribute(java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.DOMImplementationImpl org.w3c.dom.Document createDocument(java.lang.String, java.lang.String, org.w3c.dom.DocumentType)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Comment createComment(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.NodeList getChildNodes()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.NodeImpl boolean isSupported(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node removeChild(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.Attr setAttributeNodeNS(org.w3c.dom.Attr) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node removeChild(org.w3c.dom.Node)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.DocumentFragment createDocumentFragment()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DOMImplementationImpl org.w3c.dom.DocumentType createDocumentType(java.lang.String, java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.CDATASection createCDATASection(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CDATASectionImpl createCDATASection(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.CDATASectionImpl java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Text createTextNode(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node appendChild(org.w3c.dom.Node)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.EntityReferenceImpl createEntityReference(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CommentImpl createComment(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.NodeImpl java.lang.Object getUserData(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.ProcessingInstruction createProcessingInstruction(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Element createElement(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl java.lang.String getNodeName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CDATASectionImpl createCDATASection(java.lang.String) 0'>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node removeChild(org.w3c.dom.Node)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.NamedNodeMap getAttributes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.CDATASectionImpl CDATASectionImpl(org.apache.harmony.xml.dom.DocumentImpl, java.lang.String) 1'>
+    <item name='org.apache.harmony.xml.dom.CharacterDataImpl java.lang.String getData()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.TextImpl java.lang.String getWholeText()'>
+    <item name='org.apache.harmony.xml.dom.NodeImpl java.lang.Object setUserData(java.lang.String, java.lang.Object, org.w3c.dom.UserDataHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.Attr removeAttributeNode(org.w3c.dom.Attr)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.NodeList getElementsByTagName(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node importNode(org.w3c.dom.Node, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.CDATASectionImpl org.apache.harmony.xml.dom.TextImpl replaceWithText()'>
+    <item name='org.apache.harmony.xml.dom.DOMImplementationImpl org.w3c.dom.DocumentType createDocumentType(java.lang.String, java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.TextImpl createTextNode(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.NodeList getElementsByTagName(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.AttrImpl createAttribute(java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node removeChild(org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.NodeImpl java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
+    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl org.w3c.dom.DOMStringList getParameterNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.CDATASection createCDATASection(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Text createTextNode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.EntityReferenceImpl createEntityReference(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.NodeList getChildNodes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.DocumentFragment createDocumentFragment()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.CommentImpl java.lang.String getNodeName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.ElementImpl.ElementAttrNamedNodeMapImpl org.w3c.dom.Node setNamedItem(org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.CharacterDataImpl java.lang.String substringData(int, int)'>
+    <item name='org.apache.harmony.xml.dom.NodeImpl java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.ProcessingInstructionImpl createProcessingInstruction(java.lang.String, java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Attr createAttributeNS(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CommentImpl createComment(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node cloneNode(boolean)'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.ProcessingInstruction createProcessingInstruction(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.TextImpl createTextNode(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.ElementImpl.ElementAttrNamedNodeMapImpl org.w3c.dom.Node setNamedItemNS(org.w3c.dom.Node) 0'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.AttrImpl createAttribute(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.ElementImpl createElement(java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.TextImpl org.w3c.dom.Text splitText(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Node renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String)'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.apache.harmony.xml.dom.CommentImpl createComment(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DOMImplementationImpl boolean hasFeature(java.lang.String, java.lang.String) 0'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Element createElement(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.CharacterDataImpl java.lang.String getNodeValue()'>
+    <item name='org.apache.harmony.xml.dom.NodeImpl org.w3c.dom.Node cloneNode(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.NodeList getElementsByTagName(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Comment createComment(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.InnerNodeImpl org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node)'>
+    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.CDATASection createCDATASection(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.dom.DOMImplementationImpl java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.ElementImpl org.w3c.dom.NodeList getElementsByTagNameNS(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DOMConfigurationImpl void normalize(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.dom.DocumentImpl org.w3c.dom.Attr createAttributeNS(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

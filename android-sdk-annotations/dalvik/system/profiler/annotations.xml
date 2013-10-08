@@ -2,34 +2,37 @@
     <item name='dalvik.system.profiler.HprofData void addThreadEvent(dalvik.system.profiler.HprofData.ThreadEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.HprofData.StackTrace java.lang.String toString()'>
+    <item name='dalvik.system.profiler.BinaryHprof.ControlSettings dalvik.system.profiler.BinaryHprof.ControlSettings valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.HprofData java.util.Set&lt;dalvik.system.profiler.HprofData.Sample&gt; getSamples()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.BinaryHprof.ControlSettings dalvik.system.profiler.BinaryHprof.ControlSettings valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.SamplingProfiler.ThreadSet newThreadGroupThreadSet(java.lang.ThreadGroup)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='dalvik.system.profiler.BinaryHprof.ControlSettings dalvik.system.profiler.BinaryHprof.ControlSettings valueOf(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='dalvik.system.profiler.HprofData.ThreadEvent dalvik.system.profiler.HprofData.ThreadEvent start(int, int, java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.profiler.HprofData.ThreadEventType dalvik.system.profiler.HprofData.ThreadEventType valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.profiler.HprofData java.util.List&lt;dalvik.system.profiler.HprofData.ThreadEvent&gt; getThreadHistory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.profiler.SamplingProfiler.ThreadSet java.lang.Thread[] threads()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.HprofData.ThreadEventType dalvik.system.profiler.HprofData.ThreadEventType valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.HprofData getHprofData()'>
+    <item name='dalvik.system.profiler.BinaryHprof.ControlSettings dalvik.system.profiler.BinaryHprof.ControlSettings valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.HprofBinaryToAscii void main(java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.HprofData.ThreadEventType dalvik.system.profiler.HprofData.ThreadEventType valueOf(java.lang.String)'>
+    <item name='dalvik.system.profiler.ThreadSampler java.lang.StackTraceElement[] getStackTrace(java.lang.Thread) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.profiler.HprofData.ThreadEvent dalvik.system.profiler.HprofData.ThreadEvent start(int, int, java.lang.String, java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.BinaryHprof.Tag dalvik.system.profiler.BinaryHprof.Tag valueOf(java.lang.String) 0'>
@@ -38,49 +41,52 @@
     <item name='dalvik.system.profiler.BinaryHprofReader BinaryHprofReader(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.HprofData java.util.List&lt;dalvik.system.profiler.HprofData.ThreadEvent&gt; getThreadHistory()'>
+    <item name='dalvik.system.profiler.HprofData.ThreadEvent java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.SamplingProfiler.ThreadSet newArrayThreadSet(java.lang.Thread...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.AsciiHprofWriter void write(dalvik.system.profiler.HprofData, java.io.OutputStream) 1'>
+    <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.SamplingProfiler.ThreadSet newArrayThreadSet(java.lang.Thread...)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.HprofData.ThreadEvent dalvik.system.profiler.HprofData.ThreadEvent end(int)'>
+    <item name='dalvik.system.profiler.AsciiHprofWriter void write(dalvik.system.profiler.HprofData, java.io.OutputStream) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.HprofData HprofData(java.util.Map&lt;dalvik.system.profiler.HprofData.StackTrace,int[]&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='dalvik.system.profiler.HprofData.StackTrace java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='dalvik.system.profiler.HprofData void addStackTrace(dalvik.system.profiler.HprofData.StackTrace, int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.HprofData.ThreadEvent java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='dalvik.system.profiler.BinaryHprofReader dalvik.system.profiler.HprofData getHprofData()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='dalvik.system.profiler.HprofData.ThreadEvent dalvik.system.profiler.HprofData.ThreadEvent start(int, int, java.lang.String, java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.SamplingProfiler.ThreadSet newArrayThreadSet(java.lang.Thread...)'>
+    <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.SamplingProfiler.ThreadSet newThreadGroupThreadSet(java.lang.ThreadGroup)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.BinaryHprofWriter void write(dalvik.system.profiler.HprofData, java.io.OutputStream) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.HprofData.Sample java.lang.String toString()'>
+    <item name='dalvik.system.profiler.BinaryHprof.Tag dalvik.system.profiler.BinaryHprof.Tag valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='dalvik.system.profiler.BinaryHprof.Tag dalvik.system.profiler.BinaryHprof.Tag valueOf(java.lang.String)'>
+    <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.HprofData getHprofData()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='dalvik.system.profiler.HprofData.StackTrace StackTrace(int, int, java.lang.StackTraceElement[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='dalvik.system.profiler.HprofData.Sample java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='dalvik.system.profiler.SamplingProfiler dalvik.system.profiler.SamplingProfiler.ThreadSet newThreadGroupThreadSet(java.lang.ThreadGroup) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.profiler.HprofData.ThreadEvent dalvik.system.profiler.HprofData.ThreadEvent end(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.profiler.BinaryHprofReader dalvik.system.profiler.HprofData getHprofData()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

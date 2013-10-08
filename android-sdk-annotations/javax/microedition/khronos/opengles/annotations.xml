@@ -1,0 +1,359 @@
+<root>
+    <item name='javax.microedition.khronos.opengles.GL10 void glGetIntegerv(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glTexParameterfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetTexGeniv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glTexEnvfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11Ext void glDrawTexfvOES(float[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glLightxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexParameteriv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glTexSubImage2D(int, int, int, int, int, int, int, int, java.nio.Buffer) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glBufferSubData(int, int, int, java.nio.Buffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10Ext int glQueryMatrixxOES(int[], int, int[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetLightxv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glMaterialxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glDeleteRenderbuffersOES(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glTexCoordPointer(int, int, int, java.nio.Buffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetMaterialfv(int, int, java.nio.FloatBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexGenxv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glCompressedTexSubImage2D(int, int, int, int, int, int, int, int, java.nio.Buffer) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexParameteriv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glClipPlanef(int, float[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glLoadMatrixx(int[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexParameterxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glTexEnviv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGenFramebuffersOES(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetMaterialfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11Ext void glDrawTexsvOES(short[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexGeniv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetFixedv(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexEnvxv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glColorPointer(int, int, int, java.nio.Buffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glPointParameterfv(int, float[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetBooleanv(int, boolean[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glMultMatrixf(float[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glFogfv(int, float[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glGetIntegerv(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetBooleanv(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glDeleteBuffers(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetIntegerv(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetFramebufferAttachmentParameterivOES(int, int, int, java.nio.IntBuffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetBufferParameteriv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexParameterxv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10Ext int glQueryMatrixxOES(int[], int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glPointParameterfv(int, java.nio.FloatBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetFloatv(int, float[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glTexParameterxv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetIntegerv(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glLoadMatrixf(float[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glDeleteRenderbuffersOES(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glTexParameterxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glMultMatrixx(int[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetTexGenxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetTexGenfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glTexImage2D(int, int, int, int, int, int, int, int, java.nio.Buffer) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexEnviv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetFloatv(int, java.nio.FloatBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexGenfv(int, int, java.nio.FloatBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetLightfv(int, int, java.nio.FloatBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glTexParameterfv(int, int, java.nio.FloatBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glLightModelfv(int, float[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glClipPlanex(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glPointParameterxv(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexEnvfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetTexGenfv(int, int, java.nio.FloatBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glDeleteFramebuffersOES(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexGeniv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetTexGeniv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glGenTextures(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetFramebufferAttachmentParameterivOES(int, int, int, int[], int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glDeleteFramebuffersOES(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetRenderbufferParameterivOES(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glNormalPointer(int, int, java.nio.Buffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexGenfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetClipPlanex(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glDeleteBuffers(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetLightfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10Ext int glQueryMatrixxOES(java.nio.IntBuffer, java.nio.IntBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGenBuffers(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glBufferData(int, int, java.nio.Buffer, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glDeleteTextures(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11Ext void glWeightPointerOES(int, int, int, java.nio.Buffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetTexGenxv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGenRenderbuffersOES(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11Ext void glMatrixIndexPointerOES(int, int, int, java.nio.Buffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11Ext void glDrawTexxvOES(int[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glPointParameterxv(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetPointerv(int, java.nio.Buffer[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetClipPlanef(int, float[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexParameterfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetClipPlanef(int, java.nio.FloatBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexEnviv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetClipPlanex(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10Ext int glQueryMatrixxOES(java.nio.IntBuffer, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGenRenderbuffersOES(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGenBuffers(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glPointSizePointerOES(int, int, java.nio.Buffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glTexEnvxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetFixedv(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glTexEnviv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glLightfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexParameterfv(int, int, java.nio.FloatBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetMaterialxv(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glLightModelxv(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetMaterialxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11Ext void glTexParameterfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glGenTextures(int, java.nio.IntBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glTexParameteriv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11Ext void glDrawTexivOES(int[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glFogxv(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGetRenderbufferParameterivOES(int, int, java.nio.IntBuffer) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexGenxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetBufferParameteriv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGenFramebuffersOES(int, int[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glMaterialfv(int, int, float[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetLightxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glReadPixels(int, int, int, int, int, int, java.nio.Buffer) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL10 void glVertexPointer(int, int, int, java.nio.Buffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glTexEnvxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.microedition.khronos.opengles.GL11 void glGetTexEnvxv(int, int, int[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

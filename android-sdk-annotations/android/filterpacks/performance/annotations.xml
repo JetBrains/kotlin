@@ -2,4 +2,13 @@
     <item name='android.filterpacks.performance.Throughput java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.filterpacks.performance.ThroughputFilter void open(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.performance.ThroughputFilter void process(android.filterfw.core.FilterContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterpacks.performance.ThroughputFilter android.filterfw.core.FrameFormat getOutputFormat(java.lang.String, android.filterfw.core.FrameFormat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

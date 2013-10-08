@@ -1,8 +1,8 @@
 <root>
-    <item name='android.drm.mobile1.DrmRawContent java.io.InputStream getContentInputStream(android.drm.mobile1.DrmRights)'>
+    <item name='android.drm.mobile1.DrmRawContent DrmRawContent(java.io.InputStream, int, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.mobile1.DrmRawContent DrmRawContent(java.io.InputStream, int, java.lang.String) 0'>
+    <item name='android.drm.mobile1.DrmRawContent java.io.InputStream getContentInputStream(android.drm.mobile1.DrmRights)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -1,26 +1,83 @@
 <root>
-    <item name='android.content.Intent android.content.Intent putCharSequenceArrayListExtra(java.lang.String, java.util.ArrayList&lt;java.lang.CharSequence&gt;)'>
+    <item name='android.content.IOnPrimaryClipChangedListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void setWallpaper(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProvider void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putFloat(java.lang.String, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtras(android.os.Bundle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context java.io.FileInputStream openFileInput(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void removeStickyBroadcast(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProvider int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SearchRecentSuggestionsProvider int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setAction(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentUris android.net.Uri withAppendedId(android.net.Uri, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentValues java.util.Set&lt;java.util.Map.Entry&lt;java.lang.String,java.lang.Object&gt;&gt; valueSet()'>
+    <item name='android.content.SharedPreferences long getLong(java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider android.content.res.AssetFileDescriptor openTypedAssetFile(java.lang.String, android.net.Uri, java.lang.String, android.os.Bundle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent getIntent(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.BroadcastReceiver android.os.IBinder peekService(android.content.Context, android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.CharSequence[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.ContentResolver android.content.IContentProvider acquireUnstableProvider(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProvider android.net.Uri rejectInsert(android.net.Uri, android.content.ContentValues)'>
+    <item name='android.content.Context java.io.File getDatabasePath(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ClipData android.content.ClipData newRawUri(java.lang.CharSequence, android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IOnPrimaryClipChangedListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent java.lang.String toUri(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider android.database.Cursor query(java.lang.String, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, android.os.ICancellationSignal) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IIntentReceiver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, float[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendStickyOrderedBroadcastAsUser(android.content.Intent, android.os.UserHandle, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setClass(android.content.Context, java.lang.Class&lt;?&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProvider android.content.ContentProviderResult[] applyBatch(java.util.ArrayList&lt;android.content.ContentProviderOperation&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider int update(java.lang.String, android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter void readFromXml(org.xmlpull.v1.XmlPullParser) 0'>
@@ -29,34 +86,49 @@
     <item name='android.content.Loader void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context android.content.Context createPackageContextAsUser(java.lang.String, int, android.os.UserHandle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentUris android.net.Uri withAppendedId(android.net.Uri, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SearchRecentSuggestionsProvider int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.BroadcastReceiver android.os.IBinder peekService(android.content.Context, android.content.Intent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, float[])'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, short)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.SearchRecentSuggestionsProvider java.lang.String getType(android.net.Uri)'>
+    <item name='android.content.ContentProvider android.net.Uri rejectInsert(android.net.Uri, android.content.ContentValues)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory, android.database.DatabaseErrorHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences android.content.SharedPreferences.Editor edit()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentSender android.content.IntentSender readIntentSenderOrNullFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.ClipDescription void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.ISyncContext.Stub android.os.IBinder asBinder()'>
+    <item name='android.content.Intent android.content.Intent setDataAndNormalize(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipData java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent replaceExtras(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ISyncContext.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
@@ -65,58 +137,82 @@
     <item name='android.content.SyncAdapterType SyncAdapterType(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.IContentService void unregisterContentObserver(android.database.IContentObserver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContextWrapper int checkCallingPermission(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContextWrapper android.content.Context createConfigurationContext(android.content.res.Configuration) 0'>
+    <item name='android.content.ContextWrapper boolean deleteFile(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContextWrapper int checkPermission(java.lang.String, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setClass(android.content.Context, java.lang.Class&lt;?&gt;)'>
+    <item name='android.content.ContextWrapper android.content.Context createConfigurationContext(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putInt(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Loader java.lang.String dataToString(D)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver android.net.Uri insert(android.net.Uri, android.content.ContentValues) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putParcelableArrayListExtra(java.lang.String, java.util.ArrayList&lt;? extends android.os.Parcelable&gt;)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.Context int checkCallingPermission(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent java.lang.String toString()'>
+    <item name='android.content.ContextWrapper void unregisterReceiver(android.content.BroadcastReceiver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ISyncAdapter.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newInsert(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentName ComponentName(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentResolver java.lang.Object addStatusChangeListener(int, android.content.SyncStatusObserver)'>
+    <item name='android.content.Context android.content.Context createDisplayContext(android.view.Display)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.IContentService.Stub android.os.IBinder asBinder()'>
+    <item name='android.content.Context void sendStickyOrderedBroadcast(android.content.Intent, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ISyncStatusObserver.Stub android.os.IBinder asBinder()'>
+    <item name='android.content.ContentProvider int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.AsyncQueryHandler android.os.Handler createHandler(android.os.Looper)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendBroadcastAsUser(android.content.Intent, android.os.UserHandle, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver android.content.ContentProviderClient acquireContentProviderClient(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, long)'>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValueBackReference(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context android.content.Context createPackageContextAsUser(java.lang.String, int, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ISyncContext.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipData.Item java.lang.CharSequence coerceToText(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setType(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.IClipboard.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.ClipData.Item java.lang.CharSequence coerceToStyledText(android.content.Context)'>
+    <item name='android.content.Context void sendOrderedBroadcast(android.content.Intent, java.lang.String, int, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent parseIntent(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
@@ -128,46 +224,82 @@
     <item name='android.content.Intent void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipData.Item java.lang.CharSequence coerceToStyledText(android.content.Context) 0'>
+    <item name='android.content.IIntentReceiver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderResult java.lang.String toString()'>
+    <item name='android.content.ContentProviderOperation java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ClipData.Item java.lang.CharSequence coerceToStyledText(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent Intent(android.content.Context, java.lang.Class&lt;?&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent void readFromParcel(android.os.Parcel) 0'>
+    <item name='android.content.SyncAdapterType android.content.SyncAdapterType newKey(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter void addDataType(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent void readFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory, android.database.DatabaseErrorHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentProvider int bulkInsert(android.net.Uri, android.content.ContentValues[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context java.io.File getFileStreamPath(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Context void enforcePermission(java.lang.String, int, int, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.SharedPreferences float getFloat(java.lang.String, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setPackage(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.SearchRecentSuggestionsProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ComponentName java.lang.String toShortString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context void startActivities(android.content.Intent[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Intent android.content.Intent parseIntent(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.Parcelable[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent Intent(android.content.Context, java.lang.Class&lt;?&gt;) 1'>
+    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent java.lang.String resolveType(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent Intent(android.content.Context, java.lang.Class&lt;?&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentResolver android.content.IContentProvider acquireExistingProvider(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context android.content.pm.ApplicationInfo getApplicationInfo()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider java.lang.String[] getStreamTypes(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent java.lang.String toURI()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper android.content.Intent registerReceiverAsUser(android.content.BroadcastReceiver, android.os.UserHandle, android.content.IntentFilter, java.lang.String, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentCallbacks void onConfigurationChanged(android.content.res.Configuration) 0'>
@@ -179,10 +311,25 @@
     <item name='android.content.ContextWrapper void enforceCallingOrSelfPermission(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.SearchRecentSuggestionsProvider java.lang.String getType(android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Context boolean startInstrumentation(android.content.ComponentName, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent parseIntent(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withSelection(java.lang.String, java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider int update(java.lang.String, android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider java.lang.String getType(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.IBinder)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipData.Item java.lang.String coerceToHtmlText(android.content.Context) 0'>
@@ -191,16 +338,13 @@
     <item name='android.content.IIntentSender.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipDescription java.lang.String toString()'>
+    <item name='android.content.Context android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory, android.database.DatabaseErrorHandler)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Loader.OnLoadCompleteListener void onLoadComplete(android.content.Loader&lt;D&gt;, D) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.SyncStatusInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.IIntentSender.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, short[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(int, int[]) 1'>
@@ -209,40 +353,76 @@
     <item name='android.content.ContentResolver android.content.ContentProviderClient acquireUnstableContentProviderClient(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, double[])'>
+    <item name='android.content.ClipData android.content.ClipData newPlainText(java.lang.CharSequence, java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipData android.content.ClipData newHtmlText(java.lang.CharSequence, java.lang.CharSequence, java.lang.String)'>
+    <item name='android.content.Context android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent setDataAndTypeAndNormalize(android.net.Uri, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, double)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper java.io.FileInputStream openFileInput(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendStickyOrderedBroadcast(android.content.Intent, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Intent android.content.Intent putExtras(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentResolver void addPeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle, long) 2'>
+    <item name='android.content.Context void removeStickyBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SearchRecentSuggestionsProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter IntentFilter(android.content.IntentFilter) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentResolver void addPeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle, long) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IIntentSender.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentValues void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ISyncAdapter.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentName android.content.ComponentName readFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent android.content.Intent setFlags(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.Parcelable[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Context java.lang.Object getSystemService(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentUris android.net.Uri.Builder appendId(android.net.Uri.Builder, long)'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, byte)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IIntentReceiver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProvider java.lang.String[] getStreamTypes(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.DefaultDataHandler void startPrefixMapping(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver void startSync(android.net.Uri, android.os.Bundle) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Entity java.util.ArrayList&lt;android.content.Entity.NamedContentValues&gt; getSubValues()'>
+    <item name='android.content.Context android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.CursorLoader CursorLoader(android.content.Context, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
@@ -251,19 +431,10 @@
     <item name='android.content.SyncInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.Parcelable)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.ClipData.Item java.lang.String toString()'>
+    <item name='android.content.ClipData.Item java.lang.CharSequence coerceToStyledText(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IContentService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent setPackage(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent cloneFilter()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent setClass(android.content.Context, java.lang.Class&lt;?&gt;) 0'>
@@ -275,13 +446,13 @@
     <item name='android.content.ContentResolver java.io.OutputStream openOutputStream(android.net.Uri, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipData android.content.ClipData newPlainText(java.lang.CharSequence, java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent setClassName(android.content.Context, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.ContentProvider android.content.res.AssetFileDescriptor openTypedAssetFile(android.net.Uri, java.lang.String, android.os.Bundle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.CharSequence[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver void removePeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle) 1'>
@@ -290,10 +461,19 @@
     <item name='android.content.ContentResolver void addPeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle, long) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ISyncAdapter.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtras(android.content.Intent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Context void enforceCallingPermission(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation android.content.ContentProviderResult apply(android.content.ContentProvider, android.content.ContentProviderResult[], int)'>
+    <item name='android.content.ClipData.Item java.lang.String coerceToHtmlText(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider int delete(java.lang.String, android.net.Uri, java.lang.String, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver android.content.res.AssetFileDescriptor openTypedAssetFileDescriptor(android.net.Uri, java.lang.String, android.os.Bundle) 0'>
@@ -302,19 +482,34 @@
     <item name='android.content.ContentProviderResult ContentProviderResult(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.DialogInterface.OnClickListener void onClick(android.content.DialogInterface, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent createChooser(android.content.Intent, java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.pm.ActivityInfo resolveActivityInfo(android.content.pm.PackageManager, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation build()'>
+    <item name='android.content.Entity java.util.ArrayList&lt;android.content.Entity.NamedContentValues&gt; getSubValues()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IClipboard void addPrimaryClipChangedListener(android.content.IOnPrimaryClipChangedListener, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setClass(android.content.Context, java.lang.Class&lt;?&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Context void enforceCallingOrSelfPermission(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setClass(android.content.Context, java.lang.Class&lt;?&gt;) 1'>
+    <item name='android.content.SharedPreferences int getInt(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContextWrapper void unbindService(android.content.ServiceConnection) 0'>
@@ -323,19 +518,34 @@
     <item name='android.content.ContentResolver android.content.ContentResolver.OpenResourceIdResult getResourceId(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName java.lang.String flattenToString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.ContentUris android.net.Uri withAppendedId(android.net.Uri, long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.ContentResolver void addPeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValueBackReferences(android.content.ContentValues)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentResolver void removePeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider int bulkInsert(java.lang.String, android.net.Uri, android.content.ContentValues[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putParcelableArrayListExtra(java.lang.String, java.util.ArrayList&lt;? extends android.os.Parcelable&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValues(android.content.ContentValues)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context void sendBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ISyncContext.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendStickyBroadcast(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipData.Item void toShortString(java.lang.StringBuilder) 0'>
@@ -344,19 +554,34 @@
     <item name='android.content.AsyncQueryHandler android.os.Handler createHandler(android.os.Looper) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context android.content.Context createDisplayContext(android.view.Display) 0'>
+    <item name='android.content.Context void sendOrderedBroadcast(android.content.Intent, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName java.lang.Object clone()'>
+    <item name='android.content.Context android.content.Context createDisplayContext(android.view.Display) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.SearchRecentSuggestionsProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent java.lang.Object clone()'>
+    <item name='android.content.ContextWrapper java.io.File getFilesDir()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences boolean getBoolean(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, boolean[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setTypeAndNormalize(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter void addDataScheme(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider int bulkInsert(java.lang.String, android.net.Uri, android.content.ContentValues[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setType(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver android.os.ParcelFileDescriptor openFileDescriptor(android.net.Uri, java.lang.String) 0'>
@@ -365,25 +590,34 @@
     <item name='android.content.Intent android.content.Intent setClassName(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putStringArrayListExtra(java.lang.String, java.util.ArrayList&lt;java.lang.String&gt;)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.SyncAdapterType android.content.SyncAdapterType newKey(java.lang.String, java.lang.String)'>
+    <item name='android.content.Context android.content.Context getApplicationContext()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.RestrictionEntry void setChoiceEntries(android.content.Context, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context java.lang.String getString(int, java.lang.Object...)'>
+    <item name='android.content.SearchRecentSuggestionsProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValue(java.lang.String, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.AsyncTaskLoader void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.SyncStats java.lang.String toString()'>
+    <item name='android.content.ISyncStatusObserver.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setData(android.net.Uri)'>
+    <item name='android.content.ContextWrapper void sendBroadcast(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.CursorEntityIterator android.content.Entity getEntityAndIncrementCursor(android.database.Cursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, char[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent setClassName(android.content.Context, java.lang.String) 1'>
@@ -392,43 +626,58 @@
     <item name='android.content.Loader Loader(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent makeMainSelectorActivity(java.lang.String, java.lang.String)'>
+    <item name='android.content.Intent android.content.Intent parseUri(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, int[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.SyncResult java.lang.String toString()'>
+    <item name='android.content.Loader java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentName int compareTo(android.content.ComponentName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setDataAndTypeAndNormalize(android.net.Uri, java.lang.String)'>
+    <item name='android.content.IClipboard.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent createChooser(android.content.Intent, java.lang.CharSequence)'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.Parcelable)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void removeStickyBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context void setWallpaper(android.graphics.Bitmap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.DefaultDataHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter IntentFilter(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContextWrapper void sendOrderedBroadcast(android.content.Intent, java.lang.String, int, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentProvider android.net.Uri rejectInsert(android.net.Uri, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context void removeStickyBroadcast(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.CursorEntityIterator android.content.Entity getEntityAndIncrementCursor(android.database.Cursor)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.DefaultDataHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent Intent(java.lang.String, android.net.Uri, android.content.Context, java.lang.Class&lt;?&gt;) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.Intent android.content.Intent setClassName(android.content.Context, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putIntegerArrayListExtra(java.lang.String, java.util.ArrayList&lt;java.lang.Integer&gt;)'>
+    <item name='android.content.Intent Intent(java.lang.String, android.net.Uri, android.content.Context, java.lang.Class&lt;?&gt;) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.Bundle)'>
+    <item name='android.content.IContentProvider android.os.ParcelFileDescriptor openFile(java.lang.String, android.net.Uri, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderNative android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.SyncAdaptersCache android.content.SyncAdapterType parseServiceAttributes(android.content.res.Resources, java.lang.String, android.util.AttributeSet) 0'>
@@ -437,7 +686,7 @@
     <item name='android.content.Context void sendOrderedBroadcast(android.content.Intent, java.lang.String, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(int[])'>
+    <item name='android.content.ComponentName java.lang.String getPackageName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentName void writeToParcel(android.os.Parcel, int) 0'>
@@ -446,34 +695,31 @@
     <item name='android.content.IntentFilter IntentFilter(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent android.content.Intent setClassName(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Intent android.content.ComponentName resolveActivity(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setClassName(java.lang.String, java.lang.String) 1'>
+    <item name='android.content.DefaultDataHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.CursorLoader void dump(java.lang.String, java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent java.lang.String toURI()'>
+    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName java.lang.String getClassName()'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent replaceExtras(android.os.Bundle)'>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putLong(java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Context boolean bindService(android.content.Intent, android.content.ServiceConnection, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent getIntent(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, long[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, char)'>
+    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(int, int[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent Intent(java.lang.String, android.net.Uri, android.content.Context, java.lang.Class&lt;?&gt;) 3'>
@@ -482,31 +728,43 @@
     <item name='android.content.ContextWrapper void sendOrderedBroadcast(android.content.Intent, java.lang.String, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation build()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Intent android.content.Intent replaceExtras(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setAction(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Context java.lang.CharSequence getText(int)'>
+    <item name='android.content.Context java.lang.String getString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipDescription ClipDescription(java.lang.CharSequence, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentValues java.util.Set&lt;java.lang.String&gt; keySet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putLong(java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendOrderedBroadcastAsUser(android.content.Intent, android.os.UserHandle, java.lang.String, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.IntentFilter int matchDataAuthority(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValue(java.lang.String, java.lang.Object)'>
+    <item name='android.content.Context android.content.Intent registerReceiverAsUser(android.content.BroadcastReceiver, android.os.UserHandle, android.content.IntentFilter, java.lang.String, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.CharSequence)'>
+    <item name='android.content.SyncResult java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver void removePeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent makeMainActivity(android.content.ComponentName)'>
+    <item name='android.content.ClipDescription java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper java.io.FileOutputStream openFileOutput(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContextWrapper boolean bindService(android.content.Intent, android.content.ServiceConnection, int) 1'>
@@ -515,7 +773,13 @@
     <item name='android.content.ContentResolver java.io.OutputStream openOutputStream(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context void sendBroadcast(android.content.Intent, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentResolver android.content.res.AssetFileDescriptor openAssetFileDescriptor(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IntentFilter int match(android.content.ContentResolver, android.content.Intent, boolean, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, android.os.CancellationSignal) 0'>
@@ -524,40 +788,40 @@
     <item name='android.content.ComponentName ComponentName(android.content.Context, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.IntentFilter int match(android.content.ContentResolver, android.content.Intent, boolean, java.lang.String) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.SyncAdaptersCache android.content.SyncAdapterType parseServiceAttributes(android.content.res.Resources, java.lang.String, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProvider android.content.ContentProviderResult[] applyBatch(java.util.ArrayList&lt;android.content.ContentProviderOperation&gt;)'>
+    <item name='android.content.IContentProvider android.content.res.AssetFileDescriptor openTypedAssetFile(java.lang.String, android.net.Uri, java.lang.String, android.os.Bundle) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver void registerContentObserver(android.net.Uri, boolean, android.database.ContentObserver) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipData android.content.ClipData newRawUri(java.lang.CharSequence, android.net.Uri)'>
+    <item name='android.content.IContentService void requestSync(android.accounts.Account, java.lang.String, android.os.Bundle) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setClassName(java.lang.String, java.lang.String)'>
+    <item name='android.content.ComponentName java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withYieldAllowed(boolean)'>
+    <item name='android.content.ContentProvider android.content.IContentProvider getIContentProvider()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent parseUri(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProvider java.lang.String getType(android.net.Uri)'>
+    <item name='android.content.DefaultDataHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setDataAndNormalize(android.net.Uri)'>
+    <item name='android.content.Intent android.content.Intent setData(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.AsyncQueryHandler void handleMessage(android.os.Message) 0'>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putFloat(java.lang.String, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentSender void writeIntentSenderOrNullToParcel(android.content.IntentSender, android.os.Parcel) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.AsyncQueryHandler void handleMessage(android.os.Message) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.CursorLoader CursorLoader(android.content.Context) 0'>
@@ -566,7 +830,16 @@
     <item name='android.content.IntentFilter void addDataAuthority(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(int, int[])'>
+    <item name='android.content.Context void sendBroadcast(android.content.Intent, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentResolver void unstableProviderDied(android.content.IContentProvider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context java.io.FileOutputStream openFileOutput(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IClipboard void removePrimaryClipChangedListener(android.content.IOnPrimaryClipChangedListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.SyncStatusInfo SyncStatusInfo(android.os.Parcel) 0'>
@@ -578,19 +851,19 @@
     <item name='android.content.ClipDescription boolean compareMimeTypes(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, byte)'>
+    <item name='android.content.IIntentSender.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValueBackReference(java.lang.String, int)'>
+    <item name='android.content.ContextWrapper java.io.File getDatabasePath(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent replaceExtras(android.content.Intent)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(int[]) 0'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.io.Serializable)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newInsert(android.net.Uri) 0'>
@@ -599,16 +872,25 @@
     <item name='android.content.ClipData ClipData(android.content.ClipDescription, android.content.ClipData.Item) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContextWrapper boolean bindServiceAsUser(android.content.Intent, android.content.ServiceConnection, int, android.os.UserHandle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentProviderResult ContentProviderResult(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValueBackReferences(android.content.ContentValues)'>
+    <item name='android.content.Context boolean deleteFile(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentResolver android.content.ContentResolver.OpenResourceIdResult getResourceId(android.net.Uri)'>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withYieldAllowed(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent getIntentOld(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.DefaultDataHandler void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor remove(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipData android.content.ClipData newUri(android.content.ContentResolver, java.lang.CharSequence, android.net.Uri) 0'>
@@ -620,25 +902,22 @@
     <item name='android.content.IntentFilter void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentValues java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.io.Serializable)'>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withExpectedCount(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContextWrapper void enforceCallingPermission(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int) 0'>
+    <item name='android.content.DefaultDataHandler void processingInstruction(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipData ClipData(java.lang.CharSequence, java.lang.String[], android.content.ClipData.Item) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderNative android.os.IBinder asBinder()'>
+    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName java.lang.String toString()'>
+    <item name='android.content.IContentProvider android.content.ContentProviderResult[] applyBatch(java.lang.String, java.util.ArrayList&lt;android.content.ContentProviderOperation&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent.ShortcutIconResource void writeToParcel(android.os.Parcel, int) 0'>
@@ -647,25 +926,34 @@
     <item name='android.content.SearchRecentSuggestionsProvider void setupSuggestions(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context java.lang.String getString(int)'>
+    <item name='android.content.AbstractThreadedSyncAdapter void onSyncCanceled(java.lang.Thread) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.AbstractThreadedSyncAdapter void onSyncCanceled(java.lang.Thread) 0'>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putString(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.RestrictionEntry void setChoiceValues(android.content.Context, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.AsyncQueryHandler android.os.Handler createHandler(android.os.Looper)'>
+    <item name='android.content.Intent android.content.Intent makeMainActivity(android.content.ComponentName)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent java.lang.String toShortString(boolean, boolean, boolean, boolean)'>
+    <item name='android.content.Context void unregisterReceiver(android.content.BroadcastReceiver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderResult void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.DefaultDataHandler void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putCharSequenceArrayListExtra(java.lang.String, java.util.ArrayList&lt;java.lang.CharSequence&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProvider java.lang.String getType(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.RestrictionEntry RestrictionEntry(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderResult void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver android.content.IContentProvider acquireProvider(android.net.Uri) 0'>
@@ -677,22 +965,34 @@
     <item name='android.content.IntentFilter void dump(android.util.Printer, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ComponentName java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, char[])'>
+    <item name='android.content.ContextWrapper int checkUriPermission(android.net.Uri, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.DefaultDataHandler void processingInstruction(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentName ComponentName(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, short[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentService void registerContentObserver(android.net.Uri, boolean, android.database.IContentObserver, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Context int checkPermission(java.lang.String, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent.ShortcutIconResource android.content.Intent.ShortcutIconResource fromContext(android.content.Context, int)'>
+    <item name='android.content.ContentProvider android.os.ParcelFileDescriptor openPipeHelper(android.net.Uri, java.lang.String, android.os.Bundle, T, android.content.ContentProvider.PipeDataWriter&lt;T&gt;) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProvider android.os.ParcelFileDescriptor openPipeHelper(android.net.Uri, java.lang.String, android.os.Bundle, T, android.content.ContentProvider.PipeDataWriter&lt;T&gt;) 4'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.PeriodicSync PeriodicSync(android.accounts.Account, java.lang.String, android.os.Bundle, long) 2'>
@@ -701,7 +1001,13 @@
     <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newUpdate(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, boolean[])'>
+    <item name='android.content.Context java.io.File getFileStreamPath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putInt(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ComponentName java.lang.String getClassName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentUris android.net.Uri.Builder appendId(android.net.Uri.Builder, long) 0'>
@@ -710,28 +1016,31 @@
     <item name='android.content.IntentFilter.AuthorityEntry AuthorityEntry(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent parseIntent(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet)'>
+    <item name='android.content.DefaultDataHandler void setDocumentLocator(org.xml.sax.Locator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipData android.content.ClipData newIntent(java.lang.CharSequence, android.content.Intent)'>
+    <item name='android.content.ContentProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Entity java.lang.String toString()'>
+    <item name='android.content.Intent java.lang.String toShortString(boolean, boolean, boolean, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[])'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.Bundle)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.IOnPrimaryClipChangedListener.Stub android.os.IBinder asBinder()'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setDataAndType(android.net.Uri, java.lang.String)'>
+    <item name='android.content.Intent android.content.Intent makeMainSelectorActivity(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SyncStats java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ClipData android.content.ClipData newUri(android.content.ContentResolver, java.lang.CharSequence, android.net.Uri) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withExpectedCount(int)'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent.ShortcutIconResource android.content.Intent.ShortcutIconResource fromContext(android.content.Context, int) 0'>
@@ -743,22 +1052,37 @@
     <item name='android.content.ComponentName ComponentName(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentResolver void removeStatusChangeListener(java.lang.Object) 0'>
+    <item name='android.content.ComponentName java.lang.String flattenToString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withValues(android.content.ContentValues)'>
+    <item name='android.content.Context void sendBroadcastAsUser(android.content.Intent, android.os.UserHandle, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context void startActivitiesAsUser(android.content.Intent[], android.os.Bundle, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentResolver void removeStatusChangeListener(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent int fillIn(android.content.Intent, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent android.content.Intent addCategory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ClipData ClipData(android.content.ClipData) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProvider void attachInfo(android.content.Context, android.content.pm.ProviderInfo) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newAssertQuery(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName android.content.ComponentName clone()'>
+    <item name='android.content.Context java.io.File getSharedPrefsFile(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentService void registerContentObserver(android.net.Uri, boolean, android.database.IContentObserver, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver int bulkInsert(android.net.Uri, android.content.ContentValues[]) 0'>
@@ -770,10 +1094,7 @@
     <item name='android.content.Context android.content.Context createConfigurationContext(android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newDelete(android.net.Uri)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent java.lang.String toInsecureStringWithClip()'>
+    <item name='android.content.IntentSender java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent java.lang.String resolveType(android.content.ContentResolver) 0'>
@@ -788,13 +1109,25 @@
     <item name='android.content.DefaultDataHandler void insert(android.content.ContentResolver, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, float)'>
+    <item name='android.content.Intent java.lang.String toInsecureString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, double)'>
+    <item name='android.content.Context java.io.File getDatabasePath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setClassName(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setDataAndType(android.net.Uri, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context void sendOrderedBroadcastAsUser(android.content.Intent, android.os.UserHandle, java.lang.String, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver void requestSync(android.accounts.Account, java.lang.String, android.os.Bundle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver java.util.List&lt;android.content.PeriodicSync&gt; getPeriodicSyncs(android.accounts.Account, java.lang.String) 0'>
@@ -806,40 +1139,52 @@
     <item name='android.content.Intent android.content.Intent putExtras(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context void setWallpaper(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContextWrapper java.lang.Object getSystemService(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences java.util.Map&lt;java.lang.String,?&gt; getAll()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter android.content.IntentFilter create(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName java.lang.String getPackageName()'>
+    <item name='android.content.Context android.content.Context createPackageContext(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Loader java.lang.String dataToString(D)'>
+    <item name='android.content.Context void startActivitiesAsUser(android.content.Intent[], android.os.Bundle, android.os.UserHandle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, char)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentUris long parseId(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context java.lang.String getString(int, java.lang.Object...) 1'>
+    <item name='android.content.ComponentName android.content.ComponentName clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context android.content.Context createPackageContext(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentQueryMap ContentQueryMap(android.database.Cursor, java.lang.String, boolean, android.os.Handler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context java.lang.String getString(int, java.lang.Object...) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentProvider int delete(android.net.Uri, java.lang.String, java.lang.String[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Context void unbindService(android.content.ServiceConnection) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter IntentFilter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newInsert(android.net.Uri)'>
+    <item name='android.content.Context void unbindService(android.content.ServiceConnection) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.SyncResult void writeToParcel(android.os.Parcel, int) 0'>
@@ -848,10 +1193,19 @@
     <item name='android.content.ContentResolver void validateSyncExtrasBundle(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentProviderOperation android.content.ContentProviderResult apply(android.content.ContentProvider, android.content.ContentProviderResult[], int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.IntentFilter void addAction(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.SyncResult java.lang.String toDebugString()'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, double[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setDataAndTypeAndNormalize(android.net.Uri, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter android.content.IntentFilter create(java.lang.String, java.lang.String) 0'>
@@ -860,7 +1214,19 @@
     <item name='android.content.ComponentName android.content.ComponentName unflattenFromString(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent android.content.Intent makeRestartActivityTask(android.content.ComponentName)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentInsertHandler void insert(android.content.ContentResolver, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.UriMatcher int match(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setClassName(android.content.Context, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SyncAdapterType java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentSender void sendIntent(android.content.Context, int, android.content.Intent, android.content.IntentSender.OnFinished, android.os.Handler, java.lang.String) 0'>
@@ -869,16 +1235,31 @@
     <item name='android.content.ContentQueryMap ContentQueryMap(android.database.Cursor, java.lang.String, boolean, android.os.Handler) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.IntentFilter android.content.IntentFilter create(java.lang.String, java.lang.String)'>
+    <item name='android.content.ContentValues java.util.Set&lt;java.util.Map.Entry&lt;java.lang.String,java.lang.Object&gt;&gt; valueSet()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent java.lang.String toUri(int)'>
+    <item name='android.content.ContextWrapper java.io.File getFileStreamPath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProvider int delete(android.net.Uri, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newAssertQuery(android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newDelete(android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor clear()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.PeriodicSync void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent java.lang.String resolveTypeIfNeeded(android.content.ContentResolver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.PeriodicSync void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.content.Context java.io.FileInputStream openFileInput(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver int delete(android.net.Uri, java.lang.String, java.lang.String[]) 0'>
@@ -893,6 +1274,12 @@
     <item name='android.content.ContentProviderOperation android.content.ContentProviderResult apply(android.content.ContentProvider, android.content.ContentProviderResult[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newUpdate(android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentResolver java.lang.Object addStatusChangeListener(int, android.content.SyncStatusObserver)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.BroadcastReceiver void onReceive(android.content.Context, android.content.Intent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -902,31 +1289,28 @@
     <item name='android.content.SyncAdaptersCache java.lang.Object parseServiceAttributes(android.content.res.Resources, java.lang.String, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipData.Item java.lang.String coerceToHtmlText(android.content.Context)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent addCategory(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.IIntentReceiver.Stub android.os.IBinder asBinder()'>
+    <item name='android.content.Context android.content.SharedPreferences getSharedPreferences(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProvider void onConfigurationChanged(android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context void startActivities(android.content.Intent[], android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent.ShortcutIconResource android.content.Intent.ShortcutIconResource fromContext(android.content.Context, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void startActivities(android.content.Intent[], android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context void sendStickyOrderedBroadcastAsUser(android.content.Intent, android.os.UserHandle, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContextWrapper int checkCallingOrSelfPermission(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.SyncAdapterType java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withSelection(java.lang.String, java.lang.String[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.ClipData void addItem(android.content.ClipData.Item) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent setTypeAndNormalize(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.AsyncQueryHandler.WorkerHandler void handleMessage(android.os.Message) 0'>
@@ -935,10 +1319,31 @@
     <item name='android.content.SearchRecentSuggestionsProvider java.lang.String getType(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context android.content.Context createPackageContextAsUser(java.lang.String, int, android.os.UserHandle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContextWrapper void enforcePermission(java.lang.String, int, int, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.DialogInterface.OnKeyListener boolean onKey(android.content.DialogInterface, int, android.view.KeyEvent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putIntegerArrayListExtra(java.lang.String, java.util.ArrayList&lt;java.lang.Integer&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent addFlags(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentResolver android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IIntentReceiver void performReceive(android.content.Intent, int, java.lang.String, android.os.Bundle, boolean, boolean, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putBoolean(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent cloneFilter()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ComponentName int compareTo(java.lang.Object) 0'>
@@ -947,10 +1352,13 @@
     <item name='android.content.Intent android.content.Intent addCategory(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putBoolean(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.IntentSender void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.IntentSender java.lang.String toString()'>
+    <item name='android.content.ClipData android.content.ClipData newHtmlText(java.lang.CharSequence, java.lang.CharSequence, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter boolean hasDataAuthority(android.net.Uri) 0'>
@@ -959,43 +1367,70 @@
     <item name='android.content.IntentFilter void writeToXml(org.xmlpull.v1.XmlSerializer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ISyncAdapter.Stub android.os.IBinder asBinder()'>
+    <item name='android.content.ContextWrapper void startActivitiesAsUser(android.content.Intent[], android.os.Bundle, android.os.UserHandle) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Loader java.lang.String toString()'>
+    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withSelectionBackReference(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver java.util.List&lt;android.content.PeriodicSync&gt; getPeriodicSyncs(android.accounts.Account, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContextWrapper void sendBroadcast(android.content.Intent, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider java.lang.String getType(android.net.Uri)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.RestrictionEntry java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ClipData android.content.ClipData newIntent(java.lang.CharSequence, android.content.Intent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void startActivities(android.content.Intent[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider android.content.res.AssetFileDescriptor openAssetFile(java.lang.String, android.net.Uri, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context java.lang.CharSequence getText(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendOrderedBroadcast(android.content.Intent, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.Intent Intent(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.String)'>
+    <item name='android.content.SearchRecentSuggestionsProvider int delete(android.net.Uri, java.lang.String, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.SyncAdaptersCache java.lang.Object parseServiceAttributes(android.content.res.Resources, java.lang.String, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentProviderNative java.lang.String getProviderName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.IntentFilter void addDataPath(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName java.lang.String toShortString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.SearchRecentSuggestionsProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)'>
+    <item name='android.content.ClipData android.content.ClipData newUri(android.content.ContentResolver, java.lang.CharSequence, android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.BroadcastReceiver void onReceive(android.content.Context, android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContextWrapper android.content.Context createPackageContext(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContextWrapper android.content.Context createDisplayContext(android.view.Display) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, android.os.IBinder)'>
+    <item name='android.content.ISyncStatusObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ClipData android.content.ClipData newUri(android.content.ContentResolver, java.lang.CharSequence, android.net.Uri)'>
+    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, long[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProvider java.lang.String getType(android.net.Uri) 0'>
@@ -1010,19 +1445,43 @@
     <item name='android.content.ContentResolver java.lang.String getType(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Intent.FilterComparison android.content.Intent getIntent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.SyncStats SyncStats(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void sendBroadcast(android.content.Intent, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void startActivitiesAsUser(android.content.Intent[], android.os.Bundle, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IOnPrimaryClipChangedListener.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentFilter.AuthorityEntry int match(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ComponentName java.lang.String flattenToShortString()'>
+    <item name='android.content.IClipboard.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtras(android.content.Intent)'>
+    <item name='android.content.ContentProviderResult java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context java.io.File getDir(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IntentFilter android.content.IntentFilter create(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent getIntentOld(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver void unregisterContentObserver(android.database.ContentObserver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider android.net.Uri insert(java.lang.String, android.net.Uri, android.content.ContentValues) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent createChooser(android.content.Intent, java.lang.CharSequence) 0'>
@@ -1031,19 +1490,34 @@
     <item name='android.content.Intent Intent(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setComponent(android.content.ComponentName)'>
+    <item name='android.content.ContentUris android.net.Uri.Builder appendId(android.net.Uri.Builder, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentValues java.util.Set&lt;java.lang.String&gt; keySet()'>
+    <item name='android.content.ContextWrapper android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Context android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int)'>
+    <item name='android.content.ContextWrapper android.content.Context createPackageContextAsUser(java.lang.String, int, android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, short)'>
+    <item name='android.content.ISyncStatusObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context android.content.Context createConfigurationContext(android.content.res.Configuration)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentValues java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SyncResult java.lang.String toDebugString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.IntentSender void sendIntent(android.content.Context, int, android.content.Intent, android.content.IntentSender.OnFinished, android.os.Handler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent replaceExtras(android.os.Bundle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProviderNative boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent getIntent(java.lang.String) 0'>
@@ -1055,85 +1529,106 @@
     <item name='android.content.ClipDescription java.lang.String[] filterMimeTypes(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newDelete(android.net.Uri) 0'>
+    <item name='android.content.ComponentName java.lang.String flattenToShortString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContentProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent setComponent(android.content.ComponentName)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.RestrictionEntry void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newDelete(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context java.lang.String getString(int, java.lang.Object...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ClipDescription boolean hasMimeType(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.RestrictionEntry java.lang.String toString()'>
+    <item name='android.content.ContextWrapper void sendStickyBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newAssertQuery(android.net.Uri)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtras(android.os.Bundle)'>
+    <item name='android.content.Context void sendStickyBroadcast(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProviderNative boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent makeRestartActivityTask(android.content.ComponentName)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.ContentProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent.FilterComparison android.content.Intent getIntent()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.Intent android.content.Intent putExtra(java.lang.String, java.lang.String[])'>
+    <item name='android.content.Context java.lang.String[] fileList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver java.io.InputStream openInputStream(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent.FilterComparison FilterComparison(android.content.Intent) 0'>
+    <item name='android.content.ContentResolver android.content.ContentResolver.OpenResourceIdResult getResourceId(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent parseUri(java.lang.String, int)'>
+    <item name='android.content.Intent.FilterComparison FilterComparison(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.PeriodicSync boolean syncExtrasEquals(android.os.Bundle, android.os.Bundle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.IntentFilter int match(android.content.ContentResolver, android.content.Intent, boolean, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.PeriodicSync boolean syncExtrasEquals(android.os.Bundle, android.os.Bundle) 1'>
+    <item name='android.content.Context java.lang.String[] databaseList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentResolver android.os.Bundle call(android.net.Uri, java.lang.String, java.lang.String, android.os.Bundle) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation.Builder android.content.ContentProviderOperation.Builder withSelectionBackReference(int, int)'>
+    <item name='android.content.Context int checkUriPermission(android.net.Uri, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent java.lang.String toInsecureStringWithClip()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent setDataAndNormalize(android.net.Uri) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.ContextWrapper android.content.Context createPackageContextAsUser(java.lang.String, int, android.os.UserHandle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent parseIntent(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ComponentName void writeToParcel(android.content.ComponentName, android.os.Parcel) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.ContextWrapper void setWallpaper(android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.ContentProviderOperation void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent setFlags(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.SyncAdapterType void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent getIntentOld(java.lang.String)'>
+    <item name='android.content.ClipData.Item java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.IContentProvider android.net.Uri insert(java.lang.String, android.net.Uri, android.content.ContentValues) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Context int checkCallingOrSelfPermission(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.PeriodicSync boolean syncExtrasEquals(android.os.Bundle, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Intent android.content.Intent putStringArrayListExtra(java.lang.String, java.util.ArrayList&lt;java.lang.String&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.Intent android.content.Intent makeMainSelectorActivity(java.lang.String, java.lang.String) 1'>
@@ -1148,22 +1643,31 @@
     <item name='android.content.ContextWrapper boolean startInstrumentation(android.content.ComponentName, java.lang.String, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.Context boolean bindServiceAsUser(android.content.Intent, android.content.ServiceConnection, int, android.os.UserHandle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.SharedPreferences.Editor android.content.SharedPreferences.Editor putStringSet(java.lang.String, java.util.Set&lt;java.lang.String&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.ContentValues ContentValues(android.content.ContentValues) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent java.lang.String toInsecureString()'>
+    <item name='android.content.Context void sendBroadcast(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProviderOperation android.content.ContentProviderOperation.Builder newUpdate(android.net.Uri)'>
+    <item name='android.content.Entity java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.AsyncTaskLoader AsyncTaskLoader(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.Intent android.content.Intent addFlags(int)'>
+    <item name='android.content.ContentProvider android.database.Cursor rejectQuery(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, android.os.CancellationSignal) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.ContentProvider android.database.Cursor rejectQuery(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, android.os.CancellationSignal) 0'>
+    <item name='android.content.Context java.io.FileOutputStream openFileOutput(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.Context void sendStickyBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

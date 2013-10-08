@@ -1,17 +1,14 @@
 <root>
-    <item name='org.json.JSONArray org.json.JSONObject getJSONObject(int)'>
+    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONStringer org.json.JSONStringer value(long)'>
+    <item name='org.json.JSONStringer org.json.JSONStringer endObject()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONTokener java.lang.String nextString(char)'>
+    <item name='org.json.JSONArray org.json.JSONArray put(double)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONTokener java.lang.String toString()'>
+    <item name='org.json.JSONStringer org.json.JSONStringer endArray()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONStringer org.json.JSONStringer value(java.lang.Object)'>
@@ -20,55 +17,67 @@
     <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.json.JSONTokener java.lang.String nextTo(char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.json.JSONStringer org.json.JSONStringer array()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONStringer org.json.JSONStringer object()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONTokener java.lang.String nextTo(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(int, java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONStringer org.json.JSONStringer endArray()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONTokener org.json.JSONException syntaxError(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray java.lang.String join(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONTokener java.lang.String next(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(boolean)'>
+    <item name='org.json.JSONArray org.json.JSONArray put(int, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONArray java.lang.String getString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONObject org.json.JSONObject putOpt(java.lang.String, java.lang.Object)'>
+    <item name='org.json.JSONStringer org.json.JSONStringer object()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject java.lang.Object get(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONArray org.json.JSONObject getJSONObject(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject org.json.JSONArray getJSONArray(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONArray org.json.JSONArray put(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject org.json.JSONObject accumulate(java.lang.String, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject org.json.JSONObject getJSONObject(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONObject org.json.JSONObject accumulate(java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONStringer org.json.JSONStringer value(boolean)'>
+    <item name='org.json.JSONStringer org.json.JSONStringer key(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, long)'>
+    <item name='org.json.JSONTokener java.lang.String next(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(long)'>
+    <item name='org.json.JSONArray org.json.JSONArray put(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(int, boolean)'>
+    <item name='org.json.JSONArray java.lang.Object get(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONObject org.json.JSONObject getJSONObject(java.lang.String)'>
+    <item name='org.json.JSONArray org.json.JSONArray put(int, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONArray org.json.JSONArray getJSONArray(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONStringer org.json.JSONStringer value(double)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONTokener java.lang.String nextString(char)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONObject JSONObject(org.json.JSONTokener) 0'>
@@ -80,31 +89,28 @@
     <item name='org.json.JSONTokener java.lang.String nextTo(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONObject java.lang.Object get(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(int, long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray java.lang.Object get(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(java.lang.Object)'>
+    <item name='org.json.JSONObject org.json.JSONObject putOpt(java.lang.String, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONObject JSONObject(java.util.Map) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(double)'>
+    <item name='org.json.JSONArray java.lang.String join(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONArray org.json.JSONArray put(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, double)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONTokener void skipPast(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONArray org.json.JSONArray put(int, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONArray JSONArray(java.lang.Object) 0'>
@@ -113,37 +119,31 @@
     <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONStringer org.json.JSONStringer endObject()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.json.JSONStringer org.json.JSONStringer key(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONObject JSONObject(org.json.JSONObject, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONStringer org.json.JSONStringer key(java.lang.String)'>
+    <item name='org.json.JSONStringer org.json.JSONStringer value(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONArray org.json.JSONArray put(boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONArray JSONArray(org.json.JSONTokener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, double)'>
+    <item name='org.json.JSONTokener org.json.JSONException syntaxError(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONObject org.json.JSONObject accumulate(java.lang.String, java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONStringer org.json.JSONStringer value(double)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONObject org.json.JSONArray getJSONArray(java.lang.String)'>
+    <item name='org.json.JSONTokener java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONObject java.lang.String numberToString(java.lang.Number) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONTokener java.lang.String nextTo(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.json.JSONArray org.json.JSONArray put(int, double)'>
@@ -152,19 +152,19 @@
     <item name='org.json.JSONObject java.lang.String getString(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.json.JSONStringer org.json.JSONStringer value(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.json.JSONArray org.json.JSONArray put(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.json.JSONObject org.json.JSONObject put(java.lang.String, double) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.json.JSONTokener java.lang.String nextTo(char)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.json.JSONArray org.json.JSONObject toJSONObject(org.json.JSONArray) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray org.json.JSONArray getJSONArray(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.json.JSONArray org.json.JSONArray put(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

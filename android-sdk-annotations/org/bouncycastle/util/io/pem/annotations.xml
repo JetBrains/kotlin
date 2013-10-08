@@ -14,6 +14,9 @@
     <item name='org.bouncycastle.util.io.pem.PemReader PemReader(java.io.Reader) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.bouncycastle.util.io.pem.PemObjectGenerator org.bouncycastle.util.io.pem.PemObject generate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.bouncycastle.util.io.pem.PemWriter int getOutputSize(org.bouncycastle.util.io.pem.PemObject) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>

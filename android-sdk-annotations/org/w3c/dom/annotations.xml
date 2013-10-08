@@ -1,0 +1,128 @@
+<root>
+    <item name='org.w3c.dom.Element org.w3c.dom.Attr setAttributeNodeNS(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMConfiguration void setParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.NamedNodeMap org.w3c.dom.Node setNamedItemNS(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Text org.w3c.dom.Text splitText(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMConfiguration java.lang.Object getParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Attr void setValue(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Document org.w3c.dom.Comment createComment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Element org.w3c.dom.Attr removeAttributeNode(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMImplementation org.w3c.dom.DocumentType createDocumentType(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Element void removeAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.CharacterData void setData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Document org.w3c.dom.Element getElementById(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMImplementation java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.NamedNodeMap org.w3c.dom.Node setNamedItem(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.CharacterData java.lang.String substringData(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.CharacterData java.lang.String getData()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node boolean isSupported(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node java.lang.Object getUserData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Document org.w3c.dom.Node renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Element org.w3c.dom.Attr setAttributeNode(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Document org.w3c.dom.Node renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMImplementation org.w3c.dom.DocumentType createDocumentType(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMError org.w3c.dom.DOMLocator getLocation()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node java.lang.Object setUserData(java.lang.String, java.lang.Object, org.w3c.dom.UserDataHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Element void setIdAttributeNode(org.w3c.dom.Attr, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.ProcessingInstruction void setData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMConfiguration boolean canSetParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMImplementation boolean hasFeature(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMConfiguration void setParameter(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMConfiguration org.w3c.dom.DOMStringList getParameterNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMImplementation org.w3c.dom.Document createDocument(java.lang.String, java.lang.String, org.w3c.dom.DocumentType)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Document org.w3c.dom.Node importNode(org.w3c.dom.Node, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.DOMErrorHandler boolean handleError(org.w3c.dom.DOMError) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Element java.lang.String getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Document org.w3c.dom.Text createTextNode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Document org.w3c.dom.CDATASection createCDATASection(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.w3c.dom.Node org.w3c.dom.Node removeChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

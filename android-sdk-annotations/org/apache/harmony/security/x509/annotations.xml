@@ -2,12 +2,6 @@
     <item name='org.apache.harmony.security.x509.GeneralName byte[] ipStrToBytes(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.CertificatePolicies java.util.List&lt;org.apache.harmony.security.x509.PolicyInformation&gt; getPolicyInformations()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.GeneralName java.util.List&lt;java.lang.Object&gt; getAsList()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.x509.ReasonCode ReasonCode(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -26,31 +20,25 @@
     <item name='org.apache.harmony.security.x509.GeneralName GeneralName(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x509.X509PublicKey java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x509.ExtensionValue void dumpValue(java.lang.StringBuilder) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.GeneralName int[] oidStrToInts(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.InfoAccessSyntax java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.Extension Extension(java.lang.String, boolean, org.apache.harmony.security.x509.ExtensionValue) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.CertificatePolicies org.apache.harmony.security.x509.CertificatePolicies addPolicyInformation(org.apache.harmony.security.x509.PolicyInformation)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.DNParser java.util.List&lt;java.util.List&lt;org.apache.harmony.security.x501.AttributeTypeAndValue&gt;&gt; parse()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.AlternativeName void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.x509.GeneralName java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.CertificateList java.lang.String toString()'>
+    <item name='org.apache.harmony.security.x509.Extension Extension(java.lang.String, boolean, org.apache.harmony.security.x509.ExtensionValue) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.AlternativeName void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.X509PublicKey java.lang.String getFormat()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.ExtendedKeyUsage void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
@@ -59,16 +47,13 @@
     <item name='org.apache.harmony.security.x509.InvalidityDate InvalidityDate(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.CRLNumber java.math.BigInteger getNumber()'>
+    <item name='org.apache.harmony.security.x509.CertificatePolicies org.apache.harmony.security.x509.CertificatePolicies addPolicyInformation(org.apache.harmony.security.x509.PolicyInformation)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.PolicyInformation void dumpValue(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.ReasonFlags void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.X509PublicKey java.lang.String getFormat()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.SubjectKeyIdentifier void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
@@ -86,6 +71,9 @@
     <item name='org.apache.harmony.security.x509.InvalidityDate void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x509.CertificatePolicies java.util.List&lt;org.apache.harmony.security.x509.PolicyInformation&gt; getPolicyInformations()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x509.ReasonCode void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -101,6 +89,9 @@
     <item name='org.apache.harmony.security.x509.TBSCertList.RevokedCertificate void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x509.InfoAccessSyntax java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x509.CRLNumber void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -113,19 +104,25 @@
     <item name='org.apache.harmony.security.x509.CertificatePolicies void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x509.GeneralName int[] oidStrToInts(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x509.AuthorityKeyIdentifier org.apache.harmony.security.x509.AuthorityKeyIdentifier decode(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.NameConstraints boolean isAcceptable(java.util.List&lt;org.apache.harmony.security.x509.GeneralName&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.SubjectKeyIdentifier org.apache.harmony.security.x509.SubjectKeyIdentifier decode(byte[])'>
+    <item name='org.apache.harmony.security.x509.AuthorityKeyIdentifier org.apache.harmony.security.x509.AuthorityKeyIdentifier decode(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.CertificateList java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.TBSCertificate void dumpValue(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.IssuingDistributionPoint org.apache.harmony.security.x509.IssuingDistributionPoint decode(byte[])'>
+    <item name='org.apache.harmony.security.x509.GeneralName java.util.List&lt;java.lang.Object&gt; getAsList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.KeyUsage void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
@@ -140,19 +137,7 @@
     <item name='org.apache.harmony.security.x509.GeneralName GeneralName(int, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.Certificate java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.x509.GeneralName GeneralName(int, byte[]) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.X509PublicKey java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.AccessDescription java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.CertificateList byte[] getSignatureValue()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.CertificateList CertificateList(org.apache.harmony.security.x509.TBSCertList, org.apache.harmony.security.x509.AlgorithmIdentifier, byte[]) 2'>
@@ -161,13 +146,22 @@
     <item name='org.apache.harmony.security.x509.AlgorithmIdentifier void dumpValue(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x509.GeneralNames java.util.Collection&lt;java.util.List&lt;?&gt;&gt; getPairsList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x509.NameConstraints void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.DistributionPointName void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x509.CRLNumber java.math.BigInteger getNumber()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x509.CertificatePolicies org.apache.harmony.security.x509.CertificatePolicies decode(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.AccessDescription java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.GeneralName void checkDNS(java.lang.String) 0'>
@@ -179,6 +173,9 @@
     <item name='org.apache.harmony.security.x509.DistributionPoint void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.x509.CertificateList byte[] getSignatureValue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.x509.TBSCertList void dumpValue(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -188,7 +185,10 @@
     <item name='org.apache.harmony.security.x509.InfoAccessSyntax void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.x509.GeneralNames java.util.Collection&lt;java.util.List&lt;?&gt;&gt; getPairsList()'>
+    <item name='org.apache.harmony.security.x509.Certificate java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.SubjectKeyIdentifier org.apache.harmony.security.x509.SubjectKeyIdentifier decode(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.AlternativeName AlternativeName(boolean, byte[]) 1'>
@@ -198,9 +198,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.DNParser DNParser(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.x509.AuthorityKeyIdentifier org.apache.harmony.security.x509.AuthorityKeyIdentifier decode(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.GeneralName java.lang.String ipBytesToStr(byte[]) 0'>
@@ -213,6 +210,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.GeneralSubtree void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.x509.IssuingDistributionPoint org.apache.harmony.security.x509.IssuingDistributionPoint decode(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.x509.BasicConstraints void dumpValue(java.lang.StringBuilder, java.lang.String) 0'>

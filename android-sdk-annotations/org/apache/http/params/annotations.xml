@@ -1,20 +1,29 @@
 <root>
-    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getHttpElementCharset(org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.params.HttpConnectionParams void setLinger(org.apache.http.params.HttpParams, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.HttpConnectionParams int getSoTimeout(org.apache.http.params.HttpParams) 0'>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams setBooleanParameter(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getContentCharset(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getHttpElementCharset(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.BasicHttpParams boolean removeParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpConnectionParams void setSocketBufferSize(org.apache.http.params.HttpParams, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.AbstractHttpParams org.apache.http.params.HttpParams setDoubleParameter(java.lang.String, double)'>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams setIntParameter(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.HttpConnectionParams void setStaleCheckingEnabled(org.apache.http.params.HttpParams, boolean) 0'>
+    <item name='org.apache.http.params.DefaultedHttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpParams java.lang.Object getParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpProtocolParams void setUseExpectContinue(org.apache.http.params.HttpParams, boolean) 0'>
@@ -23,7 +32,7 @@
     <item name='org.apache.http.params.AbstractHttpParams org.apache.http.params.HttpParams setIntParameter(java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getContentCharset(org.apache.http.params.HttpParams)'>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpProtocolParams java.lang.String getContentCharset(org.apache.http.params.HttpParams) 0'>
@@ -38,10 +47,16 @@
     <item name='org.apache.http.params.AbstractHttpParams org.apache.http.params.HttpParams setLongParameter(java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.AbstractHttpParams org.apache.http.params.HttpParams setBooleanParameter(java.lang.String, boolean)'>
+    <item name='org.apache.http.params.HttpConnectionParams void setConnectionTimeout(org.apache.http.params.HttpParams, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.HttpConnectionParams void setConnectionTimeout(org.apache.http.params.HttpParams, int) 0'>
+    <item name='org.apache.http.params.BasicHttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.DefaultedHttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getHttpElementCharset(org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpConnectionParams void setTcpNoDelay(org.apache.http.params.HttpParams, boolean) 0'>
@@ -50,52 +65,19 @@
     <item name='org.apache.http.params.HttpProtocolParams void setHttpElementCharset(org.apache.http.params.HttpParams, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.DefaultedHttpParams org.apache.http.params.HttpParams copy()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.HttpConnectionParams boolean getTcpNoDelay(org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.BasicHttpParams org.apache.http.params.HttpParams copy()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.HttpAbstractParamBean HttpAbstractParamBean(org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.HttpConnectionParams int getLinger(org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.DefaultedHttpParams DefaultedHttpParams(org.apache.http.params.HttpParams, org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.params.HttpConnectionParams int getSocketBufferSize(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpProtocolParams void setVersion(org.apache.http.params.HttpParams, org.apache.http.ProtocolVersion) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getHttpElementCharset(org.apache.http.params.HttpParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.BasicHttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.params.HttpConnectionParams void setSoTimeout(org.apache.http.params.HttpParams, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.HttpProtocolParams void setContentCharset(org.apache.http.params.HttpParams, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpProtocolParams org.apache.http.ProtocolVersion getVersion(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getUserAgent(org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.HttpConnectionParamBean HttpConnectionParamBean(org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.params.HttpConnectionParams boolean isStaleCheckingEnabled(org.apache.http.params.HttpParams) 0'>
+    <item name='org.apache.http.params.BasicHttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpProtocolParamBean HttpProtocolParamBean(org.apache.http.params.HttpParams) 0'>
@@ -104,10 +86,82 @@
     <item name='org.apache.http.params.BasicHttpParams void setParameters(java.lang.String[], java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.params.HttpConnectionParams int getConnectionTimeout(org.apache.http.params.HttpParams) 0'>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.BasicHttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.params.HttpProtocolParams org.apache.http.ProtocolVersion getVersion(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpConnectionParams int getSoTimeout(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.AbstractHttpParams org.apache.http.params.HttpParams setBooleanParameter(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.AbstractHttpParams org.apache.http.params.HttpParams setDoubleParameter(java.lang.String, double)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.BasicHttpParams java.lang.Object getParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams setLongParameter(java.lang.String, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpConnectionParams void setStaleCheckingEnabled(org.apache.http.params.HttpParams, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.DefaultedHttpParams boolean removeParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpConnectionParams boolean getTcpNoDelay(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpConnectionParams int getLinger(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpAbstractParamBean HttpAbstractParamBean(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.DefaultedHttpParams DefaultedHttpParams(org.apache.http.params.HttpParams, org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpParams boolean removeParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.DefaultedHttpParams org.apache.http.params.HttpParams copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.BasicHttpParams org.apache.http.params.HttpParams copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpProtocolParams void setContentCharset(org.apache.http.params.HttpParams, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpConnectionParamBean HttpConnectionParamBean(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpProtocolParams java.lang.String getUserAgent(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.DefaultedHttpParams java.lang.Object getParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams setParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpConnectionParams boolean isStaleCheckingEnabled(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpConnectionParams int getConnectionTimeout(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.params.HttpParams org.apache.http.params.HttpParams setDoubleParameter(java.lang.String, double)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

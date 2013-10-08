@@ -2,16 +2,16 @@
     <item name='android.graphics.drawable.LayerDrawable LayerDrawable(android.graphics.drawable.Drawable[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.RotateDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.InsetDrawable boolean onStateChange(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.AnimatedRotateDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.Drawable android.graphics.Rect copyBounds()'>
+    <item name='android.graphics.drawable.RotateDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.RotateDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
+    <item name='android.graphics.drawable.Drawable android.graphics.Rect copyBounds()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.NinePatchDrawable void setTargetDensity(android.graphics.Canvas) 0'>
@@ -26,13 +26,34 @@
     <item name='android.graphics.drawable.AnimatedRotateDrawable boolean getPadding(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.StateListDrawable boolean onStateChange(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.DrawableContainer android.graphics.Insets getOpticalInsets()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.TransitionDrawable void draw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.RotateDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.ColorDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.InsetDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.Drawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.Drawable void setColorFilter(int, android.graphics.PorterDuff.Mode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.Drawable void onBoundsChange(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.NinePatchDrawable android.graphics.drawable.Drawable mutate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.ClipDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
@@ -44,10 +65,19 @@
     <item name='android.graphics.drawable.ScaleDrawable void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.LayerDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.AnimatedRotateDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.LayerDrawable void onBoundsChange(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.RotateDrawable void draw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.GradientDrawable void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.TransitionDrawable TransitionDrawable(android.graphics.drawable.Drawable[]) 0'>
@@ -74,7 +104,19 @@
     <item name='android.graphics.drawable.Drawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.Drawable.ConstantState android.graphics.drawable.Drawable newDrawable()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.Drawable boolean onStateChange(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.LevelListDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.ScaleDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.Drawable android.graphics.Insets getOpticalInsets()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.ShapeDrawable void onDraw(android.graphics.drawable.shapes.Shape, android.graphics.Canvas, android.graphics.Paint) 0'>
@@ -101,7 +143,13 @@
     <item name='android.graphics.drawable.AnimatedRotateDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.InsetDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.AnimatedRotateDrawable void invalidateDrawable(android.graphics.drawable.Drawable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.AnimationDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.GradientDrawable android.graphics.drawable.Drawable mutate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.LayerDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
@@ -113,10 +161,10 @@
     <item name='android.graphics.drawable.BitmapDrawable void setTargetDensity(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.GradientDrawable boolean getPadding(android.graphics.Rect) 0'>
+    <item name='android.graphics.drawable.PictureDrawable void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.PictureDrawable void draw(android.graphics.Canvas) 0'>
+    <item name='android.graphics.drawable.GradientDrawable boolean getPadding(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.Drawable.Callback void invalidateDrawable(android.graphics.drawable.Drawable) 0'>
@@ -125,7 +173,7 @@
     <item name='android.graphics.drawable.LevelListDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.GradientDrawable.Orientation android.graphics.drawable.GradientDrawable.Orientation valueOf(java.lang.String)'>
+    <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXmlInner(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.Drawable void setBounds(android.graphics.Rect) 0'>
@@ -146,13 +194,19 @@
     <item name='android.graphics.drawable.GradientDrawable void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.LayerDrawable boolean onStateChange(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.GradientDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.BitmapDrawable void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.InsetDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.DrawableContainer android.graphics.Insets getOpticalInsets()'>
+    <item name='android.graphics.drawable.DrawableContainer void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.DrawableContainer void draw(android.graphics.Canvas) 0'>
@@ -164,19 +218,19 @@
     <item name='android.graphics.drawable.Drawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.ColorDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
+    <item name='android.graphics.drawable.InsetDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.StateListDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.MipmapDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.ColorDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.BitmapDrawable void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.ColorDrawable android.graphics.drawable.Drawable mutate()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXmlInner(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet)'>
+    <item name='android.graphics.drawable.LevelListDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.ScaleDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
@@ -194,13 +248,22 @@
     <item name='android.graphics.drawable.BitmapDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.AnimatedRotateDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.ScaleDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.GradientDrawable.Orientation android.graphics.drawable.GradientDrawable.Orientation valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.DrawableContainer boolean getPadding(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.InsetDrawable void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable getCurrent()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.AnimationDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
@@ -209,22 +272,31 @@
     <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXmlInner(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.MipmapDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.StateListDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.StateListDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
+    <item name='android.graphics.drawable.ShapeDrawable boolean inflateTag(java.lang.String, android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.InsetDrawable void invalidateDrawable(android.graphics.drawable.Drawable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.ClipDrawable boolean onStateChange(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.NinePatchDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.AnimatedRotateDrawable void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.Drawable android.graphics.Insets getOpticalInsets()'>
+    <item name='android.graphics.drawable.BitmapDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.Drawable boolean getPadding(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.DrawableContainer android.graphics.drawable.Drawable mutate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.RotateDrawable void invalidateDrawable(android.graphics.drawable.Drawable) 0'>
@@ -233,7 +305,7 @@
     <item name='android.graphics.drawable.AnimationDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.GradientDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.Drawable.ConstantState android.graphics.drawable.Drawable newDrawable(android.content.res.Resources)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser) 0'>
@@ -242,7 +314,10 @@
     <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXmlInner(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.ScaleDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.StateListDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.DrawableContainer boolean onStateChange(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.NinePatchDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
@@ -251,10 +326,10 @@
     <item name='android.graphics.drawable.NinePatchDrawable boolean getPadding(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.LayerDrawable boolean getPadding(android.graphics.Rect) 0'>
+    <item name='android.graphics.drawable.MipmapDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.NinePatchDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.LayerDrawable boolean getPadding(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.InsetDrawable boolean getPadding(android.graphics.Rect) 0'>
@@ -269,13 +344,13 @@
     <item name='android.graphics.drawable.MipmapDrawable void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.DrawableContainer android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.RotateDrawable boolean getPadding(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.ColorDrawable void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.RotateDrawable boolean getPadding(android.graphics.Rect) 0'>
+    <item name='android.graphics.drawable.InsetDrawable android.graphics.drawable.Drawable mutate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.RotateDrawable void onBoundsChange(android.graphics.Rect) 0'>
@@ -284,7 +359,13 @@
     <item name='android.graphics.drawable.PaintDrawable boolean inflateTag(java.lang.String, android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.BitmapDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.ScaleDrawable void onBoundsChange(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.LevelListDrawable android.graphics.drawable.Drawable mutate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.AnimationDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
@@ -296,13 +377,13 @@
     <item name='android.graphics.drawable.MipmapDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.RotateDrawable boolean onStateChange(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.ClipDrawable void invalidateDrawable(android.graphics.drawable.Drawable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.ShapeDrawable void draw(android.graphics.Canvas) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.AnimatedRotateDrawable android.graphics.drawable.Drawable mutate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.LayerDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
@@ -311,49 +392,46 @@
     <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.AnimationDrawable android.graphics.drawable.Drawable mutate()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.drawable.StateListDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.ClipDrawable void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser)'>
+    <item name='android.graphics.drawable.ScaleDrawable boolean onStateChange(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.Drawable void copyBounds(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.ColorDrawable android.graphics.drawable.Drawable mutate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.DrawableContainer void invalidateDrawable(android.graphics.drawable.Drawable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.AnimatedRotateDrawable void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.NinePatchDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.drawable.NinePatchDrawable void setTargetDensity(android.util.DisplayMetrics) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.Drawable android.graphics.drawable.Drawable getCurrent()'>
+    <item name='android.graphics.drawable.NinePatchDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.ShapeDrawable void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.LayerDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.LevelListDrawable android.graphics.drawable.Drawable mutate()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.BitmapDrawable android.graphics.drawable.Drawable mutate()'>
+    <item name='android.graphics.drawable.MipmapDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.StateListDrawable void inflate(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.LayerDrawable android.graphics.drawable.Drawable mutate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -2,6 +2,9 @@
     <item name='org.apache.james.mime4j.field.address.parser.TokenMgrError java.lang.String addEscapes(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.james.mime4j.field.address.parser.SimpleNode java.lang.String toString(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.james.mime4j.field.address.parser.SimpleNode java.lang.Object jjtAccept(org.apache.james.mime4j.field.address.parser.AddressListParserVisitor, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -9,9 +12,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.AddressListParser void ReInit(java.io.InputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.parser.AddressListParser org.apache.james.mime4j.field.address.parser.ParseException generateParseException()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.TokenMgrError java.lang.String LexicalError(boolean, int, int, int, java.lang.String, char) 4'>
@@ -35,22 +35,16 @@
     <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.field.address.parser.AddressListParserTokenManager org.apache.james.mime4j.field.address.parser.Token getNextToken()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.parser.ParseException java.lang.String add_escapes(java.lang.String)'>
+    <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream java.lang.String GetImage()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.field.address.parser.AddressListParserTokenManager org.apache.james.mime4j.field.address.parser.Token jjFillToken()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream java.lang.String GetImage()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.james.mime4j.field.address.parser.ParseException java.lang.String add_escapes(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.parser.ParseException java.lang.String add_escapes(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.ASTmailbox java.lang.Object jjtAccept(org.apache.james.mime4j.field.address.parser.AddressListParserVisitor, java.lang.Object) 0'>
@@ -62,19 +56,31 @@
     <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.field.address.parser.Token org.apache.james.mime4j.field.address.parser.Token newToken(int)'>
+    <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream char[] GetSuffix(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.parser.AddressListParserTokenManager org.apache.james.mime4j.field.address.parser.Token jjFillToken()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.parser.TokenMgrError java.lang.String addEscapes(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.parser.AddressListParserTokenManager org.apache.james.mime4j.field.address.parser.Token getNextToken()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.parser.AddressListParser org.apache.james.mime4j.field.address.parser.ParseException generateParseException()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream void ReInit(java.io.InputStream, java.lang.String, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.parser.SimpleNode java.lang.String toString(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.AddressListParser void ReInit(java.io.InputStream, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.ASTname_addr java.lang.Object jjtAccept(org.apache.james.mime4j.field.address.parser.AddressListParserVisitor, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.parser.Token org.apache.james.mime4j.field.address.parser.Token newToken(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream void ReInit(java.io.InputStream, int, int, int) 0'>
@@ -84,9 +90,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.ASTangle_addr java.lang.Object jjtAccept(org.apache.james.mime4j.field.address.parser.AddressListParserVisitor, java.lang.Object) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream char[] GetSuffix(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.ASTroute java.lang.Object jjtAccept(org.apache.james.mime4j.field.address.parser.AddressListParserVisitor, java.lang.Object) 0'>
@@ -101,13 +104,13 @@
     <item name='org.apache.james.mime4j.field.address.parser.ASTdomain java.lang.Object jjtAccept(org.apache.james.mime4j.field.address.parser.AddressListParserVisitor, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.james.mime4j.field.address.parser.TokenMgrError java.lang.String LexicalError(boolean, int, int, int, java.lang.String, char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.field.address.parser.TokenMgrError java.lang.String addEscapes(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.parser.TokenMgrError java.lang.String LexicalError(boolean, int, int, int, java.lang.String, char)'>
+    <item name='org.apache.james.mime4j.field.address.parser.Node java.lang.Object jjtAccept(org.apache.james.mime4j.field.address.parser.AddressListParserVisitor, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.parser.SimpleCharStream void ReInit(java.io.InputStream) 0'>

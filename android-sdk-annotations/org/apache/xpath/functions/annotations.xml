@@ -1,134 +1,272 @@
 <root>
-    <item name='org.apache.xpath.functions.FuncCeiling org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncSum org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+    <item name='org.apache.xpath.functions.FunctionMultiArgs void setArg(org.apache.xpath.Expression, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.functions.FuncExtFunction void setArg(org.apache.xpath.Expression, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncUnparsedEntityURI org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+    <item name='org.apache.xpath.functions.FuncCeiling org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncRound org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.functions.FuncTrue void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncPosition org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncQname org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncConcat org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncSum org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncNamespace org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncPosition void postCompileStep(org.apache.xpath.compiler.Compiler) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncBoolean org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FunctionOneArg void setExpression(org.apache.xpath.Expression) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncLast void postCompileStep(org.apache.xpath.compiler.Compiler) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncExtFunction org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncTranslate org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncId org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncSubstringBefore org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.functions.FuncPosition void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.functions.FuncExtFunction org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncDoclocation org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.functions.FuncBoolean org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncCount org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncNumber org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncExtFunctionAvailable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncExtElementAvailable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncLang org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncNot org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncContains org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncLocalPart org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.Function void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncTrue org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncSystemProperty org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncFalse org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncUnparsedEntityURI org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncLang org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xpath.functions.FuncLast org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.functions.FuncString org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.functions.FuncStartsWith org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncCount org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+    <item name='org.apache.xpath.functions.FuncSum org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncFloor org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.functions.FuncCount org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncStringLength org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.functions.FuncNormalizeSpace void executeCharsToContentHandler(org.apache.xpath.XPathContext, org.xml.sax.ContentHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncGenerateId org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.functions.Function org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncId org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+    <item name='org.apache.xpath.functions.FuncSubstringBefore org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.functions.FuncSystemProperty void loadPropertyFile(java.lang.String, java.util.Properties) 1'>
+    <item name='org.apache.xpath.functions.FuncBoolean org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FunctionMultiArgs void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.Function void setArg(org.apache.xpath.Expression, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLast void postCompileStep(org.apache.xpath.compiler.Compiler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncContains org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncRound org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncExtElementAvailable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncSubstringAfter org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncExtElementAvailable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncSubstringBefore org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncQname org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncExtFunction void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.functions.FuncCurrent org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.functions.Function void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncStartsWith org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncFloor org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncFalse org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncSubstring org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncGenerateId org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncCount org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLocalPart org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncCurrent void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncId org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncStringLength org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncFalse void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncSystemProperty org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncFloor org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncSystemProperty org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.Function2Args void setArg(org.apache.xpath.Expression, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncSum org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncUnparsedEntityURI org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncUnparsedEntityURI org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncNamespace org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FunctionOneArg void setArg(org.apache.xpath.Expression, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLast org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncNamespace org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncTrue org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncNot org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncId org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncCeiling org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncNormalizeSpace org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncRound org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncExtFunctionAvailable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncExtFunctionAvailable org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncNumber org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncConcat org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncPosition org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncPosition void postCompileStep(org.apache.xpath.compiler.Compiler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncDoclocation org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncNumber org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.Function3Args void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FunctionOneArg void setExpression(org.apache.xpath.Expression) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncGenerateId org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncExtFunction org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.Function void postCompileStep(org.apache.xpath.compiler.Compiler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLast org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncConcat org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLang org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.Function3Args void setArg(org.apache.xpath.Expression, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncNot org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLang org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncTrue org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncDoclocation org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncQname org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncTranslate org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncPosition org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FunctionOneArg void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncTranslate org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncSystemProperty void loadPropertyFile(java.lang.String, java.util.Properties) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLast void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncStringLength org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncContains org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.Function2Args void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.functions.FuncCurrent org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncFalse org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.functions.FuncLocalPart org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -1,5 +1,11 @@
 <root>
+    <item name='android.support.v4.hardware.display.DisplayManagerCompat android.view.Display[] getDisplays(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.hardware.display.DisplayManagerCompat android.support.v4.hardware.display.DisplayManagerCompat getInstance(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.hardware.display.DisplayManagerCompat android.view.Display[] getDisplays()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

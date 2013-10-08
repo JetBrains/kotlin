@@ -5,151 +5,82 @@
     <item name='org.apache.xml.serializer.ToXMLSAXHandler boolean startPrefixMapping(java.lang.String, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToUnknownStream void characters(java.lang.String) 0'>
+    <item name='org.apache.xml.serializer.ToSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase void characters(org.w3c.dom.Node) 0'>
+    <item name='org.apache.xml.serializer.ToStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToStream java.util.Properties getOutputFormat()'>
+    <item name='org.apache.xml.serializer.ToHTMLStream void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToHTMLStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 1'>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler void characters(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToHTMLStream void processAttribute(java.io.Writer, java.lang.String, java.lang.String, org.apache.xml.serializer.ElemDesc) 1'>
+    <item name='org.apache.xml.serializer.ToXMLStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToXMLSAXHandler void characters(java.lang.String) 0'>
+    <item name='org.apache.xml.serializer.ToUnknownStream boolean startPrefixMapping(java.lang.String, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getPrefixPart(java.lang.String) 0'>
+    <item name='org.apache.xml.serializer.ToUnknownStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase org.xml.sax.ContentHandler asContentHandler()'>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void comment(char[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase void entityReference(java.lang.String) 0'>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void comment(char[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.Version java.lang.String getImplementationLanguage()'>
+    <item name='org.apache.xml.serializer.ToUnknownStream void addAttributes(org.xml.sax.Attributes) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.String[] lookupAllPrefixes(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.OutputPropertyUtils boolean getBooleanProperty(java.lang.String, java.util.Properties) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToXMLSAXHandler void startPrefixMapping(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.SerializerBase java.lang.String patchName(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.SerializerBase org.apache.xml.serializer.DOMSerializer asDOMSerializer()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.SerializerBase void comment(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToStream void startPrefixMapping(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.NamespaceMappings boolean pushNamespace(java.lang.String, java.lang.String, int) 0'>
+    <item name='org.apache.xml.serializer.Version java.lang.String getProduct()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToStream boolean startPrefixMapping(java.lang.String, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToHTMLStream void processAttribute(java.io.Writer, java.lang.String, java.lang.String, org.apache.xml.serializer.ElemDesc) 0'>
+    <item name='org.apache.xml.serializer.SerializerBase void setEncoding(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getLocalName(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToStream void startEntity(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getNamespaceURI(java.lang.String, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.String generateNextPrefix()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToXMLSAXHandler void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.SerializerBase java.lang.Object asDOM3Serializer()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToStream void setNewLine(char[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.SerializerFactory org.apache.xml.serializer.Serializer getSerializer(java.util.Properties) 0'>
+    <item name='org.apache.xml.serializer.ToUnknownStream void endEntity(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.OutputPropertiesFactory java.util.Properties getDefaultMethodProperties(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getNamespaceURI(java.lang.String, boolean) 0'>
+    <item name='org.apache.xml.serializer.ToXMLStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToStream void writeAttrString(java.io.Writer, java.lang.String, java.lang.String) 1'>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler void characters(org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToStream int writeUTF16Surrogate(char, char[], int, int) 1'>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler boolean startPrefixMapping(java.lang.String, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.OutputPropertiesFactory java.util.Properties getDefaultMethodProperties(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.OutputPropertyUtils int getIntProperty(java.lang.String, java.util.Properties) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.AttributesImplSerializer void setAttributes(org.xml.sax.Attributes) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.Encodings char getHighChar(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToUnknownStream org.xml.sax.ContentHandler asContentHandler()'>
+    <item name='org.apache.xml.serializer.SerializerBase void setDocumentLocator(org.xml.sax.Locator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToStream void setOutputFormat(java.util.Properties) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.TreeWalker void startNode(org.w3c.dom.Node) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToTextSAXHandler void comment(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xml.serializer.SerializerBase java.lang.String getLocalName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase void addAttributes(org.xml.sax.Attributes) 0'>
+    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.Encodings boolean isRecognizedEncoding(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.String lookupNamespace(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToXMLStream void CopyFrom(org.apache.xml.serializer.ToXMLStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.ToTextStream void characters(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.SerializerFactory org.apache.xml.serializer.Serializer getSerializer(java.util.Properties)'>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler boolean startPrefixMapping(java.lang.String, java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToHTMLStream void writeAttrString(java.io.Writer, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Serializer org.apache.xml.serializer.DOMSerializer asDOMSerializer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToHTMLStream void entityReference(java.lang.String) 0'>
@@ -158,22 +89,343 @@
     <item name='org.apache.xml.serializer.ToHTMLStream void processingInstruction(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xml.serializer.ToTextStream boolean startPrefixMapping(java.lang.String, java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xml.serializer.NamespaceMappings java.lang.String lookupNamespace(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.Version java.lang.String getProduct()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xml.serializer.OutputPropertyUtils int getIntProperty(java.lang.String, java.util.Properties) 1'>
+    <item name='org.apache.xml.serializer.ToUnknownStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToSAXHandler void characters(org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToHTMLStream org.apache.xml.serializer.ElemDesc getElemDesc(java.lang.String) 0'>
+    <item name='org.apache.xml.serializer.AttributesImplSerializer int getIndex(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void warning(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void startPrefixMapping(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToTextStream void comment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Serializer java.lang.Object asDOM3Serializer()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerFactory org.apache.xml.serializer.Serializer getSerializer(java.util.Properties)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void setOutputFormat(java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void processAttribute(java.io.Writer, java.lang.String, java.lang.String, org.apache.xml.serializer.ElemDesc) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void startEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void setDocumentLocator(org.xml.sax.Locator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.AttributesImplSerializer int getIndex(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void characters(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream org.xml.sax.ContentHandler asContentHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.DOM3Serializer void serializeDOM3(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase org.apache.xml.serializer.DOMSerializer asDOMSerializer()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream java.util.Properties getOutputFormat()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void setOutputFormat(java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.OutputPropertyUtils boolean getBooleanProperty(java.lang.String, java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void entityReference(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Serializer void setOutputFormat(java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void comment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void setOutputFormat(java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.NamespaceMappings boolean pushNamespace(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void entityReference(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void fatalError(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.AttributesImplSerializer int getIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void setNewLine(char[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void error(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void warning(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.Object asDOM3Serializer()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void addUniqueAttribute(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.AttributesImplSerializer void setAttributes(org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.TreeWalker void startNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Encodings boolean isRecognizedEncoding(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void addAttributes(org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler void addUniqueAttribute(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Version java.lang.String getVersion()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void startEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void addUniqueAttribute(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getOutputProperty(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Serializer org.xml.sax.ContentHandler asContentHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream org.apache.xml.serializer.ElemDesc getElemDesc(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler void addUniqueAttribute(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void characters(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.OutputPropertyUtils boolean getBooleanProperty(java.lang.String, java.util.Properties) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void setEncoding(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLStream void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void characters(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedLexicalHandler void comment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void characters(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getPrefixPart(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void setOutputFormat(java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void startEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void setContentHandler(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLStream void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void setEncoding(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void comment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void startEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerFactory org.apache.xml.serializer.Serializer getSerializer(java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void writeAttrString(java.io.Writer, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.String patchName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.OutputPropertyUtils int getIntProperty(java.lang.String, java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler java.lang.String getNamespaceURI(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializationHandler void setContentHandler(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler void addAttributes(org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void comment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Version java.lang.String getImplementationLanguage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream java.lang.String getNamespaceURI(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.String[] lookupAllPrefixes(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream void setContentHandler(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.OutputPropertyUtils int getIntProperty(java.lang.String, java.util.Properties) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.TreeWalker void endNode(org.w3c.dom.Node) 0'>
@@ -182,31 +434,172 @@
     <item name='org.apache.xml.serializer.ToHTMLStream void addUniqueAttribute(java.lang.String, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.SerializerBase java.lang.String patchName(java.lang.String) 0'>
+    <item name='org.apache.xml.serializer.SerializerBase void setOutputProperty(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.SerializerBase void endEntity(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToHTMLStream void setOutputFormat(java.util.Properties) 0'>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.Version java.lang.String getVersion()'>
+    <item name='org.apache.xml.serializer.ToUnknownStream void comment(char[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToTextSAXHandler void characters(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToHTMLStream void processAttribute(java.io.Writer, java.lang.String, java.lang.String, org.apache.xml.serializer.ElemDesc) 2'>
+    <item name='org.apache.xml.serializer.ToHTMLStream void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void comment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void characters(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase org.xml.sax.ContentHandler asContentHandler()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void processAttribute(java.io.Writer, java.lang.String, java.lang.String, org.apache.xml.serializer.ElemDesc) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void entityReference(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.OutputPropertiesFactory java.util.Properties getDefaultMethodProperties(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getLocalName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToHTMLStream void processAttribute(java.io.Writer, java.lang.String, java.lang.String, org.apache.xml.serializer.ElemDesc) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler void entityReference(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void setContentHandler(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getNamespaceURI(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.String lookupNamespace(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToStream int writeUTF16Surrogate(char, char[], int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void error(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToUnknownStream void setDocumentLocator(org.xml.sax.Locator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.Encodings char getHighChar(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase void fatalError(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.String getNamespaceURI(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLStream void CopyFrom(org.apache.xml.serializer.ToXMLStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToTextStream void characters(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.NamespaceMappings java.lang.String generateNextPrefix()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ExtendedContentHandler java.lang.String getNamespaceURI(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLStream void namespaceAfterStartElement(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.SerializerBase java.lang.String patchName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.ToXMLSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.serializer.ToHTMLStream void writeAttrURI(java.io.Writer, java.lang.String, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.OutputPropertyUtils boolean getBooleanProperty(java.lang.String, java.util.Properties) 1'>
+    <item name='org.apache.xml.serializer.ToTextSAXHandler void setDocumentLocator(org.xml.sax.Locator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.serializer.ToSAXHandler void characters(java.lang.String) 0'>
+    <item name='org.apache.xml.serializer.ToSAXHandler void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

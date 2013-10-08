@@ -1,20 +1,56 @@
 <root>
-    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM java.lang.String getPrefix(int)'>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode org.w3c.dom.Node removeChild(org.w3c.dom.Node) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode org.w3c.dom.TypeInfo getSchemaTypeInfo()'>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode java.lang.Object setUserData(java.lang.String, java.lang.Object, org.w3c.dom.UserDataHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode java.lang.Object getUserData(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode java.lang.String getNamespaceURI()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM int addNode(org.w3c.dom.Node, int, int, int) 0'>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM java.lang.String getPrefix(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM void dispatchNodeData(org.w3c.dom.Node, org.xml.sax.ContentHandler, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode void setValue(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM int getElementById(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode boolean isSupported(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM DOM2DTM(org.apache.xml.dtm.DTMManager, javax.xml.transform.dom.DOMSource, int, org.apache.xml.dtm.DTMWSFilter, org.apache.xml.utils.XMLStringFactory, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM void dispatchNodeData(org.w3c.dom.Node, org.xml.sax.ContentHandler, int) 0'>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM int addNode(org.w3c.dom.Node, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM void setProperty(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTMdefaultNamespaceDeclarationNode org.w3c.dom.TypeInfo getSchemaTypeInfo()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xml.dtm.ref.dom2dtm.DOM2DTM void getNodeData(org.w3c.dom.Node, org.apache.xml.utils.FastStringBuffer) 0'>

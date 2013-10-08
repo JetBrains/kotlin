@@ -17,19 +17,25 @@
     <item name='org.apache.http.conn.params.ConnRouteParams void setDefaultProxy(org.apache.http.params.HttpParams, org.apache.http.HttpHost) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.conn.params.ConnManagerParams org.apache.http.conn.params.ConnPerRoute getMaxConnectionsPerRoute(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.params.ConnPerRoute int getMaxForRoute(org.apache.http.conn.routing.HttpRoute) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.conn.params.ConnRouteParams org.apache.http.HttpHost getDefaultProxy(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.params.ConnRouteParams org.apache.http.conn.routing.HttpRoute getForcedRoute(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.conn.params.ConnRouteParamBean ConnRouteParamBean(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.conn.params.ConnManagerParams long getTimeout(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.params.ConnPerRouteBean int getMaxForRoute(org.apache.http.conn.routing.HttpRoute) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.params.ConnRouteParamBean ConnRouteParamBean(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.params.ConnManagerParams int getMaxTotalConnections(org.apache.http.params.HttpParams) 0'>
@@ -39,9 +45,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.params.ConnManagerParamBean ConnManagerParamBean(org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.params.ConnManagerParams org.apache.http.conn.params.ConnPerRoute getMaxConnectionsPerRoute(org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.params.ConnManagerParams org.apache.http.conn.params.ConnPerRoute getMaxConnectionsPerRoute(org.apache.http.params.HttpParams) 0'>

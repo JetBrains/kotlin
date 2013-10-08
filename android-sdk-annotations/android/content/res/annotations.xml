@@ -2,13 +2,19 @@
     <item name='android.content.res.Resources void parseBundleExtra(java.lang.String, android.util.AttributeSet, android.os.Bundle) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.res.AssetManager java.io.InputStream open(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.res.Resources.Theme boolean resolveAttribute(int, android.util.TypedValue, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.TypedArray java.lang.String getPositionDescription()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo void applyToDisplayMetrics(android.util.DisplayMetrics) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetManager android.content.res.AssetFileDescriptor openNonAssetFd(java.lang.String)'>
+    <item name='android.content.res.ColorStateList android.content.res.ColorStateList withAlpha(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int) 0'>
@@ -17,28 +23,46 @@
     <item name='android.content.res.ObbScanner android.content.res.ObbInfo getObbInfo(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.res.Resources java.lang.String getResourcePackageName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.res.CompatibilityInfo float computeCompatibleScaling(android.util.DisplayMetrics, android.util.DisplayMetrics) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetFileDescriptor java.io.FileInputStream createInputStream()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.AssetFileDescriptor void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources android.content.res.TypedArray obtainAttributes(android.util.AttributeSet, int[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Configuration java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.res.CompatibilityInfo.Translator void translateRectInScreenToAppWinFrame(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetManager java.lang.String[] getLocales()'>
+    <item name='android.content.res.Resources java.lang.String getQuantityString(int, int, java.lang.Object...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetManager android.content.res.AssetFileDescriptor openNonAssetFd(int, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo.Translator android.graphics.Rect getTranslatedVisibleInsets(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.res.Resources android.content.res.TypedArray obtainAttributes(android.util.AttributeSet, int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(int, int[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources android.content.res.Resources.Theme newTheme()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.ColorStateList android.content.res.ColorStateList valueOf(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetFileDescriptor java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int) 1'>
@@ -50,9 +74,6 @@
     <item name='android.content.res.Resources.Theme void setTo(android.content.res.Resources.Theme) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources java.lang.String getResourceEntryName(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.res.CompatibilityInfo CompatibilityInfo(android.content.pm.ApplicationInfo, int, int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -62,10 +83,16 @@
     <item name='android.content.res.Configuration int diff(android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.res.CompatibilityInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.res.CompatibilityInfo.Translator void translateRectInScreenToAppWindow(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(java.lang.String, int)'>
+    <item name='android.content.res.Resources android.content.res.TypedArray obtainTypedArray(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources java.lang.String getResourceEntryName(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo.Translator android.graphics.Region getTranslatedTouchableArea(android.graphics.Region) 0'>
@@ -74,49 +101,37 @@
     <item name='android.content.res.CompatibilityInfo.Translator void translateCanvas(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources android.content.res.Resources getSystem()'>
+    <item name='android.content.res.ColorStateList java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.AssetFileDescriptor.AutoCloseInputStream AutoCloseInputStream(android.content.res.AssetFileDescriptor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources java.lang.String getQuantityString(int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.CompatibilityInfo.Translator void translateRectInAppWindowToScreen(android.graphics.Rect) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.AssetManager android.content.res.AssetFileDescriptor openNonAssetFd(int, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.AssetManager java.io.InputStream open(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.TypedArray java.lang.String getPositionDescription()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.AssetManager java.io.InputStream open(java.lang.String, int)'>
+    <item name='android.content.res.Resources java.lang.String getResourceTypeName(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources java.lang.String getString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.res.CompatibilityInfo.Translator void translateRectInAppWindowToScreen(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(android.util.AttributeSet, int[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources int[] getIntArray(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Configuration java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetManager android.content.res.AssetFileDescriptor openFd(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.res.Resources void parseBundleExtras(android.content.res.XmlResourceParser, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources java.lang.String getResourceTypeName(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.ColorStateList java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(int[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources java.lang.String getResourcePackageName(int)'>
+    <item name='android.content.res.Resources java.io.InputStream openRawResource(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo.Translator void translateWindowLayout(android.view.WindowManager.LayoutParams) 0'>
@@ -131,19 +146,13 @@
     <item name='android.content.res.AssetFileDescriptor AssetFileDescriptor(android.os.ParcelFileDescriptor, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetFileDescriptor java.lang.String toString()'>
+    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(int, java.lang.String, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources android.content.res.Configuration getConfiguration()'>
+    <item name='android.content.res.ObbInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources java.lang.String getString(int, java.lang.Object...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources java.io.InputStream openRawResource(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources android.content.res.ColorStateList getColorStateList(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources void parseBundleExtras(android.content.res.XmlResourceParser, android.os.Bundle) 1'>
@@ -152,7 +161,16 @@
     <item name='android.content.res.Resources java.lang.String getString(int, java.lang.Object...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.res.Resources android.content.res.AssetFileDescriptor openRawResourceFd(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(int, int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.res.Resources int getIdentifier(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources java.lang.CharSequence getQuantityText(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.AssetFileDescriptor.AutoCloseInputStream int read(byte[]) 0'>
@@ -161,10 +179,16 @@
     <item name='android.content.res.Configuration void readFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetManager java.lang.String[] list(java.lang.String)'>
+    <item name='android.content.res.AssetManager java.io.InputStream open(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources java.io.InputStream openRawResource(int, android.util.TypedValue)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources android.content.res.TypedArray obtainAttributes(android.util.AttributeSet, int[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetManager java.lang.String[] getLocales()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.ColorStateList android.content.res.ColorStateList createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser) 1'>
@@ -173,16 +197,7 @@
     <item name='android.content.res.ColorStateList android.content.res.ColorStateList createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(int, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources android.content.res.TypedArray obtainTypedArray(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources android.content.res.Resources.Theme newTheme()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.AssetFileDescriptor java.io.FileInputStream createInputStream()'>
+    <item name='android.content.res.AssetFileDescriptor java.io.FileOutputStream createOutputStream()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo void writeToParcel(android.os.Parcel, int) 0'>
@@ -191,22 +206,19 @@
     <item name='android.content.res.Configuration void setTo(android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.ObbScanner android.content.res.ObbInfo getObbInfo(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.res.TypedArray boolean getValue(int, android.util.TypedValue) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources java.lang.CharSequence getQuantityText(int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(java.lang.String)'>
+    <item name='android.content.res.Resources java.lang.String getQuantityString(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo.Translator void translateLayoutParamsInAppWindowToScreen(android.view.WindowManager.LayoutParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources android.util.DisplayMetrics getDisplayMetrics()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo.Translator void translateEventInScreenToAppWindow(android.view.MotionEvent) 0'>
@@ -218,34 +230,28 @@
     <item name='android.content.res.AssetManager.AssetInputStream int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetFileDescriptor java.io.FileOutputStream createOutputStream()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(int, java.lang.String, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.ColorStateList void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.ObbInfo java.lang.String toString()'>
+    <item name='android.content.res.Resources android.content.res.Resources getSystem()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources java.lang.CharSequence getText(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.content.res.ColorStateList void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources java.lang.String getResourceName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.ObbScanner android.content.res.ObbInfo getObbInfo(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources android.content.res.ColorStateList getColorStateList(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.content.res.CompatibilityInfo.Translator android.graphics.Rect getTranslatedContentInsets(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources int[] getIntArray(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources java.lang.String getQuantityString(int, int, java.lang.Object...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.TypedArray java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources android.util.DisplayMetrics getDisplayMetrics()'>
+    <item name='android.content.res.Resources java.lang.String[] getStringArray(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Configuration int compareTo(android.content.res.Configuration) 0'>
@@ -254,16 +260,37 @@
     <item name='android.content.res.Resources java.lang.String getQuantityString(int, int, java.lang.Object...) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.ColorStateList android.content.res.ColorStateList valueOf(int)'>
+    <item name='android.content.res.AssetManager android.content.res.AssetFileDescriptor openNonAssetFd(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(int, int[])'>
+    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources.Theme android.content.res.TypedArray obtainStyledAttributes(int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetFileDescriptor.AutoCloseInputStream int read(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.TypedArray java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Configuration int compareTo(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources java.lang.String[] getStringArray(int)'>
+    <item name='android.content.res.Resources java.lang.CharSequence[] getTextArray(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.ColorStateList android.content.res.ColorStateList createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetManager java.io.InputStream openNonAsset(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetManager java.lang.String[] list(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.Resources android.content.res.Configuration getConfiguration()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Configuration int updateFrom(android.content.res.Configuration) 0'>
@@ -275,13 +302,7 @@
     <item name='android.content.res.ObbInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources java.lang.CharSequence[] getTextArray(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.res.Resources java.io.InputStream openRawResource(int, android.util.TypedValue) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources java.io.InputStream openRawResource(int, android.util.TypedValue)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.ColorStateList ColorStateList(int[][], int[]) 0'>
@@ -290,19 +311,10 @@
     <item name='android.content.res.Resources Resources(android.content.res.AssetManager, android.util.DisplayMetrics, android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.AssetManager android.content.res.AssetFileDescriptor openFd(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.CompatibilityInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.ColorStateList android.content.res.ColorStateList withAlpha(int)'>
+    <item name='android.content.res.AssetManager.AssetInputStream int read(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.CompatibilityInfo void applyToConfiguration(int, android.content.res.Configuration) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.ColorStateList android.content.res.ColorStateList createFromXml(android.content.res.Resources, org.xmlpull.v1.XmlPullParser)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.content.res.Resources void getValue(java.lang.String, android.util.TypedValue, boolean) 0'>
@@ -311,13 +323,10 @@
     <item name='android.content.res.Resources Resources(android.content.res.AssetManager, android.util.DisplayMetrics, android.content.res.Configuration, android.content.res.CompatibilityInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.content.res.Resources android.content.res.AssetFileDescriptor openRawResourceFd(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.content.res.Resources java.lang.String getResourceName(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.content.res.AssetFileDescriptor.AutoCloseOutputStream AutoCloseOutputStream(android.content.res.AssetFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.content.res.AssetFileDescriptor.AutoCloseOutputStream void write(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

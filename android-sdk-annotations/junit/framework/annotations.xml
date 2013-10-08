@@ -2,19 +2,52 @@
     <item name='junit.framework.TestSuite void addTestSuite(java.lang.Class&lt;? extends junit.framework.TestCase&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='junit.framework.Test void run(junit.framework.TestResult) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestFailure java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='junit.framework.TestCase junit.framework.TestResult createResult()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestCase junit.framework.TestResult run()'>
+    <item name='junit.framework.TestSuite void runTest(junit.framework.Test, junit.framework.TestResult) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestSuite junit.framework.Test warning(java.lang.String)'>
+    <item name='junit.framework.TestCase java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestResult java.util.Enumeration&lt;junit.framework.TestFailure&gt; failures()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestResult java.util.Enumeration&lt;junit.framework.TestFailure&gt; errors()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.framework.TestFailure java.lang.String trace()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestSuite void runTest(junit.framework.Test, junit.framework.TestResult) 0'>
+    <item name='junit.framework.TestSuite TestSuite(java.lang.Class&lt;?&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.ComparisonFailure java.lang.String getMessage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestSuite java.lang.reflect.Constructor&lt;?&gt; getTestConstructor(java.lang.Class&lt;?&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestSuite TestSuite(java.lang.Class&lt;? extends junit.framework.TestCase&gt;[], java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestListener void addFailure(junit.framework.Test, junit.framework.AssertionFailedError) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestSuite junit.framework.Test warning(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.TestListener void startTest(junit.framework.Test) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.framework.ComparisonCompactor java.lang.String compact(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.framework.TestResult void run(junit.framework.TestCase) 0'>
@@ -23,52 +56,43 @@
     <item name='junit.framework.TestSuite TestSuite(java.lang.Class&lt;?&gt;...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestCase java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='junit.framework.TestSuite TestSuite(java.lang.Class&lt;? extends junit.framework.TestCase&gt;, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestResult java.util.Enumeration&lt;junit.framework.TestFailure&gt; errors()'>
+    <item name='junit.framework.TestSuite void run(junit.framework.TestResult) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.ComparisonCompactor java.lang.String compact(java.lang.String)'>
+    <item name='junit.framework.TestListener void addError(junit.framework.Test, java.lang.Throwable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestSuite java.lang.reflect.Constructor&lt;?&gt; getTestConstructor(java.lang.Class&lt;?&gt;) 0'>
+    <item name='junit.framework.TestCase junit.framework.TestResult run()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.ComparisonFailure java.lang.String getMessage()'>
+    <item name='junit.framework.TestListener void endTest(junit.framework.Test) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestCase void run(junit.framework.TestResult) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='junit.framework.TestSuite TestSuite(java.lang.Class&lt;?&gt;) 0'>
+    <item name='junit.framework.TestListener void addError(junit.framework.Test, java.lang.Throwable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.framework.TestSuite java.util.Enumeration&lt;junit.framework.Test&gt; tests()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestSuite TestSuite(java.lang.Class&lt;? extends junit.framework.TestCase&gt;[], java.lang.String) 0'>
+    <item name='junit.framework.TestSuite java.lang.reflect.Constructor&lt;?&gt; getTestConstructor(java.lang.Class&lt;?&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestSuite java.lang.reflect.Constructor&lt;?&gt; getTestConstructor(java.lang.Class&lt;?&gt;)'>
+    <item name='junit.framework.TestCase void run(junit.framework.TestResult) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.framework.Assert java.lang.String format(java.lang.String, java.lang.Object, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.framework.TestFailure java.lang.String toString()'>
+    <item name='junit.framework.TestListener void addFailure(junit.framework.Test, junit.framework.AssertionFailedError) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.framework.TestSuite junit.framework.Test createTest(java.lang.Class&lt;?&gt;, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.framework.TestResult void startTest(junit.framework.Test) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='junit.framework.TestResult java.util.Enumeration&lt;junit.framework.TestFailure&gt; failures()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

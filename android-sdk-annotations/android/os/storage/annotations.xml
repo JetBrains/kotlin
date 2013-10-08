@@ -1,29 +1,23 @@
 <root>
-    <item name='android.os.storage.StorageManager android.os.storage.StorageManager from(android.content.Context) 0'>
+    <item name='android.os.storage.IMountService.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.StorageManager boolean mountObb(java.lang.String, java.lang.String, android.os.storage.OnObbStateChangeListener) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.storage.IMountService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.storage.StorageManager boolean unmountObb(java.lang.String, boolean, android.os.storage.OnObbStateChangeListener) 2'>
+    <item name='android.os.storage.IMountService void unmountObb(java.lang.String, boolean, android.os.storage.IObbActionListener, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.storage.IObbActionListener.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.StorageVolume java.lang.String getDescription(android.content.Context)'>
+    <item name='android.os.storage.StorageManager boolean mountObb(java.lang.String, java.lang.String, android.os.storage.OnObbStateChangeListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.StorageManager android.os.storage.StorageVolume getPrimaryVolume(android.os.storage.StorageVolume[]) 0'>
+    <item name='android.os.storage.IMountService boolean isObbMounted(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.StorageVolume void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.os.storage.IMountService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.StorageVolume android.os.storage.StorageVolume fromTemplate(android.os.storage.StorageVolume, java.io.File, android.os.UserHandle)'>
+    <item name='android.os.storage.IMountService java.lang.String getVolumeState(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.storage.StorageManager boolean mountObb(java.lang.String, java.lang.String, android.os.storage.OnObbStateChangeListener) 2'>
@@ -32,43 +26,82 @@
     <item name='android.os.storage.IObbActionListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.StorageVolume java.lang.String getDescription(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.os.storage.StorageManager java.lang.String getMountedObbPath(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.storage.StorageManager boolean unmountObb(java.lang.String, boolean, android.os.storage.OnObbStateChangeListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.storage.StorageManager boolean isObbMounted(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.StorageVolume java.lang.String toString()'>
+    <item name='android.os.storage.IObbActionListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.IMountServiceListener.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.storage.IMountServiceListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+    <item name='android.os.storage.IMountServiceListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.storage.IMountShutdownObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.IMountShutdownObserver.Stub android.os.IBinder asBinder()'>
+    <item name='android.os.storage.IMountService void mountObb(java.lang.String, java.lang.String, java.lang.String, android.os.storage.IObbActionListener, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountService void mountObb(java.lang.String, java.lang.String, java.lang.String, android.os.storage.IObbActionListener, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.storage.StorageVolume android.os.storage.StorageVolume fromTemplate(android.os.storage.StorageVolume, java.io.File, android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.storage.IMountService.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.os.storage.StorageManager long getStorageLowBytes(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.os.storage.StorageVolume java.lang.String getDescription(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageManager android.os.storage.StorageManager from(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountService java.lang.String getMountedObbPath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageManager boolean unmountObb(java.lang.String, boolean, android.os.storage.OnObbStateChangeListener) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageVolume java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageManager android.os.storage.StorageVolume getPrimaryVolume(android.os.storage.StorageVolume[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageVolume void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageVolume java.lang.String getDescription(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageManager boolean unmountObb(java.lang.String, boolean, android.os.storage.OnObbStateChangeListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountShutdownObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.StorageVolume android.os.storage.StorageVolume fromTemplate(android.os.storage.StorageVolume, java.io.File, android.os.UserHandle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountServiceListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.os.storage.StorageVolume java.lang.String getPath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountShutdownObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountServiceListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.storage.IMountService void mountObb(java.lang.String, java.lang.String, java.lang.String, android.os.storage.IObbActionListener, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -1,14 +1,38 @@
 <root>
-    <item name='android.text.util.Rfc822Token java.lang.String quoteNameIfNecessary(java.lang.String)'>
+    <item name='android.text.util.Rfc822Token java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.util.Rfc822Token java.lang.String quoteComment(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Rfc822Token java.lang.String quoteComment(java.lang.String)'>
+    <item name='android.text.util.Rfc822Tokenizer java.lang.CharSequence terminateToken(java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Rfc822Tokenizer java.lang.CharSequence terminateToken(java.lang.CharSequence) 0'>
+    <item name='android.text.util.Linkify boolean addLinks(android.widget.TextView, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Linkify boolean addLinks(android.text.Spannable, java.util.regex.Pattern, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Linkify.TransformFilter java.lang.String transformUrl(java.util.regex.Matcher, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Linkify void addLinks(android.widget.TextView, java.util.regex.Pattern, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Rfc822Tokenizer void tokenize(java.lang.CharSequence, java.util.Collection&lt;android.text.util.Rfc822Token&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Linkify.TransformFilter java.lang.String transformUrl(java.util.regex.Matcher, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Linkify boolean addLinks(android.text.Spannable, java.util.regex.Pattern, java.lang.String, android.text.util.Linkify.MatchFilter, android.text.util.Linkify.TransformFilter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Linkify void addLinks(android.widget.TextView, java.util.regex.Pattern, java.lang.String, android.text.util.Linkify.MatchFilter, android.text.util.Linkify.TransformFilter) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Rfc822Token java.lang.String quoteNameIfNecessary(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.util.Linkify void addLinks(android.widget.TextView, java.util.regex.Pattern, java.lang.String) 1'>
@@ -17,40 +41,28 @@
     <item name='android.text.util.Linkify boolean addLinks(android.text.Spannable, java.util.regex.Pattern, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Linkify boolean addLinks(android.text.Spannable, java.util.regex.Pattern, java.lang.String) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.util.Linkify boolean addLinks(android.widget.TextView, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.util.Linkify void addLinks(android.widget.TextView, java.util.regex.Pattern, java.lang.String) 0'>
+    <item name='android.text.util.Rfc822Token java.lang.String quoteComment(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.util.Rfc822Tokenizer int findTokenStart(java.lang.CharSequence, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Rfc822Tokenizer android.text.util.Rfc822Token[] tokenize(java.lang.CharSequence)'>
+    <item name='android.text.util.Rfc822Token java.lang.String quoteName(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.util.Rfc822Tokenizer void tokenize(java.lang.CharSequence, java.util.Collection&lt;android.text.util.Rfc822Token&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Rfc822Token java.lang.String quoteName(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.util.Rfc822Tokenizer android.text.util.Rfc822Token[] tokenize(java.lang.CharSequence) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.util.Rfc822Token java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.util.Rfc822Tokenizer void tokenize(java.lang.CharSequence, java.util.Collection&lt;android.text.util.Rfc822Token&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.util.Rfc822Token java.lang.String quoteName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Linkify boolean addLinks(android.text.Spannable, java.util.regex.Pattern, java.lang.String, android.text.util.Linkify.MatchFilter, android.text.util.Linkify.TransformFilter) 0'>
+    <item name='android.text.util.Rfc822Token java.lang.String quoteNameIfNecessary(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.util.Rfc822Tokenizer android.text.util.Rfc822Token[] tokenize(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.util.Linkify boolean addLinks(android.text.Spannable, java.util.regex.Pattern, java.lang.String, android.text.util.Linkify.MatchFilter, android.text.util.Linkify.TransformFilter) 1'>
@@ -59,19 +71,13 @@
     <item name='android.text.util.Linkify boolean addLinks(android.text.Spannable, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Linkify void addLinks(android.widget.TextView, java.util.regex.Pattern, java.lang.String, android.text.util.Linkify.MatchFilter, android.text.util.Linkify.TransformFilter) 1'>
+    <item name='android.text.util.Linkify void addLinks(android.widget.TextView, java.util.regex.Pattern, java.lang.String, android.text.util.Linkify.MatchFilter, android.text.util.Linkify.TransformFilter) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.util.Rfc822Tokenizer int findTokenEnd(java.lang.CharSequence, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.util.Linkify void addLinks(android.widget.TextView, java.util.regex.Pattern, java.lang.String, android.text.util.Linkify.MatchFilter, android.text.util.Linkify.TransformFilter) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.util.Rfc822Tokenizer java.lang.CharSequence terminateToken(java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.util.Rfc822Token java.lang.String quoteNameIfNecessary(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -8,6 +8,9 @@
     <item name='org.apache.harmony.security.fortress.Services java.util.List&lt;java.security.Provider&gt; getProvidersList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.fortress.SecurityAccess java.security.Provider.Service getService(java.security.Provider, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.fortress.Engine java.lang.Object getInstance(java.lang.String, java.security.Provider, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -18,6 +21,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.fortress.Engine java.lang.Object getInstance(java.lang.String, java.security.Provider, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.SecurityAccess java.util.List&lt;java.lang.String&gt; getAliases(java.security.Provider.Service) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

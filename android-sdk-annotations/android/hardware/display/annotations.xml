@@ -8,13 +8,19 @@
     <item name='android.hardware.display.DisplayManager void unregisterDisplayListener(android.hardware.display.DisplayManager.DisplayListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.display.IDisplayManagerCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.display.WifiDisplay WifiDisplay(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.display.DisplayManager android.view.Display[] getDisplays()'>
+    <item name='android.hardware.display.WifiDisplay java.lang.String getDeviceName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.display.DisplayManager android.view.Display[] getDisplays(java.lang.String)'>
+    <item name='android.hardware.display.WifiDisplay java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.IDisplayManagerCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.display.WifiDisplayStatus WifiDisplayStatus(int, int, int, android.hardware.display.WifiDisplay, android.hardware.display.WifiDisplay[], android.hardware.display.WifiDisplay[]) 5'>
@@ -23,10 +29,7 @@
     <item name='android.hardware.display.DisplayManager void forgetWifiDisplay(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.display.IDisplayManagerCallback.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.display.WifiDisplay java.lang.String getDeviceAddress()'>
+    <item name='android.hardware.display.IDisplayManager void forgetWifiDisplay(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.display.DisplayManagerGlobal void registerDisplayListener(android.hardware.display.DisplayManager.DisplayListener, android.os.Handler) 0'>
@@ -35,13 +38,16 @@
     <item name='android.hardware.display.DisplayManagerGlobal void forgetWifiDisplay(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.display.IDisplayManager.Stub android.os.IBinder asBinder()'>
+    <item name='android.hardware.display.IDisplayManager void registerCallback(android.hardware.display.IDisplayManagerCallback) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.display.WifiDisplay java.lang.String toString()'>
+    <item name='android.hardware.display.IDisplayManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.display.IDisplayManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.DisplayManager android.view.Display[] getDisplays(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.display.WifiDisplay WifiDisplay(java.lang.String, java.lang.String, java.lang.String) 0'>
@@ -50,31 +56,46 @@
     <item name='android.hardware.display.WifiDisplay void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.display.WifiDisplayStatus android.hardware.display.WifiDisplay[] getRememberedDisplays()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.WifiDisplayStatus java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.WifiDisplay java.lang.String getDeviceAddress()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.display.DisplayManager void connectWifiDisplay(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.display.WifiDisplayStatus void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.display.IDisplayManagerCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.display.WifiDisplayStatus WifiDisplayStatus(int, int, int, android.hardware.display.WifiDisplay, android.hardware.display.WifiDisplay[], android.hardware.display.WifiDisplay[]) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.display.WifiDisplayStatus android.hardware.display.WifiDisplay[] getAvailableDisplays()'>
+    <item name='android.hardware.display.IDisplayManager void connectWifiDisplay(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.display.WifiDisplayStatus android.hardware.display.WifiDisplay[] getRememberedDisplays()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.display.WifiDisplay java.lang.String getDeviceName()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.display.WifiDisplayStatus java.lang.String toString()'>
+    <item name='android.hardware.display.IDisplayManager.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.display.DisplayManagerGlobal void unregisterDisplayListener(android.hardware.display.DisplayManager.DisplayListener) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.hardware.display.WifiDisplayStatus android.hardware.display.WifiDisplay[] getAvailableDisplays()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.hardware.display.DisplayManager void renameWifiDisplay(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.IDisplayManager void renameWifiDisplay(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.display.DisplayManager android.view.Display[] getDisplays()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.display.DisplayManager void registerDisplayListener(android.hardware.display.DisplayManager.DisplayListener, android.os.Handler) 0'>

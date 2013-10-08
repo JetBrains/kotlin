@@ -1,11 +1,14 @@
 <root>
-    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.HttpMessageParser createResponseParser(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpResponseFactory, org.apache.http.params.HttpParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnection void update(java.net.Socket, org.apache.http.HttpHost, boolean, org.apache.http.params.HttpParams) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator org.apache.http.conn.OperatedClientConnection createConnection()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.conn.AbstractPooledConnAdapter void layerProtocol(org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.AbstractClientConnAdapter void receiveResponseEntity(org.apache.http.HttpResponse) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.SingleClientConnManager org.apache.http.conn.ManagedClientConnection getConnection(org.apache.http.conn.routing.HttpRoute, java.lang.Object) 0'>
@@ -20,13 +23,13 @@
     <item name='org.apache.http.impl.conn.AbstractPoolEntry void open(org.apache.http.conn.routing.HttpRoute, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.conn.DefaultHttpRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.SessionOutputBuffer createSessionOutputBuffer(java.net.Socket, int, org.apache.http.params.HttpParams)'>
+    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.AbstractPoolEntry void layerProtocol(org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.DefaultClientConnection void sendRequestHeader(org.apache.http.HttpRequest) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.Wire void input(java.io.InputStream) 0'>
@@ -35,13 +38,34 @@
     <item name='org.apache.http.impl.conn.AbstractPooledConnAdapter void tunnelProxy(org.apache.http.HttpHost, boolean, org.apache.http.params.HttpParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.conn.LoggingSessionOutputBuffer void write(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner java.net.Proxy chooseProxy(java.util.List&lt;java.net.Proxy&gt;, org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.HttpMessageParser createResponseParser(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpResponseFactory, org.apache.http.params.HttpParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.AbstractClientConnAdapter void assertValid(org.apache.http.conn.OperatedClientConnection) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.SessionOutputBuffer createSessionOutputBuffer(java.net.Socket, int, org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator void updateSecureConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.LoggingSessionInputBuffer int readLine(org.apache.http.util.CharArrayBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner org.apache.http.HttpHost determineProxy(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.DefaultHttpRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner java.net.Proxy chooseProxy(java.util.List&lt;java.net.Proxy&gt;, org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.DefaultResponseParser DefaultResponseParser(org.apache.http.io.SessionInputBuffer, org.apache.http.message.LineParser, org.apache.http.HttpResponseFactory, org.apache.http.params.HttpParams) 2'>
@@ -50,7 +74,7 @@
     <item name='org.apache.http.impl.conn.Wire void output(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner java.net.Proxy chooseProxy(java.util.List&lt;java.net.Proxy&gt;, org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)'>
+    <item name='org.apache.http.impl.conn.SingleClientConnManager org.apache.http.conn.ClientConnectionOperator createConnectionOperator(org.apache.http.conn.scheme.SchemeRegistry)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.AbstractPooledConnAdapter void open(org.apache.http.conn.routing.HttpRoute, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 0'>
@@ -60,9 +84,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator void openConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator org.apache.http.conn.OperatedClientConnection createConnection()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.AbstractPoolEntry AbstractPoolEntry(org.apache.http.conn.ClientConnectionOperator, org.apache.http.conn.routing.HttpRoute) 0'>
@@ -77,10 +98,10 @@
     <item name='org.apache.http.impl.conn.DefaultHttpRoutePlanner DefaultHttpRoutePlanner(org.apache.http.conn.scheme.SchemeRegistry) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)'>
+    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.SessionInputBuffer createSessionInputBuffer(java.net.Socket, int, org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.SessionInputBuffer createSessionInputBuffer(java.net.Socket, int, org.apache.http.params.HttpParams) 0'>
+    <item name='org.apache.http.impl.conn.LoggingSessionInputBuffer int read(byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator void openConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 4'>
@@ -95,6 +116,9 @@
     <item name='org.apache.http.impl.conn.SingleClientConnManager SingleClientConnManager(org.apache.http.params.HttpParams, org.apache.http.conn.scheme.SchemeRegistry) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.conn.AbstractClientConnAdapter void sendRequestEntity(org.apache.http.HttpEntityEnclosingRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner ProxySelectorRoutePlanner(org.apache.http.conn.scheme.SchemeRegistry, java.net.ProxySelector) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -107,6 +131,9 @@
     <item name='org.apache.http.impl.conn.DefaultClientConnection void update(java.net.Socket, org.apache.http.HttpHost, boolean, org.apache.http.params.HttpParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.conn.DefaultResponseParser DefaultResponseParser(org.apache.http.io.SessionInputBuffer, org.apache.http.message.LineParser, org.apache.http.HttpResponseFactory, org.apache.http.params.HttpParams) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -116,19 +143,31 @@
     <item name='org.apache.http.impl.conn.SingleClientConnManager void closeIdleConnections(long, java.util.concurrent.TimeUnit) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.HttpMessageParser createResponseParser(org.apache.http.io.SessionInputBuffer, org.apache.http.HttpResponseFactory, org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator void prepareSocket(java.net.Socket, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.Wire void output(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.SessionInputBuffer createSessionInputBuffer(java.net.Socket, int, org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.impl.conn.SingleClientConnManager void releaseConnection(org.apache.http.conn.ManagedClientConnection, long, java.util.concurrent.TimeUnit) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.LoggingSessionInputBuffer int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.SessionOutputBuffer createSessionOutputBuffer(java.net.Socket, int, org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator void openConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.SingleClientConnManager org.apache.http.conn.ClientConnectionRequest requestConnection(org.apache.http.conn.routing.HttpRoute, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.Wire void input(byte[], int, int) 0'>
@@ -149,7 +188,10 @@
     <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator void updateSecureConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.conn.SingleClientConnManager org.apache.http.conn.ClientConnectionOperator createConnectionOperator(org.apache.http.conn.scheme.SchemeRegistry)'>
+    <item name='org.apache.http.impl.conn.DefaultHttpRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.AbstractClientConnAdapter void sendRequestHeader(org.apache.http.HttpRequest) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.AbstractPooledConnAdapter void open(org.apache.http.conn.routing.HttpRoute, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 2'>
@@ -158,10 +200,10 @@
     <item name='org.apache.http.impl.conn.SingleClientConnManager.ConnAdapter ConnAdapter(org.apache.http.impl.conn.SingleClientConnManager, org.apache.http.impl.conn.SingleClientConnManager.PoolEntry, org.apache.http.conn.routing.HttpRoute) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.conn.DefaultClientConnection org.apache.http.io.SessionInputBuffer createSessionInputBuffer(java.net.Socket, int, org.apache.http.params.HttpParams)'>
+    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.impl.conn.ProxySelectorRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+    <item name='org.apache.http.impl.conn.LoggingSessionOutputBuffer void write(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.SingleClientConnManager.PoolEntry PoolEntry(org.apache.http.impl.conn.SingleClientConnManager) 0'>
@@ -177,9 +219,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.DefaultClientConnectionOperator void updateSecureConnection(org.apache.http.conn.OperatedClientConnection, org.apache.http.HttpHost, org.apache.http.protocol.HttpContext, org.apache.http.params.HttpParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.impl.conn.SingleClientConnManager org.apache.http.conn.ClientConnectionRequest requestConnection(org.apache.http.conn.routing.HttpRoute, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.impl.conn.DefaultResponseParser org.apache.http.HttpMessage parseHead(org.apache.http.io.SessionInputBuffer) 0'>

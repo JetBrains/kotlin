@@ -2,6 +2,9 @@
     <item name='org.apache.http.client.protocol.RequestProxyAuthentication void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.client.protocol.RequestDefaultHeaders void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.client.protocol.RequestDefaultHeaders void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>

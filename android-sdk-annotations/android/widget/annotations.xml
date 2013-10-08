@@ -1,11 +1,17 @@
 <root>
-    <item name='android.widget.RadioGroup android.widget.RadioGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.widget.ZoomButton boolean onLongClick(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.Switch void onPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Gallery boolean onDown(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.Switch void onPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionsView()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AbsoluteLayout.LayoutParams java.lang.String debug(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ScrollView void draw(android.graphics.Canvas) 0'>
@@ -26,28 +32,16 @@
     <item name='android.widget.LinearLayout.LayoutParams LayoutParams(android.view.ViewGroup.MarginLayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.LinearLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.Toast android.widget.Toast makeText(android.content.Context, int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.ExpandableListView android.os.Parcelable onSaveInstanceState()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ListPopupWindow ListPopupWindow(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionsView()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RelativeLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
+    <item name='android.widget.TableRow android.widget.LinearLayout.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Switch Switch(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.RelativeLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.StackView boolean onTouchEvent(android.view.MotionEvent) 0'>
@@ -66,9 +60,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SlidingDrawer void dispatchDraw(android.graphics.Canvas) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.AutoCompleteTextView java.lang.CharSequence convertSelectionToString(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.HorizontalScrollView void addView(android.view.View, int) 0'>
@@ -98,6 +89,9 @@
     <item name='android.widget.MultiAutoCompleteTextView void performFiltering(java.lang.CharSequence, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.PopupMenu android.view.MenuInflater getMenuInflater()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ListView void dispatchDraw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -110,13 +104,16 @@
     <item name='android.widget.ViewAnimator void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RelativeLayout android.widget.RelativeLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.SimpleCursorAdapter SimpleCursorAdapter(android.content.Context, int, android.database.Cursor, java.lang.String[], int[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.GridView boolean onKeyUp(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsListView android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.widget.Gallery android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SeekBar SeekBar(android.content.Context, android.util.AttributeSet) 0'>
@@ -158,10 +155,10 @@
     <item name='android.widget.SeekBar SeekBar(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ShareActionProvider android.view.View onCreateActionView()'>
+    <item name='android.widget.AdapterViewAnimator AdapterViewAnimator(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AdapterViewAnimator AdapterViewAnimator(android.content.Context) 0'>
+    <item name='android.widget.RelativeLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RadioButton RadioButton(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -185,6 +182,12 @@
     <item name='android.widget.ZoomControls ZoomControls(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.AbsListView android.widget.AbsListView.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.CursorTreeAdapter android.view.View getChildView(int, int, boolean, android.view.View, android.view.ViewGroup)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.Chronometer void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -200,22 +203,16 @@
     <item name='android.widget.FrameLayout void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TextView android.text.TextPaint getPaint()'>
+    <item name='android.widget.LinearLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.DatePicker void onPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TextView android.graphics.drawable.Drawable[] getCompoundDrawables()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.NumberPicker NumberPicker(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ImageButton ImageButton(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.AbsListView android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CheckBox void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -236,10 +233,13 @@
     <item name='android.widget.OverScroller OverScroller(android.content.Context, android.view.animation.Interpolator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableRow android.widget.LinearLayout.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+    <item name='android.widget.ExpandableListView void setAdapter(android.widget.ListAdapter) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.widget.TextView int getTextColor(android.content.Context, android.content.res.TypedArray, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setIndicator(java.lang.CharSequence, android.graphics.drawable.Drawable)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RadioGroup android.widget.RadioGroup.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
@@ -260,25 +260,37 @@
     <item name='android.widget.CursorTreeAdapter void bindGroupView(android.view.View, android.content.Context, android.database.Cursor, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RadioGroup android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.SlidingDrawer void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RadioGroup RadioGroup(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ImageSwitcher void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+    <item name='android.widget.AbsSeekBar void onDraw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsSeekBar void onDraw(android.graphics.Canvas) 0'>
+    <item name='android.widget.ImageSwitcher void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.HorizontalScrollView boolean executeKeyEvent(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.GridLayout android.widget.GridLayout.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ScrollView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.FrameLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.FrameLayout FrameLayout(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TableRow android.widget.LinearLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TableRow TableRow(android.content.Context) 0'>
@@ -290,10 +302,16 @@
     <item name='android.widget.ListView boolean drawChild(android.graphics.Canvas, android.view.View, long) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.AbsListView boolean showContextMenuForChild(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ArrayAdapter ArrayAdapter(android.content.Context, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.FrameLayout FrameLayout(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TableLayout void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.StackView void dispatchDraw(android.graphics.Canvas) 0'>
@@ -308,13 +326,10 @@
     <item name='android.widget.AnalogClock AnalogClock(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.Gallery android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.widget.TableLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TextView void onVisibilityChanged(android.view.View, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ListView boolean drawChild(android.graphics.Canvas, android.view.View, long) 0'>
@@ -326,10 +341,19 @@
     <item name='android.widget.AbsoluteLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.ExpandableListAdapter android.view.View getChildView(int, int, boolean, android.view.View, android.view.ViewGroup)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.LinearLayout LinearLayout(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TableLayout void addView(android.view.View, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.RadioGroup android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.LinearLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CheckBox CheckBox(android.content.Context) 0'>
@@ -365,13 +389,10 @@
     <item name='android.widget.LinearLayout LinearLayout(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.Gallery android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setContent(android.content.Intent)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ArrayAdapter ArrayAdapter(android.content.Context, int, T[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TextSwitcher void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.FrameLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
@@ -392,6 +413,9 @@
     <item name='android.widget.TwoLineListItem TwoLineListItem(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RemoteViews.OnClickHandler boolean onClickHandler(android.view.View, android.app.PendingIntent, android.content.Intent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.VideoView boolean onTouchEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -401,10 +425,10 @@
     <item name='android.widget.CompoundButton CompoundButton(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ScrollBarDrawable java.lang.String toString()'>
+    <item name='android.widget.ListView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ListView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+    <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.HorizontalScrollView int computeScrollDeltaToGetChildRectOnScreen(android.graphics.Rect) 0'>
@@ -414,9 +438,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SearchView.SearchAutoComplete SearchAutoComplete(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RadioGroup android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterView void addView(android.view.View, android.view.ViewGroup.LayoutParams) 0'>
@@ -437,28 +458,16 @@
     <item name='android.widget.TwoLineListItem TwoLineListItem(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.FrameLayout android.widget.FrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ArrayAdapter ArrayAdapter(android.content.Context, int, T[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ArrayAdapter android.widget.ArrayAdapter&lt;java.lang.CharSequence&gt; createFromResource(android.content.Context, int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.FrameLayout void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.FrameLayout android.widget.FrameLayout.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TwoLineListItem void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CursorTreeAdapter void bindChildView(android.view.View, android.content.Context, android.database.Cursor, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setIndicator(java.lang.CharSequence, android.graphics.drawable.Drawable)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TextView boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
@@ -470,10 +479,10 @@
     <item name='android.widget.CompoundButton CompoundButton(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsListView long[] getCheckedItemIds()'>
+    <item name='android.widget.GridLayout.LayoutParams LayoutParams(android.widget.GridLayout.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout.LayoutParams LayoutParams(android.widget.GridLayout.LayoutParams) 0'>
+    <item name='android.widget.AdapterView void addView(android.view.View, android.view.ViewGroup.LayoutParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.MultiAutoCompleteTextView.Tokenizer int findTokenStart(java.lang.CharSequence, int) 0'>
@@ -507,9 +516,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CursorAdapter void bindView(android.view.View, android.content.Context, android.database.Cursor) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.MultiAutoCompleteTextView.CommaTokenizer java.lang.CharSequence terminateToken(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.QuickContactBadge QuickContactBadge(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -551,6 +557,12 @@
     <item name='android.widget.MediaController void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RelativeLayout.LayoutParams java.lang.String debug(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AbsListView long[] getCheckedItemIds()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.SimpleCursorTreeAdapter void bindChildView(android.view.View, android.content.Context, android.database.Cursor, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -563,16 +575,13 @@
     <item name='android.widget.ListPopupWindow ListPopupWindow(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.Gallery void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Toast android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.Toast android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)'>
+    <item name='android.widget.AbsSpinner android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsListView void dispatchDraw(android.graphics.Canvas) 0'>
@@ -582,6 +591,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SeekBar SeekBar(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ActivityChooserModel.ActivitySorter void sort(android.content.Intent, java.util.List&lt;android.widget.ActivityChooserModel.ActivityResolveInfo&gt;, java.util.List&lt;android.widget.ActivityChooserModel.HistoricalRecord&gt;) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ZoomButton ZoomButton(android.content.Context) 0'>
@@ -599,10 +611,10 @@
     <item name='android.widget.ScrollView void addView(android.view.View, android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ShareActionProvider void onPrepareSubMenu(android.view.SubMenu) 0'>
+    <item name='android.widget.ZoomButtonsController android.view.ViewGroup getContainer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableLayout android.widget.LinearLayout.LayoutParams generateDefaultLayoutParams()'>
+    <item name='android.widget.ShareActionProvider void onPrepareSubMenu(android.view.SubMenu) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.DialerFilter DialerFilter(android.content.Context, android.util.AttributeSet) 0'>
@@ -614,13 +626,22 @@
     <item name='android.widget.TextView void setFilters(android.text.InputFilter[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.ActivityChooserModel.ActivitySorter void sort(android.content.Intent, java.util.List&lt;android.widget.ActivityChooserModel.ActivityResolveInfo&gt;, java.util.List&lt;android.widget.ActivityChooserModel.HistoricalRecord&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AutoCompleteTextView void replaceText(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.TableLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SeekBar SeekBar(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ArrayAdapter android.view.View getDropDownView(int, android.view.View, android.view.ViewGroup)'>
+    <item name='android.widget.Gallery boolean showContextMenuForChild(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ActivityChooserModel android.widget.ActivityChooserModel get(android.content.Context, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AnalogClock AnalogClock(android.content.Context, android.util.AttributeSet) 0'>
@@ -629,13 +650,13 @@
     <item name='android.widget.TextView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionsViewWithRevokeButtons()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TableLayout android.widget.TableLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.widget.AbsoluteLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSeekBar void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TableLayout void addView(android.view.View, android.view.ViewGroup.LayoutParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TabWidget void sendAccessibilityEventUnchecked(android.view.accessibility.AccessibilityEvent) 0'>
@@ -644,22 +665,22 @@
     <item name='android.widget.HorizontalScrollView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.HorizontalScrollView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+    <item name='android.widget.VideoView boolean onTrackballEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.DialerFilter DialerFilter(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.HorizontalScrollView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ListPopupWindow ListPopupWindow(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.widget.MediaController boolean onTrackballEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SlidingDrawer void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RemoteViewsService android.os.IBinder onBind(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Scroller Scroller(android.content.Context, android.view.animation.Interpolator) 0'>
@@ -671,13 +692,16 @@
     <item name='android.widget.ExpandableListView void dispatchDraw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsListView android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+    <item name='android.widget.NumberPicker.OnValueChangeListener void onValueChange(android.widget.NumberPicker, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.HorizontalScrollView HorizontalScrollView(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Gallery boolean onKeyDown(int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AbsListView android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterView void addView(android.view.View, int) 0'>
@@ -693,6 +717,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ViewSwitcher void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.GridLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ViewAnimator void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 0'>
@@ -719,13 +746,16 @@
     <item name='android.widget.Spinner void onClick(android.content.DialogInterface, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.FrameLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.CalendarView CalendarView(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsListView void reclaimViews(java.util.List&lt;android.view.View&gt;) 0'>
+    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setContent(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setContent(android.widget.TabHost.TabContentFactory)'>
+    <item name='android.widget.AbsListView void reclaimViews(java.util.List&lt;android.view.View&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.HorizontalScrollView HorizontalScrollView(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -744,9 +774,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ScrollView boolean onTouchEvent(android.view.MotionEvent) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.ZoomButtonsController android.view.ViewGroup getContainer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TabWidget TabWidget(android.content.Context, android.util.AttributeSet) 0'>
@@ -770,6 +797,12 @@
     <item name='android.widget.Spinner Spinner(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.Spinner android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.RemoteViews android.widget.RemoteViews clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.EditText EditText(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -785,6 +818,9 @@
     <item name='android.widget.TextView TextView(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.AbsSpinner android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.RemoteViewsAdapter RemoteViewsAdapter(android.content.Context, android.content.Intent, android.widget.RemoteViewsAdapter.RemoteAdapterConnectionCallback) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -795,6 +831,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ActivityChooserModel.HistoricalRecord HistoricalRecord(java.lang.String, long, float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ListView android.view.View findViewByPredicateTraversal(com.android.internal.util.Predicate&lt;android.view.View&gt;, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSpinner void onRestoreInstanceState(android.os.Parcelable) 0'>
@@ -816,6 +855,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.StackView StackView(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionsViewWithRevokeButtons()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ScrollView void measureChildWithMargins(android.view.View, int, int, int, int) 0'>
@@ -854,7 +896,7 @@
     <item name='android.widget.TableLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TextView android.os.Parcelable onSaveInstanceState()'>
+    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int, android.widget.GridLayout.Alignment)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsoluteLayout AbsoluteLayout(android.content.Context, android.util.AttributeSet) 0'>
@@ -866,13 +908,7 @@
     <item name='android.widget.TableLayout void addView(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RemoteViews java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RemoteViewsAdapter android.content.Intent getRemoteViewsServiceIntent()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TextView.BufferType android.widget.TextView.BufferType valueOf(java.lang.String)'>
+    <item name='android.widget.Filter android.widget.Filter.FilterResults performFiltering(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ViewSwitcher ViewSwitcher(android.content.Context) 0'>
@@ -884,16 +920,22 @@
     <item name='android.widget.ListView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setContent(int)'>
+    <item name='android.widget.TextSwitcher TextSwitcher(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TextSwitcher TextSwitcher(android.content.Context, android.util.AttributeSet) 0'>
+    <item name='android.widget.ProgressBar android.os.Parcelable onSaveInstanceState()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.LinearLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.Filter java.lang.CharSequence convertResultToString(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.RelativeLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TimePicker android.os.Parcelable onSaveInstanceState()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ViewFlipper void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -903,6 +945,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsListView void getFocusedRect(android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.HorizontalScrollView void addView(android.view.View, android.view.ViewGroup.LayoutParams) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsListView boolean onKeyUp(int, android.view.KeyEvent) 1'>
@@ -935,13 +980,22 @@
     <item name='android.widget.ProgressBar void onRestoreInstanceState(android.os.Parcelable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.ExpandableListView void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.TextView void setTextAppearance(android.content.Context, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.NumberPicker boolean onTouchEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TableLayout android.widget.TableLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.Editor.UserDictionaryListener void handleMessage(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ActivityChooserModel.ActivityResolveInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSpinner AbsSpinner(android.content.Context) 0'>
@@ -953,7 +1007,7 @@
     <item name='android.widget.QuickContactBadge void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ArrayAdapter android.view.View getView(int, android.view.View, android.view.ViewGroup)'>
+    <item name='android.widget.ViewAnimator void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.GridLayout void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -965,11 +1019,14 @@
     <item name='android.widget.ListView boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.GridView GridView(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ImageButton ImageButton(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridView GridView(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+    <item name='android.widget.GridView void setAdapter(android.widget.ListAdapter) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.widget.CalendarView CalendarView(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -1001,9 +1058,6 @@
     <item name='android.widget.AbsSpinner void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int, android.widget.GridLayout.Alignment)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.GridView GridView(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1019,13 +1073,13 @@
     <item name='android.widget.ViewFlipper ViewFlipper(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsoluteLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.Button void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsListView void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TableLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ResourceCursorTreeAdapter ResourceCursorTreeAdapter(android.content.Context, android.database.Cursor, int, int, int, int) 0'>
@@ -1055,6 +1109,9 @@
     <item name='android.widget.OverScroller OverScroller(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.AppSecurityPermissions.PermissionItemView void onClick(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.GridLayout GridLayout(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1062,6 +1119,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSeekBar AbsSeekBar(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.MultiAutoCompleteTextView.Tokenizer java.lang.CharSequence terminateToken(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TextView android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo) 0'>
@@ -1082,9 +1142,6 @@
     <item name='android.widget.RadioGroup RadioGroup(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableRow android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.AutoCompleteTextView boolean onKeyPreIme(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1097,7 +1154,7 @@
     <item name='android.widget.GridLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CursorTreeAdapter java.lang.CharSequence convertToString(android.database.Cursor)'>
+    <item name='android.widget.CursorTreeAdapter android.view.View getGroupView(int, boolean, android.view.View, android.view.ViewGroup)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.VideoView boolean onKeyDown(int, android.view.KeyEvent) 1'>
@@ -1109,10 +1166,13 @@
     <item name='android.widget.TableLayout android.widget.TableLayout.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ListPopupWindow void setAdapter(android.widget.ListAdapter) 0'>
+    <item name='android.widget.RadioGroup android.widget.RadioGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout android.widget.GridLayout.LayoutParams generateDefaultLayoutParams()'>
+    <item name='android.widget.ListPopupWindow void setAdapter(android.widget.ListAdapter) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='android.widget.AbsoluteLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SpellChecker void onGetSuggestions(android.view.textservice.SuggestionsInfo[]) 0'>
@@ -1127,6 +1187,9 @@
     <item name='android.widget.TwoLineListItem TwoLineListItem(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.LinearLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.QuickContactBadge QuickContactBadge(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1137,6 +1200,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.HorizontalScrollView void addView(android.view.View, android.view.ViewGroup.LayoutParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.GridLayout android.widget.GridLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RatingBar RatingBar(android.content.Context, android.util.AttributeSet, int) 0'>
@@ -1151,6 +1217,12 @@
     <item name='android.widget.ImageView.ScaleType android.widget.ImageView.ScaleType valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RelativeLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ScrollBarDrawable java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ScrollView void requestChildFocus(android.view.View, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1163,19 +1235,10 @@
     <item name='android.widget.TextSwitcher TextSwitcher(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.FrameLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RelativeLayout.LayoutParams java.lang.String debug(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.DatePicker void onRestoreInstanceState(android.os.Parcelable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TextView boolean onKeyPreIme(int, android.view.KeyEvent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.ActivityChooserModel.HistoricalRecord java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsoluteLayout AbsoluteLayout(android.content.Context) 0'>
@@ -1184,37 +1247,37 @@
     <item name='android.widget.ZoomButtonsController ZoomButtonsController(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RadioGroup android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.RatingBar RatingBar(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CheckedTextView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ImageSwitcher void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
+    <item name='android.widget.AbsSpinner AbsSpinner(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsSpinner AbsSpinner(android.content.Context, android.util.AttributeSet, int) 0'>
+    <item name='android.widget.ImageSwitcher void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.LinearLayout LinearLayout(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RelativeLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.widget.CompoundButton android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.Toast android.widget.Toast makeText(android.content.Context, java.lang.CharSequence, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.NumberPicker boolean onInterceptTouchEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabHost android.widget.TabHost.TabSpec newTabSpec(java.lang.String)'>
+    <item name='android.widget.TextView android.graphics.drawable.Drawable[] getCompoundDrawablesRelative()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.DigitalClock DigitalClock(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.LinearLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.widget.RelativeLayout.LayoutParams int[] getRules()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.MultiAutoCompleteTextView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -1229,10 +1292,16 @@
     <item name='android.widget.ListView boolean onKeyDown(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RadioGroup void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.StackView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.widget.NumberPicker android.widget.NumberPicker.Formatter getTwoDigitFormatter()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TabHost.TabContentFactory android.view.View createTabContent(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ImageView ImageView(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -1241,28 +1310,25 @@
     <item name='android.widget.PopupWindow void update(android.view.View, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ActivityChooserModel android.widget.ActivityChooserModel get(android.content.Context, java.lang.String)'>
+    <item name='android.widget.RemoteViewsService android.os.IBinder onBind(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterViewAnimator AdapterViewAnimator(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsoluteLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.widget.AutoCompleteTextView.Validator java.lang.CharSequence fixText(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RemoteViewsAdapter boolean handleMessage(android.os.Message) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableRow android.widget.LinearLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.DigitalClock DigitalClock(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsoluteLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+    <item name='android.widget.ZoomControls void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ZoomControls void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
+    <item name='android.widget.FrameLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RemoteViewsAdapter RemoteViewsAdapter(android.content.Context, android.content.Intent, android.widget.RemoteViewsAdapter.RemoteAdapterConnectionCallback) 1'>
@@ -1274,13 +1340,22 @@
     <item name='android.widget.Editor void addSpanWatchers(android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.SearchView.SearchAutoComplete void replaceText(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionsView(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.LinearLayout LinearLayout(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ListPopupWindow boolean onKeyPreIme(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TimePicker android.os.Parcelable onSaveInstanceState()'>
+    <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AutoCompleteTextView.Validator boolean isValid(java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
@@ -1295,10 +1370,13 @@
     <item name='android.widget.Spinner Spinner(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TableRow android.widget.TableRow.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.AlphabetIndexer AlphabetIndexer(android.database.Cursor, int, java.lang.CharSequence) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CursorTreeAdapter android.view.View getGroupView(int, boolean, android.view.View, android.view.ViewGroup)'>
+    <item name='android.widget.AbsListView.OnScrollListener void onScroll(android.widget.AbsListView, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterViewAnimator AdapterViewAnimator(android.content.Context, android.util.AttributeSet) 0'>
@@ -1331,9 +1409,6 @@
     <item name='android.widget.ListView ListView(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AdapterViewAnimator android.os.Parcelable onSaveInstanceState()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.SearchView.SearchAutoComplete boolean onKeyPreIme(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1346,9 +1421,6 @@
     <item name='android.widget.AbsSpinner AbsSpinner(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CursorTreeAdapter android.view.View getChildView(int, int, boolean, android.view.View, android.view.ViewGroup)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.AbsListView android.widget.AbsListView.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1356,9 +1428,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TabWidget void addView(android.view.View) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.LinearLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ViewAnimator void setInAnimation(android.content.Context, int) 0'>
@@ -1388,7 +1457,13 @@
     <item name='android.widget.RelativeLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TextView android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.MediaController MediaController(android.content.Context, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.SeekBar.OnSeekBarChangeListener void onStopTrackingTouch(android.widget.SeekBar) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TabWidget boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
@@ -1412,9 +1487,6 @@
     <item name='android.widget.TextView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CursorAdapter android.view.View getView(int, android.view.View, android.view.ViewGroup)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.RelativeLayout void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1424,10 +1496,13 @@
     <item name='android.widget.TextView void onPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RelativeLayout.LayoutParams int[] getRules()'>
+    <item name='android.widget.TabHost TabHost(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabHost TabHost(android.content.Context, android.util.AttributeSet) 0'>
+    <item name='android.widget.FrameLayout android.widget.FrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.DatePicker android.os.Parcelable onSaveInstanceState()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.QuickContactBadge void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -1448,7 +1523,7 @@
     <item name='android.widget.GridLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.Spinner android.os.Parcelable onSaveInstanceState()'>
+    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setContent(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterView void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 0'>
@@ -1466,16 +1541,19 @@
     <item name='android.widget.ZoomButtonsController boolean onTouch(android.view.View, android.view.MotionEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RadioGroup android.widget.LinearLayout.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.GridView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AutoCompleteTextView void setAdapter(T) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.PopupWindow int getMaxAvailableHeight(android.view.View) 0'>
+    <item name='android.widget.TabHost TabHost(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabHost TabHost(android.content.Context, android.util.AttributeSet) 1'>
+    <item name='android.widget.PopupWindow int getMaxAvailableHeight(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ViewAnimator void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
@@ -1490,13 +1568,7 @@
     <item name='android.widget.RadioGroup android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setIndicator(android.view.View)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.PopupWindow int getMaxAvailableHeight(android.view.View, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.Gallery android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.FrameLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
@@ -1506,9 +1578,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ZoomButton ZoomButton(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.AbsListView android.widget.AbsListView.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TableLayout TableLayout(android.content.Context) 0'>
@@ -1535,16 +1604,19 @@
     <item name='android.widget.AbsListView void setRemoteViewsAdapter(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RelativeLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.widget.TextView android.graphics.drawable.Drawable[] getCompoundDrawables()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.HorizontalScrollView boolean onTouchEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Switch void setSwitchTextAppearance(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AbsListView android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AdapterView void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.OverScroller OverScroller(android.content.Context, android.view.animation.Interpolator, float, float) 0'>
@@ -1580,16 +1652,10 @@
     <item name='android.widget.DialerFilter boolean onKeyUp(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.MultiAutoCompleteTextView.Tokenizer java.lang.CharSequence terminateToken(java.lang.CharSequence)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.FrameLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ProgressBar ProgressBar(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RemoteViewsAdapter android.view.View getView(int, android.view.View, android.view.ViewGroup)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RadioGroup.LayoutParams void setBaseAttributes(android.content.res.TypedArray, int, int) 0'>
@@ -1604,19 +1670,22 @@
     <item name='android.widget.TabWidget void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TextView void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RatingBar RatingBar(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CursorAdapter java.lang.CharSequence convertToString(android.database.Cursor)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.FrameLayout android.widget.FrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSeekBar AbsSeekBar(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AutoCompleteTextView.Validator java.lang.CharSequence fixText(java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Spinner Spinner(android.content.Context) 0'>
@@ -1628,10 +1697,16 @@
     <item name='android.widget.AbsSpinner void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RemoteViewsAdapter android.content.Intent getRemoteViewsServiceIntent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.Chronometer Chronometer(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsoluteLayout AbsoluteLayout(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.LinearLayout.LayoutParams java.lang.String debug(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ViewSwitcher ViewSwitcher(android.content.Context, android.util.AttributeSet) 0'>
@@ -1643,7 +1718,7 @@
     <item name='android.widget.ActivityChooserView ActivityChooserView(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.widget.CursorTreeAdapter java.lang.CharSequence convertToString(android.database.Cursor)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SimpleCursorTreeAdapter SimpleCursorTreeAdapter(android.content.Context, android.database.Cursor, int, java.lang.String[], int[], int, java.lang.String[], int[]) 0'>
@@ -1694,6 +1769,9 @@
     <item name='android.widget.TabWidget void dispatchDraw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TabHost android.widget.TabHost.TabSpec newTabSpec(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ViewFlipper void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1712,9 +1790,6 @@
     <item name='android.widget.TableRow.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ListPopupWindow ListPopupWindow(android.content.Context, android.util.AttributeSet, int, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1730,10 +1805,10 @@
     <item name='android.widget.TimePicker void onConfigurationChanged(android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AdapterViewFlipper void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
+    <item name='android.widget.TabHost boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabHost boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
+    <item name='android.widget.AdapterViewFlipper void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CompoundButton void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -1742,13 +1817,13 @@
     <item name='android.widget.GridView boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CursorTreeAdapter java.lang.String convertToString(android.database.Cursor)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.SearchView.SearchAutoComplete SearchAutoComplete(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterView AdapterView(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.RemoteViewsAdapter android.view.View getView(int, android.view.View, android.view.ViewGroup)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SearchView SearchView(android.content.Context) 0'>
@@ -1778,9 +1853,6 @@
     <item name='android.widget.RadioButton void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsListView android.os.Parcelable onSaveInstanceState()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.CheckBox CheckBox(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1808,6 +1880,9 @@
     <item name='android.widget.TableLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.ScrollView void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.Gallery boolean onScroll(android.view.MotionEvent, android.view.MotionEvent, float, float) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1826,7 +1901,13 @@
     <item name='android.widget.CompoundButton CompoundButton(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.AutoCompleteTextView java.lang.CharSequence convertSelectionToString(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ZoomButton ZoomButton(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TextView.BufferType android.widget.TextView.BufferType valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TimePicker TimePicker(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -1838,7 +1919,13 @@
     <item name='android.widget.SearchView boolean onKeyDown(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.ArrayAdapter android.view.View getView(int, android.view.View, android.view.ViewGroup)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ImageButton void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TimePicker TimePicker(android.content.Context, android.util.AttributeSet) 0'>
@@ -1853,9 +1940,6 @@
     <item name='android.widget.RadioGroup.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int, int, android.widget.GridLayout.Alignment)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ImageView void onPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1866,9 +1950,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsListView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.LinearLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Spinner Spinner(android.content.Context, android.util.AttributeSet, int, int) 1'>
@@ -1887,6 +1968,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.NumberPicker boolean dispatchTrackballEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ExpandableListAdapter android.view.View getGroupView(int, boolean, android.view.View, android.view.ViewGroup)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ScrollView ScrollView(android.content.Context, android.util.AttributeSet, int) 0'>
@@ -1916,6 +2000,9 @@
     <item name='android.widget.ArrayAdapter ArrayAdapter(android.content.Context, int, int, java.util.List&lt;T&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TextView android.text.TextPaint getPaint()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.ToggleButton ToggleButton(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1925,13 +2012,16 @@
     <item name='android.widget.AbsListView.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.NumberPicker android.widget.NumberPicker.Formatter getTwoDigitFormatter()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ScrollView void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSeekBar AbsSeekBar(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.Gallery android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AbsListView android.os.Parcelable onSaveInstanceState()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RemoteViews void reapply(android.content.Context, android.view.View) 1'>
@@ -1946,9 +2036,6 @@
     <item name='android.widget.ScrollView ScrollView(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.PopupMenu android.view.MenuInflater getMenuInflater()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.TableRow void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1958,7 +2045,16 @@
     <item name='android.widget.ZoomButton void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TextView.SavedState java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setIndicator(android.view.View)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.DatePicker DatePicker(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AbsListView android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ToggleButton ToggleButton(android.content.Context, android.util.AttributeSet) 1'>
@@ -2003,6 +2099,15 @@
     <item name='android.widget.AdapterViewFlipper AdapterViewFlipper(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TableLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ArrayAdapter android.view.View getDropDownView(int, android.view.View, android.view.ViewGroup)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ImageView.ScaleType android.widget.ImageView.ScaleType valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.TextView void setTextKeepState(java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2010,6 +2115,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ImageSwitcher ImageSwitcher(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.GridLayout android.widget.GridLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Gallery boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
@@ -2033,11 +2141,8 @@
     <item name='android.widget.SimpleExpandableListAdapter SimpleExpandableListAdapter(android.content.Context, java.util.List&lt;? extends java.util.Map&lt;java.lang.String,?&gt;&gt;, int, int, java.lang.String[], int[], java.util.List&lt;? extends java.util.List&lt;? extends java.util.Map&lt;java.lang.String,?&gt;&gt;&gt;, int, java.lang.String[], int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsSpinner android.os.Parcelable onSaveInstanceState()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.DatePicker android.os.Parcelable onSaveInstanceState()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+    <item name='android.widget.ListView void setAdapter(android.widget.ListAdapter) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.widget.ToggleButton ToggleButton(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -2060,10 +2165,10 @@
     <item name='android.widget.ImageView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ImageSwitcher ImageSwitcher(android.content.Context, android.util.AttributeSet) 0'>
+    <item name='android.widget.AdapterViewFlipper AdapterViewFlipper(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AdapterViewFlipper AdapterViewFlipper(android.content.Context, android.util.AttributeSet) 0'>
+    <item name='android.widget.ImageSwitcher ImageSwitcher(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ResourceCursorAdapter ResourceCursorAdapter(android.content.Context, int, android.database.Cursor, boolean) 0'>
@@ -2087,10 +2192,10 @@
     <item name='android.widget.ListView ListView(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.widget.SimpleAdapter void setViewImage(android.widget.ImageView, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.SimpleAdapter void setViewImage(android.widget.ImageView, java.lang.String) 1'>
+    <item name='android.widget.LinearLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TableLayout.LayoutParams void setBaseAttributes(android.content.res.TypedArray, int, int) 0'>
@@ -2114,9 +2219,6 @@
     <item name='android.widget.TableLayout void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RadioGroup android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.MultiAutoCompleteTextView MultiAutoCompleteTextView(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2132,16 +2234,13 @@
     <item name='android.widget.ListView ListView(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RadioGroup android.widget.LinearLayout.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.GridLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.TextView.SavedState void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ScrollView boolean executeKeyEvent(android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.HorizontalScrollView void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ProgressBar void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
@@ -2150,22 +2249,28 @@
     <item name='android.widget.EditText void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RadioGroup android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.AppSecurityPermissions.PermissionItemView PermissionItemView(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SimpleCursorTreeAdapter void setViewText(android.widget.TextView, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ScrollView ScrollView(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.TableLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionItemView(android.content.Context, java.lang.CharSequence, java.lang.CharSequence, boolean)'>
+    <item name='android.widget.ScrollView ScrollView(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.VideoView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setIndicator(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSeekBar boolean onTouchEvent(android.view.MotionEvent) 0'>
@@ -2180,22 +2285,28 @@
     <item name='android.widget.AdapterView boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.RemoteViews java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.GridLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.CursorTreeAdapter java.lang.String convertToString(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.AbsoluteLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SlidingDrawer SlidingDrawer(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.EdgeEffect android.graphics.Rect getBounds(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.Filter java.lang.CharSequence convertResultToString(java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ScrollView ScrollView(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RemoteViews android.view.View apply(android.content.Context, android.view.ViewGroup) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionItemView(android.content.Context, java.lang.CharSequence, java.lang.CharSequence, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CheckedTextView CheckedTextView(android.content.Context, android.util.AttributeSet) 1'>
@@ -2243,6 +2354,9 @@
     <item name='android.widget.Gallery boolean onTouchEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.HorizontalScrollView HorizontalScrollView(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2276,13 +2390,7 @@
     <item name='android.widget.StackView StackView(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TextView.SavedState java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.RelativeLayout RelativeLayout(android.content.Context, android.util.AttributeSet) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.ImageView.ScaleType android.widget.ImageView.ScaleType valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AppSecurityPermissions.PermissionItemView PermissionItemView(android.content.Context, android.util.AttributeSet) 1'>
@@ -2321,9 +2429,6 @@
     <item name='android.widget.StackView StackView(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.AbsListView AbsListView(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2331,6 +2436,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TimePicker TimePicker(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.FrameLayout android.widget.FrameLayout.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Space void draw(android.graphics.Canvas) 0'>
@@ -2348,16 +2456,13 @@
     <item name='android.widget.Gallery.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsoluteLayout.LayoutParams java.lang.String debug(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.GridLayout android.widget.GridLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.VideoView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.Filter java.lang.CharSequence convertResultToString(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Chronometer void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
@@ -2381,6 +2486,9 @@
     <item name='android.widget.VideoView VideoView(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int, int, android.widget.GridLayout.Alignment)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.TableRow android.widget.TableRow.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2402,16 +2510,22 @@
     <item name='android.widget.SimpleAdapter SimpleAdapter(android.content.Context, java.util.List&lt;? extends java.util.Map&lt;java.lang.String,?&gt;&gt;, int, java.lang.String[], int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.GridLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.AbsListView void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Button Button(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.EdgeEffect android.graphics.Rect getBounds(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.PopupWindow PopupWindow(android.content.Context, android.util.AttributeSet, int, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.FrameLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.widget.TabWidget TabWidget(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AdapterView void addView(android.view.View) 0'>
@@ -2420,22 +2534,22 @@
     <item name='android.widget.ScrollView void addView(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TabWidget TabWidget(android.content.Context, android.util.AttributeSet, int) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ZoomControls void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.ProgressBar android.os.Parcelable onSaveInstanceState()'>
+    <item name='android.widget.SlidingDrawer SlidingDrawer(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.SlidingDrawer SlidingDrawer(android.content.Context, android.util.AttributeSet) 1'>
+    <item name='android.widget.ShareActionProvider android.view.View onCreateActionView()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Button Button(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ExpandableListView ExpandableListView(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.RelativeLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsSpinner AbsSpinner(android.content.Context, android.util.AttributeSet) 1'>
@@ -2450,19 +2564,22 @@
     <item name='android.widget.OverScroller OverScroller(android.content.Context, android.view.animation.Interpolator, float, float, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout android.widget.GridLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.TabHost void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ScrollBarDrawable void drawThumb(android.graphics.Canvas, android.graphics.Rect, int, int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TableLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.AutoCompleteTextView boolean onKeyDown(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ExpandableListView ExpandableListView(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.MultiAutoCompleteTextView.CommaTokenizer java.lang.CharSequence terminateToken(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RadioGroup void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -2474,7 +2591,13 @@
     <item name='android.widget.ImageView void setColorFilter(int, android.graphics.PorterDuff.Mode) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.Gallery android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.Gallery.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ViewSwitcher void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TabWidget void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
@@ -2498,7 +2621,16 @@
     <item name='android.widget.EditText EditText(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TextView android.graphics.drawable.Drawable[] getCompoundDrawablesRelative()'>
+    <item name='android.widget.AdapterViewAnimator android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.SeekBar.OnSeekBarChangeListener void onProgressChanged(android.widget.SeekBar, int, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.AbsListView void setAdapter(android.widget.ListAdapter) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='android.widget.ArrayAdapter android.widget.ArrayAdapter&lt;java.lang.CharSequence&gt; createFromResource(android.content.Context, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TextView boolean extractText(android.view.inputmethod.ExtractedTextRequest, android.view.inputmethod.ExtractedText) 1'>
@@ -2522,13 +2654,13 @@
     <item name='android.widget.Space Space(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CompoundButton android.os.Parcelable onSaveInstanceState()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.CheckedTextView CheckedTextView(android.content.Context, android.util.AttributeSet, int) 0'>
+    <item name='android.widget.TextView boolean onTrackballEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Chronometer Chronometer(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.CheckedTextView CheckedTextView(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.CalendarView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
@@ -2537,16 +2669,7 @@
     <item name='android.widget.HorizontalScrollView boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.TableRow android.widget.TableRow.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.Gallery Gallery(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.FrameLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TableRow android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SearchView.SearchAutoComplete SearchAutoComplete(android.content.Context, android.util.AttributeSet) 0'>
@@ -2559,6 +2682,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TextView boolean extractText(android.view.inputmethod.ExtractedTextRequest, android.view.inputmethod.ExtractedText) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.CursorAdapter android.view.View newView(android.content.Context, android.database.Cursor, android.view.ViewGroup)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.DatePicker DatePicker(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -2576,10 +2702,10 @@
     <item name='android.widget.Space Space(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AppSecurityPermissions android.view.View getPermissionsView(int)'>
+    <item name='android.widget.CheckedTextView CheckedTextView(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.CheckedTextView CheckedTextView(android.content.Context, android.util.AttributeSet, int) 1'>
+    <item name='android.widget.PopupMenu void onCloseMenu(com.android.internal.view.menu.MenuBuilder, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.MultiAutoCompleteTextView.CommaTokenizer int findTokenStart(java.lang.CharSequence, int) 0'>
@@ -2589,6 +2715,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Chronometer Chronometer(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ScrollBarDrawable void onBoundsChange(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.PopupWindow int getMaxAvailableHeight(android.view.View, int, boolean) 0'>
@@ -2633,7 +2762,7 @@
     <item name='android.widget.LinearLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.GridLayout android.widget.GridLayout.Spec spec(int, int)'>
+    <item name='android.widget.TextView void onTextChanged(java.lang.CharSequence, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.ProgressBar ProgressBar(android.content.Context, android.util.AttributeSet, int, int) 1'>
@@ -2646,6 +2775,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Gallery android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TableLayout android.widget.LinearLayout.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.GridView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
@@ -2666,13 +2798,13 @@
     <item name='android.widget.RatingBar RatingBar(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.TableLayout android.widget.LinearLayout.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.Gallery Gallery(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsListView AbsListView(android.content.Context, android.util.AttributeSet) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.ActivityChooserModel.ActivityResolveInfo java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.PopupWindow PopupWindow(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -2682,6 +2814,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RadioButton RadioButton(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setContent(android.widget.TabHost.TabContentFactory)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.Gallery Gallery(android.content.Context, android.util.AttributeSet) 0'>
@@ -2711,6 +2846,9 @@
     <item name='android.widget.EditText void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.ScrollView void addView(android.view.View, android.view.ViewGroup.LayoutParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.AbsListView.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2735,6 +2873,12 @@
     <item name='android.widget.SimpleCursorAdapter SimpleCursorAdapter(android.content.Context, int, android.database.Cursor, java.lang.String[], int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.Filter void publishResults(java.lang.CharSequence, android.widget.Filter.FilterResults) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.TableRow android.widget.LinearLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.GridLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2751,9 +2895,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TableRow TableRow(android.content.Context, android.util.AttributeSet) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.RemoteViews android.widget.RemoteViews clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SearchView SearchView(android.content.Context, android.util.AttributeSet) 0'>
@@ -2780,13 +2921,10 @@
     <item name='android.widget.RemoteViews void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RelativeLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.widget.ScrollView void measureChild(android.view.View, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RemoteViewsAdapter android.view.View getView(int, android.view.View, android.view.ViewGroup) 2'>
+    <item name='android.widget.Toast android.widget.Toast makeText(android.content.Context, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RemoteViews void reapply(android.content.Context, android.view.View, android.widget.RemoteViews.OnClickHandler) 1'>
@@ -2798,16 +2936,10 @@
     <item name='android.widget.MultiAutoCompleteTextView void replaceText(java.lang.CharSequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.AbsSpinner android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.LinearLayout.LayoutParams java.lang.String debug(java.lang.String)'>
+    <item name='android.widget.AbsoluteLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.VideoView VideoView(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.widget.TabHost.TabSpec android.widget.TabHost.TabSpec setIndicator(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.SimpleAdapter void setViewText(android.widget.TextView, java.lang.String) 0'>
@@ -2819,7 +2951,7 @@
     <item name='android.widget.GridView GridView(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.widget.RelativeLayout android.widget.RelativeLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.widget.ActivityChooserModel.HistoricalRecord java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.AbsListView boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
@@ -2840,6 +2972,9 @@
     <item name='android.widget.Space Space(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.widget.ResourceCursorAdapter android.view.View newView(android.content.Context, android.database.Cursor, android.view.ViewGroup)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.widget.SimpleCursorTreeAdapter SimpleCursorTreeAdapter(android.content.Context, android.database.Cursor, int, int, java.lang.String[], int[], int, java.lang.String[], int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -2850,6 +2985,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.PopupWindow PopupWindow(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.ExpandableListView android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.widget.NumberPicker.Formatter java.lang.String format(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.RelativeLayout android.widget.RelativeLayout.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>

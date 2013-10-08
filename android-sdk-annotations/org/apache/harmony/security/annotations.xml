@@ -5,10 +5,16 @@
     <item name='org.apache.harmony.security.SystemScope java.security.Identity getIdentity(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.PrivateKeyImpl java.lang.String getFormat()'>
+    <item name='org.apache.harmony.security.PrivateKeyImpl byte[] getEncoded()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.PublicKeyImpl byte[] getEncoded()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.PrivateKeyImpl void setEncoding(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.PrivateKeyImpl java.lang.String getFormat()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.PublicKeyImpl java.lang.String getFormat()'>
@@ -17,13 +23,7 @@
     <item name='org.apache.harmony.security.SystemScope java.util.Enumeration identities()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.PublicKeyImpl byte[] getEncoded()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.PublicKeyImpl void setEncoding(byte[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.PrivateKeyImpl byte[] getEncoded()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.SystemScope void removeIdentity(java.security.Identity) 0'>

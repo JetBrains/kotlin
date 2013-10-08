@@ -2,37 +2,22 @@
     <item name='android.app.admin.DevicePolicyManager android.content.ComponentName setGlobalProxy(android.content.ComponentName, java.net.Proxy, java.util.List&lt;java.lang.String&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.app.admin.DeviceAdminInfo void readPoliciesFromXml(org.xmlpull.v1.XmlPullParser) 0'>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordQuality(android.content.ComponentName, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.admin.DeviceAdminInfo java.lang.CharSequence loadDescription(android.content.pm.PackageManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.app.admin.IDevicePolicyManager.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.admin.DeviceAdminInfo android.content.ComponentName getComponent()'>
+    <item name='android.app.admin.IDevicePolicyManager boolean setDeviceOwner(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.admin.DeviceAdminReceiver android.app.admin.DevicePolicyManager getManager(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.app.admin.DeviceAdminInfo java.util.ArrayList&lt;android.app.admin.DeviceAdminInfo.PolicyInfo&gt; getUsedPolicies()'>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordExpirationTimeout(android.content.ComponentName, long, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.app.admin.DeviceAdminInfo android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.admin.IDevicePolicyManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.admin.DeviceAdminInfo java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.admin.DeviceAdminReceiver void onReceive(android.content.Context, android.content.Intent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.admin.DeviceAdminInfo DeviceAdminInfo(android.content.Context, android.content.pm.ResolveInfo) 0'>
+    <item name='android.app.admin.IDevicePolicyManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.admin.DeviceAdminInfo void dump(android.util.Printer, java.lang.String) 0'>
@@ -44,13 +29,82 @@
     <item name='android.app.admin.DeviceAdminReceiver void onReceive(android.content.Context, android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.app.admin.DeviceAdminInfo java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.admin.DeviceAdminInfo void writePoliciesToXml(org.xmlpull.v1.XmlSerializer) 0'>
+    <item name='android.app.admin.DeviceAdminInfo java.util.ArrayList&lt;android.app.admin.DeviceAdminInfo.PolicyInfo&gt; getUsedPolicies()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.admin.DeviceAdminInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager int setStorageEncryption(android.content.ComponentName, boolean, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordHistoryLength(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setKeyguardDisabledFeatures(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo void readPoliciesFromXml(org.xmlpull.v1.XmlPullParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordMinimumLowerCase(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo android.content.ComponentName getComponent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordMinimumSymbols(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setCameraDisabled(android.content.ComponentName, boolean, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager boolean resetPassword(java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordMinimumNumeric(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo java.lang.CharSequence loadLabel(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setMaximumTimeToLock(android.content.ComponentName, long, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminReceiver void onReceive(android.content.Context, android.content.Intent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordMinimumNonLetter(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo DeviceAdminInfo(android.content.Context, android.content.pm.ResolveInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordMinimumLetters(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordMinimumUpperCase(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager void setPasswordMinimumLength(android.content.ComponentName, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.IDevicePolicyManager android.content.ComponentName setGlobalProxy(android.content.ComponentName, java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.admin.DeviceAdminInfo void writePoliciesToXml(org.xmlpull.v1.XmlSerializer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

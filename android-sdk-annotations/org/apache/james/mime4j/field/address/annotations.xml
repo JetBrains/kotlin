@@ -2,16 +2,28 @@
     <item name='org.apache.james.mime4j.field.address.NamedMailbox NamedMailbox(java.lang.String, org.apache.james.mime4j.field.address.Mailbox) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.field.address.Mailbox java.lang.String toString()'>
+    <item name='org.apache.james.mime4j.field.address.Mailbox java.lang.String getAddressString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.Group java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.james.mime4j.field.address.NamedMailbox java.lang.String getAddressString(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.DomainList java.lang.String toRouteString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.Address void doAddMailboxesTo(java.util.ArrayList&lt;org.apache.james.mime4j.field.address.Address&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.james.mime4j.field.address.AddressList org.apache.james.mime4j.field.address.AddressList parse(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.james.mime4j.field.address.Mailbox java.lang.String getAddressString()'>
+    <item name='org.apache.james.mime4j.field.address.Mailbox java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.address.Group void doAddMailboxesTo(java.util.ArrayList&lt;org.apache.james.mime4j.field.address.Address&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.AddressList org.apache.james.mime4j.field.address.AddressList parse(java.lang.String) 0'>
@@ -21,12 +33,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.Mailbox java.lang.String getAddressString(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.NamedMailbox java.lang.String getAddressString(boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.james.mime4j.field.address.DomainList java.lang.String toRouteString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.james.mime4j.field.address.AddressList org.apache.james.mime4j.field.address.MailboxList flatten()'>

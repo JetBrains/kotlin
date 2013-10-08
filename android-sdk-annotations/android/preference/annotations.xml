@@ -14,7 +14,7 @@
     <item name='android.preference.PreferenceGroup void dispatchSaveInstanceState(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceManager android.preference.PreferenceScreen createPreferenceScreen(android.content.Context)'>
+    <item name='android.preference.VolumePreference.SeekBarVolumizer void onProgressChanged(android.widget.SeekBar, int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.SwitchPreference SwitchPreference(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -23,7 +23,16 @@
     <item name='android.preference.PreferenceManager void setDefaultValues(android.content.Context, java.lang.String, int, int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.PreferenceManager android.preference.PreferenceScreen inflateFromResource(android.content.Context, int, android.preference.PreferenceScreen)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.MultiCheckPreference void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.SeekBarPreference SeekBarPreference(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.Preference void onRestoreInstanceState(android.os.Parcelable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.ListPreference void onPrepareDialogBuilder(android.app.AlertDialog.Builder) 0'>
@@ -38,6 +47,9 @@
     <item name='android.preference.Preference void onAttachedToHierarchy(android.preference.PreferenceManager) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.PreferenceActivity android.preference.PreferenceActivity.Header onGetInitialHeader()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.PreferenceScreen PreferenceScreen(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -45,6 +57,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.ListPreference java.lang.Object onGetDefaultValue(android.content.res.TypedArray, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.Preference void onSetInitialValue(boolean, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.RingtonePreference RingtonePreference(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -56,10 +71,10 @@
     <item name='android.preference.Preference void saveHierarchyState(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.Preference java.lang.String toString()'>
+    <item name='android.preference.PreferenceFrameLayout void addView(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceFrameLayout void addView(android.view.View) 0'>
+    <item name='android.preference.Preference boolean onKey(android.view.View, int, android.view.KeyEvent) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.EditTextPreference EditTextPreference(android.content.Context, android.util.AttributeSet) 0'>
@@ -71,6 +86,9 @@
     <item name='android.preference.MultiSelectListPreference void setValues(java.util.Set&lt;java.lang.String&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.PreferenceManager android.preference.PreferenceScreen createPreferenceScreen(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.VolumePreference.SeekBarVolumizer void onRestoreInstanceState(android.preference.VolumePreference.VolumeStore) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -80,19 +98,19 @@
     <item name='android.preference.PreferenceGroup boolean addPreference(android.preference.Preference) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceActivity android.preference.PreferenceActivity.Header onGetInitialHeader()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.preference.SeekBarDialogPreference void onBindDialogView(android.view.View) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.preference.PreferenceFrameLayout android.widget.FrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.EditTextPreference EditTextPreference(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.RingtonePreference RingtonePreference(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.PreferenceActivity android.content.Intent onBuildStartFragmentIntent(java.lang.String, android.os.Bundle, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.ListPreference void onSetInitialValue(boolean, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.Preference.BaseSavedState BaseSavedState(android.os.Parcelable) 0'>
@@ -137,6 +155,12 @@
     <item name='android.preference.TwoStatePreference TwoStatePreference(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.VolumePreference boolean onKey(android.view.View, int, android.view.KeyEvent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.TwoStatePreference java.lang.Object onGetDefaultValue(android.content.res.TypedArray, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.TwoStatePreference TwoStatePreference(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -149,6 +173,9 @@
     <item name='android.preference.SeekBarDialogPreference SeekBarDialogPreference(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.PreferenceFrameLayout android.preference.PreferenceFrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.VolumePreference.SeekBarVolumizer SeekBarVolumizer(android.preference.VolumePreference, android.content.Context, android.widget.SeekBar, int, android.net.Uri) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -158,6 +185,9 @@
     <item name='android.preference.ListPreference ListPreference(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.Preference android.view.View onCreateView(android.view.ViewGroup)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.SwitchPreference SwitchPreference(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -165,9 +195,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.MultiCheckPreference java.lang.Object onGetDefaultValue(android.content.res.TypedArray, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.preference.PreferenceManager android.preference.PreferenceScreen inflateFromResource(android.content.Context, int, android.preference.PreferenceScreen)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.DialogPreference DialogPreference(android.content.Context, android.util.AttributeSet) 0'>
@@ -195,6 +222,15 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.VolumePreference.SeekBarVolumizer SeekBarVolumizer(android.preference.VolumePreference, android.content.Context, android.widget.SeekBar, int, android.net.Uri) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.PreferenceScreen void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.PreferenceScreen android.widget.ListAdapter onCreateRootAdapter()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.SeekBarPreference void onSetInitialValue(boolean, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceGroup boolean removePreference(android.preference.Preference) 0'>
@@ -239,9 +275,6 @@
     <item name='android.preference.MultiCheckPreference MultiCheckPreference(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.MultiSelectListPreference java.lang.Object onGetDefaultValue(android.content.res.TypedArray, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.preference.RingtonePreference RingtonePreference(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -254,16 +287,13 @@
     <item name='android.preference.SeekBarPreference SeekBarPreference(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceFrameLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.preference.ListPreference void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.RingtonePreference void onSetInitialValue(boolean, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.DialogPreference void onClick(android.content.DialogInterface, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.preference.TwoStatePreference java.lang.Object onGetDefaultValue(android.content.res.TypedArray, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.preference.PreferenceFrameLayout android.preference.PreferenceFrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceFrameLayout PreferenceFrameLayout(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -275,22 +305,37 @@
     <item name='android.preference.PreferenceActivity.Header void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.SeekBarPreference void onProgressChanged(android.widget.SeekBar, int, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.PreferenceFrameLayout android.widget.FrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.CheckBoxPreference void onBindView(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.Preference void restoreHierarchyState(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.MultiSelectListPreference java.util.Set&lt;java.lang.String&gt; getValues()'>
+    <item name='android.preference.MultiCheckPreference MultiCheckPreference(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.MultiCheckPreference MultiCheckPreference(android.content.Context, android.util.AttributeSet) 1'>
+    <item name='android.preference.PreferenceActivity java.util.List&lt;android.preference.PreferenceActivity.Header&gt; getHeaders()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.Preference.BaseSavedState BaseSavedState(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.MultiSelectListPreference java.lang.Object onGetDefaultValue(android.content.res.TypedArray, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.Preference android.view.View getView(android.view.View, android.view.ViewGroup)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.CheckBoxPreference CheckBoxPreference(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.TwoStatePreference void onSetInitialValue(boolean, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.EditTextPreference EditTextPreference(android.content.Context) 0'>
@@ -299,7 +344,7 @@
     <item name='android.preference.MultiCheckPreference MultiCheckPreference(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceScreen android.widget.ListAdapter onCreateRootAdapter()'>
+    <item name='android.preference.PreferenceFrameLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.Preference Preference(android.content.Context, android.util.AttributeSet) 0'>
@@ -320,10 +365,10 @@
     <item name='android.preference.SeekBarPreference SeekBarPreference(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.Preference Preference(android.content.Context, android.util.AttributeSet, int) 0'>
+    <item name='android.preference.MultiCheckPreference void onPrepareDialogBuilder(android.app.AlertDialog.Builder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.MultiCheckPreference void onPrepareDialogBuilder(android.app.AlertDialog.Builder) 0'>
+    <item name='android.preference.Preference Preference(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.TwoStatePreference TwoStatePreference(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -332,25 +377,34 @@
     <item name='android.preference.DialogPreference void onPrepareDialogBuilder(android.app.AlertDialog.Builder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.EditTextPreference void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.Preference Preference(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceFragment.OnPreferenceStartFragmentCallback boolean onPreferenceStartFragment(android.preference.PreferenceFragment, android.preference.Preference) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceCategory boolean onPrepareAddPreference(android.preference.Preference) 0'>
+    <item name='android.preference.MultiSelectListPreference java.util.Set&lt;java.lang.String&gt; getValues()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceActivity android.content.Intent onBuildStartFragmentIntent(java.lang.String, android.os.Bundle, int, int)'>
+    <item name='android.preference.VolumePreference void onRestoreInstanceState(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.PreferenceCategory boolean onPrepareAddPreference(android.preference.Preference) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.CheckBoxPreference CheckBoxPreference(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceActivity void onSaveInstanceState(android.os.Bundle) 0'>
+    <item name='android.preference.PreferenceFrameLayout android.preference.PreferenceFrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceFrameLayout android.preference.PreferenceFrameLayout.LayoutParams generateLayoutParams(android.util.AttributeSet) 0'>
+    <item name='android.preference.GenericInflater.Parent void addItemFromInflater(T) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.PreferenceActivity void onSaveInstanceState(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceGroup void addItemFromInflater(java.lang.Object) 0'>
@@ -363,6 +417,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.Preference Preference(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.EditTextPreference void onSetInitialValue(boolean, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.TwoStatePreference TwoStatePreference(android.content.Context, android.util.AttributeSet) 1'>
@@ -378,6 +435,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceManager PreferenceManager(android.app.Activity, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.MultiCheckPreference void onSetInitialValue(boolean, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.TwoStatePreference void onRestoreInstanceState(android.os.Parcelable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceFrameLayout PreferenceFrameLayout(android.content.Context, android.util.AttributeSet) 0'>
@@ -431,9 +494,6 @@
     <item name='android.preference.ListPreference ListPreference(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.Preference android.view.View getView(android.view.View, android.view.ViewGroup)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.preference.SwitchPreference SwitchPreference(android.content.Context, android.util.AttributeSet, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -449,7 +509,7 @@
     <item name='android.preference.MultiSelectListPreference MultiSelectListPreference(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.PreferenceActivity java.util.List&lt;android.preference.PreferenceActivity.Header&gt; getHeaders()'>
+    <item name='android.preference.DialogPreference void onRestoreInstanceState(android.os.Parcelable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.SeekBarPreference void onBindView(android.view.View) 0'>
@@ -461,13 +521,16 @@
     <item name='android.preference.VolumePreference.SeekBarVolumizer SeekBarVolumizer(android.preference.VolumePreference, android.content.Context, android.widget.SeekBar, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.preference.Preference android.view.View onCreateView(android.view.ViewGroup)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.preference.EditTextPreference java.lang.Object onGetDefaultValue(android.content.res.TypedArray, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.preference.PreferenceActivity boolean onPreferenceTreeClick(android.preference.PreferenceScreen, android.preference.Preference) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.preference.PreferenceCategory PreferenceCategory(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.VolumePreference.SeekBarVolumizer void onStopTrackingTouch(android.widget.SeekBar) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceActivity void loadHeadersFromResource(int, java.util.List&lt;android.preference.PreferenceActivity.Header&gt;) 1'>
@@ -480,6 +543,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.PreferenceGroup PreferenceGroup(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.preference.Preference java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.preference.ListPreference ListPreference(android.content.Context, android.util.AttributeSet) 1'>

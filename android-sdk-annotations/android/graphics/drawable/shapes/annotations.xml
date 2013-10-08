@@ -2,49 +2,58 @@
     <item name='android.graphics.drawable.shapes.RoundRectShape void draw(android.graphics.Canvas, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.shapes.RoundRectShape android.graphics.drawable.shapes.RectShape clone()'>
+    <item name='android.graphics.drawable.shapes.RoundRectShape java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.shapes.ArcShape void draw(android.graphics.Canvas, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.shapes.RoundRectShape android.graphics.drawable.shapes.Shape clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.shapes.PathShape java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.drawable.shapes.OvalShape void draw(android.graphics.Canvas, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.shapes.RectShape void draw(android.graphics.Canvas, android.graphics.Paint) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.shapes.PathShape android.graphics.drawable.shapes.PathShape clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.shapes.RectShape java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.shapes.RoundRectShape java.lang.Object clone()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.shapes.RectShape void draw(android.graphics.Canvas, android.graphics.Paint) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.drawable.shapes.RectShape android.graphics.drawable.shapes.RectShape clone()'>
+    <item name='android.graphics.drawable.shapes.RoundRectShape android.graphics.drawable.shapes.Shape clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.shapes.RoundRectShape android.graphics.drawable.shapes.RoundRectShape clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.drawable.shapes.RectShape android.graphics.drawable.shapes.RectShape clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.RectShape void draw(android.graphics.Canvas, android.graphics.Paint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.Shape void draw(android.graphics.Canvas, android.graphics.Paint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.Shape void draw(android.graphics.Canvas, android.graphics.Paint) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.RectShape void draw(android.graphics.Canvas, android.graphics.Paint) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.RectShape java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.Shape java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.RoundRectShape android.graphics.drawable.shapes.RectShape clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.Shape android.graphics.drawable.shapes.Shape clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.PathShape android.graphics.drawable.shapes.PathShape clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.drawable.shapes.PathShape void draw(android.graphics.Canvas, android.graphics.Paint) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.shapes.RectShape android.graphics.drawable.shapes.Shape clone()'>
+    <item name='android.graphics.drawable.shapes.PathShape android.graphics.drawable.shapes.Shape clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.drawable.shapes.PathShape android.graphics.drawable.shapes.Shape clone()'>
+    <item name='android.graphics.drawable.shapes.RectShape android.graphics.drawable.shapes.Shape clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.shapes.OvalShape void draw(android.graphics.Canvas, android.graphics.Paint) 1'>
@@ -57,6 +66,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.drawable.shapes.ArcShape void draw(android.graphics.Canvas, android.graphics.Paint) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.drawable.shapes.PathShape java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

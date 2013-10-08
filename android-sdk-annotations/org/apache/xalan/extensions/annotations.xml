@@ -2,6 +2,9 @@
     <item name='org.apache.xalan.extensions.ExtensionsTable void addExtensionNamespace(java.lang.String, org.apache.xalan.extensions.ExtensionHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.extensions.ExpressionContext org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xml.utils.QName)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.extensions.ExtensionsTable java.lang.Object extFunction(org.apache.xpath.functions.FuncExtFunction, java.util.Vector, org.apache.xalan.extensions.ExpressionContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -9,6 +12,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.extensions.ExtensionNamespacesManager void registerExtension(org.apache.xalan.extensions.ExtensionNamespaceSupport) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.extensions.ExpressionContext java.lang.String toString(org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.extensions.ExpressionContext org.w3c.dom.traversal.NodeIterator getContextNodes()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.extensions.ExtensionNamespacesManager int namespaceIndex(java.lang.String, java.util.Vector) 1'>

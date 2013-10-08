@@ -1,8 +1,8 @@
 <root>
-    <item name='android.nfc.tech.NfcBarcode android.nfc.tech.NfcBarcode get(android.nfc.Tag) 0'>
+    <item name='android.nfc.tech.Ndef java.lang.String getType()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.Ndef java.lang.String getType()'>
+    <item name='android.nfc.tech.NfcBarcode android.nfc.tech.NfcBarcode get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.MifareClassic MifareClassic(android.nfc.Tag) 0'>

@@ -1,14 +1,8 @@
 <root>
-    <item name='org.apache.http.conn.routing.BasicRouteDirector int firstStep(org.apache.http.conn.routing.RouteInfo) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.BasicRouteDirector int proxiedStep(org.apache.http.conn.routing.RouteInfo, org.apache.http.conn.routing.RouteInfo) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.conn.routing.HttpRoute HttpRoute(org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.HttpHost, boolean) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.routing.RouteTracker java.lang.String toString()'>
+    <item name='org.apache.http.conn.routing.BasicRouteDirector int proxiedStep(org.apache.http.conn.routing.RouteInfo, org.apache.http.conn.routing.RouteInfo) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.routing.HttpRoute HttpRoute(org.apache.http.HttpHost, java.net.InetAddress, boolean) 0'>
@@ -17,25 +11,7 @@
     <item name='org.apache.http.conn.routing.HttpRoute HttpRoute(org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.HttpHost, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.routing.RouteInfo.TunnelType org.apache.http.conn.routing.RouteInfo.TunnelType valueOf(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.RouteInfo.LayerType org.apache.http.conn.routing.RouteInfo.LayerType valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.RouteTracker RouteTracker(org.apache.http.HttpHost, java.net.InetAddress) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.HttpRoute org.apache.http.conn.routing.RouteInfo.TunnelType getTunnelType()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.BasicRouteDirector int directStep(org.apache.http.conn.routing.RouteInfo, org.apache.http.conn.routing.RouteInfo) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.RouteTracker org.apache.http.HttpHost getTargetHost()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.RouteTracker void connectProxy(org.apache.http.HttpHost, boolean) 0'>
+    <item name='org.apache.http.conn.routing.RouteInfo.TunnelType org.apache.http.conn.routing.RouteInfo.TunnelType valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.routing.RouteInfo.LayerType org.apache.http.conn.routing.RouteInfo.LayerType valueOf(java.lang.String) 0'>
@@ -44,31 +20,76 @@
     <item name='org.apache.http.conn.routing.HttpRoute HttpRoute(org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.HttpHost, boolean, org.apache.http.conn.routing.RouteInfo.TunnelType, org.apache.http.conn.routing.RouteInfo.LayerType) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.routing.RouteTracker void tunnelProxy(org.apache.http.HttpHost, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.conn.routing.HttpRoute HttpRoute(org.apache.http.HttpHost, java.net.InetAddress, org.apache.http.HttpHost[], boolean, org.apache.http.conn.routing.RouteInfo.TunnelType, org.apache.http.conn.routing.RouteInfo.LayerType) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.RouteTracker RouteTracker(org.apache.http.conn.routing.HttpRoute) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.RouteInfo.TunnelType org.apache.http.conn.routing.RouteInfo.TunnelType valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.conn.routing.HttpRoute org.apache.http.conn.routing.RouteInfo.LayerType getLayerType()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.routing.HttpRoute org.apache.http.HttpHost getTargetHost()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.conn.routing.HttpRoute org.apache.http.conn.routing.RouteInfo.TunnelType getTunnelType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.HttpRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteInfo.LayerType org.apache.http.conn.routing.RouteInfo.LayerType valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.HttpRoute org.apache.http.conn.routing.RouteInfo.LayerType getLayerType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.HttpRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.BasicRouteDirector int nextStep(org.apache.http.conn.routing.RouteInfo, org.apache.http.conn.routing.RouteInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.BasicRouteDirector int firstStep(org.apache.http.conn.routing.RouteInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteInfo org.apache.http.conn.routing.RouteInfo.TunnelType getTunnelType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteTracker java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.conn.routing.HttpRoute java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteInfo org.apache.http.conn.routing.RouteInfo.LayerType getLayerType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteInfo org.apache.http.HttpHost getTargetHost()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteInfo.TunnelType org.apache.http.conn.routing.RouteInfo.TunnelType valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteTracker RouteTracker(org.apache.http.HttpHost, java.net.InetAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.BasicRouteDirector int directStep(org.apache.http.conn.routing.RouteInfo, org.apache.http.conn.routing.RouteInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteTracker void connectProxy(org.apache.http.HttpHost, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteTracker void tunnelProxy(org.apache.http.HttpHost, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteTracker RouteTracker(org.apache.http.conn.routing.HttpRoute) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.HttpRoutePlanner org.apache.http.conn.routing.HttpRoute determineRoute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.routing.RouteTracker org.apache.http.HttpHost getTargetHost()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.conn.routing.HttpRoute HttpRoute(org.apache.http.HttpHost) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.conn.routing.BasicRouteDirector int nextStep(org.apache.http.conn.routing.RouteInfo, org.apache.http.conn.routing.RouteInfo) 0'>
+    <item name='org.apache.http.conn.routing.HttpRouteDirector int nextStep(org.apache.http.conn.routing.RouteInfo, org.apache.http.conn.routing.RouteInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

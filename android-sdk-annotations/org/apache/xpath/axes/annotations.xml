@@ -5,28 +5,34 @@
     <item name='org.apache.xpath.axes.WalkingIterator void setExpression(org.apache.xpath.Expression) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.LocPathIterator org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+    <item name='org.apache.xpath.axes.PredicatedNodeTest int getProximityPosition(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.LocPathIterator org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.MatchPatternIterator void setRoot(int, java.lang.Object) 1'>
+    <item name='org.apache.xpath.axes.ChildTestIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.DescendantIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+    <item name='org.apache.xpath.axes.MatchPatternIterator void setRoot(int, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.UnionPathIterator void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.WalkerFactory java.lang.String getAnalysisString(int)'>
+    <item name='org.apache.xpath.axes.PredicatedNodeTest void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.OneStepIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+    <item name='org.apache.xpath.axes.ContextNodeList org.w3c.dom.traversal.NodeIterator cloneWithReset()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.AxesWalker void setExpression(org.apache.xpath.Expression) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.LocPathIterator org.apache.xml.dtm.DTMIterator asIterator(org.apache.xpath.XPathContext, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.AxesWalker int getLastPos(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.LocPathIterator void setRoot(int, java.lang.Object) 1'>
@@ -35,10 +41,10 @@
     <item name='org.apache.xpath.axes.UnionPathIterator void setRoot(int, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.LocPathIterator org.apache.xml.dtm.DTMIterator asIterator(org.apache.xpath.XPathContext, int)'>
+    <item name='org.apache.xpath.axes.OneStepIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.AxesWalker java.lang.Object clone()'>
+    <item name='org.apache.xpath.axes.FilterExprIteratorSimple void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.ChildIterator int asNode(org.apache.xpath.XPathContext) 0'>
@@ -50,10 +56,10 @@
     <item name='org.apache.xpath.axes.AxesWalker void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.HasPositionalPredChecker boolean check(org.apache.xpath.axes.LocPathIterator) 0'>
+    <item name='org.apache.xpath.axes.AxesWalker void init(org.apache.xpath.compiler.Compiler, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.FilterExprWalker java.lang.Object clone()'>
+    <item name='org.apache.xpath.axes.HasPositionalPredChecker boolean check(org.apache.xpath.axes.LocPathIterator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.WalkingIterator void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
@@ -62,7 +68,19 @@
     <item name='org.apache.xpath.axes.FilterExprWalker void setInnerExpression(org.apache.xpath.Expression) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.axes.UnionPathIterator org.apache.xpath.axes.LocPathIterator createUnionIterator(org.apache.xpath.compiler.Compiler, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.ReverseAxesWalker int getLastPos(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.axes.LocPathIterator void executeCharsToContentHandler(org.apache.xpath.XPathContext, org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.WalkingIteratorSorted void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.DescendantIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.FilterExprIteratorSimple void setInnerExpression(org.apache.xpath.Expression) 0'>
@@ -71,22 +89,43 @@
     <item name='org.apache.xpath.axes.LocPathIterator int asNode(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.axes.OneStepIterator void setRoot(int, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.PredicatedNodeTest java.lang.String nodeToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.AxesWalker java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.axes.MatchPatternIterator short acceptNode(int, org.apache.xpath.XPathContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.UnionChildIterator void addNodeTest(org.apache.xpath.axes.PredicatedNodeTest) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.LocPathIterator void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+    <item name='org.apache.xpath.axes.WalkerFactory org.apache.xml.dtm.DTMIterator newDTMIterator(org.apache.xpath.compiler.Compiler, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.UnionChildIterator void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.BasicTestIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.LocPathIterator int getLastPos(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.SelfIteratorNoPredicate int asNode(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.LocPathIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+    <item name='org.apache.xpath.axes.LocPathIterator void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.NodeSequence org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+    <item name='org.apache.xpath.axes.WalkerFactory java.lang.String getAnalysisString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.NodeSequence void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.UnionPathIterator org.apache.xpath.axes.LocPathIterator createDTMIterator(org.apache.xpath.compiler.Compiler, int) 0'>
@@ -95,19 +134,31 @@
     <item name='org.apache.xpath.axes.FilterExprWalker void init(org.apache.xpath.compiler.Compiler, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.UnionPathIterator void loadLocationPaths(org.apache.xpath.compiler.Compiler, int, int) 0'>
+    <item name='org.apache.xpath.axes.ChildTestIterator void setRoot(int, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.UnionPathIterator org.apache.xpath.axes.LocPathIterator createUnionIterator(org.apache.xpath.compiler.Compiler, int)'>
+    <item name='org.apache.xpath.axes.NodeSequence void setRoot(int, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.UnionPathIterator void loadLocationPaths(org.apache.xpath.compiler.Compiler, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.WalkerFactory org.apache.xml.dtm.DTMIterator newDTMIterator(org.apache.xpath.compiler.Compiler, int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.UnionPathIterator org.apache.xpath.axes.LocPathIterator createDTMIterator(org.apache.xpath.compiler.Compiler, int)'>
+    <item name='org.apache.xpath.axes.LocPathIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.FilterExprWalker java.lang.Object clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.LocPathIterator boolean bool(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.OneStepIteratorForward void setRoot(int, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.PredicatedNodeTest int getLastPos(org.apache.xpath.XPathContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.DescendantIterator int asNode(org.apache.xpath.XPathContext) 0'>
@@ -119,7 +170,16 @@
     <item name='org.apache.xpath.axes.BasicTestIterator BasicTestIterator(org.apache.xpath.compiler.Compiler, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.axes.SubContextList int getLastPos(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.axes.FilterExprIteratorSimple org.apache.xpath.objects.XNodeSet executeFilterExpr(int, org.apache.xpath.XPathContext, org.apache.xml.utils.PrefixResolver, boolean, int, org.apache.xpath.Expression) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.FilterExprIterator void setRoot(int, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.UnionPathIterator org.apache.xpath.axes.LocPathIterator createDTMIterator(org.apache.xpath.compiler.Compiler, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.FilterExprIteratorSimple org.apache.xpath.objects.XNodeSet executeFilterExpr(int, org.apache.xpath.XPathContext, org.apache.xml.utils.PrefixResolver, boolean, int, org.apache.xpath.Expression) 1'>
@@ -128,13 +188,19 @@
     <item name='org.apache.xpath.axes.DescendantIterator void setRoot(int, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.PredicatedNodeTest java.lang.String nodeToString(int)'>
+    <item name='org.apache.xpath.axes.SubContextList int getProximityPosition(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.LocPathIterator org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.UnionPathIterator UnionPathIterator(org.apache.xpath.compiler.Compiler, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.ChildTestIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+    <item name='org.apache.xpath.axes.HasPositionalPredChecker boolean visitPredicate(org.apache.xpath.ExpressionOwner, org.apache.xpath.Expression) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.LocPathIterator org.apache.xml.dtm.DTMIterator asIterator(org.apache.xpath.XPathContext, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.UnionPathIterator org.apache.xpath.axes.LocPathIterator createUnionIterator(org.apache.xpath.compiler.Compiler, int) 0'>
@@ -143,25 +209,40 @@
     <item name='org.apache.xpath.axes.UnionPathIterator void addIterator(org.apache.xml.dtm.DTMIterator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.BasicTestIterator org.apache.xml.dtm.DTMIterator cloneWithReset()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xpath.axes.FilterExprIterator void setInnerExpression(org.apache.xpath.Expression) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.WalkerFactory void diagnoseIterator(java.lang.String, int, org.apache.xpath.compiler.Compiler) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.axes.UnionPathIterator void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.axes.WalkerFactory int getAxisFromStep(org.apache.xpath.compiler.Compiler, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.FilterExprIterator void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xpath.axes.WalkingIterator void setRoot(int, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xpath.axes.SelfIteratorNoPredicate int getLastPos(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.FilterExprWalker void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xpath.axes.FilterExprIteratorSimple void setRoot(int, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xpath.axes.WalkerFactory org.apache.xml.dtm.DTMIterator newDTMIterator(org.apache.xpath.compiler.Compiler, int, boolean)'>
+    <item name='org.apache.xpath.axes.FilterExprWalker int getLastPos(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.NodeSequence org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.axes.WalkingIterator void fixupVariables(java.util.Vector, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

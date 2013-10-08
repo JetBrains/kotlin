@@ -1,14 +1,26 @@
 <root>
+    <item name='junit.runner.StandardTestSuiteLoader java.lang.Class reload(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.BaseTestRunner void addFailure(junit.framework.Test, junit.framework.AssertionFailedError) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.LoadingTestCollector boolean isTestClass(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='junit.runner.BaseTestRunner void endTest(junit.framework.Test) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.TestSuiteLoader java.lang.Class load(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.runner.ClassPathTestCollector java.util.Hashtable collectFilesInPath(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.BaseTestRunner int getPreference(java.lang.String, int) 0'>
+    <item name='junit.runner.TestSuiteLoader java.lang.Class load(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.BaseTestRunner junit.runner.TestSuiteLoader getLoader()'>
+    <item name='junit.runner.BaseTestRunner int getPreference(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.runner.TestCaseClassLoader TestCaseClassLoader(java.lang.String) 0'>
@@ -17,16 +29,22 @@
     <item name='junit.runner.ClassPathTestCollector java.lang.String classNameFromFile(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='junit.runner.BaseTestRunner void addError(junit.framework.Test, java.lang.Throwable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='junit.runner.BaseTestRunner java.lang.Class&lt;?&gt; loadSuiteClass(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.ClassPathTestCollector java.lang.String classNameFromFile(java.lang.String)'>
+    <item name='junit.runner.ClassPathTestCollector java.util.Enumeration collectTests()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.BaseTestRunner java.lang.Class&lt;?&gt; loadSuiteClass(java.lang.String)'>
+    <item name='junit.runner.StandardTestSuiteLoader java.lang.Class load(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.BaseTestRunner java.lang.String extractClassName(java.lang.String)'>
+    <item name='junit.runner.BaseTestRunner java.lang.String elapsedTimeAsString(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.BaseTestRunner void addFailure(junit.framework.Test, junit.framework.AssertionFailedError) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.runner.BaseTestRunner java.lang.String processArguments(java.lang.String[]) 0'>
@@ -35,22 +53,37 @@
     <item name='junit.runner.ClassPathTestCollector boolean isTestClass(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.BaseTestRunner java.lang.String elapsedTimeAsString(long)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='junit.runner.BaseTestRunner void startTest(junit.framework.Test) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.StandardTestSuiteLoader java.lang.Class load(java.lang.String)'>
+    <item name='junit.runner.BaseTestRunner java.lang.Class&lt;?&gt; loadSuiteClass(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.BaseTestRunner junit.framework.Test getTest(java.lang.String) 0'>
+    <item name='junit.runner.ClassPathTestCollector java.lang.String classNameFromFile(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.Version java.lang.String id()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.runner.SimpleTestCollector boolean isTestClass(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='junit.runner.BaseTestRunner junit.framework.Test getTest(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.ReloadingTestSuiteLoader junit.runner.TestCaseClassLoader createLoader()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.BaseTestRunner void addError(junit.framework.Test, java.lang.Throwable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.BaseTestRunner java.lang.String extractClassName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='junit.runner.BaseTestRunner java.lang.String getFilteredTrace(java.lang.Throwable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.ClassPathTestCollector java.util.Hashtable collectFilesInPath(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.runner.BaseTestRunner java.lang.String getPreference(java.lang.String) 0'>
@@ -59,22 +92,22 @@
     <item name='junit.runner.BaseTestRunner java.lang.String extractClassName(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.Version java.lang.String id()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='junit.runner.StandardTestSuiteLoader java.lang.Class load(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.ReloadingTestSuiteLoader junit.runner.TestCaseClassLoader createLoader()'>
+    <item name='junit.runner.ReloadingTestSuiteLoader java.lang.Class load(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='junit.runner.TestCollector java.util.Enumeration collectTests()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.runner.Sorter void sortStrings(java.util.Vector, int, int, junit.runner.Sorter.Swapper) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.ClassPathTestCollector java.util.Enumeration collectTests()'>
+    <item name='junit.runner.TestSuiteLoader java.lang.Class reload(java.lang.Class) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='junit.runner.ClassPathTestCollector java.util.Hashtable collectFilesInPath(java.lang.String)'>
+    <item name='junit.runner.BaseTestRunner junit.runner.TestSuiteLoader getLoader()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='junit.runner.ReloadingTestSuiteLoader java.lang.Class reload(java.lang.Class) 0'>

@@ -11,13 +11,13 @@
     <item name='org.apache.harmony.security.asn1.BerInputStream void readSetOf(org.apache.harmony.security.asn1.ASN1SetOf) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Type void encodeASN(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1Any void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Implicit java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Integer java.math.BigInteger toBigIntegerValue(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1SequenceOf void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -32,22 +32,22 @@
     <item name='org.apache.harmony.security.asn1.ASN1Implicit void encodeASN(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Type java.lang.String toString()'>
+    <item name='org.apache.harmony.security.asn1.BerOutputStream void getSequenceLength(org.apache.harmony.security.asn1.ASN1Sequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.BerInputStream void readSequenceOf(org.apache.harmony.security.asn1.ASN1SequenceOf) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Integer void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.asn1.ASN1BitString java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1OctetString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
+    <item name='org.apache.harmony.security.asn1.ASN1Any org.apache.harmony.security.asn1.ASN1Any getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.BitString boolean[] toBooleanArray()'>
+    <item name='org.apache.harmony.security.asn1.ASN1Integer void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1OctetString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Any void encodeASN(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -56,13 +56,10 @@
     <item name='org.apache.harmony.security.asn1.ASN1Integer java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1GeneralizedTime org.apache.harmony.security.asn1.ASN1GeneralizedTime getInstance()'>
+    <item name='org.apache.harmony.security.asn1.ASN1BitString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Any int getEncodedLength(org.apache.harmony.security.asn1.BerOutputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.BerInputStream byte[] getEncoded()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Choice ASN1Choice(org.apache.harmony.security.asn1.ASN1Type[]) 0'>
@@ -74,16 +71,19 @@
     <item name='org.apache.harmony.security.asn1.ASN1Boolean java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Enumerated void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ASN1StringType java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.asn1.ASN1Integer org.apache.harmony.security.asn1.ASN1Integer getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Enumerated void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1UTCTime void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Implicit void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Oid org.apache.harmony.security.asn1.ASN1Oid getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1SequenceOf void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -92,19 +92,34 @@
     <item name='org.apache.harmony.security.asn1.ASN1Set void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Boolean java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1GeneralizedTime org.apache.harmony.security.asn1.ASN1GeneralizedTime getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ObjectIdentifier void validate(int[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Explicit java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Enumerated java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+    <item name='org.apache.harmony.security.asn1.ASN1Choice int getIndex(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Integer java.math.BigInteger toBigIntegerValue(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1ValueCollection java.util.Collection&lt;?&gt; getValues(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.BerOutputStream void getSequenceOfLength(org.apache.harmony.security.asn1.ASN1SequenceOf) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.DerOutputStream void getChoiceLength(org.apache.harmony.security.asn1.ASN1Choice) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Any java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1OctetString void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -122,16 +137,13 @@
     <item name='org.apache.harmony.security.asn1.ASN1Enumerated void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Explicit java.lang.String toString()'>
+    <item name='org.apache.harmony.security.asn1.ASN1StringType java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Type java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.BerInputStream int getLength(byte[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Oid org.apache.harmony.security.asn1.ASN1Oid getInstance()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Oid org.apache.harmony.security.asn1.ASN1Oid getInstanceForString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1UTCTime void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -140,7 +152,13 @@
     <item name='org.apache.harmony.security.asn1.ASN1Enumerated java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Oid java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1Sequence void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Type java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1TypeCollection ASN1TypeCollection(int, org.apache.harmony.security.asn1.ASN1Type[]) 1'>
@@ -158,10 +176,10 @@
     <item name='org.apache.harmony.security.asn1.ASN1Constructed void encodeASN(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Integer java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+    <item name='org.apache.harmony.security.asn1.ASN1Integer int toIntValue(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Integer int toIntValue(java.lang.Object) 0'>
+    <item name='org.apache.harmony.security.asn1.BerOutputStream void getSetOfLength(org.apache.harmony.security.asn1.ASN1SetOf) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Any void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -182,22 +200,25 @@
     <item name='org.apache.harmony.security.asn1.DerOutputStream void getSequenceLength(org.apache.harmony.security.asn1.ASN1Sequence) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Type void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1SetOf void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.BitString BitString(byte[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ObjectIdentifier java.lang.String toString(int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1Type java.lang.Object decode(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Any java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+    <item name='org.apache.harmony.security.asn1.ASN1OctetString org.apache.harmony.security.asn1.ASN1OctetString getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.DerInputStream void readSetOf(org.apache.harmony.security.asn1.ASN1SetOf) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Enumerated org.apache.harmony.security.asn1.ASN1Enumerated getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Sequence ASN1Sequence(org.apache.harmony.security.asn1.ASN1Type[]) 0'>
@@ -209,6 +230,9 @@
     <item name='org.apache.harmony.security.asn1.DerOutputStream DerOutputStream(org.apache.harmony.security.asn1.ASN1Type, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Integer java.lang.Object fromIntValue(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1Explicit void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -218,7 +242,22 @@
     <item name='org.apache.harmony.security.asn1.DerOutputStream void getSequenceOfLength(org.apache.harmony.security.asn1.ASN1SequenceOf) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.BerOutputStream void encodeSequence(org.apache.harmony.security.asn1.ASN1Sequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.BerInputStream byte[] getEncoded()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1TypeCollection void getValues(java.lang.Object, java.lang.Object[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Type java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1Oid void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Enumerated org.apache.harmony.security.asn1.ASN1Enumerated getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ObjectIdentifier java.lang.String toString(int[]) 0'>
@@ -227,10 +266,10 @@
     <item name='org.apache.harmony.security.asn1.ASN1BitString void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1BitString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
+    <item name='org.apache.harmony.security.asn1.ASN1BitString org.apache.harmony.security.asn1.ASN1BitString getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1OctetString org.apache.harmony.security.asn1.ASN1OctetString getInstance()'>
+    <item name='org.apache.harmony.security.asn1.ASN1BitString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1BitString.ASN1NamedBitList void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -248,7 +287,7 @@
     <item name='org.apache.harmony.security.asn1.DerOutputStream void encodeExplicit(org.apache.harmony.security.asn1.ASN1Explicit) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Boolean org.apache.harmony.security.asn1.ASN1Boolean getInstance()'>
+    <item name='org.apache.harmony.security.asn1.ASN1UTCTime org.apache.harmony.security.asn1.ASN1UTCTime getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.BerInputStream BerInputStream(byte[]) 0'>
@@ -257,10 +296,22 @@
     <item name='org.apache.harmony.security.asn1.ASN1Set void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Oid java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+    <item name='org.apache.harmony.security.asn1.ASN1Oid org.apache.harmony.security.asn1.ASN1Oid getInstanceForString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1TypeCollection void getValues(java.lang.Object, java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Choice java.lang.Object getObjectToEncode(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Implicit ASN1Implicit(int, org.apache.harmony.security.asn1.ASN1Type) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Explicit java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.BitString boolean[] toBooleanArray()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Set ASN1Set(org.apache.harmony.security.asn1.ASN1Type[]) 0'>
@@ -272,10 +323,19 @@
     <item name='org.apache.harmony.security.asn1.ASN1Type java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Any org.apache.harmony.security.asn1.ASN1Any getInstance()'>
+    <item name='org.apache.harmony.security.asn1.BerOutputStream void encodeExplicit(org.apache.harmony.security.asn1.ASN1Explicit) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1BitString.ASN1NamedBitList java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Integer java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1SetOf void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Enumerated java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Choice java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
@@ -284,7 +344,13 @@
     <item name='org.apache.harmony.security.asn1.BitString BitString(boolean[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Type void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1GeneralizedTime java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Integer java.math.BigInteger toBigIntegerValue(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1UTCTime java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
@@ -296,13 +362,16 @@
     <item name='org.apache.harmony.security.asn1.ASN1Boolean java.lang.Object decode(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.ASN1OctetString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1OctetString void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.DerOutputStream void getExplicitLength(org.apache.harmony.security.asn1.ASN1Explicit) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Boolean java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+    <item name='org.apache.harmony.security.asn1.BerOutputStream void getChoiceLength(org.apache.harmony.security.asn1.ASN1Choice) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.DerOutputStream void getSetOfLength(org.apache.harmony.security.asn1.ASN1SetOf) 0'>
@@ -311,22 +380,22 @@
     <item name='org.apache.harmony.security.asn1.ASN1Sequence void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.asn1.BerOutputStream void getExplicitLength(org.apache.harmony.security.asn1.ASN1Explicit) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.asn1.ASN1Boolean org.apache.harmony.security.asn1.ASN1Boolean getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.asn1.ASN1StringType java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Type int getEncodedLength(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1OctetString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
+    <item name='org.apache.harmony.security.asn1.ASN1Implicit void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Oid java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ObjectIdentifier java.lang.String toString(int[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ASN1UTCTime org.apache.harmony.security.asn1.ASN1UTCTime getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Choice void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
@@ -347,9 +416,6 @@
     <item name='org.apache.harmony.security.asn1.ASN1GeneralizedTime void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1BitString java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.asn1.ASN1BitString.ASN1NamedBitList java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -359,22 +425,13 @@
     <item name='org.apache.harmony.security.asn1.ASN1Choice void encodeASN(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1Integer java.lang.Object fromIntValue(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.asn1.ASN1Boolean void encodeContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.ASN1Enumerated java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.asn1.ASN1BitString org.apache.harmony.security.asn1.ASN1BitString getInstance()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.security.asn1.ASN1StringType void setEncodingContent(org.apache.harmony.security.asn1.BerOutputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.security.asn1.ASN1BitString.ASN1NamedBitList java.lang.Object getDecodedObject(org.apache.harmony.security.asn1.BerInputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.asn1.BerInputStream void readString(org.apache.harmony.security.asn1.ASN1StringType) 0'>

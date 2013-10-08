@@ -1,32 +1,20 @@
 <root>
-    <item name='android.test.mock.MockContext void sendOrderedBroadcast(android.content.Intent, java.lang.String, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContext void enforcePermission(java.lang.String, int, int, java.lang.String) 0'>
+    <item name='android.test.mock.MockResources int getIdentifier(java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.mock.MockContext void enforceCallingPermission(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockCursor int getColumnIndex(java.lang.String) 0'>
+    <item name='android.test.mock.MockResources void getValue(java.lang.String, android.util.TypedValue, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockContentProvider java.lang.String getType(android.net.Uri) 0'>
+    <item name='android.test.mock.MockPackageManager java.lang.CharSequence getApplicationLabel(android.content.pm.ApplicationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockCursor int getColumnIndexOrThrow(java.lang.String) 0'>
+    <item name='android.test.mock.MockContext void sendStickyBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockContext android.content.Context createDisplayContext(android.view.Display) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockApplication void onConfigurationChanged(android.content.res.Configuration) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContentProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContext int checkCallingPermission(java.lang.String) 0'>
+    <item name='android.test.mock.MockIContentProvider android.content.ContentProviderResult[] applyBatch(java.lang.String, java.util.ArrayList&lt;android.content.ContentProviderOperation&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.mock.MockContext boolean startInstrumentation(android.content.ComponentName, java.lang.String, android.os.Bundle) 0'>
@@ -35,46 +23,310 @@
     <item name='android.test.mock.MockContentProvider int bulkInsert(android.net.Uri, android.content.ContentValues[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockContentProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 0'>
+    <item name='android.test.mock.MockContext void startActivities(android.content.Intent[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockContext android.content.Context createConfigurationContext(android.content.res.Configuration) 0'>
+    <item name='android.test.mock.MockContentProvider int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockResources android.content.res.TypedArray obtainAttributes(android.util.AttributeSet, int[]) 1'>
+    <item name='android.test.mock.MockPackageManager android.content.pm.ResolveInfo resolveActivity(android.content.Intent, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockCursor void copyStringToBuffer(int, android.database.CharArrayBuffer) 1'>
+    <item name='android.test.mock.MockContext void sendBroadcast(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.mock.MockContext void enforceCallingOrSelfPermission(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContentProvider android.content.ContentProviderResult[] applyBatch(java.util.ArrayList&lt;android.content.ContentProviderOperation&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContentProvider android.content.res.AssetFileDescriptor openTypedAssetFile(android.net.Uri, java.lang.String, android.os.Bundle) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContext boolean bindService(android.content.Intent, android.content.ServiceConnection, int) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContext int checkPermission(java.lang.String, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContext void unbindService(android.content.ServiceConnection) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContext java.lang.Object getSystemService(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.mock.MockContext int checkCallingOrSelfPermission(java.lang.String) 0'>
+    <item name='android.test.mock.MockContext java.io.FileInputStream openFileInput(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.mock.MockContentProvider int delete(android.net.Uri, java.lang.String, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.mock.MockIContentProvider android.net.Uri insert(java.lang.String, android.net.Uri, android.content.ContentValues) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentServicesAsUser(android.content.Intent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void enforcePermission(java.lang.String, int, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager int getPreferredActivities(java.util.List&lt;android.content.IntentFilter&gt;, java.util.List&lt;android.content.ComponentName&gt;, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendBroadcast(android.content.Intent, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.graphics.drawable.Drawable getApplicationIcon(android.content.pm.ApplicationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendStickyOrderedBroadcast(android.content.Intent, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.lang.String[] currentToCanonicalPackageNames(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider int bulkInsert(java.lang.String, android.net.Uri, android.content.ContentValues[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendOrderedBroadcast(android.content.Intent, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext int checkPermission(java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider android.content.res.AssetFileDescriptor openTypedAssetFile(java.lang.String, android.net.Uri, java.lang.String, android.os.Bundle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider int update(java.lang.String, android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void setWallpaper(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory, android.database.DatabaseErrorHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryBroadcastReceivers(android.content.Intent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider int bulkInsert(java.lang.String, android.net.Uri, android.content.ContentValues[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.graphics.drawable.Drawable getActivityIcon(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockCursor void copyStringToBuffer(int, android.database.CharArrayBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider android.content.ContentProviderResult[] applyBatch(java.util.ArrayList&lt;android.content.ContentProviderOperation&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext int checkCallingOrSelfPermission(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendBroadcast(android.content.Intent, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider java.lang.String getType(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider int update(java.lang.String, android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.content.Context createPackageContext(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void removeStickyBroadcast(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider android.database.Cursor query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext java.io.FileOutputStream openFileOutput(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendOrderedBroadcast(android.content.Intent, java.lang.String, int, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.content.Context createConfigurationContext(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider android.net.Uri insert(android.net.Uri, android.content.ContentValues) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider int update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext java.io.File getFileStreamPath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext java.io.File getDatabasePath(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendStickyBroadcast(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider android.net.Uri insert(java.lang.String, android.net.Uri, android.content.ContentValues) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider java.lang.String[] getStreamTypes(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendOrderedBroadcast(android.content.Intent, java.lang.String, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendStickyOrderedBroadcastAsUser(android.content.Intent, android.os.UserHandle, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockCursor int getColumnIndexOrThrow(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager void replacePreferredActivity(android.content.IntentFilter, int, android.content.ComponentName[], android.content.ComponentName) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext boolean deleteFile(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.mock.MockContentProvider android.content.IContentProvider getIContentProvider()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider android.os.ParcelFileDescriptor openFile(java.lang.String, android.net.Uri, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider java.lang.String getType(android.net.Uri) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext boolean bindServiceAsUser(android.content.Intent, android.content.ServiceConnection, int, android.os.UserHandle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void enforceCallingOrSelfPermission(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.content.Intent registerReceiverAsUser(android.content.BroadcastReceiver, android.os.UserHandle, android.content.IntentFilter, java.lang.String, android.os.Handler) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider void attachInfo(android.content.Context, android.content.pm.ProviderInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext java.lang.Object getSystemService(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.graphics.drawable.Drawable getApplicationLogo(android.content.pm.ApplicationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockApplication void onConfigurationChanged(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider android.database.Cursor query(java.lang.String, android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, android.os.ICancellationSignal) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider java.lang.String[] getStreamTypes(android.net.Uri, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void unregisterReceiver(android.content.BroadcastReceiver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CursorFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.content.Context createPackageContextAsUser(java.lang.String, int, android.os.UserHandle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void setWallpaper(android.graphics.Bitmap) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider android.content.res.AssetFileDescriptor openTypedAssetFile(android.net.Uri, java.lang.String, android.os.Bundle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext int checkUriPermission(android.net.Uri, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager int getPreferredActivities(java.util.List&lt;android.content.IntentFilter&gt;, java.util.List&lt;android.content.ComponentName&gt;, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext boolean bindService(android.content.Intent, android.content.ServiceConnection, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.content.res.Resources getResourcesForApplication(android.content.pm.ApplicationInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockResources java.lang.String getQuantityString(int, int, java.lang.Object...) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void unbindService(android.content.ServiceConnection) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendBroadcastAsUser(android.content.Intent, android.os.UserHandle, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider android.content.res.AssetFileDescriptor openAssetFile(java.lang.String, android.net.Uri, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockCursor int getColumnIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.content.pm.ResolveInfo resolveService(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void startActivities(android.content.Intent[], android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager void removePermission(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentServices(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.content.pm.PackageInfo getPackageArchiveInfo(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.content.pm.ResolveInfo resolveActivityAsUser(android.content.Intent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockResources android.content.res.TypedArray obtainAttributes(android.util.AttributeSet, int[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider android.content.res.AssetFileDescriptor openTypedAssetFile(java.lang.String, android.net.Uri, java.lang.String, android.os.Bundle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendOrderedBroadcastAsUser(android.content.Intent, android.os.UserHandle, java.lang.String, android.content.BroadcastReceiver, android.os.Handler, int, java.lang.String, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentActivitiesAsUser(android.content.Intent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentActivityOptions(android.content.ComponentName, android.content.Intent[], android.content.Intent, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.content.Context getApplicationContext()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryBroadcastReceivers(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentResolver void unstableProviderDied(android.content.IContentProvider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockCursor void registerContentObserver(android.database.ContentObserver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.content.Context createDisplayContext(android.view.Display) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockIContentProvider int delete(java.lang.String, android.net.Uri, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext android.content.Context createPackageContextAsUser(java.lang.String, int, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext int checkCallingPermission(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void sendBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContext void removeStickyBroadcastAsUser(android.content.Intent, android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.util.List&lt;android.content.pm.ResolveInfo&gt; queryIntentActivities(android.content.Intent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager java.lang.String[] canonicalToCurrentPackageNames(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockContentProvider int delete(android.net.Uri, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockResources android.content.res.TypedArray obtainAttributes(android.util.AttributeSet, int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockPackageManager android.graphics.drawable.Drawable getActivityLogo(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.mock.MockResources java.lang.String getString(int, java.lang.Object...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

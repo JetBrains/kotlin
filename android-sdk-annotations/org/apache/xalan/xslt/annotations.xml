@@ -14,10 +14,10 @@
     <item name='org.apache.xalan.xslt.EnvironmentCheck void main(java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.xslt.EnvironmentCheck java.lang.String getApparentVersion(java.lang.String, long)'>
+    <item name='org.apache.xalan.xslt.EnvironmentCheck void checkSAXVersion(java.util.Hashtable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.xslt.EnvironmentCheck void checkSAXVersion(java.util.Hashtable) 0'>
+    <item name='org.apache.xalan.xslt.EnvironmentCheck java.util.Hashtable getEnvironmentHash()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.xslt.EnvironmentCheck void checkAntVersion(java.util.Hashtable) 0'>
@@ -26,10 +26,10 @@
     <item name='org.apache.xalan.xslt.EnvironmentCheck void checkParserVersion(java.util.Hashtable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.xslt.EnvironmentCheck void logMsg(java.lang.String) 0'>
+    <item name='org.apache.xalan.xslt.EnvironmentCheck java.lang.String getApparentVersion(java.lang.String, long)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.xslt.EnvironmentCheck java.util.Hashtable getEnvironmentHash()'>
+    <item name='org.apache.xalan.xslt.EnvironmentCheck void logMsg(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>
