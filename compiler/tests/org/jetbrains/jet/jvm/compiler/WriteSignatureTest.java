@@ -111,7 +111,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private ActualSignature readSignature(String className, final String methodName) throws Exception {
+    private ActualSignature readSignature(@NotNull String className, @Nullable final String methodName) throws Exception {
         // ugly unreadable code begin
         FileInputStream classInputStream = new FileInputStream(tmpdir + "/" + className.replace('.', '/') + ".class");
         try {
@@ -120,6 +120,15 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
 
                 public Visitor() {
                     super(Opcodes.ASM4);
+                }
+
+                @Override
+                public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                    if (methodName == null) {
+                        Assert.assertNull(readSignature);
+                        readSignature = new ActualSignature(name, signature);
+                    }
+                    super.visit(version, access, name, signature, superName, interfaces);
                 }
 
                 @Override
@@ -155,12 +164,13 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
 
     private static class Expectation {
         private final String className;
+        @Nullable
         private final String methodName;
         private final String jvmSignature;
         private final String genericSignature;
 
         private Expectation(
-                @NotNull String className, @NotNull String methodName,
+                @NotNull String className, @Nullable String methodName,
                 @NotNull String jvmSignature, @Nullable String genericSignature
         ) {
             this.className = className;
@@ -171,6 +181,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
+    private static final Pattern classPattern = Pattern.compile("^// class: *(.*)");
     private static final Pattern methodPattern = Pattern.compile("^// method: *(.*)::(.*?) *(//.*)?");
     private static final Pattern jvmSignaturePattern = Pattern.compile("^// jvm signature: *(.+?) *(//.*)?");
     private static final Pattern genericSignaturePattern = Pattern.compile("^// generic signature: *(.+?) *(//.*)?");
@@ -178,16 +189,21 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
     private Expectation parseExpectations() throws IOException {
         List<String> lines = Files.readLines(ktFile, Charset.forName("utf-8"));
         for (int i = 0; i < lines.size() - 2; ++i) {
-            Matcher methodMatcher = methodPattern.matcher(lines.get(i));
-            if (methodMatcher.matches()) {
+            String line = lines.get(i);
+            Matcher methodMatcher = methodPattern.matcher(line);
+            Matcher classMatcher = classPattern.matcher(line);
+            boolean isMethod = methodMatcher.matches();
+            boolean isClass = classMatcher.matches();
+            Matcher matcher = isMethod ? methodMatcher : classMatcher;
+            if (isMethod || isClass) {
                 Matcher jvmSignatureMatcher = jvmSignaturePattern.matcher(lines.get(i + 1));
                 Matcher genericSignatureMatcher = genericSignaturePattern.matcher(lines.get(i + 2));
                 if (!jvmSignatureMatcher.matches() || !genericSignatureMatcher.matches()) {
                     throw new AssertionError("'method:' must be followed ... bla bla ... use the source luke");
                 }
 
-                String className = methodMatcher.group(1);
-                String methodName = methodMatcher.group(2);
+                String className = matcher.group(1);
+                String methodName = isMethod ? matcher.group(2) : null;
 
                 String jvmSignature = jvmSignatureMatcher.group(1);
                 String genericSignature = genericSignatureMatcher.group(1);
