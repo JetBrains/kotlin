@@ -50,7 +50,7 @@ import java.util.List;
 import static org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
 public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfigurator {
-    private static final String[] KOTLIN_VERSIONS = {"0.6.+", "0.1-SNAPSHOT"};
+    private static final String[] KOTLIN_VERSIONS = {"0.6.+"};
 
     protected static final String VERSION_TEMPLATE = "$VERSION$";
 
