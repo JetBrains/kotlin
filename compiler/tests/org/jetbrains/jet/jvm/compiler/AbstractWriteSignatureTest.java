@@ -20,11 +20,12 @@ import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.*;
-import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.asm4.ClassReader;
+import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -47,19 +48,9 @@ import java.util.regex.Pattern;
  *
  * @see CompileJavaAgainstKotlinTestGenerated
  */
-public class WriteSignatureTest extends TestCaseWithTmpdir {
+public abstract class AbstractWriteSignatureTest extends TestCaseWithTmpdir {
 
-    private final File ktFile;
     private JetCoreEnvironment jetCoreEnvironment;
-
-    public WriteSignatureTest(File ktFile) {
-        this.ktFile = ktFile;
-    }
-
-    @Override
-    public String getName() {
-        return ktFile.getName();
-    }
 
     @Override
     protected void setUp() throws Exception {
@@ -73,8 +64,8 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
         super.tearDown();
     }
 
-    @Override
-    protected void runTest() throws Throwable {
+    protected void doTest(String ktFileName) throws Exception {
+        File ktFile = new File(ktFileName);
         String text = FileUtil.loadFile(ktFile);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
@@ -85,7 +76,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
 
         Disposer.dispose(myTestRootDisposable);
 
-        Expectation expectation = parseExpectations();
+        Expectation expectation = parseExpectations(ktFile);
 
         ActualSignature actualSignature = readSignature(expectation.className, expectation.methodName);
 
@@ -186,7 +177,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
     private static final Pattern jvmSignaturePattern = Pattern.compile("^// jvm signature: *(.+?) *(//.*)?");
     private static final Pattern genericSignaturePattern = Pattern.compile("^// generic signature: *(.+?) *(//.*)?");
 
-    private Expectation parseExpectations() throws IOException {
+    private Expectation parseExpectations(File ktFile) throws IOException {
         List<String> lines = Files.readLines(ktFile, Charset.forName("utf-8"));
         for (int i = 0; i < lines.size() - 2; ++i) {
             String line = lines.get(i);
@@ -214,20 +205,5 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
             }
         }
         throw new AssertionError("test instructions not found in " + ktFile);
-    }
-
-    public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/writeSignature", true,
-                                                    new JetTestCaseBuilder.NamedTestFactory() {
-                                                        @NotNull
-                                                        @Override
-                                                        public Test createTest(
-                                                                @NotNull String dataPath,
-                                                                @NotNull String name,
-                                                                @NotNull File file
-                                                        ) {
-                                                            return new WriteSignatureTest(file);
-                                                        }
-                                                    });
     }
 }

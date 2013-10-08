@@ -258,6 +258,13 @@ public class GenerateTests {
         );
 
         generateTest(
+                "compiler/tests/",
+                "WriteSignatureTestGenerated",
+                AbstractWriteSignatureTest.class,
+                testModel("compiler/testData/writeSignature", true, "kt", "doTest")
+        );
+
+        generateTest(
                 "idea/tests/",
                 "JetPsiMatcherTest",
                 AbstractJetPsiMatcherTest.class,
