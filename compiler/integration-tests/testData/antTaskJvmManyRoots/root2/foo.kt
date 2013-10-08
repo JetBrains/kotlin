@@ -1,3 +1,3 @@
-package Hello
+package hello
 
 fun foo() {}

@@ -31,7 +31,7 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
         String runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar").getAbsolutePath();
 
         assertEquals("compilation failed", 0, runAnt("build.log", "build.xml", extraJavaArgs));
-        runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "Hello.HelloPackage");
+        runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "hello.HelloPackage");
     }
 
     @Test
