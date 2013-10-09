@@ -16,16 +16,14 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ArrayUtil;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptorForObject;
@@ -39,10 +37,10 @@ import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
@@ -50,20 +48,26 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompare
 public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     public static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstCustomBinaries/";
 
-    private void doTestWithTxt() throws Exception {
-        File ktFile = new File(TEST_DATA_PATH + getTestName(true), getTestName(false) + ".kt");
+    @NotNull
+    private File getTestDataDirectory() {
+        return new File(TEST_DATA_PATH, getTestName(true));
+    }
 
-        NamespaceDescriptor namespace = analyzeFileToNamespace(ktFile);
+    private void doTestWithTxt(@NotNull Function0<List<File>> classPathProducer) throws Exception {
+        File ktFile = new File(getTestDataDirectory(), getTestName(false) + ".kt");
+
+        NamespaceDescriptor namespace = analyzeFileToNamespace(ktFile, classPathProducer);
 
         NamespaceComparator.Configuration comparator = NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
                 DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES);
-        File txtFile = new File(ktFile.getParentFile(), FileUtil.getNameWithoutExtension(ktFile) + ".txt");
+        File txtFile = new File(getTestDataDirectory(), FileUtil.getNameWithoutExtension(ktFile) + ".txt");
         validateAndCompareNamespaceWithFile(namespace, comparator, txtFile);
     }
 
     @NotNull
-    private NamespaceDescriptor analyzeFileToNamespace(@NotNull File ktFile) throws IOException {
-        Project project = createEnvironment(ktFile.getParentFile()).getProject();
+    private NamespaceDescriptor analyzeFileToNamespace(@NotNull File ktFile, @NotNull Function0<List<File>> classPathProducer)
+            throws IOException {
+        Project project = createEnvironment(classPathProducer.invoke()).getProject();
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                 JetTestUtils.loadJetFile(project, ktFile),
@@ -77,29 +81,35 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private JetCoreEnvironment createEnvironment(@NotNull File dir) {
-        List<File> jarFiles = FileUtil.findFilesByMask(Pattern.compile("^.*\\.jar$"), dir);
-
-        CopyOnWriteArrayList<File> extras = Lists.newCopyOnWriteArrayList();
-        extras.addAll(jarFiles);
+    private JetCoreEnvironment createEnvironment(@NotNull List<File> extraClassPath) {
+        List<File> extras = new ArrayList<File>();
+        extras.addAll(extraClassPath);
         extras.add(JetTestUtils.getAnnotationsJar());
-        extras.add(dir);
 
-        CompilerConfiguration configurationWithADirInClasspath = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, ArrayUtil.toObjectArray(extras, File.class));
-
-        return new JetCoreEnvironment(getTestRootDisposable(), configurationWithADirInClasspath);
+        return new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()])));
     }
 
     @NotNull
-    private Collection<DeclarationDescriptor> analyzeAndGetAllDescriptors() throws IOException {
-        String testName = getTestName(true);
-        File ktFile = new File(TEST_DATA_PATH + testName, testName + ".kt");
-        return analyzeFileToNamespace(ktFile).getMemberScope().getAllDescriptors();
+    private Collection<DeclarationDescriptor> analyzeAndGetAllDescriptors(@NotNull Function0<List<File>> classPathProducer)
+            throws IOException {
+        File ktFile = new File(getTestDataDirectory(), getTestName(true) + ".kt");
+        return analyzeFileToNamespace(ktFile, classPathProducer).getMemberScope().getAllDescriptors();
     }
 
+    @NotNull
+    private List<File> findAllJars() {
+        return FileUtil.findFilesByMask(Pattern.compile("^.*\\.jar$"), getTestDataDirectory());
+    }
+
+
     public void testDuplicateObjectInBinaryAndSources() throws Exception {
-        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors();
+        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(new Function0<List<File>>() {
+            @Override
+            public List<File> invoke() {
+                return findAllJars();
+            }
+        });
         assertEquals(allDescriptors.size(), 2);
         for (DeclarationDescriptor descriptor : allDescriptors) {
             assertTrue(descriptor.getName().asString().equals("Lol"));
@@ -110,7 +120,12 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     public void testBrokenJarWithNoClassForObjectProperty() throws Exception {
-        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors();
+        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(new Function0<List<File>>() {
+            @Override
+            public List<File> invoke() {
+                return findAllJars();
+            }
+        });
         assertEquals(allDescriptors.size(), 1);
         DeclarationDescriptor descriptor = allDescriptors.iterator().next();
         assertTrue(descriptor.getName().asString().equals("Lol"));
@@ -120,10 +135,20 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     public void testDuplicateLibraries() throws Exception {
-        doTestWithTxt();
+        doTestWithTxt(new Function0<List<File>>() {
+            @Override
+            public List<File> invoke() {
+                return findAllJars();
+            }
+        });
     }
 
     public void testMissingEnumReferencedInAnnotation() throws Exception {
-        doTestWithTxt();
+        doTestWithTxt(new Function0<List<File>>() {
+            @Override
+            public List<File> invoke() {
+                return findAllJars();
+            }
+        });
     }
 }
