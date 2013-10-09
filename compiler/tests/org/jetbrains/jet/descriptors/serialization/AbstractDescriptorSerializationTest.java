@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.test.util.NamespaceComparator;
+import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +69,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         NamespaceDescriptor deserialized = serializeAndDeserialize(javaDescriptorResolver, testNamespace);
 
-        NamespaceComparator.validateAndCompareNamespaces(testNamespace, deserialized, NamespaceComparator.RECURSIVE, null);
+        RecursiveDescriptorComparator
+                .validateAndCompareDescriptors(testNamespace, deserialized, RecursiveDescriptorComparator.RECURSIVE, null);
     }
 
     @NotNull

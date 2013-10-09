@@ -31,8 +31,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE;
-import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaces;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptors;
 
 public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
 
@@ -54,7 +54,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         // Only recurse into those namespaces mentioned in the files
         // Otherwise we'll be examining the whole JDK
         final Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
-        validateAndCompareNamespaces(
+        validateAndCompareDescriptors(
                 expected, actual,
                 RECURSIVE.filterRecursion(new Predicate<FqNameUnsafe>() {
                     @Override

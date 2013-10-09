@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.test.util.NamespaceComparator;
+import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,7 +54,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
         Collection<DeclarationDescriptor> allDescriptors = KotlinBuiltIns.getInstance().getBuiltInsScope().getAllDescriptors();
         NamespaceDescriptorImpl actualNamespace = getDeserializedDescriptorsAsNamespace(allDescriptors);
 
-        NamespaceComparator.Configuration configuration = NamespaceComparator.RECURSIVE.withRenderer(
+        RecursiveDescriptorComparator.Configuration configuration = RecursiveDescriptorComparator.RECURSIVE.withRenderer(
                 new DescriptorRendererBuilder()
                         .setWithDefinedIn(false)
                         .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
@@ -64,7 +64,8 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
                         .setPrettyFunctionTypes(false)
                         .build()
         );
-        NamespaceComparator.validateAndCompareNamespaces(KotlinBuiltIns.getInstance().getBuiltInsPackage(), actualNamespace, configuration, null);
+        RecursiveDescriptorComparator
+                .validateAndCompareDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackage(), actualNamespace, configuration, null);
     }
 
     private static NamespaceDescriptorImpl getDeserializedDescriptorsAsNamespace(Collection<DeclarationDescriptor> allDescriptors) {

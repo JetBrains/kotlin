@@ -44,7 +44,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
 
-public class NamespaceComparator {
+public class RecursiveDescriptorComparator {
     private static final DescriptorRenderer DEFAULT_RENDERER = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
@@ -67,7 +67,7 @@ public class NamespaceComparator {
 
     private final Configuration conf;
 
-    private NamespaceComparator(@NotNull Configuration conf) {
+    private RecursiveDescriptorComparator(@NotNull Configuration conf) {
         this.conf = conf;
     }
 
@@ -164,60 +164,61 @@ public class NamespaceComparator {
         }
     }
 
-    private static void compareNamespaceWithFile(
-            @NotNull NamespaceDescriptor actualNamespace,
+    private static void compareDescriptorWithFile(
+            @NotNull DeclarationDescriptor actual,
             @NotNull Configuration configuration,
             @NotNull File txtFile
     ) {
-        doCompareNamespaces(null, actualNamespace, configuration, txtFile);
+        doCompareDescriptors(null, actual, configuration, txtFile);
     }
 
-    private static void compareNamespaces(
-            @NotNull NamespaceDescriptor expectedNamespace,
-            @NotNull NamespaceDescriptor actualNamespace,
+    private static void compareDescriptors(
+            @NotNull DeclarationDescriptor expected,
+            @NotNull DeclarationDescriptor actual,
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {
-        if (expectedNamespace == actualNamespace) {
-            throw new IllegalArgumentException("Don't invoke this method with expectedNamespace == actualNamespace." +
-                                               "Invoke compareNamespaceWithFile() instead.");
+        if (expected == actual) {
+            throw new IllegalArgumentException("Don't invoke this method with expected == actual." +
+                                               "Invoke compareDescriptorWithFile() instead.");
         }
-        doCompareNamespaces(expectedNamespace, actualNamespace, configuration, txtFile);
+        doCompareDescriptors(expected, actual, configuration, txtFile);
     }
 
-    public static void validateAndCompareNamespaceWithFile(
-            @NotNull NamespaceDescriptor actualNamespace,
+    public static void validateAndCompareDescriptorWithFile(
+            @NotNull DeclarationDescriptor actual,
             @NotNull Configuration configuration,
             @NotNull File txtFile
     ) {
-        DescriptorValidator.validate(configuration.validationStrategy, actualNamespace);
-        compareNamespaceWithFile(actualNamespace, configuration, txtFile);
+        DescriptorValidator.validate(configuration.validationStrategy, actual);
+        compareDescriptorWithFile(actual, configuration, txtFile);
     }
 
-    public static void validateAndCompareNamespaces(
-            @NotNull NamespaceDescriptor expectedNamespace,
-            @NotNull NamespaceDescriptor actualNamespace,
+    public static void validateAndCompareDescriptors(
+            @NotNull DeclarationDescriptor expected,
+            @NotNull DeclarationDescriptor actual,
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {
-        DescriptorValidator.validate(configuration.validationStrategy, expectedNamespace, actualNamespace);
-        compareNamespaces(expectedNamespace, actualNamespace, configuration, txtFile);
+        DescriptorValidator.validate(configuration.validationStrategy, expected, actual);
+        compareDescriptors(expected, actual, configuration, txtFile);
     }
 
-    private static void doCompareNamespaces(
-            @Nullable NamespaceDescriptor expectedNamespace,
-            @NotNull NamespaceDescriptor actualNamespace,
+    private static void doCompareDescriptors(
+            @Nullable DeclarationDescriptor expected,
+            @NotNull DeclarationDescriptor actual,
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {
-        NamespaceComparator comparator = new NamespaceComparator(configuration);
+        RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(configuration);
 
-        String actualSerialized = comparator.serializeRecursively(actualNamespace);
+        String actualSerialized = comparator.serializeRecursively(actual);
 
-        if (expectedNamespace != null) {
-            String expectedSerialized = comparator.serializeRecursively(expectedNamespace);
+        if (expected != null) {
+            String expectedSerialized = comparator.serializeRecursively(expected);
+            Assert.assertSame(expected.getClass(), actual.getClass());
 
-            Assert.assertEquals("Expected and actual namespaces differ", expectedSerialized, actualSerialized);
+            Assert.assertEquals("Expected and actual descriptors differ", expectedSerialized, actualSerialized);
         }
 
         if (txtFile != null) {

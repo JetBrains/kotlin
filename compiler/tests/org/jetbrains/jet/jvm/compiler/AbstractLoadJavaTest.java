@@ -54,7 +54,7 @@ import java.util.Map;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
-import static org.jetbrains.jet.test.util.NamespaceComparator.*;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
 
 /*
     The generated test compares namespace descriptors loaded from kotlin sources and read from compiled java.
@@ -202,7 +202,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
             @Override
             public void run() {
-                validateAndCompareNamespaces(kotlinNamespace, javaNamespace, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+                validateAndCompareDescriptors(kotlinNamespace, javaNamespace, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
             }
         });
     }
@@ -216,7 +216,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
             @Override
             public void run() {
-                validateAndCompareNamespaceWithFile(javaNamespace, configuration, txtFile);
+                validateAndCompareDescriptorWithFile(javaNamespace, configuration, txtFile);
             }
         });
     }

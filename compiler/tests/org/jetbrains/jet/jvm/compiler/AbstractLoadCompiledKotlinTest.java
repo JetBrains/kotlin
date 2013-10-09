@@ -27,13 +27,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.jet.test.util.NamespaceComparator;
+import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
-import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaces;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptors;
 
 /**
  * Compile Kotlin and then parse model from .class files.
@@ -71,11 +71,11 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
             }
         }
 
-        validateAndCompareNamespaces(namespaceFromSource, namespaceFromClass,
-                                     NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT
-                                             .checkPrimaryConstructors(true)
-                                             .checkPropertyAccessors(includeAccessors),
-                                     txtFile);
+        validateAndCompareDescriptors(namespaceFromSource, namespaceFromClass,
+                                      RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                                              .checkPrimaryConstructors(true)
+                                              .checkPropertyAccessors(includeAccessors),
+                                      txtFile);
     }
 
     private static void checkUsageOfDeserializedScope(@NotNull NamespaceDescriptor namespaceFromClass) {

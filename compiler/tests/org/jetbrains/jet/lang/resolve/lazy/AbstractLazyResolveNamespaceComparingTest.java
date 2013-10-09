@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.test.util.NamespaceComparator;
+import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
 import java.io.File;
@@ -81,8 +81,8 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
-        NamespaceComparator.validateAndCompareNamespaces(
-                expected, actual, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
+        RecursiveDescriptorComparator.validateAndCompareDescriptors(
+                expected, actual, RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
                 new Predicate<FqNameUnsafe>() {
                     @Override
                     public boolean apply(FqNameUnsafe fqName) {
