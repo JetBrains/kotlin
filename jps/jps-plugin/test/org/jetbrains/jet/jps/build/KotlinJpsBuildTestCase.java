@@ -19,8 +19,11 @@ package org.jetbrains.jet.jps.build;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.jps.model.java.*;
+import org.jetbrains.jps.builders.BuildResult;
+import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 
@@ -89,6 +92,22 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         doTest();
     }
 
+    public void testCircularDependenciesWithKotlinFilesDifferentPackages() {
+        initProject();
+        BuildResult result = makeAll();
+
+        // Check that outputs are located properly
+        for (JpsModule module : myProject.getModules()) {
+            if (module.getName().equals("module2")) {
+                assertFileExistsInOutput(module, "kt1/Kt1Package.class");
+            }
+            if (module.getName().equals("kotlinProject")) {
+                assertFileExistsInOutput(module, "kt2/Kt2Package.class");
+            }
+        }
+        result.assertSuccessful();
+    }
+
     public void testTestDependencyLibrary() throws Throwable {
         initProject();
         addKotlinRuntimeDependency(JpsJavaDependencyScope.TEST, myProject.getModules(), false);
@@ -109,4 +128,24 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         makeAll().assertSuccessful();
     }
 
+    private static void assertFileExistsInOutput(JpsModule module, String relativePath) {
+        String outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false);
+        assertNotNull(outputUrl);
+        File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
+        File outputFile = new File(outputDir, relativePath);
+        assertTrue("Output not written: " + outputFile.getAbsolutePath() + "\n Directory contents: \n" + dirContents(outputFile.getParentFile()),
+                   outputFile.exists());
+    }
+
+    private static String dirContents(File dir) {
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return "<not found>";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (File file : files) {
+            builder.append(" * ").append(file.getName()).append("\n");
+        }
+        return builder.toString();
+    }
 }
