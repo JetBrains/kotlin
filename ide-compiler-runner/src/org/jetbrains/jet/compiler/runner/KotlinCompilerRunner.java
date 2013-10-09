@@ -50,7 +50,7 @@ public class KotlinCompilerRunner {
             OutputItemsCollector collector,
             boolean runOutOfProcess
     ) {
-        String[] arguments = createArgumentsForJvmCompiler(environment.getOutput(), moduleFile);
+        String[] arguments = createArgumentsForJvmCompiler(moduleFile);
 
         if (runOutOfProcess) {
             runOutOfProcess(K2JVM_COMPILER, arguments, messageCollector, collector, environment);
@@ -106,10 +106,9 @@ public class KotlinCompilerRunner {
         }
     }
 
-    private static String[] createArgumentsForJvmCompiler(File outputDir, File moduleFile) {
+    private static String[] createArgumentsForJvmCompiler(File moduleFile) {
         return new String[]{
                 "-module", moduleFile.getAbsolutePath(),
-                "-output", outputDir.getPath(),
                 "-tags", "-verbose", "-version",
                 "-notNullAssertions", "-notNullParamAssertions",
                 "-noStdlib", "-noJdkAnnotations", "-noJdk"};

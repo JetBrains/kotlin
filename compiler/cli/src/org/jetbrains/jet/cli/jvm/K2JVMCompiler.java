@@ -128,9 +128,14 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
                 ModuleChunk modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
 
+                if (outputDir != null) {
+                    messageCollector.report(CompilerMessageSeverity.WARNING, "The '-output' option is ignored because '-module' is specified",
+                                            CompilerMessageLocation.NO_LOCATION);
+                }
+
                 File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
                 KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
-                                                                      directory, jar, outputDir,
+                                                                      directory, jar,
                                                                       arguments.includeRuntime);
             }
             else if (arguments.script) {

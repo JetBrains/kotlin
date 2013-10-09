@@ -53,9 +53,6 @@ import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -115,40 +112,30 @@ public class KotlinToJVMBytecodeCompiler {
         }
     }
 
+    private static void writeOutput(
+            CompilerConfiguration configuration,
+            ClassFileFactory moduleFactory, File outputDir, File jarPath,
+            boolean jarRuntime,
+            FqName mainClass
+    ) {
+        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
+        CompileEnvironmentUtil.writeOutputToDirOrJar(jarPath, outputDir, jarRuntime, mainClass, moduleFactory, messageCollector);
+    }
+
     public static boolean compileModules(
             CompilerConfiguration configuration,
             @NotNull ModuleChunk modules,
             @NotNull File directory,
             @Nullable File jarPath,
-            @Nullable File outputDir,
-            boolean jarRuntime) {
-
+            boolean jarRuntime
+    ) {
         for (Module moduleBuilder : modules.getModules()) {
             ClassFileFactory moduleFactory = compileModule(configuration, moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
             }
-            if (outputDir != null) {
-                CompileEnvironmentUtil.writeToOutputDirectory(moduleFactory, outputDir);
-            }
-            else {
-                File path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar");
-                FileOutputStream outputStream = null;
-                try {
-                    outputStream = new FileOutputStream(path);
-                    CompileEnvironmentUtil.writeToJar(moduleFactory, outputStream, null, jarRuntime);
-                    outputStream.close();
-                }
-                catch (FileNotFoundException e) {
-                    throw new CompileEnvironmentException("Invalid jar path " + path, e);
-                }
-                catch (IOException e) {
-                    throw ExceptionUtils.rethrow(e);
-                }
-                finally {
-                    ExceptionUtils.closeQuietly(outputStream);
-                }
-            }
+            File outputDir = new File(moduleBuilder.getOutputDirectory());
+            writeOutput(configuration, moduleFactory, outputDir, jarPath, jarRuntime, null);
         }
         return true;
     }
@@ -184,30 +171,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
 
         try {
-            ClassFileFactory factory = generationState.getFactory();
-            if (jar != null) {
-                FileOutputStream os = null;
-                try {
-                    os = new FileOutputStream(jar);
-                    CompileEnvironmentUtil.writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
-                    os.close();
-                }
-                catch (FileNotFoundException e) {
-                    throw new CompileEnvironmentException("Invalid jar path " + jar, e);
-                }
-                catch (IOException e) {
-                    throw ExceptionUtils.rethrow(e);
-                }
-                finally {
-                    ExceptionUtils.closeQuietly(os);
-                }
-            }
-            else if (outputDir != null) {
-                CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
-            }
-            else {
-                throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
-            }
+            writeOutput(environment.getConfiguration(), generationState.getFactory(), outputDir, jar, includeRuntime, mainClass);
             return true;
         }
         finally {

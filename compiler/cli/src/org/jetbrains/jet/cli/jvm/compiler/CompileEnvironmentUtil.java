@@ -27,8 +27,7 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.modules.ModuleDescription;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -39,13 +38,11 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -181,7 +178,7 @@ public class CompileEnvironmentUtil {
     }
 
     // TODO: includeRuntime should be not a flag but a path to runtime
-    public static void writeToJar(ClassFileFactory factory, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
+    private static void doWriteToJar(ClassFileFactory factory, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
             Attributes mainAttributes = manifest.getMainAttributes();
@@ -202,6 +199,24 @@ public class CompileEnvironmentUtil {
         }
         catch (IOException e) {
             throw new CompileEnvironmentException("Failed to generate jar file", e);
+        }
+    }
+
+    public static void writeToJar(File jarPath, boolean jarRuntime, FqName mainClass, ClassFileFactory moduleFactory) {
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(jarPath);
+            doWriteToJar(moduleFactory, outputStream, mainClass, jarRuntime);
+            outputStream.close();
+        }
+        catch (FileNotFoundException e) {
+            throw new CompileEnvironmentException("Invalid jar path " + jarPath, e);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+        finally {
+            ExceptionUtils.closeQuietly(outputStream);
         }
     }
 
@@ -253,6 +268,37 @@ public class CompileEnvironmentUtil {
             moduleScriptText = "Can't load module script text:\n" + MessageRenderer.PLAIN.renderException(e);
         }
         return moduleScriptText;
+    }
+
+    static void writeOutputToDirOrJar(
+            @Nullable File jar,
+            @Nullable File outputDir,
+            boolean includeRuntime,
+            @Nullable FqName mainClass,
+            @NotNull ClassFileFactory factory,
+            @NotNull MessageCollector messageCollector
+    ) {
+        if (jar != null) {
+            writeToJar(jar, includeRuntime, mainClass, factory);
+        }
+        else if (outputDir != null) {
+            reportOutputs(factory, messageCollector);
+            writeToOutputDirectory(factory, outputDir);
+        }
+        else {
+            throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
+        }
+    }
+
+    private static void reportOutputs(ClassFileFactory factory, MessageCollector messageCollector) {
+        for (String outputFile : factory.files()) {
+            List<File> sourceFiles = factory.getSourceFiles(outputFile);
+            messageCollector.report(
+                    CompilerMessageSeverity.OUTPUT,
+                    OutputMessageUtil.formatOutputMessage(sourceFiles, new File(outputFile)),
+                    CompilerMessageLocation.NO_LOCATION);
+
+        }
     }
 
     private static class DescriptionToModuleAdapter implements Module {
