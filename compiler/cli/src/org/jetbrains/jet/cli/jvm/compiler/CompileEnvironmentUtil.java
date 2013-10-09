@@ -48,6 +48,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.jar.*;
 
@@ -245,10 +246,26 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    public static void writeToOutputDirectory(ClassFileFactory factory, @NotNull File outputDir) {
+    public interface OutputDirector {
+        @NotNull
+        File getOutputDirectory(@NotNull Collection<File> sourceFiles);
+    }
+
+    public static OutputDirector singleDirectory(@Nullable final File file) {
+        if (file == null) return null;
+        return new OutputDirector() {
+            @NotNull
+            @Override
+            public File getOutputDirectory(@NotNull Collection<File> sourceFiles) {
+                return file;
+            }
+        };
+    }
+
+    public static void writeToOutputWithDirector(ClassFileFactory factory, @NotNull OutputDirector outputDirector) {
         List<String> files = factory.files();
         for (String file : files) {
-            File target = new File(outputDir, file);
+            File target = new File(outputDirector.getOutputDirectory(factory.getSourceFiles(file)), file);
             try {
                 FileUtil.writeToFile(target, factory.asBytes(file));
             }
@@ -256,6 +273,10 @@ public class CompileEnvironmentUtil {
                 throw new CompileEnvironmentException(e);
             }
         }
+    }
+
+    public static void writeToOutputDirectory(ClassFileFactory factory, @NotNull File outputDir) {
+        writeToOutputWithDirector(factory, singleDirectory(outputDir));
     }
 
     // Used for debug output only
@@ -272,7 +293,7 @@ public class CompileEnvironmentUtil {
 
     static void writeOutputToDirOrJar(
             @Nullable File jar,
-            @Nullable File outputDir,
+            @Nullable OutputDirector outputDir,
             boolean includeRuntime,
             @Nullable FqName mainClass,
             @NotNull ClassFileFactory factory,
@@ -283,7 +304,7 @@ public class CompileEnvironmentUtil {
         }
         else if (outputDir != null) {
             reportOutputs(factory, messageCollector);
-            writeToOutputDirectory(factory, outputDir);
+            writeToOutputWithDirector(factory, outputDir);
         }
         else {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");

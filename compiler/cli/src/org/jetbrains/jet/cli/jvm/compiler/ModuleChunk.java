@@ -16,24 +16,39 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
+import com.google.common.collect.Maps;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class ModuleChunk {
 
     public static final ModuleChunk EMPTY = new ModuleChunk(Collections.<Module>emptyList());
 
     private final List<Module> modules;
+    private final Map<File, Module> sourceFileToModule = Maps.newHashMap();
 
     public ModuleChunk(@NotNull List<Module> modules) {
         this.modules = modules;
+        for (Module module : modules) {
+            for (String file : module.getSourceFiles()) {
+                sourceFileToModule.put(new File(file).getAbsoluteFile(), module);
+            }
+        }
     }
 
     @NotNull
     public List<Module> getModules() {
         return modules;
+    }
+
+    @Nullable
+    public Module findModuleBySourceFile(@NotNull File sourceFile) {
+        return sourceFileToModule.get(sourceFile.getAbsoluteFile());
     }
 }

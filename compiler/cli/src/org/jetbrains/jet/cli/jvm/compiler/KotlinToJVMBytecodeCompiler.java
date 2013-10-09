@@ -114,7 +114,9 @@ public class KotlinToJVMBytecodeCompiler {
 
     private static void writeOutput(
             CompilerConfiguration configuration,
-            ClassFileFactory moduleFactory, File outputDir, File jarPath,
+            ClassFileFactory moduleFactory,
+            CompileEnvironmentUtil.OutputDirector outputDir,
+            File jarPath,
             boolean jarRuntime,
             FqName mainClass
     ) {
@@ -124,7 +126,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     public static boolean compileModules(
             CompilerConfiguration configuration,
-            @NotNull ModuleChunk modules,
+            @NotNull final ModuleChunk modules,
             @NotNull File directory,
             @Nullable File jarPath,
             boolean jarRuntime
@@ -134,7 +136,20 @@ public class KotlinToJVMBytecodeCompiler {
             if (moduleFactory == null) {
                 return false;
             }
-            File outputDir = new File(moduleBuilder.getOutputDirectory());
+            CompileEnvironmentUtil.OutputDirector outputDir = new CompileEnvironmentUtil.OutputDirector() {
+                @NotNull
+                @Override
+                public File getOutputDirectory(@NotNull Collection<File> sourceFiles) {
+                    for (File sourceFile : sourceFiles) {
+                        Module module = modules.findModuleBySourceFile(sourceFile);
+                        if (module != null) {
+                            return new File(module.getOutputDirectory());
+                        }
+                    }
+                    throw new IllegalStateException("No module found for source files: " + sourceFiles);
+                }
+            };
+
             writeOutput(configuration, moduleFactory, outputDir, jarPath, jarRuntime, null);
         }
         return true;
@@ -171,7 +186,8 @@ public class KotlinToJVMBytecodeCompiler {
         }
 
         try {
-            writeOutput(environment.getConfiguration(), generationState.getFactory(), outputDir, jar, includeRuntime, mainClass);
+            CompileEnvironmentUtil.OutputDirector outputDirector = CompileEnvironmentUtil.singleDirectory(outputDir);
+            writeOutput(environment.getConfiguration(), generationState.getFactory(), outputDirector, jar, includeRuntime, mainClass);
             return true;
         }
         finally {
