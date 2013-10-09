@@ -316,7 +316,7 @@ public class GenerateTests {
                 "idea/tests",
                 "JetJavaLibCompletionTestGenerated",
                 AbstractJavaWithLibCompletionTest.class,
-                testModel("idea/testData/completion/basic/custom", false, "doTestWithJar"));
+                testModel("idea/testData/completion/basic/custom", false, "doTest"));
 
         generateTest(
                 "idea/tests",

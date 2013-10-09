@@ -38,12 +38,12 @@ public class JetJavaLibCompletionTestGenerated extends AbstractJavaWithLibComple
     
     @TestMetadata("TopLevelNonImportedExtFun.kt")
     public void testTopLevelNonImportedExtFun() throws Exception {
-        doTestWithJar("idea/testData/completion/basic/custom/TopLevelNonImportedExtFun.kt");
+        doTest("idea/testData/completion/basic/custom/TopLevelNonImportedExtFun.kt");
     }
     
     @TestMetadata("TopLevelNonImportedFun.kt")
     public void testTopLevelNonImportedFun() throws Exception {
-        doTestWithJar("idea/testData/completion/basic/custom/TopLevelNonImportedFun.kt");
+        doTest("idea/testData/completion/basic/custom/TopLevelNonImportedFun.kt");
     }
     
 }

@@ -1,8 +1,5 @@
 package abc
 
-// To regenerate this test, run CompileBinaryTestData.kt
-// Or manually, compile this file into jar
-
 public fun abcdAAA1(): Unit {}
 
 public fun abcdBBB2(i: Int) {}
