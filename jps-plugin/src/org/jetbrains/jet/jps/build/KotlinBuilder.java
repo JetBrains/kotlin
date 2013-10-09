@@ -39,9 +39,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
 
@@ -81,27 +85,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION);
 
-        if (chunk.getModules().size() > 1) {
-            // We do not support circular dependencies, but if they are present, we should not break the build,
-            // so we simply yield a warning and report NOTHING_DONE
-            messageCollector.report(
-                    WARNING, "Circular dependencies are not supported. " +
-                             "The following modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
-                             "Kotlin is not compiled for these modules",
-                    CompilerMessageLocation.NO_LOCATION);
-            return ExitCode.NOTHING_DONE;
-        }
-
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
 
         // For non-incremental build: take all sources
         if (!dirtyFilesHolder.hasDirtyFiles()) {
-            return ExitCode.NOTHING_DONE;
-        }
-        List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget);
-        //List<File> sourceFiles = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
-
-        if (sourceFiles.isEmpty()) {
             return ExitCode.NOTHING_DONE;
         }
 
@@ -118,6 +105,24 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl(outputDir);
 
         if (JpsUtils.isJsKotlinModule(representativeTarget)) {
+            if (chunk.getModules().size() > 1) {
+                // We do not support circular dependencies, but if they are present, we do our best should not break the build,
+                // so we simply yield a warning and report NOTHING_DONE
+                messageCollector.report(
+                        WARNING, "Circular dependencies are not supported. " +
+                                 "The following JS modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
+                                 "Kotlin is not compiled for these modules",
+                        CompilerMessageLocation.NO_LOCATION);
+                return ExitCode.NOTHING_DONE;
+            }
+
+            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget);
+            //List<File> sourceFiles = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
+
+            if (sourceFiles.isEmpty()) {
+                return ExitCode.NOTHING_DONE;
+            }
+
             File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
 
             KotlinCompilerRunner.runK2JsCompiler(
@@ -129,7 +134,19 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                     outputFile);
         }
         else {
-            File moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, representativeTarget, sourceFiles);
+            if (chunk.getModules().size() > 1) {
+                messageCollector.report(
+                        WARNING, "Circular dependencies are only partially supported. " +
+                                 "The following modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
+                                 "Kotlin will compile them, but some strange effect may happen",
+                        CompilerMessageLocation.NO_LOCATION);
+            }
+
+            File moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk);
+            if (moduleFile == null) {
+                // No Kotlin sources found
+                return ExitCode.NOTHING_DONE;
+            }
 
             KotlinCompilerRunner.runK2JvmCompiler(
                     messageCollector,

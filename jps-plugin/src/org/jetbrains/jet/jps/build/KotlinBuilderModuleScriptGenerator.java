@@ -20,14 +20,17 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator;
-import org.jetbrains.jet.compiler.runner.KotlinModuleXmlGenerator;
+import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder;
+import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilderFactory;
+import org.jetbrains.jet.compiler.runner.KotlinModuleXmlBuilderFactory;
+import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
-import org.jetbrains.jps.model.java.*;
+import org.jetbrains.jps.model.java.JpsAnnotationRootType;
+import org.jetbrains.jps.model.java.JpsJavaSdkType;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.library.sdk.JpsSdkType;
@@ -42,42 +45,61 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator.DependencyProvider;
+import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProcessor;
+import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProvider;
 import static org.jetbrains.jet.jps.build.JpsUtils.getAllDependencies;
 
 public class KotlinBuilderModuleScriptGenerator {
 
-    public static final KotlinModuleDescriptionGenerator GENERATOR = KotlinModuleXmlGenerator.INSTANCE;
+    public static final KotlinModuleDescriptionBuilderFactory FACTORY = KotlinModuleXmlBuilderFactory.INSTANCE;
 
-    public static File generateModuleDescription(CompileContext context, ModuleBuildTarget target, List<File> sourceFiles)
+    @Nullable
+    public static File generateModuleDescription(CompileContext context, ModuleChunk chunk)
             throws IOException
     {
+        KotlinModuleDescriptionBuilder builder = FACTORY.create();
+
+        boolean noSources = true;
+
+        for (ModuleBuildTarget target : chunk.getTargets()) {
+            File outputDir = getOutputDir(target);
+
+            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
+            noSources &= sourceFiles.isEmpty();
+
+            builder.addModule(
+                    target.getId(),
+                    outputDir.getAbsolutePath(),
+                    getKotlinModuleDependencies(context, target),
+                    sourceFiles,
+                    target.isTests(),
+                    // this excludes the output directory from the class path, to be removed for true incremental compilation
+                    Collections.singleton(outputDir)
+            );
+        }
+
+        if (noSources) return null;
+
+        File scriptFile = new File(getOutputDir(chunk.representativeTarget()), "script." + FACTORY.getFileExtension());
+
+        writeScriptToFile(context, builder.asText(), scriptFile);
+
+        return scriptFile;
+    }
+
+    @NotNull
+    private static File getOutputDir(@NotNull ModuleBuildTarget target) {
         File outputDir = target.getOutputDir();
         if (outputDir == null) {
             throw new IllegalStateException("No output directory found for " + target);
-
         }
-        CharSequence moduleScriptText = GENERATOR.generateModuleScript(
-                target.getId(),
-                outputDir.getAbsolutePath(),
-                getKotlinModuleDependencies(context, target),
-                sourceFiles,
-                target.isTests(),
-                // this excludes the output directory from the class path, to be removed for true incremental compilation
-                Collections.singleton(outputDir)
-        );
-
-        File scriptFile = new File(outputDir, "script." + GENERATOR.getFileExtension());
-
-        writeScriptToFile(context, moduleScriptText, scriptFile);
-
-        return scriptFile;
+        return outputDir;
     }
 
     private static DependencyProvider getKotlinModuleDependencies(final CompileContext context, final ModuleBuildTarget target) {
         return new DependencyProvider() {
             @Override
-            public void processClassPath(@NotNull KotlinModuleDescriptionGenerator.DependencyProcessor processor) {
+            public void processClassPath(@NotNull DependencyProcessor processor) {
                 processor.processClassPathSection("Classpath", findClassPathRoots(target));
                 processor.processClassPathSection("Java Source Roots", findSourceRoots(context, target));
                 processor.processAnnotationRoots(findAnnotationRoots(target));
