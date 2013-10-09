@@ -52,19 +52,6 @@ private object BinaryTestData {
         rm("test")
     }
 
-    GenScript("compiler/testData/compileKotlinAgainstBinariesCustom/duplicateObjectInBinaryAndSources", "source.kt", "objectBinaries.jar")
-    fun genDuplicateObjectInBinaryAndSources() {
-        jar("objectBinaries.jar", "test")
-        rm("test")
-    }
-
-    GenScript("compiler/testData/compileKotlinAgainstCustomBinaries/duplicateLibraries", "DuplicateTest.kt", "DuplicateLibTest-1.jar")
-    fun genDuplicateLibraries() {
-        jar("DuplicateLibTest-1.jar", "testing")
-        cp("DuplicateLibTest-1.jar", "DuplicateLibTest-2.jar")
-        rm("testing")
-    }
-
     GenScript("compiler/testData/compileKotlinAgainstCustomBinaries/missingEnumReferencedInAnnotation", "MissingEnum.kt", "MissingEnum.jar")
     fun genMissingEnumReferencedInAnnotation() {
         rm("test/E.class")

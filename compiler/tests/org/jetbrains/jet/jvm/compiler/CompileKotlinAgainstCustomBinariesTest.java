@@ -22,6 +22,7 @@ import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -37,10 +38,7 @@ import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
@@ -51,6 +49,11 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     @NotNull
     private File getTestDataDirectory() {
         return new File(TEST_DATA_PATH, getTestName(true));
+    }
+
+    @NotNull
+    private File compileLibrary(@NotNull String sourcePath) {
+        return MockLibraryUtil.compileLibraryToJar(new File(getTestDataDirectory(), sourcePath).getPath());
     }
 
     private void doTestWithTxt(@NotNull Function0<List<File>> classPathProducer) throws Exception {
@@ -107,7 +110,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(new Function0<List<File>>() {
             @Override
             public List<File> invoke() {
-                return findAllJars();
+                return Collections.singletonList(compileLibrary("library"));
             }
         });
         assertEquals(allDescriptors.size(), 2);
@@ -138,7 +141,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         doTestWithTxt(new Function0<List<File>>() {
             @Override
             public List<File> invoke() {
-                return findAllJars();
+                return Arrays.asList(compileLibrary("library-1"), compileLibrary("library-2"));
             }
         });
     }
