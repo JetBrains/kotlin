@@ -210,13 +210,6 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
-                "CompileKotlinAgainstCustomBinariesGenerated",
-                AbstractCompileKotlinAgainstCustomBinariesTest.class,
-                testModel("compiler/testData/compileKotlinAgainstCustomBinaries")
-        );
-
-        generateTest(
-                "compiler/tests/",
                 "LazyResolveDescriptorRendererTestGenerated",
                 AbstractLazyResolveDescriptorRendererTest.class,
                 testModel("compiler/testData/renderer")
