@@ -268,17 +268,10 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static GenerationState analyzeAndGenerate(JetCoreEnvironment environment) {
-        return analyzeAndGenerate(environment,
-                                  environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
-    }
-
-    @Nullable
     public static GenerationState analyzeAndGenerate(
-            JetCoreEnvironment environment,
-            List<AnalyzerScriptParameter> scriptParameters
+            JetCoreEnvironment environment
     ) {
-        AnalyzeExhaust exhaust = analyze(environment, scriptParameters);
+        AnalyzeExhaust exhaust = analyze(environment);
 
         if (exhaust == null) {
             return null;
@@ -290,10 +283,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    private static AnalyzeExhaust analyze(
-            final JetCoreEnvironment environment,
-            final List<AnalyzerScriptParameter> scriptParameters
-    ) {
+    private static AnalyzeExhaust analyze(final JetCoreEnvironment environment) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
         analyzerWithCompilerReport.analyzeAndReport(
@@ -306,7 +296,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getProject(),
                                 environment.getSourceFiles(),
                                 sharedTrace,
-                                scriptParameters,
+                                environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS),
                                 Predicates.<PsiFile>alwaysTrue(),
                                 false
                         );
