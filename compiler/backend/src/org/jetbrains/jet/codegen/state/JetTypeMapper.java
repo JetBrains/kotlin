@@ -296,7 +296,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (ErrorUtils.isError(descriptor)) {
-            if (classBuilderMode != ClassBuilderMode.SIGNATURES) {
+            if (classBuilderMode != ClassBuilderMode.LIGHT_CLASSES) {
                 throw new IllegalStateException(generateErrorMessageForErrorType(descriptor));
             }
             Type asmType = Type.getObjectType("error/NonExistentClass");
