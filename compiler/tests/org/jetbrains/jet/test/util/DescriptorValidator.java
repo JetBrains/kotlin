@@ -183,6 +183,22 @@ public class DescriptorValidator {
         }
 
         @Override
+        public Boolean visitPackageFragmentDescriptor(
+                PackageFragmentDescriptor descriptor, DiagnosticCollector collector
+        ) {
+            validateScope(descriptor.getMemberScope(), collector);
+            return true;
+        }
+
+        @Override
+        public Boolean visitPackageViewDescriptor(
+                PackageViewDescriptor descriptor, DiagnosticCollector collector
+        ) {
+            validateScope(descriptor.getMemberScope(), collector);
+            return true;
+        }
+
+        @Override
         public Boolean visitVariableDescriptor(
                 VariableDescriptor descriptor, DiagnosticCollector collector
         ) {
@@ -365,6 +381,22 @@ public class DescriptorValidator {
                 NamespaceDescriptor descriptor, JetScope scope
         ) {
             assertFound(scope, descriptor, scope.getNamespace(descriptor.getName()));
+            return null;
+        }
+
+        @Override
+        public Void visitPackageFragmentDescriptor(
+                PackageFragmentDescriptor descriptor, JetScope scope
+        ) {
+            return null;
+        }
+
+        @Override
+        public Void visitPackageViewDescriptor(
+                PackageViewDescriptor descriptor, JetScope scope
+        ) {
+            // TODO
+            //assertFound(scope, descriptor, scope.getPackage(descriptor.getName()));
             return null;
         }
 

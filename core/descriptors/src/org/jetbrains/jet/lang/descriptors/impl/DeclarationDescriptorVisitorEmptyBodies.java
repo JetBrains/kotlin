@@ -44,6 +44,16 @@ public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements Declaratio
     }
 
     @Override
+    public R visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, D data) {
+        return visitDeclarationDescriptor(descriptor, data);
+    }
+
+    @Override
+    public R visitPackageViewDescriptor(PackageViewDescriptor descriptor, D data) {
+        return visitDeclarationDescriptor(descriptor, data);
+    }
+
+    @Override
     public R visitClassDescriptor(ClassDescriptor descriptor, D data) {
         return visitDeclarationDescriptor(descriptor, data);
     }

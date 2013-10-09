@@ -184,6 +184,11 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         }
 
         @Override
+        public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
+            return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
+        }
+
+        @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
             // skip java.util.Collection, etc.
             if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(DescriptorUtils.getFQName(descriptor).toSafe()).isEmpty()) {

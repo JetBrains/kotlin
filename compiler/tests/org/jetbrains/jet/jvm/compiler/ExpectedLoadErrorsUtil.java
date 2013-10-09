@@ -66,6 +66,11 @@ public class ExpectedLoadErrorsUtil {
             }
 
             @Override
+            public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
+                return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
+            }
+
+            @Override
             public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
                 return visitDeclarationRecursively(descriptor, descriptor.getDefaultType().getMemberScope());
             }

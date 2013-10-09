@@ -17,7 +17,12 @@
 package org.jetbrains.jet.lang.descriptors;
 
 public interface DeclarationDescriptorVisitor<R, D> {
+    @Deprecated
     R visitNamespaceDescriptor(NamespaceDescriptor descriptor, D data);
+
+    R visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, D data);
+
+    R visitPackageViewDescriptor(PackageViewDescriptor descriptor, D data);
 
     R visitVariableDescriptor(VariableDescriptor descriptor, D data);
 

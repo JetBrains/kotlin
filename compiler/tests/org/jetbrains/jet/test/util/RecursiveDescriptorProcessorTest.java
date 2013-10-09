@@ -98,6 +98,20 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
             }
 
             @Override
+            public Boolean visitPackageFragmentDescriptor(
+                    PackageFragmentDescriptor descriptor, Void data
+            ) {
+                add(descriptor);
+                return true;
+            }
+
+            @Override
+            public Boolean visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
+                add(descriptor);
+                return true;
+            }
+
+            @Override
             public Boolean visitVariableDescriptor(VariableDescriptor descriptor, Void data) {
                 add(descriptor);
                 return true;

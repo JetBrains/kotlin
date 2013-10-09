@@ -687,6 +687,18 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(namespace, builder);
     }
 
+    private void renderPackageView(@NotNull PackageViewDescriptor packageView, @NotNull StringBuilder builder) {
+        builder.append(renderKeyword("package")).append(" ");
+        renderName(packageView, builder);
+    }
+
+    private void renderPackageFragment(@NotNull PackageFragmentDescriptor fragment, @NotNull StringBuilder builder) {
+        builder.append(renderKeyword("package-fragment")).append(" ");
+        renderName(fragment, builder);
+        builder.append(" in context of ");
+        renderName(fragment.getContainingDeclaration(), builder);
+    }
+
 
     /* STUPID DISPATCH-ONLY VISITOR */
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, StringBuilder> {
@@ -734,6 +746,22 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         @Override
         public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
             renderNamespace(namespaceDescriptor, builder);
+            return null;
+        }
+
+        @Override
+        public Void visitPackageFragmentDescriptor(
+                PackageFragmentDescriptor descriptor, StringBuilder builder
+        ) {
+            renderPackageFragment(descriptor, builder);
+            return null;
+        }
+
+        @Override
+        public Void visitPackageViewDescriptor(
+                PackageViewDescriptor descriptor, StringBuilder builder
+        ) {
+            renderPackageView(descriptor, builder);
             return null;
         }
 
