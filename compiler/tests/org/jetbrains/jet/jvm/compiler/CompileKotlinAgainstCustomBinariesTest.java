@@ -35,11 +35,16 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipOutputStream;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
 
@@ -101,8 +106,34 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private List<File> findAllJars() {
-        return FileUtil.findFilesByMask(Pattern.compile("^.*\\.jar$"), getTestDataDirectory());
+    private static File copyJarFileWithoutEntry(@NotNull File jarPath, @NotNull String entryToDelete) {
+        try {
+            File outputFile = new File(jarPath.getParentFile(), FileUtil.getNameWithoutExtension(jarPath) + "-after.jar");
+
+            @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+            JarFile jar = new JarFile(jarPath);
+            ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
+            try {
+                for (Enumeration<JarEntry> enumeration = jar.entries(); enumeration.hasMoreElements(); ) {
+                    JarEntry jarEntry = enumeration.nextElement();
+                    if (entryToDelete.equals(jarEntry.getName())) {
+                        continue;
+                    }
+                    output.putNextEntry(jarEntry);
+                    output.write(FileUtil.loadBytes(jar.getInputStream(jarEntry)));
+                    output.closeEntry();
+                }
+            }
+            finally {
+                output.close();
+                jar.close();
+            }
+
+            return outputFile;
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
 
@@ -126,7 +157,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(new Function0<List<File>>() {
             @Override
             public List<File> invoke() {
-                return findAllJars();
+                return Collections.singletonList(copyJarFileWithoutEntry(compileLibrary("library"), "test/Lol.class"));
             }
         });
         assertEquals(allDescriptors.size(), 1);
@@ -150,7 +181,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         doTestWithTxt(new Function0<List<File>>() {
             @Override
             public List<File> invoke() {
-                return findAllJars();
+                return Collections.singletonList(copyJarFileWithoutEntry(compileLibrary("library"), "test/E.class"));
             }
         });
     }

@@ -45,20 +45,6 @@ Retention(RetentionPolicy.RUNTIME)
 private annotation class GenScript(val dir: String, val source: String, val binary: String)
 
 private object BinaryTestData {
-    GenScript("compiler/testData/compileKotlinAgainstBinariesCustom/brokenJarWithNoClassForObjectProperty", "source.kt", "broken.jar")
-    fun genBrokenJarWithNoClassForObjectProperty() {
-        rm("test/Lol.class")
-        jar("broken.jar", "test")
-        rm("test")
-    }
-
-    GenScript("compiler/testData/compileKotlinAgainstCustomBinaries/missingEnumReferencedInAnnotation", "MissingEnum.kt", "MissingEnum.jar")
-    fun genMissingEnumReferencedInAnnotation() {
-        rm("test/E.class")
-        jar("MissingEnum.jar", "test")
-        rm("test")
-    }
-
     GenScript("idea/testData/completion/basic/custom/", "TopLevelNonImportedExtFunSource.kt", "TopLevelNonImportedExtFun.jar")
     fun genTopLevelNonImportedExtFun() {
         jar("TopLevelNonImportedExtFun.jar", "abc")
