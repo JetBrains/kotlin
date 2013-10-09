@@ -144,13 +144,13 @@ public class TypeBoundsImpl implements TypeBounds {
     @Override
     public Collection<JetType> getValues() {
         if (resultValues == null) {
-            resultValues = computeValues(bounds);
+            resultValues = computeValues();
         }
         return resultValues;
     }
 
     @NotNull
-    private static Collection<JetType> computeValues(@NotNull Collection<Bound> bounds) {
+    private Collection<JetType> computeValues() {
         Set<JetType> values = Sets.newLinkedHashSet();
         if (bounds.isEmpty()) {
             return Collections.emptyList();
@@ -168,7 +168,7 @@ public class TypeBoundsImpl implements TypeBounds {
         Set<JetType> exactBounds = filterBounds(bounds, BoundKind.EXACT_BOUND, values);
         if (exactBounds.size() == 1) {
             JetType exactBound = exactBounds.iterator().next();
-            if (trySuggestion(exactBound, bounds)) {
+            if (tryPossibleAnswer(exactBound)) {
                 return Collections.singleton(exactBound);
             }
         }
@@ -180,7 +180,7 @@ public class TypeBoundsImpl implements TypeBounds {
         Collection<JetType> numberLowerBounds = pair.getSecond();
 
         JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(generalLowerBounds);
-        if (trySuggestion(superTypeOfLowerBounds, bounds)) {
+        if (tryPossibleAnswer(superTypeOfLowerBounds)) {
             return Collections.singleton(superTypeOfLowerBounds);
         }
         ContainerUtil.addIfNotNull(superTypeOfLowerBounds, values);
@@ -188,7 +188,7 @@ public class TypeBoundsImpl implements TypeBounds {
         Set<JetType> upperBounds = filterBounds(bounds, BoundKind.UPPER_BOUND, values);
         JetType intersectionOfUpperBounds = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
         if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
-            if (trySuggestion(intersectionOfUpperBounds, bounds)) {
+            if (tryPossibleAnswer(intersectionOfUpperBounds)) {
                 return Collections.singleton(intersectionOfUpperBounds);
             }
         }
@@ -199,7 +199,7 @@ public class TypeBoundsImpl implements TypeBounds {
         values.addAll(filterBounds(bounds, BoundKind.UPPER_BOUND));
 
         JetType superTypeOfNumberLowerBounds = TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds);
-        if (trySuggestion(superTypeOfNumberLowerBounds, bounds)) {
+        if (tryPossibleAnswer(superTypeOfNumberLowerBounds)) {
             return Collections.singleton(superTypeOfNumberLowerBounds);
         }
         ContainerUtil.addIfNotNull(superTypeOfNumberLowerBounds, values);
@@ -207,37 +207,33 @@ public class TypeBoundsImpl implements TypeBounds {
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
             JetType superTypeOfAllLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(
                     Lists.newArrayList(superTypeOfLowerBounds, superTypeOfNumberLowerBounds));
-            if (trySuggestion(superTypeOfAllLowerBounds, bounds)) {
+            if (tryPossibleAnswer(superTypeOfAllLowerBounds)) {
                 return Collections.singleton(superTypeOfAllLowerBounds);
             }
         }
         return values;
     }
 
-    private static boolean trySuggestion(
-            @Nullable JetType suggestion,
-            @NotNull Collection<Bound> bounds
-    ) {
-        if (suggestion == null) return false;
-        if (!suggestion.getConstructor().isDenotable()) return false;
-        if (filterBounds(bounds, BoundKind.EXACT_BOUND).size() > 1) return false;
+    private boolean tryPossibleAnswer(@Nullable JetType possibleAnswer) {
+        if (possibleAnswer == null) return false;
+        if (!possibleAnswer.getConstructor().isDenotable()) return false;
 
         for (Bound bound : bounds) {
             switch (bound.kind) {
                 case LOWER_BOUND:
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(bound.type, suggestion)) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(bound.type, possibleAnswer)) {
                         return false;
                     }
                     break;
 
                 case UPPER_BOUND:
-                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(suggestion, bound.type)) {
+                    if (!JetTypeChecker.INSTANCE.isSubtypeOf(possibleAnswer, bound.type)) {
                         return false;
                     }
                     break;
 
                 case EXACT_BOUND:
-                    if (!JetTypeChecker.INSTANCE.equalTypes(bound.type, suggestion)) {
+                    if (!JetTypeChecker.INSTANCE.equalTypes(bound.type, possibleAnswer)) {
                         return false;
                     }
                     break;
