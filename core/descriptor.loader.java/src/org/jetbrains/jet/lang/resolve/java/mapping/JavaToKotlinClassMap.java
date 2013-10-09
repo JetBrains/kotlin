@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.mapping;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -39,6 +37,8 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
+
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
     private static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
 
@@ -55,7 +55,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();
     private final Map<String, JetType> primitiveTypesMap = new HashMap<String, JetType>();
-    private final Multimap<FqName, ClassDescriptor> packagesWithMappedClasses = HashMultimap.create();
+    private final Map<FqName, Collection<ClassDescriptor>> packagesWithMappedClasses = new HashMap<FqName, Collection<ClassDescriptor>>();
 
     private JavaToKotlinClassMap() {
         init();
@@ -66,15 +66,13 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            register(jvmPrimitiveType.getWrapper().getFqName(), builtIns.getPrimitiveClassDescriptor(primitiveType));
-        }
+            String name = jvmPrimitiveType.getName();
+            FqName wrapperFqName = jvmPrimitiveType.getWrapperFqName();
 
-        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-            primitiveTypesMap.put(jvmPrimitiveType.getName(), KotlinBuiltIns.getInstance().getPrimitiveJetType(primitiveType));
-            primitiveTypesMap.put("[" + jvmPrimitiveType.getName(), KotlinBuiltIns.getInstance().getPrimitiveArrayJetType(primitiveType));
-            primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().asString(), KotlinBuiltIns.getInstance().getNullablePrimitiveJetType(
-                    primitiveType));
+            register(wrapperFqName, builtIns.getPrimitiveClassDescriptor(primitiveType));
+            primitiveTypesMap.put(name, builtIns.getPrimitiveJetType(primitiveType));
+            primitiveTypesMap.put("[" + name, builtIns.getPrimitiveArrayJetType(primitiveType));
+            primitiveTypesMap.put(wrapperFqName.asString(), builtIns.getNullablePrimitiveJetType(primitiveType));
         }
         primitiveTypesMap.put("void", KotlinBuiltIns.getInstance().getUnitType());
     }
@@ -116,18 +114,10 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         return annotation;
     }
 
-    private static FqName getJavaClassFqName(@NotNull Class<?> javaClass) {
-        return new FqName(javaClass.getName().replace('$', '.'));
-    }
-
     @Override
-    protected void register(
-            @NotNull Class<?> javaClass,
-            @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull Direction direction
-    ) {
+    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            register(getJavaClassFqName(javaClass), kotlinDescriptor);
+            register(fqNameByClass(javaClass), kotlinDescriptor);
         }
     }
 
@@ -139,7 +129,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             @NotNull Direction direction
     ) {
         if (direction == Direction.BOTH || direction == Direction.JAVA_TO_KOTLIN) {
-            FqName javaClassName = getJavaClassFqName(javaClass);
+            FqName javaClassName = fqNameByClass(javaClass);
             register(javaClassName, kotlinDescriptor);
             registerCovariant(javaClassName, kotlinMutableDescriptor);
         }
@@ -147,12 +137,21 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         classDescriptorMap.put(javaClassName, kotlinDescriptor);
-        packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
+        registerClassInPackage(javaClassName.parent(), kotlinDescriptor);
     }
 
     private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
-        packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
+        registerClassInPackage(javaClassName.parent(), kotlinDescriptor);
+    }
+
+    private void registerClassInPackage(@NotNull FqName packageFqName, @NotNull ClassDescriptor kotlinDescriptor) {
+        Collection<ClassDescriptor> classesInPackage = packagesWithMappedClasses.get(packageFqName);
+        if (classesInPackage == null) {
+            classesInPackage = new HashSet<ClassDescriptor>();
+            packagesWithMappedClasses.put(packageFqName, classesInPackage);
+        }
+        classesInPackage.add(kotlinDescriptor);
     }
 
     @NotNull
@@ -186,6 +185,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         if (!fqName.isSafe()) {
             return Collections.emptyList();
         }
-        return packagesWithMappedClasses.get(fqName.toSafe());
+        Collection<ClassDescriptor> result = packagesWithMappedClasses.get(fqName.toSafe());
+        return result == null ? Collections.<ClassDescriptor>emptySet() : Collections.unmodifiableCollection(result);
     }
 }

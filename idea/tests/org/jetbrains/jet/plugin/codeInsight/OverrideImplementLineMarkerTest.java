@@ -49,6 +49,26 @@ public class OverrideImplementLineMarkerTest extends JetLightCodeInsightFixtureT
         doTest();
     }
 
+    public void testDelegatedFun() throws Exception {
+        doTest();
+    }
+
+    public void testFakeOverrideFun() throws Exception {
+        doTest();
+    }
+
+    public void testDelegatedProperty() throws Exception {
+        doTest();
+    }
+
+    public void testFakeOverrideProperty() throws Exception {
+        doTest();
+    }
+
+    public void testFakeOverrideFunWithMostRelevantImplementation() throws Exception {
+        doTest();
+    }
+
     private void doTest() {
         try {
             myFixture.configureByFile(fileName());

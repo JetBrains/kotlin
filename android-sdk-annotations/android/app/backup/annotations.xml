@@ -1,17 +1,113 @@
 <root>
-    <item name='android.app.backup.FileBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+    <item name='android.app.backup.IRestoreObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onRestoreFile(android.os.ParcelFileDescriptor, long, int, java.lang.String, java.lang.String, long, long) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IRestoreObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void fullBackupFileTree(java.lang.String, java.lang.String, java.lang.String, java.util.HashSet&lt;java.lang.String&gt;, android.app.backup.FullBackupDataOutput) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IFullBackupRestoreObserver.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IRestoreSession.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.WallpaperBackupHelper WallpaperBackupHelper(android.content.Context, java.lang.String[], java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper FileBackupHelper(android.content.Context, java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.AbsoluteFileBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IFullBackupRestoreObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.WallpaperBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelperDispatcher void performRestore(android.app.backup.BackupDataInput, int, android.os.ParcelFileDescriptor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.backup.BackupDataInputStream int read(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.app.backup.BackupAgent void onRestoreFile(android.os.ParcelFileDescriptor, long, java.io.File, int, long, long) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.BackupAgent void onFullBackup(android.app.backup.FullBackupDataOutput) 0'>
+    <item name='android.app.backup.IRestoreSession int restoreSome(long, android.app.backup.IRestoreObserver, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.backup.BackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IRestoreSession.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.WallpaperBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FullBackupAgent void onBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onRestore(android.app.backup.BackupDataInput, int, android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.SharedPreferencesBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelperDispatcher void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IBackupManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgentHelper void onRestore(android.app.backup.BackupDataInput, int, android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.SharedPreferencesBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupDataInputStream int read(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.SharedPreferencesBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupDataInput BackupDataInput(java.io.FileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.AbsoluteFileBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.AbsoluteFileBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IFullBackupRestoreObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgentHelper void onBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.RestoreSet void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IBackupManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onRestoreFile(android.os.ParcelFileDescriptor, long, java.io.File, int, long, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.backup.BackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
@@ -20,34 +116,61 @@
     <item name='android.app.backup.FileBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.app.backup.BackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.BackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.SharedPreferencesBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.FileBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.SharedPreferencesBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.FileBackupHelper FileBackupHelper(android.content.Context, java.lang.String...) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.FileBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.app.backup.SharedPreferencesBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+    <item name='android.app.backup.IRestoreSession.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.backup.SharedPreferencesBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.app.backup.AbsoluteFileBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.WallpaperBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.app.backup.BackupAgent void fullBackupFile(java.io.File, android.app.backup.FullBackupDataOutput) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper void writeNewStateDescription(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onFullBackup(android.app.backup.FullBackupDataOutput) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IRestoreObserver.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupDataOutput BackupDataOutput(java.io.FileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgent void onBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FullBackupAgent void onBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IBackupManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FileBackupHelper void restoreEntity(android.app.backup.BackupDataInputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.BackupAgentHelper void onBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FullBackupAgent void onRestore(android.app.backup.BackupDataInput, int, android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.IRestoreSession int getAvailableRestoreSets(android.app.backup.IRestoreObserver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.FullBackupDataOutput FullBackupDataOutput(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.app.backup.WallpaperBackupHelper void performBackup(android.os.ParcelFileDescriptor, android.app.backup.BackupDataOutput, android.os.ParcelFileDescriptor) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.app.backup.BackupAgent void fullBackupFile(java.io.File, android.app.backup.FullBackupDataOutput) 0'>

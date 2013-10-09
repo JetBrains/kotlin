@@ -20,11 +20,9 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * Encapuslates different types of constants and naming conventions.
@@ -51,18 +49,11 @@ public final class Namer {
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
+    private static final String PROTOTYPE_NAME = "prototype";
 
 
     private static final String DELEGATE_POSTFIX = "$delegate";
     private static final String PROPERTY_METADATA = "PropertyMetadata";
-
-    private static final Named CLASS_OBJECT_INITIALIZER_NAMED = new Named() {
-        @NotNull
-        @Override
-        public Name getName() {
-            return Name.identifier(CLASS_OBJECT_INITIALIZER);
-        }
-    };
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -119,8 +110,18 @@ public final class Namer {
     }
 
     @NotNull
-    public static Named getNamedForClassObjectInitializer() {
-        return CLASS_OBJECT_INITIALIZER_NAMED;
+    public static String getNameForClassObjectInitializer() {
+        return CLASS_OBJECT_INITIALIZER;
+    }
+
+    @NotNull
+    public static String getPrototypeName() {
+        return PROTOTYPE_NAME;
+    }
+
+    @NotNull
+    public static JsNameRef getRefToPrototype(@NotNull JsExpression classOrTraitExpression) {
+        return new JsNameRef(getPrototypeName(), classOrTraitExpression);
     }
 
     @NotNull
@@ -164,6 +165,12 @@ public final class Namer {
     private final JsName objectName;
     @NotNull
     private final JsName enumEntriesName;
+    @NotNull
+    private final JsExpression undefinedExpression;
+    @NotNull
+    private final JsExpression callGetProperty;
+    @NotNull
+    private final JsExpression callSetProperty;
 
     @NotNull
     private final JsName isTypeName;
@@ -176,11 +183,16 @@ public final class Namer {
         definePackage = kotlin("definePackage");
         defineRootPackage = kotlin("defineRootPackage");
 
+        callGetProperty = kotlin("callGetter");
+        callSetProperty = kotlin("callSetter");
+
         className = kotlinScope.declareName(CLASS_OBJECT_NAME);
         enumEntriesName = kotlinScope.declareName(ENUM_ENTRIES_NAME);
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
 
         isTypeName = kotlinScope.declareName("isType");
+
+        undefinedExpression = new JsPrefixOperation(JsUnaryOperator.VOID, rootScope.getProgram().getNumberLiteral(0));
     }
 
     @NotNull
@@ -249,7 +261,7 @@ public final class Namer {
     }
 
     @NotNull
-    static String generateNamespaceName(DeclarationDescriptor descriptor) {
+    static String generateNamespaceName(@NotNull DeclarationDescriptor descriptor) {
         if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
             return getRootNamespaceName();
         }
@@ -277,5 +289,20 @@ public final class Namer {
     @NotNull
     public JsInvocation enumEntriesObjectCreateInvocation() {
         return new JsInvocation(enumEntriesCreationMethodReference());
+    }
+
+    @NotNull
+    public JsExpression getUndefinedExpression() {
+        return undefinedExpression;
+    }
+
+    @NotNull
+    public JsExpression getCallGetProperty() {
+        return callGetProperty;
+    }
+
+    @NotNull
+    public JsExpression getCallSetProperty() {
+        return callSetProperty;
     }
 }

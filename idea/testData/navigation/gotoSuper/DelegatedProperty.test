@@ -1,0 +1,29 @@
+// FILE: before.kt
+trait A {
+    val f: Int
+        get() = 3
+}
+
+trait B : A
+
+open class C(b : B) : B by b, A {
+}
+
+class D(b : B) : C(b) {
+    override val <caret>f: Int = 2
+}
+
+// FILE: after.kt
+trait A {
+    val <caret>f: Int
+        get() = 3
+}
+
+trait B : A
+
+open class C(b : B) : B by b, A {
+}
+
+class D(b : B) : C(b) {
+    override val f: Int = 2
+}

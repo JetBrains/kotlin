@@ -16,12 +16,10 @@
 
 package org.jetbrains.k2js.translate.utils;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNode;
-import com.google.dart.compiler.backend.js.ast.JsReturn;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.types.JetType;
@@ -31,7 +29,13 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDefaultArgument;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.equality;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 public final class FunctionBodyTranslator extends AbstractTranslator {
@@ -43,6 +47,23 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
         return (new FunctionBodyTranslator(descriptor, declarationWithBody, functionBodyContext)).translate();
     }
 
+    @NotNull
+    public static List<JsStatement> setDefaultValueForArguments(@NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext functionBodyContext) {
+        List<JsStatement> result = new ArrayList<JsStatement>();
+        for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
+            if (valueParameter.hasDefaultValue()) {
+                JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
+                JetExpression defaultArgument = getDefaultArgument(functionBodyContext.bindingContext(), valueParameter);
+                JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext);
+
+                JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, functionBodyContext.namer().getUndefinedExpression());
+                JsIf jsIf = new JsIf(checkArgIsUndefined, assignment(jsNameRef, defaultValue).makeStmt());
+                result.add(jsIf);
+            }
+        }
+        return result;
+    }
 
     @NotNull
     private final FunctionDescriptor descriptor;
@@ -61,7 +82,9 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     private JsBlock translate() {
         JetExpression jetBodyExpression = declaration.getBodyExpression();
         assert jetBodyExpression != null : "Cannot translate a body of an abstract function.";
-        return mayBeWrapWithReturn(Translation.translateExpression(jetBodyExpression, context()));
+        JsBlock jsBlock = new JsBlock(setDefaultValueForArguments(descriptor, context()));
+        jsBlock.getStatements().addAll(mayBeWrapWithReturn(Translation.translateExpression(jetBodyExpression, context())).getStatements());
+        return jsBlock;
     }
 
     @NotNull

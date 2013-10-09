@@ -58,10 +58,16 @@ public class WrappedValues {
 
     @Nullable
     public static <V> V unescapeExceptionOrNull(@NotNull Object value) {
+        return unescapeNull(unescapeThrowable(value));
+    }
+
+    @Nullable
+    public static <V> V unescapeThrowable(@Nullable Object value) {
         if (value instanceof ThrowableWrapper) {
             throw ExceptionUtils.rethrow(((ThrowableWrapper) value).getThrowable());
         }
 
-        return unescapeNull(value);
+        //noinspection unchecked
+        return (V) value;
     }
 }

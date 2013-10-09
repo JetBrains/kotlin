@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,10 +24,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaEnumClassObjectDescriptor;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaEnumClassObjectScope;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
@@ -54,8 +53,6 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaClassResolver {
-    private static final Logger LOG = Logger.getInstance(JavaClassResolver.class);
-
     @NotNull
     private final Map<FqNameUnsafe, ClassDescriptor> classDescriptorCache = new HashMap<FqNameUnsafe, ClassDescriptor>();
 
@@ -204,16 +201,6 @@ public final class JavaClassResolver {
             return null;
         }
 
-        if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            if (javaClass.findAnnotation(JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName()) != null) {
-                if (ApplicationManager.getApplication().isInternal()) {
-                    LOG.error("classpath is configured incorrectly:" +
-                              " class " + qualifiedName + " from runtime must not be loaded by compiler");
-                }
-                return null;
-            }
-        }
-
         // Class may have been resolved previously by different Java resolver instance, and we are reusing its trace
         ClassDescriptor alreadyResolved = cache.getClass(javaClass);
         if (alreadyResolved != null) {
@@ -271,7 +258,7 @@ public final class JavaClassResolver {
         classDescriptor.setModality(determineClassModality(javaClass));
         classDescriptor.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, javaClass, false, memberResolver);
+        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classDescriptor, javaClass, memberResolver);
         classDescriptor.setScopeForMemberLookup(scope);
         classDescriptor.setScopeForConstructorResolve(scope);
 
@@ -282,9 +269,10 @@ public final class JavaClassResolver {
         supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, javaClass, classTypeParameters));
 
         if (javaClass.isEnum()) {
-            ClassDescriptorFromJvmBytecode classObjectDescriptor = createClassObjectDescriptorForEnum(classDescriptor, javaClass);
-            cache(getFqNameForClassObject(javaClass), classObjectDescriptor);
-            classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
+            JavaEnumClassObjectDescriptor enumClassObject = createEnumClassObject(classDescriptor, javaClass);
+            createEnumSyntheticMethods(enumClassObject, classDescriptor.getDefaultType());
+            cache(getFqNameForClassObject(javaClass), enumClassObject);
+            classDescriptor.getBuilder().setClassObjectDescriptor(enumClassObject);
         }
 
         classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(javaClass, taskList));
@@ -424,43 +412,30 @@ public final class JavaClassResolver {
         return javaClass.getOuterClass() != null && !javaClass.isStatic();
     }
 
-    @NotNull
-    private ClassDescriptorFromJvmBytecode createClassObjectDescriptorForEnum(
-            @NotNull ClassDescriptor containing,
-            @NotNull JavaClass javaClass
-    ) {
-        ClassDescriptorFromJvmBytecode classObjectDescriptor = createSyntheticClassObject(containing, javaClass);
+    private static void createEnumSyntheticMethods(@NotNull JavaEnumClassObjectDescriptor classObject, @NotNull JetType enumType) {
+        JetType valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(enumType);
+        SimpleFunctionDescriptor valuesMethod = DescriptorFactory.createEnumClassObjectValuesMethod(classObject, valuesReturnType);
+        classObject.getBuilder().addFunctionDescriptor(valuesMethod);
 
-        JetType valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(containing.getDefaultType());
-        SimpleFunctionDescriptor valuesMethod =
-                DescriptorFactory.createEnumClassObjectValuesMethod(classObjectDescriptor, valuesReturnType);
-        classObjectDescriptor.getBuilder().addFunctionDescriptor(valuesMethod);
-
-        JetType valueOfReturnType = containing.getDefaultType();
-        SimpleFunctionDescriptor valueOfMethod =
-                DescriptorFactory.createEnumClassObjectValueOfMethod(classObjectDescriptor, valueOfReturnType);
-        classObjectDescriptor.getBuilder().addFunctionDescriptor(valueOfMethod);
-
-        return classObjectDescriptor;
+        SimpleFunctionDescriptor valueOfMethod = DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType);
+        classObject.getBuilder().addFunctionDescriptor(valueOfMethod);
     }
 
     @NotNull
-    private ClassDescriptorFromJvmBytecode createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull JavaClass javaClass) {
-        ClassDescriptorFromJvmBytecode classObjectDescriptor =
-                new ClassDescriptorFromJvmBytecode(containing, getClassObjectName(containing.getName()), ClassKind.CLASS_OBJECT, false);
+    private JavaEnumClassObjectDescriptor createEnumClassObject(@NotNull ClassDescriptor enumClass, @NotNull JavaClass javaClass) {
+        JavaEnumClassObjectDescriptor classObject = new JavaEnumClassObjectDescriptor(enumClass);
 
-        classObjectDescriptor.setModality(Modality.FINAL);
-        classObjectDescriptor.setVisibility(containing.getVisibility());
-        classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
-        classObjectDescriptor.createTypeConstructor();
+        classObject.setModality(Modality.FINAL);
+        classObject.setVisibility(enumClass.getVisibility());
+        classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classObject.createTypeConstructor();
 
-        JavaClassNonStaticMembersScope scope = new JavaClassNonStaticMembersScope(classObjectDescriptor, javaClass, true, memberResolver);
+        JavaEnumClassObjectScope scope = new JavaEnumClassObjectScope(classObject, javaClass, memberResolver);
         WritableScopeImpl writableScope =
-                new WritableScopeImpl(scope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, "Member lookup scope");
+                new WritableScopeImpl(scope, classObject, RedeclarationHandler.THROW_EXCEPTION, "Enum class object scope");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        classObjectDescriptor.setScopeForMemberLookup(writableScope);
-        classObjectDescriptor.setScopeForConstructorResolve(scope);
+        classObject.setScopeForMemberLookup(writableScope);
 
-        return classObjectDescriptor;
+        return classObject;
     }
 }

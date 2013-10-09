@@ -53,9 +53,9 @@ public class SamWrapperCodegen extends GenerationStateAware {
         this.samInterface = samInterface;
     }
 
-    public JvmClassName genWrapper(@NotNull JetFile file) {
+    public Type genWrapper(@NotNull JetFile file) {
         // Name for generated class, in form of whatever$1
-        JvmClassName name = JvmClassName.byInternalName(getWrapperName(file));
+        Type asmType = Type.getObjectType(getWrapperName(file));
 
         // e.g. (T, T) -> Int
         JetType functionType = samInterface.getFunctionTypeForSamInterface();
@@ -63,14 +63,14 @@ public class SamWrapperCodegen extends GenerationStateAware {
         // e.g. compare(T, T)
         SimpleFunctionDescriptor interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
 
-        ClassBuilder cv = state.getFactory().newVisitor(name, file);
+        ClassBuilder cv = state.getFactory().newVisitor(asmType, file);
         cv.defineClass(file,
                        V1_6,
                        ACC_FINAL,
-                       name.getInternalName(),
+                       asmType.getInternalName(),
                        null,
                        OBJECT_TYPE.getInternalName(),
-                       new String[]{JvmClassName.byClassDescriptor(samInterface).getInternalName()}
+                       new String[]{ typeMapper.mapType(samInterface).getInternalName() }
         );
         cv.visitSource(file.getName(), null);
 
@@ -84,12 +84,12 @@ public class SamWrapperCodegen extends GenerationStateAware {
                     null,
                     null);
 
-        generateConstructor(name.getAsmType(), functionAsmType, cv);
-        generateMethod(name.getAsmType(), functionAsmType, cv, interfaceFunction, functionType);
+        generateConstructor(asmType, functionAsmType, cv);
+        generateMethod(asmType, functionAsmType, cv, interfaceFunction, functionType);
 
         cv.done();
 
-        return name;
+        return asmType;
     }
 
     private void generateConstructor(Type ownerType, Type functionType, ClassBuilder cv) {
@@ -129,7 +129,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
 
         FunctionDescriptor invokeFunction = functionJetType.getMemberScope()
                 .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();
-        StackValue functionField = StackValue.field(functionType, JvmClassName.byType(ownerType), FUNCTION_FIELD_NAME, false);
+        StackValue functionField = StackValue.field(functionType, ownerType, FUNCTION_FIELD_NAME, false);
         codegen.genDelegate(interfaceFunction, invokeFunction, functionField);
     }
 

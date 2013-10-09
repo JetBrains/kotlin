@@ -53,8 +53,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -71,10 +69,9 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.functionTypeToImpl;
-import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplClassName;
+import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplType;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.RECEIVER_ARGUMENT;
 import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.THIS_OBJECT;
@@ -113,8 +110,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
 
-        JvmClassName className = classNameForAnonymousClass(bindingContext, objectDeclaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(className, literal.getContainingFile());
+        Type asmType = asmTypeForAnonymousClass(bindingContext, objectDeclaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(asmType, literal.getContainingFile());
 
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
         assert classDescriptor != null;
@@ -287,8 +284,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, declaration);
         assert descriptor != null;
 
-        JvmClassName className = classNameForAnonymousClass(bindingContext, declaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(className, declaration.getContainingFile());
+        Type asmType = asmTypeForAnonymousClass(bindingContext, declaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(asmType, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
 
@@ -673,12 +670,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         // This method consumes range/progression from stack
         // The result is stored to local variable
         protected void generateRangeOrProgressionProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
-            JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(elementType);
-            assert primitiveType != null : elementType;
-            Type asmWrapperType = primitiveType.getWrapper().getAsmType();
-
-            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + asmWrapperType.getDescriptor());
-            StackValue.coerce(asmWrapperType, elementType, v);
+            Type boxedType = boxType(elementType);
+            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor());
+            StackValue.coerce(boxedType, elementType, v);
             v.store(varToStore, elementType);
         }
     }
@@ -1314,7 +1308,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
-        JvmClassName closureSuperClass = samInterfaceClass == null ? getFunctionImplClassName(descriptor) : JvmClassName.byType(OBJECT_TYPE);
+        Type closureSuperClass = samInterfaceClass == null ? getFunctionImplType(descriptor) : OBJECT_TYPE;
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, declaration, descriptor, samInterfaceClass, closureSuperClass, context,
                 this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration));
@@ -1332,10 +1326,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert constructorDescriptor != null;
         CallableMethod constructor = typeMapper.mapToCallableMethod(constructorDescriptor, closure);
 
-        JvmClassName name = bindingContext.get(FQN, constructorDescriptor.getContainingDeclaration());
-        assert name != null;
+        Type type = bindingContext.get(ASM_TYPE, constructorDescriptor.getContainingDeclaration());
+        assert type != null;
 
-        Type type = name.getAsmType();
         v.anew(type);
         v.dup();
         Method cons = constructor.getSignature().getAsmMethod();
@@ -1357,7 +1350,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes));
         }
 
-        v.invokespecial(name.getInternalName(), "<init>", cons.getDescriptor());
+        v.invokespecial(type.getInternalName(), "<init>", cons.getDescriptor());
         return StackValue.onStack(type);
     }
 
@@ -1705,13 +1698,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
             ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
             assert scriptDescriptor != null;
-            JvmClassName scriptClassName = classNameForScriptDescriptor(bindingContext, scriptDescriptor);
+            Type scriptClassType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
             ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
             StackValue script = StackValue.thisOrOuter(this, scriptClass, false);
             script.put(script.type, v);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor);
-            return StackValue.field(fieldType, scriptClassName, valueParameterDescriptor.getName().getIdentifier(), false);
+            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false);
         }
 
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
@@ -1723,7 +1716,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ClassDescriptor containing = (ClassDescriptor) variableDescriptor.getContainingDeclaration().getContainingDeclaration();
             assert containing != null;
             Type type = typeMapper.mapType(containing);
-            return StackValue.field(type, JvmClassName.byType(type), variableDescriptor.getName().asString(), true);
+            return StackValue.field(type, type, variableDescriptor.getName().asString(), true);
         }
         else {
             return StackValue.singleton(objectClassDescriptor, typeMapper);
@@ -1850,7 +1843,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        JvmClassName owner;
+        Type owner;
         CallableMethod callableMethod = callableGetter != null ? callableGetter : callableSetter;
 
         propertyDescriptor = unwrapFakeOverride(propertyDescriptor);
@@ -1942,10 +1935,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samInterface);
         }
         else {
-            JvmClassName className =
-                    state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
+            Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
 
-            v.anew(className.getAsmType());
+            v.anew(asmType);
             v.dup();
 
             Type functionType = typeMapper.mapType(samInterface.getFunctionTypeForSamInterface());
@@ -1964,10 +1956,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.goTo(afterAll);
 
             v.mark(ifNonNull);
-            v.invokespecial(className.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
+            v.invokespecial(asmType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
 
             v.mark(afterAll);
-            return StackValue.onStack(className.getAsmType());
+            return StackValue.onStack(asmType);
         }
     }
 
@@ -2220,19 +2212,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (cur instanceof ScriptContext) {
                 ScriptContext scriptContext = (ScriptContext) cur;
 
-                JvmClassName currentScriptClassName =
-                        classNameForScriptDescriptor(bindingContext,
-                                                                    scriptContext.getScriptDescriptor());
+                Type currentScriptType = asmTypeForScriptDescriptor(bindingContext, scriptContext.getScriptDescriptor());
                 if (scriptContext.getScriptDescriptor() == receiver.getDeclarationDescriptor()) {
-                    result.put(currentScriptClassName.getAsmType(), v);
+                    result.put(currentScriptType, v);
                 }
                 else {
-                    JvmClassName className =
-                            classNameForScriptDescriptor(bindingContext,
-                                                                        receiver.getDeclarationDescriptor());
+                    Type classType = asmTypeForScriptDescriptor(bindingContext, receiver.getDeclarationDescriptor());
                     String fieldName = state.getScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
-                    result.put(currentScriptClassName.getAsmType(), v);
-                    StackValue.field(className.getAsmType(), currentScriptClassName, fieldName, false).put(className.getAsmType(), v);
+                    result.put(currentScriptType, v);
+                    StackValue.field(classType, currentScriptType, fieldName, false).put(classType, v);
                 }
                 return;
             }
@@ -2437,7 +2425,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassDescriptor kFunctionImpl = functionTypeToImpl(kFunctionType);
         assert kFunctionImpl != null : "Impl type is not found for the function type: " + kFunctionType;
 
-        JvmClassName closureSuperClass = JvmClassName.byType(typeMapper.mapType(kFunctionImpl));
+        Type closureSuperClass = typeMapper.mapType(kFunctionImpl);
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, closureSuperClass, context, this,
                 new FunctionGenerationStrategy.CodegenBased<CallableDescriptor>(state, functionDescriptor) {
@@ -3023,7 +3011,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
         int functionLocalIndex = lookupLocalIndex(op);
         if (functionLocalIndex >= 0) {
-            stackValueForLocal(op, functionLocalIndex).put(callable.getOwner().getAsmType(), v);
+            stackValueForLocal(op, functionLocalIndex).put(callable.getOwner(), v);
         }
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
@@ -3221,8 +3209,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             generateInitializer.fun(variableDescriptor);
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;
-            JvmClassName scriptClassName = classNameForScriptPsi(bindingContext, scriptPsi);
-            v.putfield(scriptClassName.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
+            Type scriptClassType = asmTypeForScriptPsi(bindingContext, scriptPsi);
+            v.putfield(scriptClassType.getInternalName(), variableDeclaration.getName(), varType.getDescriptor());
         }
         else if (sharedVarType == null) {
             generateInitializer.fun(variableDescriptor);

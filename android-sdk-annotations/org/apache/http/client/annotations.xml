@@ -1,0 +1,83 @@
+<root>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.AuthenticationHandler org.apache.http.auth.AuthScheme selectScheme(java.util.Map&lt;java.lang.String,org.apache.http.Header&gt;, org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.CredentialsProvider void setCredentials(org.apache.http.auth.AuthScope, org.apache.http.auth.Credentials) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;, org.apache.http.protocol.HttpContext) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.RedirectHandler java.net.URI getLocationURI(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.UserTokenHandler java.lang.Object getUserToken(org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.ResponseHandler T handleResponse(org.apache.http.HttpResponse) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.RedirectHandler boolean isRedirectRequested(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient org.apache.http.HttpResponse execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.AuthenticationHandler org.apache.http.auth.AuthScheme selectScheme(java.util.Map&lt;java.lang.String,org.apache.http.Header&gt;, org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.AuthenticationHandler java.util.Map&lt;java.lang.String,org.apache.http.Header&gt; getChallenges(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient org.apache.http.HttpResponse execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.RequestDirector org.apache.http.HttpResponse execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.CredentialsProvider org.apache.http.auth.Credentials getCredentials(org.apache.http.auth.AuthScope) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.AuthenticationHandler boolean isAuthenticationRequested(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpRequestRetryHandler boolean retryRequest(java.io.IOException, int, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient T execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler&lt;? extends T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient org.apache.http.HttpResponse execute(org.apache.http.HttpHost, org.apache.http.HttpRequest) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpRequestRetryHandler boolean retryRequest(java.io.IOException, int, org.apache.http.protocol.HttpContext) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.RedirectHandler java.net.URI getLocationURI(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.CookieStore java.util.List&lt;org.apache.http.cookie.Cookie&gt; getCookies()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.HttpClient org.apache.http.HttpResponse execute(org.apache.http.client.methods.HttpUriRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

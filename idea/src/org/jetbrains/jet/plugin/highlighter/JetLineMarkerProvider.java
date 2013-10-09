@@ -69,6 +69,8 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getDirectlyOverriddenDeclarations;
+
 public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon OVERRIDING_MARK = AllIcons.Gutter.OverridingMethod;
     public static final Icon IMPLEMENTING_MARK = AllIcons.Gutter.ImplementingMethod;
@@ -244,7 +246,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return null;
         }
 
-        Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        Set<? extends CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations(
+                (CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return null;
         }
@@ -286,7 +289,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        Set<CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return;
         }
@@ -330,7 +333,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return "";
         }
 
-        Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        Set<CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return "";
         }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
-import com.intellij.util.Function;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -25,11 +25,10 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -44,17 +43,17 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
         super(resolveSession, declarationProvider, thisPackage);
 
         this.packageDescriptors = resolveSession.getStorageManager().createMemoizedFunctionWithNullableValues(
-                new Function<Name, NamespaceDescriptor>() {
+                new Function1<Name, NamespaceDescriptor>() {
                     @Override
-                    public NamespaceDescriptor fun(Name name) {
+                    public NamespaceDescriptor invoke(Name name) {
                         return createPackageDescriptor(name);
                     }
-                }, StorageManager.ReferenceKind.STRONG);
+                });
     }
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return packageDescriptors.fun(name);
+        return packageDescriptors.invoke(name);
     }
 
     @Nullable

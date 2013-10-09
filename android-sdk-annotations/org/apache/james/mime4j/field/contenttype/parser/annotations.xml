@@ -1,0 +1,89 @@
+<root>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.Token org.apache.james.mime4j.field.contenttype.parser.Token newToken(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream void ReInit(java.io.InputStream, java.lang.String, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.TokenMgrError java.lang.String addEscapes(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream void ReInit(java.io.InputStream, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream char[] GetSuffix(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream java.lang.String GetImage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream void ReInit(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ContentTypeParserTokenManager org.apache.james.mime4j.field.contenttype.parser.Token jjFillToken()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ContentTypeParser void ReInit(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ContentTypeParser void ReInit(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ContentTypeParserTokenManager org.apache.james.mime4j.field.contenttype.parser.Token getNextToken()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream void ReInit(java.io.InputStream, java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.TokenMgrError java.lang.String LexicalError(boolean, int, int, int, java.lang.String, char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream SimpleCharStream(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ContentTypeParser ContentTypeParser(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ContentTypeParser org.apache.james.mime4j.field.contenttype.parser.ParseException generateParseException()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream void ReInit(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream void ReInit(java.io.InputStream, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.TokenMgrError java.lang.String LexicalError(boolean, int, int, int, java.lang.String, char) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ParseException java.lang.String add_escapes(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ParseException java.lang.String add_escapes(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.TokenMgrError java.lang.String addEscapes(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.SimpleCharStream SimpleCharStream(java.io.InputStream, java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.TokenMgrError TokenMgrError(boolean, int, int, int, java.lang.String, char, int) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.contenttype.parser.ContentTypeParser ContentTypeParser(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

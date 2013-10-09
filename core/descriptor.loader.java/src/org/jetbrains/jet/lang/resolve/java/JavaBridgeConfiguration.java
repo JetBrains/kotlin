@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -26,15 +25,22 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class JavaBridgeConfiguration implements ModuleConfiguration {
 
-    public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = ImmutableList.of(new ImportPath("java.lang.*"));
-    public static final List<ImportPath> ALL_JAVA_IMPORTS = ImmutableList.<ImportPath>builder()
-            .addAll(DEFAULT_JAVA_IMPORTS)
-            .addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS)
-            .build();
+    public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = Collections.unmodifiableList(Arrays.asList(new ImportPath("java.lang.*")));
+    public static final List<ImportPath> ALL_JAVA_IMPORTS;
+
+    static {
+        List<ImportPath> allJavaImports = new ArrayList<ImportPath>();
+        allJavaImports.addAll(DEFAULT_JAVA_IMPORTS);
+        allJavaImports.addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
+        ALL_JAVA_IMPORTS = Collections.unmodifiableList(allJavaImports);
+    }
 
     private JavaDescriptorResolver javaDescriptorResolver;
 

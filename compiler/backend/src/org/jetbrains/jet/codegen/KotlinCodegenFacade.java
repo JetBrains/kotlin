@@ -19,13 +19,13 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -44,11 +44,11 @@ public class KotlinCodegenFacade {
                 String name = ScriptNameUtil.classNameForScript(file);
                 JetScript script = file.getScript();
                 assert script != null;
-                registerClassNameForScript(state.getBindingTrace(), script, JvmClassName.byInternalName(name));
+                registerClassNameForScript(state.getBindingTrace(), script, Type.getObjectType(name));
             }
         }
 
-        state.getScriptCodegen().registerEarlierScripts(Collections.<Pair<ScriptDescriptor, JvmClassName>>emptyList());
+        state.getScriptCodegen().registerEarlierScripts(Collections.<Pair<ScriptDescriptor, Type>>emptyList());
 
         state.beforeCompile();
 

@@ -45,7 +45,7 @@ public class DebuggerUtils {
         JetFilesProvider filesProvider = JetFilesProvider.getInstance(searchScope.getProject());
         Collection<JetFile> filesInScope = filesProvider.allInScope(searchScope);
 
-        final FqName packageFqName = className.getOuterClassFqName().parent();
+        final FqName packageFqName = getPackageFqNameForClass(className);
 
         // Only consider files with the file name from the stack trace and in the given package
         Collection<JetFile> files = Collections2.filter(filesInScope, new Predicate<JetFile>() {
@@ -74,6 +74,13 @@ public class DebuggerUtils {
         // we may actually need to analyze the project in order to find a file which produces this class
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(anyFile);
 
-        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allNamespaceFiles, className);
+        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allNamespaceFiles, className.getInternalName());
+    }
+
+    @NotNull
+    private static FqName getPackageFqNameForClass(@NotNull JvmClassName className) {
+        String internalName = className.getInternalName();
+        int lastSlash = internalName.lastIndexOf('/');
+        return lastSlash == -1 ? FqName.ROOT : new FqName(internalName.substring(0, lastSlash).replace('/', '.'));
     }
 }

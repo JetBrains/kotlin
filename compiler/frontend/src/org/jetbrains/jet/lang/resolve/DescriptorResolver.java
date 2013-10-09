@@ -22,6 +22,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -42,8 +43,6 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.RecursionIntolerantLazyValueWithDefault;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -54,6 +53,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
+import static org.jetbrains.jet.util.StorageUtil.createRecursionIntolerantLazyValueWithDefault;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
@@ -313,13 +313,19 @@ public class DescriptorResolver {
             JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {
                 returnType =
-                        DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
-                            @Override
-                            protected JetType compute() {
-                                JetType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
-                                return transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
-                            }
-                        });
+                        DeferredType.create(trace,
+                                            createRecursionIntolerantLazyValueWithDefault(
+                                                    ErrorUtils.createErrorType("Recursive dependency"),
+                                                    new Function0<JetType>() {
+                                                        @Override
+                                                        public JetType invoke() {
+                                                            JetType type = expressionTypingServices
+                                                                    .getBodyExpressionType(trace, scope, dataFlowInfo, function,
+                                                                                           functionDescriptor);
+                                                            return transformAnonymousTypeIfNeeded(functionDescriptor, function, type,
+                                                                                                  trace);
+                                                        }
+                                                    }));
             }
             else {
                 returnType = ErrorUtils.createErrorType("No type, no body");
@@ -1027,13 +1033,17 @@ public class DescriptorResolver {
                 if (hasDelegate && variableDescriptor instanceof PropertyDescriptor) {
                     final JetExpression propertyDelegateExpression = ((JetProperty) variable).getDelegateExpression();
                     if (propertyDelegateExpression != null) {
-                        return DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
-                            @Override
-                            protected JetType compute() {
-                                return resolveDelegatedPropertyType((PropertyDescriptor) variableDescriptor, scope,
-                                                                            propertyDelegateExpression, dataFlowInfo, trace);
-                            }
-                        });
+                        return DeferredType.create(
+                                trace,
+                                createRecursionIntolerantLazyValueWithDefault(
+                                        ErrorUtils.createErrorType("Recursive dependency"),
+                                        new Function0<JetType>() {
+                                            @Override
+                                            public JetType invoke() {
+                                                return resolveDelegatedPropertyType((PropertyDescriptor) variableDescriptor, scope,
+                                                                                    propertyDelegateExpression, dataFlowInfo, trace);
+                                            }
+                                        }));
                     }
                 }
                 if (!notLocal) {
@@ -1043,14 +1053,20 @@ public class DescriptorResolver {
             }
             else {
                 if (notLocal) {
-                    return DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
-                        @Override
-                        protected JetType compute() {
-                            JetType type = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
+                    return DeferredType.create(trace,
+                                               createRecursionIntolerantLazyValueWithDefault(
+                                                       ErrorUtils.createErrorType("Recursive dependency"),
+                                                       new Function0<JetType>() {
+                                                           @Override
+                                                           public JetType invoke() {
+                                                               JetType type =
+                                                                       resolveInitializerType(scope, initializer, dataFlowInfo, trace);
 
-                            return transformAnonymousTypeIfNeeded(variableDescriptor, variable, type, trace);
-                        }
-                    });
+                                                               return transformAnonymousTypeIfNeeded(variableDescriptor, variable, type,
+                                                                                                     trace);
+                                                           }
+                                                       }
+                                               ));
                 }
                 else {
                     return resolveInitializerType(scope, initializer, dataFlowInfo, trace);
@@ -1368,9 +1384,9 @@ public class DescriptorResolver {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "values should be created in enum class: " + enumClassDescriptor;
         return DescriptorFactory
-                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
+                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new Function0<JetType>() {
                     @Override
-                    protected JetType compute() {
+                    public JetType invoke() {
                         return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
                     }
                 }));
@@ -1385,9 +1401,9 @@ public class DescriptorResolver {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "valueOf should be created in enum class: " + enumClassDescriptor;
         return DescriptorFactory
-                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
+                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new Function0<JetType>() {
                     @Override
-                    protected JetType compute() {
+                    public JetType invoke() {
                         return enumClassDescriptor.getDefaultType();
                     }
                 }));

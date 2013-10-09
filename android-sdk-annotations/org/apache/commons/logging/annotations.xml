@@ -1,0 +1,56 @@
+<root>
+    <item name='org.apache.commons.logging.LogFactory java.lang.Object createFactory(java.lang.String, java.lang.ClassLoader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory org.apache.commons.logging.Log getInstance(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogSource org.apache.commons.logging.Log getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory void removeAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory org.apache.commons.logging.Log getInstance(java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory org.apache.commons.logging.Log getLog(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory java.lang.ClassLoader getClassLoader(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory org.apache.commons.logging.Log getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory org.apache.commons.logging.Log getLog(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory org.apache.commons.logging.Log getLog(java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory java.lang.String objectId(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory void setAttribute(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory java.lang.Object getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory org.apache.commons.logging.Log getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogSource org.apache.commons.logging.Log getInstance(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory java.lang.String[] getAttributeNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogSource void setLogImplementation(java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.logging.LogFactory void setAttribute(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

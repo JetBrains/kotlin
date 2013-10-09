@@ -1,110 +1,392 @@
 <root>
-    <item name='android.webkit.WebView boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
+    <item name='android.webkit.WebViewFactoryProvider android.webkit.WebViewProvider createWebView(android.webkit.WebView, android.webkit.WebView.PrivateAccess) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.ZoomDensity CLOSE'>
+    <item name='android.webkit.WebView.PrivateAccess void super_setLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebView void onConfigurationChanged(android.content.res.Configuration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.URLUtil java.lang.String guessUrl(java.lang.String)'>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void onDrawVerticalScrollBar(android.graphics.Canvas, android.graphics.drawable.Drawable, int, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.URLUtil java.lang.String stripAnchor(java.lang.String) 0'>
+    <item name='android.webkit.WebView android.webkit.PluginList getPluginList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean onKeyDown(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebView boolean onHoverEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebView void onVisibilityChanged(android.view.View, int) 0'>
+    <item name='android.webkit.WebViewProvider android.webkit.WebViewProvider.ViewDelegate getViewDelegate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.ConsoleMessage.MessageLevel LOG'>
+    <item name='android.webkit.WebViewClassic android.webkit.WebViewProvider.ScrollDelegate getScrollDelegate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings void setTextSize(android.webkit.WebSettings.TextSize) 0'>
+    <item name='android.webkit.WebViewProvider.ViewDelegate android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.LayoutAlgorithm SINGLE_COLUMN'>
+    <item name='android.webkit.HTML5VideoFullScreen void onPrepared(android.media.MediaPlayer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebViewClient void onReceivedSslError(android.webkit.WebView, android.webkit.SslErrorHandler, android.net.http.SslError) 1'>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void setLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.TextSize LARGEST'>
+    <item name='android.webkit.WebViewClassic void onDraw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+    <item name='android.webkit.WebBackForwardList android.webkit.WebBackForwardList clone()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.MimeTypeMap java.lang.String getFileExtensionFromUrl(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.WebSettings.TextSize LARGER'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.WebViewClient void onUnhandledKeyEvent(android.webkit.WebView, android.view.KeyEvent) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.ConsoleMessage.MessageLevel ERROR'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.WebView SCHEME_GEO'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.WebSettings.LayoutAlgorithm NARROW_COLUMNS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.WebChromeClient void onExceededDatabaseQuota(java.lang.String, java.lang.String, long, long, long, android.webkit.WebStorage.QuotaUpdater) 5'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.WebSettings.TextSize NORMAL'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.ConsoleMessage.MessageLevel TIP'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.URLUtil java.lang.String guessUrl(java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.URLUtil java.lang.String guessFileName(java.lang.String, java.lang.String, java.lang.String)'>
+    <item name='android.webkit.HTML5VideoView java.util.Map&lt;java.lang.String,java.lang.String&gt; generateHeaders(java.lang.String, android.webkit.HTML5VideoViewProxy) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.URLUtil byte[] decode(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebChromeClient void onReachedMaxAppCacheSize(long, long, android.webkit.WebStorage.QuotaUpdater) 2'>
+    <item name='android.webkit.WebSettings void setTextSize(android.webkit.WebSettings.TextSize) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.RenderPriority NORMAL'>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean onKeyUp(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.LayoutAlgorithm NORMAL'>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void onDraw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebViewFragment android.view.View onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle) 0'>
+    <item name='android.webkit.FindActionModeCallback FindActionModeCallback(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebViewClient void onFormResubmission(android.webkit.WebView, android.os.Message, android.os.Message) 1'>
+    <item name='android.webkit.WebViewClassic void onVisibilityChanged(android.view.View, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.ConsoleMessage.MessageLevel WARNING'>
+    <item name='android.webkit.WebViewClassic android.webkit.PluginList getPluginList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebViewClient void onReceivedHttpAuthRequest(android.webkit.WebView, android.webkit.HttpAuthHandler, java.lang.String, java.lang.String) 1'>
+    <item name='android.webkit.WebViewClassic void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebView boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
+    <item name='android.webkit.HTML5VideoView void enterFullScreenVideoState(int, android.webkit.HTML5VideoViewProxy, android.webkit.WebViewClassic) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.ZoomDensity android.webkit.WebSettings.ZoomDensity valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onReceivedSslError(android.webkit.WebView, android.webkit.SslErrorHandler, android.net.http.SslError) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView.PrivateAccess boolean super_dispatchKeyEvent(android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewCore android.webkit.WebViewInputDispatcher.WebKitCallbacks getInputDispatcherCallbacks()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onUnhandledKeyEvent(android.webkit.WebView, android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void dispatchDraw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebChromeClient void onExceededDatabaseQuota(java.lang.String, java.lang.String, long, long, long, android.webkit.WebStorage.QuotaUpdater) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic boolean onHoverEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.PluginStub android.view.View getFullScreenView(int, android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean onHoverEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings android.webkit.WebSettings.TextSize getTextSize()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.HTML5VideoView void setVideoURI(java.lang.String, android.webkit.HTML5VideoViewProxy) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.MimeTypeMap android.webkit.MimeTypeMap getSingleton()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.PluginStub android.view.View getEmbeddedView(int, android.content.Context)'>
+    <item name='android.webkit.FindActionModeCallback.NoAction boolean onCreateActionMode(android.view.ActionMode, android.view.Menu) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.ZoomDensity FAR'>
+    <item name='android.webkit.ConsoleMessage.MessageLevel android.webkit.ConsoleMessage.MessageLevel valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewFragment android.view.View onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.FindActionModeCallback boolean onActionItemClicked(android.view.ActionMode, android.view.MenuItem) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic android.webkit.WebBackForwardList copyBackForwardList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.PluginState android.webkit.WebSettings.PluginState valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onReceivedHttpAuthRequest(android.webkit.WebView, android.webkit.HttpAuthHandler, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.JsDialogHelper JsDialogHelper(android.webkit.JsPromptResult, android.os.Message) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView.PrivateAccess boolean super_onGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebBackForwardList java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet, int, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView.PrivateAccess boolean super_onHoverEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.FindActionModeCallback void onClick(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.RenderPriority android.webkit.WebSettings.RenderPriority valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void setLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewFactoryProvider android.webkit.WebViewProvider createWebView(android.webkit.WebView, android.webkit.WebView.PrivateAccess)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onKeyDown(int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.HTML5VideoFullScreen void enterFullScreenVideoState(int, android.webkit.HTML5VideoViewProxy, android.webkit.WebViewClassic) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettingsClassic java.lang.String getDefaultUserAgentForLocale(android.content.Context, java.util.Locale) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void onDraw(android.graphics.Canvas) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClientClassicExt void onReceivedClientCertRequest(android.webkit.WebView, android.webkit.ClientCertRequestHandler, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewCore android.webkit.WebSettingsClassic getSettings()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebHistoryItem java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettingsClassic java.lang.String getPluginsPath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.ConsoleMessage.MessageLevel android.webkit.ConsoleMessage.MessageLevel valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String composeSearchUrl(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet, int, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String guessFileName(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic android.webkit.WebBackForwardListClassic copyBackForwardList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebHistoryItem android.webkit.WebHistoryItem clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic void setLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic WebViewClassic(android.webkit.WebView, android.webkit.WebView.PrivateAccess) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewFactoryProvider.Statics java.lang.String getDefaultUserAgent(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.FindActionModeCallback.NoAction boolean onActionItemClicked(android.view.ActionMode, android.view.MenuItem) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebChromeClient boolean onConsoleMessage(android.webkit.ConsoleMessage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.JsDialogHelper boolean invokeCallback(android.webkit.WebChromeClient, android.webkit.WebView) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil byte[] decode(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic boolean onTouchEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String guessUrl(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String composeSearchUrl(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.TextSize android.webkit.WebSettings.TextSize valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void onVisibilityChanged(android.view.View, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.L10nUtils void setApplicationContext(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.CookieManager java.lang.String getCookie(android.net.WebAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.CookieSyncManager android.webkit.CookieSyncManager createInstance(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.MimeTypeMap java.lang.String getFileExtensionFromUrl(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.ZoomDensity android.webkit.WebSettings.ZoomDensity valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic android.webkit.WebView getWebView()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String stripAnchor(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewFactoryProvider android.webkit.WebViewFactoryProvider.Statics getStatics()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.OverScrollGlow OverScrollGlow(android.webkit.WebViewClassic) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView void onVisibilityChanged(android.view.View, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.RenderPriority android.webkit.WebSettings.RenderPriority valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void onConfigurationChanged(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic void onDrawVerticalScrollBar(android.graphics.Canvas, android.graphics.drawable.Drawable, int, int, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettingsClassic java.lang.String getDefaultUserAgentForLocale(android.content.Context, java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.MimeTypeMap java.lang.String getFileExtensionFromUrl(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet, int, java.util.Map&lt;java.lang.String,java.lang.Object&gt;, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic void onConfigurationChanged(android.content.res.Configuration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic boolean onKeyDown(int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean onTouchEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.HTML5VideoView void onPrepared(android.media.MediaPlayer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onTrackballEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String stripAnchor(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.URLUtil java.lang.String guessUrl(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate boolean onTrackballEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.LayoutAlgorithm android.webkit.WebSettings.LayoutAlgorithm valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebChromeClient void onReachedMaxAppCacheSize(long, long, android.webkit.WebStorage.QuotaUpdater) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.LayoutAlgorithm android.webkit.WebSettings.LayoutAlgorithm valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings.PluginState android.webkit.WebSettings.PluginState valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebChromeClient void openFileChooser(android.webkit.ValueCallback&lt;android.net.Uri&gt;, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClient void onFormResubmission(android.webkit.WebView, android.os.Message, android.os.Message) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettings java.lang.String getPluginsPath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic boolean onGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebSettingsClassic java.lang.String getDefaultUserAgentForLocale(android.content.Context, java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet, int, java.util.Map&lt;java.lang.String,java.lang.Object&gt;, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebViewClient void onUnhandledKeyEvent(android.webkit.WebView, android.view.KeyEvent) 1'>
@@ -113,64 +395,82 @@
     <item name='android.webkit.WebView void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.webkit.WebView WebView(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider android.webkit.WebBackForwardList copyBackForwardList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebView WebView(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.webkit.WebViewClient void onTooManyRedirects(android.webkit.WebView, android.os.Message, android.os.Message) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.DateSorter DateSorter(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.TextSize SMALLER'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.WebSettings.RenderPriority LOW'>
+    <item name='android.webkit.HTML5VideoView java.util.Map&lt;java.lang.String,java.lang.String&gt; generateHeaders(java.lang.String, android.webkit.HTML5VideoViewProxy)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebView void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebView boolean onKeyDown(int, android.view.KeyEvent) 1'>
+    <item name='android.webkit.WebViewClassic android.webkit.WebViewProvider.ViewDelegate getViewDelegate()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.PluginState OFF'>
+    <item name='android.webkit.HTML5VideoView void setVideoURI(java.lang.String, android.webkit.HTML5VideoViewProxy) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebView void onDraw(android.graphics.Canvas) 0'>
+    <item name='android.webkit.WebViewClassic boolean onKeyMultiple(int, int, android.view.KeyEvent) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.PluginStub android.view.View getFullScreenView(int, android.content.Context)'>
+    <item name='android.webkit.HTML5VideoFullScreen boolean onTouch(android.view.View, android.view.MotionEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebView SCHEME_TEL'>
+    <item name='android.webkit.WebSettings.TextSize android.webkit.WebSettings.TextSize valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.RenderPriority HIGH'>
+    <item name='android.webkit.FindActionModeCallback boolean onCreateActionMode(android.view.ActionMode, android.view.Menu) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.URLUtil java.lang.String composeSearchUrl(java.lang.String, java.lang.String, java.lang.String) 2'>
+    <item name='android.webkit.WebView void onDrawVerticalScrollBar(android.graphics.Canvas, android.graphics.drawable.Drawable, int, int, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider android.webkit.WebViewProvider.ScrollDelegate getScrollDelegate()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewFactoryProvider.Statics java.lang.String getDefaultUserAgent(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebView boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.PluginState ON_DEMAND'>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void onDrawVerticalScrollBar(android.graphics.Canvas, android.graphics.drawable.Drawable, int, int, int, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.TextSize SMALLEST'>
+    <item name='android.webkit.WebView void onDrawVerticalScrollBar(android.graphics.Canvas, android.graphics.drawable.Drawable, int, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewProvider.ViewDelegate void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebView boolean onKeyUp(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebChromeClient boolean onConsoleMessage(android.webkit.ConsoleMessage) 0'>
+    <item name='android.webkit.PluginStub android.view.View getEmbeddedView(int, android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.URLUtil byte[] decode(byte[]) 0'>
+    <item name='android.webkit.WebViewClassic boolean onTrackballEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.ConsoleMessage.MessageLevel DEBUG'>
+    <item name='android.webkit.WebViewClassic boolean onKeyUp(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebView SCHEME_MAILTO'>
+    <item name='android.webkit.FindActionModeCallback.NoAction boolean onCreateActionMode(android.view.ActionMode, android.view.Menu) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.webkit.WebViewClassic void onDrawVerticalScrollBar(android.graphics.Canvas, android.graphics.drawable.Drawable, int, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebView boolean requestChildRectangleOnScreen(android.view.View, android.graphics.Rect, boolean) 0'>
@@ -179,13 +479,10 @@
     <item name='android.webkit.WebView boolean onTouchEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.PluginState ON'>
+    <item name='android.webkit.FindActionModeCallback boolean onCreateActionMode(android.view.ActionMode, android.view.Menu) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.webkit.WebSettings.ZoomDensity MEDIUM'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.webkit.URLUtil java.lang.String composeSearchUrl(java.lang.String, java.lang.String, java.lang.String) 1'>
+    <item name='android.webkit.FindActionModeCallback void onTextChanged(java.lang.CharSequence, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.webkit.WebView android.view.inputmethod.InputConnection onCreateInputConnection(android.view.inputmethod.EditorInfo) 0'>

@@ -27,9 +27,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.SystemProperties;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -126,30 +124,24 @@ public class KotlinCompilerRunner {
 
         Collections.addAll(args, "-tags", "-verbose", "-version", "-sourcemap");
 
+        String separator = ",";
+        String sourceFilesAsString = StringUtil.join(sourceFiles, new Function<File, String>() {
+            @Override
+            public String fun(File file) {
+                return file.getPath();
+            }
+        }, separator);
+
         args.add("-sourceFiles");
-        args.add(convertSourceFilesListToString(sourceFiles));
+        args.add(sourceFilesAsString);
 
         args.add("-output");
         args.add(outputFile.getPath());
 
         args.add("-libraryFiles");
-        args.add(StringUtil.join(libraryFiles, ","));
+        args.add(StringUtil.join(libraryFiles, separator));
 
         return ArrayUtil.toStringArray(args);
-    }
-
-    @NotNull
-    private static String convertSourceFilesListToString(@NotNull List<File> sourceFiles) {
-        StringBuilder sb = StringBuilderSpinAllocator.alloc();
-
-        for (File file : sourceFiles) {
-            sb.append(file.getPath()).append(',');
-        }
-        String result = sb.substring(0, sb.length() - 1);
-
-        StringBuilderSpinAllocator.dispose(sb);
-
-        return result;
     }
 
     private static void runOutOfProcess(

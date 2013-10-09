@@ -1,0 +1,8 @@
+<root>
+    <item name='dalvik.annotation.TestLevel dalvik.annotation.TestLevel valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel dalvik.annotation.TestLevel valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

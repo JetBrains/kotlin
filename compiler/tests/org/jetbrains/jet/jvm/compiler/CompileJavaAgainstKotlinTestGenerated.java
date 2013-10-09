@@ -78,6 +78,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest("compiler/testData/compileJavaAgainstKotlin/class/kt3561.kt");
         }
         
+        @TestMetadata("kt4050.kt")
+        public void testKt4050() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/class/kt4050.kt");
+        }
+        
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             doTest("compiler/testData/compileJavaAgainstKotlin/class/Simple.kt");

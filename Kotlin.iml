@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
       <excludeFolder url="$MODULE_DIR$/libraries/out" />
       <excludeFolder url="file://$MODULE_DIR$/android.tests.dependencies" />
       <excludeFolder url="file://$MODULE_DIR$/dependencies" />

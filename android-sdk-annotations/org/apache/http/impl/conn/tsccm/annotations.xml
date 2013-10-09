@@ -1,0 +1,122 @@
+<root>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager void closeIdleConnections(long, java.util.concurrent.TimeUnit) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.RouteSpecificPool void createdEntry(org.apache.http.impl.conn.tsccm.BasicPoolEntry) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.RouteSpecificPool newRouteSpecificPool(org.apache.http.conn.routing.HttpRoute)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager org.apache.http.conn.ClientConnectionOperator createConnectionOperator(org.apache.http.conn.scheme.SchemeRegistry)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute java.util.Queue&lt;org.apache.http.impl.conn.tsccm.WaitingThread&gt; createWaitingThreadQueue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute ConnPoolByRoute(org.apache.http.conn.ClientConnectionOperator, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.BasicPoolEntry createEntry(org.apache.http.impl.conn.tsccm.RouteSpecificPool, org.apache.http.conn.ClientConnectionOperator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.PoolEntryRequest requestPoolEntry(org.apache.http.conn.routing.HttpRoute, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager org.apache.http.conn.ClientConnectionOperator createConnectionOperator(org.apache.http.conn.scheme.SchemeRegistry) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.BasicPoolEntry getEntryBlocking(org.apache.http.conn.routing.HttpRoute, java.lang.Object, long, java.util.concurrent.TimeUnit, org.apache.http.impl.conn.tsccm.WaitingThreadAborter)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.BasicPoolEntry BasicPoolEntry(org.apache.http.conn.ClientConnectionOperator, org.apache.http.conn.routing.HttpRoute, java.lang.ref.ReferenceQueue&lt;java.lang.Object&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.RefQueueWorker RefQueueWorker(java.lang.ref.ReferenceQueue&lt;?&gt;, org.apache.http.impl.conn.tsccm.RefQueueHandler) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.AbstractConnPool org.apache.http.impl.conn.tsccm.PoolEntryRequest requestPoolEntry(org.apache.http.conn.routing.HttpRoute, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.RouteSpecificPool void queueThread(org.apache.http.impl.conn.tsccm.WaitingThread) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.WaitingThread java.util.concurrent.locks.Condition getCondition()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager ThreadSafeClientConnManager(org.apache.http.params.HttpParams, org.apache.http.conn.scheme.SchemeRegistry) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager void releaseConnection(org.apache.http.conn.ManagedClientConnection, long, java.util.concurrent.TimeUnit) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.RefQueueWorker java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute ConnPoolByRoute(org.apache.http.conn.ClientConnectionOperator, org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.WaitingThread newWaitingThread(java.util.concurrent.locks.Condition, org.apache.http.impl.conn.tsccm.RouteSpecificPool) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager org.apache.http.impl.conn.tsccm.AbstractConnPool createConnectionPool(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager org.apache.http.impl.conn.tsccm.AbstractConnPool createConnectionPool(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.WaitingThread WaitingThread(java.util.concurrent.locks.Condition, org.apache.http.impl.conn.tsccm.RouteSpecificPool) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute java.util.Queue&lt;org.apache.http.impl.conn.tsccm.BasicPoolEntry&gt; createFreeConnQueue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.WaitingThread newWaitingThread(java.util.concurrent.locks.Condition, org.apache.http.impl.conn.tsccm.RouteSpecificPool)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.BasicPoolEntry org.apache.http.impl.conn.tsccm.BasicPoolEntryRef getWeakRef()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.AbstractConnPool void closeIdleConnections(long, java.util.concurrent.TimeUnit) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.BasicPooledConnAdapter BasicPooledConnAdapter(org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager, org.apache.http.impl.conn.AbstractPoolEntry) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.RefQueueWorker RefQueueWorker(java.lang.ref.ReferenceQueue&lt;?&gt;, org.apache.http.impl.conn.tsccm.RefQueueHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.BasicPoolEntry createEntry(org.apache.http.impl.conn.tsccm.RouteSpecificPool, org.apache.http.conn.ClientConnectionOperator) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.BasicPoolEntry BasicPoolEntry(org.apache.http.conn.ClientConnectionOperator, org.apache.http.conn.routing.HttpRoute, java.lang.ref.ReferenceQueue&lt;java.lang.Object&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute void freeEntry(org.apache.http.impl.conn.tsccm.BasicPoolEntry, boolean, long, java.util.concurrent.TimeUnit) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.PoolEntryRequest org.apache.http.impl.conn.tsccm.BasicPoolEntry getPoolEntry(long, java.util.concurrent.TimeUnit)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.AbstractConnPool void freeEntry(org.apache.http.impl.conn.tsccm.BasicPoolEntry, boolean, long, java.util.concurrent.TimeUnit) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute org.apache.http.impl.conn.tsccm.BasicPoolEntry createEntry(org.apache.http.impl.conn.tsccm.RouteSpecificPool, org.apache.http.conn.ClientConnectionOperator)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager ThreadSafeClientConnManager(org.apache.http.params.HttpParams, org.apache.http.conn.scheme.SchemeRegistry) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.BasicPoolEntryRef BasicPoolEntryRef(org.apache.http.impl.conn.tsccm.BasicPoolEntry, java.lang.ref.ReferenceQueue&lt;java.lang.Object&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager org.apache.http.conn.ClientConnectionRequest requestConnection(org.apache.http.conn.routing.HttpRoute, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute void deleteEntry(org.apache.http.impl.conn.tsccm.BasicPoolEntry) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.impl.conn.tsccm.ConnPoolByRoute java.util.Map&lt;org.apache.http.conn.routing.HttpRoute,org.apache.http.impl.conn.tsccm.RouteSpecificPool&gt; createRouteToPoolMap()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

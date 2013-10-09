@@ -36,6 +36,10 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testBaseCallOrder() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testCrazyInheritance() throws Exception {
         checkFooBoxIsOk();
     }

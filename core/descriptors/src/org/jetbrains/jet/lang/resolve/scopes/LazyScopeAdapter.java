@@ -17,19 +17,19 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValue;
 
 public class LazyScopeAdapter extends AbstractScopeAdapter {
 
-    private final RecursionIntolerantLazyValue<JetScope> scope;
+    private final NotNullLazyValue<JetScope> scope;
 
-    public LazyScopeAdapter(RecursionIntolerantLazyValue<JetScope> scope) {
+    public LazyScopeAdapter(NotNullLazyValue<JetScope> scope) {
         this.scope = scope;
     }
 
     @NotNull
     @Override
     protected JetScope getWorkerScope() {
-        return scope.get();
+        return scope.invoke();
     }
 }

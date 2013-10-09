@@ -19,17 +19,34 @@ package org.jetbrains.kotlin;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
 public class AntTaskTest extends KotlinIntegrationTestBase {
-    @Test
-    public void antTaskJvm() throws Exception {
+    private void doAntTest(String... extraJavaArgs) throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
         String runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar").getAbsolutePath();
 
-        assertEquals("compilation failed", 0, runAnt("build.log", "build.xml"));
-        runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "Hello.HelloPackage");
+        assertEquals("compilation failed", 0, runAnt("build.log", "build.xml", extraJavaArgs));
+        runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "hello.HelloPackage");
+    }
+
+    @Test
+    public void antTaskJvm() throws Exception {
+        doAntTest();
+    }
+
+    @Test
+    public void antTaskJvmManyRoots() throws Exception {
+        doAntTest();
+    }
+
+    @Test
+    public void javacCompiler() throws Exception {
+        doAntTest("-cp", getCompilerLib() + "/kotlin-ant.jar");
     }
 
     @Override
@@ -38,12 +55,18 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
                 .replaceAll("Total time: .+\n", "Total time: [time]\n");
     }
 
-    private int runAnt(String logName, String scriptName) throws Exception {
-        return runJava(logName, "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
-                       "-Dkotlin.lib=" + getCompilerLib(),
-                       "-Dtest.data=" + testDataDir,
-                       "-Dtemp=" + tmpdir.getTmpDir(),
-                       "-f", scriptName);
+    private int runAnt(String logName, String scriptName, String... extraJavaArgs) throws Exception {
+        String[] basicArgs = {
+                "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
+                "-Dkotlin.lib=" + getCompilerLib(),
+                "-Dtest.data=" + testDataDir,
+                "-Dtemp=" + tmpdir.getTmpDir(),
+                "-f", scriptName
+        };
+        List<String> strings = new ArrayList<String>();
+        strings.addAll(Arrays.asList(basicArgs));
+        strings.addAll(Arrays.asList(extraJavaArgs));
+        return runJava(logName, strings.toArray(new String[strings.size()]));
     }
 
     private static String getAntHome() {

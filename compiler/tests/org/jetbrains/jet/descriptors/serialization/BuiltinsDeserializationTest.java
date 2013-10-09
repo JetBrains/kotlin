@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;

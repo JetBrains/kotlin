@@ -1,0 +1,338 @@
+<root>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.DOMImplementation getImplementation()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Node insertBefore(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void error(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl boolean isSupported(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void endEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMAxisIteratorBase org.apache.xml.dtm.DTMAxisIterator includeSelf()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void startEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void setFeature(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Text createTextNode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExtendedType void redefine(int, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy void setValue(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMManagerDefault boolean release(org.apache.xml.dtm.DTM, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBaseIterators.FollowingIterator FollowingIterator(org.apache.xml.dtm.ref.DTMDefaultBaseIterators) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase int getElementById(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy void setData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy java.lang.Object getUserData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void fatalError(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBaseIterators.ParentIterator org.apache.xml.dtm.DTMAxisIterator setNodeType(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl java.lang.String getLocalNameFromExpandedNameID(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Node renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Element getElementById(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl int getExpandedTypeID(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBaseIterators.DescendantIterator org.apache.xml.dtm.DTMAxisIterator reset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExpandedNameTable int getExpandedTypeID(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExpandedNameTable int getExpandedTypeID(java.lang.String, java.lang.String, int, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase int getExpandedTypeID(java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl java.lang.String getPrefix(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy java.lang.String getTextContent()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy void setIdAttributeNode(org.w3c.dom.Attr, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMManagerDefault org.apache.xml.dtm.DTM getDTM(javax.xml.transform.Source, boolean, org.apache.xml.dtm.DTMWSFilter, boolean, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl java.lang.String getLocalName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase java.lang.String dumpNode(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy boolean isSupported(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase void setFeature(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExpandedNameTable int getExpandedTypeID(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Attr setAttributeNodeNS(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void setDocumentLocator(org.xml.sax.Locator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void setXMLReader(org.xml.sax.XMLReader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.NamedNodeMap getAttributes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter org.apache.xml.dtm.ref.IncrementalSAXSource createIncrementalSAXSource(org.apache.xml.dtm.ref.CoroutineManager, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Node removeChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMManagerDefault void addDTM(org.apache.xml.dtm.DTM, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Node importNode(org.w3c.dom.Node, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBaseIterators.TypedFollowingIterator TypedFollowingIterator(org.apache.xml.dtm.ref.DTMDefaultBaseIterators, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExtendedType void redefine(int, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase org.w3c.dom.Node getNode(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNamedNodeMap org.w3c.dom.Node setNamedItem(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.CDATASection createCDATASection(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Attr removeAttributeNode(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.NodeList getElementsByTagNameNS(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void setIncrementalSAXSource(org.apache.xml.dtm.ref.IncrementalSAXSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl int getElementById(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy java.lang.String substringData(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void setDocumentLocator(org.xml.sax.Locator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMAxisIteratorBase org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeIterator DTMNodeIterator(org.apache.xml.dtm.DTMIterator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMManagerDefault void addDTM(org.apache.xml.dtm.DTM, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.NodeList getElementsByTagName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void endElement(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase java.lang.String getDocumentEncoding(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl java.lang.String getNamespaceFromExpandedNameID(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy java.lang.Object getFeature(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy java.lang.String getAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExpandedNameTable int getExpandedTypeID(java.lang.String, java.lang.String, int, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase int getExpandedTypeID(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBaseIterators.AncestorIterator org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void startPrefixMapping(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy java.lang.Object setUserData(java.lang.String, java.lang.Object, org.w3c.dom.UserDataHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExtendedType ExtendedType(int, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void warning(org.xml.sax.SAXParseException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.NodeList getChildNodes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Comment createComment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Node replaceChild(org.w3c.dom.Node, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.NodeLocator java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource void setContentHandler(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMManagerDefault org.apache.xml.dtm.DTM createDocumentFragment()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl int getExpandedTypeID(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl char[] getStringValueChunk(int, int, int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void setProperty(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy java.lang.String getStringValue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.ExtendedType ExtendedType(int, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void comment(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy void removeAttribute(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBaseIterators.PrecedingIterator org.apache.xml.dtm.DTMAxisIterator cloneIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void processingInstruction(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void endEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void processingInstruction(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDefaultBase boolean isSupported(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void startEntity(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMAxisIteratorBase org.apache.xml.dtm.DTMAxisIterator reset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMDocumentImpl void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMChildIterNodeList DTMChildIterNodeList(org.apache.xml.dtm.DTM, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMAxisIteratorBase org.apache.xml.dtm.DTMAxisIterator resetPosition()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Node appendChild(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNamedNodeMap org.w3c.dom.Node setNamedItemNS(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.DTMNodeProxy org.w3c.dom.Attr setAttributeNode(org.w3c.dom.Attr) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.dtm.ref.IncrementalSAXSource_Filter void setContentHandler(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

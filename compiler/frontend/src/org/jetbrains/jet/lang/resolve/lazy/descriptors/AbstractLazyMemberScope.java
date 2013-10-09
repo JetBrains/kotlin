@@ -17,9 +17,10 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Computable;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -28,12 +29,12 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +42,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
-import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> implements JetScope {
     protected final ResolveSession resolveSession;
@@ -71,35 +71,35 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         this.thisDescriptor = thisDescriptor;
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.classDescriptors = storageManager.createMemoizedFunction(new Function<Name, List<ClassDescriptor>>() {
+        this.classDescriptors = storageManager.createMemoizedFunction(new Function1<Name, List<ClassDescriptor>>() {
             @Override
-            public List<ClassDescriptor> fun(Name name) {
+            public List<ClassDescriptor> invoke(Name name) {
                 return resolveClassOrObjectDescriptor(name, false);
             }
-        }, STRONG);
-        this.objectDescriptors = storageManager.createMemoizedFunction(new Function<Name, List<ClassDescriptor>>() {
+        });
+        this.objectDescriptors = storageManager.createMemoizedFunction(new Function1<Name, List<ClassDescriptor>>() {
             @Override
-            public List<ClassDescriptor> fun(Name name) {
+            public List<ClassDescriptor> invoke(Name name) {
                 return resolveClassOrObjectDescriptor(name, true);
             }
-        }, STRONG);
+        });
 
-        this.functionDescriptors = storageManager.createMemoizedFunction(new Function<Name, Set<FunctionDescriptor>>() {
+        this.functionDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Set<FunctionDescriptor>>() {
             @Override
-            public Set<FunctionDescriptor> fun(Name name) {
+            public Set<FunctionDescriptor> invoke(Name name) {
                 return doGetFunctions(name);
             }
-        }, STRONG);
-        this.propertyDescriptors = storageManager.createMemoizedFunction(new Function<Name, Set<VariableDescriptor>>() {
+        });
+        this.propertyDescriptors = storageManager.createMemoizedFunction(new Function1<Name, Set<VariableDescriptor>>() {
             @Override
-            public Set<VariableDescriptor> fun(Name name) {
+            public Set<VariableDescriptor> invoke(Name name) {
                 return doGetProperties(name);
             }
-        }, STRONG);
+        });
 
-        this.allDescriptors = storageManager.createLazyValue(new Computable<AllDescriptors>() {
+        this.allDescriptors = storageManager.createLazyValue(new Function0<AllDescriptors>() {
             @Override
-            public AllDescriptors compute() {
+            public AllDescriptors invoke() {
                 return computeAllDescriptors();
             }
         });
@@ -126,12 +126,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return first(classDescriptors.fun(name));
+        return first(classDescriptors.invoke(name));
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return first(objectDescriptors.fun(name));
+        return first(objectDescriptors.invoke(name));
     }
 
     private static <T> T first(@NotNull List<T> list) {
@@ -142,7 +142,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        return functionDescriptors.fun(name);
+        return functionDescriptors.invoke(name);
     }
 
     @NotNull
@@ -175,7 +175,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull Name name) {
-        return propertyDescriptors.fun(name);
+        return propertyDescriptors.invoke(name);
     }
 
     @NotNull
@@ -224,7 +224,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        return allDescriptors.compute().objects;
+        return allDescriptors.invoke().objects;
     }
 
     @Override
@@ -248,7 +248,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return allDescriptors.compute().all;
+        return allDescriptors.invoke().all;
     }
 
     @NotNull
@@ -275,7 +275,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
                 if (name != null) {
-                    result.all.addAll(classDescriptors.fun(name));
+                    result.all.addAll(classDescriptors.invoke(name));
                 }
             }
             else if (declaration instanceof JetFunction) {

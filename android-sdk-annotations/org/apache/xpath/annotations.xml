@@ -1,0 +1,317 @@
+<root>
+    <item name='org.apache.xpath.XPathContext org.apache.xml.dtm.DTMIterator createDTMIterator(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xpath.XPathContext, org.apache.xml.utils.QName) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathContext.XPathExpressionContext java.lang.String toString(org.w3c.dom.Node)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath boolean bool(org.apache.xpath.XPathContext, int, org.apache.xml.utils.PrefixResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.ExtensionsProvider java.lang.Object extFunction(org.apache.xpath.functions.FuncExtFunction, java.util.Vector) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathException org.apache.xpath.ExpressionNode getExpressionOwner(org.apache.xpath.ExpressionNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression int asNode(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSet org.w3c.dom.traversal.NodeIterator cloneWithReset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression void warn(org.apache.xpath.XPathContext, java.lang.String, java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath double getMatchScore(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathContext.XPathExpressionContext org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xml.utils.QName)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, int, org.apache.xml.dtm.DTM, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathException XPathException(java.lang.String, org.apache.xpath.ExpressionNode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath void error(org.apache.xpath.XPathContext, int, java.lang.String, java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xpath.XPathContext, org.apache.xml.utils.QName)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath void warn(org.apache.xpath.XPathContext, int, java.lang.String, java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String, org.apache.xml.utils.PrefixResolver) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath XPath(java.lang.String, javax.xml.transform.SourceLocator, org.apache.xml.utils.PrefixResolver, int, javax.xml.transform.ErrorListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathVisitor boolean visitVariableRef(org.apache.xpath.ExpressionOwner, org.apache.xpath.operations.Variable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathException void printStackTrace(java.io.PrintStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression boolean bool(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.ExpressionNode void exprAddChild(org.apache.xpath.ExpressionNode, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM void setRoot(int, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathException org.w3c.dom.Node getStylesheetNode(org.apache.xpath.ExpressionNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.SourceTreeManager int getNode(javax.xml.transform.Source) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM void appendNodes(org.apache.xml.utils.NodeVector) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathException void printStackTrace(java.io.PrintWriter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.ExtensionsProvider java.lang.Object extFunction(java.lang.String, java.lang.String, java.util.Vector, java.lang.Object) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack org.apache.xpath.objects.XObject getGlobalVariable(org.apache.xpath.XPathContext, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression org.apache.xml.dtm.DTMIterator asIterator(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression void exprAddChild(org.apache.xpath.ExpressionNode, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathContext void setErrorListener(javax.xml.transform.ErrorListener) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, int, org.apache.xml.utils.PrefixResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM NodeSetDTM(org.apache.xml.dtm.DTMIterator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathVisitor boolean visitPredicate(org.apache.xpath.ExpressionOwner, org.apache.xpath.Expression) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack org.apache.xpath.objects.XObject getLocalVariable(org.apache.xpath.XPathContext, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath void setExpression(org.apache.xpath.Expression) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression void error(org.apache.xpath.XPathContext, java.lang.String, java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression void executeCharsToContentHandler(org.apache.xpath.XPathContext, org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM org.apache.xml.dtm.DTMIterator cloneWithReset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSet void addNodesInDocOrder(org.w3c.dom.traversal.NodeIterator, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSet void addNodesInDocOrder(org.w3c.dom.NodeList, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.ExtensionsProvider java.lang.Object extFunction(java.lang.String, java.lang.String, java.util.Vector, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack org.apache.xpath.objects.XObject getGlobalVariable(org.apache.xpath.XPathContext, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String, org.apache.xml.utils.PrefixResolver) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.SourceTreeManager int getSourceTree(javax.xml.transform.Source, javax.xml.transform.SourceLocator, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression org.apache.xml.dtm.DTMIterator asIteratorRaw(org.apache.xpath.XPathContext, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathVisitor boolean visitLocationPath(org.apache.xpath.ExpressionOwner, org.apache.xpath.axes.LocPathIterator) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathContext.XPathExpressionContext org.w3c.dom.traversal.NodeIterator getContextNodes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM NodeSetDTM(org.w3c.dom.traversal.NodeIterator, org.apache.xpath.XPathContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.Node selectSingleNode(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath XPath(java.lang.String, javax.xml.transform.SourceLocator, org.apache.xml.utils.PrefixResolver, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM NodeSetDTM(org.w3c.dom.NodeList, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.SourceTreeManager int parseToNode(javax.xml.transform.Source, javax.xml.transform.SourceLocator, org.apache.xpath.XPathContext) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathContext boolean release(org.apache.xml.dtm.DTM, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSet void appendNodes(org.apache.xpath.NodeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM NodeSetDTM(org.w3c.dom.traversal.NodeIterator, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack org.apache.xpath.objects.XObject getVariableOrParam(org.apache.xpath.XPathContext, org.apache.xml.utils.QName) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI CachedXPathAPI(org.apache.xpath.CachedXPathAPI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM void addNodesInDocOrder(org.apache.xml.dtm.DTMIterator, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.CachedXPathAPI org.w3c.dom.traversal.NodeIterator selectNodeIterator(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM NodeSetDTM(org.apache.xpath.NodeSetDTM) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.NodeSetDTM NodeSetDTM(org.w3c.dom.NodeList, org.apache.xpath.XPathContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.Expression org.apache.xml.dtm.DTMIterator asIteratorRaw(org.apache.xpath.XPathContext, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath XPath(java.lang.String, javax.xml.transform.SourceLocator, org.apache.xml.utils.PrefixResolver, int, javax.xml.transform.ErrorListener, org.apache.xpath.compiler.FunctionTable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.apache.xpath.objects.XObject eval(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathVisitable void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.VariableStack org.apache.xpath.objects.XObject getLocalVariable(org.apache.xpath.XPathContext, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.SourceTreeManager void putDocumentInCache(int, javax.xml.transform.Source) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPath org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext, org.w3c.dom.Node, org.apache.xml.utils.PrefixResolver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.ExpressionOwner void setExpression(org.apache.xpath.Expression) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.XPathAPI org.w3c.dom.NodeList selectNodeList(org.w3c.dom.Node, java.lang.String, org.w3c.dom.Node) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

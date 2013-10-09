@@ -17,8 +17,8 @@
 package org.jetbrains.jet.cli.jvm.repl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 public class EarlierLine {
     @NotNull
@@ -30,14 +30,14 @@ public class EarlierLine {
     @NotNull
     private final Object scriptInstance;
     @NotNull
-    private final JvmClassName className;
+    private final Type classType;
 
-    public EarlierLine(@NotNull String code, @NotNull ScriptDescriptor scriptDescriptor, @NotNull Class<?> scriptClass, @NotNull Object scriptInstance, @NotNull JvmClassName className) {
+    public EarlierLine(@NotNull String code, @NotNull ScriptDescriptor scriptDescriptor, @NotNull Class<?> scriptClass, @NotNull Object scriptInstance, @NotNull Type classType) {
         this.code = code;
         this.scriptDescriptor = scriptDescriptor;
         this.scriptClass = scriptClass;
         this.scriptInstance = scriptInstance;
-        this.className = className;
+        this.classType = classType;
     }
 
     @NotNull
@@ -61,7 +61,7 @@ public class EarlierLine {
     }
 
     @NotNull
-    public JvmClassName getClassName() {
-        return className;
+    public Type getClassType() {
+        return classType;
     }
 }

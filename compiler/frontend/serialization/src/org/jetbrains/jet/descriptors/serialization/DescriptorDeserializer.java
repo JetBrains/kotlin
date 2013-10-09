@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;

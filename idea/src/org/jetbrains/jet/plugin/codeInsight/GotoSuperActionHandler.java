@@ -44,6 +44,8 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getDirectlyOverriddenDeclarations;
+
 public class GotoSuperActionHandler implements CodeInsightActionHandler {
     @Override
     public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
@@ -82,7 +84,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             message = JetBundle.message("goto.super.class.chooser.title");
         }
         else if (descriptor instanceof CallableMemberDescriptor) {
-            superDescriptors = ((CallableMemberDescriptor) descriptor).getOverriddenDescriptors();
+            superDescriptors = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
             if (descriptor instanceof PropertyDescriptor) {
                 message = JetBundle.message("goto.super.property.chooser.title");
             }

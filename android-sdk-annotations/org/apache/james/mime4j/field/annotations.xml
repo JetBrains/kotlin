@@ -1,0 +1,95 @@
+<root>
+    <item name='org.apache.james.mime4j.field.AddressListField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.FieldParser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.DateTimeField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.DateTimeField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.MailboxListField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.FieldParser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.Field org.apache.james.mime4j.field.Field parse(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.AddressListField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.MailboxField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.ContentTransferEncodingField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.MailboxField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.ContentTypeField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.DelegatingFieldParser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.UnstructuredField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.UnstructuredField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.MailboxListField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.DateTimeField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.DelegatingFieldParser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.ContentTypeField java.util.Map&lt;java.lang.String,java.lang.String&gt; getParameters()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.AddressListField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.DelegatingFieldParser void setFieldParser(java.lang.String, org.apache.james.mime4j.field.FieldParser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.ContentTransferEncodingField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.MailboxField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.ContentTransferEncodingField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.MailboxListField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.ContentTypeField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.Field org.apache.james.mime4j.field.DefaultFieldParser getParser()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.UnstructuredField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.FieldParser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.ContentTypeField.Parser org.apache.james.mime4j.field.Field parse(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.field.DelegatingFieldParser org.apache.james.mime4j.field.FieldParser getParser(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
@@ -89,7 +88,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final ModuleDescriptorImpl moduleDescriptor;
     private final JavaBridgeConfiguration javaBridgeConfiguration;
     private final JavaDescriptorResolver javaDescriptorResolver;
-    private final PsiClassFinderImpl psiClassFinder;
     private final JavaToKotlinClassMap javaToKotlinClassMap;
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
@@ -150,7 +148,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.moduleDescriptor = moduleDescriptor;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.psiClassFinder = new PsiClassFinderImpl();
         this.javaToKotlinClassMap = org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap.getInstance();
         this.javaClassFinder = new JavaClassFinderImpl();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
@@ -230,9 +227,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaDescriptorResolver.setClassResolver(javaClassResolver);
         javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
 
-        psiClassFinder.setProject(project);
-
-        javaClassFinder.setPsiClassFinder(psiClassFinder);
+        javaClassFinder.setProject(project);
 
         traceBasedExternalSignatureResolver.setAnnotationResolver(javaAnnotationResolver);
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
@@ -342,6 +337,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
         deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
 
+        annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileKotlinClassFinder);
 
@@ -385,7 +381,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
-        psiClassFinder.initialize();
+        javaClassFinder.initialize();
 
     }
     

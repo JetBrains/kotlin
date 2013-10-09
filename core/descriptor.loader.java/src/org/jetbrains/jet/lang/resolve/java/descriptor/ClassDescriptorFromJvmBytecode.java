@@ -33,8 +33,9 @@ import java.util.Collection;
  */
 public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     private JetType functionTypeForSamInterface;
-
     private JavaClassNonStaticMembersScope scopeForConstructorResolve;
+    private ConstructorDescriptor primaryConstructor;
+    private Collection<ConstructorDescriptor> constructors;
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -45,18 +46,31 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
         super(containingDeclaration, name, kind, isInner);
     }
 
-
     @NotNull
     @Override
     public Collection<ConstructorDescriptor> getConstructors() {
         assert scopeForConstructorResolve != null;
-        return scopeForConstructorResolve.getConstructors();
+        if (constructors == null) {
+            constructors = scopeForConstructorResolve.getConstructors();
+        }
+        return constructors;
     }
 
     @Nullable
     @Override
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return scopeForConstructorResolve.getPrimaryConstructor();
+        if (primaryConstructor == null) {
+            for (ConstructorDescriptor constructor : getConstructors()) {
+                if (constructor.isPrimary()) {
+                    if (primaryConstructor != null) {
+                        throw new IllegalStateException(
+                                "Class has more than one primary constructor: " + primaryConstructor + "\n" + constructor);
+                    }
+                    primaryConstructor = constructor;
+                }
+            }
+        }
+        return primaryConstructor;
     }
 
     public void setScopeForConstructorResolve(@NotNull JavaClassNonStaticMembersScope scopeForConstructorResolve) {

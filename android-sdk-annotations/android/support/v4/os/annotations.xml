@@ -1,0 +1,14 @@
+<root>
+    <item name='android.support.v4.os.ParcelableCompatCreatorCallbacks T createFromParcel(android.os.Parcel, java.lang.ClassLoader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.os.ParcelableCompatCreatorCallbacks T createFromParcel(android.os.Parcel, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.os.ParcelableCompat android.os.Parcelable.Creator&lt;T&gt; newCreator(android.support.v4.os.ParcelableCompatCreatorCallbacks&lt;T&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.os.ParcelableCompatCreatorCallbacks T[] newArray(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

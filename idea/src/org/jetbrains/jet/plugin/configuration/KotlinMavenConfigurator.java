@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.dom.MavenDomUtil;
 import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.framework.ui.ConfigureDialogWithModulesAndVersion;
@@ -49,7 +50,7 @@ import org.jetbrains.jet.plugin.framework.ui.ConfigureDialogWithModulesAndVersio
 import java.util.List;
 
 public class KotlinMavenConfigurator implements KotlinProjectConfigurator {
-    private static final String[] KOTLIN_VERSIONS = {"0.6.594", "0.1-SNAPSHOT"};
+    private static final String[] KOTLIN_VERSIONS = {KotlinVersion.VERSION};
 
     public static final String NAME = "maven";
 

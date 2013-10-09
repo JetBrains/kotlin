@@ -16,15 +16,13 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
@@ -32,7 +30,8 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +52,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     private final NotNullLazyValue<JetType> upperBoundsAsType;
 
     public AbstractLazyTypeParameterDescriptor(
-            @NotNull StorageManager storageManager,
+            @NotNull final StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull Variance variance,
@@ -66,27 +65,27 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
         this.name = name;
         this.reified = isReified;
 
-        this.typeConstructor = storageManager.createLazyValue(new Computable<TypeConstructor>() {
+        this.typeConstructor = storageManager.createLazyValue(new Function0<TypeConstructor>() {
             @Override
-            public TypeConstructor compute() {
+            public TypeConstructor invoke() {
                 return createTypeConstructor();
             }
         });
-        this.defaultType = storageManager.createLazyValue(new Computable<JetType>() {
+        this.defaultType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
-            public JetType compute() {
-                return createDefaultType();
+            public JetType invoke() {
+                return createDefaultType(storageManager);
             }
         });
-        this.upperBounds = storageManager.createLazyValue(new Computable<Set<JetType>>() {
+        this.upperBounds = storageManager.createLazyValue(new Function0<Set<JetType>>() {
             @Override
-            public Set<JetType> compute() {
+            public Set<JetType> invoke() {
                 return resolveUpperBounds();
             }
         });
-        this.upperBoundsAsType = storageManager.createLazyValue(new Computable<JetType>() {
+        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
-            public JetType compute() {
+            public JetType invoke() {
                 return computeUpperBoundsAsType();
             }
         });
@@ -106,7 +105,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     @NotNull
     @Override
     public Set<JetType> getUpperBounds() {
-        return upperBounds.compute();
+        return upperBounds.invoke();
     }
 
     @NotNull
@@ -115,7 +114,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     @NotNull
     @Override
     public JetType getUpperBoundsAsType() {
-        return upperBoundsAsType.compute();
+        return upperBoundsAsType.invoke();
     }
 
     @NotNull
@@ -145,7 +144,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
-        return typeConstructor.compute();
+        return typeConstructor.invoke();
     }
 
     @NotNull
@@ -193,17 +192,19 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
     @NotNull
     @Override
     public JetType getDefaultType() {
-        return defaultType.compute();
+        return defaultType.invoke();
     }
 
     @NotNull
-    private JetType createDefaultType() {
-        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
-                        @Override
-                        protected JetScope compute() {
-                            return getUpperBoundsAsType().getMemberScope();
-                        }
-                    }));
+    private JetType createDefaultType(@NotNull StorageManager storageManager) {
+        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(storageManager.createLazyValue(
+                new Function0<JetScope>() {
+                    @Override
+                    public JetScope invoke() {
+                        return getUpperBoundsAsType().getMemberScope();
+                    }
+                }
+        )));
     }
 
     @Override

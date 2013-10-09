@@ -26,8 +26,8 @@ import com.intellij.util.cls.ClsFormatException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassFileHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.PackageFragmentClassFileHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.PackageFragmentClassHeader;
 
 /**
  * This class is needed to build an empty PSI stub for compiled package fragment classes. This results in these classes not showing up
@@ -44,8 +44,7 @@ public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFac
     public boolean canBeProcessed(VirtualFile file, byte[] bytes) {
         if (file.getName().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") &&
             StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
-            KotlinClassFileHeader header = KotlinClassFileHeader.readKotlinHeaderFromClassFile(new VirtualFileKotlinClass(file));
-            return header instanceof PackageFragmentClassFileHeader;
+            return KotlinClassHeader.read(new VirtualFileKotlinClass(file)) instanceof PackageFragmentClassHeader;
         }
         return false;
     }

@@ -1,131 +1,47 @@
 <root>
-    <item name='android.speech.RecognitionService SERVICE_INTERFACE'>
+    <item name='android.speech.RecognizerIntent android.content.Intent getVoiceDetailsIntent(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognizerResultsIntent EXTRA_VOICE_SEARCH_RESULT_STRINGS'>
+    <item name='android.speech.IRecognitionListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognitionService android.os.IBinder onBind(android.content.Intent)'>
+    <item name='android.speech.IRecognitionListener.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.speech.IRecognitionListener.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context, android.content.ComponentName)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognizerIntent LANGUAGE_MODEL_FREE_FORM'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerResultsIntent ACTION_VOICE_SEARCH_RESULTS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerResultsIntent EXTRA_VOICE_SEARCH_RESULT_HTTP_HEADERS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.speech.SpeechRecognizer boolean isRecognitionAvailable(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.SpeechRecognizer RESULTS_RECOGNITION'>
+    <item name='android.speech.IRecognitionService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognizerResultsIntent EXTRA_VOICE_SEARCH_RESULT_HTML_BASE_URLS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_WEB_SEARCH_ONLY'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS'>
+    <item name='android.speech.IRecognitionService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.RecognitionService android.os.IBinder onBind(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognizerIntent EXTRA_CALLING_PACKAGE'>
+    <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognizerIntent EXTRA_RESULTS'>
+    <item name='android.speech.RecognitionService android.os.IBinder onBind(android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognizerResultsIntent EXTRA_VOICE_SEARCH_RESULT_URLS'>
+    <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context, android.content.ComponentName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.RecognizerResultsIntent URI_SCHEME_INLINE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent ACTION_WEB_SEARCH'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_MAX_RESULTS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_LANGUAGE_PREFERENCE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent ACTION_RECOGNIZE_SPEECH'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognitionService SERVICE_META_DATA'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_PARTIAL_RESULTS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent android.content.Intent getVoiceDetailsIntent(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerResultsIntent EXTRA_VOICE_SEARCH_RESULT_HTML'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_RESULTS_PENDINGINTENT_BUNDLE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent DETAILS_META_DATA'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_RESULTS_PENDINGINTENT'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_SECURE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_ORIGIN'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_CONFIDENCE_SCORES'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_PROMPT'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_LANGUAGE'>
+    <item name='android.speech.SpeechRecognizer void startListening(android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.speech.SpeechRecognizer android.speech.SpeechRecognizer createSpeechRecognizer(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.speech.SpeechRecognizer CONFIDENCE_SCORES'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_SUPPORTED_LANGUAGES'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent ACTION_VOICE_SEARCH_HANDS_FREE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent ACTION_GET_LANGUAGE_DETAILS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent EXTRA_LANGUAGE_MODEL'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.speech.RecognizerIntent LANGUAGE_MODEL_WEB_SEARCH'>
+    <item name='android.speech.IRecognitionService.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

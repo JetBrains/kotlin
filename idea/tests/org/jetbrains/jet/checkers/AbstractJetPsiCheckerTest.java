@@ -20,6 +20,7 @@ import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
 public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
     public void doTest(@NotNull String filePath) throws Exception {
@@ -27,9 +28,16 @@ public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestC
     }
 
     public void doTestWithInfos(@NotNull String filePath) throws Exception {
-        doTest(filePath, true, true);
+        try {
+            JetPsiChecker.setNamesHighlightingEnabled(false);
+            doTest(filePath, true, true);
+        }
+        finally {
+            JetPsiChecker.setNamesHighlightingEnabled(true);
+        }
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return "";

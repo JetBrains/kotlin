@@ -1,38 +1,53 @@
 <root>
-    <item name='android.hardware.usb.UsbManager EXTRA_DEVICE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.hardware.usb.UsbDevice void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbDeviceConnection boolean releaseInterface(android.hardware.usb.UsbInterface) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.usb.UsbAccessory void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.usb.UsbDevice java.lang.String getDeviceName(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.usb.UsbDevice android.hardware.usb.UsbInterface getInterface(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.usb.UsbManager EXTRA_ACCESSORY'>
+    <item name='android.hardware.usb.UsbManager java.lang.String getDefaultFunction()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.usb.UsbDeviceConnection byte[] getRawDescriptors()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbDeviceConnection java.lang.String getSerial()'>
+    <item name='android.hardware.usb.UsbDeviceConnection boolean releaseInterface(android.hardware.usb.UsbInterface) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbDeviceConnection android.hardware.usb.UsbRequest requestWait()'>
+    <item name='android.hardware.usb.UsbInterface android.hardware.usb.UsbEndpoint getEndpoint(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbManager ACTION_USB_ACCESSORY_DETACHED'>
+    <item name='android.hardware.usb.UsbAccessory void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.IUsbManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.UsbDevice java.lang.String getDeviceName(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.usb.UsbDeviceConnection boolean claimInterface(android.hardware.usb.UsbInterface, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.UsbDeviceConnection int bulkTransfer(android.hardware.usb.UsbEndpoint, byte[], int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.UsbDeviceConnection java.lang.String getSerial()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.IUsbManager void grantDevicePermission(android.hardware.usb.UsbDevice, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.UsbDevice java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.UsbManager boolean isFunctionEnabled(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.UsbAccessory java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.IUsbManager void setAccessoryPackage(android.hardware.usb.UsbAccessory, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.IUsbManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.usb.UsbManager android.hardware.usb.UsbDeviceConnection openDevice(android.hardware.usb.UsbDevice) 0'>
@@ -44,28 +59,31 @@
     <item name='android.hardware.usb.UsbDeviceConnection int bulkTransfer(android.hardware.usb.UsbEndpoint, byte[], int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbManager EXTRA_PERMISSION_GRANTED'>
+    <item name='android.hardware.usb.UsbEndpoint java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbManager ACTION_USB_DEVICE_ATTACHED'>
+    <item name='android.hardware.usb.UsbAccessory UsbAccessory(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.IUsbManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.usb.UsbDevice android.hardware.usb.UsbInterface getInterface(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.usb.UsbRequest boolean initialize(android.hardware.usb.UsbDeviceConnection, android.hardware.usb.UsbEndpoint) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbManager ACTION_USB_DEVICE_DETACHED'>
+    <item name='android.hardware.usb.IUsbManager void setDevicePackage(android.hardware.usb.UsbDevice, java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.hardware.usb.UsbInterface android.hardware.usb.UsbEndpoint getEndpoint(int)'>
+    <item name='android.hardware.usb.UsbInterface java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.usb.UsbEndpoint void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.hardware.usb.UsbInterface void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.hardware.usb.UsbManager ACTION_USB_ACCESSORY_ATTACHED'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

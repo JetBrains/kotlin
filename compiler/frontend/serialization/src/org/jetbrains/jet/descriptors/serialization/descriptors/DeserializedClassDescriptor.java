@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Function;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
@@ -26,10 +26,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -39,13 +35,16 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
-import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public class DeserializedClassDescriptor extends AbstractClassDescriptor implements ClassDescriptor {
 
@@ -96,9 +95,9 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.deserializer = outerDeserializer.createChildDeserializer(this, classProto.getTypeParameterList(), typeParameters);
         this.typeDeserializer = deserializer.getTypeDeserializer();
 
-        this.containingDeclaration = storageManager.createLazyValue(new Computable<DeclarationDescriptor>() {
+        this.containingDeclaration = storageManager.createLazyValue(new Function0<DeclarationDescriptor>() {
             @Override
-            public DeclarationDescriptor compute() {
+            public DeclarationDescriptor invoke() {
                 return computeContainingDeclaration();
             }
         });
@@ -115,23 +114,23 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.isInner = Flags.INNER.get(flags);
 
         this.annotationDeserializer = annotationResolver;
-        this.annotations = storageManager.createLazyValue(new Computable<List<AnnotationDescriptor>>() {
+        this.annotations = storageManager.createLazyValue(new Function0<List<AnnotationDescriptor>>() {
             @Override
-            public List<AnnotationDescriptor> compute() {
+            public List<AnnotationDescriptor> invoke() {
                 return computeAnnotations();
             }
         });
 
-        this.primaryConstructor = storageManager.createNullableLazyValue(new Computable<ConstructorDescriptor>() {
+        this.primaryConstructor = storageManager.createNullableLazyValue(new Function0<ConstructorDescriptor>() {
             @Override
-            public ConstructorDescriptor compute() {
+            public ConstructorDescriptor invoke() {
                 return computePrimaryConstructor();
             }
         });
 
-        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Computable<ClassDescriptor>() {
+        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptor>() {
             @Override
-            public ClassDescriptor compute() {
+            public ClassDescriptor invoke() {
                 return computeClassObjectDescriptor();
             }
         });
@@ -151,7 +150,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration.compute();
+        return containingDeclaration.invoke();
     }
 
     @NotNull
@@ -201,7 +200,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
-        return annotations.compute();
+        return annotations.invoke();
     }
 
     @Override
@@ -226,7 +225,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Nullable
     @Override
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor.compute();
+        return primaryConstructor.invoke();
     }
 
     @NotNull
@@ -306,7 +305,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Nullable
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor.compute();
+        return classObjectDescriptor.invoke();
     }
 
     @NotNull
@@ -463,7 +462,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         @Nullable
         @Override
         protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedClasses.findClass.fun(name);
+            return classDescriptor.nestedClasses.findClass.invoke(name);
         }
 
         @Override
@@ -474,7 +473,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         @Nullable
         @Override
         public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedObjects.findClass.fun(name);
+            return classDescriptor.nestedObjects.findClass.invoke(name);
         }
 
         @NotNull
@@ -490,21 +489,21 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         public NestedClassDescriptors(@NotNull StorageManager storageManager, @NotNull Set<Name> declaredNames) {
             this.declaredNames = declaredNames;
-            this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
+            this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<Name, ClassDescriptor>() {
                 @Override
-                public ClassDescriptor fun(Name name) {
+                public ClassDescriptor invoke(Name name) {
                     return NestedClassDescriptors.this.declaredNames.contains(name) ?
                            descriptorFinder.findClass(classId.createNestedClassId(name)) :
                            null;
                 }
-            }, STRONG);
+            });
         }
 
         @NotNull
         public Collection<ClassDescriptor> getAllDescriptors() {
             Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(declaredNames.size());
             for (Name name : declaredNames) {
-                ClassDescriptor descriptor = findClass.fun(name);
+                ClassDescriptor descriptor = findClass.invoke(name);
                 if (descriptor != null) {
                     result.add(descriptor);
                 }

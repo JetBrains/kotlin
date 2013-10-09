@@ -136,10 +136,11 @@ public final class JsDescriptorUtils {
         return accessorDescriptor == null || accessorDescriptor.isDefault();
     }
 
-    public static boolean isSimpleProperty(@NotNull PropertyDescriptor propertyDescriptor) {
+    public static boolean isSimpleFinalProperty(@NotNull PropertyDescriptor propertyDescriptor) {
         return !isExtension(propertyDescriptor) &&
                isDefaultAccessor(propertyDescriptor.getGetter()) &&
-               isDefaultAccessor(propertyDescriptor.getSetter());
+               isDefaultAccessor(propertyDescriptor.getSetter()) &&
+               !propertyDescriptor.getModality().isOverridable();
     }
 
     public static boolean isStandardDeclaration(@NotNull DeclarationDescriptor descriptor) {

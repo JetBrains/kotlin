@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationPr
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PsiBasedClassMemberDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class StubDeclarationProviderFactory implements DeclarationProviderFactory {

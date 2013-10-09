@@ -30,6 +30,10 @@ public class FunctionTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testWhenFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testFunctionLiteral() throws Exception {
         fooBoxTest();
     }

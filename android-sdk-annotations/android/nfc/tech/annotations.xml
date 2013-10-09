@@ -1,14 +1,11 @@
 <root>
+    <item name='android.nfc.tech.Ndef java.lang.String getType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.tech.NfcBarcode android.nfc.tech.NfcBarcode get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_3'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_1'>
+    <item name='android.nfc.tech.MifareClassic MifareClassic(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.MifareUltralight void writePage(int, byte[]) 1'>
@@ -17,16 +14,28 @@
     <item name='android.nfc.tech.NfcV android.nfc.tech.NfcV get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.tech.IsoDep IsoDep(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.tech.IsoDep android.nfc.tech.IsoDep get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.Ndef MIFARE_CLASSIC'>
+    <item name='android.nfc.tech.MifareUltralight MifareUltralight(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.NfcF android.nfc.tech.NfcF get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.tech.Ndef Ndef(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcB NfcB(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.tech.MifareClassic android.nfc.tech.MifareClassic get(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcV NfcV(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.Ndef android.nfc.tech.Ndef get(android.nfc.Tag) 0'>
@@ -44,13 +53,16 @@
     <item name='android.nfc.tech.NfcB android.nfc.tech.NfcB get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.Ndef java.lang.String getType()'>
+    <item name='android.nfc.tech.NfcA NfcA(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.MifareClassic void writeBlock(int, byte[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_4'>
+    <item name='android.nfc.tech.NfcBarcode NfcBarcode(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcF NfcF(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

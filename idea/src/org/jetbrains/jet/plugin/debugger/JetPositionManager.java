@@ -34,6 +34,7 @@ import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
@@ -55,7 +56,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.WeakHashMap;
 
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
@@ -139,8 +140,8 @@ public class JetPositionManager implements PositionManager {
                     result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element));
                 }
                 else if (element instanceof JetFunctionLiteral) {
-                    result.set(classNameForAnonymousClass(typeMapper.getBindingContext(),
-                                                          ((JetFunctionLiteral) element)).getInternalName());
+                    Type asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), ((JetFunctionLiteral) element));
+                    result.set(asmType.getInternalName());
                 }
                 else if (element instanceof JetNamedFunction) {
                     PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
@@ -148,8 +149,8 @@ public class JetPositionManager implements PositionManager {
                         result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent));
                     }
                     else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
-                        result.set(classNameForAnonymousClass(typeMapper.getBindingContext(),
-                                                              (JetElement) element).getInternalName());
+                        Type asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), (JetElement) element);
+                        result.set(asmType.getInternalName());
                     }
                 }
 

@@ -29,6 +29,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -65,6 +66,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 
 public class ReplInterpreter {
 
@@ -181,7 +184,8 @@ public class ReplInterpreter {
     public LineResult eval(@NotNull String line) {
         ++lineNumber;
 
-        JvmClassName scriptClassName = JvmClassName.byInternalName("Line" + lineNumber);
+        FqName scriptFqName = new FqName("Line" + lineNumber);
+        Type scriptClassType = asmTypeByFqNameWithoutInnerClasses(scriptFqName);
 
         StringBuilder fullText = new StringBuilder();
         for (String prevLine : previousIncompleteLines) {
@@ -219,16 +223,16 @@ public class ReplInterpreter {
             return LineResult.error(errorCollector.getString());
         }
 
-        List<Pair<ScriptDescriptor, JvmClassName>> earierScripts = Lists.newArrayList();
+        List<Pair<ScriptDescriptor, Type>> earlierScripts = Lists.newArrayList();
 
         for (EarlierLine earlierLine : earlierLines) {
-            earierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassName()));
+            earlierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassType()));
         }
 
         BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), module).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false),
                                                               bindingContext, Collections.singletonList(psiFile));
-        generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassName, earierScripts,
+        generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassType, earlierScripts,
                                                          CompilationErrorHandler.THROW_EXCEPTION);
 
         for (String file : generationState.getFactory().files()) {
@@ -236,7 +240,7 @@ public class ReplInterpreter {
         }
 
         try {
-            Class<?> scriptClass = classLoader.loadClass(scriptClassName.getFqName().asString());
+            Class<?> scriptClass = classLoader.loadClass(scriptFqName.asString());
 
             Class<?>[] constructorParams = new Class<?>[earlierLines.size()];
             Object[] constructorArgs = new Object[earlierLines.size()];
@@ -257,7 +261,7 @@ public class ReplInterpreter {
             rvField.setAccessible(true);
             Object rv = rvField.get(scriptInstance);
 
-            earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassName));
+            earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassType));
 
             return LineResult.successful(rv, scriptDescriptor.getReturnType().equals(KotlinBuiltIns.getInstance().getUnitType()));
         } catch (Throwable e) {

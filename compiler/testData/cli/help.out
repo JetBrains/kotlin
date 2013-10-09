@@ -1,6 +1,6 @@
 Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -jar [String] jar file name
-  -src [String] source file or directory
+  -src [String] source file or directory (allows many paths separated by the system path separator)
   -classpath [String] classpath to use when compiling
   -annotations [String] paths to external annotations
   -includeRuntime [flag] include Kotlin runtime in to resulting jar

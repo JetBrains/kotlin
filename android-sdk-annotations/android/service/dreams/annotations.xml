@@ -1,35 +1,68 @@
 <root>
-    <item name='android.service.dreams.DreamService boolean dispatchKeyShortcutEvent(android.view.KeyEvent) 0'>
+    <item name='android.service.dreams.IDreamManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.dreams.DreamService boolean onMenuItemSelected(int, android.view.MenuItem) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.service.dreams.Sandman void startDreamWhenDockedIfAppropriate(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.service.dreams.DreamService void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.dreams.DreamService android.os.IBinder onBind(android.content.Intent)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.service.dreams.DreamService android.os.IBinder onBind(android.content.Intent) 0'>
+    <item name='android.service.dreams.IDreamService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.dreams.DreamService boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.dreams.DreamService SERVICE_INTERFACE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.service.dreams.DreamService boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.dreams.DreamService DREAM_META_DATA'>
+    <item name='android.service.dreams.IDreamManager void testDream(android.content.ComponentName) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.service.dreams.DreamService boolean dispatchTrackballEvent(android.view.MotionEvent) 0'>
+    <item name='android.service.dreams.IDreamManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.DreamService boolean dispatchGenericMotionEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.DreamService boolean dispatchKeyShortcutEvent(android.view.KeyEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.IDreamService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.IDreamManager void finishSelf(android.os.IBinder) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.IDreamManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.DreamService android.os.IBinder onBind(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.DreamService void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.IDreamService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.Sandman boolean shouldStartDockApp(android.content.Context, android.content.Intent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.DreamService android.os.IBinder onBind(android.content.Intent)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.Sandman boolean shouldStartDockApp(android.content.Context, android.content.Intent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.service.dreams.DreamService boolean dispatchTouchEvent(android.view.MotionEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.service.dreams.DreamService boolean dispatchTrackballEvent(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

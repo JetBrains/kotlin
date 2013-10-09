@@ -1,0 +1,104 @@
+<root>
+    <item name='dalvik.system.BlockGuard.BlockGuardPolicyException java.lang.String getMessage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexFile java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BaseDexClassLoader java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DalvikLogHandler void publish(java.util.logging.Logger, java.lang.String, java.util.logging.Level, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.SocketTagger void tag(java.net.Socket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.VMRuntime dalvik.system.VMRuntime getRuntime()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.CloseGuard dalvik.system.CloseGuard get()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DalvikLogHandler void publish(java.util.logging.Logger, java.lang.String, java.util.logging.Level, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.CloseGuard void setReporter(dalvik.system.CloseGuard.Reporter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.CloseGuard void open(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DalvikLogging java.lang.String loggerNameToTag(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexClassLoader DexClassLoader(java.lang.String, java.lang.String, java.lang.String, java.lang.ClassLoader) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BaseDexClassLoader java.lang.Class&lt;?&gt; findClass(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BlockGuard void setThreadPolicy(dalvik.system.BlockGuard.Policy) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BaseDexClassLoader java.util.Enumeration&lt;java.net.URL&gt; findResources(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexFile java.util.Enumeration&lt;java.lang.String&gt; entries()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.Zygote void appendQuotedShellArgs(java.lang.StringBuilder, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.VMDebug void dumpHprofData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BaseDexClassLoader java.lang.Class&lt;?&gt; findClass(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexFile java.lang.Class loadClass(java.lang.String, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexFile dalvik.system.DexFile loadDex(java.lang.String, java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.SocketTagger void set(dalvik.system.SocketTagger) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexFile DexFile(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexFile dalvik.system.DexFile loadDex(java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.PathClassLoader PathClassLoader(java.lang.String, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexClassLoader DexClassLoader(java.lang.String, java.lang.String, java.lang.String, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BaseDexClassLoader java.lang.String getLdLibraryPath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BaseDexClassLoader java.net.URL findResource(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.PathClassLoader PathClassLoader(java.lang.String, java.lang.String, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.BaseDexClassLoader BaseDexClassLoader(java.lang.String, java.io.File, java.lang.String, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.SocketTagger void untag(java.net.Socket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.CloseGuard.Reporter void report(java.lang.String, java.lang.Throwable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.DexFile DexFile(java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.system.VMDebug void startMethodTracing(java.lang.String, java.io.FileDescriptor, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

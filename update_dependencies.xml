@@ -5,6 +5,8 @@
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
+    <property name="continuous.idea.version" value="unknown"/>
+
     <target name="update" depends="fetch-third-party">
         <execute_update
             base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
@@ -14,14 +16,21 @@
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/Kotlin_IdeaCommunityDist_CloneIdea121InstallersBuild/${jb.buildserver.build.id}:id"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
+        />
+    </target>
+
+    <target name="jb_update_continuous_local" depends="fetch-third-party">
+        <execute_update
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/IDEA_Trunk_Installers/${continuous.idea.version}"
+            build.zip="ideaIC-${continuous.idea.version}.win.zip"
         />
     </target>
 
     <target name="jb_update_continuous" depends="fetch-third-party">
         <execute_update
-            base.url="file://${basedir}/idea_artifacts"
+            base.url="file:///${basedir}/idea_artifacts"
             build.zip="${idea.archive.name}"
         />
     </target>
@@ -111,6 +120,13 @@
         <!-- dx.jar -->
         <get-maven-library prefix="com/google/android/tools" lib="dx" version="1.7" target.jar.name.base="dx"/>
 
+        <!-- jflex 1.4 -->
+        <mkdir dir="dependencies/jflex"/>
+        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/jflex-1.4/lib/JFlex.jar"
+             dest="dependencies/jflex/JFlex.jar" usetimestamp="true" />
+        <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/idea-flex.skeleton"
+             dest="dependencies/jflex/idea-flex.skeleton" usetimestamp="true" />
+
         <!-- jline -->
         <get-maven-library prefix="jline" lib="jline" version="2.9" target.jar.name.base="jline"/>
 
@@ -119,17 +135,23 @@
         <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.9"/>
         -->
 
-        <!-- Guava 12 sources-->
-        <get-maven-library prefix="com/google/guava" lib="guava" version="12.0" bin="false"/>
+        <!-- Guava 14 sources-->
+        <get-maven-library prefix="com/google/guava" lib="guava" version="14.0.1" bin="false"/>
 
         <!-- ASM 4 -->
         <get-asm4-and-rename-packages/>
 
         <!-- Protocol Buffers -->
-        <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.4.1" bin="false"/>
+        <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0" bin="false"/>
 
         <!-- CLI Parser -->
         <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.1"/>
+
+        <!-- Bootstrap compiler -->
+        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+             dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
+        <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
+        <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
     </target>
 
     <macrodef name="get-asm4-and-rename-packages">
@@ -188,6 +210,7 @@
                     <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
+                    <!--<get src="@{base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
 
                     <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="${jps}"/>
                     <get src="@{base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/groovy-jps-plugin.jar" usetimestamp="true"/>
@@ -208,7 +231,8 @@
 
                     <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
-                    <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip"/>
+                    <delete file="dependencies/download/idea-sdk-sources.zip" failonerror="false"/>
+                    <get src="@{base.url}/sources.zip" dest="dependencies/download/idea-sdk-sources.zip" usetimestamp="true"/>
                 </then>
             </if>
 

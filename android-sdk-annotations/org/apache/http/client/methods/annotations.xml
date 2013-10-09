@@ -1,0 +1,68 @@
+<root>
+    <item name='org.apache.http.client.methods.HttpPut java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpOptions java.util.Set&lt;java.lang.String&gt; getAllowedMethods(org.apache.http.HttpResponse)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpDelete HttpDelete(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpRequestBase java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpOptions java.util.Set&lt;java.lang.String&gt; getAllowedMethods(org.apache.http.HttpResponse) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpGet HttpGet(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpTrace java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpHead HttpHead(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpGet java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpOptions java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpPost HttpPost(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpTrace HttpTrace(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpDelete java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpEntityEnclosingRequestBase java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpPut HttpPut(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpHead java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpRequestBase org.apache.http.RequestLine getRequestLine()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpPost java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpOptions HttpOptions(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpRequestBase org.apache.http.ProtocolVersion getProtocolVersion()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpUriRequest java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.methods.HttpRequestBase java.lang.String getMethod()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

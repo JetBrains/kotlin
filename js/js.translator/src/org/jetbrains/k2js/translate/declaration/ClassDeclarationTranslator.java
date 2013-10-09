@@ -33,7 +33,6 @@ import org.jetbrains.jet.utils.DFS;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -256,6 +255,6 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             }
         }
 
-        return InitializerUtils.createPropertyInitializer(descriptor, value, context());
+        return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), value);
     }
 }

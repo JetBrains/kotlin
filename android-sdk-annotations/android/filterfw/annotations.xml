@@ -1,0 +1,17 @@
+<root>
+    <item name='android.filterfw.GraphEnvironment int loadGraph(android.content.Context, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.GraphEnvironment void addReferences(java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.FilterFunctionEnvironment android.filterfw.core.FilterFunction createFunction(java.lang.Class, java.lang.Object...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.FilterFunctionEnvironment android.filterfw.core.FilterFunction createFunction(java.lang.Class, java.lang.Object...) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.FilterFunctionEnvironment android.filterfw.core.FilterFunction createFunction(java.lang.Class, java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

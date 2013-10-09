@@ -1,14 +1,59 @@
 <root>
-    <item name='android.view.textservice.SpellCheckerSession SERVICE_META_DATA'>
+    <item name='android.view.textservice.SpellCheckerSubtype java.lang.CharSequence getDisplayName(android.content.Context, java.lang.String, android.content.pm.ApplicationInfo)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.textservice.SuggestionsInfo SuggestionsInfo(android.os.Parcel) 0'>
+    <item name='android.view.textservice.SpellCheckerInfo SpellCheckerInfo(android.content.Context, android.content.pm.ResolveInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerSubtype void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.textservice.SpellCheckerSubtype java.lang.String getLocale()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.textservice.SpellCheckerSubtype void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.view.textservice.SpellCheckerSession SpellCheckerSession(android.view.textservice.SpellCheckerInfo, com.android.internal.textservice.ITextServicesManager, android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener, android.view.textservice.SpellCheckerSubtype) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerSession android.view.textservice.SpellCheckerInfo getSpellChecker()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerSession SpellCheckerSession(android.view.textservice.SpellCheckerInfo, com.android.internal.textservice.ITextServicesManager, android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener, android.view.textservice.SpellCheckerSubtype) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerInfo android.graphics.drawable.Drawable loadIcon(android.content.pm.PackageManager) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.TextInfo TextInfo(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.TextInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SentenceSuggestionsInfo SentenceSuggestionsInfo(android.view.textservice.SuggestionsInfo[], int[], int[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener void onGetSuggestions(android.view.textservice.SuggestionsInfo[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener void onGetSentenceSuggestions(android.view.textservice.SentenceSuggestionsInfo[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SentenceSuggestionsInfo SentenceSuggestionsInfo(android.view.textservice.SuggestionsInfo[], int[], int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerSession com.android.internal.textservice.ITextServicesSessionListener getTextServicesSessionListener()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SuggestionsInfo SuggestionsInfo(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerInfo SpellCheckerInfo(android.content.Context, android.content.pm.ResolveInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.view.textservice.SpellCheckerSession com.android.internal.textservice.ISpellCheckerSessionListener getSpellCheckerSessionListener()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.textservice.SpellCheckerInfo android.content.ComponentName getComponent()'>
@@ -20,22 +65,25 @@
     <item name='android.view.textservice.SentenceSuggestionsInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.view.textservice.SpellCheckerSession SpellCheckerSession(android.view.textservice.SpellCheckerInfo, com.android.internal.textservice.ITextServicesManager, android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener, android.view.textservice.SpellCheckerSubtype) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.view.textservice.SentenceSuggestionsInfo SentenceSuggestionsInfo(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.textservice.TextInfo TextInfo(android.os.Parcel) 0'>
+    <item name='android.view.textservice.TextServicesManager android.view.textservice.SpellCheckerSession newSpellCheckerSession(android.os.Bundle, java.util.Locale, android.view.textservice.SpellCheckerSession.SpellCheckerSessionListener, boolean) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.textservice.SuggestionsInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.textservice.TextInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.view.textservice.SpellCheckerInfo SpellCheckerInfo(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.view.textservice.SpellCheckerSubtype java.lang.CharSequence getDisplayName(android.content.Context, java.lang.String, android.content.pm.ApplicationInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.view.textservice.SpellCheckerInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.view.textservice.SentenceSuggestionsInfo SentenceSuggestionsInfo(android.view.textservice.SuggestionsInfo[], int[], int[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

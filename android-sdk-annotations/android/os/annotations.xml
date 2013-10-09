@@ -1,419 +1,188 @@
 <root>
-    <item name='android.os.Parcel void readBinderList(java.util.List&lt;android.os.IBinder&gt;) 0'>
+    <item name='android.os.BatteryStats.HistoryItem void setTo(long, byte, android.os.BatteryStats.HistoryItem) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel void readStringList(java.util.List&lt;java.lang.String&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.BatteryManager EXTRA_PLUGGED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Binder boolean transact(int, android.os.Parcel, android.os.Parcel, int) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.WorkSource boolean diff(android.os.WorkSource) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.TokenWatcher void dump(java.io.PrintWriter) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.CountDownTimer android.os.CountDownTimer start()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment MEDIA_BAD_REMOVAL'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Bundle Bundle(android.os.Bundle) 0'>
+    <item name='android.os.BatteryStats.Uid java.util.Map&lt;java.lang.String,? extends android.os.BatteryStats.Uid.Wakelock&gt; getWakelockStats()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.RecoverySystem void verifyPackage(java.io.File, android.os.RecoverySystem.ProgressListener, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.AsyncTask Result get(long, java.util.concurrent.TimeUnit) 1'>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectLeakedSqlLiteObjects()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.ParcelFileDescriptor void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.os.Environment java.io.File getDownloadCacheDirectory()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel void readTypedArray(T[], android.os.Parcelable.Creator&lt;T&gt;) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ResultReceiver void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment DIRECTORY_MOVIES'>
+    <item name='android.os.INetworkManagementService void setDnsForwarders(java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Messenger void writeMessengerOrNullToParcel(android.os.Messenger, android.os.Parcel) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitCustomSlowCalls()'>
+    <item name='android.os.AsyncResult android.os.AsyncResult forMessage(android.os.Message)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPermissionController.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Looper java.lang.Thread getThread()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Parcel void readTypedList(java.util.List&lt;T&gt;, android.os.Parcelable.Creator&lt;T&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.AsyncTask.Status RUNNING'>
+    <item name='android.os.IHardwareService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.PatternMatcher PatternMatcher(android.os.Parcel) 0'>
+    <item name='android.os.Parcel android.os.Parcel obtain(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.BatteryManager EXTRA_LEVEL'>
+    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor[] createPipe()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyLog()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDeath()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ParcelUuid void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Message)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Message) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Handler)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Handler, java.lang.Runnable)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, int, int, java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel java.util.ArrayList&lt;T&gt; createTypedArrayList(android.os.Parcelable.Creator&lt;T&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode android.os.StrictMode.ThreadPolicy allowThreadDiskReads()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.UserManager long getSerialNumberForUser(android.os.UserHandle) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment MEDIA_CHECKING'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectDiskWrites()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ParcelFileDescriptor.AutoCloseOutputStream AutoCloseOutputStream(android.os.ParcelFileDescriptor) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.MemoryFile void writeBytes(byte[], int, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readLongArray(long[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.RemoteCallbackList boolean register(E, java.lang.Object) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.RecoverySystem void installPackage(android.content.Context, java.io.File) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readTypedList(java.util.List&lt;T&gt;, android.os.Parcelable.Creator&lt;T&gt;) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy build()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder Builder(android.os.StrictMode.ThreadPolicy) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Bundle void putAll(android.os.Bundle) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.AsyncTask android.os.AsyncTask&lt;Params,Progress,Result&gt; execute(Params...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyFlashScreen()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readStringArray(java.lang.String[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.BatteryManager EXTRA_PRESENT'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readList(java.util.List, java.lang.ClassLoader) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Handler boolean sendMessageAtFrontOfQueue(android.os.Message) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message void copyFrom(android.os.Message) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor fromFd(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.RemoteCallbackList boolean unregister(E) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Handler boolean sendMessageAtTime(android.os.Message, long) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.MemoryFile java.io.InputStream getInputStream()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectAll()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor open(java.io.File, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectCustomSlowCalls()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readBooleanArray(boolean[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel T[] createTypedArray(android.os.Parcelable.Creator&lt;T&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Debug.MemoryInfo void readFromParcel(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment java.io.File getExternalStoragePublicDirectory(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.DropBoxManager EXTRA_TIME'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.AsyncTask android.os.AsyncTask&lt;Params,Progress,Result&gt; executeOnExecutor(java.util.concurrent.Executor, Params...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment MEDIA_UNMOUNTABLE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Handler boolean sendMessage(android.os.Message) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.BatteryManager EXTRA_TEMPERATURE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitDiskWrites()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.DropBoxManager EXTRA_TAG'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment MEDIA_UNMOUNTED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.WorkSource boolean add(android.os.WorkSource) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.AsyncTask android.os.AsyncTask.Status getStatus()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyDeath()'>
+    <item name='android.os.Parcel byte[] marshall()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectDiskReads()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Messenger void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.os.Binder void dumpAsync(java.io.FileDescriptor, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug void startMethodTracing(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPermissionController.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readTypedList(java.util.List&lt;T&gt;, android.os.Parcelable.Creator&lt;T&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Bundle void putAll(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IHardwareService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemVibrator SystemVibrator(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager.Entry Entry(java.lang.String, long, java.io.File, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppCacheDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppObbDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService void setInterfaceConfig(java.lang.String, android.net.InterfaceConfiguration) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug void startMethodTracing(java.lang.String, java.io.FileDescriptor, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor fromFd(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryItem void setTo(android.os.BatteryStats.HistoryItem) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDeath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPowerManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncTask android.os.AsyncTask&lt;Params,Progress,Result&gt; execute(Params...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel android.os.Parcel obtain()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.MemoryFile int readBytes(byte[], int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.WorkSource void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.AsyncTask.Status FINISHED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Message void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode void setVmPolicy(android.os.StrictMode.VmPolicy) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readIntArray(int[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Handler boolean sendMessageDelayed(android.os.Message, long) 0'>
+    <item name='android.os.Handler Handler(android.os.Looper, android.os.Handler.Callback) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.RecoverySystem void rebootWipeCache(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment DIRECTORY_ALARMS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Handler Handler(android.os.Looper, android.os.Handler.Callback) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectActivityLeaks()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ParcelUuid android.os.ParcelUuid fromString(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.BatteryManager EXTRA_TECHNOLOGY'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.BatteryManager EXTRA_VOLTAGE'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment MEDIA_MOUNTED_READ_ONLY'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode android.os.StrictMode.ThreadPolicy allowThreadDiskWrites()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Process android.os.UserHandle myUserHandle()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Messenger Messenger(android.os.Handler) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readTypedArray(T[], android.os.Parcelable.Creator&lt;T&gt;) 0'>
+    <item name='android.os.Environment java.io.File getLegacyExternalStorageDirectory()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.AsyncTask void execute(java.lang.Runnable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment java.io.File getDataDirectory()'>
+    <item name='android.os.SystemProperties int getInt(java.lang.String, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode android.os.StrictMode.ThreadPolicy getThreadPolicy()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Handler void dump(android.util.Printer, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode android.os.StrictMode.VmPolicy getVmPolicy()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment DIRECTORY_MUSIC'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder Builder(android.os.StrictMode.VmPolicy) 0'>
+    <item name='android.os.Handler android.os.Message obtainMessage(int, int, int, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.ParcelFileDescriptor.AutoCloseInputStream AutoCloseInputStream(android.os.ParcelFileDescriptor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment DIRECTORY_PICTURES'>
+    <item name='android.os.BatteryStats void dumpLocked(java.io.PrintWriter, java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppCacheDirectory(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.UserManager boolean isUserRunningOrStopping(android.os.UserHandle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitDiskReads()'>
+    <item name='android.os.AsyncTask.Status android.os.AsyncTask.Status valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment MEDIA_SHARED'>
+    <item name='android.os.FileUtils boolean isFilenameSafe(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.TokenWatcher void acquire(android.os.IBinder, java.lang.String) 0'>
+    <item name='android.os.IVibratorService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.WorkSource boolean remove(android.os.WorkSource) 0'>
+    <item name='android.os.DropBoxManager.Entry Entry(java.lang.String, long, android.os.ParcelFileDescriptor, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Looper android.os.MessageQueue myQueue()'>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel void readMap(java.util.Map, java.lang.ClassLoader) 0'>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppDataDirectory(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.RecoverySystem void rebootWipeUserData(android.content.Context) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Handler void dispatchMessage(android.os.Message) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder setClassInstanceLimit(java.lang.Class, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.BatteryManager EXTRA_HEALTH'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectLeakedRegistrationObjects()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor adoptFd(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment DIRECTORY_NOTIFICATIONS'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Debug.MemoryInfo java.lang.String getOtherLabel(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.BatteryManager EXTRA_ICON_SMALL'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment java.io.File getRootDirectory()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcel void readByteArray(byte[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDialog()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment MEDIA_MOUNTED'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDropBox()'>
+    <item name='android.os.INetworkManagementService void disableNat(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.UserHandle void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyDropBox()'>
+    <item name='android.os.Environment java.io.File getExternalStoragePublicDirectory(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.PatternMatcher void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.os.SystemProperties boolean getBoolean(java.lang.String, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.DropBoxManager ACTION_DROPBOX_ENTRY_ADDED'>
+    <item name='android.os.PerformanceCollector android.os.Bundle addIteration(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Messenger android.os.Messenger readMessengerOrNullFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.UserHandle void writeToParcel(android.os.UserHandle, android.os.Parcel) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.DropBoxManager.Entry void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.UserHandle UserHandle(android.os.Parcel) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectLeakedSqlLiteObjects()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor fromSocket(java.net.Socket) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Build UNKNOWN'>
+    <item name='android.os.StrictMode void onIntentReceiverLeaked(java.lang.Throwable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.BatteryManager EXTRA_SCALE'>
+    <item name='android.os.PerformanceCollector.PerformanceResultsWriter void writeEndSnapshot(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IVibratorService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Binder boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
@@ -422,46 +191,316 @@
     <item name='android.os.UserHandle android.os.UserHandle readFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.BatteryManager EXTRA_STATUS'>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.UserManager boolean isUserRunning(android.os.UserHandle) 0'>
+    <item name='android.os.DropBoxManager.Entry Entry(java.lang.String, long, java.io.File, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment MEDIA_REMOVED'>
+    <item name='android.os.Debug java.lang.String getCaller()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel byte[] createByteArray()'>
+    <item name='android.os.PowerManager.WakeLock java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDeathOnNetwork()'>
+    <item name='android.os.RegistrantList void notifyRegistrants(android.os.AsyncResult) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode void setThreadPolicy(android.os.StrictMode.ThreadPolicy) 0'>
+    <item name='android.os.StrictMode android.os.StrictMode.ThreadPolicy allowThreadDiskReads()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectAll()'>
+    <item name='android.os.StrictMode.VmPolicy java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment MEDIA_NOFS'>
+    <item name='android.os.Environment java.io.File getExternalStorageAppObbDirectory(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.AsyncTask.Status PENDING'>
+    <item name='android.os.SystemVibrator void vibrate(long[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.RecoverySystem void installPackage(android.content.Context, java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyLog()'>
+    <item name='android.os.ParcelUuid java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment DIRECTORY_PODCASTS'>
+    <item name='android.os.IPowerManager void updateWakeLockWorkSource(android.os.IBinder, android.os.WorkSource) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Handler Handler(android.os.Looper) 0'>
+    <item name='android.os.INetworkManagementService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Binder android.os.UserHandle getCallingUserHandle()'>
+    <item name='android.os.AsyncResult android.os.AsyncResult forMessage(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor fromDatagramSocket(java.net.DatagramSocket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.RemoteCallbackList boolean register(E) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IServiceManager java.lang.String[] listServices()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.Uid java.util.Map&lt;java.lang.Integer,? extends android.os.BatteryStats.Uid.Sensor&gt; getSensorStats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Binder boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Bundle java.util.Set&lt;java.lang.String&gt; keySet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug java.lang.String getCallers(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ViolationInfo void dump(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncResult android.os.AsyncResult forMessage(android.os.Message, java.lang.Object, java.lang.Throwable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppObbDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readCharArray(char[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode android.os.StrictMode.ThreadPolicy getThreadPolicy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ISchedulingPolicyService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelUuid android.os.ParcelUuid fromString(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemProperties java.lang.String get(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.FileObserver void onEvent(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug.MemoryInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor adoptFd(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ViolationInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.MessageQueue void addIdleHandler(android.os.MessageQueue.IdleHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Looper android.os.MessageQueue myQueue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IUserManager.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.PowerManager android.os.PowerManager.WakeLock newWakeLock(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode android.os.StrictMode.Span enterCriticalSpan(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppMediaDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncTask Result get(long, java.util.concurrent.TimeUnit) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitDiskReads()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ISchedulingPolicyService.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IMessenger.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.PatternMatcher PatternMatcher(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.RemoteCallback void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyDeath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.CountDownTimer android.os.CountDownTimer start()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStoragePublicDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel java.util.ArrayList&lt;T&gt; createTypedArrayList(android.os.Parcelable.Creator&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource WorkSource(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserManager long getSerialNumberForUser(android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.Uid.Pkg java.util.Map&lt;java.lang.String,? extends android.os.BatteryStats.Uid.Pkg.Serv&gt; getServiceStats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode java.lang.Object trackActivity(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor.AutoCloseOutputStream AutoCloseOutputStream(android.os.ParcelFileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Process android.os.Process.ProcessStartResult start(java.lang.String, java.lang.String, int, int, int[], int, int, int, java.lang.String, java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Vibrator void vibrate(long[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService void setDnsServersForInterface(java.lang.String, java.lang.String[], java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.RecoverySystem void installPackage(android.content.Context, java.io.File) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.CancellationSignal android.os.ICancellationSignal createTransport()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readList(java.util.List, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.Uid java.util.Map&lt;java.lang.String,? extends android.os.BatteryStats.Uid.Pkg&gt; getPackageStats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.RemoteCallback void onResult(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy build()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.RemoteCallbackList boolean unregister(E) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncTask android.os.AsyncTask.Status getStatus()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IServiceManager void setPermissionController(android.os.IPermissionController) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel byte[] createByteArray()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel T[] createTypedArray(android.os.Parcelable.Creator&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Bundle android.os.Bundle forPair(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppCacheDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IMessenger void send(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemService.State android.os.SystemService.State valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcelable.ClassLoaderCreator T createFromParcel(android.os.Parcel, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Messenger void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler boolean sendMessageDelayed(android.os.Message, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readIntArray(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ViolationInfo ViolationInfo(java.lang.Throwable, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager.Entry Entry(java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDropBox()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppMediaDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Bundle java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryItem void writeDelta(android.os.Parcel, android.os.BatteryStats.HistoryItem) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppCacheDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler void dispatchMessage(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IUserManager void setUserRestrictions(android.os.Bundle, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectAll()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.PatternMatcher void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectFileUriExposure()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserHandle void writeToParcel(android.os.UserHandle, android.os.Parcel) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserHandle void formatUid(java.lang.StringBuilder, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.MemoryFile java.io.InputStream getInputStream()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IUpdateLock.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode android.os.StrictMode.VmPolicy getVmPolicy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IRemoteCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Looper android.os.MessageQueue getQueue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource android.os.WorkSource stripNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.Counter void logState(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDialog()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode void setThreadPolicy(android.os.StrictMode.ThreadPolicy) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.MemoryFile java.io.OutputStream getOutputStream()'>
@@ -470,73 +509,694 @@
     <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectNetwork()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Bundle java.util.Set&lt;java.lang.String&gt; keySet()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Environment DIRECTORY_DCIM'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor fromDatagramSocket(java.net.DatagramSocket) 0'>
+    <item name='android.os.INetworkManagementService void enableNat(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Handler void handleMessage(android.os.Message) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel void readFloatArray(float[]) 0'>
+    <item name='android.os.FileUtils java.lang.String readTextFile(java.io.File, int, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor[] createPipe()'>
+    <item name='android.os.WorkSource android.os.WorkSource[] setReturningDiffs(android.os.WorkSource) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel void readDoubleArray(double[]) 0'>
+    <item name='android.os.IMessenger.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.RemoteCallbackList boolean register(E) 0'>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppFilesDirectory(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment DIRECTORY_DOWNLOADS'>
+    <item name='android.os.Binder void dump(java.io.FileDescriptor, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppFilesDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats android.util.SparseArray&lt;? extends android.os.BatteryStats.Uid&gt; getUidStats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ServiceManagerNative boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode void onSqliteObjectLeaked(java.lang.String, java.lang.Throwable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryItem HistoryItem(long, android.os.Parcel) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ViolationInfo ViolationInfo(android.os.Parcel, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.PatternMatcher java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService void registerObserver(android.net.INetworkManagementEventObserver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IMessenger.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.NullVibrator android.os.NullVibrator getInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppDataDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Looper java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStoragePublicDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectLeakedRegistrationObjects()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Process android.os.UserHandle myUserHandle()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder setClassInstanceLimit(java.lang.Class, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserHandle java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ServiceManagerNative boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppFilesDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcelable void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.FileUtils java.lang.String readTextFile(java.io.File, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppFilesDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readBinderList(java.util.List&lt;android.os.IBinder&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IUpdateLock.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource boolean diff(android.os.WorkSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Bundle Bundle(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ResultReceiver void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryItem void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncResult android.os.AsyncResult forMessage(android.os.Message, java.lang.Object, java.lang.Throwable)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPermissionController boolean checkPermission(java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, java.lang.Runnable)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getEmulatedStorageObbSource()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.HandlerThread HandlerThread(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IUpdateLock.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppDataDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncTask android.os.AsyncTask&lt;Params,Progress,Result&gt; executeOnExecutor(java.util.concurrent.Executor, Params...)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor ParcelFileDescriptor(java.io.FileDescriptor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.MemoryFile void writeBytes(byte[], int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readLongArray(long[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SELinux boolean restorecon(java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode java.lang.Object trackActivity(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitAll()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Bundle EMPTY'>
+    <item name='android.os.Parcel void readStringArray(java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Binder boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+    <item name='android.os.Message android.os.Message obtain()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitNetwork()'>
+    <item name='android.os.Handler boolean sendMessageAtFrontOfQueue(android.os.Message) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Bundle void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.os.Environment java.io.File getEmulatedStorageSource(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.AsyncTask android.os.AsyncTask&lt;Params,Progress,Result&gt; executeOnExecutor(java.util.concurrent.Executor, Params...) 0'>
+    <item name='android.os.Debug.MemoryInfo java.lang.String getOtherLabel(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Handler java.lang.String getMessageName(android.os.Message) 0'>
+    <item name='android.os.INetworkManagementService void addSecondaryRoute(java.lang.String, android.net.RouteInfo) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel byte[] marshall()'>
+    <item name='android.os.Handler boolean sendMessageAtTime(android.os.Message, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppDataDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource android.os.WorkSource addReturningNewbs(android.os.WorkSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode void onVmPolicyViolation(java.lang.String, java.lang.Throwable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug.MemoryInfo void readFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler boolean sendMessage(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource boolean add(android.os.WorkSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getSystemSecureDirectory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager void addFile(java.lang.String, java.io.File, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemService.State android.os.SystemService.State valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectDiskWrites()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPowerManager void acquireWakeLock(android.os.IBinder, int, java.lang.String, android.os.WorkSource) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStorageAppObbDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode void setVmPolicy(android.os.StrictMode.VmPolicy) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.PowerManager android.os.PowerManager.WakeLock newWakeLock(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemService void waitForState(java.lang.String, android.os.SystemService.State, long) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectLeakedClosableObjects()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Bundle java.lang.Object clone()'>
+    <item name='android.os.Handler void dump(android.util.Printer, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment DIRECTORY_RINGTONES'>
+    <item name='android.os.INetworkManagementService android.net.NetworkStats getNetworkStatsTethering(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyLog()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UEventObserver void startObserving(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserManager android.os.Bundle getApplicationRestrictions(java.lang.String, android.os.UserHandle) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.TokenWatcher void acquire(android.os.IBinder, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Binder void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IBinder void dumpAsync(java.io.FileDescriptor, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readMap(java.util.Map, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getSecureDataDirectory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UEventObserver.UEvent UEvent(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readByteArray(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryPrinter void printNextItem(java.io.PrintWriter, android.os.BatteryStats.HistoryItem, long) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler android.os.Message obtainMessage(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IVibratorService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelUuid android.os.ParcelUuid fromString(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SELinux boolean restorecon(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPowerManager void acquireWakeLock(android.os.IBinder, int, java.lang.String, android.os.WorkSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService void removeSecondaryRoute(java.lang.String, android.net.RouteInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager.Entry void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserHandle UserHandle(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Binder boolean isProxy(android.os.IInterface) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPowerManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Binder void dump(java.io.FileDescriptor, java.io.PrintWriter, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Registrant void notifyRegistrant(android.os.AsyncResult) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ServiceManagerNative android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemProperties long getLong(java.lang.String, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode void onServiceConnectionLeaked(java.lang.Throwable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager.Entry java.lang.String getTag()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncTask Result doInBackground(Params...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Message)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyDeathOnNetwork()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler Handler(android.os.Looper) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel T readCreator(android.os.Parcelable.Creator&lt;T&gt;, java.lang.ClassLoader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug void dumpHprofData(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemProperties java.lang.String get(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IBinder boolean transact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppMediaDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ICancellationSignal.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPowerManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readFloatArray(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readDoubleArray(double[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode android.os.StrictMode.ThreadPolicy allowThreadDiskWrites()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment.UserEnvironment java.io.File getExternalStoragePublicDirectory(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UEventObserver void onUEvent(android.os.UEventObserver.UEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitDiskWrites()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.IBinder boolean transact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel void readCharArray(char[]) 0'>
+    <item name='android.os.Parcelable.Creator T createFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Environment java.io.File getDownloadCacheDirectory()'>
+    <item name='android.os.ICancellationSignal.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder setClassInstanceLimit(java.lang.Class, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.FileUtils long checksumCrc32(java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void appendFrom(android.os.Parcel, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitNetwork()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryPrinter void printNextItem(java.io.PrintWriter, android.os.BatteryStats.HistoryItem, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.FileUtils void stringToFile(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel T[] readTypedArray(android.os.Parcelable.Creator&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyFlashScreen()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readStringList(java.util.List&lt;java.lang.String&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats void dumpCheckinLocked(java.io.PrintWriter, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Binder boolean transact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.Uid android.util.SparseArray&lt;? extends android.os.BatteryStats.Uid.Pid&gt; getPidStats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.TokenWatcher void dump(java.io.PrintWriter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler boolean runWithScissors(java.lang.Runnable, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler Handler(android.os.Looper, android.os.Handler.Callback, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemService android.os.SystemService.State getState(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readTypedArray(T[], android.os.Parcelable.Creator&lt;T&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler android.os.Message obtainMessage(int, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitCustomSlowCalls()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Binder boolean transact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelUuid void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug java.lang.String getCallers(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats void dumpCheckinLocked(java.io.PrintWriter, java.lang.String[], java.util.List&lt;android.content.pm.ApplicationInfo&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats java.util.Map&lt;java.lang.String,? extends android.os.BatteryStats.Timer&gt; getKernelWakelockStats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.RemoteCallbackList boolean register(E, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ICancellationSignal.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder Builder(android.os.StrictMode.ThreadPolicy) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler android.os.Message obtainMessage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager.Entry Entry(java.lang.String, long, byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message void copyFrom(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getUserSystemDirectory(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ParcelFileDescriptor android.os.ParcelFileDescriptor open(java.io.File, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats void dumpCheckinLocked(java.io.PrintWriter, java.lang.String[], java.util.List&lt;android.content.pm.ApplicationInfo&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readBooleanArray(boolean[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.HandlerThread HandlerThread(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Bundle java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager.Entry Entry(java.lang.String, long, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.PowerManager void validateWakeLockParameters(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryItem void readDelta(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode void onWebViewMethodCalledOnWrongThread(java.lang.Throwable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ISchedulingPolicyService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserManager void setApplicationRestrictions(java.lang.String, android.os.Bundle, android.os.UserHandle) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Binder android.os.UserHandle getCallingUserHandle()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void writeException(java.lang.Exception) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Messenger Messenger(android.os.Handler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder penaltyDropBox()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void readTypedArray(T[], android.os.Parcelable.Creator&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.Uid java.util.Map&lt;java.lang.String,? extends android.os.BatteryStats.Uid.Proc&gt; getProcessStats()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getRootDirectory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.HistoryItem boolean same(android.os.BatteryStats.HistoryItem) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats void dumpLocked(java.io.PrintWriter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder Builder(android.os.StrictMode.VmPolicy) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ViolationInfo ViolationInfo(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager void addData(java.lang.String, byte[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource boolean remove(android.os.WorkSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IRemoteCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcelable.Creator T[] newArray(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler java.lang.String getMessageName(android.os.Message)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.RecoverySystem void rebootWipeUserData(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IUserManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPermissionController.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService void removeRoute(java.lang.String, android.net.RouteInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager.Entry Entry(java.lang.String, long, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.NullVibrator void vibrate(int, java.lang.String, long[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService void startTethering(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService void addRoute(java.lang.String, android.net.RouteInfo) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getDataDirectory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.NullVibrator void vibrate(long[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemService void waitForAnyStopped(java.lang.String...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler android.os.Message obtainMessage(int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.DropBoxManager void addFile(java.lang.String, java.io.File, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IHardwareService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcel void writeParcelableCreator(android.os.Parcelable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserHandle void formatUid(java.io.PrintWriter, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.FileUtils void deleteOlderFiles(java.io.File, int, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectAll()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler.Callback boolean handleMessage(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.PerformanceCollector.PerformanceResultsWriter void writeStopTiming(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.UserManager boolean isUserRunning(android.os.UserHandle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder detectCustomSlowCalls()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.WorkSource void set(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Vibrator void vibrate(int, java.lang.String, long[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.ServiceManager void initServiceCache(java.util.Map&lt;java.lang.String,android.os.IBinder&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemProperties void set(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug void startMethodTracing(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Message android.os.Message obtain(android.os.Handler, int, int, int, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IBinder void dump(java.io.FileDescriptor, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.BatteryStats.Timer void logState(android.util.Printer, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IPowerManager void releaseWakeLock(android.os.IBinder, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Environment java.io.File getExternalStorageAppMediaDirectory(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncTask android.os.AsyncTask&lt;Params,Progress,Result&gt; executeOnExecutor(java.util.concurrent.Executor, Params...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Bundle void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Debug void startMethodTracing(java.lang.String, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Handler java.lang.String getMessageName(android.os.Message) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.Parcelable.ClassLoaderCreator T createFromParcel(android.os.Parcel, java.lang.ClassLoader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder penaltyLog()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy build()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.SystemVibrator void vibrate(int, java.lang.String, long[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.StrictMode.VmPolicy.Builder android.os.StrictMode.VmPolicy.Builder detectActivityLeaks()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.INetworkManagementService.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.AsyncTask.Status android.os.AsyncTask.Status valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IRemoteCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.os.IUserManager.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.os.Parcel void readBinderArray(android.os.IBinder[]) 0'>
@@ -545,22 +1205,7 @@
     <item name='android.os.Bundle void readFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.os.Parcel void appendFrom(android.os.Parcel, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Debug.MemoryInfo void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy build()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Looper java.lang.Thread getThread()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.PowerManager android.os.PowerManager.WakeLock newWakeLock(int, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.os.Parcelable void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.os.INetworkManagementService void unregisterObserver(android.net.INetworkManagementEventObserver) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

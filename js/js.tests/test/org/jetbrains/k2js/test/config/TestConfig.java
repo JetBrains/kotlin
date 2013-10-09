@@ -28,13 +28,23 @@ import java.util.List;
 public class TestConfig extends Config {
 
     @NotNull
-    public static TestConfigFactory FACTORY = new TestConfigFactory() {
+    public static TestConfigFactory FACTORY_WITHOUT_SOURCEMAP = new TestConfigFactory() {
         @Override
         public TestConfig create(@NotNull Project project,
                 @NotNull EcmaVersion version,
                 @NotNull List<JetFile> files,
                 @NotNull BindingContext context) {
-            return new TestConfig(project, version, files, context);
+            return new TestConfig(project, version, files, context, false);
+        }
+    };
+
+    public static TestConfigFactory FACTORY_WITH_SOURCEMAP = new TestConfigFactory() {
+        @Override
+        public TestConfig create(@NotNull Project project,
+                @NotNull EcmaVersion version,
+                @NotNull List<JetFile> files,
+                @NotNull BindingContext context) {
+            return new TestConfig(project, version, files, context, true);
         }
     };
 
@@ -44,8 +54,8 @@ public class TestConfig extends Config {
     private final BindingContext libraryContext;
 
     public TestConfig(@NotNull Project project, @NotNull EcmaVersion version,
-            @NotNull List<JetFile> files, @NotNull BindingContext context) {
-        super(project, REWRITABLE_MODULE_NAME, version);
+            @NotNull List<JetFile> files, @NotNull BindingContext context, boolean sourcemap) {
+        super(project, REWRITABLE_MODULE_NAME, version, sourcemap);
         jsLibFiles = files;
         libraryContext = context;
     }

@@ -229,7 +229,19 @@ var Kotlin = {};
 
         obj.$metadata$ = computeMetadata(bases, properties);
         obj.$metadata$.type = Kotlin.TYPE.TRAIT;
+
+        obj.prototype = {};
+        Object.defineProperties(obj.prototype, obj.$metadata$.properties);
+        copyProperties(obj.prototype, obj.$metadata$.functions);
         return obj;
+    };
+
+    Kotlin.callGetter = function(thisObject, klass, propertyName) {
+        return klass.$metadata$.properties[propertyName].get.call(thisObject);
+    };
+
+    Kotlin.callSetter = function(thisObject, klass, propertyName, value) {
+        klass.$metadata$.properties[propertyName].set.call(thisObject, value);
     };
 
     function isInheritanceFromTrait (objConstructor, trait) {

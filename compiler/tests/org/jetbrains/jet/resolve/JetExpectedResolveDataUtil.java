@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -43,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.resolveFakeCall;
 
 public class JetExpectedResolveDataUtil {
@@ -114,9 +117,10 @@ public class JetExpectedResolveDataUtil {
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, new BindingTraceContext());
-        PsiClass psiClass = injector.getPsiClassFinder().findPsiClass(new FqName(qualifiedName));
-        Assert.assertNotNull("Class wasn't found: " + qualifiedName, psiClass);
-        return psiClass;
+        JavaClass javaClass = injector.getJavaClassFinder().findClass(new FqName(qualifiedName));
+        Assert.assertNotNull("Class wasn't found: " + qualifiedName, javaClass);
+        assertInstanceOf(javaClass, JavaClassImpl.class);
+        return ((JavaClassImpl) javaClass).getPsi();
     }
 
     @NotNull

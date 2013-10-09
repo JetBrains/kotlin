@@ -143,10 +143,9 @@ public final class AnalyzerWithCompilerReport {
         Collection<VirtualFileKotlinClass> errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.ABI_VERSION_ERRORS);
         for (VirtualFileKotlinClass kotlinClass : errorClasses) {
             Integer abiVersion = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, kotlinClass);
-            String fqName = kotlinClass.getClassName().getFqName().asString();
             String path = toSystemDependentName(kotlinClass.getFile().getPath());
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           "Class '" + fqName +
+                                           "Class '" + kotlinClass.getClassName() +
                                            "' was compiled with an incompatible version of Kotlin. " +
                                            "Its ABI version is " + abiVersion + ", expected ABI version is " + JvmAbi.VERSION,
                                            CompilerMessageLocation.create(path, 0, 0));

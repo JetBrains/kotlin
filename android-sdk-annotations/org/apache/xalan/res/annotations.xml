@@ -1,0 +1,8 @@
+<root>
+    <item name='org.apache.xalan.res.XSLTErrorResources org.apache.xalan.res.XSLTErrorResources loadResourceBundle(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.res.XSLTErrorResources java.lang.Object[][] getContents()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

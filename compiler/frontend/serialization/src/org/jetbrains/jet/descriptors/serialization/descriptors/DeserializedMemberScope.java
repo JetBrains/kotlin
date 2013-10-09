@@ -16,24 +16,22 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
-import com.intellij.openapi.util.Computable;
-import com.intellij.util.Function;
+import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;
 import org.jetbrains.jet.descriptors.serialization.Flags;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.*;
-
-import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.STRONG;
 
 public abstract class DeserializedMemberScope implements JetScope {
 
@@ -73,27 +71,27 @@ public abstract class DeserializedMemberScope implements JetScope {
         this.deserializer = deserializer;
 
         this.membersProtos = groupByName(membersList);
-        this.functions = storageManager.createMemoizedFunction(new Function<Name, Collection<FunctionDescriptor>>() {
+        this.functions = storageManager.createMemoizedFunction(new Function1<Name, Collection<FunctionDescriptor>>() {
             @Override
-            public Collection<FunctionDescriptor> fun(Name name) {
+            public Collection<FunctionDescriptor> invoke(Name name) {
                 return computeFunctions(name);
             }
-        }, STRONG);
-        this.properties = storageManager.createMemoizedFunction(new Function<Name, Collection<VariableDescriptor>>() {
+        });
+        this.properties = storageManager.createMemoizedFunction(new Function1<Name, Collection<VariableDescriptor>>() {
             @Override
-            public Collection<VariableDescriptor> fun(Name name) {
+            public Collection<VariableDescriptor> invoke(Name name) {
                 return computeProperties(name);
             }
-        }, STRONG);
-        this.allDescriptors = storageManager.createLazyValue(new Computable<Collection<DeclarationDescriptor>>() {
+        });
+        this.allDescriptors = storageManager.createLazyValue(new Function0<Collection<DeclarationDescriptor>>() {
             @Override
-            public Collection<DeclarationDescriptor> compute() {
+            public Collection<DeclarationDescriptor> invoke() {
                 return computeAllDescriptors();
             }
         });
-        this.objectDescriptors = storageManager.createLazyValue(new Computable<Collection<ClassDescriptor>>() {
+        this.objectDescriptors = storageManager.createLazyValue(new Function0<Collection<ClassDescriptor>>() {
             @Override
-            public Collection<ClassDescriptor> compute() {
+            public Collection<ClassDescriptor> invoke() {
                 return computeAllObjectDescriptors();
             }
         });
@@ -143,7 +141,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public final Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        return functions.fun(name);
+        return functions.invoke(name);
     }
 
     @NotNull
@@ -160,7 +158,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
-        return properties.fun(name);
+        return properties.invoke(name);
     }
 
     @Nullable
@@ -184,7 +182,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        return objectDescriptors.compute();
+        return objectDescriptors.invoke();
     }
 
     @Nullable
@@ -231,7 +229,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public final Collection<DeclarationDescriptor> getAllDescriptors() {
-        return allDescriptors.compute();
+        return allDescriptors.invoke();
     }
 
     @NotNull

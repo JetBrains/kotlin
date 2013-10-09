@@ -33,4 +33,9 @@ public enum JetTypeMapperMode {
      * jet.Int is mapped to Ljava/lang/Integer;
      */
     TYPE_PARAMETER,
+    /**
+     * jet.Int is mapped to Ljava/lang/Integer;
+     * No projections allowed in immediate arguments
+     */
+    SUPER_TYPE
 }

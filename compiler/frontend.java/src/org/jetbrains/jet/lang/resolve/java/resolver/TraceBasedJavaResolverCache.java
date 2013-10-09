@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiLiteralExpression;
@@ -37,12 +39,18 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 import javax.inject.Inject;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public class TraceBasedJavaResolverCache implements JavaResolverCache {
+    private static final Logger LOG = Logger.getInstance(TraceBasedJavaResolverCache.class);
+    private static final FqName ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION = fqNameByClass(AssertInvisibleInResolver.class);
+
     private BindingTrace trace;
 
     @Inject
@@ -77,6 +85,17 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     @Nullable
     @Override
     public ClassDescriptor getClass(@NotNull JavaClass javaClass) {
+        FqName fqName = javaClass.getFqName();
+        if (fqName != null && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName.parent())) {
+            if (javaClass.findAnnotation(ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION) != null) {
+                if (ApplicationManager.getApplication().isInternal()) {
+                    LOG.error("Classpath is configured incorrectly:" +
+                              " class " + fqName + " from runtime must not be loaded by compiler");
+                }
+                return null;
+            }
+        }
+
         return trace.get(CLASS, ((JavaClassImpl) javaClass).getPsi());
     }
 

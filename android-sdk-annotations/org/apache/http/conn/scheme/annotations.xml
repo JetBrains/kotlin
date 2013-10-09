@@ -1,0 +1,74 @@
+<root>
+    <item name='org.apache.http.conn.scheme.SocketFactory boolean isSecure(java.net.Socket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SocketFactory java.net.Socket createSocket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.Scheme org.apache.http.conn.scheme.SocketFactory getSocketFactory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.PlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry java.util.List&lt;java.lang.String&gt; getSchemeNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.PlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.PlainSocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.PlainSocketFactory boolean isSecure(java.net.Socket) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry org.apache.http.conn.scheme.Scheme get(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry org.apache.http.conn.scheme.Scheme unregister(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry org.apache.http.conn.scheme.Scheme register(org.apache.http.conn.scheme.Scheme) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry org.apache.http.conn.scheme.Scheme getScheme(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.LayeredSocketFactory java.net.Socket createSocket(java.net.Socket, java.lang.String, int, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.PlainSocketFactory org.apache.http.conn.scheme.PlainSocketFactory getSocketFactory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.Scheme java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry org.apache.http.conn.scheme.Scheme getScheme(org.apache.http.HttpHost)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry org.apache.http.conn.scheme.Scheme getScheme(org.apache.http.HttpHost) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.PlainSocketFactory java.net.Socket createSocket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.Scheme Scheme(java.lang.String, org.apache.http.conn.scheme.SocketFactory, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SchemeRegistry org.apache.http.conn.scheme.Scheme getScheme(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.Scheme Scheme(java.lang.String, org.apache.http.conn.scheme.SocketFactory, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.conn.scheme.SocketFactory java.net.Socket connectSocket(java.net.Socket, java.lang.String, int, java.net.InetAddress, int, org.apache.http.params.HttpParams) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

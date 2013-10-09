@@ -1,0 +1,62 @@
+<root>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createByteFormat(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createInt16Format(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ObjectFormat android.filterfw.core.MutableFrameFormat fromClass(java.lang.Class, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ObjectFormat android.filterfw.core.MutableFrameFormat fromObject(java.lang.Object, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createInt32Format(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createDoubleFormat(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createInt32Format(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createFloatFormat(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createDoubleFormat(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ImageFormat android.filterfw.core.MutableFrameFormat create(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createByteFormat(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createInt16Format(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ImageFormat android.filterfw.core.MutableFrameFormat create(int, int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ObjectFormat android.filterfw.core.MutableFrameFormat fromClass(java.lang.Class, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ObjectFormat android.filterfw.core.MutableFrameFormat fromObject(java.lang.Object, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ImageFormat android.filterfw.core.MutableFrameFormat create(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ImageFormat android.filterfw.core.MutableFrameFormat create(int, int, int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ObjectFormat android.filterfw.core.MutableFrameFormat fromClass(java.lang.Class, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.ObjectFormat android.filterfw.core.MutableFrameFormat fromClass(java.lang.Class, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.filterfw.format.PrimitiveFormat android.filterfw.core.MutableFrameFormat createFloatFormat(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

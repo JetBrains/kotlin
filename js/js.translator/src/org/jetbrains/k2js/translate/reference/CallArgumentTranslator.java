@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDefaultArgument;
-
 public class CallArgumentTranslator extends AbstractTranslator {
 
     @NotNull
@@ -76,7 +74,6 @@ public class CallArgumentTranslator extends AbstractTranslator {
 
     public static void translateSingleArgument(
             @NotNull ResolvedValueArgument actualArgument,
-            @NotNull ValueParameterDescriptor parameterDescriptor,
             @NotNull List<JsExpression> result,
             @NotNull TranslationContext context,
             boolean shouldWrapVarargInArray
@@ -86,8 +83,7 @@ public class CallArgumentTranslator extends AbstractTranslator {
             translateVarargArgument(valueArguments, result, context, shouldWrapVarargInArray);
         }
         else if (actualArgument instanceof DefaultValueArgument) {
-            JetExpression defaultArgument = getDefaultArgument(context.bindingContext(), parameterDescriptor);
-            result.add(Translation.translateAsExpression(defaultArgument, context));
+            result.add(context.namer().getUndefinedExpression());
         }
         else {
             assert actualArgument instanceof ExpressionValueArgument;
@@ -143,6 +139,15 @@ public class CallArgumentTranslator extends AbstractTranslator {
         this.isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor());
     }
 
+    private void removeLastUndefinedArguments(@NotNull List<JsExpression> result) {
+        int i;
+        for (i = result.size() - 1; i >= 0; i--) {
+            if (result.get(i) != context().namer().getUndefinedExpression()) {
+                break;
+            }
+        }
+        result.subList(i + 1, result.size()).clear();
+    }
 
     private ArgumentsInfo translate() {
         List<ValueParameterDescriptor> valueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
@@ -170,7 +175,7 @@ public class CallArgumentTranslator extends AbstractTranslator {
                 }
             }
 
-            translateSingleArgument(actualArgument, parameterDescriptor, result, context(), !isNativeFunctionCall && !hasSpreadOperator);
+            translateSingleArgument(actualArgument, result, context(), !isNativeFunctionCall && !hasSpreadOperator);
         }
 
         if (isNativeFunctionCall && hasSpreadOperator) {
@@ -187,6 +192,8 @@ public class CallArgumentTranslator extends AbstractTranslator {
                 result.add(0, JsLiteral.NULL);
             }
         }
+
+        removeLastUndefinedArguments(result);
         return new ArgumentsInfo(result, hasSpreadOperator, cachedReceiver);
     }
 

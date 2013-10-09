@@ -120,7 +120,7 @@ public final class TranslationUtils {
         return result;
     }
 
-    private static List<JetFile> createJetFileList(@NotNull Project project, @NotNull List<String> list, @Nullable String root) {
+    public static List<JetFile> createJetFileList(@NotNull Project project, @NotNull List<String> list, @Nullable String root) {
         List<JetFile> libFiles = Lists.newArrayList();
         for (String libFileName : list) {
             try {

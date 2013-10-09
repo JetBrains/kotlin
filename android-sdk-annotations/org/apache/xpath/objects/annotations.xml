@@ -1,0 +1,383 @@
+<root>
+    <item name='org.apache.xpath.objects.XStringForFSB int compareToIgnoreCase(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XMLStringFactoryImpl org.apache.xml.utils.XMLString newstr(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNull java.lang.String str()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int compareToIgnoreCase(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet org.apache.xml.dtm.DTMIterator iterRaw()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject void dispatchCharactersEvents(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString substring(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet void appendToFsb(org.apache.xml.utils.FastStringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject boolean lessThanOrEqual(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSetForDOM XNodeSetForDOM(org.w3c.dom.Node, org.apache.xml.dtm.DTMManager) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet boolean compare(org.apache.xpath.objects.XObject, org.apache.xpath.objects.Comparator) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject org.apache.xpath.objects.XObject create(java.lang.Object, org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject void appendToFsb(org.apache.xml.utils.FastStringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSetForDOM XNodeSetForDOM(org.w3c.dom.traversal.NodeIterator, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.DTMXRTreeFrag DTMXRTreeFrag(int, org.apache.xpath.XPathContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet XNodeSet(org.apache.xpath.objects.XNodeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFrag java.lang.String str()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB org.apache.xml.utils.XMLString substring(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean startsWith(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject java.lang.String getTypeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean equalsIgnoreCase(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject org.apache.xpath.objects.XObject getFresh()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString toLowerCase(java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet boolean lessThan(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet org.w3c.dom.NodeList nodelist()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XMLStringFactoryImpl org.apache.xml.utils.XMLString newstr(char[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XBoolean java.lang.String str()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet boolean notEquals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString concat(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XBoolean boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFrag void appendToFsb(org.apache.xml.utils.FastStringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int compareTo(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObjectFactory org.apache.xpath.objects.XObject create(java.lang.Object, org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString toLowerCase()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString java.lang.String getTypeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject java.lang.String str()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB boolean startsWith(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString void dispatchAsComment(org.xml.sax.ext.LexicalHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB boolean startsWith(org.apache.xml.utils.XMLString, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int indexOf(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int lastIndexOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB org.apache.xml.utils.XMLString substring(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFragSelectWrapper org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNull boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSetForDOM XNodeSetForDOM(org.apache.xpath.objects.XNodeSet) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB org.apache.xml.utils.XMLString concat(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XBooleanStatic boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSetForDOM XNodeSetForDOM(org.w3c.dom.traversal.NodeIterator, org.apache.xpath.XPathContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB int compareTo(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFrag boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString toUpperCase()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XBoolean XBoolean(java.lang.Boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject boolean lessThan(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString toUpperCase(java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet boolean lessThanOrEqual(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject boolean greaterThan(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForChars void dispatchAsComment(org.xml.sax.ext.LexicalHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB void getChars(int, int, char[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XMLStringFactoryImpl org.apache.xml.utils.XMLString emptystr()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet org.w3c.dom.traversal.NodeIterator nodeset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean startsWith(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB boolean equalsIgnoreCase(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForChars void getChars(int, int, char[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSetForDOM XNodeSetForDOM(org.w3c.dom.NodeList, org.apache.xpath.XPathContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFrag XRTreeFrag(int, org.apache.xpath.XPathContext, org.apache.xpath.ExpressionNode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean startsWith(org.apache.xml.utils.XMLString, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNull java.lang.String getTypeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString concat(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int rtf(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet java.lang.String getTypeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB void dispatchCharactersEvents(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean equals(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean startsWith(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSetForDOM XNodeSetForDOM(org.w3c.dom.NodeList, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB void appendToFsb(org.apache.xml.utils.FastStringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet boolean greaterThan(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNumber XNumber(java.lang.Number) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFrag org.apache.xml.dtm.DTMIterator asNodeIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean endsWith(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString boolean equals(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XBoolean java.lang.String getTypeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int indexOf(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB boolean equals(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString toUpperCase(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject org.apache.xml.utils.XMLString xstr()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFrag XRTreeFrag(int, org.apache.xpath.XPathContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet java.lang.String str()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XMLStringFactoryImpl org.apache.xml.utils.XMLString newstr(org.apache.xml.utils.FastStringBuffer, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString void dispatchCharactersEvents(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject boolean greaterThanOrEqual(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet void dispatchCharactersEvents(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject org.w3c.dom.DocumentFragment rtree(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString void getChars(int, int, char[], int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFragSelectWrapper org.apache.xpath.objects.XObject execute(org.apache.xpath.XPathContext)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int lastIndexOf(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB boolean equals(org.apache.xml.utils.XMLString) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString toLowerCase(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNumber java.lang.String getTypeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNull int rtf(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFrag java.lang.String getTypeString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForChars void appendToFsb(org.apache.xml.utils.FastStringBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString trim()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString int indexOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNodeSet boolean greaterThanOrEqual(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNumber void callVisitors(org.apache.xpath.ExpressionOwner, org.apache.xpath.XPathVisitor) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB org.apache.xml.utils.XMLString concat(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString substring(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObjectFactory org.apache.xpath.objects.XObject create(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForChars void dispatchCharactersEvents(org.xml.sax.ContentHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNumber java.lang.String str()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XString org.apache.xml.utils.XMLString xstr()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject int rtf(org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XStringForFSB void dispatchAsComment(org.xml.sax.ext.LexicalHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XRTreeFragSelectWrapper void fixupVariables(java.util.Vector, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject org.apache.xpath.objects.XObject create(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XObject boolean notEquals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xpath.objects.XNumber boolean equals(org.apache.xpath.objects.XObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

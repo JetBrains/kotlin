@@ -30,8 +30,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -132,14 +130,14 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static Field field(@NotNull Type type, @NotNull JvmClassName owner, @NotNull String name, boolean isStatic) {
+    public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic) {
         return new Field(type, owner, name, isStatic);
     }
 
     @NotNull
     public static Property property(
             @NotNull PropertyDescriptor descriptor,
-            @NotNull JvmClassName methodOwner,
+            @NotNull Type methodOwner,
             @NotNull Type type,
             boolean isStatic,
             @NotNull String name,
@@ -253,11 +251,8 @@ public abstract class StackValue {
             }
         }
         else if (fromType.getSort() == Type.OBJECT) {
-            if (toType.getSort() == Type.BOOLEAN) {
-                coerce(fromType, JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType(), v);
-            }
-            else if (toType.getSort() == Type.CHAR) {
-                coerce(fromType, JvmPrimitiveType.CHAR.getWrapper().getAsmType(), v);
+            if (toType.getSort() == Type.BOOLEAN || toType.getSort() == Type.CHAR) {
+                coerce(fromType, boxType(toType), v);
             }
             else {
                 coerce(fromType, getType(Number.class), v);
@@ -288,8 +283,8 @@ public abstract class StackValue {
         return None.INSTANCE;
     }
 
-    public static StackValue fieldForSharedVar(Type type, JvmClassName name, String fieldName) {
-        return new FieldForSharedVar(type, name, fieldName);
+    public static StackValue fieldForSharedVar(Type localType, Type classType, String fieldName) {
+        return new FieldForSharedVar(localType, classType, fieldName);
     }
 
     public static StackValue composed(StackValue prefix, StackValue suffix) {
@@ -334,7 +329,7 @@ public abstract class StackValue {
 
     public static Field singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
         FieldInfo info = FieldInfo.createForSingleton(classDescriptor, typeMapper);
-        return field(info.getFieldType(), JvmClassName.byInternalName(info.getOwnerInternalName()), info.getFieldName(), true);
+        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true);
     }
 
     private static class None extends StackValue {
@@ -830,10 +825,10 @@ public abstract class StackValue {
 
 
     static class Field extends StackValueWithSimpleReceiver {
-        final JvmClassName owner;
+        final Type owner;
         final String name;
 
-        public Field(Type type, JvmClassName owner, String name, boolean isStatic) {
+        public Field(Type type, Type owner, String name, boolean isStatic) {
             super(type, isStatic);
             this.owner = owner;
             this.name = name;
@@ -858,7 +853,7 @@ public abstract class StackValue {
         @Nullable
         private final CallableMethod setter;
         @NotNull
-        public final JvmClassName methodOwner;
+        public final Type methodOwner;
 
         @NotNull
         private final PropertyDescriptor descriptor;
@@ -868,7 +863,7 @@ public abstract class StackValue {
         private final String name;
 
         public Property(
-                @NotNull PropertyDescriptor descriptor, @NotNull JvmClassName methodOwner,
+                @NotNull PropertyDescriptor descriptor, @NotNull Type methodOwner,
                 @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStatic,
                 @NotNull String name, @NotNull Type type, @NotNull GenerationState state
         ) {
@@ -1014,10 +1009,10 @@ public abstract class StackValue {
     }
 
     static class FieldForSharedVar extends StackValueWithSimpleReceiver {
-        final JvmClassName owner;
+        final Type owner;
         final String name;
 
-        public FieldForSharedVar(Type type, JvmClassName owner, String name) {
+        public FieldForSharedVar(Type type, Type owner, String name) {
             super(type, false);
             this.owner = owner;
             this.name = name;
@@ -1162,7 +1157,7 @@ public abstract class StackValue {
                     }
                     else {
                         //noinspection ConstantConditions
-                        return callableMethod.getThisType().getAsmType();
+                        return callableMethod.getThisType();
                     }
                 }
                 else {
@@ -1198,7 +1193,7 @@ public abstract class StackValue {
             if (thisObject.exists()) {
                 if (receiverArgument.exists()) {
                     if (callableMethod != null) {
-                        codegen.generateFromResolvedCall(thisObject, callableMethod.getOwner().getAsmType());
+                        codegen.generateFromResolvedCall(thisObject, callableMethod.getOwner());
                     }
                     else {
                         codegen.generateFromResolvedCall(thisObject, codegen.typeMapper

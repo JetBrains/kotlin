@@ -43,8 +43,8 @@ import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -66,10 +66,16 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             return null;
         }
 
-        JvmClassName jvmClassName = PsiCodegenPredictor.getPredefinedJvmClassName(classOrObject);
-        if (jvmClassName == null) return null;
+        // TODO temporary not building light classes for local classes: e.g., they won't be visible in hierarchy
+        if (JetPsiUtil.getOutermostClassOrObject(classOrObject) == null) {
+            return null;
+        }
 
-        return new KotlinLightClassForExplicitDeclaration(manager, jvmClassName.getFqName(), classOrObject);
+        String jvmInternalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
+        if (jvmInternalName == null) return null;
+
+        FqName fqName = JvmClassName.byInternalName(jvmInternalName).getFqNameForClassNameWithoutDollars();
+        return new KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject);
     }
 
     private final FqName classFqName; // FqName of (possibly inner) class

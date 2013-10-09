@@ -1,0 +1,74 @@
+<root>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeHeaderParameter(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeEncodedWord(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeEncodedWord(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil boolean hasToBeEncoded(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil boolean isToken(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeAddressDisplayName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeHeaderParameter(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil.Encoding org.apache.james.mime4j.codec.EncoderUtil.Encoding valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeEncodedWord(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage, int, java.nio.charset.Charset, org.apache.james.mime4j.codec.EncoderUtil.Encoding) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeEncodedWord(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil.Usage org.apache.james.mime4j.codec.EncoderUtil.Usage valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeAddressLocalPart(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeB(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeIfNecessary(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil.Encoding org.apache.james.mime4j.codec.EncoderUtil.Encoding valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil.Usage org.apache.james.mime4j.codec.EncoderUtil.Usage valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeAddressDisplayName(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeIfNecessary(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeAddressLocalPart(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeB(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeQ(byte[], org.apache.james.mime4j.codec.EncoderUtil.Usage)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeEncodedWord(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeQ(byte[], org.apache.james.mime4j.codec.EncoderUtil.Usage) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.codec.EncoderUtil java.lang.String encodeEncodedWord(java.lang.String, org.apache.james.mime4j.codec.EncoderUtil.Usage, int, java.nio.charset.Charset, org.apache.james.mime4j.codec.EncoderUtil.Encoding)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -1,6 +1,6 @@
 package org.jetbrains.jet.lang.types.lang;
 
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
@@ -8,11 +8,11 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPacka
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -81,10 +81,10 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
             super(storageManager, UNSUPPORTED);
 
-            classNames = storageManager.createLazyValue(new Computable<Collection<Name>>() {
+            classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override
                 @NotNull
-                public Collection<Name> compute() {
+                public Collection<Name> invoke() {
                     InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsNamespaceDescriptorImpl.this));
 
                     try {
@@ -143,7 +143,7 @@ class BuiltinsNamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
         @NotNull
         @Override
         public Collection<Name> getClassNames(@NotNull FqName packageName) {
-            return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? classNames.compute() : Collections.<Name>emptyList();
+            return packageName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? classNames.invoke() : Collections.<Name>emptyList();
         }
     }
 }

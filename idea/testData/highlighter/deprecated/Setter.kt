@@ -24,3 +24,6 @@ class MyClass() {
 
 public var test2: Int = 0
       [deprecated("Use A instead")] set
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS

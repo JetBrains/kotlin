@@ -1,0 +1,53 @@
+<root>
+    <item name='android.support.v4.util.AtomicFile byte[] readFully()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.LruCache V put(K, V) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.LruCache java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.LruCache V put(K, V) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.AtomicFile java.io.File getBaseFile()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.AtomicFile java.io.FileInputStream openRead()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.AtomicFile AtomicFile(java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.TimeUtils void formatDuration(long, java.io.PrintWriter, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.TimeUtils void formatDuration(long, long, java.io.PrintWriter) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.LruCache V remove(K) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.TimeUtils void formatDuration(long, java.io.PrintWriter) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.DebugUtils void buildShortClassTag(java.lang.Object, java.lang.StringBuilder) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.LruCache java.util.Map&lt;K,V&gt; snapshot()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.AtomicFile java.io.FileOutputStream startWrite()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.LruCache V get(K) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.LogWriter void write(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.util.TimeUtils void formatDuration(long, java.lang.StringBuilder) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -1,32 +1,86 @@
 <root>
-    <item name='android.drm.DrmStore.ConstraintsColumns MAX_REPEAT_COUNT'>
+    <item name='android.drm.DrmManagerClient java.lang.String getOriginalMimeType(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmStore.ConstraintsColumns LICENSE_EXPIRY_TIME'>
+    <item name='android.drm.DrmRights DrmRights(android.drm.ProcessedData, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmInfoRequest SUBSCRIPTION_ID'>
+    <item name='android.drm.DrmInfoStatus DrmInfoStatus(int, int, android.drm.ProcessedData, java.lang.String) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmStore.ConstraintsColumns EXTENDED_METADATA'>
+    <item name='android.drm.DrmManagerClient int processDrmInfo(android.drm.DrmInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmInfoRequest ACCOUNT_ID'>
+    <item name='android.drm.DrmRights DrmRights(java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmEvent DRM_INFO_OBJECT'>
+    <item name='android.drm.DrmManagerClient java.lang.String[] getAvailableDrmEngines()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmStore.ConstraintsColumns LICENSE_AVAILABLE_TIME'>
+    <item name='android.drm.DrmManagerClient int acquireRights(android.drm.DrmInfoRequest) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmStore.ConstraintsColumns LICENSE_START_TIME'>
+    <item name='android.drm.DrmUtils android.drm.DrmUtils.ExtendedMetadataParser getExtendedMetadataParser(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmStore.ConstraintsColumns REMAINING_REPEAT_COUNT'>
+    <item name='android.drm.DrmManagerClient android.drm.DrmConvertedStatus convertData(int, byte[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.drm.DrmEvent DRM_INFO_STATUS_OBJECT'>
+    <item name='android.drm.DrmOutputStream void write(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient void notify(java.lang.Object, int, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient void installDrmEngine(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmUtils android.drm.DrmUtils.ExtendedMetadataParser getExtendedMetadataParser(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmRights DrmRights(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient android.content.ContentValues getConstraints(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmSupportInfo java.util.Iterator&lt;java.lang.String&gt; getMimeTypeIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient int checkRightsStatus(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient int removeRights(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient int checkRightsStatus(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient int openConvertSession(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmSupportInfo java.util.Iterator&lt;java.lang.String&gt; getFileSuffixIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmOutputStream DrmOutputStream(android.drm.DrmManagerClient, java.io.RandomAccessFile, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmSupportInfo void addMimeType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmSupportInfo void setDescription(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient android.drm.DrmInfo acquireDrmInfo(android.drm.DrmInfoRequest) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient android.content.ContentValues getMetadata(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmManagerClient int saveRights(android.drm.DrmRights, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.DrmRights DrmRights(java.lang.String, java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

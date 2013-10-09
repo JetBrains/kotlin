@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.RecursionIntolerantLazyValueWithDefault;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -45,6 +45,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
+import static org.jetbrains.jet.util.StorageUtil.createRecursionIntolerantLazyValueWithDefault;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
@@ -66,12 +67,14 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
                 if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                    JetType defaultType = DeferredType.create(context.trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
-                        @Override
-                        protected JetType compute() {
-                            return descriptor.getDefaultType();
-                        }
-                    });
+                    JetType defaultType = DeferredType.create(context.trace, createRecursionIntolerantLazyValueWithDefault(
+                            ErrorUtils.createErrorType("Recursive dependency"),
+                            new Function0<JetType>() {
+                                @Override
+                                public JetType invoke() {
+                                    return descriptor.getDefaultType();
+                                }
+                            }));
                     result[0] = defaultType;
                     if (!context.trace.get(PROCESSED, expression)) {
                         temporaryTrace.record(EXPRESSION_TYPE, expression, defaultType);

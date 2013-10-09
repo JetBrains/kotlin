@@ -22,6 +22,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.SamCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -88,7 +89,6 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 null,
                 false);
 
-        assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingContext, funDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
         return classDescriptor;
     }
@@ -131,7 +131,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, bindingContext.get(SCRIPT, file.getScript()));
             classStack.push(classDescriptor);
             //noinspection ConstantConditions
-            nameStack.push(classNameForScriptPsi(bindingContext, file.getScript()).getInternalName());
+            nameStack.push(asmTypeForScriptPsi(bindingContext, file.getScript()).getInternalName());
         }
         else {
             nameStack.push(JvmClassName.byFqNameWithoutInnerClasses(JetPsiUtil.getFQName(file)).getInternalName());
@@ -154,9 +154,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitEnumEntry(enumEntry);
         }
         else {
-            JvmClassName jvmClassName = bindingTrace.get(FQN, peekFromStack(classStack));
-            assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, jvmClassName);
-            bindingTrace.record(FQN, descriptor, jvmClassName);
+            Type asmType = bindingTrace.get(ASM_TYPE, peekFromStack(classStack));
+            assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, asmType);
+            bindingTrace.record(ASM_TYPE, descriptor, asmType);
         }
     }
 
@@ -232,7 +232,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         classStack.push(classDescriptor);
         //noinspection ConstantConditions
-        nameStack.push(bindingContext.get(FQN, classDescriptor).getInternalName());
+        nameStack.push(bindingContext.get(ASM_TYPE, classDescriptor).getInternalName());
         super.visitObjectLiteralExpression(expression);
         nameStack.pop();
         classStack.pop();
@@ -287,7 +287,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             boolean functionLiteral
     ) {
         CodegenBinding.recordClosure(bindingTrace, element, classDescriptor, peekFromStack(classStack),
-                                     JvmClassName.byInternalName(name), functionLiteral);
+                                     Type.getObjectType(name), functionLiteral);
     }
 
     @Override

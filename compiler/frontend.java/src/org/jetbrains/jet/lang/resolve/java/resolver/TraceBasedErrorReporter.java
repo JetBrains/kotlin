@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -33,6 +35,8 @@ import javax.inject.Inject;
 import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_INFER_VISIBILITY;
 
 public class TraceBasedErrorReporter implements ErrorReporter {
+    private static final Logger LOG = Logger.getInstance(TraceBasedErrorReporter.class);
+
     public static final WritableSlice<VirtualFileKotlinClass, Integer> ABI_VERSION_ERRORS =
             new BasicWritableSlice<VirtualFileKotlinClass, Integer>(Slices.ONLY_REWRITE_TO_EQUAL, true);
     private BindingTrace trace;
@@ -53,5 +57,10 @@ public class TraceBasedErrorReporter implements ErrorReporter {
         if (element instanceof JetDeclaration) {
             trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element));
         }
+    }
+
+    @Override
+    public void reportAnnotationLoadingError(@NotNull String message, @Nullable Exception exception) {
+        LOG.error(message, exception);
     }
 }

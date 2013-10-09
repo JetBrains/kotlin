@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.asm4.Type;
 
 public class OwnerKind {
     private final String name;
@@ -31,15 +31,15 @@ public class OwnerKind {
     public static final OwnerKind TRAIT_IMPL = new OwnerKind("trait implementation");
 
     public static class StaticDelegateKind extends OwnerKind {
-        private final JvmClassName ownerClass;
+        private final Type ownerClass;
 
-        public StaticDelegateKind(@NotNull JvmClassName ownerClass) {
+        public StaticDelegateKind(@NotNull Type ownerClass) {
             super("staticDelegateKind");
             this.ownerClass = ownerClass;
         }
 
         @NotNull
-        public JvmClassName getOwnerClass() {
+        public Type getOwnerClass() {
             return ownerClass;
         }
     }

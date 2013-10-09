@@ -19,13 +19,16 @@ package org.jetbrains.js.compiler;
 import com.google.dart.compiler.backend.js.JsToStringGenerationVisitor;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.TextOutput;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor implements TextOutput.OutListener {
     @Nullable
     private final SourceMapBuilder sourceMapBuilder;
 
-    private Object pendingSourceInfo;
+    private final List<Object> pendingSources = new SmartList<Object>();
 
     public JsSourceGenerationVisitor(TextOutput out, @Nullable SourceMapBuilder sourceMapBuilder) {
         super(out);
@@ -52,16 +55,18 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
 
     @Override
     public void indentedAfterNewLine() {
-        if (pendingSourceInfo != null) {
-            assert sourceMapBuilder != null;
-            sourceMapBuilder.processSourceInfo(pendingSourceInfo);
-            pendingSourceInfo = null;
+        if (pendingSources.isEmpty()) return;
+
+        assert sourceMapBuilder != null;
+        for (Object source : pendingSources) {
+            sourceMapBuilder.processSourceInfo(source);
         }
+        pendingSources.clear();
     }
 
     @Override
     public void accept(JsNode node) {
-        if (!(node instanceof JsNameRef)) {
+        if (!(node instanceof JsNameRef) && !(node instanceof JsLiteral.JsThisRef)) {
             mapSource(node);
         }
         super.accept(node);
@@ -71,9 +76,8 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
         if (sourceMapBuilder != null) {
             Object sourceInfo = node.getSource();
             if (sourceInfo != null) {
-                assert pendingSourceInfo == null;
                 if (p.isJustNewlined()) {
-                    pendingSourceInfo = sourceInfo;
+                    pendingSources.add(sourceInfo);
                 }
                 else {
                     sourceMapBuilder.processSourceInfo(sourceInfo);

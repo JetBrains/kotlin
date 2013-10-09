@@ -17,14 +17,14 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.*;
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.List;
 import java.util.Set;
@@ -35,9 +35,9 @@ class ImportsProvider {
 
     public ImportsProvider(StorageManager storageManager, final List<JetImportDirective> importDirectives) {
         this.importDirectives = importDirectives;
-        this.importsCacheValue = storageManager.createLazyValue(new Computable<NameToImportsCache>() {
+        this.importsCacheValue = storageManager.createLazyValue(new Function0<NameToImportsCache>() {
             @Override
-            public NameToImportsCache compute() {
+            public NameToImportsCache invoke() {
                 return NameToImportsCache.createIndex(importDirectives);
             }
         });
@@ -45,7 +45,7 @@ class ImportsProvider {
 
     @NotNull
     public List<JetImportDirective> getImports(@NotNull Name name) {
-        return importsCacheValue.compute().getImports(name);
+        return importsCacheValue.invoke().getImports(name);
     }
 
     @NotNull

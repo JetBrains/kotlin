@@ -8,3 +8,6 @@ fun test() {
 
   <warning descr="'fun get(i: MyClass)' is deprecated. Use A instead">x1[x2]</warning>
 }
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS

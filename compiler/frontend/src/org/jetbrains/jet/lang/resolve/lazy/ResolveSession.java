@@ -19,10 +19,10 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
@@ -216,9 +216,9 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
             if (classObjectInfo != null) {
                 final Name name = DescriptorUtils.getClassObjectName(parentClassDescriptor.getName());
-                return storageManager.compute(new Computable<LazyClassDescriptor>() {
+                return storageManager.compute(new Function0<LazyClassDescriptor>() {
                     @Override
-                    public LazyClassDescriptor compute() {
+                    public LazyClassDescriptor invoke() {
                         // Create under lock to avoid premature access to published 'this'
                         return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
                     }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -43,7 +42,7 @@ public final class DescriptorResolverUtils {
         if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
             FqName fqName = javaClass.getFqName();
             if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
-                return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getFqName()) != null;
+                return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE) != null;
             }
         }
         return false;
@@ -51,13 +50,18 @@ public final class DescriptorResolverUtils {
 
     public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
         if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getFqName()) != null;
+            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS) != null;
         }
         return false;
     }
 
     public static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
         return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
+    }
+
+    @NotNull
+    public static FqName fqNameByClass(@NotNull Class<?> clazz) {
+        return new FqName(clazz.getCanonicalName());
     }
 
     @NotNull
@@ -235,7 +239,9 @@ public final class DescriptorResolverUtils {
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
     ) {
-        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result = Maps.newLinkedHashMap(); // save order of type parameters
+        // LinkedHashMap to save the order of type parameters
+        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> result =
+                new LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
         for (TypeParameterDescriptor typeParameter : originalParameters) {
             result.put(typeParameter,
                        TypeParameterDescriptorImpl.createForFurtherModification(
@@ -253,7 +259,7 @@ public final class DescriptorResolverUtils {
     public static TypeSubstitutor createSubstitutorForTypeParameters(
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters
     ) {
-        Map<TypeConstructor, TypeProjection> typeSubstitutionContext = Maps.newHashMap();
+        Map<TypeConstructor, TypeProjection> typeSubstitutionContext = new HashMap<TypeConstructor, TypeProjection>();
         for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameter : originalToAltTypeParameters
                 .entrySet()) {
             typeSubstitutionContext.put(originalToAltTypeParameter.getKey().getTypeConstructor(),

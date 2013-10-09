@@ -1,0 +1,12 @@
+OUT Buildfile: build.xml
+OUT 
+OUT build:
+OUT     [mkdir] Created dir: [Temp]/classes
+OUT     [javac] Compiling 1 source file to [Temp]/classes
+OUT     [javac] Compiling [[[TestData]/root1]] => [[Temp]/classes]
+OUT     [javac] Running javac...
+OUT       [jar] Building jar: [Temp]/hello.jar
+OUT 
+OUT BUILD SUCCESSFUL
+OUT Total time: [time]
+Return code: 0

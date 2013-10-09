@@ -18,12 +18,12 @@ package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 import static org.jetbrains.k2js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
@@ -131,34 +132,23 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
-            @NotNull List<? extends ValueArgument> jetArguments) {
-        if (jetArguments.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<JsExpression> jsArguments = new SmartList<JsExpression>();
-        for (ValueArgument argument : jetArguments) {
-            jsArguments.add(translateArgument(context, argument));
-        }
-        return jsArguments;
-    }
-
-    @NotNull
-    private static JsExpression translateArgument(@NotNull TranslationContext context, @NotNull ValueArgument argument) {
-        JetExpression jetExpression = argument.getArgumentExpression();
-        assert jetExpression != null : "Argument with no expression";
-        return Translation.translateAsExpression(jetExpression, context);
+    public static String getMangledName(@NotNull PropertyDescriptor descriptor, @NotNull String suggestedName) {
+        int absHashCode = Math.abs(getFQName(descriptor).asString().hashCode());
+        return suggestedName + "_" + Integer.toString(absHashCode, Character.MAX_RADIX) + "$";
     }
 
     @NotNull
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
             @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
-        if(!JsDescriptorUtils.isSimpleProperty(descriptor)) {
-            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor,
-                                                                             getKotlinBackingFieldName(backingFieldName.getIdent()),
-                                                                             false);
+        if(!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
+            String backingFieldMangledName;
+            if (descriptor.getVisibility() != Visibilities.PRIVATE) {
+                backingFieldMangledName = getMangledName(descriptor, getKotlinBackingFieldName(backingFieldName.getIdent()));
+            } else {
+                backingFieldMangledName = getKotlinBackingFieldName(backingFieldName.getIdent());
+            }
+            backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName, false);
         }
         return new JsNameRef(backingFieldName, JsLiteral.THIS);
     }

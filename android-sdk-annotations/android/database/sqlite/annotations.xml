@@ -1,41 +1,179 @@
 <root>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor query(boolean, java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, android.os.CancellationSignal) 1'>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase create(android.database.sqlite.SQLiteDatabase.CursorFactory)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildQuery(java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)'>
+    <item name='android.database.sqlite.SQLiteDebug android.database.sqlite.SQLiteDebug.PagerStats getDatabaseInfo()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String[], java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, int, android.database.DatabaseErrorHandler)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildQuery(java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor queryWithFactory(android.database.sqlite.SQLiteDatabase.CursorFactory, boolean, java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, android.os.CancellationSignal) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, int)'>
+    <item name='android.database.sqlite.SQLiteDatabase boolean deleteDatabase(java.io.File) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.io.File, android.database.sqlite.SQLiteDatabase.CursorFactory)'>
+    <item name='android.database.sqlite.SQLiteDatabaseConfiguration void updateParametersFrom(android.database.sqlite.SQLiteDatabaseConfiguration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, android.database.DatabaseErrorHandler)'>
+    <item name='android.database.sqlite.SQLiteSession long executeForLong(java.lang.String, java.lang.Object[], int, android.os.CancellationSignal) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder void appendColumns(java.lang.StringBuilder, java.lang.String[]) 0'>
+    <item name='android.database.sqlite.SQLiteConnectionPool void dump(android.util.Printer, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession int executeForCursorWindow(java.lang.String, java.lang.Object[], android.database.CursorWindow, int, int, boolean, int, android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase void execSQL(java.lang.String, java.lang.Object[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabaseConfiguration SQLiteDatabaseConfiguration(android.database.sqlite.SQLiteDatabaseConfiguration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteProgram void bindString(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection int executeForCursorWindow(java.lang.String, java.lang.Object[], android.database.CursorWindow, int, int, boolean, android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection void execute(java.lang.String, java.lang.Object[], android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection int executeForChangedRowCount(java.lang.String, java.lang.Object[], android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection java.lang.String executeForString(java.lang.String, java.lang.Object[], android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase java.lang.String findEditTable(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String[], java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder android.database.Cursor query(android.database.sqlite.SQLiteDatabase, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, android.os.CancellationSignal) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionQuery(java.lang.String[], java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor query(java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String) 0'>
+    <item name='android.database.sqlite.SQLiteDatabase java.util.Map&lt;java.lang.String,java.lang.String&gt; getSyncedTables()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase java.util.Map&lt;java.lang.String,java.lang.String&gt; getSyncedTables()'>
+    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteCursor int getColumnIndex(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildQueryString(boolean, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor query(boolean, java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession android.os.ParcelFileDescriptor executeForBlobFileDescriptor(java.lang.String, java.lang.Object[], int, android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDebug void dump(android.util.Printer, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase int update(java.lang.String, android.content.ContentValues, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase int updateWithOnConflict(java.lang.String, android.content.ContentValues, java.lang.String, java.lang.String[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession int executeForChangedRowCount(java.lang.String, java.lang.Object[], int, android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession SQLiteSession(android.database.sqlite.SQLiteConnectionPool) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildQuery(java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase void execSQL(java.lang.String, java.lang.Object[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession java.lang.String executeForString(java.lang.String, java.lang.Object[], int, android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase java.lang.String findEditTable(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionQuery(java.lang.String[], java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDirectCursorDriver java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder void appendWhere(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnectionPool java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase void execSQL(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor query(boolean, java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, android.os.CancellationSignal) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection android.os.ParcelFileDescriptor executeForBlobFileDescriptor(java.lang.String, java.lang.Object[], android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession int executeForCursorWindow(java.lang.String, java.lang.Object[], android.database.CursorWindow, int, int, boolean, int, android.os.CancellationSignal) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase void addCustomFunction(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CustomFunction) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, int, android.database.DatabaseErrorHandler) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteStatement compileStatement(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder void appendColumns(java.lang.StringBuilder, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnectionPool android.database.sqlite.SQLiteConnectionPool open(android.database.sqlite.SQLiteDatabaseConfiguration) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection void prepare(java.lang.String, android.database.sqlite.SQLiteStatementInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteCursor SQLiteCursor(android.database.sqlite.SQLiteDatabase, android.database.sqlite.SQLiteCursorDriver, java.lang.String, android.database.sqlite.SQLiteQuery) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection long executeForLastInsertedRowId(java.lang.String, java.lang.Object[], android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection long executeForLong(java.lang.String, java.lang.Object[], android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabaseConfiguration SQLiteDatabaseConfiguration(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor query(java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.database.sqlite.SQLiteQueryBuilder android.database.Cursor query(android.database.sqlite.SQLiteDatabase, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String) 0'>
@@ -44,43 +182,85 @@
     <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase java.lang.String findEditTable(java.lang.String) 0'>
+    <item name='android.database.sqlite.SqliteWrapper void checkSQLiteException(android.content.Context, android.database.sqlite.SQLiteException) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnectionPool android.database.sqlite.SQLiteConnectionPool open(android.database.sqlite.SQLiteDatabaseConfiguration)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteOpenHelper void onCreate(android.database.sqlite.SQLiteDatabase) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase void setLocale(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteProgram void bindBlob(int, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession void execute(java.lang.String, java.lang.Object[], int, android.os.CancellationSignal) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteCursor SQLiteCursor(android.database.sqlite.SQLiteCursorDriver, java.lang.String, android.database.sqlite.SQLiteQuery) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnection int executeForCursorWindow(java.lang.String, java.lang.Object[], android.database.CursorWindow, int, int, boolean, android.os.CancellationSignal) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, android.database.DatabaseErrorHandler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder android.database.Cursor query(android.database.sqlite.SQLiteDatabase, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, android.os.CancellationSignal) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.io.File, android.database.sqlite.SQLiteDatabase.CursorFactory) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String) 2'>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.io.File, android.database.sqlite.SQLiteDatabase.CursorFactory)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String[], java.lang.String, java.lang.String)'>
+    <item name='android.database.sqlite.SQLiteCustomFunction SQLiteCustomFunction(java.lang.String, int, android.database.sqlite.SQLiteDatabase.CustomFunction) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteCursor int getColumnIndex(java.lang.String) 0'>
+    <item name='android.database.sqlite.SQLiteConnectionPool android.database.sqlite.SQLiteConnection acquireConnection(java.lang.String, int, android.os.CancellationSignal)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor query(boolean, java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String) 1'>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, int, android.database.DatabaseErrorHandler)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionSubQuery(java.lang.String, java.lang.String[], java.util.Set&lt;java.lang.String&gt;, int, java.lang.String, java.lang.String, java.lang.String[], java.lang.String, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.database.sqlite.SQLiteConnection void dump(android.util.Printer, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildQuery(java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.database.sqlite.SQLiteQueryBuilder android.database.Cursor query(android.database.sqlite.SQLiteDatabase, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase create(android.database.sqlite.SQLiteDatabase.CursorFactory)'>
+    <item name='android.database.sqlite.SQLiteQuery java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteStatement java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteSession void prepare(java.lang.String, int, android.os.CancellationSignal, android.database.sqlite.SQLiteStatementInfo) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.database.sqlite.SQLiteQueryBuilder void appendWhereEscapeString(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildQueryString(boolean, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)'>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteStatement compileStatement(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteOpenHelper void onUpgrade(android.database.sqlite.SQLiteDatabase, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.database.sqlite.SQLiteConnectionPool void reconfigure(android.database.sqlite.SQLiteDatabaseConfiguration) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.database.sqlite.SQLiteDatabase android.database.Cursor query(java.lang.String, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String) 0'>
@@ -92,13 +272,13 @@
     <item name='android.database.sqlite.SQLiteQueryBuilder void appendColumns(java.lang.StringBuilder, java.lang.String[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder java.lang.String buildUnionQuery(java.lang.String[], java.lang.String, java.lang.String) 0'>
+    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory, android.database.DatabaseErrorHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteQueryBuilder void appendWhere(java.lang.CharSequence) 0'>
+    <item name='android.database.sqlite.SqliteWrapper void checkSQLiteException(android.content.Context, android.database.sqlite.SQLiteException) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteDatabase openOrCreateDatabase(java.lang.String, android.database.sqlite.SQLiteDatabase.CursorFactory)'>
+    <item name='android.database.sqlite.SQLiteSession long executeForLastInsertedRowId(java.lang.String, java.lang.Object[], int, android.os.CancellationSignal) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

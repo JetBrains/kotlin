@@ -25,7 +25,6 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.List;
 
@@ -34,24 +33,24 @@ import static org.jetbrains.asm4.Opcodes.INVOKESTATIC;
 
 public class CallableMethod implements Callable {
     @NotNull
-    private final JvmClassName owner;
+    private final Type owner;
     @Nullable
-    private final JvmClassName defaultImplOwner;
+    private final Type defaultImplOwner;
     @Nullable
-    private final JvmClassName defaultImplParam;
+    private final Type defaultImplParam;
     private final JvmMethodSignature signature;
     private final int invokeOpcode;
     @Nullable
-    private final JvmClassName thisClass;
+    private final Type thisClass;
     @Nullable
     private final Type receiverParameterType;
     @Nullable
     private final Type generateCalleeType;
 
     public CallableMethod(
-            @NotNull JvmClassName owner, @Nullable JvmClassName defaultImplOwner, @Nullable JvmClassName defaultImplParam,
+            @NotNull Type owner, @Nullable Type defaultImplOwner, @Nullable Type defaultImplParam,
             JvmMethodSignature signature, int invokeOpcode,
-            @Nullable JvmClassName thisClass, @Nullable Type receiverParameterType, @Nullable Type generateCalleeType
+            @Nullable Type thisClass, @Nullable Type receiverParameterType, @Nullable Type generateCalleeType
     ) {
         this.owner = owner;
         this.defaultImplOwner = defaultImplOwner;
@@ -64,13 +63,8 @@ public class CallableMethod implements Callable {
     }
 
     @NotNull
-    public JvmClassName getOwner() {
+    public Type getOwner() {
         return owner;
-    }
-
-    @Nullable
-    public JvmClassName getDefaultImplParam() {
-        return defaultImplParam;
     }
 
     public JvmMethodSignature getSignature() {
@@ -86,7 +80,7 @@ public class CallableMethod implements Callable {
     }
 
     @Nullable
-    public JvmClassName getThisType() {
+    public Type getThisType() {
         return thisClass;
     }
 
@@ -157,12 +151,6 @@ public class CallableMethod implements Callable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Printer.OPCODES[invokeOpcode]);
-        sb.append(" ");
-        sb.append(owner);
-        sb.append(".");
-        sb.append(signature);
-        return sb.toString();
+        return Printer.OPCODES[invokeOpcode] + " " + owner + "." + signature;
     }
 }

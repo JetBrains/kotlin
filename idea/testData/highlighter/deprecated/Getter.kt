@@ -17,3 +17,6 @@ class MyClass() {
     deprecated("Use A instead") public val test3: String = ""
       [deprecated("Use A instead")] get
 }
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS

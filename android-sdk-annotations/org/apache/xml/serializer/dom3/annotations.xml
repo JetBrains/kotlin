@@ -1,0 +1,32 @@
+<root>
+    <item name='org.apache.xml.serializer.dom3.LSSerializerImpl void setParameter(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.LSSerializerImpl org.w3c.dom.DOMStringList getParameterNames()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.LSSerializerImpl boolean write(org.w3c.dom.Node, org.w3c.dom.ls.LSOutput) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.LSSerializerImpl void setParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.LSSerializerImpl java.lang.Object getParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.NamespaceSupport.Prefixes java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.DOM3SerializerImpl void serializeDOM3(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.LSSerializerImpl boolean canSetParameter(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.NamespaceSupport java.util.Enumeration getAllPrefixes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xml.serializer.dom3.LSSerializerImpl org.w3c.dom.DOMConfiguration getDomConfig()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

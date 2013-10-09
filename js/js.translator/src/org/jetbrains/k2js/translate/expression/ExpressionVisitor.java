@@ -47,6 +47,7 @@ import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
+import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
@@ -57,8 +58,12 @@ import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.m
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
-    public JsNode visitConstantExpression(@NotNull JetConstantExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
+        return translateConstantExpression(expression, context).source(expression);
+    }
+
+    @NotNull
+    private static JsNode translateConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
 
         // TODO: workaround for default parameters translation. Will be fixed later.
@@ -96,6 +101,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (value instanceof Character) {
             return context.program().getStringLiteral(value.toString());
         }
+
         throw new AssertionError(message(expression, "Unsupported constant expression"));
     }
 
@@ -423,6 +429,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression,
             @NotNull TranslationContext context) {
         return AccessTranslationUtils.translateAsGet(expression, context);
+    }
+
+    @Override
+    @NotNull
+    public JsNode visitSuperExpression(@NotNull JetSuperExpression expression, @NotNull TranslationContext context) {
+        DeclarationDescriptor superClassDescriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
+        assert superClassDescriptor != null: message(expression);
+        return translateAsFQReference(superClassDescriptor, context);
     }
 
     @Override

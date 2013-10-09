@@ -57,7 +57,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -227,7 +226,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
-        AnnotationVisitor av = v.getVisitor().visitAnnotation(JvmAnnotationNames.KOTLIN_CLASS.getDescriptor(), true);
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
@@ -367,7 +366,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 signatureVisitor.writeClassEnd();
             }
             else {
-                typeMapper.mapType(superClassType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                typeMapper.mapType(superClassType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
             }
             signatureVisitor.writeSuperclassEnd();
         }
@@ -382,7 +381,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 if (isInterface(superClassDescriptor)) {
                     signatureVisitor.writeInterface();
-                    Type jvmName = typeMapper.mapType(superType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                    Type jvmName = typeMapper.mapType(superType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
                     signatureVisitor.writeInterfaceEnd();
                     superInterfacesLinkedHashSet.add(jvmName.getInternalName());
                 }
@@ -867,7 +866,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (closure != null && closure.getCaptureThis() != null) {
                     Type type = typeMapper.mapType(enclosingClassDescriptor(bindingContext, descriptor));
                     iv.load(0, classAsmType);
-                    iv.getfield(JvmClassName.byType(classAsmType).getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
+                    iv.getfield(classAsmType.getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
                 }
 
                 int parameterIndex = 1; // localVariable 0 = this
@@ -1041,7 +1040,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int reg = 1;
         if (isConstructor) {
-            iv.anew(callableMethod.getOwner().getAsmType());
+            iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
         }
@@ -1095,6 +1094,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                 //This field are always static and final so if it has constant initializer don't do anything in clinit,
                 //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
+                // TODO: test this code
                 if (state.getClassBuilderMode() == ClassBuilderMode.FULL && propertyInfo.defaultValue == null) {
                     ExpressionCodegen codegen = createOrGetClInitCodegen();
                     int classObjectIndex = putClassObjectInLocalVar(codegen);
@@ -1122,8 +1122,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null);
         property.put(property.type, codegen.v);
-        StackValue.Field field = StackValue.field(property.type, JvmClassName.byClassDescriptor(descriptor),
-                                                  propertyDescriptor.getName().asString(), true);
+        StackValue.Field field = StackValue.field(property.type, classAsmType, propertyDescriptor.getName().asString(), true);
         field.store(field.type, codegen.v);
     }
 
@@ -1194,8 +1193,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         InstructionAdapter iv = codegen.v;
 
-        JvmClassName className = JvmClassName.byType(classAsmType);
-
         if (superCall == null) {
             genSimpleSuperCall(iv);
         }
@@ -1221,7 +1218,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
-                genCallToDelegatorByExpressionSpecifier(iv, codegen, classAsmType, className, n++, specifier);
+                genCallToDelegatorByExpressionSpecifier(iv, codegen, n++, specifier);
             }
         }
 
@@ -1287,8 +1284,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void genCallToDelegatorByExpressionSpecifier(
             InstructionAdapter iv,
             ExpressionCodegen codegen,
-            Type classType,
-            JvmClassName className,
             int n,
             JetDelegationSpecifier specifier
     ) {
@@ -1324,20 +1319,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             !propertyDescriptor.isVar() &&
             Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
             // final property with backing field
-            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType()), className,
+            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType()), classAsmType,
                                      propertyDescriptor.getName().asString(), false);
         }
         else {
-            iv.load(0, classType);
+            iv.load(0, classAsmType);
             codegen.genToJVMStack(expression);
 
             String delegateField = "$delegate_" + n;
             Type fieldType = typeMapper.mapType(superClassDescriptor);
             String fieldDesc = fieldType.getDescriptor();
 
-            v.newField(specifier, ACC_PRIVATE|ACC_FINAL|ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
+            v.newField(specifier, ACC_PRIVATE | ACC_FINAL | ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
 
-            field = StackValue.field(fieldType, className, delegateField, false);
+            field = StackValue.field(fieldType, classAsmType, delegateField, false);
             field.store(fieldType, iv);
         }
 

@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -54,7 +53,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
+import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public class NamespaceCodegen extends MemberCodegen {
     @NotNull
@@ -86,7 +88,7 @@ public class NamespaceCodegen extends MemberCodegen {
             public void doSomething(@NotNull ClassBuilder v) {
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
-                              getJVMClassNameForKotlinNs(fqName).getInternalName(),
+                              JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName)).getInternalName(),
                               null,
                               //"jet/lang/Namespace",
                               "java/lang/Object",
@@ -152,7 +154,8 @@ public class NamespaceCodegen extends MemberCodegen {
 
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto);
 
-        AnnotationVisitor av = v.getClassBuilder().newAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE.getDescriptor(), true);
+        AnnotationVisitor av =
+                v.getClassBuilder().newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
@@ -181,12 +184,12 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (!generateSrcClass) return null;
 
-        JvmClassName className = getMultiFileNamespaceInternalName(PackageClassUtils.getPackageClassFqName(name), file);
-        ClassBuilder builder = state.getFactory().forNamespacePart(className, file);
+        Type namespacePartType = getNamespacePartType(getPackageClassFqName(name), file);
+        ClassBuilder builder = state.getFactory().forNamespacePart(namespacePartType, file);
 
         builder.defineClass(file, V1_6,
                             ACC_PUBLIC | ACC_FINAL,
-                            className.getInternalName(),
+                            namespacePartType.getInternalName(),
                             null,
                             //"jet/lang/Namespace",
                             "java/lang/Object",
@@ -198,7 +201,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         FieldOwnerContext nameSpaceContext = CodegenContext.STATIC.intoNamespace(descriptor);
 
-        FieldOwnerContext nameSpacePart = CodegenContext.STATIC.intoNamespacePart(className, descriptor);
+        FieldOwnerContext nameSpacePart = CodegenContext.STATIC.intoNamespacePart(namespacePartType, descriptor);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -215,7 +218,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     private static void writeKotlinPackageFragmentAnnotation(@NotNull ClassBuilder builder) {
-        AnnotationVisitor av = builder.newAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT.getDescriptor(), true);
+        AnnotationVisitor av = builder.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         av.visitEnd();
     }
@@ -307,17 +310,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    public static JvmClassName getJVMClassNameForKotlinNs(@NotNull FqName fqName) {
-        String packageClassName = PackageClassUtils.getPackageClassName(fqName);
-        if (fqName.isRoot()) {
-            return JvmClassName.byInternalName(packageClassName);
-        }
-
-        return JvmClassName.byFqNameWithoutInnerClasses(fqName.child(Name.identifier(packageClassName)));
-    }
-
-    @NotNull
-    private static JvmClassName getMultiFileNamespaceInternalName(@NotNull FqName facadeFqName, @NotNull PsiFile file) {
+    private static Type getNamespacePartType(@NotNull FqName facadeFqName, @NotNull PsiFile file) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // path hashCode to prevent same name / different path collision
@@ -326,7 +319,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         FqName srcFqName = facadeFqName.parent().child(Name.identifier(srcName));
 
-        return JvmClassName.byFqNameWithoutInnerClasses(srcFqName);
+        return asmTypeByFqNameWithoutInnerClasses(srcFqName);
     }
 
     @NotNull
@@ -336,8 +329,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
     @NotNull
     public static String getNamespacePartInternalName(@NotNull JetFile file) {
-        FqName fqName = JetPsiUtil.getFQName(file);
-        JvmClassName namespaceJvmClassName = getJVMClassNameForKotlinNs(fqName);
-        return getMultiFileNamespaceInternalName(namespaceJvmClassName.getFqName(), file).getInternalName();
+        FqName packageFqName = JetPsiUtil.getFQName(file);
+        return getNamespacePartType(getPackageClassFqName(packageFqName), file).getInternalName();
     }
 }

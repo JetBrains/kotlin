@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.declaration.ClassDeclarationTranslator;
@@ -175,11 +174,6 @@ public class TranslationContext {
     @NotNull
     public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name, boolean fresh) {
         return staticContext.declarePropertyOrPropertyAccessorName(descriptor, name, fresh);
-    }
-
-    @NotNull
-    public JsStringLiteral nameToLiteral(@NotNull Named named) {
-        return program().getStringLiteral(named.getName().asString());
     }
 
     @NotNull

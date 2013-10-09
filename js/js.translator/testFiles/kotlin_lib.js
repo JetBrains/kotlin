@@ -266,6 +266,7 @@ String.prototype.contains = function (s) {
             },
             add: function (element) {
                 this.array[this.$size++] = element;
+                return true;
             },
             addAt: function (index, element) {
                 this.array.splice(index, 0, element);

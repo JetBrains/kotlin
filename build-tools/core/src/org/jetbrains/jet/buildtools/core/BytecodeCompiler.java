@@ -16,13 +16,20 @@
 
 package org.jetbrains.jet.buildtools.core;
 
+import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
-import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -42,6 +49,7 @@ import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
  * Wrapper class for Kotlin bytecode compiler.
  */
 public class BytecodeCompiler {
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
 
@@ -87,6 +95,12 @@ public class BytecodeCompiler {
         }
 
         configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourceRoots));
+        for (String sourceRoot : sourceRoots) {
+            File file = new File(sourceRoot);
+            if (!file.isFile() || !"kt".equals(FileUtilRt.getExtension(file.getName()))) {
+                configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, file);
+            }
+        }
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         // lets register any compiler plugins
@@ -101,24 +115,37 @@ public class BytecodeCompiler {
      * @param exceptionThrown whether compilation failed due to exception thrown
      * @return compilation error message
      */
-    private static String errorMessage(@NotNull String source, boolean exceptionThrown) {
-        return String.format("[%s] compilation failed" +
-                             (exceptionThrown ? "" : ", see \"ERROR:\" messages above for more details."),
-                             new File(source).getAbsolutePath());
+    private static String errorMessage(@NotNull String[] source, boolean exceptionThrown) {
+        return String.format("Compilation of the following source roots failed:" + LINE_SEPARATOR +
+                             getAbsolutePaths(source) +
+                             (exceptionThrown ? "" : LINE_SEPARATOR + "see \"ERROR:\" messages above for more details."));
+    }
+
+    private static String getAbsolutePaths(String[] source) {
+        return StringUtil.join(
+                source,
+                new Function<String, String>() {
+                    @Override
+                    public String fun(String s) {
+                        return " * " + new File(s).getAbsolutePath();
+                    }
+                },
+                LINE_SEPARATOR
+        );
     }
 
 
     /**
      * {@code CompileEnvironment#compileBunchOfSources} wrapper.
      *
-     * @param src       compilation source (directory or file)
+     * @param src       compilation source (directories or files)
      * @param output    compilation destination directory
      * @param stdlib    "kotlin-runtime.jar" path
      * @param classpath compilation classpath, can be <code>null</code> or empty
      */
-    public void sourcesToDir(@NotNull String src, @NotNull String output, @Nullable String stdlib, @Nullable String[] classpath) {
+    public void sourcesToDir(@NotNull String[] src, @NotNull String output, @Nullable String stdlib, @Nullable String[] classpath) {
         try {
-            JetCoreEnvironment environment = env(stdlib, classpath, new String[]{src});
+            JetCoreEnvironment environment = env(stdlib, classpath, src);
 
             boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, null, new File(output), true);
             if (!success) {
@@ -140,13 +167,13 @@ public class BytecodeCompiler {
      * @param stdlib         "kotlin-runtime.jar" path
      * @param classpath      compilation classpath, can be <code>null</code> or empty
      */
-    public void sourcesToJar(@NotNull String src,
+    public void sourcesToJar(@NotNull String[] src,
             @NotNull String jar,
             boolean includeRuntime,
             @Nullable String stdlib,
             @Nullable String[] classpath) {
         try {
-            JetCoreEnvironment environment = env(stdlib, classpath, new String[]{src});
+            JetCoreEnvironment environment = env(stdlib, classpath, src);
 
             boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, new File(jar), null, includeRuntime);
             if (!success) {
@@ -184,11 +211,11 @@ public class BytecodeCompiler {
             File directory = new File(module).getParentFile();
             boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), null, includeRuntime);
             if (!success) {
-                throw new CompileEnvironmentException(errorMessage(module, false));
+                throw new CompileEnvironmentException(errorMessage(new String[]{module}, false));
             }
         }
         catch (Exception e) {
-            throw new CompileEnvironmentException(errorMessage(module, true), e);
+            throw new CompileEnvironmentException(errorMessage(new String[]{module}, true), e);
         }
     }
 

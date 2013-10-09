@@ -22,11 +22,10 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 
 public interface LocalLookup {
@@ -44,7 +43,8 @@ public interface LocalLookup {
                     DeclarationDescriptor d,
                     LocalLookup localLookup,
                     GenerationState state,
-                    MutableClosure closure, JvmClassName className
+                    MutableClosure closure,
+                    Type classType
             ) {
                 VariableDescriptor vd = (VariableDescriptor) d;
 
@@ -57,8 +57,8 @@ public interface LocalLookup {
 
                 String fieldName = "$" + vd.getName();
                 StackValue innerValue = sharedVarType != null
-                                        ? StackValue.fieldForSharedVar(localType, className, fieldName)
-                                        : StackValue.field(type, className, fieldName, false);
+                                        ? StackValue.fieldForSharedVar(localType, classType, fieldName)
+                                        : StackValue.field(type, classType, fieldName, false);
 
                 closure.recordField(fieldName, type);
                 closure.captureVariable(new EnclosedValueDescriptor(d, innerValue, type));
@@ -79,17 +79,17 @@ public interface LocalLookup {
                     LocalLookup localLookup,
                     GenerationState state,
                     MutableClosure closure,
-                    JvmClassName className
+                    Type classType
             ) {
                 FunctionDescriptor vd = (FunctionDescriptor) d;
 
                 boolean idx = localLookup != null && localLookup.lookupLocal(vd);
                 if (!idx) return null;
 
-                Type localType = classNameForAnonymousClass(state.getBindingContext(), vd).getAsmType();
+                Type localType = asmTypeForAnonymousClass(state.getBindingContext(), vd);
 
                 String fieldName = "$" + vd.getName();
-                StackValue innerValue = StackValue.field(localType, className, fieldName, false);
+                StackValue innerValue = StackValue.field(localType, classType, fieldName, false);
 
                 closure.recordField(fieldName, localType);
                 closure.captureVariable(new EnclosedValueDescriptor(d, innerValue, localType));
@@ -109,13 +109,14 @@ public interface LocalLookup {
                     DeclarationDescriptor d,
                     LocalLookup enclosingLocalLookup,
                     GenerationState state,
-                    MutableClosure closure, JvmClassName className
+                    MutableClosure closure,
+                    Type classType
             ) {
                 if (closure.getEnclosingReceiverDescriptor() != d) return null;
 
                 JetType receiverType = ((CallableDescriptor) d).getReceiverParameter().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
-                StackValue innerValue = StackValue.field(type, className, CAPTURED_RECEIVER_FIELD, false);
+                StackValue innerValue = StackValue.field(type, classType, CAPTURED_RECEIVER_FIELD, false);
                 closure.setCaptureReceiver();
 
                 return innerValue;
@@ -135,7 +136,7 @@ public interface LocalLookup {
                 LocalLookup localLookup,
                 GenerationState state,
                 MutableClosure closure,
-                JvmClassName className
+                Type classType
         );
 
         public StackValue outerValue(EnclosedValueDescriptor d, ExpressionCodegen expressionCodegen) {

@@ -19,37 +19,26 @@ package org.jetbrains.jet.lang.resolve.java;
 import jet.KotlinClass;
 import jet.KotlinPackage;
 import jet.KotlinPackageFragment;
-import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+
+import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public final class JvmAnnotationNames {
-    public static final JvmClassName KOTLIN_CLASS = JvmClassName.byClass(KotlinClass.class);
+    public static final FqName KOTLIN_CLASS = fqNameByClass(KotlinClass.class);
 
-    public static final JvmClassName KOTLIN_PACKAGE = JvmClassName.byClass(KotlinPackage.class);
+    public static final FqName KOTLIN_PACKAGE = fqNameByClass(KotlinPackage.class);
 
-    public static final JvmClassName KOTLIN_PACKAGE_FRAGMENT = JvmClassName.byClass(KotlinPackageFragment.class);
+    public static final FqName KOTLIN_PACKAGE_FRAGMENT = fqNameByClass(KotlinPackageFragment.class);
 
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
 
     public static final String DATA_FIELD_NAME = "data";
+
     @Deprecated
-    public static final JvmClassName OLD_JET_CLASS_ANNOTATION = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetClass");
+    public static final FqName OLD_JET_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetClass");
+
     @Deprecated
-    public static final JvmClassName OLD_JET_PACKAGE_CLASS_ANNOTATION = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetPackageClass");
-
-    public static final JvmClassName ASSERT_INVISIBLE_IN_RESOLVER = JvmClassName.byClass(AssertInvisibleInResolver.class);
-
-    public static final JvmClassName KOTLIN_SIGNATURE = JvmClassName.byClass(KotlinSignature.class);
-
-    public static final Name KOTLIN_SIGNATURE_VALUE_FIELD_NAME = Name.identifier("value");
-
-    public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION = JvmClassName.byClass(NotNull.class);
-
-    public static final JvmClassName JETBRAINS_MUTABLE_ANNOTATION = JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.Mutable");
-
-    public static final JvmClassName JETBRAINS_READONLY_ANNOTATION = JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.ReadOnly");
+    public static final FqName OLD_JET_PACKAGE_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetPackageClass");
 
     private JvmAnnotationNames() {
     }

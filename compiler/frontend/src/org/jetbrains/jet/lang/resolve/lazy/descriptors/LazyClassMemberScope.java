@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Computable;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,13 +29,12 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.storage.NullableLazyValue;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -83,9 +82,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @NotNull LazyClassDescriptor thisClass
     ) {
         super(resolveSession, declarationProvider, thisClass);
-        this.primaryConstructor = resolveSession.getStorageManager().createNullableLazyValue(new Computable<ConstructorDescriptor>() {
+        this.primaryConstructor = resolveSession.getStorageManager().createNullableLazyValue(new Function0<ConstructorDescriptor>() {
             @Override
-            public ConstructorDescriptor compute() {
+            public ConstructorDescriptor invoke() {
                 return resolvePrimaryConstructor();
             }
         });
@@ -349,7 +348,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
-        return primaryConstructor.compute();
+        return primaryConstructor.invoke();
     }
 
     @Nullable
@@ -378,12 +377,14 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
-        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new RecursionIntolerantLazyValue<JetType>() {
-            @Override
-            protected JetType compute() {
-                return thisDescriptor.getDefaultType();
-            }
-        }));
+        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), resolveSession.getStorageManager().createLazyValue(
+                new Function0<JetType>() {
+                    @Override
+                    public JetType invoke() {
+                        return thisDescriptor.getDefaultType();
+                    }
+                })
+        ));
     }
 
     @Override

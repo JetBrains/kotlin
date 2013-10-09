@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
@@ -106,26 +107,42 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
                                 ecmaVersions);
     }
 
-    protected void generateJavaScriptFiles(@NotNull List<String> files, @NotNull String testName,
+    protected void generateJavaScriptFiles(
+            @NotNull List<String> files,
+            @NotNull String testName,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Iterable<EcmaVersion> ecmaVersions,
-            @NotNull TestConfigFactory configFactory)
-            throws Exception {
+            @NotNull TestConfigFactory configFactory
+    ) throws Exception {
         for (EcmaVersion version : ecmaVersions) {
-            TranslationUtils.translateFiles(getProject(), withAdditionalFiles(files),
-                                            getOutputFilePath(testName, version), mainCallParameters,
-                                            version, configFactory);
+            translateFiles(getProject(), withAdditionalFiles(files), getOutputFilePath(testName, version), mainCallParameters,
+                           version, configFactory);
         }
     }
 
-    protected void generateJavaScriptFiles(@NotNull List<String> files, @NotNull String testName,
-            @NotNull MainCallParameters mainCallParameters, @NotNull Iterable<EcmaVersion> ecmaVersions)
-            throws Exception {
-        for (EcmaVersion version : ecmaVersions) {
-            TranslationUtils.translateFiles(getProject(), withAdditionalFiles(files),
-                                            getOutputFilePath(testName, version), mainCallParameters,
-                                            version, TestConfig.FACTORY);
-        }
+    protected void generateJavaScriptFiles(
+            @NotNull List<String> files,
+            @NotNull String testName,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull Iterable<EcmaVersion> ecmaVersions
+    ) throws Exception {
+        generateJavaScriptFiles(files, testName, mainCallParameters, ecmaVersions, getConfigFactory());
+    }
+
+    protected void translateFiles(
+            @NotNull Project project,
+            @NotNull List<String> files,
+            @NotNull String outputFile,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull EcmaVersion version,
+            @NotNull TestConfigFactory configFactory
+    ) throws Exception {
+        TranslationUtils.translateFiles(project, files, outputFile, mainCallParameters, version, configFactory);
+    }
+
+    @NotNull
+    protected TestConfigFactory getConfigFactory() {
+        return TestConfig.FACTORY_WITHOUT_SOURCEMAP;
     }
 
     @NotNull

@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
-import org.jetbrains.jet.utils.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
 import javax.inject.Inject;
 import java.util.*;

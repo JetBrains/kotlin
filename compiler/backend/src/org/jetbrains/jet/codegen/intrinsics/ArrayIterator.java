@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -30,11 +29,16 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
 
 public class ArrayIterator implements IntrinsicMethod {
     @Override
@@ -57,17 +61,18 @@ public class ArrayIterator implements IntrinsicMethod {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
             return StackValue.onStack(AsmTypeConstants.JET_ITERATOR_TYPE);
         }
-        else {
-            for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-                PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                ClassDescriptor arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType);
-                if (containingDeclaration.equals(arrayClass)) {
-                    String methodSignature = "([" + jvmPrimitiveType.getJvmLetter() + ")" + jvmPrimitiveType.getIterator().getDescriptor();
-                    v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
-                    return StackValue.onStack(jvmPrimitiveType.getIterator().getAsmType());
-                }
+
+        for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
+            PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
+            ClassDescriptor arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType);
+            if (containingDeclaration.equals(arrayClass)) {
+                String iteratorDesc = asmDescByFqNameWithoutInnerClasses(new FqName("jet." + primitiveType.getTypeName() + "Iterator"));
+                String methodSignature = "([" + asmTypeForPrimitive(jvmPrimitiveType) + ")" + iteratorDesc;
+                v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
+                return StackValue.onStack(Type.getType(iteratorDesc));
             }
-            throw new UnsupportedOperationException(containingDeclaration.toString());
         }
+
+        throw new UnsupportedOperationException(containingDeclaration.toString());
     }
 }

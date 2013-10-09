@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 
@@ -24,4 +25,6 @@ public interface ErrorReporter {
     void reportIncompatibleAbiVersion(@NotNull KotlinJvmBinaryClass kotlinClass, int actualVersion);
 
     void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
+
+    void reportAnnotationLoadingError(@NotNull String message, @Nullable Exception exception);
 }

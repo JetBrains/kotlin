@@ -36,11 +36,10 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -235,12 +234,11 @@ public class LightClassUtil {
 
         if (parent instanceof JetFile) {
             // top-level declaration
-            JvmClassName jvmName = PsiCodegenPredictor.getPredefinedJvmClassName((JetFile) parent, true);
-            if (jvmName != null) {
+            FqName fqName = getPackageClassNameForFile((JetFile) parent);
+            if (fqName != null) {
                 Project project = declaration.getProject();
 
-                String fqName = jvmName.getFqName().asString();
-                return JavaElementFinder.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project));
+                return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project));
             }
         }
         else if (parent instanceof JetClassBody) {
@@ -249,6 +247,12 @@ public class LightClassUtil {
         }
 
         return null;
+    }
+
+    @Nullable
+    private static FqName getPackageClassNameForFile(@NotNull JetFile jetFile) {
+        String packageName = jetFile.getPackageName();
+        return packageName == null ? null : PackageClassUtils.getPackageClassFqName(new FqName(packageName));
     }
 
     private static PropertyAccessorsPsiMethods extractPropertyAccessors(

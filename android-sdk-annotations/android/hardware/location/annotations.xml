@@ -1,0 +1,38 @@
+<root>
+    <item name='android.hardware.location.IGeofenceHardwareCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardwareCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.GeofenceHardwareImpl int[] getMonitoringTypes()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardwareMonitorCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardware.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardwareMonitorCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.GeofenceHardwareService android.os.IBinder onBind(android.content.Intent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardware.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.GeofenceHardwareRequest android.hardware.location.GeofenceHardwareRequest createCircularGeofence(double, double, double)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardwareMonitorCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardwareCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.hardware.location.IGeofenceHardware.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

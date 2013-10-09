@@ -1,0 +1,62 @@
+<root>
+    <item name='org.apache.james.mime4j.ContentHandler void epilogue(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.ContentHandler void preamble(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.SimpleContentHandler void field(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.BodyDescriptor boolean isMimeType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.EOLConvertingInputStream EOLConvertingInputStream(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.AbstractContentHandler void preamble(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.AbstractContentHandler void body(org.apache.james.mime4j.BodyDescriptor, java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.AbstractContentHandler void body(org.apache.james.mime4j.BodyDescriptor, java.io.InputStream) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.CloseShieldInputStream int read(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.ContentHandler void body(org.apache.james.mime4j.BodyDescriptor, java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.EOLConvertingInputStream EOLConvertingInputStream(java.io.InputStream, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.MimeBoundaryInputStream MimeBoundaryInputStream(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.LogFactory org.apache.james.mime4j.Log getLog(java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.SimpleContentHandler void body(org.apache.james.mime4j.BodyDescriptor, java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.CloseShieldInputStream int read(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.ContentHandler void field(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.SimpleContentHandler void body(org.apache.james.mime4j.BodyDescriptor, java.io.InputStream) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.AbstractContentHandler void field(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.AbstractContentHandler void epilogue(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.ContentHandler void body(org.apache.james.mime4j.BodyDescriptor, java.io.InputStream) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

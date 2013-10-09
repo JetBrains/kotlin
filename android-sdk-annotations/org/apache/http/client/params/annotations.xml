@@ -1,0 +1,26 @@
+<root>
+    <item name='org.apache.http.client.params.HttpClientParams boolean isRedirecting(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams void setRedirecting(org.apache.http.params.HttpParams, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientParamBean ClientParamBean(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams java.lang.String getCookiePolicy(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams boolean isAuthenticating(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams void setAuthenticating(org.apache.http.params.HttpParams, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams void setCookiePolicy(org.apache.http.params.HttpParams, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams java.lang.String getCookiePolicy(org.apache.http.params.HttpParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

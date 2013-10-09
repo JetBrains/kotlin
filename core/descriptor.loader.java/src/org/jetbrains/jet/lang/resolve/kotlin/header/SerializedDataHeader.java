@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin.header;
 
 import org.jetbrains.annotations.NotNull;
 
-public class SerializedDataHeader extends KotlinClassFileHeader {
+public class SerializedDataHeader extends KotlinClassHeader {
     public enum Kind {
         CLASS,
         PACKAGE

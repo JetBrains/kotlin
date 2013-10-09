@@ -1,0 +1,107 @@
+<root>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer text(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer void setOutput(java.io.Writer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser java.lang.Object getProperty(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer void setFeature(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser void setFeature(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer void comment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser java.lang.String getPositionDescription()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser void defineEntityReplacementText(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer endTag(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlSerializer newSerializer()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer text(char[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer text(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer text(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer attribute(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser java.lang.String getAttributeNamespace(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer void ignorableWhitespace(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer attribute(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser char[] getTextCharacters(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer startTag(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer void setOutput(java.io.OutputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser void setInput(java.io.InputStream, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlPullParserFactory newInstance()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser java.lang.String getAttributeName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlPullParser newPullParser()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer void setProperty(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer void startDocument(java.lang.String, java.lang.Boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer java.lang.Object getProperty(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser java.lang.String getAttributeType(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser void setProperty(java.lang.String, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser boolean getFeature(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer attribute(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParser java.lang.String getNamespace()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer boolean getFeature(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlSerializer org.xmlpull.v1.XmlSerializer startTag(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.xmlpull.v1.XmlPullParserFactory org.xmlpull.v1.XmlPullParserFactory newInstance(java.lang.String, java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

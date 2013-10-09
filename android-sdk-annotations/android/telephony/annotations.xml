@@ -1,59 +1,218 @@
 <root>
-    <item name='android.telephony.TelephonyManager ACTION_PHONE_STATE_CHANGED'>
+    <item name='android.telephony.SmsCbMessage void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.NeighboringCellInfo void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.telephony.TelephonyManager java.lang.String getNetworkTypeName()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.SmsMessage.MessageClass UNKNOWN'>
+    <item name='android.telephony.CellInfoLte java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.CellSignalStrengthGsm void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.telephony.SignalStrength android.telephony.SignalStrength makeSignalStrengthFromRilParcel(android.os.Parcel)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.TelephonyManager EXTRA_STATE'>
+    <item name='android.telephony.CellSignalStrengthCdma CellSignalStrengthCdma(android.telephony.CellSignalStrengthCdma) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.CellInfoLte void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.telephony.CellIdentityGsm void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.telephony.CellInfoCdma void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.telephony.SmsMessage.MessageClass CLASS_2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.telephony.SmsMessage.MessageClass CLASS_3'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.telephony.SmsMessage.MessageClass CLASS_1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.telephony.CellIdentityCdma void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.telephony.PhoneNumberUtils void formatJapaneseNumber(android.text.Editable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.telephony.PhoneNumberFormattingTextWatcher void onTextChanged(java.lang.CharSequence, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.CellIdentityLte void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.telephony.SignalStrength void copyFrom(android.telephony.SignalStrength) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.TelephonyManager EXTRA_INCOMING_NUMBER'>
+    <item name='android.telephony.CellSignalStrengthLte CellSignalStrengthLte(android.telephony.CellSignalStrengthLte) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoWcdma android.telephony.CellInfoWcdma createFromParcelBody(android.os.Parcel)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.telephony.CellInfoGsm void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.CellSignalStrengthCdma void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.telephony.SmsMessage.SubmitPdu java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.SmsMessage.MessageClass CLASS_0'>
+    <item name='android.telephony.SmsCbEtwsInfo void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.SignalStrength void writeToParcel(android.os.Parcel, int) 0'>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String calledPartyBCDToString(byte[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String replaceUnicodeDigits(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthWcdma CellSignalStrengthWcdma(android.telephony.CellSignalStrengthWcdma) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage java.util.ArrayList&lt;java.lang.String&gt; fragmentText(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState void fillInNotifierBundle(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbCmasInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String getUsernameFromUriNumber(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength android.telephony.SignalStrength newFromBundle(android.os.Bundle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState android.telephony.ServiceState newFromBundle(android.os.Bundle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoLte void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils byte[] numberToCalledPartyBCD(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsManager android.telephony.SmsManager getDefault()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState android.telephony.ServiceState newFromBundle(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbCmasInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfo void writeToParcel(android.os.Parcel, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength android.telephony.SignalStrength makeSignalStrengthFromRilParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoGsm java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbLocation void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage android.telephony.SmsMessage.SubmitPdu getSubmitPdu(java.lang.String, java.lang.String, java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthCdma android.telephony.CellSignalStrength copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoWcdma CellInfoWcdma(android.telephony.CellInfoWcdma) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoCdma CellInfoCdma(android.telephony.CellInfoCdma) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsManager java.util.ArrayList&lt;android.telephony.SmsMessage&gt; getAllMessagesFromIcc()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthCdma void copyFrom(android.telephony.CellSignalStrengthCdma) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState java.lang.String rilRadioTechnologyToString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength SignalStrength(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils int getFormatTypeForLocale(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityGsm java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoWcdma android.telephony.CellInfoWcdma createFromParcelBody(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String formatNumber(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthWcdma void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellBroadcastMessage void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoLte android.telephony.CellInfoLte createFromParcelBody(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityWcdma void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthWcdma android.telephony.CellSignalStrengthWcdma copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String getNumberFromIntent(android.content.Intent, android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.TelephonyManager TelephonyManager(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage android.telephony.SmsMessage newFromCMT(java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoWcdma void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellBroadcastMessage java.lang.String getDateString(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils void formatNumber(android.text.Editable, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsManager java.util.ArrayList&lt;java.lang.String&gt; divideMessage(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage.SubmitPdu SubmitPdu(com.android.internal.telephony.SmsMessageBase.SubmitPduBase) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoCdma android.telephony.CellInfoCdma createFromParcelBody(android.os.Parcel)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState ServiceState(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String formatNumber(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbLocation boolean isInLocationArea(android.telephony.SmsCbLocation) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage android.telephony.SmsMessage newFromParcel(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage int[] calculateLength(java.lang.CharSequence, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage.MessageClass android.telephony.SmsMessage.MessageClass valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsManager java.util.ArrayList&lt;java.lang.String&gt; divideMessage(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoCdma android.telephony.CellInfoCdma createFromParcelBody(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellBroadcastMessage android.content.ContentValues getContentValues()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState void copyFrom(android.telephony.ServiceState) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoGsm android.telephony.CellInfoGsm createFromParcelBody(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellBroadcastMessage java.lang.String getSpokenDateString(android.content.Context)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityLte java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthGsm android.telephony.CellSignalStrength copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthLte android.telephony.CellSignalStrengthLte copy()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.telephony.CellSignalStrengthLte void writeToParcel(android.os.Parcel, int) 0'>
@@ -63,6 +222,234 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.telephony.ServiceState void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage int[] calculateLength(java.lang.CharSequence, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage.MessageClass android.telephony.SmsMessage.MessageClass valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityGsm void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.NeighboringCellInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthGsm void copyFrom(android.telephony.CellSignalStrengthGsm) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellBroadcastMessage android.telephony.CellBroadcastMessage createFromCursor(android.database.Cursor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthLte void initialize(android.telephony.SignalStrength, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthLte java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbEtwsInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength SignalStrength(android.telephony.SignalStrength) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength void fillInNotifierBundle(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage android.telephony.SmsMessage.SubmitPdu getSubmitPdu(java.lang.String, java.lang.String, short, byte[], boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoLte CellInfoLte(android.telephony.CellInfoLte) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.NeighboringCellInfo NeighboringCellInfo(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String formatNumber(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength android.telephony.SignalStrength newFromBundle(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage int[] calculateLength(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfo CellInfo(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoLte android.telephony.CellInfoLte createFromParcelBody(android.os.Parcel)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthLte android.telephony.CellSignalStrength copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsManager void sendMultipartTextMessage(java.lang.String, java.lang.String, java.util.ArrayList&lt;java.lang.String&gt;, java.util.ArrayList&lt;android.app.PendingIntent&gt;, java.util.ArrayList&lt;android.app.PendingIntent&gt;) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage android.telephony.SmsMessage.MessageClass getMessageClass()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoCdma void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberFormattingTextWatcher PhoneNumberFormattingTextWatcher(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityCdma java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfo CellInfo(android.telephony.CellInfo) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.NeighboringCellInfo NeighboringCellInfo(int, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityCdma void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrength android.telephony.CellSignalStrength copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityLte void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage int[] calculateLength(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthCdma void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthWcdma android.telephony.CellSignalStrength copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbLocation java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthCdma android.telephony.CellSignalStrengthCdma copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellLocation void fillInNotifierBundle(android.os.Bundle) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState ServiceState(android.telephony.ServiceState) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoWcdma java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthCdma java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellBroadcastMessage android.telephony.CellBroadcastMessage createFromCursor(android.database.Cursor)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoCdma java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthGsm void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils boolean compare(android.content.Context, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String replaceUnicodeDigits(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String formatNumber(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthLte void copyFrom(android.telephony.CellSignalStrengthLte) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoGsm android.telephony.CellInfoGsm createFromParcelBody(android.os.Parcel)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthWcdma java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String normalizeNumber(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.ServiceState java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String formatNumber(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils boolean isPotentialLocalEmergencyNumber(java.lang.String, android.content.Context) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.TelephonyManager android.telephony.TelephonyManager from(android.content.Context) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbLocation SmsCbLocation(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.NeighboringCellInfo void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String formatNumber(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsManager void sendDataMessage(java.lang.String, java.lang.String, short, byte[], android.app.PendingIntent, android.app.PendingIntent) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthGsm java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthWcdma void copyFrom(android.telephony.CellSignalStrengthWcdma) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils void formatNanpNumber(android.text.Editable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String formatNumber(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String calledPartyBCDFragmentToString(byte[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthGsm CellSignalStrengthGsm(android.telephony.CellSignalStrengthGsm) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils boolean isLocalEmergencyNumber(java.lang.String, android.content.Context) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbMessage java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellIdentityWcdma java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.TelephonyManager java.lang.String getNetworkTypeName(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsCbMessage SmsCbMessage(android.os.Parcel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellSignalStrengthGsm android.telephony.CellSignalStrengthGsm copy()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.CellInfoGsm CellInfoGsm(android.telephony.CellInfoGsm) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SignalStrength void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage java.util.ArrayList&lt;java.lang.String&gt; fragmentText(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.SmsMessage android.telephony.SmsMessage newFromParcel(android.os.Parcel)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.PhoneNumberUtils java.lang.String getUsernameFromUriNumber(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -69,7 +69,8 @@ public final class InitializerUtils {
         initializers.add(expression.makeStmt());
     }
 
-    public static JsPropertyInitializer createPropertyInitializer(Named named, JsExpression value, TranslationContext context) {
-        return new JsPropertyInitializer(context.nameToLiteral(named), value);
+    public static JsPropertyInitializer createClassObjectInitializer(JsExpression value, TranslationContext context) {
+        JsStringLiteral classObjectInitStr = context.program().getStringLiteral(Namer.getNameForClassObjectInitializer());
+        return new JsPropertyInitializer(classObjectInitStr, value);
     }
 }

@@ -1,0 +1,32 @@
+<root>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil byte[] decodeBaseQuotedPrintable(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil java.lang.String decodeEncodedWords(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil java.lang.String decodeB(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil java.lang.String decodeQ(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil byte[] decodeBase64(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.ByteQueue java.util.Iterator iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil java.lang.String decodeQ(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil java.lang.String decodeQ(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil java.lang.String decodeEncodedWords(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.james.mime4j.decoder.DecoderUtil java.lang.String decodeB(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -1,0 +1,26 @@
+// FILE: before.kt
+trait A {
+    val f: Int
+        get() = 2
+}
+
+trait B : A
+
+trait C : B, A
+
+class SomeClass() : C {
+    override val <caret>f: Int = 4
+}
+// FILE: after.kt
+trait A {
+    val <caret>f: Int
+        get() = 2
+}
+
+trait B : A
+
+trait C : B, A
+
+class SomeClass() : C {
+    override val f: Int = 4
+}

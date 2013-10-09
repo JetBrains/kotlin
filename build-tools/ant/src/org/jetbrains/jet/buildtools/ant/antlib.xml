@@ -9,4 +9,7 @@
     <taskdef
         name      = "kotlinJSc"
         classname = "org.jetbrains.jet.buildtools.ant.JavaScriptCompilerTask"/>
+    <typedef
+        name      = "withKotlin"
+        classname = "org.jetbrains.jet.buildtools.ant.KotlinCompilerAdapter"/>
 </antlib>

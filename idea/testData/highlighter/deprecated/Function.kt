@@ -16,3 +16,6 @@ class MyClass() {
         deprecated("Use A instead") fun test3() {}
     }
 }
+
+// NO_CHECK_INFOS
+// NO_CHECK_WEAK_WARNINGS
