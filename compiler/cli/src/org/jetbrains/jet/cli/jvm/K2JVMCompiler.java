@@ -20,16 +20,12 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
-import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
-import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -130,7 +126,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
-                List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
+                ModuleChunk modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
 
                 File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
                 KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,

@@ -117,13 +117,13 @@ public class KotlinToJVMBytecodeCompiler {
 
     public static boolean compileModules(
             CompilerConfiguration configuration,
-            @NotNull List<Module> modules,
+            @NotNull ModuleChunk modules,
             @NotNull File directory,
             @Nullable File jarPath,
             @Nullable File outputDir,
             boolean jarRuntime) {
 
-        for (Module moduleBuilder : modules) {
+        for (Module moduleBuilder : modules.getModules()) {
             ClassFileFactory moduleFactory = compileModule(configuration, moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
