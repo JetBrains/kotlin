@@ -52,16 +52,22 @@ public class KotlinBuilderModuleScriptGenerator {
     public static File generateModuleDescription(CompileContext context, ModuleBuildTarget target, List<File> sourceFiles)
             throws IOException
     {
+        File outputDir = target.getOutputDir();
+        if (outputDir == null) {
+            throw new IllegalStateException("No output directory found for " + target);
+
+        }
         CharSequence moduleScriptText = GENERATOR.generateModuleScript(
                 target.getId(),
+                outputDir.getAbsolutePath(),
                 getKotlinModuleDependencies(context, target),
                 sourceFiles,
                 target.isTests(),
                 // this excludes the output directory from the class path, to be removed for true incremental compilation
-                Collections.singleton(target.getOutputDir())
+                Collections.singleton(outputDir)
         );
 
-        File scriptFile = new File(target.getOutputDir(), "script." + GENERATOR.getFileExtension());
+        File scriptFile = new File(outputDir, "script." + GENERATOR.getFileExtension());
 
         writeScriptToFile(context, moduleScriptText, scriptFile);
 
