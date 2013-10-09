@@ -13,47 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.jetbrains.jet.jvm.compiler;
 
-import junit.framework.Assert;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptorForObject;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME;
-import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR;
-
 public final class CompileKotlinAgainstBinariesCustomTest extends AbstractCompileKotlinAgainstCustomBinariesTest {
+    public static final String TEST_DATA_PATH = "compiler/testData/compileKotlinAgainstBinariesCustom/";
 
-    public void testDuplicateObjectInSourcesAndBinaries() throws Exception {
-        BindingContext context = analyzeFile(new File(
-                "compiler/testData/compileKotlinAgainstBinariesCustom/duplicateObjectInBinaryAndSources/duplicateObjectInBinaryAndSources.kt"));
-        NamespaceDescriptor namespaceDescriptor = context.get(FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
-        assert namespaceDescriptor != null;
-        Collection<DeclarationDescriptor> allDescriptors = namespaceDescriptor.getMemberScope().getAllDescriptors();
-        Assert.assertEquals(allDescriptors.size(), 2);
+    @NotNull
+    private Collection<DeclarationDescriptor> analyzeAndGetAllDescriptors() throws IOException {
+        String testName = getTestName(true);
+        File ktFile = new File(TEST_DATA_PATH + testName, testName + ".kt");
+        return analyzeFileToNamespace(ktFile).getMemberScope().getAllDescriptors();
+    }
+
+    public void testDuplicateObjectInBinaryAndSources() throws Exception {
+        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors();
+        assertEquals(allDescriptors.size(), 2);
         for (DeclarationDescriptor descriptor : allDescriptors) {
-            Assert.assertTrue(descriptor.getName().asString().equals("Lol"));
-            Assert.assertTrue(descriptor instanceof VariableDescriptorForObject);
-            Assert.assertFalse("Object property should have valid class", ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
+            assertTrue(descriptor.getName().asString().equals("Lol"));
+            assertTrue(descriptor instanceof VariableDescriptorForObject);
+            assertFalse("Object property should have valid class",
+                        ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
         }
     }
 
     public void testBrokenJarWithNoClassForObjectProperty() throws Exception {
-        BindingContext context = analyzeFile(new File(
-                "compiler/testData/compileKotlinAgainstBinariesCustom/brokenJarWithNoClassForObjectProperty/brokenJarWithNoClassForObjectProperty.kt"));
-        NamespaceDescriptor namespaceDescriptor = context.get(FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
-        assert namespaceDescriptor != null;
-        Collection<DeclarationDescriptor> allDescriptors = namespaceDescriptor.getMemberScope().getAllDescriptors();
-        Assert.assertEquals(allDescriptors.size(), 1);
+        Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors();
+        assertEquals(allDescriptors.size(), 1);
         DeclarationDescriptor descriptor = allDescriptors.iterator().next();
-        Assert.assertTrue(descriptor.getName().asString().equals("Lol"));
-        Assert.assertTrue(descriptor instanceof VariableDescriptorForObject);
-        Assert.assertTrue("Object property should have an error class", ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
+        assertTrue(descriptor.getName().asString().equals("Lol"));
+        assertTrue(descriptor instanceof VariableDescriptorForObject);
+        assertTrue("Object property should have an error class",
+                   ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
     }
 }

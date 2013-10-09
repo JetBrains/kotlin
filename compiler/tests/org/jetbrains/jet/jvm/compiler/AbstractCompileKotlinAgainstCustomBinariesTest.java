@@ -16,27 +16,23 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
-import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,40 +44,35 @@ import java.util.regex.Pattern;
 import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
 
 public abstract class AbstractCompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
-    protected void doTest(String ktFilePath) throws Exception {
-        Assert.assertTrue(ktFilePath.endsWith(".kt"));
-
+    protected void doTest(@NotNull String ktFilePath) throws Exception {
+        assertTrue(ktFilePath.endsWith(".kt"));
         File ktFile = new File(ktFilePath);
-        String testFileWithoutExtension = FileUtil.getNameWithoutExtension(ktFile);
 
-        checkNamespace(ktFile, LoadDescriptorUtil.TEST_PACKAGE_FQNAME,
-                       new File(ktFile.getParentFile(), testFileWithoutExtension + ".txt"));
+        NamespaceDescriptor namespace = analyzeFileToNamespace(ktFile);
+
+        NamespaceComparator.Configuration comparator = NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
+                DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES);
+        File txtFile = new File(ktFile.getParentFile(), FileUtil.getNameWithoutExtension(ktFile) + ".txt");
+        validateAndCompareNamespaceWithFile(namespace, comparator, txtFile);
     }
 
-    private void checkNamespace(File ktFile, FqName namespaceFqn, File expectedFile) throws IOException {
-        BindingContext bindingContext = analyzeFile(ktFile);
+    @NotNull
+    protected NamespaceDescriptor analyzeFileToNamespace(@NotNull File ktFile) throws IOException {
+        Project project = getEnvironment(ktFile.getParentFile()).getProject();
 
-        NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, namespaceFqn);
-        assertNotNull("Failed to find namespace: " + namespaceFqn, namespaceDescriptor);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
+                JetTestUtils.loadJetFile(project, ktFile),
+                Collections.<AnalyzerScriptParameter>emptyList()
+        ).getBindingContext();
 
-        validateAndCompareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
-                DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES), expectedFile);
+        NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
+                                                                     LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
+        assertNotNull("Failed to find namespace: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, namespaceDescriptor);
+        return namespaceDescriptor;
     }
 
-    protected BindingContext analyzeFile(File ktFile) throws IOException {
-        JetCoreEnvironment environment = getEnvironment(ktFile);
-        Project project = environment.getProject();
-
-        List<JetFile> jetFiles = Collections.singletonList(JetTestUtils.loadJetFile(project, ktFile));
-
-        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
-    }
-
-    private JetCoreEnvironment getEnvironment(File ktFile) {
-        File dir = ktFile.getParentFile();
-
+    @NotNull
+    private JetCoreEnvironment getEnvironment(@NotNull File dir) {
         List<File> jarFiles = FileUtil.findFilesByMask(Pattern.compile("^.*\\.jar$"), dir);
 
         CopyOnWriteArrayList<File> extras = Lists.newCopyOnWriteArrayList();
