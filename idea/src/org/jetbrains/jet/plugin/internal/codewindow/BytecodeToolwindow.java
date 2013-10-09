@@ -93,7 +93,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
                     return printStackTraceToString(exhaust.getError());
                 }
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEXT, Progress.DEAF, exhaust.getBindingContext(),
-                                            Collections.singletonList(jetFile), BuiltinToJavaTypesMapping.ENABLED, true, true, true);
+                                            Collections.singletonList(jetFile), true, true, true);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
             catch (ProcessCanceledException e) {

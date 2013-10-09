@@ -25,8 +25,4 @@ public enum ClassBuilderMode {
      * Only function signatures
      */
     SIGNATURES,
-    /**
-     * Function with stub bodies: just throw exception
-     */
-    STUBS,
 }

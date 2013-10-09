@@ -49,7 +49,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         assertNotNull(positionManager);
 
         DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(state.getBindingContext(), "trace created in JetPositionManagerTest");
-        JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, true, ClassBuilderMode.FULL);
+        JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);
         //noinspection unchecked
         CodegenBinding.initTrace(bindingTrace, files);
         for (JetFile file : files) {

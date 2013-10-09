@@ -1478,10 +1478,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null, null);
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(fun);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             Type returnType = methodToGenerate.getReturnType();
 
             mv.visitCode();

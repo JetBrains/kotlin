@@ -58,12 +58,10 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
 public class JetTypeMapper extends BindingTraceAware {
 
-    private final boolean mapBuiltinsToJava;
     private final ClassBuilderMode classBuilderMode;
 
-    public JetTypeMapper(BindingTrace bindingTrace, boolean mapBuiltinsToJava, ClassBuilderMode mode) {
+    public JetTypeMapper(BindingTrace bindingTrace, ClassBuilderMode mode) {
         super(bindingTrace);
-        this.mapBuiltinsToJava = mapBuiltinsToJava;
         classBuilderMode = mode;
     }
 
@@ -260,7 +258,7 @@ public class JetTypeMapper extends BindingTraceAware {
         Type known = null;
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
-        if (mapBuiltinsToJava && descriptor instanceof ClassDescriptor) {
+        if (descriptor instanceof ClassDescriptor) {
             FqNameUnsafe className = DescriptorUtils.getFQName(descriptor);
             if (className.isSafe()) {
                 known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(className.toSafe(), jetType.isNullable());
@@ -279,11 +277,8 @@ public class JetTypeMapper extends BindingTraceAware {
                 throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
             }
             else if (kind == JetTypeMapperMode.IMPL) {
-                //noinspection ConstantConditions
-                if (mapBuiltinsToJava) {
-                    // TODO: enable and fix tests
-                    //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
-                }
+                // TODO: enable and fix tests
+                //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
                 return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
             }
             else {
@@ -308,11 +303,10 @@ public class JetTypeMapper extends BindingTraceAware {
             if (signatureVisitor != null) {
                 signatureVisitor.writeAsmType(asmType);
             }
-            checkValidType(asmType);
             return asmType;
         }
 
-        if (mapBuiltinsToJava && descriptor instanceof ClassDescriptor && KotlinBuiltIns.getInstance().isArray(jetType)) {
+        if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.getInstance().isArray(jetType)) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
@@ -332,7 +326,6 @@ public class JetTypeMapper extends BindingTraceAware {
             else {
                 r = AsmTypeConstants.JAVA_ARRAY_GENERIC_TYPE;
             }
-            checkValidType(r);
             return r;
         }
 
@@ -348,7 +341,6 @@ public class JetTypeMapper extends BindingTraceAware {
 
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
 
-            checkValidType(asmType);
             return asmType;
         }
 
@@ -358,7 +350,6 @@ public class JetTypeMapper extends BindingTraceAware {
             if (signatureVisitor != null) {
                 signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), type);
             }
-            checkValidType(type);
             return type;
         }
 
@@ -460,19 +451,7 @@ public class JetTypeMapper extends BindingTraceAware {
                 writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, allowProjections);
             }
         }
-        checkValidType(asmType);
         return asmType;
-    }
-
-    private void checkValidType(@NotNull Type type) {
-        if (!mapBuiltinsToJava) {
-            String descriptor = type.getDescriptor();
-            if (!descriptor.equals("Ljava/lang/Object;")) {
-                if (descriptor.startsWith("Ljava/")) {
-                    throw new IllegalStateException("builtins must not reference java.* classes: " + descriptor);
-                }
-            }
-        }
     }
 
     @NotNull

@@ -192,7 +192,7 @@ public class JetPositionManager implements PositionManager {
                     Collection<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allNamespaceFiles().fun(file);
 
                     DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
-                    JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, true, ClassBuilderMode.FULL);
+                    JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);
                     //noinspection unchecked
                     CodegenBinding.initTrace(bindingTrace, namespaceFiles);
                     return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);

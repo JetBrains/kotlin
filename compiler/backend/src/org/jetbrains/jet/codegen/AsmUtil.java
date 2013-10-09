@@ -78,9 +78,6 @@ public class AsmUtil {
     public static final String CAPTURED_RECEIVER_FIELD = "receiver$0";
     public static final String CAPTURED_THIS_FIELD = "this$0";
 
-    private static final String STUB_EXCEPTION = "java/lang/RuntimeException";
-    private static final String STUB_EXCEPTION_MESSAGE = "Stubs are for compiler only, do not add them to runtime classpath";
-
     private static final ImmutableMap<Integer, JvmPrimitiveType> primitiveTypeByAsmSort;
     private static final ImmutableMap<Type, Type> primitiveTypeByBoxedType;
 
@@ -467,10 +464,6 @@ public class AsmUtil {
         }
         v.neg(expectedType);
         return expectedType;
-    }
-
-    public static void genStubCode(MethodVisitor mv) {
-        genMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
     }
 
     public static void swap(InstructionAdapter v, Type stackTop, Type afterTop) {

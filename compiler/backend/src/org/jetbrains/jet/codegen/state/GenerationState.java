@@ -72,7 +72,7 @@ public class GenerationState {
     private final boolean generateDeclaredClasses;
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, BindingContext bindingContext, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, bindingContext, files, BuiltinToJavaTypesMapping.ENABLED, true, false, true);
+        this(project, builderFactory, Progress.DEAF, bindingContext, files, true, false, true);
     }
 
     public GenerationState(
@@ -81,7 +81,6 @@ public class GenerationState {
             @NotNull Progress progress,
             @NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files,
-            @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
             boolean generateNotNullAssertions,
             boolean generateNotNullParamAssertions,
             boolean generateDeclaredClasses
@@ -94,7 +93,7 @@ public class GenerationState {
         bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
 
-        this.typeMapper = new JetTypeMapper(bindingTrace, builtinToJavaTypesMapping == BuiltinToJavaTypesMapping.ENABLED, classBuilderMode);
+        this.typeMapper = new JetTypeMapper(bindingTrace, classBuilderMode);
 
         InjectorForJvmCodegen injector = new InjectorForJvmCodegen(typeMapper, this, builderFactory, project);
 

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.cli.jvm;
 
-import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
 import org.jetbrains.jet.config.CompilerConfigurationKey;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 
@@ -31,8 +30,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<File>> ANNOTATIONS_PATH_KEY = CompilerConfigurationKey.create("annotations path");
 
     public static final CompilerConfigurationKey<List<AnalyzerScriptParameter>> SCRIPT_PARAMETERS = CompilerConfigurationKey.create("script");
-    public static final CompilerConfigurationKey<BuiltinToJavaTypesMapping> BUILTIN_TO_JAVA_TYPES_MAPPING_KEY =
-            CompilerConfigurationKey.create("builtin to java types mapping");
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_NOT_NULL_ASSERTIONS =
             CompilerConfigurationKey.create("generate not-null assertions");
