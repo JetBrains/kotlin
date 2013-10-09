@@ -34,7 +34,7 @@ public class KotlinModuleScriptGenerator implements KotlinModuleDescriptionGener
     @Override
     public CharSequence generateModuleScript(
             String moduleName,
-            DependencyProvider dependencyProvider,
+            String outputDir, DependencyProvider dependencyProvider,
             List<File> sourceFiles,
             boolean tests,
             final Set<File> directoriesToFilterOut
@@ -50,7 +50,7 @@ public class KotlinModuleScriptGenerator implements KotlinModuleDescriptionGener
 
         script.append("import kotlin.modules.*\n");
         script.append("fun project() {\n");
-        script.append("    module(\"" + moduleName + "\") {\n");
+        script.append("    module(\"" + moduleName + "\", outputDir = \"" + toSystemIndependentName(outputDir) + "\") {\n");
 
         for (File sourceFile : sourceFiles) {
             script.append("        sources += \"" + toSystemIndependentName(sourceFile.getPath()) + "\"\n");

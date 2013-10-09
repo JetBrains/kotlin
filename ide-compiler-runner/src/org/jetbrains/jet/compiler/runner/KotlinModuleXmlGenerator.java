@@ -37,7 +37,7 @@ public class KotlinModuleXmlGenerator implements KotlinModuleDescriptionGenerato
     @Override
     public CharSequence generateModuleScript(
             String moduleName,
-            DependencyProvider dependencyProvider,
+            String outputDir, DependencyProvider dependencyProvider,
             List<File> sourceFiles,
             boolean tests,
             final Set<File> directoriesToFilterOut
@@ -54,7 +54,9 @@ public class KotlinModuleXmlGenerator implements KotlinModuleDescriptionGenerato
             p.println("<!-- Module script for production -->");
         }
 
-        p.println("<", MODULE, " ", NAME, "=\"", escapeXml(moduleName), "\">");
+        p.println("<", MODULE, " ",
+                       NAME, "=\"", escapeXml(moduleName), "\" ",
+                       OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\">");
         p.pushIndent();
 
         for (File sourceFile : sourceFiles) {

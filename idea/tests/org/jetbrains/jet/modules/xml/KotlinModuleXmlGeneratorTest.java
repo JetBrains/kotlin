@@ -31,6 +31,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
     public void testBasic() throws Exception {
         String actual = KotlinModuleXmlGenerator.INSTANCE.generateModuleScript(
                 "name",
+                "output",
                 new KotlinModuleDescriptionGenerator.DependencyProvider() {
                     @Override
                     public void processClassPath(@NotNull KotlinModuleDescriptionGenerator.DependencyProcessor processor) {
@@ -40,8 +41,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 },
                 Arrays.asList(new File("s1"), new File("s2")),
                 false,
-                Collections.<File>emptySet()
-        ).toString();
+                Collections.<File>emptySet()).toString();
         String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/basic.xml"));
         UsefulTestCase.assertSameLines(expected, actual);
     }
@@ -49,6 +49,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
     public void testFiltered() throws Exception {
         String actual = KotlinModuleXmlGenerator.INSTANCE.generateModuleScript(
                 "name",
+                "output",
                 new KotlinModuleDescriptionGenerator.DependencyProvider() {
                     @Override
                     public void processClassPath(@NotNull KotlinModuleDescriptionGenerator.DependencyProcessor processor) {
@@ -58,8 +59,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 },
                 Arrays.asList(new File("s1"), new File("s2")),
                 false,
-                Collections.singleton(new File("cp1"))
-        ).toString();
+                Collections.singleton(new File("cp1"))).toString();
         String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/filtered.xml"));
         UsefulTestCase.assertSameLines(expected, actual);
     }

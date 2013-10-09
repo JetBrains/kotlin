@@ -24,6 +24,9 @@ public interface Module {
     @KotlinSignature("fun getModuleName(): String")
     String getModuleName();
 
+    @KotlinSignature("fun getOutputDirectory(): String")
+    String getOutputDirectory();
+
     @KotlinSignature("fun getSourceFiles(): List<String>")
     List<String> getSourceFiles();
 

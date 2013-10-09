@@ -268,6 +268,11 @@ public class CompileEnvironmentUtil {
         }
 
         @Override
+        public String getOutputDirectory() {
+            return description.getOutputDir();
+        }
+
+        @Override
         public List<String> getSourceFiles() {
             return description.getSourceFiles();
         }

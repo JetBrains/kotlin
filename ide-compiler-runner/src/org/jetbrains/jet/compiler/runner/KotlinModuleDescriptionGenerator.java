@@ -26,6 +26,7 @@ import java.util.Set;
 public interface KotlinModuleDescriptionGenerator {
     CharSequence generateModuleScript(
             String moduleName,
+            String outputDir,
             DependencyProvider dependencyProvider,
             List<File> sourceFiles,
             boolean tests,

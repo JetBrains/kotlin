@@ -159,6 +159,7 @@ public class JetCompiler implements TranslatingCompiler {
         }
         CharSequence script = KotlinModuleScriptGenerator.INSTANCE.generateModuleScript(
                 moduleName,
+                moduleOutputDirectory.getAbsolutePath(),
                 getDependencyProvider(chunk, tests, mainOutput),
                 sourceFiles,
                 tests,

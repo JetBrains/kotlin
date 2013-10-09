@@ -1,4 +1,5 @@
 name
+	outputDir=out
 	sources=[]
 	classpath=[]
 	annotations=[]
