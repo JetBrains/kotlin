@@ -266,7 +266,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     private static final String TEST_SYNTHETIC_METHOD_NAME =
-            JvmAbi.getSyntheticMethodSignatureForAnnotatedProperty(Name.identifier("property")).getName();
+            JvmAbi.getSyntheticMethodSignatureForAnnotatedProperty(Name.identifier("property"), null).getName();
 
     public void testAnnotatedClassPropertyNoField() {
         loadFile("properties/annotatedClassPropertyNoField.kt");

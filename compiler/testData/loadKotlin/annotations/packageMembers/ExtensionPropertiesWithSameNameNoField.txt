@@ -1,0 +1,20 @@
+package test
+
+test.DoubleAnno() internal val jet.Double.extension: jet.Int
+    internal fun jet.Double.<get-extension>(): jet.Int
+test.IntAnno() internal val jet.Int.extension: jet.Int
+    internal fun jet.Int.<get-extension>(): jet.Int
+test.StringAnno() internal val jet.String.extension: jet.String
+    internal fun jet.String.<get-extension>(): jet.String
+
+internal final annotation class DoubleAnno : jet.Annotation {
+    /*primary*/ public constructor DoubleAnno()
+}
+
+internal final annotation class IntAnno : jet.Annotation {
+    /*primary*/ public constructor IntAnno()
+}
+
+internal final annotation class StringAnno : jet.Annotation {
+    /*primary*/ public constructor StringAnno()
+}

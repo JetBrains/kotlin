@@ -70,6 +70,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/EnumArgument.kt");
             }
             
+            @TestMetadata("ExtensionPropertiesWithSameNameNoField.kt")
+            public void testExtensionPropertiesWithSameNameNoField() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/ExtensionPropertiesWithSameNameNoField.kt");
+            }
+            
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
@@ -169,6 +174,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("EnumArgument.kt")
             public void testEnumArgument() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/EnumArgument.kt");
+            }
+            
+            @TestMetadata("ExtensionPropertiesWithSameNameNoField.kt")
+            public void testExtensionPropertiesWithSameNameNoField() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/ExtensionPropertiesWithSameNameNoField.kt");
             }
             
             @TestMetadata("Function.kt")

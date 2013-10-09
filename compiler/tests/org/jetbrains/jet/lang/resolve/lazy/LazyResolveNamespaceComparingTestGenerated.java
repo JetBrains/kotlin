@@ -72,6 +72,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/EnumArgument.kt");
                 }
                 
+                @TestMetadata("ExtensionPropertiesWithSameNameNoField.kt")
+                public void testExtensionPropertiesWithSameNameNoField() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/ExtensionPropertiesWithSameNameNoField.kt");
+                }
+                
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/Function.kt");
@@ -171,6 +176,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("EnumArgument.kt")
                 public void testEnumArgument() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/EnumArgument.kt");
+                }
+                
+                @TestMetadata("ExtensionPropertiesWithSameNameNoField.kt")
+                public void testExtensionPropertiesWithSameNameNoField() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/ExtensionPropertiesWithSameNameNoField.kt");
                 }
                 
                 @TestMetadata("Function.kt")
