@@ -63,17 +63,20 @@ import java.util.List;
 
 public class KotlinToJVMBytecodeCompiler {
 
+    private static final boolean COMPILE_CHUNK_AS_ONE_MODULE = true;
+
     private KotlinToJVMBytecodeCompiler() {
     }
 
     @Nullable
     public static ClassFileFactory compileModule(CompilerConfiguration configuration, Module module, File directory) {
-        if (module.getSourceFiles().isEmpty()) {
+        List<String> sourceFiles = module.getSourceFiles();
+        if (sourceFiles.isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined in module " + module.getModuleName());
         }
 
         CompilerConfiguration compilerConfiguration = configuration.copy();
-        for (String sourceFile : module.getSourceFiles()) {
+        for (String sourceFile : sourceFiles) {
             File source = new File(sourceFile);
             if (!source.isAbsolute()) {
                 source = new File(directory, sourceFile);
@@ -126,12 +129,16 @@ public class KotlinToJVMBytecodeCompiler {
 
     public static boolean compileModules(
             CompilerConfiguration configuration,
-            @NotNull final ModuleChunk modules,
+            @NotNull final ModuleChunk chunk,
             @NotNull File directory,
             @Nullable File jarPath,
             boolean jarRuntime
     ) {
-        for (Module module : modules.getModules()) {
+        List<Module> modules = chunk.getModules();
+        if (COMPILE_CHUNK_AS_ONE_MODULE && modules.size() > 1) {
+            modules = Collections.<Module>singletonList(new ChunkAsOneModule(chunk));
+        }
+        for (Module module : modules) {
             ClassFileFactory moduleFactory = compileModule(configuration, module, directory);
             if (moduleFactory == null) {
                 return false;
@@ -141,7 +148,8 @@ public class KotlinToJVMBytecodeCompiler {
                 @Override
                 public File getOutputDirectory(@NotNull Collection<File> sourceFiles) {
                     for (File sourceFile : sourceFiles) {
-                        Module module = modules.findModuleBySourceFile(sourceFile);
+                        // Note that here we track original modules:
+                        Module module = chunk.findModuleBySourceFile(sourceFile);
                         if (module != null) {
                             return new File(module.getOutputDirectory());
                         }

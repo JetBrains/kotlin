@@ -10,6 +10,7 @@
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="util.runtime" exported="" />
     <orderEntry type="module" module-name="Kotlin" exported="" />
+    <orderEntry type="library" exported="" name="kotlin-runtime" level="project" />
   </component>
 </module>
 
