@@ -30,7 +30,7 @@ import java.util.*;
 public final class MemberMap {
     private final Map<FunctionDescriptor, Method> methodForFunction = new HashMap<FunctionDescriptor, Method>();
     private final Map<PropertyDescriptor, Pair<Type, String>> fieldForProperty = new HashMap<PropertyDescriptor, Pair<Type, String>>();
-    private final Map<PropertyDescriptor, String> syntheticMethodNameForProperty = new HashMap<PropertyDescriptor, String>();
+    private final Map<PropertyDescriptor, Method> syntheticMethodForProperty = new HashMap<PropertyDescriptor, Method>();
     private final Map<CallableMemberDescriptor, String> srcClassNameForCallable = new HashMap<CallableMemberDescriptor, String>();
     private final Set<PropertyDescriptor> staticFieldInOuterClass = new HashSet<PropertyDescriptor>();
 
@@ -46,8 +46,8 @@ public final class MemberMap {
                 result.recordFieldOfProperty(entry.getKey(), entry.getValue().first, entry.getValue().second);
             }
 
-            for (Map.Entry<PropertyDescriptor, String> entry : map.syntheticMethodNameForProperty.entrySet()) {
-                result.recordSyntheticMethodNameOfProperty(entry.getKey(), entry.getValue());
+            for (Map.Entry<PropertyDescriptor, Method> entry : map.syntheticMethodForProperty.entrySet()) {
+                result.recordSyntheticMethodOfProperty(entry.getKey(), entry.getValue());
             }
 
             for (Map.Entry<CallableMemberDescriptor, String> entry : map.srcClassNameForCallable.entrySet()) {
@@ -72,8 +72,8 @@ public final class MemberMap {
         assert old == null : "Duplicate field for property: " + descriptor + "; " + old;
     }
 
-    public void recordSyntheticMethodNameOfProperty(@NotNull PropertyDescriptor descriptor, @NotNull String name) {
-        String old = syntheticMethodNameForProperty.put(descriptor, name);
+    public void recordSyntheticMethodOfProperty(@NotNull PropertyDescriptor descriptor, @NotNull Method method) {
+        Method old = syntheticMethodForProperty.put(descriptor, method);
         assert old == null : "Duplicate synthetic method for property: " + descriptor + "; " + old;
     }
 
@@ -98,8 +98,8 @@ public final class MemberMap {
     }
 
     @Nullable
-    public String getSyntheticMethodNameOfProperty(@NotNull PropertyDescriptor descriptor) {
-        return syntheticMethodNameForProperty.get(descriptor);
+    public Method getSyntheticMethodOfProperty(@NotNull PropertyDescriptor descriptor) {
+        return syntheticMethodForProperty.get(descriptor);
     }
 
     @Nullable
@@ -115,7 +115,7 @@ public final class MemberMap {
     public String toString() {
         return "Functions: " + methodForFunction.size() +
                ", fields: " + fieldForProperty.size() +
-               ", synthetic methods: " + syntheticMethodNameForProperty.size() +
+               ", synthetic methods: " + syntheticMethodForProperty.size() +
                ", src class names: " + srcClassNameForCallable.size();
     }
 }

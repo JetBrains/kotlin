@@ -24,6 +24,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.NamespaceContext;
@@ -143,14 +144,15 @@ public class PropertyCodegen extends GenerationStateAware {
         else if (!propertyDescriptor.getAnnotations().isEmpty()) {
             // Annotations on properties without backing fields are stored in bytecode on an empty synthetic method. This way they're still
             // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
-            String methodName = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(propertyDescriptor.getName());
+            Method method = JvmAbi.getSyntheticMethodSignatureForAnnotatedProperty(propertyDescriptor.getName());
+
             MethodVisitor mv = v.newMethod(null,
                                            ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC,
-                                           methodName,
-                                           JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE,
+                                           method.getName(),
+                                           method.getDescriptor(),
                                            null,
                                            null);
-            v.getMemberMap().recordSyntheticMethodNameOfProperty(propertyDescriptor, methodName);
+            v.getMemberMap().recordSyntheticMethodOfProperty(propertyDescriptor, method);
             AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(propertyDescriptor);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
