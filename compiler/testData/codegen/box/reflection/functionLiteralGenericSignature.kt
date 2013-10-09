@@ -13,9 +13,7 @@ val intFun = { 42 }
 val stringParamFun = { (x: String) : Unit -> }
 val listFun = { (l: List<String>) : List<String> -> l }
 val mutableListFun = { (l: MutableList<Double>) : MutableList<Int> -> null!! }
-
-trait In<in T>
-val funWithIn = { (x: In<String>) : Unit -> }
+val funWithIn = { (x: Comparable<String>) : Unit -> }
 
 val extensionFun = { Any.() : Unit -> }
 val extensionWithArgFun = { Long.(x: Any) : Date -> Date() }
@@ -26,7 +24,7 @@ fun box(): String {
     assertGenericSuper("jet.FunctionImpl1<java.lang.String, jet.Unit>", stringParamFun)
     assertGenericSuper("jet.FunctionImpl1<java.util.List<? extends java.lang.String>, java.util.List<? extends java.lang.String>>", listFun)
     assertGenericSuper("jet.FunctionImpl1<java.util.List<java.lang.Double>, java.util.List<java.lang.Integer>>", mutableListFun)
-    assertGenericSuper("jet.FunctionImpl1<In<? super java.lang.String>, jet.Unit>", funWithIn)
+    assertGenericSuper("jet.FunctionImpl1<java.lang.Comparable<? super java.lang.String>, jet.Unit>", funWithIn)
 
     assertGenericSuper("jet.ExtensionFunctionImpl0<java.lang.Object, jet.Unit>", extensionFun)
     assertGenericSuper("jet.ExtensionFunctionImpl1<java.lang.Long, java.lang.Object, java.util.Date>", extensionWithArgFun)
