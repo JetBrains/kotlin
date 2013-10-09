@@ -78,12 +78,6 @@ private object BinaryTestData {
         rm("test")
     }
 
-    GenScript("idea/testData/codeInsight/overrideImplement/withLib", "source.kt", "fakeOverride.jar")
-    fun genFakeOverride() {
-        jar("fakeOverride.jar", "dependency")
-        rm("dependency")
-    }
-
     GenScript("idea/testData/completion/basic/custom/", "TopLevelNonImportedExtFunSource.kt", "TopLevelNonImportedExtFun.jar")
     fun genTopLevelNonImportedExtFun() {
         jar("TopLevelNonImportedExtFun.jar", "abc")

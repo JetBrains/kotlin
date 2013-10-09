@@ -16,17 +16,12 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.testing.ConfigLibraryUtil;
-
-import java.io.File;
 
 public final class OverrideImplementWithLibTest extends AbstractOverrideImplementTest {
-
     private static final String TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement/withLib";
 
     @Override
@@ -35,24 +30,13 @@ public final class OverrideImplementWithLibTest extends AbstractOverrideImplemen
         myFixture.setTestDataPath(TEST_PATH);
     }
 
-    public void doTestWithLib() {
-        File dependency = new File(TEST_PATH + "/" + getTestName(true) + ".jar");
-        assert dependency.exists();
-        NewLibraryEditor editor = new NewLibraryEditor();
-        editor.setName("dependency");
-        editor.addRoot(VfsUtil.getUrlForLibraryRoot(dependency), OrderRootType.CLASSES);
-
-        try {
-            ConfigLibraryUtil.configureLibrary(myModule, getProjectDescriptor().getSdk(), editor);
-            CodeInsightTestFixtureImpl.ensureIndexesUpToDate(getProject());
-            doOverrideFileTest();
-        }
-        finally {
-            ConfigLibraryUtil.unConfigureLibrary(myModule, getProjectDescriptor().getSdk(), editor.getName());
-        }
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return new JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false);
     }
 
-    public void testFakeOverride() throws Exception {
-        doTestWithLib();
+    public void testFakeOverride() {
+        doOverrideFileTest();
     }
 }
