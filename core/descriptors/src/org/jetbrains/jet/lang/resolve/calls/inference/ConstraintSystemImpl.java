@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition.EXPECTED_TYPE_POSITION;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBoundsImpl.BoundKind.*;
@@ -73,8 +72,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         @Override
         public boolean hasViolatedUpperBound() {
             if (isSuccessful()) return false;
-            ConstraintSystem systemWithoutWeakConstraints = getSystemWithoutWeakConstraints();
-            return systemWithoutWeakConstraints.getStatus().isSuccessful();
+            return getSystemWithoutWeakConstraints().getStatus().isSuccessful();
         }
 
         @Override
@@ -193,21 +191,22 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @Override
     @NotNull
     public ConstraintSystem copy() {
-        return replaceTypeVariables(Functions.<TypeParameterDescriptor>identity(),
-                                    new Function<TypeBoundsImpl, TypeBoundsImpl>() {
-                                        @Override
-                                        public TypeBoundsImpl apply(TypeBoundsImpl typeBounds) {
-                                            return typeBounds.copy();
-                                        }
-                                    },
-                                    Conditions.<ConstraintPosition>alwaysTrue());
+        return createNewConstraintSystemFromThis(Functions.<TypeParameterDescriptor>identity(),
+                                                 new Function<TypeBoundsImpl, TypeBoundsImpl>() {
+                                                     @Override
+                                                     public TypeBoundsImpl apply(TypeBoundsImpl typeBounds) {
+                                                         return typeBounds.copy();
+                                                     }
+                                                 },
+                                                 Conditions.<ConstraintPosition>alwaysTrue());
     }
 
     @NotNull
-    public ConstraintSystem replaceTypeVariables(@NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
-        return replaceTypeVariables(typeVariablesMap,
-                                    Functions.<TypeBoundsImpl>identity(),
-                                    Conditions.<ConstraintPosition>alwaysTrue());
+    public ConstraintSystem substituteTypeVariables(@NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap) {
+        return createNewConstraintSystemFromThis(typeVariablesMap,
+                                                 // type bounds are proper types and don't contain other variables
+                                                 Functions.<TypeBoundsImpl>identity(),
+                                                 Conditions.<ConstraintPosition>alwaysTrue());
     }
 
     @NotNull
@@ -223,14 +222,14 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @NotNull
     public ConstraintSystem filterConstraints(@NotNull final Condition<ConstraintPosition> condition) {
-        return replaceTypeVariables(Functions.<TypeParameterDescriptor>identity(),
-                                    new Function<TypeBoundsImpl, TypeBoundsImpl>() {
-                                        @Override
-                                        public TypeBoundsImpl apply(TypeBoundsImpl typeBounds) {
-                                            return typeBounds.filter(condition);
-                                        }
-                                    },
-                                    condition);
+        return createNewConstraintSystemFromThis(Functions.<TypeParameterDescriptor>identity(),
+                                                 new Function<TypeBoundsImpl, TypeBoundsImpl>() {
+                                                     @Override
+                                                     public TypeBoundsImpl apply(TypeBoundsImpl typeBounds) {
+                                                         return typeBounds.filter(condition);
+                                                     }
+                                                 },
+                                                 condition);
     }
 
     @NotNull
@@ -251,25 +250,24 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     @NotNull
-    private ConstraintSystem replaceTypeVariables(
-            @NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> typeVariablesMap,
-            @NotNull Function<TypeBoundsImpl, TypeBoundsImpl> typeBoundsMap,
-            @NotNull Condition<ConstraintPosition> constraintPositionCondition
-
+    private ConstraintSystem createNewConstraintSystemFromThis(
+            @NotNull Function<TypeParameterDescriptor, TypeParameterDescriptor> substituteTypeVariable,
+            @NotNull Function<TypeBoundsImpl, TypeBoundsImpl> replaceTypeBounds,
+            @NotNull Condition<ConstraintPosition> filterConstraintPosition
     ) {
-        ConstraintSystemImpl newConstraintSystem = new ConstraintSystemImpl();
+        ConstraintSystemImpl newSystem = new ConstraintSystemImpl();
         for (Map.Entry<TypeParameterDescriptor, TypeBoundsImpl> entry : typeParameterBounds.entrySet()) {
             TypeParameterDescriptor typeParameter = entry.getKey();
             TypeBoundsImpl typeBounds = entry.getValue();
 
-            TypeParameterDescriptor newTypeParameter = typeVariablesMap.apply(typeParameter);
+            TypeParameterDescriptor newTypeParameter = substituteTypeVariable.apply(typeParameter);
             assert newTypeParameter != null;
-            newConstraintSystem.typeParameterBounds.put(newTypeParameter, typeBoundsMap.apply(typeBounds));
+            newSystem.typeParameterBounds.put(newTypeParameter, replaceTypeBounds.apply(typeBounds));
         }
-        newConstraintSystem.errorConstraintPositions.addAll(ContainerUtil.filter(errorConstraintPositions, constraintPositionCondition));
-        //todo if 'constraintPositionCondition' is not trivial, it's incorrect to just copy 'hasErrorInConstrainingTypes'
-        newConstraintSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
-        return newConstraintSystem;
+        newSystem.errorConstraintPositions.addAll(ContainerUtil.filter(errorConstraintPositions, filterConstraintPosition));
+        //todo if 'filterConstraintPosition' is not trivial, it's incorrect to just copy 'hasErrorInConstrainingTypes'
+        newSystem.hasErrorInConstrainingTypes = hasErrorInConstrainingTypes;
+        return newSystem;
     }
 
     @Override

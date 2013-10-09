@@ -579,14 +579,15 @@ public class CandidateResolver {
             constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         }
 
-        ConstraintSystem constraintSystemWithRightTypeParameters = constraintSystem.replaceTypeVariables(
+        // Restore type variables before alpha-conversion
+        ConstraintSystem constraintSystemWithRightTypeParameters = constraintSystem.substituteTypeVariables(
                 new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
-            @Override
-            public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
-                assert typeParameterDescriptor != null;
-                return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
-            }
-        });
+                    @Override
+                    public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
+                        assert typeParameterDescriptor != null;
+                        return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
+                    }
+                });
         candidateCall.setConstraintSystem(constraintSystemWithRightTypeParameters);
 
 
