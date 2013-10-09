@@ -70,9 +70,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "notNullParamAssertions", description = "generate not-null assertions on parameters of methods accessible from Java")
     public boolean notNullParamAssertions;
 
-    @Argument(value = "builtins", description = "compile builtin classes (internal)")
-    public boolean builtins;
-
     @Argument(value = "output", description = "output directory")
     public String outputDir;
 

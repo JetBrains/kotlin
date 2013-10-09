@@ -100,7 +100,7 @@ public class TestlibTest extends UsefulTestCase {
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
-        generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(myEnvironment, false);
+        generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(myEnvironment);
         if (generationState == null) {
             throw new RuntimeException("There were compilation errors");
         }

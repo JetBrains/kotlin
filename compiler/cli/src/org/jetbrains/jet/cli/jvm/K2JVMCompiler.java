@@ -112,14 +112,10 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
         }
 
-        boolean builtins = arguments.builtins;
-
         configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, arguments.script
                                                                           ? CommandLineScriptUtils.scriptParameters()
                                                                           : Collections.<AnalyzerScriptParameter>emptyList());
-        configuration.put(JVMConfigurationKeys.STUBS, builtins);
-        configuration.put(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,
-                                  builtins ? BuiltinToJavaTypesMapping.DISABLED : BuiltinToJavaTypesMapping.ENABLED);
+        configuration.put(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED);
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
