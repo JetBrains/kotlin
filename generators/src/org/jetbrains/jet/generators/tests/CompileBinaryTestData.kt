@@ -45,12 +45,6 @@ Retention(RetentionPolicy.RUNTIME)
 private annotation class GenScript(val dir: String, val source: String, val binary: String)
 
 private object BinaryTestData {
-    GenScript("compiler/testData/codegen/topLevelMemberInvocation/twoModules", "a.kt", "a.jar")
-    fun genTwoModules() {
-        jar("a.jar", "a")
-        rm("a")
-    }
-
     GenScript("compiler/testData/compileKotlinAgainstBinariesCustom/brokenJarWithNoClassForObjectProperty", "source.kt", "broken.jar")
     fun genBrokenJarWithNoClassForObjectProperty() {
         rm("test/Lol.class")

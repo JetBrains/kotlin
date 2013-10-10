@@ -21,6 +21,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
@@ -31,23 +32,26 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractTopLevelMembersInvocationTest extends AbstractBytecodeTextTest {
-
+    @Override
     public void doTest(@NotNull String filename) throws Exception {
+        final File root = new File(filename);
         final List<String> sourceFiles = new ArrayList<String>(2);
-        final List<File> classPath = new ArrayList<File>(1);
 
-        FileUtil.processFilesRecursively(new File(filename), new Processor<File>() {
+        FileUtil.processFilesRecursively(root, new Processor<File>() {
             @Override
             public boolean process(File file) {
                 if (file.getName().endsWith(".kt")) {
                     sourceFiles.add(file.getPath().substring("compiler/testData/codegen/".length()));
+                    return true;
                 }
-                else if (file.getName().endsWith(".jar")) {
-                    classPath.add(file);
-                }
-                return true;
+                return FileUtil.filesEqual(file, root);
             }
         });
+
+        File library = new File(root, "library");
+        List<File> classPath = library.exists() ?
+                               Collections.singletonList(MockLibraryUtil.compileLibraryToJar(library.getPath())) :
+                               Collections.<File>emptyList();
 
         assert !sourceFiles.isEmpty() : getTestName(true) + " should contains at least one .kt file";
         Collections.sort(sourceFiles);
