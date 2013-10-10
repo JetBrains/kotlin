@@ -48,6 +48,7 @@ public class CompilerRunnerUtil {
 
         ArrayList<File> answer = new ArrayList<File>();
         answer.add(new File(libs, "kotlin-compiler.jar"));
+        answer.add(new File(libs, "kotlin-runtime.jar"));
         return answer;
     }
 
