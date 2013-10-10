@@ -152,8 +152,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public FieldOwnerContext intoNamespacePart(@NotNull Type delegateTo, @NotNull NamespaceDescriptor descriptor) {
-        return new NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
+    public FieldOwnerContext intoNamespaceFacade(@NotNull Type delegateTo, @NotNull NamespaceDescriptor descriptor) {
+        return new NamespaceFacadeContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
     }
 
     @NotNull
