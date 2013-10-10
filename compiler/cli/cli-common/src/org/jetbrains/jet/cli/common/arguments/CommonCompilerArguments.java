@@ -33,6 +33,8 @@ public abstract class CommonCompilerArguments extends CompilerArguments {
     public boolean help;
     @Argument(value = "suppress", description = "Suppress compiler messages by severity (warnings)")
     public String suppress;
+    @Argument(value = "printArgs", description = "Print commandline arguments")
+    public boolean printArgs;
 
     @Override
     public boolean isHelp() {
@@ -56,6 +58,11 @@ public abstract class CommonCompilerArguments extends CompilerArguments {
     @Override
     public boolean isVerbose() {
         return verbose;
+    }
+
+    @Override
+    public boolean isPrintArgs() {
+        return printArgs;
     }
 
     public void setTags(boolean tags) {

@@ -20,7 +20,9 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.sampullara.cli.Args;
+import com.sampullara.cli.ArgumentUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
@@ -118,6 +120,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
         MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
 
+        printArgumentsIfNeeded(errStream, arguments, messageRenderer);
         printVersionIfNeeded(errStream, arguments, messageRenderer);
 
         MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
@@ -167,14 +170,32 @@ public abstract class CLICompiler<A extends CompilerArguments> {
         return arguments.isTags() ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
     }
 
-    protected void printVersionIfNeeded(@NotNull PrintStream errStream,
+    protected void printVersionIfNeeded(
+            @NotNull PrintStream errStream,
             @NotNull A arguments,
-            @NotNull MessageRenderer messageRenderer) {
+            @NotNull MessageRenderer messageRenderer
+    ) {
         if (arguments.isVersion()) {
             String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
                                                            "Kotlin Compiler version " + KotlinVersion.VERSION,
                                                            CompilerMessageLocation.NO_LOCATION);
             errStream.println(versionMessage);
+        }
+    }
+
+    private void printArgumentsIfNeeded(
+            @NotNull PrintStream errStream,
+            @NotNull A arguments,
+            @NotNull MessageRenderer messageRenderer
+    ) {
+        if (arguments.isPrintArgs()) {
+            String freeArgs = StringUtil.join(arguments.freeArgs, "");
+            String argumentsAsString = ArgumentUtils.convertArgumentsToString(arguments, createArguments());
+            String printArgsMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
+                                                             "Invoking compiler " + getClass().getName() +
+                                                             " with arguments " + argumentsAsString + freeArgs,
+                                                             CompilerMessageLocation.NO_LOCATION);
+            errStream.println(printArgsMessage);
         }
     }
 
@@ -197,12 +218,6 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
-            }
-            if (Boolean.parseBoolean(System.getProperty("kotlin.print.cmd.args"))) {
-                System.out.println("Command line arguments:");
-                for (String arg : args) {
-                    System.out.println(arg);
-                }
             }
             return rc;
         }

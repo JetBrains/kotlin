@@ -18,4 +18,5 @@ Usage: org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
   -version [flag] Display compiler version
   -help (-h) [flag] Show help
   -suppress [String] Suppress compiler messages by severity (warnings)
+  -printArgs [flag] Print commandline arguments
 OK
