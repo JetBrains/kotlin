@@ -470,9 +470,9 @@ public class CandidateResolver {
     ) {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         if (argumentExpression == null) return;
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(argumentExpression, false);
-        if (!(deparenthesizedExpression instanceof JetFunctionLiteralExpression)) return;
-        JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) deparenthesizedExpression;
+        if (!ArgumentTypeResolver.isFunctionLiteralArgument(argumentExpression)) return;
+
+        JetFunctionLiteralExpression functionLiteralExpression = ArgumentTypeResolver.getFunctionLiteralArgument(argumentExpression);
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetType expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT);

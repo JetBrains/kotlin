@@ -165,6 +165,36 @@ public class ArgumentTypeResolver {
         }
     }
 
+    public static boolean isFunctionLiteralArgument(@NotNull JetExpression expression) {
+        return getFunctionLiteralArgumentIfAny(expression) != null;
+    }
+
+    @NotNull
+    public static JetFunctionLiteralExpression getFunctionLiteralArgument(@NotNull JetExpression expression) {
+        assert isFunctionLiteralArgument(expression);
+        //noinspection ConstantConditions
+        return getFunctionLiteralArgumentIfAny(expression);
+    }
+
+    @Nullable
+    private static JetFunctionLiteralExpression getFunctionLiteralArgumentIfAny(@NotNull JetExpression expression) {
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
+        if (deparenthesizedExpression instanceof JetBlockExpression) {
+            // todo
+            // This case is a temporary hack for 'if' branches.
+            // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
+            // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
+            JetElement lastStatementInABlock = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesizedExpression);
+            if (lastStatementInABlock instanceof JetExpression) {
+                deparenthesizedExpression = JetPsiUtil.deparenthesize((JetExpression) lastStatementInABlock, false);
+            }
+        }
+        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
+            return (JetFunctionLiteralExpression) deparenthesizedExpression;
+        }
+        return null;
+    }
+
     @NotNull
     public JetTypeInfo getArgumentTypeInfo(
             @Nullable JetExpression expression,
@@ -174,9 +204,8 @@ public class ArgumentTypeResolver {
         if (expression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
-        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
-            return getFunctionLiteralTypeInfo(expression, (JetFunctionLiteralExpression) deparenthesizedExpression, context, resolveArgumentsMode);
+        if (isFunctionLiteralArgument(expression)) {
+            return getFunctionLiteralTypeInfo(expression, getFunctionLiteralArgument(expression), context, resolveArgumentsMode);
         }
         JetTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
