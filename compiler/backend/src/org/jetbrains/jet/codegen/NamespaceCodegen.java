@@ -168,7 +168,7 @@ public class NamespaceCodegen extends MemberCodegen {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file) {
         boolean generateSrcClass = false;
-        FieldOwnerContext namespaceImpl = CodegenContext.STATIC.intoNamespace(descriptor);
+        FieldOwnerContext packageFragmentContext = CodegenContext.STATIC.intoNamespace(descriptor);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -180,23 +180,22 @@ public class NamespaceCodegen extends MemberCodegen {
                 }
             }
             else if (declaration instanceof JetScript) {
-               ScriptCodegen.createScriptCodegen((JetScript) declaration, state, namespaceImpl).generate();
+               ScriptCodegen.createScriptCodegen((JetScript) declaration, state, packageFragmentContext).generate();
             }
         }
 
         if (!generateSrcClass) return null;
 
-        Type namespacePartType = getNamespacePartType(getPackageClassFqName(name), file);
-        ClassBuilder builder = state.getFactory().forNamespacePart(namespacePartType, file);
+        Type packageFragmentType = getNamespacePartType(getPackageClassFqName(name), file);
+        ClassBuilder builder = state.getFactory().forPackageFragment(packageFragmentType, file);
 
-        NamespacePartCodegen namespacePartCodegen = new NamespacePartCodegen(builder, file, namespacePartType, namespaceImpl, state);
-        namespacePartCodegen.generate();
+        new NamespacePartCodegen(builder, file, packageFragmentType, packageFragmentContext, state).generate();
 
-        FieldOwnerContext nameSpacePart = CodegenContext.STATIC.intoNamespaceFacade(namespacePartType, descriptor);
+        FieldOwnerContext namespaceFacade = CodegenContext.STATIC.intoNamespaceFacade(packageFragmentType, descriptor);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                genFunctionOrProperty(nameSpacePart, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                genFunctionOrProperty(namespaceFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
             }
         }
 

@@ -132,7 +132,7 @@ public final class ClassFileFactory extends GenerationStateAware {
     }
 
     @NotNull
-    public ClassBuilder forNamespacePart(@NotNull Type asmType, @NotNull PsiFile sourceFile) {
+    public ClassBuilder forPackageFragment(@NotNull Type asmType, @NotNull PsiFile sourceFile) {
         return newVisitor(asmType, sourceFile);
     }
 
