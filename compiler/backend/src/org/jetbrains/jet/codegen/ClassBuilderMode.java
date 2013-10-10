@@ -22,11 +22,7 @@ public enum ClassBuilderMode {
      */
     FULL,
     /**
-     * Only function signatures
+     * Generating light classes: Only function signatures
      */
-    SIGNATURES,
-    /**
-     * Function with stub bodies: just throw exception
-     */
-    STUBS,
+    LIGHT_CLASSES,
 }

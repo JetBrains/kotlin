@@ -122,7 +122,7 @@ public class CompileEnvironmentUtil {
         List<Module> modules;
         try {
             JetCoreEnvironment scriptEnvironment = new JetCoreEnvironment(disposable, configuration);
-            GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment, false);
+            GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment);
             if (generationState == null) {
                 throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed:\n" +
                                                       loadModuleScriptText(moduleScriptFile));

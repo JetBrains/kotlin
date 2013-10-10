@@ -289,7 +289,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
 
         assertNotNull(String.format("Failed to wrap jetClass '%s' to class", jetClass.getText()), lightClass);
 
-        // This invokes codegen with ClassBuilderMode = SIGNATURES
+        // This invokes codegen with ClassBuilderMode = LIGHT_CLASSES
         // No exception/error should happen here
         lightClass.getDelegate();
     }

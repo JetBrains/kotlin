@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -269,27 +268,10 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static GenerationState analyzeAndGenerate(JetCoreEnvironment environment) {
-        return analyzeAndGenerate(environment, environment.getConfiguration().get(JVMConfigurationKeys.STUBS, false),
-                                  environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
-    }
-
-    @Nullable
     public static GenerationState analyzeAndGenerate(
-            JetCoreEnvironment environment,
-            boolean stubs
+            JetCoreEnvironment environment
     ) {
-        return analyzeAndGenerate(environment, stubs,
-                                  environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS));
-    }
-
-    @Nullable
-    public static GenerationState analyzeAndGenerate(
-            JetCoreEnvironment environment,
-            boolean stubs,
-            List<AnalyzerScriptParameter> scriptParameters
-    ) {
-        AnalyzeExhaust exhaust = analyze(environment, scriptParameters, stubs);
+        AnalyzeExhaust exhaust = analyze(environment);
 
         if (exhaust == null) {
             return null;
@@ -297,18 +279,13 @@ public class KotlinToJVMBytecodeCompiler {
 
         exhaust.throwIfError();
 
-        return generate(environment, exhaust, stubs);
+        return generate(environment, exhaust);
     }
 
     @Nullable
-    private static AnalyzeExhaust analyze(
-            final JetCoreEnvironment environment,
-            final List<AnalyzerScriptParameter> scriptParameters,
-            boolean stubs) {
+    private static AnalyzeExhaust analyze(final JetCoreEnvironment environment) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
-        final Predicate<PsiFile> filesToAnalyzeCompletely =
-                stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         analyzerWithCompilerReport.analyzeAndReport(
                 new Function0<AnalyzeExhaust>() {
                     @NotNull
@@ -319,8 +296,8 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getProject(),
                                 environment.getSourceFiles(),
                                 sharedTrace,
-                                scriptParameters,
-                                filesToAnalyzeCompletely,
+                                environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS),
+                                Predicates.<PsiFile>alwaysTrue(),
                                 false
                         );
                     }
@@ -333,8 +310,8 @@ public class KotlinToJVMBytecodeCompiler {
     @NotNull
     private static GenerationState generate(
             JetCoreEnvironment environment,
-            AnalyzeExhaust exhaust,
-            boolean stubs) {
+            AnalyzeExhaust exhaust
+    ) {
         Project project = environment.getProject();
         final CompilerConfiguration configuration = environment.getConfiguration();
         Progress backendProgress = new Progress() {
@@ -352,8 +329,7 @@ public class KotlinToJVMBytecodeCompiler {
             }
         };
         GenerationState generationState = new GenerationState(
-                project, ClassBuilderFactories.binaries(stubs), backendProgress, exhaust.getBindingContext(), environment.getSourceFiles(),
-                configuration.get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
+                project, ClassBuilderFactories.BINARIES, backendProgress, exhaust.getBindingContext(), environment.getSourceFiles(),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
                 /*generateDeclaredClasses = */true

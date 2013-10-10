@@ -9,7 +9,6 @@ Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -noJdkAnnotations [flag] don't include JDK external annotations into classpath
   -notNullAssertions [flag] generate not-null assertion after each invokation of method returning not-null
   -notNullParamAssertions [flag] generate not-null assertions on parameters of methods accessible from Java
-  -builtins [flag] compile builtin classes (internal)
   -output [String] output directory
   -module [String] module to compile
   -script [flag] evaluate script

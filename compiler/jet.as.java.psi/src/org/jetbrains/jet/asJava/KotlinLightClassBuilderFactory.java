@@ -33,7 +33,7 @@ import org.jetbrains.jet.codegen.ClassBuilderMode;
     @NotNull
     @Override
     public ClassBuilderMode getClassBuilderMode() {
-        return ClassBuilderMode.SIGNATURES;
+        return ClassBuilderMode.LIGHT_CLASSES;
     }
 
     @Override

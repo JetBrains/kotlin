@@ -82,33 +82,31 @@ public class ClassBuilderFactories {
         }
     };
 
+    public static ClassBuilderFactory BINARIES = new ClassBuilderFactory() {
+        @NotNull
+        @Override
+        public ClassBuilderMode getClassBuilderMode() {
+            return ClassBuilderMode.FULL;
+        }
+
+        @Override
+        public ClassBuilder newClassBuilder() {
+            return new ClassBuilder.Concrete(new BinaryClassWriter());
+        }
+
+        @Override
+        public String asText(ClassBuilder builder) {
+            throw new UnsupportedOperationException("BINARIES generator asked for text");
+        }
+
+        @Override
+        public byte[] asBytes(ClassBuilder builder) {
+            ClassWriter visitor = (ClassWriter) builder.getVisitor();
+            return visitor.toByteArray();
+        }
+    };
+
     private ClassBuilderFactories() {
-    }
-
-    public static ClassBuilderFactory binaries(final boolean stubs) {
-        return new ClassBuilderFactory() {
-            @NotNull
-            @Override
-            public ClassBuilderMode getClassBuilderMode() {
-                return stubs ? ClassBuilderMode.STUBS : ClassBuilderMode.FULL;
-            }
-
-            @Override
-            public ClassBuilder newClassBuilder() {
-                return new ClassBuilder.Concrete(new BinaryClassWriter());
-            }
-
-            @Override
-            public String asText(ClassBuilder builder) {
-                throw new UnsupportedOperationException("BINARIES generator asked for text");
-            }
-
-            @Override
-            public byte[] asBytes(ClassBuilder builder) {
-                ClassWriter visitor = (ClassWriter) builder.getVisitor();
-                return visitor.toByteArray();
-            }
-        };
     }
 
     private static class BinaryClassWriter extends ClassWriter {

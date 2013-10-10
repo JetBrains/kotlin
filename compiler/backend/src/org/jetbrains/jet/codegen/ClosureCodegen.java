@@ -160,10 +160,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
         cv.newField(fun, ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(), null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
             genInitSingletonField(asmType, iv);
             mv.visitInsn(RETURN);
@@ -182,9 +179,6 @@ public class ClosureCodegen extends GenerationStateAware {
 
         MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE, interfaceFunction.getName().asString(),
                                         bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
@@ -223,10 +217,7 @@ public class ClosureCodegen extends GenerationStateAware {
         Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
         MethodVisitor mv = cv.newMethod(fun, NO_FLAG_PACKAGE_PRIVATE, "<init>", constructor.getDescriptor(), null,
                                         ArrayUtil.EMPTY_STRING_ARRAY);
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 

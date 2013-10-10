@@ -119,18 +119,13 @@ public class FunctionCodegen extends GenerationStateAware {
         }
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
-        if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
 
         generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
 
         if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-            return;
-        }
 
         generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy);
 
@@ -498,11 +493,8 @@ public class FunctionCodegen extends GenerationStateAware {
         int flags = getVisibilityAccessFlag(constructorDescriptor);
         MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
             return;
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             InstructionAdapter v = new InstructionAdapter(mv);
@@ -576,10 +568,7 @@ public class FunctionCodegen extends GenerationStateAware {
                                              isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX,
                                              descriptor, null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             generateDefaultImpl(owner, state, signature, functionDescriptor, isStatic, mv, loadStrategy);
         }
     }
@@ -749,10 +738,7 @@ public class FunctionCodegen extends GenerationStateAware {
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
         MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
             Type[] argTypes = overridden.getArgumentTypes();
@@ -795,10 +781,7 @@ public class FunctionCodegen extends GenerationStateAware {
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
         MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null, null);
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
             Type[] argTypes = delegateMethod.getArgumentTypes();

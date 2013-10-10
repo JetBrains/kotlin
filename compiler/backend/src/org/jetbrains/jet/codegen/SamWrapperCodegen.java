@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
-import static org.jetbrains.jet.codegen.AsmUtil.genStubCode;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class SamWrapperCodegen extends GenerationStateAware {
@@ -95,10 +94,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
     private void generateConstructor(Type ownerType, Type functionType, ClassBuilder cv) {
         MethodVisitor mv = cv.newMethod(null, NO_FLAG_PACKAGE_PRIVATE, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 

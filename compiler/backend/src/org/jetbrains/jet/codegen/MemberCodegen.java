@@ -88,7 +88,7 @@ public class MemberCodegen extends GenerationStateAware {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
 
         if (descriptor == null || ErrorUtils.isError(descriptor) || descriptor.getName().equals(JetPsiUtil.NO_NAME_PROVIDED)) {
-            if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
+            if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
                 throw new IllegalStateException(
                         "Generating bad descriptor in ClassBuilderMode = " + state.getClassBuilderMode() + ": " + descriptor);
             }
