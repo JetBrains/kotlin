@@ -59,6 +59,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     private boolean hasErrorInConstrainingTypes;
 
     private final ConstraintSystemStatus constraintSystemStatus = new ConstraintSystemStatus() {
+        // for debug ConstraintsUtil.getDebugMessageForStatus might be used
+
         @Override
         public boolean isSuccessful() {
             return !hasContradiction() && !hasUnknownParameters();

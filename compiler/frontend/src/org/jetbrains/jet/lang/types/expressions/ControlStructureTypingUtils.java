@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemStatus;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -345,13 +346,13 @@ public class ControlStructureTypingUtils {
                 if (status.hasErrorInConstrainingTypes()) {
                     return;
                 }
+                JetExpression expression = call.getCalleeExpression();
+                if (expression == null) return;
                 if (status.hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()) {
-                    JetExpression expression = call.getCalleeExpression();
-                    if (expression != null) {
-                        expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
-                    }
+                    expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     return;
                 }
+                throwError("Expression: " + expression.getText() + ".\nConstraint system status: \n" + ConstraintsUtil.getDebugMessageForStatus(status));
                 super.typeInferenceFailed(trace, data);
             }
         };
@@ -365,7 +366,15 @@ public class ControlStructureTypingUtils {
         }
 
         private void throwError() {
-            throw new IllegalStateException("Resolution error of this type shouldn't occur for " + debugName);
+            throwError(null);
+        }
+
+        protected void throwError(@Nullable String additionalInformation) {
+            String errorMessage = "Resolution error of this type shouldn't occur for " + debugName;
+            if (additionalInformation != null) {
+                errorMessage += ".\n" + additionalInformation;
+            }
+            throw new IllegalStateException(errorMessage);
         }
 
         @Override

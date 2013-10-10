@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class ConstraintsUtil {
@@ -109,5 +111,33 @@ public class ConstraintsUtil {
             }
         }
         return true;
+    }
+    
+    public static String getDebugMessageForStatus(@NotNull ConstraintSystemStatus status) {
+        StringBuilder sb = new StringBuilder();
+        List<Method> interestingMethods = Lists.newArrayList();
+        for (Method method : status.getClass().getMethods()) {
+            String name = method.getName();
+            boolean isInteresting = name.startsWith("is") || name.startsWith("has") && !name.equals("hashCode");
+            if (method.getParameterTypes().length == 0 && isInteresting) {
+                interestingMethods.add(method);
+            }
+        }
+        for (Iterator<Method> iterator = interestingMethods.iterator(); iterator.hasNext(); ) {
+            Method method = iterator.next();
+            try {
+                sb.append("-").append(method.getName()).append(": ").append(method.invoke(status));
+                if (iterator.hasNext()) {
+                    sb.append("\n");
+                }
+            }
+            catch (IllegalAccessException e) {
+                sb.append(e.getMessage());
+            }
+            catch (InvocationTargetException e) {
+                sb.append(e.getMessage());
+            }
+        }
+        return sb.toString();
     }
 }
