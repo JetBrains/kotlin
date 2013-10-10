@@ -301,6 +301,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
 
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, null).generate();
+        classBuilder.done();
+
         return StackValue.none();
     }
 
