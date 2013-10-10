@@ -277,23 +277,9 @@ public class KotlinToJVMBytecodeCompiler {
             AnalyzeExhaust exhaust
     ) {
         Project project = environment.getProject();
-        final CompilerConfiguration configuration = environment.getConfiguration();
-        Progress backendProgress = new Progress() {
-            @Override
-            public void reportOutput(@NotNull Collection<File> sourceFiles, @Nullable File outputFile) {
-                if (outputFile == null) return;
-
-                MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-                if (messageCollector == null) return;
-
-                messageCollector.report(
-                        CompilerMessageSeverity.OUTPUT,
-                        OutputMessageUtil.formatOutputMessage(sourceFiles, outputFile),
-                        CompilerMessageLocation.NO_LOCATION);
-            }
-        };
+        CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState generationState = new GenerationState(
-                project, ClassBuilderFactories.BINARIES, backendProgress, exhaust.getBindingContext(), environment.getSourceFiles(),
+                project, ClassBuilderFactories.BINARIES, Progress.DEAF, exhaust.getBindingContext(), environment.getSourceFiles(),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
                 /*generateDeclaredClasses = */true
