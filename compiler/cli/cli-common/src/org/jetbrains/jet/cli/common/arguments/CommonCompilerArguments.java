@@ -18,7 +18,11 @@ package org.jetbrains.jet.cli.common.arguments;
 
 import com.sampullara.cli.Argument;
 
+import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUPPRESS_WARNINGS;
+
 public abstract class CommonCompilerArguments extends CompilerArguments {
+    public static final CommonCompilerArguments DUMMY = new DummyImpl();
+
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
     @Argument(value = "verbose", description = "Enable verbose logging output")
@@ -60,6 +64,14 @@ public abstract class CommonCompilerArguments extends CompilerArguments {
 
     @Override
     public boolean suppressAllWarnings() {
-        return "warnings".equalsIgnoreCase(suppress);
+        return SUPPRESS_WARNINGS.equalsIgnoreCase(suppress);
+    }
+
+    // Used only for serialize and deserialize settings. Don't use in other places!
+    public static final class DummyImpl extends CommonCompilerArguments {
+        @Override
+        public String getSrc() {
+            return null;
+        }
     }
 }

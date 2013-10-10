@@ -116,6 +116,15 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"
                     serviceImplementation="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerSettings"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerSettings"/>
+
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerSettings"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerSettings"/>
+
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerSettings"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerSettings"/>
+
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

@@ -19,6 +19,9 @@ package org.jetbrains.jet.cli.common.arguments;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.Nullable;
 
+import static org.jetbrains.jet.cli.common.arguments.K2JsArgumentConstants.CALL;
+import static org.jetbrains.jet.cli.common.arguments.K2JsArgumentConstants.NO_CALL;
+
 /**
  * NOTE: for now K2JSCompiler supports only minimal amount of parameters required to launch it from the plugin.
  */
@@ -39,7 +42,8 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     public String target;
 
     @Nullable
-    @Argument(value = "main", description = "Whether a main function should be called; either 'call' or 'noCall', default 'call' (main function will be auto detected)")
+    @Argument(value = "main", description = "Whether a main function should be called; either '" + CALL +
+                                            "' or '" + NO_CALL + "', default '" + CALL + "' (main function will be auto detected)")
     public String main;
 
     @Override
