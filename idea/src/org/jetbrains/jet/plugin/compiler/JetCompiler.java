@@ -41,9 +41,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class JetCompiler implements TranslatingCompiler {
-
-    private static final boolean RUN_OUT_OF_PROCESS = false;
-
     @Override
     public boolean isCompilableFile(VirtualFile virtualFile, CompileContext compileContext) {
         if (!(virtualFile.getFileType() instanceof JetFileType)) {
@@ -136,7 +133,7 @@ public class JetCompiler implements TranslatingCompiler {
             File scriptFile,
             OutputItemsCollector outputItemsCollector
     ) {
-        KotlinCompilerRunner.runK2JvmCompiler(messageCollector, environment, scriptFile, outputItemsCollector, RUN_OUT_OF_PROCESS);
+        KotlinCompilerRunner.runK2JvmCompiler(messageCollector, environment, scriptFile, outputItemsCollector);
     }
 
     public static File tryToWriteScriptFile(

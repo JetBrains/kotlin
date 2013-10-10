@@ -152,8 +152,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                     messageCollector,
                     environment,
                     moduleFile,
-                    outputItemCollector,
-                    /*runOutOfProcess = */false);
+                    outputItemCollector);
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
