@@ -93,7 +93,7 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     private static JetTypeMapperMode ownerKindToMapTypeMode(OwnerKind kind) {
-        if (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind) {
+        if (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.NAMESPACE) {
             return JetTypeMapperMode.IMPL;
         }
         else if (kind == OwnerKind.TRAIT_IMPL) {

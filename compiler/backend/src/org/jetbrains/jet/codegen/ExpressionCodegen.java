@@ -123,7 +123,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
-        ImplementationBodyCodegen implementationBodyCodegen = new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, null);
+        ImplementationBodyCodegen implementationBodyCodegen =
+                new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen());
 
         implementationBodyCodegen.generate();
 
@@ -299,8 +300,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassBuilder classBuilder = state.getFactory().newVisitor(asmType, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
-
-        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, null).generate();
+        new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();
         classBuilder.done();
 
         return StackValue.none();

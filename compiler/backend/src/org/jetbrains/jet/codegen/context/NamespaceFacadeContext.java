@@ -18,16 +18,24 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.OwnerKind;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
 public class NamespaceFacadeContext extends NamespaceContext {
 
+    private final Type delegateTo;
+
     public NamespaceFacadeContext(
             @NotNull NamespaceDescriptor contextDescriptor,
             @Nullable CodegenContext parent,
-            @NotNull OwnerKind kind
+            @NotNull Type delegateTo
     ) {
-        super(contextDescriptor, parent, kind);
+        super(contextDescriptor, parent);
+        this.delegateTo = delegateTo;
+    }
+
+    @NotNull
+    public Type getDelegateToClassType() {
+        return delegateTo;
     }
 }

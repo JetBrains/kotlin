@@ -31,6 +31,8 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
+import org.jetbrains.jet.codegen.context.NamespaceContext;
+import org.jetbrains.jet.codegen.context.NamespaceFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -110,9 +112,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                                        jvmSignature.getGenericsSignature(),
                                        null);
 
-        OwnerKind contextKind = owner.getContextKind();
-        if (contextKind instanceof OwnerKind.StaticDelegateKind) {
-            Type ownerType = ((OwnerKind.StaticDelegateKind) contextKind).getOwnerClass();
+        if (owner instanceof NamespaceFacadeContext) {
+            Type ownerType = ((NamespaceFacadeContext) owner).getDelegateToClassType();
             v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, shortNameByAsmType(ownerType));
         }
         else {
@@ -251,9 +252,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         Label methodBegin = new Label();
         mv.visitLabel(methodBegin);
 
-        OwnerKind kind = context.getContextKind();
-        if (kind instanceof OwnerKind.StaticDelegateKind) {
-            generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (OwnerKind.StaticDelegateKind) kind);
+        if (context.getParentContext() instanceof NamespaceFacadeContext) {
+            generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (NamespaceFacadeContext) context.getParentContext());
         }
         else {
             FrameMap frameMap = strategy.getFrameMap(typeMapper, context);
@@ -278,7 +278,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
 
         Type thisType = getThisTypeForFunction(functionDescriptor, context);
-        generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, localVariableNames, labelsForSharedVars, kind);
+        generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, localVariableNames, labelsForSharedVars, context.getContextKind());
     }
 
     @NotNull
@@ -386,7 +386,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
     private static void generateStaticDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
-            @NotNull OwnerKind.StaticDelegateKind dk
+            @NotNull NamespaceFacadeContext context
     ) {
         InstructionAdapter iv = new InstructionAdapter(mv);
         Type[] argTypes = asmMethod.getArgumentTypes();
@@ -402,7 +402,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             iv.load(k, argType);
             k += argType.getSize();
         }
-        iv.invokestatic(dk.getOwnerClass().getInternalName(), asmMethod.getName(), asmMethod.getDescriptor());
+        iv.invokestatic(context.getDelegateToClassType().getInternalName(), asmMethod.getName(), asmMethod.getDescriptor());
         iv.areturn(asmMethod.getReturnType());
     }
 

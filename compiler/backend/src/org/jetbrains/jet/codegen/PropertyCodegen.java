@@ -26,6 +26,8 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
+import org.jetbrains.jet.codegen.context.NamespaceContext;
+import org.jetbrains.jet.codegen.context.NamespaceFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
@@ -83,11 +85,12 @@ public class PropertyCodegen extends GenerationStateAware {
         assert variableDescriptor instanceof PropertyDescriptor : "Property should have a property descriptor: " + variableDescriptor;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-        assert kind instanceof OwnerKind.StaticDelegateKind || kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
+        assert kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
 
-        if (kind instanceof OwnerKind.StaticDelegateKind) {
-            Type ownerType = ((OwnerKind.StaticDelegateKind) kind).getOwnerClass();
+
+        if (context instanceof NamespaceFacadeContext) {
+            Type ownerType = ((NamespaceFacadeContext) context).getDelegateToClassType();
             v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerType));
         }
         else if (kind != OwnerKind.TRAIT_IMPL) {
