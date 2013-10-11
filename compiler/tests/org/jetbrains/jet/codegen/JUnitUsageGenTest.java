@@ -36,7 +36,7 @@ public class JUnitUsageGenTest extends CodegenTestCase {
             throw new AssertionError("JUnit jar wasn't found");
         }
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, junitJar));
     }
 

@@ -36,7 +36,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, root.getPath());
         }
 
-        return new JetCoreEnvironment(getTestRootDisposable(), configuration);
+        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
     }
 
     protected abstract List<File> getKotlinSourceRoots();

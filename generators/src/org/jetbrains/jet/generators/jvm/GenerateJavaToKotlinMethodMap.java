@@ -72,7 +72,7 @@ public class GenerateJavaToKotlinMethodMap {
 
         Disposable disposable = CompileEnvironmentUtil.createMockDisposable();
         try {
-            JetCoreEnvironment coreEnvironment = new JetCoreEnvironment(disposable, configuration);
+            JetCoreEnvironment coreEnvironment = JetCoreEnvironment.createForProduction(disposable, configuration);
 
             StringBuilder buf = new StringBuilder();
             Printer printer = new Printer(buf);

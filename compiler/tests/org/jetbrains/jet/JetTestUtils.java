@@ -52,7 +52,6 @@ import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -241,7 +240,7 @@ public class JetTestUtils {
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        return new JetCoreEnvironment(disposable, compilerConfigurationForTests(
+        return JetCoreEnvironment.createForTests(disposable, compilerConfigurationForTests(
                 configurationKind, jdkKind, getAnnotationsJar(), getAnnotationsExtJar()));
     }
 

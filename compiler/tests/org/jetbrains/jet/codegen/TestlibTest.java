@@ -98,7 +98,7 @@ public class TestlibTest extends UsefulTestCase {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                           new MessageCollectorPlainTextToStream(System.out, MessageCollectorPlainTextToStream.NON_VERBOSE));
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
 
         generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(myEnvironment);
         if (generationState == null) {

@@ -47,7 +47,7 @@ public class BuiltInsSerializer {
         try {
             List<File> sourceFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), new File(BUILT_INS_SRC_DIR));
             CompilerConfiguration configuration = new CompilerConfiguration();
-            JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
+            JetCoreEnvironment environment = JetCoreEnvironment.createForTests(rootDisposable, configuration);
             List<JetFile> files = JetTestUtils.loadToJetFiles(environment, sourceFiles);
 
             ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, environment, false);

@@ -78,7 +78,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     private void compileB(@NotNull File ktBFile) throws IOException {
         CompilerConfiguration configurationWithADirInClasspath = JetTestUtils
                 .compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
-        compileKotlin(ktBFile, bDir, new JetCoreEnvironment(getTestRootDisposable(), configurationWithADirInClasspath),
+        compileKotlin(ktBFile, bDir, JetCoreEnvironment.createForTests(getTestRootDisposable(), configurationWithADirInClasspath),
                       getTestRootDisposable());
     }
 

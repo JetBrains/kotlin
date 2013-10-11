@@ -79,7 +79,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         String ktFile = ktFileFullPath.substring("compiler/testData/codegen/".length());
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
         loadFile(ktFile);

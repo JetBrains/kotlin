@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.buildtools.core;
 
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
@@ -65,7 +66,7 @@ public class BytecodeCompiler {
     private JetCoreEnvironment env(String stdlib, String[] classpath, String[] sourceRoots) {
         CompilerConfiguration configuration = createConfiguration(stdlib, classpath, sourceRoots);
 
-        return new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration);
+        return JetCoreEnvironment.createForProduction(Disposer.newDisposable(), configuration);
     }
 
     private CompilerConfiguration createConfiguration(String stdlib, String[] classpath, String[] sourceRoots) {

@@ -51,7 +51,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, generateAssertions);
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, generateParamAssertions);
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
     }
 
     private void doTestGenerateAssertions(boolean generateAssertions) throws Exception {

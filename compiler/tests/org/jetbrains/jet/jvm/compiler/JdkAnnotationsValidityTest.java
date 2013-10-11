@@ -69,7 +69,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar());
         configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File("ideaSDK/lib/jdkAnnotations.jar"));
-        return new JetCoreEnvironment(parentDisposable, configuration);
+        return JetCoreEnvironment.createForTests(parentDisposable, configuration);
     }
 
     @Override

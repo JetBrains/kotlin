@@ -75,7 +75,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(arguments.sourceFiles));
-        JetCoreEnvironment environmentForJS = new JetCoreEnvironment(rootDisposable, configuration);
+        JetCoreEnvironment environmentForJS = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
 
         Project project = environmentForJS.getProject();
 

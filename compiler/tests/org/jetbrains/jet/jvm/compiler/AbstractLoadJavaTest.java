@@ -141,7 +141,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, tmpdir);
         configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(sourcesDir.getAbsolutePath()));
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("compiler/tests")); // for @ExpectLoadError annotation
-        JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
+        JetCoreEnvironment environment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
 
         // we need the same binding trace for resolve from Java and Kotlin
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();

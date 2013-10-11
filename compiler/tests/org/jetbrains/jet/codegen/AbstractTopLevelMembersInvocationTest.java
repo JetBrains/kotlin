@@ -56,7 +56,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         assert !sourceFiles.isEmpty() : getTestName(true) + " should contains at least one .kt file";
         Collections.sort(sourceFiles);
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, Arrays.asList(JetTestUtils.getAnnotationsJar()), classPath));
 
         loadFiles(sourceFiles.toArray(new String[sourceFiles.size()]));

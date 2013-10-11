@@ -24,6 +24,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptorForObject;
@@ -92,8 +93,9 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         extras.addAll(extraClassPath);
         extras.add(JetTestUtils.getAnnotationsJar());
 
-        return new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()])));
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()]));
+        return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
     }
 
     @NotNull

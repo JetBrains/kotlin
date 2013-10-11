@@ -93,7 +93,7 @@ public class ReplInterpreter {
     private final ModuleDescriptorImpl module;
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
+        jetCoreEnvironment = JetCoreEnvironment.createForProduction(disposable, configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
         module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
