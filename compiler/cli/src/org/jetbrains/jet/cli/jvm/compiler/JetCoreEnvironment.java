@@ -65,19 +65,10 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARN
 public class JetCoreEnvironment {
 
     private final JavaCoreApplicationEnvironment applicationEnvironment;
-    private final JavaCoreProjectEnvironment projectEnvironment;
-    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
-    private final ClassPath classPath = new ClassPath();
 
-    private final CoreExternalAnnotationsManager annotationsManager;
-
-    private final CompilerConfiguration configuration;
-
-    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
-        this.configuration = configuration.copy();
-        this.configuration.setReadOnly(true);
-
-        this.applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
+    @NotNull
+    private JavaCoreApplicationEnvironment initApplication(@NotNull Disposable parentDisposable) {
+        JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
         // ability to get text from annotations xml files
         applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml");
@@ -90,6 +81,22 @@ public class JetCoreEnvironment {
         applicationEnvironment.registerParserDefinition(new JetParserDefinition());
 
         applicationEnvironment.getApplication().registerService(OperationModeProvider.class, new CompilerModeProvider());
+        return applicationEnvironment;
+    }
+
+    private final JavaCoreProjectEnvironment projectEnvironment;
+    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+    private final ClassPath classPath = new ClassPath();
+
+    private final CoreExternalAnnotationsManager annotationsManager;
+
+    private final CompilerConfiguration configuration;
+
+    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
+        this.configuration = configuration.copy();
+        this.configuration.setReadOnly(true);
+
+        this.applicationEnvironment = initApplication(parentDisposable);
 
         projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 
