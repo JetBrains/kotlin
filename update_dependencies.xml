@@ -1,7 +1,25 @@
 <project name="Update Dependencies" default="update">
     <property name="jb.buildserver.build.id" value="2123245"/>
     <property name="public.buildserver.build.id" value="96571"/>
-    <property name="idea.archive.name" value="ideaIC-132.SNAPSHOT.win.zip"/>
+
+    <condition property="os.tag" value="win.zip">
+      <os family="windows" />
+    </condition>
+
+    <condition property="os.tag" value="mac.zip">
+      <os family="mac" />
+    </condition>
+
+    <condition property="os.tag" value="tar.gz">
+      <and>
+        <os family="unix" />
+        <not>
+          <os family="mac"/>
+        </not>
+      </and>
+    </condition>
+
+    <property name="idea.archive.name" value="ideaIC-132.SNAPSHOT.${os.tag}"/>
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
@@ -239,7 +257,41 @@
                 </then>
             </if>
 
-            <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
+            <if>
+                <os family="windows"/>
+                <then>
+                    <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
+                </then>
+                <elseif>
+                    <os family="mac"/>
+                    <then>
+                        <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK">
+                            <cutdirsmapper dirs="1"/>
+                        </unzip>
+                        <!-- Java can't manipulate permissions -->
+                        <exec executable="chmod">
+                            <arg value="a+x"/>
+                            <arg path="ideaSDK/bin/fsnotifier"/>
+                            <arg path="ideaSDK/bin/inspect.sh"/>
+                            <arg path="ideaSDK/bin/printenv.py"/>
+                            <arg path="ideaSDK/bin/restarter"/>
+                        </exec>
+                    </then>
+                </elseif>
+                <else>
+                    <untar src="dependencies/download/@{build.zip}" dest="ideaSDK" compression="gzip">
+                        <cutdirsmapper dirs="1"/>
+                    </untar>
+                    <!-- Java can't manipulate permissions -->
+                    <exec executable="chmod">
+                        <arg value="a+x"/>
+                        <arg path="ideaSDK/bin/fsnotifier"/>
+                        <arg path="ideaSDK/bin/fsnotifier64"/>
+                        <arg path="ideaSDK/bin/inspect.sh"/>
+                        <arg path="ideaSDK/bin/idea.sh"/>
+                    </exec>
+                </else>
+            </if>
 
             <mkdir dir="ideaSDK/sources"/>
             <copy file="dependencies/download/idea-sdk-sources.zip" tofile="ideaSDK/sources/sources.zip"/>
