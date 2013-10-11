@@ -91,7 +91,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     private boolean isGenerateNoWarnings() {
-        return SUPPRESS_WARNINGS.equals(commonCompilerSettings.suppress);
+        return commonCompilerSettings.suppressAllWarnings();
     }
 
     private void setGenerateNoWarnings(boolean selected) {

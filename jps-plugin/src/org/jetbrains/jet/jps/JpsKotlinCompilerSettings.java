@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.jps;
 
-import com.intellij.util.xmlb.Accessor;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
@@ -73,49 +71,28 @@ public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerS
 
     @NotNull
     public static CommonCompilerArguments getCommonSettings(@NotNull JpsProject project) {
-        JpsKotlinCompilerSettings settings = getSettings(project);
-        return settings.commonCompilerSettings;
+        return getSettings(project).commonCompilerSettings;
     }
 
     public static void setCommonSettings(@NotNull JpsProject project, @NotNull CommonCompilerArguments commonCompilerSettings) {
-        JpsKotlinCompilerSettings settings = getOrCreateSettings(project);
-        settings.commonCompilerSettings = commonCompilerSettings;
+        getOrCreateSettings(project).commonCompilerSettings = commonCompilerSettings;
     }
 
     @NotNull
-    public static K2JVMCompilerArguments getMergedK2JvmSettings(@NotNull JpsProject project) {
-        JpsKotlinCompilerSettings settings = getSettings(project);
-        return merge(settings.commonCompilerSettings, settings.k2JvmCompilerSettings);
+    public static K2JVMCompilerArguments getK2JvmSettings(@NotNull JpsProject project) {
+        return getSettings(project).k2JvmCompilerSettings;
     }
 
     public static void setK2JvmSettings(@NotNull JpsProject project, @NotNull K2JVMCompilerArguments k2JvmCompilerSettings) {
-        JpsKotlinCompilerSettings settings = getOrCreateSettings(project);
-        settings.k2JvmCompilerSettings = k2JvmCompilerSettings;
+        getOrCreateSettings(project).k2JvmCompilerSettings = k2JvmCompilerSettings;
     }
 
     @NotNull
-    public static K2JSCompilerArguments getMergedK2JsSettings(@NotNull JpsProject project) {
-        JpsKotlinCompilerSettings settings = getSettings(project);
-        return merge(settings.commonCompilerSettings, settings.k2JsCompilerSettings);
+    public static K2JSCompilerArguments getK2JsSettings(@NotNull JpsProject project) {
+        return getSettings(project).k2JsCompilerSettings;
     }
 
     public static void setK2JsSettings(@NotNull JpsProject project, @NotNull K2JSCompilerArguments k2JsCompilerSettings) {
-        JpsKotlinCompilerSettings settings = getOrCreateSettings(project);
-        settings.k2JsCompilerSettings = k2JsCompilerSettings;
-    }
-
-    @NotNull
-    private static <T extends CommonCompilerArguments> T merge(@NotNull CommonCompilerArguments from, @NotNull T to) {
-        Class<CommonCompilerArguments> fromClass = CommonCompilerArguments.class;
-
-        assert fromClass.isAssignableFrom(to.getClass()) : to.getClass() + " is not assignable to " + fromClass;
-
-        T mergedCopy = XmlSerializerUtil.createCopy(to);
-
-        for (Accessor accessor : XmlSerializerUtil.getAccessors(fromClass)) {
-            accessor.write(mergedCopy, accessor.read(from));
-        }
-
-        return mergedCopy;
+        getOrCreateSettings(project).k2JsCompilerSettings = k2JsCompilerSettings;
     }
 }

@@ -16,9 +16,14 @@
 
 package org.jetbrains.jet.compiler.runner;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.xmlb.Accessor;
+import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -26,23 +31,30 @@ import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 public class KotlinCompilerRunner {
     private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
     private static final String K2JS_COMPILER = "org.jetbrains.jet.cli.js.K2JSCompiler";
 
     public static void runK2JvmCompiler(
+            CommonCompilerArguments commonArguments,
+            K2JVMCompilerArguments k2jvmArguments,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
             File moduleFile,
             OutputItemsCollector collector
     ) {
-        String[] arguments = createArgumentsForJvmCompiler(moduleFile);
+        K2JVMCompilerArguments arguments = mergeBeans(commonArguments, k2jvmArguments);
+        setupK2JvmSettings(moduleFile, arguments);
+
         runCompiler(K2JVM_COMPILER, arguments, messageCollector, collector, environment);
     }
 
     public static void runK2JsCompiler(
+            CommonCompilerArguments commonArguments,
+            K2JSCompilerArguments k2jsArguments,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
             OutputItemsCollector collector,
@@ -50,13 +62,15 @@ public class KotlinCompilerRunner {
             Set<String> libraryFiles,
             File outputFile
     ) {
-        String[] arguments = createArgumentsForJsCompiler(outputFile, sourceFiles, libraryFiles);
+        K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
+        setupK2JsSettings(outputFile, sourceFiles, libraryFiles, arguments);
+
         runCompiler(K2JS_COMPILER, arguments, messageCollector, collector, environment);
     }
 
     private static void runCompiler(
             final String compilerClassName,
-            final String[] arguments,
+            final CommonCompilerArguments arguments,
             final MessageCollector messageCollector,
             OutputItemsCollector collector,
             final CompilerEnvironment environment
@@ -71,7 +85,7 @@ public class KotlinCompilerRunner {
 
     private static int execCompiler(
             String compilerClassName,
-            String[] arguments,
+            CommonCompilerArguments arguments,
             CompilerEnvironment environment,
             PrintStream out,
             MessageCollector messageCollector
@@ -80,9 +94,7 @@ public class KotlinCompilerRunner {
             messageCollector.report(CompilerMessageSeverity.INFO,
                                     "Using kotlinHome=" + environment.getKotlinPaths().getHomePath(),
                                     CompilerMessageLocation.NO_LOCATION);
-            messageCollector.report(CompilerMessageSeverity.INFO,
-                               "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments),
-                               CompilerMessageLocation.NO_LOCATION);
+
             Object rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, arguments, environment,
                                                             messageCollector, out, /*usePreloader=*/true);
             // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
@@ -95,40 +107,55 @@ public class KotlinCompilerRunner {
         }
     }
 
-    private static String[] createArgumentsForJvmCompiler(File moduleFile) {
-        return new String[]{
-                "-module", moduleFile.getAbsolutePath(),
-                "-tags", "-verbose", "-version",
-                "-notNullAssertions", "-notNullParamAssertions",
-                "-noStdlib", "-noJdkAnnotations", "-noJdk"};
+    private static <F, T extends F> T mergeBeans(F from, T to) {
+        T copy = XmlSerializerUtil.createCopy(to);
+
+        for (Accessor accessor : XmlSerializerUtil.getAccessors(from.getClass())) {
+            accessor.write(copy, accessor.read(from));
+        }
+
+        return copy;
     }
 
-    private static String[] createArgumentsForJsCompiler(
+    private static void setupCommonSettings(CommonCompilerArguments settings) {
+        settings.tags = true;
+        settings.verbose = true;
+        settings.version = true;
+        settings.printArgs = true;
+    }
+
+    private static void setupK2JvmSettings(
+            File moduleFile,
+            K2JVMCompilerArguments settings
+    ) {
+        setupCommonSettings(settings);
+
+        settings.module = moduleFile.getAbsolutePath();
+        settings.notNullAssertions = true;
+        settings.notNullParamAssertions = true;
+        settings.noStdlib = true;
+        settings.noJdkAnnotations = true;
+        settings.noJdk = true;
+    }
+
+    private static void setupK2JsSettings(
             File outputFile,
             List<File> sourceFiles,
-            Set<String> libraryFiles
+            Set<String> libraryFiles,
+            K2JSCompilerArguments settings
     ) {
-        List<String> args = new ArrayList<String>();
+        setupCommonSettings(settings);
 
-        Collections.addAll(args, "-tags", "-verbose", "-version", "-sourcemap");
-
-        String separator = ",";
-        String sourceFilesAsString = StringUtil.join(sourceFiles, new Function<File, String>() {
+        List<String> sourceFilePaths = ContainerUtil.map(sourceFiles, new Function<File, String>() {
             @Override
             public String fun(File file) {
                 return file.getPath();
             }
-        }, separator);
-
-        args.add("-sourceFiles");
-        args.add(sourceFilesAsString);
-
-        args.add("-output");
-        args.add(outputFile.getPath());
-
-        args.add("-libraryFiles");
-        args.add(StringUtil.join(libraryFiles, separator));
-
-        return ArrayUtil.toStringArray(args);
+        });
+        settings.sourceFiles = ArrayUtil.toStringArray(sourceFilePaths);
+        settings.outputFile = outputFile.getPath();
+        settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles);
+        //TODO drop later
+        settings.sourcemap = true;
     }
 }
