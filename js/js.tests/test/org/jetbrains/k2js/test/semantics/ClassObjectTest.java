@@ -12,6 +12,10 @@ public final class ClassObjectTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testInTrait() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testWithExtension() throws Exception {
         checkFooBoxIsOk();
     }
