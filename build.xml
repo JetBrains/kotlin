@@ -413,6 +413,21 @@
                 ]]></proguard>
             </else>
         </if>
+
+        <jar jarfile="${output}/kotlin-compiler-for-maven.jar">
+            <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
+            <zipfileset src="${bootstrap.runtime}" includes="**" excludes="META-INF/**"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+
+                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="antTools">
