@@ -9,9 +9,9 @@
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
     <property name="generate.javadoc" value="true"/>
 
-    <property name="boostrap.home" value="dependencies/bootstrap-compiler"/>
-    <property name="boostrap.compiler.home" value="${boostrap.home}/Kotlin/kotlinc"/>
-    <property name="bootstrap.runtime" value="${boostrap.compiler.home}/lib/kotlin-runtime.jar"/>
+    <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
+    <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
+    <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
 
     <property name="output.relative" value="dist"/>
     <property name="output" value="${basedir}/${output.relative}"/>
@@ -34,7 +34,7 @@
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
-    <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${boostrap.compiler.home}/lib/kotlin-ant.jar"/>
+    <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
     <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
