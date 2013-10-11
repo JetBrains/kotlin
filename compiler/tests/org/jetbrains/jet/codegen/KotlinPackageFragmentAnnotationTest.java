@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.lang.annotation.Annotation;
+
 public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
     public static final FqName NAMESPACE_NAME = new FqName("test");
 
@@ -42,12 +44,17 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
                 // The file which is not a facade is a package fragment
                 String fqName = fileName.substring(0, fileName.length() - ".class".length()).replace('/', '.');
                 Class aClass = generateClass(fqName);
-                assertTrue("No KotlinPackageFragment annotation on a package fragment",
-                           aClass.isAnnotationPresent(KotlinPackageFragment.class));
 
-                KotlinPackageFragment annotation = (KotlinPackageFragment) aClass.getAnnotation(KotlinPackageFragment.class);
+                Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinPackageFragment.class);
+
+                assertTrue("No KotlinPackageFragment annotation on a package fragment",
+                           aClass.isAnnotationPresent(annotationClass));
+
+                Annotation kotlinPackageFragment = aClass.getAnnotation(annotationClass);
+
                 assertTrue("KotlinPackageFragment annotation is written with an unsupported format",
-                           AbiVersionUtil.isAbiVersionCompatible(annotation.abiVersion()));
+                           AbiVersionUtil.isAbiVersionCompatible(
+                                   (Integer) ClassLoaderIsolationUtil.getAnnotationAttribute(kotlinPackageFragment, "abiVersion")));
 
                 return;
             }

@@ -32,7 +32,7 @@ public class ClassPathInParentClassLoaderTest extends CodegenTestCase {
     @NotNull
     @Override
     protected GeneratedClassLoader createClassLoader(@NotNull ClassFileFactory factory) {
-        ClassLoader parentClassLoader = new URLClassLoader(getClassPathURLs(), CodegenTestCase.class.getClassLoader());
+        ClassLoader parentClassLoader = new URLClassLoader(getClassPathURLs(), null);
         initializedClassLoader = new GeneratedClassLoader(factory, parentClassLoader);
         return initializedClassLoader;
     }

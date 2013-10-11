@@ -25,12 +25,14 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -109,7 +111,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             fail("Double initialization of class loader in same test");
         }
 
-        initializedClassLoader = new GeneratedClassLoader(factory, CodegenTestCase.class.getClassLoader(), getClassPathURLs());
+        initializedClassLoader = new GeneratedClassLoader(factory, null, getClassPathURLs());
         return initializedClassLoader;
     }
 
@@ -122,6 +124,13 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
+        }
+        try {
+            //add runtime library
+            urls.add(ForTestCompileRuntime.runtimeJarForTests().toURI().toURL());
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         }
 
         return urls.toArray(new URL[urls.size()]);
@@ -200,5 +209,13 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             throw new IllegalArgumentException("Couldn't find method " + name + " in class " + aClass);
         }
         return method;
+    }
+
+    public Class<? extends Annotation> getCorrespondingAnnotationClass(Class<? extends Annotation> classForName) {
+        return ClassLoaderIsolationUtil.getAnnotationClass(classForName, initializedClassLoader);
+    }
+
+    public Class<?> getCorrespondingClass(Class<?> classForName) {
+        return ClassLoaderIsolationUtil.getClassFromClassLoader(classForName, initializedClassLoader);
     }
 }

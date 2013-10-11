@@ -229,8 +229,10 @@ public class AnnotationGenTest extends CodegenTestCase {
         Class[] interfaces = aClass.getInterfaces();
         assertEquals(2, interfaces.length);
         assertEquals(0, aClass.getDeclaredMethods().length);
-        assertTrue(Annotation.class == interfaces[0] || Annotation.class == interfaces[1]);
-        assertTrue(JetObject.class == interfaces[0] || JetObject.class == interfaces[1]);
+        Class annotationClass = getCorrespondingClass(Annotation.class);
+        Class jetObjectClass = getCorrespondingClass(JetObject.class);
+        assertTrue(annotationClass == interfaces[0] || annotationClass == interfaces[1]);
+        assertTrue(jetObjectClass == interfaces[0] || jetObjectClass == interfaces[1]);
         assertTrue(aClass.isAnnotation());
     }
 

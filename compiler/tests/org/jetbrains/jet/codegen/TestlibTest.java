@@ -108,8 +108,17 @@ public class TestlibTest extends UsefulTestCase {
         ClassFileFactory classFileFactory = generationState.getFactory();
 
         classLoader = new GeneratedClassLoader(classFileFactory,
-                                               new URLClassLoader(new URL[] {ForTestCompileRuntime.runtimeJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
-                                                                  TestCase.class.getClassLoader()));
+                                               new URLClassLoader(new URL[] {ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
+                                                        null)) {
+            @Override
+            public Class<?> loadClass(String name) throws ClassNotFoundException {
+                if (name.startsWith("junit.") || name.startsWith("org.junit.")) {
+                    //In other way we don't find any test cause will have two different TestCase classes!
+                    return TestlibTest.class.getClassLoader().loadClass(name);
+                }
+                return super.loadClass(name);
+            }
+        };
 
         typeMapper = generationState.getTypeMapper();
 
