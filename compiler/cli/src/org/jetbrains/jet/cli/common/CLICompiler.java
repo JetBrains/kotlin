@@ -23,7 +23,6 @@ import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.PrintStream;
@@ -125,7 +124,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
     public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
-            Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+            Disposable rootDisposable = Disposer.newDisposable();
             try {
                 MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
                 ExitCode code = doExecute(arguments, severityCollector, rootDisposable);

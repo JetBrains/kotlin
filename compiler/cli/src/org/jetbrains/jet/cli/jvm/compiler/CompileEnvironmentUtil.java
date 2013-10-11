@@ -56,13 +56,6 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_L
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
-    public static Disposable createMockDisposable() {
-        return new Disposable() {
-            @Override
-            public void dispose() {
-            }
-        };
-    }
 
     @Nullable
     private static File getRuntimeJarPath() {
@@ -97,12 +90,6 @@ public class CompileEnvironmentUtil {
 
     @NotNull
     private static List<Module> loadModuleScript(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
-        Disposable disposable = new Disposable() {
-            @Override
-            public void dispose() {
-
-            }
-        };
         CompilerConfiguration configuration = new CompilerConfiguration();
         File runtimePath = paths.getRuntimePath();
         if (runtimePath.exists()) {
@@ -117,6 +104,8 @@ public class CompileEnvironmentUtil {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
         List<Module> modules;
+
+        Disposable disposable = Disposer.newDisposable();
         try {
             JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createForProduction(disposable, configuration);
             GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment);

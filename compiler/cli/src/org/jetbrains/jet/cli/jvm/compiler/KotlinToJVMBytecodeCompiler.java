@@ -97,7 +97,7 @@ public class KotlinToJVMBytecodeCompiler {
             compilerConfiguration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
         }
 
-        Disposable parentDisposable = CompileEnvironmentUtil.createMockDisposable();
+        Disposable parentDisposable = Disposer.newDisposable();
         JetCoreEnvironment moduleEnvironment = null;
         try {
             moduleEnvironment = JetCoreEnvironment.createForProduction(parentDisposable, compilerConfiguration);
@@ -325,7 +325,7 @@ public class KotlinToJVMBytecodeCompiler {
             @Nullable List<JetScriptDefinition> scriptDefinitions) {
         MessageRenderer messageRenderer = MessageRenderer.PLAIN;
         GroupingMessageCollector messageCollector = new GroupingMessageCollector(new PrintingMessageCollector(System.err, messageRenderer, false));
-        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+        Disposable rootDisposable = Disposer.newDisposable();
         try {
             CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
             compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
