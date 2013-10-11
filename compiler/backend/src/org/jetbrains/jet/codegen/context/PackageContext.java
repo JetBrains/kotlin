@@ -18,13 +18,12 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.OwnerKind;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 
-public class NamespaceContext extends FieldOwnerContext<NamespaceDescriptor> {
-
-    public NamespaceContext(@NotNull NamespaceDescriptor contextDescriptor, @Nullable CodegenContext parent) {
+public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> {
+    
+    public PackageContext(@NotNull PackageFragmentDescriptor contextDescriptor, @Nullable CodegenContext parent) {
         super(contextDescriptor, OwnerKind.NAMESPACE, parent, null, null, null);
     }
 

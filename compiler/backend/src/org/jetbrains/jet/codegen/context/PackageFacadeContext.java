@@ -19,14 +19,14 @@ package org.jetbrains.jet.codegen.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 
-public class NamespaceFacadeContext extends NamespaceContext {
+public class PackageFacadeContext extends PackageContext {
 
     private final Type delegateTo;
 
-    public NamespaceFacadeContext(
-            @NotNull NamespaceDescriptor contextDescriptor,
+    public PackageFacadeContext(
+            @NotNull PackageFragmentDescriptor contextDescriptor,
             @Nullable CodegenContext parent,
             @NotNull Type delegateTo
     ) {

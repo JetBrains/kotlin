@@ -46,11 +46,6 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
         return (NamespaceDescriptorParent) super.getContainingDeclaration();
     }
 
-    @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        throw new IllegalStateException("immutable");
-    }
-
     @NotNull
     @Override
     public NamespaceDescriptor substitute(@NotNull TypeSubstitutor substitutor) {

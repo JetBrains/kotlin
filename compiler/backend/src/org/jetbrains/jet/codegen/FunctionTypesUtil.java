@@ -143,7 +143,7 @@ public class FunctionTypesUtil {
         JetScope builtInsScope = KotlinBuiltIns.getInstance().getBuiltInsScope();
 
         MutableClassDescriptor functionImpl = new MutableClassDescriptor(
-                builtInsScope.getContainingDeclaration(),
+                KotlinBuiltIns.getInstance().getBuiltInsPackageFragment(),
                 builtInsScope,
                 ClassKind.CLASS,
                 false,

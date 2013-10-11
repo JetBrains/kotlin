@@ -133,17 +133,14 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
-        NamespaceDescriptor namespaceDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
-        if (namespaceDescriptor != null) {
-            Collection<JetFile> files = getTrace().get(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor);
-            if (files != null) {
-                return Collections2.filter(files, new Predicate<JetFile>() {
-                    @Override
-                    public boolean apply(JetFile input) {
-                        return PsiSearchScopeUtil.isInScope(searchScope, input);
-                    }
-                });
-            }
+        Collection<JetFile> files = getTrace().get(BindingContext.PACKAGE_TO_FILES, fqName);
+        if (files != null) {
+            return Collections2.filter(files, new Predicate<JetFile>() {
+                @Override
+                public boolean apply(JetFile input) {
+                    return PsiSearchScopeUtil.isInScope(searchScope, input);
+                }
+            });
         }
         return Collections.emptyList();
     }

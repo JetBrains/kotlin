@@ -240,8 +240,7 @@ public class CodegenBinding {
         answer.addAll(files);
 
         for (FqName name : names) {
-            NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, name);
-            Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
+            Collection<JetFile> jetFiles = bindingContext.get(PACKAGE_TO_FILES, name);
             if (jetFiles != null) {
                 answer.addAll(jetFiles);
             }
@@ -289,6 +288,7 @@ public class CodegenBinding {
         return false;
     }
 
+    // TODO 2 accept ClassDescriptor and simplify
     @NotNull
     public static Type getAsmType(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
@@ -304,14 +304,19 @@ public class CodegenBinding {
         return asmType;
     }
 
+    // TODO 2 accept ClassDescriptor and simplify
     @NotNull
     private static String getAsmTypeImpl(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof PackageFragmentDescriptor) {
+            throw new IllegalStateException("package is unexpected: " + descriptor);
+        }
+
         if (descriptor instanceof FunctionDescriptor) {
             throw new IllegalStateException("requested fq name for function: " + descriptor);
         }
 
         if (descriptor instanceof ModuleDescriptor) {
-            throw new IllegalStateException("missed something");
+            throw new IllegalStateException("module is unexpected: " + descriptor);
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
@@ -319,13 +324,21 @@ public class CodegenBinding {
             throw new IllegalStateException("descriptor has no container: " + descriptor);
         }
 
-        if (container.getContainingDeclaration() instanceof ModuleDescriptor || container instanceof ScriptDescriptor) {
+        if (container instanceof ScriptDescriptor) {
             return descriptor.getName().getIdentifier();
         }
 
-        String containerInternalName = getAsmType(bindingTrace, container).getInternalName();
 
-        if (descriptor instanceof ClassDescriptor && container instanceof ClassDescriptor) {
+        if (container instanceof PackageFragmentDescriptor) {
+            String shortName = descriptor.getName().getIdentifier();
+            FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
+            return fqName.isRoot() ? shortName : fqName.asString().replace('.', '/') + '/' + shortName;
+        }
+
+        if (descriptor instanceof ClassDescriptor) {
+            assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + descriptor;
+
+            String containerInternalName = getAsmType(bindingTrace, container).getInternalName();
             ClassDescriptor klass = (ClassDescriptor) descriptor;
             if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
                 if (isEnumClass(container)) {
@@ -338,9 +351,10 @@ public class CodegenBinding {
                     return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
                 }
             }
+            return containerInternalName + "$" + descriptor.getName().getIdentifier();
         }
 
-        return containerInternalName + (container instanceof NamespaceDescriptor ? "/" : "$") + descriptor.getName().getIdentifier();
+        throw new IllegalStateException("neither top-level nor nested class: " + descriptor);
     }
 
     public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {

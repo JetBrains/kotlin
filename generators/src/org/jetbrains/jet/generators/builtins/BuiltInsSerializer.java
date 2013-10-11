@@ -26,10 +26,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -40,6 +37,7 @@ import org.jetbrains.jet.test.util.DescriptorValidator;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -68,10 +66,11 @@ public class BuiltInsSerializer {
 
             ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, environment, false);
 
-            NamespaceDescriptor namespace = module.getNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
-            assert namespace != null : "No built-ins namespace: " + KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+            PackageFragmentDescriptor fragmentDescriptor = module.getPackageFragmentProvider()
+                    .getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME).get(0); // TODO 1 hack
+            assert fragmentDescriptor != null : "No built-ins package: " + KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 
-            DescriptorValidator.validate(namespace);
+            DescriptorValidator.validate(fragmentDescriptor);
 
             if (!FileUtil.delete(destDir)) {
                 System.err.println("Could not delete: " + destDir);
@@ -90,7 +89,7 @@ public class BuiltInsSerializer {
             });
 
             final List<Name> classNames = new ArrayList<Name>();
-            List<DeclarationDescriptor> allDescriptors = DescriptorSerializer.sort(namespace.getMemberScope().getAllDescriptors());
+            List<DeclarationDescriptor> allDescriptors = DescriptorSerializer.sort(fragmentDescriptor.getMemberScope().getAllDescriptors());
             ClassSerializationUtil.serializeClasses(allDescriptors, serializer, new ClassSerializationUtil.Sink() {
                 @Override
                 public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
@@ -111,16 +110,16 @@ public class BuiltInsSerializer {
 
             ByteArrayOutputStream classNamesStream = new ByteArrayOutputStream();
             writeClassNames(serializer, classNames, classNamesStream);
-            write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(namespace), classNamesStream, out);
+            write(destDir, BuiltInsSerializationUtil.getClassNamesFilePath(fragmentDescriptor), classNamesStream, out);
 
             ByteArrayOutputStream packageStream = new ByteArrayOutputStream();
-            ProtoBuf.Package packageProto = serializer.packageProto(namespace).build();
+            ProtoBuf.Package packageProto = serializer.packageProto(Collections.singleton(fragmentDescriptor)).build();
             packageProto.writeTo(packageStream);
-            write(destDir, BuiltInsSerializationUtil.getPackageFilePath(namespace), packageStream, out);
+            write(destDir, BuiltInsSerializationUtil.getPackageFilePath(fragmentDescriptor), packageStream, out);
 
             ByteArrayOutputStream nameStream = new ByteArrayOutputStream();
             NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable());
-            write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(namespace), nameStream, out);
+            write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(fragmentDescriptor), nameStream, out);
 
             if (out != null) {
                 out.println("Total bytes written: " + totalSize + " to " + totalFiles + " files");

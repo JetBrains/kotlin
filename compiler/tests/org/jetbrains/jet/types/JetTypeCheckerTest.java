@@ -28,12 +28,13 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -51,9 +52,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public class JetTypeCheckerTest extends JetLiteFixture {
 
@@ -578,7 +576,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        NamespaceDescriptor testData = moduleDescriptor.getNamespace(new FqName("testData"));
+        PackageFragmentDescriptor testData = moduleDescriptor.getPackageFragmentProvider().getPackageFragments(new FqName("testData")).get(0); // TODO 2 hack
         return addImports(testData.getMemberScope());
     }
 
@@ -588,10 +586,12 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT, INCLUDE_KOTLIN_SOURCES).getMemberScope());
-        writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"), IGNORE_KOTLIN_SOURCES).getMemberScope());
+        ModuleDescriptor module = javaDescriptorResolver.getPackageFragmentProvider().getModule();
+        for (ImportPath defaultImport : module.getDefaultImports()) {
+            writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());
+        }
+        writableScope.importScope(module.getPackage(FqName.ROOT).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        writableScope.importScope(builtIns.getBuiltInsScope());
         return writableScope;
     }
 

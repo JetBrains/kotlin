@@ -16,25 +16,20 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.ProgressChecker;
+import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaPackageScope extends JavaBaseScope {
     @NotNull
@@ -43,7 +38,7 @@ public final class JavaPackageScope extends JavaBaseScope {
     private final FqName packageFQN;
 
     public JavaPackageScope(
-            @NotNull NamespaceDescriptor descriptor,
+            @NotNull PackageFragmentDescriptor descriptor,
             @NotNull JavaPackage javaPackage,
             @NotNull FqName packageFQN,
             @NotNull JavaMemberResolver memberResolver
@@ -58,11 +53,6 @@ public final class JavaPackageScope extends JavaBaseScope {
         return memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
     }
 
-    @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return memberResolver.resolveNamespace(packageFQN.child(name), INCLUDE_KOTLIN_SOURCES);
-    }
-
     @NotNull
     @Override
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
@@ -74,13 +64,6 @@ public final class JavaPackageScope extends JavaBaseScope {
     @NotNull
     private Collection<DeclarationDescriptor> computeAllPackageDeclarations() {
         Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
-
-        for (JavaPackage subPackage : javaPackage.getSubPackages()) {
-            NamespaceDescriptor childNs = memberResolver.resolveNamespace(subPackage.getFqName(), IGNORE_KOTLIN_SOURCES);
-            if (childNs != null) {
-                result.add(childNs);
-            }
-        }
 
         for (JavaClass javaClass : DescriptorResolverUtils.getClassesInPackage(javaPackage)) {
             if (DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass)) continue;
@@ -98,11 +81,6 @@ public final class JavaPackageScope extends JavaBaseScope {
             if (classDescriptor != null) {
                 result.add(classDescriptor);
             }
-
-            NamespaceDescriptor namespace = memberResolver.resolveNamespace(fqName, IGNORE_KOTLIN_SOURCES);
-            if (namespace != null) {
-                result.add(namespace);
-            }
         }
 
         return result;
@@ -115,7 +93,7 @@ public final class JavaPackageScope extends JavaBaseScope {
         if (members == null) {
             return Collections.emptySet();
         }
-        SamConstructorDescriptor samConstructor = JavaFunctionResolver.resolveSamConstructor((NamespaceDescriptor) descriptor, members);
+        SamConstructorDescriptor samConstructor = JavaFunctionResolver.resolveSamConstructor((JavaPackageFragmentDescriptor) descriptor, members);
         if (samConstructor == null) {
             return Collections.emptySet();
         }
@@ -126,5 +104,19 @@ public final class JavaPackageScope extends JavaBaseScope {
     @Override
     protected Collection<ClassDescriptor> computeInnerClasses() {
         return Collections.emptyList();
+    }
+
+    @NotNull
+    public Collection<FqName> getSubPackages() {
+        List<FqName> result = Lists.newArrayList();
+        for (JavaPackage subPackage : javaPackage.getSubPackages()) {
+            result.add(subPackage.getFqName());
+        }
+        for (JavaClass javaClass : DescriptorResolverUtils.getClassesInPackage(javaPackage)) {
+            if (JavaPackageFragmentProvider.shouldCreateStaticMembersPackage(javaClass)) {
+                result.add(javaClass.getFqName());
+            }
+        }
+        return result;
     }
 }

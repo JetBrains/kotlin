@@ -99,7 +99,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             return;
         }
 
-        if (functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+        if (functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
             return;
         }
 

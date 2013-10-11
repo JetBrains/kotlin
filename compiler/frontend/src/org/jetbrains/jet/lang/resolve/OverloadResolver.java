@@ -66,12 +66,12 @@ public class OverloadResolver {
     }
 
     private static class Key extends Pair<String, Name> {
-        Key(String namespace, Name name) {
-            super(namespace, name);
+        Key(String packageName, Name name) {
+            super(packageName, name);
         }
         
-        Key(NamespaceDescriptor namespaceDescriptor, Name name) {
-            this(DescriptorUtils.getFQName(namespaceDescriptor).asString(), name);
+        Key(PackageFragmentDescriptor fragment, Name name) {
+            this(fragment.getFqName().asString(), name);
         }
 
         public String getNamespace() {
@@ -88,7 +88,7 @@ public class OverloadResolver {
             constructorsGrouped()
     {
         MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
-        MultiMap<Key, ConstructorDescriptor> inNamespaces = MultiMap.create();
+        MultiMap<Key, ConstructorDescriptor> inPackages = MultiMap.create();
 
         for (MutableClassDescriptor klass : context.getClasses().values()) {
             if (klass.getKind().isSingleton()) {
@@ -96,9 +96,9 @@ public class OverloadResolver {
                 continue;
             }
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
-            if (containingDeclaration instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-                inNamespaces.put(new Key(namespaceDescriptor, klass.getName()), klass.getConstructors());
+            if (containingDeclaration instanceof PackageFragmentDescriptor) {
+                PackageFragmentDescriptor packageFragment = (PackageFragmentDescriptor) containingDeclaration;
+                inPackages.put(new Key(packageFragment, klass.getName()), klass.getConstructors());
             }
             else if (containingDeclaration instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -109,7 +109,7 @@ public class OverloadResolver {
             }
         }
         
-        return Pair.create(inClasses, inNamespaces);
+        return Pair.create(inClasses, inPackages);
     }
 
     private void checkOverloadsInANamespace(MultiMap<Key, ConstructorDescriptor> inNamespaces) {
@@ -118,17 +118,17 @@ public class OverloadResolver {
 
         for (SimpleFunctionDescriptor function : context.getFunctions().values()) {
             DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
-            if (containingDeclaration instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-                functionsByName.putValue(new Key(namespaceDescriptor, function.getName()), function);
+            if (containingDeclaration instanceof PackageFragmentDescriptor) {
+                PackageFragmentDescriptor packageFragment = (PackageFragmentDescriptor) containingDeclaration;
+                functionsByName.putValue(new Key(packageFragment, function.getName()), function);
             }
         }
         
         for (PropertyDescriptor property : context.getProperties().values()) {
             DeclarationDescriptor containingDeclaration = property.getContainingDeclaration();
-            if (containingDeclaration instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-                functionsByName.putValue(new Key(namespaceDescriptor, property.getName()), property);
+            if (containingDeclaration instanceof PackageFragmentDescriptor) {
+                PackageFragmentDescriptor packageFragment = (PackageFragmentDescriptor) containingDeclaration;
+                functionsByName.putValue(new Key(packageFragment, property.getName()), property);
             }
         }
         

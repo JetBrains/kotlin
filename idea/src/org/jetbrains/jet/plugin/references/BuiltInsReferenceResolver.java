@@ -239,7 +239,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                     new ModuleDescriptorImpl(Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY)
                             .setModuleConfiguration(ModuleConfiguration.EMPTY),
                   Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")), Collections.<AnnotationDescriptor>emptyList(),
-                  KotlinBuiltIns.getInstance().getBuiltInsPackage().getName());
+                  KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
         }
 
         void setMemberScope(WritableScope memberScope) {

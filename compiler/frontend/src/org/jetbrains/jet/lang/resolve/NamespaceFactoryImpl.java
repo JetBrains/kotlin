@@ -17,40 +17,35 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 public class NamespaceFactoryImpl implements NamespaceFactory {
 
-    private ModuleDescriptorImpl moduleDescriptor;
+    private ModuleDescriptorImpl module;
+    private MutablePackageFragmentProvider packageFragmentProvider;
     private BindingTrace trace;
 
     @Inject
-    public void setModuleDescriptor(ModuleDescriptorImpl moduleDescriptor) {
-        this.moduleDescriptor = moduleDescriptor;
+    public void setModule(ModuleDescriptorImpl module) {
+        this.module = module;
     }
 
     @Inject
@@ -58,160 +53,72 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         this.trace = trace;
     }
 
+    @Inject
+    public void setPackageFragmentProvider(MutablePackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
+    }
+
     @NotNull
-    public NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull JetFile file,
-                                                                         @NotNull JetScope outerScope,
-                                                                         @NotNull RedeclarationHandler handler) {
+    public MutablePackageFragmentDescriptor createPackageFragmentIfNeeded(@NotNull JetFile file, @NotNull RedeclarationHandler handler) {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
-        if (moduleDescriptor.getRootNamespaceDescriptorImpl() == null) {
-            createRootNamespaceDescriptorIfNeeded(null, moduleDescriptor, null, handler);
+        // TODO 2 make this code neater
+        List<JetSimpleNameExpression> allNamespaceNames = new ArrayList<JetSimpleNameExpression>(namespaceHeader.getParentNamespaceNames());
+        ContainerUtil.addIfNotNull(allNamespaceNames, namespaceHeader.getLastPartExpression());
+        for (JetSimpleNameExpression nameExpression : allNamespaceNames) {
+            FqName parentFqName = namespaceHeader.getParentFqName(nameExpression);
+            getOrCreatePackageFragment(parentFqName, nameExpression, handler);
+
+            trace.record(RESOLUTION_SCOPE, nameExpression, module.getPackage(parentFqName).getMemberScope());
         }
 
-        NamespaceDescriptorImpl currentOwner = moduleDescriptor.getRootNamespaceDescriptorImpl();
-        if (currentOwner == null) {
-            throw new IllegalStateException("must be initialized 5 lines above");
-        }
-
-        for (JetSimpleNameExpression nameExpression : namespaceHeader.getParentNamespaceNames()) {
-            Name namespaceName = Name.identifier(nameExpression.getReferencedName());
-
-            NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(
-                    null, currentOwner, namespaceName, nameExpression, handler);
-
-            trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
-            trace.record(RESOLUTION_SCOPE, nameExpression, outerScope);
-
-            outerScope = namespaceDescriptor.getMemberScope();
-            currentOwner = namespaceDescriptor;
-        }
-
-        NamespaceDescriptorImpl namespaceDescriptor;
-        Name name;
-        if (namespaceHeader.isRoot()) {
-            // previous call to createRootNamespaceDescriptorIfNeeded couldn't store occurrence for current file.
-            namespaceDescriptor = moduleDescriptor.getRootNamespaceDescriptorImpl();
-            storeBindingForFileAndExpression(file, null, namespaceDescriptor);
-        }
-        else {
-            name = namespaceHeader.getNameAsName();
-            namespaceDescriptor = createNamespaceDescriptorIfNeeded(
-                    file, currentOwner, name, namespaceHeader.getLastPartExpression(), handler);
-
-            trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
-        }
-        trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
-
-        return namespaceDescriptor;
+        MutablePackageFragmentDescriptor fragment = getOrCreatePackageFragment(
+                namespaceHeader.getFqName(), namespaceHeader.getLastPartExpression(), handler);
+        storeBindingForFile(file, fragment);
+        return fragment;
     }
 
     @Override
     @NotNull
-    public NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName) {
-        NamespaceDescriptorImpl owner = null;
+    public PackageFragmentDescriptor createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName) {
         for (FqName pathElement : fqName.path()) {
             if (pathElement.isRoot()) {
-                owner = createRootNamespaceDescriptorIfNeeded(null,
-                                                              moduleDescriptor,
-                                                              null,
-                                                              RedeclarationHandler.DO_NOTHING);
+                getOrCreatePackageFragment(FqName.ROOT, null, RedeclarationHandler.DO_NOTHING);
             }
             else {
-                assert owner != null : "Should never be null as first element in the path must be root";
-                owner = createNamespaceDescriptorIfNeeded(null,
-                                                          owner,
-                                                          pathElement.shortName(),
-                                                          null,
-                                                          RedeclarationHandler.DO_NOTHING);
+                getOrCreatePackageFragment(pathElement, null, RedeclarationHandler.DO_NOTHING);
             }
 
         }
-
-        assert owner != null : "Should never be null as first element in the path must be root";
-        return owner;
-    }
-
-    private NamespaceDescriptorImpl createRootNamespaceDescriptorIfNeeded(@Nullable JetFile file,
-                                                                          @NotNull ModuleDescriptorImpl owner,
-                                                                          @Nullable JetReferenceExpression expression,
-                                                                          @NotNull RedeclarationHandler handler) {
-        FqName fqName = FqName.ROOT;
-        NamespaceDescriptorImpl namespaceDescriptor = owner.getRootNamespaceDescriptorImpl();
-
-        if (namespaceDescriptor == null) {
-            namespaceDescriptor = createNewNamespaceDescriptor(owner, FqNameUnsafe.ROOT_NAME, expression, handler, fqName);
-        }
-
-        storeBindingForFileAndExpression(file, expression, namespaceDescriptor);
-
-        return namespaceDescriptor;
+        return packageFragmentProvider.getOrCreateFragment(fqName);
     }
 
     @NotNull
-    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file,
-                                                                      @NotNull NamespaceDescriptorImpl owner,
-                                                                      @NotNull Name name,
-                                                                      @Nullable JetReferenceExpression expression,
-                                                                      @NotNull RedeclarationHandler handler) {
-        FqName ownerFqName = DescriptorUtils.getFQName(owner).toSafe();
-        FqName fqName = ownerFqName.child(name);
-        // !!!
-        NamespaceDescriptorImpl namespaceDescriptor = (NamespaceDescriptorImpl) owner.getMemberScope().getDeclaredNamespace(name);
-
-        if (namespaceDescriptor == null) {
-            namespaceDescriptor = createNewNamespaceDescriptor(owner, name, expression, handler, fqName);
+    private MutablePackageFragmentDescriptor getOrCreatePackageFragment(
+            @NotNull FqName fqName,
+            @Nullable JetReferenceExpression expression,
+            @NotNull RedeclarationHandler handler
+    ) {
+        // TODO 1 use handler
+        MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(fqName);
+        if (expression != null) {
+            trace.record(REFERENCE_TARGET, expression, packageFragmentProvider.getModule().getPackage(fqName));
         }
 
-        storeBindingForFileAndExpression(file, expression, namespaceDescriptor);
-
-        return namespaceDescriptor;
+        return fragment;
     }
 
-    private NamespaceDescriptorImpl createNewNamespaceDescriptor(NamespaceDescriptorParent owner,
-                                                                 Name name,
-                                                                 PsiElement expression,
-                                                                 RedeclarationHandler handler,
-                                                                 FqName fqName) {
-        NamespaceDescriptorImpl namespaceDescriptor;
-        namespaceDescriptor = new NamespaceDescriptorImpl(
-                owner,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
-                name
-        );
-        trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
+    private void storeBindingForFile(@NotNull JetFile file, @NotNull PackageFragmentDescriptor fragment) {
+        trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, fragment);
 
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, handler, "Namespace member scope");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-        namespaceDescriptor.initialize(scope);
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        //
-        moduleDescriptor.getModuleConfiguration().extendNamespaceScope(namespaceDescriptor, scope);
-        owner.addNamespace(namespaceDescriptor);
-        if (expression != null) {
-            trace.record(BindingContext.NAMESPACE, expression, namespaceDescriptor);
+        // Register files corresponding to this namespace
+        // The trace currently does not support bi-di multimaps that would handle this task nicer
+        FqName fqName = fragment.getFqName();
+        Collection<JetFile> files = trace.get(PACKAGE_TO_FILES, fqName);
+        if (files == null) {
+            files = Sets.newIdentityHashSet();
         }
-        return namespaceDescriptor;
-    }
-
-    private void storeBindingForFileAndExpression(@Nullable JetFile file,
-                                                  @Nullable JetReferenceExpression expression,
-                                                  @NotNull NamespaceDescriptor namespaceDescriptor) {
-        if (expression != null) {
-            trace.record(REFERENCE_TARGET, expression, namespaceDescriptor);
-        }
-
-        if (file != null) {
-            trace.record(BindingContext.FILE_TO_NAMESPACE, file, namespaceDescriptor);
-
-            // Register files corresponding to this namespace
-            // The trace currently does not support bi-di multimaps that would handle this task nicer
-            Collection<JetFile> files = trace.get(NAMESPACE_TO_FILES, namespaceDescriptor);
-            if (files == null) {
-                files = Sets.newIdentityHashSet();
-            }
-            files.add(file);
-            trace.record(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor, files);
-        }
+        files.add(file);
+        trace.record(BindingContext.PACKAGE_TO_FILES, fqName, files);
     }
 }

@@ -14,53 +14,63 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.descriptors;
+package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
 
-public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements LazyDescriptor, PackageFragmentDescriptor {
-    private final ModuleDescriptor module;
-    private final JetScope memberScope;
-    private final FqName fqName;
-    private final PackageMemberDeclarationProvider declarationProvider;
+public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl implements PackageFragmentDescriptor {
 
-    public LazyPackageDescriptor(
+    private final ModuleDescriptor module;
+    private final FqName fqName;
+    private final WritableScope scope;
+    private final NamespaceLikeBuilder builder;
+
+    public MutablePackageFragmentDescriptor(
             @NotNull ModuleDescriptor module,
-            @NotNull FqName fqName,
-            @NotNull ResolveSession resolveSession,
-            @NotNull PackageMemberDeclarationProvider declarationProvider
+            @NotNull FqName fqName
     ) {
         super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
         this.module = module;
         this.fqName = fqName;
-        this.declarationProvider = declarationProvider;
 
-        this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
-    }
+        scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING,
+                                           "Members of " + fqName + " in " + module);
 
-    @NotNull
-    @Override
-    public JetScope getMemberScope() {
-        return memberScope;
+        // TODO 1 make read-only after
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        builder = new ScopeBasedNamespaceLikeBuilder(this, scope);
     }
 
     @NotNull
     @Override
     public ModuleDescriptor getContainingDeclaration() {
         return module;
+    }
+
+    @NotNull
+    @Override
+    public FqName getFqName() {
+        return fqName;
+    }
+
+    @NotNull
+    @Override
+    public WritableScope getMemberScope() {
+        return scope;
     }
 
     @Nullable
@@ -75,18 +85,12 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
     }
 
     @NotNull
-    @Override
-    public FqName getFqName() {
-        return fqName;
+    public NamespaceLikeBuilder getBuilder() {
+        return builder;
     }
 
     @Override
-    public void forceResolveAllContents() {
-        ForceResolveUtil.forceResolveAllContents(memberScope);
-    }
-
-    @NotNull
-    public PackageMemberDeclarationProvider getDeclarationProvider() {
-        return declarationProvider;
+    public String toString() {
+        return "fragment of " + fqName + " in " + module;
     }
 }

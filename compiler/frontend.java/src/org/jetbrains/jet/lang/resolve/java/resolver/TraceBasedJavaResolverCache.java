@@ -66,12 +66,6 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
 
     @Nullable
     @Override
-    public NamespaceDescriptor getPackageResolvedFromSource(@NotNull FqName fqName) {
-        return trace.get(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
-    }
-
-    @Nullable
-    @Override
     public SimpleFunctionDescriptor getMethod(@NotNull JavaMethod method) {
         return trace.get(FUNCTION, ((JavaMethodImpl) method).getPsi());
     }
@@ -132,17 +126,12 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     }
 
     @Override
-    public void recordProperNamespace(@NotNull NamespaceDescriptor descriptor) {
+    public void recordProperPackage(@NotNull PackageFragmentDescriptor descriptor) {
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, descriptor, JavaNamespaceKind.PROPER);
     }
 
     @Override
-    public void recordClassStaticMembersNamespace(@NotNull NamespaceDescriptor descriptor) {
+    public void recordClassStaticMembersNamespace(@NotNull PackageFragmentDescriptor descriptor) {
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, descriptor, JavaNamespaceKind.CLASS_STATICS);
-    }
-
-    @Override
-    public void recordPackage(@NotNull JavaElement element, @NotNull NamespaceDescriptor descriptor) {
-        trace.record(NAMESPACE, ((JavaElementImpl) element).getPsi(), descriptor);
     }
 }

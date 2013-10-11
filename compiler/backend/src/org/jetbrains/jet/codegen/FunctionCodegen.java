@@ -32,7 +32,7 @@ import org.jetbrains.asm4.util.TraceMethodVisitor;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
-import org.jetbrains.jet.codegen.context.NamespaceFacadeContext;
+import org.jetbrains.jet.codegen.context.PackageFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -113,8 +113,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                                        jvmSignature.getGenericsSignature(),
                                        null);
 
-        if (owner instanceof NamespaceFacadeContext) {
-            Type ownerType = ((NamespaceFacadeContext) owner).getDelegateToClassType();
+        if (owner instanceof PackageFacadeContext) {
+            Type ownerType = ((PackageFacadeContext) owner).getDelegateToClassType();
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, shortNameByAsmType(ownerType));
         }
         else {
@@ -274,8 +274,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         Label methodBegin = new Label();
         mv.visitLabel(methodBegin);
 
-        if (context.getParentContext() instanceof NamespaceFacadeContext) {
-            generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (NamespaceFacadeContext) context.getParentContext());
+        if (context.getParentContext() instanceof PackageFacadeContext) {
+            generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
         }
         else {
             FrameMap frameMap = strategy.getFrameMap(typeMapper, context);
@@ -411,7 +411,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
     private static void generateStaticDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
-            @NotNull NamespaceFacadeContext context
+            @NotNull PackageFacadeContext context
     ) {
         InstructionAdapter iv = new InstructionAdapter(mv);
         Type[] argTypes = asmMethod.getArgumentTypes();
@@ -585,7 +585,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
         Type ownerType;
-        if (contextClass instanceof NamespaceDescriptor) {
+        if (contextClass instanceof PackageFragmentDescriptor) {
             ownerType = state.getTypeMapper().getOwner(functionDescriptor, kind, true);
         }
         else if (contextClass instanceof ClassDescriptor) {

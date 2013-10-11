@@ -27,7 +27,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -52,7 +52,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
     public void testBuiltIns() throws Exception {
         Collection<DeclarationDescriptor> allDescriptors = KotlinBuiltIns.getInstance().getBuiltInsScope().getAllDescriptors();
-        NamespaceDescriptorImpl actualNamespace = getDeserializedDescriptorsAsNamespace(allDescriptors);
+        PackageFragmentDescriptor actualPackage = getDeserializedDescriptorsAsPackage(allDescriptors);
 
         RecursiveDescriptorComparator.Configuration configuration = RecursiveDescriptorComparator.RECURSIVE.withRenderer(
                 new DescriptorRendererBuilder()
@@ -65,26 +65,26 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
                         .build()
         );
         RecursiveDescriptorComparator
-                .validateAndCompareDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackage(), actualNamespace, configuration, null);
+                .validateAndCompareDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackageFragment(), actualPackage, configuration, null);
     }
 
-    private static NamespaceDescriptorImpl getDeserializedDescriptorsAsNamespace(Collection<DeclarationDescriptor> allDescriptors) {
+    private static PackageFragmentDescriptor getDeserializedDescriptorsAsPackage(Collection<DeclarationDescriptor> allDescriptors) {
         DescriptorSerializer serializer = new DescriptorSerializer();
 
         final Map<ClassId, ProtoBuf.Class> classProtos = serializeClasses(serializer, allDescriptors);
 
         List<ProtoBuf.Callable> callableProtos = serializeCallables(serializer, allDescriptors);
 
-        final NamespaceDescriptorImpl actualNamespace = JetTestUtils.createTestNamespace(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
+        final MutablePackageFragmentDescriptor actualPackage = JetTestUtils.createTestPackageFragment(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
 
         final NameResolver nameResolver = NameSerializationUtil.createNameResolver(serializer.getNameTable());
 
         DescriptorFinder finder = new AbstractDescriptorFinder(new LockBasedStorageManager(), AnnotationDeserializer.UNSUPPORTED) {
             @NotNull
             @Override
-            public NamespaceDescriptor findPackage(@NotNull FqName fqName) {
+            public PackageFragmentDescriptor findPackage(@NotNull FqName fqName) {
                 assert fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) : "Unsupported package: " + fqName;
-                return actualNamespace;
+                return actualPackage;
             }
 
             @NotNull
@@ -110,7 +110,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
                     case ENUM_CLASS:
                     case ANNOTATION_CLASS:
                     case OBJECT:
-                        actualNamespace.getMemberScope().addClassifierDescriptor(classDescriptor);
+                        actualPackage.getMemberScope().addClassifierDescriptor(classDescriptor);
                         break;
                     case ENUM_ENTRY:
                         assert false : "Enum entry appears to be a top-level declaration: " + classDescriptor;
@@ -125,10 +125,10 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
             finder.findClass(classId);
         }
 
-        deserializeCallables(callableProtos, actualNamespace, nameResolver, finder);
+        deserializeCallables(callableProtos, actualPackage, nameResolver, finder);
 
-        actualNamespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
-        return actualNamespace;
+        actualPackage.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
+        return actualPackage;
     }
 
     private static Map<ClassId, ProtoBuf.Class> serializeClasses(
@@ -163,21 +163,21 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
 
     private static void deserializeCallables(
             List<ProtoBuf.Callable> callableProtos,
-            NamespaceDescriptorImpl actualNamespace,
+            MutablePackageFragmentDescriptor actualPackage,
             NameResolver nameResolver,
             DescriptorFinder descriptorFinder
     ) {
         DescriptorDeserializer descriptorDeserializer =
-                DescriptorDeserializer.create(new LockBasedStorageManager(), actualNamespace, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED);
+                DescriptorDeserializer.create(new LockBasedStorageManager(), actualPackage, nameResolver, descriptorFinder, AnnotationDeserializer.UNSUPPORTED);
         for (ProtoBuf.Callable callableProto : callableProtos) {
             CallableMemberDescriptor callableMemberDescriptor = descriptorDeserializer.loadCallable(callableProto);
             if (callableMemberDescriptor instanceof PropertyDescriptor) {
                 PropertyDescriptor propertyDescriptor = (PropertyDescriptor) callableMemberDescriptor;
-                actualNamespace.getMemberScope().addPropertyDescriptor(propertyDescriptor);
+                actualPackage.getMemberScope().addPropertyDescriptor(propertyDescriptor);
             }
             else if (callableMemberDescriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) callableMemberDescriptor;
-                actualNamespace.getMemberScope().addFunctionDescriptor(functionDescriptor);
+                actualPackage.getMemberScope().addFunctionDescriptor(functionDescriptor);
             }
         }
     }

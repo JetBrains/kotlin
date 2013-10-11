@@ -1,4 +1,4 @@
-package jet
+package-fragment jet
 
 public fun </*0*/ T> arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>
 public fun </*0*/ R> synchronized(/*0*/ lock: jet.Any, /*1*/ block: () -> R): R

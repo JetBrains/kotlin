@@ -25,16 +25,13 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
@@ -163,15 +160,31 @@ public class KotlinBuiltIns {
     }
 
     private static void loadBuiltIns(@NotNull ModuleDescriptorImpl module) throws IOException {
-        NamespaceDescriptorImpl rootNamespace =
-                        new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), SpecialNames.ROOT_NAMESPACE);
-        rootNamespace.initialize(
-                new WritableScopeImpl(JetScope.EMPTY, rootNamespace, RedeclarationHandler.DO_NOTHING, "members of root namespace"));
+        final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(module, FqName.ROOT);
+        final PackageFragmentDescriptor builtinsPackage = new BuiltinsPackageFragment(new LockBasedStorageManager(), module);
 
-        module.setRootNamespace(rootNamespace);
+        module.addFragmentProvider(new PackageFragmentProvider() {
+            @NotNull
+            @Override
+            public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+                if (fqName.isRoot()) {
+                    return Collections.singletonList(rootPackage);
+                }
+                else if (BUILT_INS_PACKAGE_FQ_NAME.equals(fqName)) {
+                    return Collections.singletonList(builtinsPackage);
+                }
+                return Collections.emptyList();
+            }
 
-        rootNamespace.getMemberScope().addNamespace(new BuiltinsNamespaceDescriptorImpl(new LockBasedStorageManager(), rootNamespace));
-        rootNamespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
+            @NotNull
+            @Override
+            public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+                if (fqName.isRoot()) {
+                    return Collections.singleton(BUILT_INS_PACKAGE_FQ_NAME);
+                }
+                return Collections.emptyList();
+            }
+        });
     }
 
     private void doInitialize() {
@@ -213,20 +226,20 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public NamespaceDescriptor getBuiltInsPackage() {
-        NamespaceDescriptor namespace = getBuiltInsModule().getNamespace(BUILT_INS_PACKAGE_FQ_NAME);
-        assert namespace != null : "Built ins namespace not found: " + BUILT_INS_PACKAGE_FQ_NAME;
-        return namespace;
+    public PackageFragmentDescriptor getBuiltInsPackageFragment() {
+        return builtInsModule.getPackageFragmentProvider().getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME).get(0);
     }
 
+    //  TODO 1 inline
     @NotNull
     public FqName getBuiltInsPackageFqName() {
-        return getBuiltInsPackage().getFqName();
+        return BUILT_INS_PACKAGE_FQ_NAME;
     }
 
+    @Deprecated
     @NotNull
-    public JetScope getBuiltInsScope() {
-        return getBuiltInsPackage().getMemberScope();
+    public JetScope getBuiltInsScope() { // TODO 1 scope?
+        return getBuiltInsPackageFragment().getMemberScope();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

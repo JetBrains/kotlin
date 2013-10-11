@@ -31,4 +31,7 @@ public interface PackageViewDescriptor extends DeclarationDescriptor {
 
     @NotNull
     JetScope getMemberScope();
+
+    @NotNull
+    ModuleDescriptor getModule();
 }

@@ -75,12 +75,12 @@ public class JetScopeSelectorUtil {
                 }
             };
 
-    public static final ScopeByNameSelector<NamespaceDescriptor> NAMESPACE_SCOPE_SELECTOR =
-            new ScopeByNameSelector<NamespaceDescriptor>() {
+    public static final ScopeByNameSelector<PackageViewDescriptor> PACKAGE_SCOPE_SELECTOR =
+            new ScopeByNameSelector<PackageViewDescriptor>() {
                 @Nullable
                 @Override
-                public NamespaceDescriptor get(@NotNull JetScope scope, @NotNull Name name) {
-                    return scope.getNamespace(name);
+                public PackageViewDescriptor get(@NotNull JetScope scope, @NotNull Name name) {
+                    return scope.getPackage(name);
                 }
             };
 

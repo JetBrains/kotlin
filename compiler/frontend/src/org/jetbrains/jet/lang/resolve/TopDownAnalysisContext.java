@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -42,7 +42,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private DataFlowInfo outerDataFlowInfo = DataFlowInfo.EMPTY;
 
     private final Map<JetClassOrObject, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
-    protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
+    protected final Map<JetFile, MutablePackageFragmentDescriptor> packageFragments = Maps.newHashMap();
     private List<MutableClassDescriptorLite> classesTopologicalOrder = null;
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
@@ -114,13 +114,13 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         return namespaceScopes;
     }
 
-    public Map<JetFile, NamespaceDescriptorImpl> getNamespaceDescriptors() {
-        return namespaceDescriptors;
+    public Map<JetFile, MutablePackageFragmentDescriptor> getPackageFragments() {
+        return packageFragments;
     }
 
     @Override
     public Collection<JetFile> getFiles() {
-        return namespaceDescriptors.keySet();
+        return packageFragments.keySet();
     }
 
     @Override

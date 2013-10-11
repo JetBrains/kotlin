@@ -23,13 +23,11 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.DescriptorValidator;
@@ -64,28 +62,27 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     private void doTestWithTxt(@NotNull File... extraClassPath) throws Exception {
         File ktFile = new File(getTestDataDirectory(), getTestName(false) + ".kt");
 
-        NamespaceDescriptor namespace = analyzeFileToNamespace(ktFile, extraClassPath);
+        PackageViewDescriptor packageView = analyzeFileToPackageView(ktFile, extraClassPath);
 
         RecursiveDescriptorComparator.Configuration comparator =
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
                         DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES);
         File txtFile = new File(getTestDataDirectory(), FileUtil.getNameWithoutExtension(ktFile) + ".txt");
-        validateAndCompareDescriptorWithFile(namespace, comparator, txtFile);
+        validateAndCompareDescriptorWithFile(packageView, comparator, txtFile);
     }
 
     @NotNull
-    private NamespaceDescriptor analyzeFileToNamespace(@NotNull File ktFile, @NotNull File... extraClassPath) throws IOException {
+    private PackageViewDescriptor analyzeFileToPackageView(@NotNull File ktFile, @NotNull File... extraClassPath) throws IOException {
         Project project = createEnvironment(Arrays.asList(extraClassPath)).getProject();
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
+        AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                 JetTestUtils.loadJetFile(project, ktFile),
                 Collections.<AnalyzerScriptParameter>emptyList()
-        ).getBindingContext();
+        );
 
-        NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                                                                     LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
-        assertNotNull("Failed to find namespace: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, namespaceDescriptor);
-        return namespaceDescriptor;
+        PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
+        assertNotNull("Failed to find namespace: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView);
+        return packageView;
     }
 
     @NotNull
@@ -102,7 +99,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     @NotNull
     private Collection<DeclarationDescriptor> analyzeAndGetAllDescriptors(@NotNull File... extraClassPath) throws IOException {
         File ktFile = new File(getTestDataDirectory(), getTestName(true) + ".kt");
-        return analyzeFileToNamespace(ktFile, extraClassPath).getMemberScope().getAllDescriptors();
+        return analyzeFileToPackageView(ktFile, extraClassPath).getMemberScope().getAllDescriptors();
     }
 
     @NotNull

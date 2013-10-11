@@ -54,18 +54,19 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         NamespaceDescriptor rootNamespaceDescriptor = null;
 
         for (JetFile file : files) {
-            NamespaceDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
-            assert descriptor != null;
-            NamespaceTranslator translator = descriptorToTranslator.get(descriptor);
-            if (translator == null) {
-                if (rootNamespaceDescriptor == null) {
-                    rootNamespaceDescriptor = getRootPackageDescriptor(descriptorToDefineInvocation, descriptor);
-                }
-                translator = new NamespaceTranslator(descriptor, descriptorToDefineInvocation, context());
-                descriptorToTranslator.put(descriptor, translator);
-            }
-
-            translator.translate(file);
+            // TODO 1
+            //NamespaceDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+            //assert descriptor != null;
+            //NamespaceTranslator translator = descriptorToTranslator.get(descriptor);
+            //if (translator == null) {
+            //    if (rootNamespaceDescriptor == null) {
+            //        rootNamespaceDescriptor = getRootPackageDescriptor(descriptorToDefineInvocation, descriptor);
+            //    }
+            //    translator = new NamespaceTranslator(descriptor, descriptorToDefineInvocation, context());
+            //    descriptorToTranslator.put(descriptor, translator);
+            //}
+            //
+            //translator.translate(file);
         }
 
         if (rootNamespaceDescriptor == null) {

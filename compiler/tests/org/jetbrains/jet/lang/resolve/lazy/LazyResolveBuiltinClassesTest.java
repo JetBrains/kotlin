@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.File;
@@ -33,7 +33,7 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
     }
 
     public void testBuiltIns() throws Exception {
-        NamespaceDescriptor builtInsPackage = KotlinBuiltIns.getInstance().getBuiltInsPackage();
+        PackageFragmentDescriptor builtInsPackage = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
         validateAndCompareDescriptorWithFile(builtInsPackage, RECURSIVE_ALL, new File("compiler/testData/builtin-classes.txt"));
     }
 }

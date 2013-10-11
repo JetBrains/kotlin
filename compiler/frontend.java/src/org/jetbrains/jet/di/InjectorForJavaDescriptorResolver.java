@@ -17,6 +17,7 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
@@ -27,12 +28,13 @@ import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationRe
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
@@ -58,12 +60,13 @@ public class InjectorForJavaDescriptorResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final VirtualFileKotlinClassFinder virtualFileKotlinClassFinder;
     private final VirtualFileFinder virtualFileFinder;
+    private final ModuleDescriptorImpl module;
     private final JavaAnnotationResolver javaAnnotationResolver;
     private final JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
     private final JavaClassResolver javaClassResolver;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
-    private final JavaNamespaceResolver javaNamespaceResolver;
+    private final JavaPackageFragmentProvider javaPackageFragmentProvider;
     private final JavaMemberResolver javaMemberResolver;
     private final JavaConstructorResolver javaConstructorResolver;
     private final JavaTypeTransformer javaTypeTransformer;
@@ -88,12 +91,13 @@ public class InjectorForJavaDescriptorResolver {
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.virtualFileKotlinClassFinder = new VirtualFileKotlinClassFinder();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
+        this.module = org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
         this.javaClassResolver = new JavaClassResolver();
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
-        this.javaNamespaceResolver = new JavaNamespaceResolver();
+        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider();
         this.javaMemberResolver = new JavaMemberResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
@@ -116,7 +120,7 @@ public class InjectorForJavaDescriptorResolver {
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
-        this.javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
+        this.javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
 
         virtualFileKotlinClassFinder.setVirtualFileFinder(virtualFileFinder);
 
@@ -135,29 +139,29 @@ public class InjectorForJavaDescriptorResolver {
         javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
         javaClassResolver.setMemberResolver(javaMemberResolver);
-        javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
+        javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
         deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
-        deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
+        deserializedDescriptorResolver.setJavaPackageFragmentProvider(javaPackageFragmentProvider);
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileKotlinClassFinder);
 
-        javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
-        javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
-        javaNamespaceResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
-        javaNamespaceResolver.setMemberResolver(javaMemberResolver);
+        javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
+        javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
+        javaPackageFragmentProvider.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        javaPackageFragmentProvider.setMemberResolver(javaMemberResolver);
+        javaPackageFragmentProvider.setModule(module);
 
         javaMemberResolver.setClassResolver(javaClassResolver);
         javaMemberResolver.setConstructorResolver(javaConstructorResolver);
         javaMemberResolver.setFunctionResolver(javaFunctionResolver);
-        javaMemberResolver.setNamespaceResolver(javaNamespaceResolver);
         javaMemberResolver.setPropertyResolver(javaPropertyResolver);
 
         javaConstructorResolver.setCache(traceBasedJavaResolverCache);
@@ -204,6 +208,10 @@ public class InjectorForJavaDescriptorResolver {
     
     public JavaDescriptorResolver getJavaDescriptorResolver() {
         return this.javaDescriptorResolver;
+    }
+    
+    public ModuleDescriptorImpl getModule() {
+        return this.module;
     }
     
 }

@@ -261,7 +261,7 @@ public abstract class ExpectedResolveData {
             }
             assert expected != null : "No declaration for " + name;
 
-            if (referenceTarget instanceof NamespaceDescriptor) {
+            if (referenceTarget instanceof PackageViewDescriptor) {
                 JetNamespaceHeader expectedHeader = PsiTreeUtil.getParentOfType(expected, JetNamespaceHeader.class);
                 FqName expectedFqName;
                 if (expectedHeader != null) {
@@ -275,7 +275,7 @@ public abstract class ExpectedResolveData {
                 else {
                     throw new IllegalStateException(expected.getClass().getName() + " name=" + name);
                 }
-                assertEquals(expectedFqName, ((NamespaceDescriptor) referenceTarget).getFqName());
+                assertEquals(expectedFqName, ((PackageViewDescriptor) referenceTarget).getFqName());
                 continue;
             }
 

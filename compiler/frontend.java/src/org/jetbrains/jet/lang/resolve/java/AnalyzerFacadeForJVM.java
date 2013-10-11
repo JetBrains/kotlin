@@ -26,10 +26,9 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
@@ -38,8 +37,6 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
@@ -90,7 +87,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @NotNull InjectorForJavaDescriptorResolver injector,
-            final boolean addBuiltIns
+            boolean addBuiltIns
     ) {
         final JavaClassFinderImpl classFinder = injector.getJavaClassFinder();
 
@@ -103,30 +100,17 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             }
         });
 
-        final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
-        ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
-            @Override
-            public void extendNamespaceScope(
-                    @NotNull NamespaceDescriptor namespaceDescriptor,
-                    @NotNull WritableScope namespaceMemberScope
-            ) {
-                FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-                if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName) && addBuiltIns) {
-                    namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
-                }
-                if (classFinder.findPackage(fqName) != null) {
-                    JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
-                    assert javaPackageScope != null;
-                    namespaceMemberScope.importScope(javaPackageScope);
-                }
-            }
-        };
+        ModuleDescriptorImpl module = injector.getModule();
 
-        ModuleDescriptorImpl lazyModule = createJavaModule("<lazy module>");
-        lazyModule.setModuleConfiguration(moduleConfiguration);
+        module.setModuleConfiguration(DefaultModuleConfiguration.INSTANCE);
+        module.addFragmentProvider(javaDescriptorResolver.getPackageFragmentProvider());
+        if (addBuiltIns) {
+            module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        }
 
-        return new ResolveSession(project, storageManager, lazyModule, declarationProviderFactory, trace);
+        return new ResolveSession(project, storageManager, module, declarationProviderFactory, trace);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
@@ -192,7 +176,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             boolean storeContextForBodiesResolve
     ) {
         ModuleDescriptorImpl owner = createJavaModule("<module>");
-
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);
 
@@ -206,7 +189,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
             return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, owner);
-        } finally {
+        }
+        finally {
             injector.destroy();
         }
     }

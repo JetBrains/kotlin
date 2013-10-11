@@ -90,7 +90,7 @@ public class LazyResolveTestUtil {
     }
 
     public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment, boolean addBuiltIns) {
-        return resolveLazilyWithSession(files, environment, addBuiltIns).getRootModuleDescriptor();
+        return resolveLazilyWithSession(files, environment, addBuiltIns).getModuleDescriptor();
     }
 
     @NotNull

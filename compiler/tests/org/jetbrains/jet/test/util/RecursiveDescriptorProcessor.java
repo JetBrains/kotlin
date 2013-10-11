@@ -118,7 +118,7 @@ public class RecursiveDescriptorProcessor {
         @Override
         public Boolean visitModuleDeclaration(ModuleDescriptor descriptor, D data) {
             return applyWorker(descriptor, data)
-                   && visitChildren(descriptor.getNamespace(FqName.ROOT), data);
+                   && visitChildren(descriptor.getPackage(FqName.ROOT), data);
         }
 
         @Override

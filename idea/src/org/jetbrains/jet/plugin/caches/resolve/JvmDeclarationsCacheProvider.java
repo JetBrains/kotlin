@@ -57,15 +57,14 @@ class JvmDeclarationsCacheProvider extends DeclarationsCacheProvider {
                 // This lock is already acquired by the calling method,
                 // but we put it here to guard for the case of further modifications
                 synchronized (declarationAnalysisLock) {
-                    BindingTraceContext trace = new BindingTraceContext();
+                    incompleteTrace = new BindingTraceContext();
 
-                    incompleteTrace = trace;
                     AnalyzeExhaust analyzeExhaust;
                     try {
                         analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 project,
                                 JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project)),
-                                trace,
+                                incompleteTrace,
                                 Collections.<AnalyzerScriptParameter>emptyList(),
                                 Predicates.<PsiFile>alwaysFalse(),
                                 true);
@@ -90,11 +89,13 @@ class JvmDeclarationsCacheProvider extends DeclarationsCacheProvider {
         synchronized (declarationAnalysisLock) {
             if (allowIncomplete) {
                 if (incompleteTrace != null) {
+                    // saving context to local variable to avoid race condition
+                    final BindingContext context = incompleteTrace.getBindingContext();
                     return new KotlinDeclarationsCache() {
                         @NotNull
                         @Override
                         public BindingContext getBindingContext() {
-                            return incompleteTrace.getBindingContext();
+                            return context;
                         }
                     };
                 }

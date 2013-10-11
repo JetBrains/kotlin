@@ -42,19 +42,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
         ALL_JAVA_IMPORTS = Collections.unmodifiableList(allJavaImports);
     }
 
-    private JavaDescriptorResolver javaDescriptorResolver;
-
-    @Inject
-    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
-    }
-
     @Override
     public void extendNamespaceScope(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
-        if (javaPackageScope != null) {
-            namespaceMemberScope.importScope(javaPackageScope);
-        }
-        DefaultModuleConfiguration.INSTANCE.extendNamespaceScope(namespaceDescriptor, namespaceMemberScope);
     }
 }

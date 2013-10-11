@@ -33,14 +33,21 @@ public class Visibilities {
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
                 if ((parent instanceof ClassDescriptor && !DescriptorUtils.isClassObject(parent)) ||
-                    parent instanceof NamespaceDescriptor) {
+                    parent instanceof PackageFragmentDescriptor) {
                     break;
                 }
+            }
+            if (parent == null) {
+                return false;
             }
             DeclarationDescriptor fromParent = from;
             while (fromParent != null) {
                 if (parent == fromParent) {
                     return true;
+                }
+                if (fromParent instanceof PackageFragmentDescriptor) {
+                    return parent instanceof PackageFragmentDescriptor && ((PackageFragmentDescriptor) parent).getFqName()
+                            .isAncestorOf(((PackageFragmentDescriptor) fromParent).getFqName());
                 }
                 fromParent = fromParent.getContainingDeclaration();
             }
@@ -112,6 +119,9 @@ public class Visibilities {
             @Nullable DeclarationDescriptorWithVisibility what,
             @NotNull DeclarationDescriptor from
     ) {
+        if (from instanceof PackageViewDescriptor) {
+            return null; // TODO 1 review: everything is visible from package view
+        }
         DeclarationDescriptorWithVisibility parent = what;
         while (parent != null && parent.getVisibility() != LOCAL) {
             if (!parent.getVisibility().isVisible(parent, from)) {

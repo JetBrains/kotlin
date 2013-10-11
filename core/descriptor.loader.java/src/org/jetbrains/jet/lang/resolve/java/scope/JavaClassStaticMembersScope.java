@@ -16,53 +16,30 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.Collections;
-
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
+import java.util.List;
 
 public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
-    @NotNull
-    private final FqName packageFQN;
     @NotNull
     private final JavaClass javaClass;
 
     public JavaClassStaticMembersScope(
-            @NotNull NamespaceDescriptor descriptor,
-            @NotNull FqName packageFQN,
+            @NotNull PackageFragmentDescriptor descriptor,
             @NotNull JavaClass javaClass,
             @NotNull JavaMemberResolver memberResolver
     ) {
         super(descriptor, MembersProvider.forClass(javaClass, true), memberResolver);
-        this.packageFQN = packageFQN;
         this.javaClass = javaClass;
-    }
-
-    @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return memberResolver.resolveNamespace(packageFQN.child(name), INCLUDE_KOTLIN_SOURCES);
-    }
-
-    @NotNull
-    @Override
-    protected Collection<DeclarationDescriptor> computeAllDescriptors() {
-        Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
-        for (JavaClass nested : javaClass.getInnerClasses()) {
-            NamespaceDescriptor namespace = getNamespace(nested.getName());
-            if (namespace != null) {
-                result.add(namespace);
-            }
-        }
-        return result;
     }
 
     @NotNull
@@ -70,4 +47,16 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     protected Collection<ClassDescriptor> computeInnerClasses() {
         return Collections.emptyList();
     }
+
+    @NotNull
+    public Collection<FqName> getSubPackages() {
+        List<FqName> result = Lists.newArrayList();
+        for (JavaClass nested : javaClass.getInnerClasses()) {
+            if (JavaPackageFragmentProvider.shouldCreateStaticMembersPackage(nested)) {
+                result.add(nested.getFqName());
+            }
+        }
+        return result;
+    }
+
 }

@@ -30,7 +30,6 @@ import java.util.Set;
 
 public class JavaMemberResolver {
     private JavaClassResolver classResolver;
-    private JavaNamespaceResolver namespaceResolver;
     private JavaFunctionResolver functionResolver;
     private JavaPropertyResolver propertyResolver;
     private JavaConstructorResolver constructorResolver;
@@ -38,11 +37,6 @@ public class JavaMemberResolver {
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
-    }
-
-    @Inject
-    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
-        this.namespaceResolver = namespaceResolver;
     }
 
     @Inject
@@ -63,11 +57,6 @@ public class JavaMemberResolver {
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         return classResolver.resolveClass(qualifiedName, searchRule);
-    }
-
-    @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
     }
 
     @NotNull

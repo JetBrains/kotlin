@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -78,14 +77,14 @@ public class RecursiveDescriptorComparator {
     }
 
     private void appendDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull Printer printer, boolean topLevel) {
-        if (descriptor instanceof ClassOrNamespaceDescriptor && !topLevel) {
+        if ((descriptor instanceof ClassOrNamespaceDescriptor || descriptor instanceof PackageViewDescriptor) && !topLevel) {
             printer.println();
         }
 
         boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
         printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", conf.renderer.render(descriptor));
 
-        if (descriptor instanceof ClassOrNamespaceDescriptor) {
+        if (descriptor instanceof ClassOrNamespaceDescriptor || descriptor instanceof PackageViewDescriptor) {
             if (!topLevel) {
                 printer.printlnWithNoIndent(" {").pushIndent();
             }
@@ -98,8 +97,12 @@ public class RecursiveDescriptorComparator {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
                 appendSubDescriptors(klass.getDefaultType().getMemberScope(), getConstructorsAndClassObject(klass), printer);
             }
-            else if (descriptor instanceof NamespaceDescriptor) {
-                appendSubDescriptors(((NamespaceDescriptor) descriptor).getMemberScope(),
+            else if (descriptor instanceof PackageFragmentDescriptor) {
+                appendSubDescriptors(((PackageFragmentDescriptor) descriptor).getMemberScope(),
+                                     Collections.<DeclarationDescriptor>emptyList(), printer);
+            }
+            else if (descriptor instanceof PackageViewDescriptor) {
+                appendSubDescriptors(((PackageViewDescriptor) descriptor).getMemberScope(),
                                      Collections.<DeclarationDescriptor>emptyList(), printer);
             }
 
@@ -142,7 +145,7 @@ public class RecursiveDescriptorComparator {
                 && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().asString())
                 && !conf.includeMethodsOfJavaObject
             ||
-                subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor));
+                subDescriptor instanceof PackageViewDescriptor && !conf.recurseIntoPackage.apply(((PackageViewDescriptor) subDescriptor).getFqName().toUnsafe()); // TODO 2 accept safe fq name instead
     }
 
     private void appendSubDescriptors(
@@ -216,7 +219,6 @@ public class RecursiveDescriptorComparator {
 
         if (expected != null) {
             String expectedSerialized = comparator.serializeRecursively(expected);
-            Assert.assertSame(expected.getClass(), actual.getClass());
 
             Assert.assertEquals("Expected and actual descriptors differ", expectedSerialized, actualSerialized);
         }

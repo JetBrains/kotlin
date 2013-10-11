@@ -111,21 +111,15 @@ public class DescriptorUtils {
     public static FqNameUnsafe getFQName(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
-        if (descriptor instanceof ModuleDescriptor || containingDeclaration instanceof ModuleDescriptor) {
+        if (descriptor instanceof ModuleDescriptor || ErrorUtils.isError(descriptor)) {
             return FqName.ROOT.toUnsafe();
         }
 
-        if (containingDeclaration == null) {
-            if (descriptor instanceof NamespaceDescriptor) {
-                // TODO: namespace must always have parent
-                if (descriptor.getName().equals(Name.identifier("jet"))) {
-                    return FqNameUnsafe.topLevel(Name.identifier("jet"));
-                }
-                if (descriptor.getName().equals(Name.special("<java_root>"))) {
-                    return FqName.ROOT.toUnsafe();
-                }
-            }
-            throw new IllegalStateException("descriptor is not module descriptor and has null containingDeclaration: " + descriptor);
+        if (descriptor instanceof PackageViewDescriptor) {
+            return ((PackageViewDescriptor) descriptor).getFqName().toUnsafe();
+        }
+        else if (descriptor instanceof PackageFragmentDescriptor) {
+            return ((PackageFragmentDescriptor) descriptor).getFqName().toUnsafe();
         }
 
         if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.CLASS_OBJECT) {
@@ -138,7 +132,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+        return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
     public static boolean isInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
@@ -303,7 +297,7 @@ public class DescriptorUtils {
 
     public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return true;
         }
         if (containingDeclaration instanceof ClassDescriptor) {

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
@@ -42,7 +43,7 @@ public class NamespacePartCodegen extends MemberCodegen {
 
     private final ClassBuilder v;
 
-    private final NamespaceDescriptor descriptor;
+    private final PackageFragmentDescriptor descriptor;
 
     private final JetFile jetFile;
 
@@ -62,7 +63,7 @@ public class NamespacePartCodegen extends MemberCodegen {
         this.jetFile = jetFile;
         this.namespacePartName = namespacePartName;
         this.context = context;
-        descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, jetFile);
+        descriptor = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, jetFile);
         assert descriptor != null : "No namespace found for jetFile " + jetFile + " declared package: " + jetFile.getPackageName();
     }
 
@@ -71,9 +72,8 @@ public class NamespacePartCodegen extends MemberCodegen {
                       ACC_PUBLIC | ACC_FINAL,
                       namespacePartName.getInternalName(),
                       null,
-                      //"jet/lang/Namespace",
                       "java/lang/Object",
-                      new String[0]
+                      ArrayUtil.EMPTY_STRING_ARRAY
         );
         v.visitSource(jetFile.getName(), null);
 

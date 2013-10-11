@@ -185,7 +185,7 @@ public final class JsDescriptorUtils {
     @Nullable
     public static Name getNameIfStandardType(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor != null && descriptor.getContainingDeclaration() == KotlinBuiltIns.getInstance().getBuiltInsPackage()) {
+        if (descriptor != null && descriptor.getContainingDeclaration() == KotlinBuiltIns.getInstance().getBuiltInsPackageFragment()) {
             return descriptor.getName();
         }
 

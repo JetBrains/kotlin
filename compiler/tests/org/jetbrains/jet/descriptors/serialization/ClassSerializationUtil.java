@@ -19,7 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
 import java.util.Collection;
@@ -63,8 +63,8 @@ public class ClassSerializationUtil {
     @NotNull
     public static ClassId getClassId(@NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor owner = classDescriptor.getContainingDeclaration();
-        if (owner instanceof NamespaceDescriptor) {
-            return new ClassId(((NamespaceDescriptor) owner).getFqName(), FqNameUnsafe.topLevel(classDescriptor.getName()));
+        if (owner instanceof PackageFragmentDescriptor) {
+            return new ClassId(((PackageFragmentDescriptor) owner).getFqName(), FqNameUnsafe.topLevel(classDescriptor.getName()));
         }
         return getClassId((ClassDescriptor) owner).createNestedClassId(classDescriptor.getName());
     }

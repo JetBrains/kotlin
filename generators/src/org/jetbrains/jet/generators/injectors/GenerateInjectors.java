@@ -103,6 +103,7 @@ public class GenerateInjectors {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
+        generator.addField(MutablePackageFragmentProvider.class);
         generator.addField(NamespaceFactoryImpl.class);
         generator.addParameter(PlatformToKotlinClassMap.class);
         generator.configure("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic", GenerateInjectors.class);
@@ -113,6 +114,7 @@ public class GenerateInjectors {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
+        generator.addField(MutablePackageFragmentProvider.class);
         generator.addField(NamespaceFactoryImpl.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("org.jetbrains.jet.lang.PlatformToKotlinClassMap.EMPTY"));
         generator.configure("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs", GenerateInjectors.class);
@@ -133,7 +135,8 @@ public class GenerateInjectors {
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addField(VirtualFileKotlinClassFinder.class);
-        generator.addPublicField(NamespaceFactoryImpl.class);
+        generator.addField(MutablePackageFragmentProvider.class);
+        generator.addField(NamespaceFactoryImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(
                                    "com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));
@@ -160,9 +163,11 @@ public class GenerateInjectors {
         generator.addField(VirtualFileKotlinClassFinder.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression("com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));
+        generator.addField(true, ModuleDescriptorImpl.class, "module",
+                           new GivenExpression("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule(\"<fake-jdr-module>\")"));
 
         generator.configure("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaDescriptorResolver",
-                           GenerateInjectors.class);
+                            GenerateInjectors.class);
         return generator;
     }
 

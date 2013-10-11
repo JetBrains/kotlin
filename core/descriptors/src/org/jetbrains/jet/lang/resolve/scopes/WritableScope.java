@@ -45,7 +45,7 @@ public interface WritableScope extends JetScope {
 
     void addClassifierAlias(@NotNull Name name, @NotNull ClassifierDescriptor classifierDescriptor);
 
-    void addNamespaceAlias(@NotNull Name name, @NotNull NamespaceDescriptor namespaceDescriptor);
+    void addPackageAlias(@NotNull Name name, @NotNull PackageViewDescriptor packageView);
     
     void addFunctionAlias(@NotNull Name name, @NotNull FunctionDescriptor functionDescriptor);
     
@@ -53,6 +53,7 @@ public interface WritableScope extends JetScope {
 
     void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
 
+    @Deprecated
     @Nullable
     NamespaceDescriptor getDeclaredNamespace(@NotNull Name name);
 
@@ -64,7 +65,7 @@ public interface WritableScope extends JetScope {
 
     void importClassifierAlias(@NotNull Name importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor);
 
-    void importNamespaceAlias(@NotNull Name aliasName, @NotNull NamespaceDescriptor namespaceDescriptor);
+    void importPackageAlias(@NotNull Name aliasName, @NotNull PackageViewDescriptor packageView);
     
     void importFunctionAlias(@NotNull Name aliasName, @NotNull FunctionDescriptor functionDescriptor);
     

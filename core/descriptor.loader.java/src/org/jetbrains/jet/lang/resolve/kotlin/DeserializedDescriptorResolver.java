@@ -25,10 +25,10 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -39,7 +39,6 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 import javax.inject.Inject;
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 
@@ -48,7 +47,7 @@ public final class DeserializedDescriptorResolver {
 
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
-    private JavaNamespaceResolver javaNamespaceResolver;
+    private JavaPackageFragmentProvider javaPackageFragmentProvider;
 
     private JavaClassResolver javaClassResolver;
 
@@ -64,14 +63,14 @@ public final class DeserializedDescriptorResolver {
 
         @Nullable
         @Override
-        public NamespaceDescriptor findPackage(@NotNull FqName name) {
-            return javaNamespaceResolver.resolveNamespace(name, IGNORE_KOTLIN_SOURCES);
+        public PackageFragmentDescriptor findPackage(@NotNull FqName name) {
+            return javaPackageFragmentProvider.getOrCreatePackage(name);
         }
 
         @NotNull
         @Override
         public Collection<Name> getClassNames(@NotNull FqName packageName) {
-            return javaNamespaceResolver.getClassNamesInPackage(packageName);
+            return javaPackageFragmentProvider.getClassNamesInPackage(packageName);
         }
     };
 
@@ -81,8 +80,8 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Inject
-    public void setJavaNamespaceResolver(JavaNamespaceResolver javaNamespaceResolver) {
-        this.javaNamespaceResolver = javaNamespaceResolver;
+    public void setJavaPackageFragmentProvider(JavaPackageFragmentProvider javaPackageFragmentProvider) {
+        this.javaPackageFragmentProvider = javaPackageFragmentProvider;
     }
 
     @Inject
@@ -107,7 +106,7 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public JetScope createKotlinPackageScope(@NotNull NamespaceDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
+    public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass);
         if (data != null) {
             return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder,

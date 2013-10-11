@@ -100,8 +100,8 @@ public class ErrorUtils {
         }
 
         @Override
-        public NamespaceDescriptor getNamespace(@NotNull Name name) {
-            return null; // TODO : review
+        public PackageViewDescriptor getPackage(@NotNull Name name) {
+            return null;
         }
 
         @NotNull
@@ -166,7 +166,7 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public NamespaceDescriptor getNamespace(@NotNull Name name) {
+        public PackageViewDescriptor getPackage(@NotNull Name name) {
             throw new IllegalStateException();
         }
 

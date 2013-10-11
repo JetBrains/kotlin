@@ -31,7 +31,7 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -47,7 +47,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class LoadDescriptorUtil {
 
@@ -73,7 +72,7 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static Pair<NamespaceDescriptor, BindingContext> loadTestNamespaceAndBindingContextFromJavaRoot(
+    public static Pair<PackageViewDescriptor, BindingContext> loadTestPackageAndBindingContextFromJavaRoot(
             @NotNull File javaRoot,
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
@@ -87,15 +86,14 @@ public final class LoadDescriptorUtil {
         JetCoreEnvironment jetCoreEnvironment = JetCoreEnvironment.createForTests(disposable, configuration);
         BindingTraceContext trace = new BindingTraceContext();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(jetCoreEnvironment.getProject(), trace);
-        NamespaceDescriptor namespaceDescriptor =
-                injector.getJavaDescriptorResolver().resolveNamespace(TEST_PACKAGE_FQNAME, IGNORE_KOTLIN_SOURCES);
-        assert namespaceDescriptor != null;
+        PackageViewDescriptor packageView = injector.getModule().getPackage(TEST_PACKAGE_FQNAME);
+        assert packageView != null;
 
-        return Pair.create(namespaceDescriptor, trace.getBindingContext());
+        return Pair.create(packageView, trace.getBindingContext());
     }
 
     @NotNull
-    public static Pair<NamespaceDescriptor, BindingContext> compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+    public static Pair<PackageViewDescriptor, BindingContext> compileJavaAndLoadTestPackageAndBindingContextFromBinary(
             @NotNull Collection<File> javaFiles,
             @NotNull File outDir,
             @NotNull Disposable disposable,
@@ -103,7 +101,7 @@ public final class LoadDescriptorUtil {
     )
             throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return loadTestNamespaceAndBindingContextFromJavaRoot(outDir, disposable, configurationKind);
+        return loadTestPackageAndBindingContextFromJavaRoot(outDir, disposable, configurationKind);
     }
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
@@ -117,12 +115,16 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) throws Exception {
+    public static PackageViewDescriptor analyzeKotlinAndLoadTestPackage(
+            @NotNull File ktFile,
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind
+    ) throws Exception {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable, configurationKind);
-        NamespaceDescriptor namespace =
-                fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
-        assert namespace != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
-        return namespace;
+        PackageViewDescriptor packageView =
+                fileAndExhaust.getExhaust().getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
+        assert packageView != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
+        return packageView;
     }
 
     private static class JetFileAndExhaust {

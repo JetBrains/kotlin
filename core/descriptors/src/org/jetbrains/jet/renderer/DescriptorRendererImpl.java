@@ -690,13 +690,19 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderPackageView(@NotNull PackageViewDescriptor packageView, @NotNull StringBuilder builder) {
         builder.append(renderKeyword("package")).append(" ");
         renderName(packageView, builder);
+        if (debugMode) {
+            builder.append(" in context of ");
+            renderName(packageView.getModule(), builder);
+        }
     }
 
     private void renderPackageFragment(@NotNull PackageFragmentDescriptor fragment, @NotNull StringBuilder builder) {
         builder.append(renderKeyword("package-fragment")).append(" ");
         renderName(fragment, builder);
-        builder.append(" in context of ");
-        renderName(fragment.getContainingDeclaration(), builder);
+        if (debugMode) {
+            builder.append(" in context of ");
+            renderName(fragment.getContainingDeclaration(), builder);
+        }
     }
 
 

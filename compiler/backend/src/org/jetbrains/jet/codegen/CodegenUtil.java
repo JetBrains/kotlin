@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
-import org.jetbrains.jet.codegen.context.NamespaceContext;
+import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -194,7 +194,7 @@ public class CodegenUtil {
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
-                 (context.getParentContext() instanceof NamespaceContext && context.getParentContext().getContextDescriptor() == containingDeclaration))
+                 (context.getParentContext() instanceof PackageContext && context.getParentContext().getContextDescriptor() == containingDeclaration))
                 && context.getContextKind() != OwnerKind.TRAIT_IMPL);
     }
 

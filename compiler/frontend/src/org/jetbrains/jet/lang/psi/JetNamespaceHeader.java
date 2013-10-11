@@ -81,7 +81,7 @@ public class JetNamespaceHeader extends JetReferenceExpression {
     }
 
     @NotNull
-    public FqName getParentFqName(JetReferenceExpression nameExpression) {
+    public FqName getParentFqName(JetSimpleNameExpression nameExpression) {
         String parentQualifiedName = getQualifiedNameParentOf(nameExpression);
         return parentQualifiedName.isEmpty() ? FqName.ROOT : new FqName(parentQualifiedName);
     }
@@ -96,7 +96,7 @@ public class JetNamespaceHeader extends JetReferenceExpression {
     }
 
     @NotNull
-    private String getQualifiedNameParentOf(@Nullable JetReferenceExpression nameExpression) {
+    private String getQualifiedNameParentOf(@Nullable JetSimpleNameExpression nameExpression) {
         StringBuilder builder = new StringBuilder();
         for (JetSimpleNameExpression e : findChildrenByClass(JetSimpleNameExpression.class)) {
             if (e == nameExpression) {

@@ -33,13 +33,12 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
@@ -52,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
 
@@ -66,10 +64,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = getTxtFile(javaFile.getPath());
-        NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.ALL);
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+        PackageViewDescriptor kotlinPackage = analyzeKotlinAndLoadTestPackage(ktFile, myTestRootDisposable, ConfigurationKind.ALL);
+        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.ALL);
-        checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);
+        checkLoadedPackages(txtFile, kotlinPackage, javaPackageAndContext.first, javaPackageAndContext.second);
     }
 
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
@@ -105,10 +103,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.ALL);
 
-        checkJavaNamespace(getTxtFile(javaFileName), javaNamespaceAndContext.first, javaNamespaceAndContext.second, configuration);
+        checkJavaPackage(getTxtFile(javaFileName), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
     }
 
     protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
@@ -119,11 +117,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertTrue(testPackageDir.mkdir());
         FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
-        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = loadTestNamespaceAndBindingContextFromJavaRoot(
+        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext = loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaNamespace(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
-                           DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
+        checkJavaPackage(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
+                         DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -149,6 +147,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(), trace);
 
         ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<test module>");
+
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),
                 new TopDownAnalysisParameters(
@@ -159,21 +158,20 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
-        JavaDescriptorResolver javaDescriptorResolver = injectorForJava.getJavaDescriptorResolver();
-        NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, INCLUDE_KOTLIN_SOURCES);
-        assert namespaceDescriptor != null : "Test namespace not found";
+        PackageViewDescriptor packageView = moduleDescriptor.getPackage(TEST_PACKAGE_FQNAME);
+        assert packageView != null : "Test namespace not found";
 
-        checkJavaNamespace(expectedFile, namespaceDescriptor, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
+        checkJavaPackage(expectedFile, packageView, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
     }
 
     private static void checkForLoadErrorsAndCompare(
-            @NotNull NamespaceDescriptor javaNamespace,
+            @NotNull PackageViewDescriptor javaPackage,
             @NotNull BindingContext bindingContext,
             @NotNull Runnable compareNamespacesRunnable
     ) {
         boolean fail = false;
         try {
-            ExpectedLoadErrorsUtil.checkForLoadErrors(javaNamespace, bindingContext);
+            ExpectedLoadErrorsUtil.checkForLoadErrors(javaPackage, bindingContext);
         }
         catch (ComparisonFailure e) {
             // to let the next check run even if this one failed
@@ -193,30 +191,30 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
     }
 
-    private static void checkLoadedNamespaces(
+    private static void checkLoadedPackages(
             final File txtFile,
-            final NamespaceDescriptor kotlinNamespace,
-            final NamespaceDescriptor javaNamespace,
+            final PackageViewDescriptor kotlinPackage,
+            final PackageViewDescriptor javaPackage,
             BindingContext bindingContext
     ) {
-        checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
+        checkForLoadErrorsAndCompare(javaPackage, bindingContext, new Runnable() {
             @Override
             public void run() {
-                validateAndCompareDescriptors(kotlinNamespace, javaNamespace, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+                validateAndCompareDescriptors(kotlinPackage, javaPackage, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
             }
         });
     }
 
-    private static void checkJavaNamespace(
+    private static void checkJavaPackage(
             final File txtFile,
-            final NamespaceDescriptor javaNamespace,
+            final PackageViewDescriptor javaPackage,
             BindingContext bindingContext,
             final Configuration configuration
     ) {
-        checkForLoadErrorsAndCompare(javaNamespace, bindingContext, new Runnable() {
+        checkForLoadErrorsAndCompare(javaPackage, bindingContext, new Runnable() {
             @Override
             public void run() {
-                validateAndCompareDescriptorWithFile(javaNamespace, configuration, txtFile);
+                validateAndCompareDescriptorWithFile(javaPackage, configuration, txtFile);
             }
         });
     }

@@ -49,6 +49,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
@@ -56,6 +57,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -578,6 +580,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     private Editor currentFileEditor;
     private Editor containingFileEditor;
     private BindingContext currentFileContext;
+    private ModuleDescriptor currentFileModule;
     private JetClass ownerClass;
     private ClassDescriptor ownerClassDescriptor;
     private TypeCandidate selectedReceiverType;
@@ -604,7 +607,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     public void invoke(@NotNull final Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         currentFile = file;
         currentFileEditor = editor;
-        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile).getBindingContext();
+        AnalyzeExhaust exhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile);
+        currentFileContext = exhaust.getBindingContext();
+        currentFileModule = exhaust.getModuleDescriptor();
 
         ownerType.computeTypeCandidates(currentFileContext);
         List<TypeCandidate> ownerTypeCandidates = ownerType.getTypeCandidates();
@@ -663,9 +668,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
         JetScope scope;
         if (isExtension) {
-            NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, currentFile);
-            assert namespaceDescriptor != null;
-            scope = namespaceDescriptor.getMemberScope();
+            scope = currentFileModule.getPackage(JetPsiUtil.getFQName(currentFile)).getMemberScope();
         } else {
             assert ownerClassDescriptor instanceof MutableClassDescriptor;
             scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberResolution();

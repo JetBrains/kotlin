@@ -22,8 +22,10 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -55,43 +57,43 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
         AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(),
                                                                         ConfigurationKind.JDK_ONLY);
 
-        NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                                                                                  TEST_PACKAGE_FQNAME);
-        assert namespaceFromSource != null;
-        Assert.assertEquals("test", namespaceFromSource.getName().asString());
+        PackageViewDescriptor packageFromSource = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
+        assert packageFromSource != null;
+        Assert.assertEquals("test", packageFromSource.getName().asString());
 
-        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot(
+        PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
 
-        checkUsageOfDeserializedScope(namespaceFromClass);
+        checkUsageOfDeserializedScope(packageFromBinary);
 
-        for (DeclarationDescriptor descriptor : namespaceFromClass.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor descriptor : packageFromBinary.getMemberScope().getAllDescriptors()) {
             if (descriptor instanceof ClassDescriptor) {
                 assert descriptor instanceof DeserializedClassDescriptor : DescriptorUtils.getFQName(descriptor) + " is loaded as " + descriptor.getClass();
             }
         }
 
-        validateAndCompareDescriptors(namespaceFromSource, namespaceFromClass,
+        validateAndCompareDescriptors(packageFromSource, packageFromBinary,
                                       RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                                               .checkPrimaryConstructors(true)
                                               .checkPropertyAccessors(includeAccessors),
                                       txtFile);
     }
 
-    private static void checkUsageOfDeserializedScope(@NotNull NamespaceDescriptor namespaceFromClass) {
-        JetScope scope = namespaceFromClass.getMemberScope();
-        boolean hasOwnMembers = false;
-        for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
-            if (declarationDescriptor instanceof CallableMemberDescriptor) {
-                hasOwnMembers = true;
-            }
-        }
-        if (hasOwnMembers) {
-            assert scope instanceof DeserializedPackageMemberScope : "If namespace has members, members should be inside deserialized scope.";
-        }
-        else {
-            //NOTE: should probably change
-            assert !(scope instanceof DeserializedPackageMemberScope) : "We don't use deserialized scopes for namespaces without members.";
-        }
+    // TODO 2 do something
+    private static void checkUsageOfDeserializedScope(@NotNull PackageViewDescriptor packageFromBinary) {
+        //JetScope scope = packageFromBinary.getMemberScope();
+        //boolean hasOwnMembers = false;
+        //for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
+        //    if (declarationDescriptor instanceof CallableMemberDescriptor) {
+        //        hasOwnMembers = true;
+        //    }
+        //}
+        //if (hasOwnMembers) {
+        //    assert scope instanceof DeserializedPackageMemberScope : "If namespace has members, members should be inside deserialized scope.";
+        //}
+        //else {
+        //    //NOTE: should probably change
+        //    assert !(scope instanceof DeserializedPackageMemberScope) : "We don't use deserialized scopes for namespaces without members.";
+        //}
     }
 }

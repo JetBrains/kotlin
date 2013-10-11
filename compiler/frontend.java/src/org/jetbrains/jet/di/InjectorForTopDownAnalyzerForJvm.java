@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
+import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
@@ -63,7 +64,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolv
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
@@ -98,6 +99,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final VirtualFileKotlinClassFinder virtualFileKotlinClassFinder;
+    private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final NamespaceFactoryImpl namespaceFactory;
     private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
@@ -124,7 +126,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final JavaTypeTransformer javaTypeTransformer;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
-    private final JavaNamespaceResolver javaNamespaceResolver;
+    private final JavaPackageFragmentProvider javaPackageFragmentProvider;
     private final JavaMemberResolver javaMemberResolver;
     private final JavaConstructorResolver javaConstructorResolver;
     private final JavaValueParameterResolver javaValueParameterResolver;
@@ -160,6 +162,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.virtualFileKotlinClassFinder = new VirtualFileKotlinClassFinder();
+        this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.declarationResolver = new DeclarationResolver();
@@ -186,7 +189,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
-        this.javaNamespaceResolver = new JavaNamespaceResolver();
+        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider();
         this.javaMemberResolver = new JavaMemberResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
@@ -199,9 +202,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.topDownAnalyzer.setContext(topDownAnalysisContext);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
-        this.topDownAnalyzer.setNamespaceFactory(namespaceFactory);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
+        this.topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
         this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.topDownAnalyzer.setTrace(bindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
@@ -230,10 +233,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
-        this.javaBridgeConfiguration.setJavaDescriptorResolver(javaDescriptorResolver);
-
         javaDescriptorResolver.setClassResolver(javaClassResolver);
-        javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
+        javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
 
         javaClassFinder.setProject(project);
 
@@ -249,8 +250,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         virtualFileKotlinClassFinder.setVirtualFileFinder(virtualFileFinder);
 
-        this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
-        this.namespaceFactory.setTrace(bindingTrace);
+        namespaceFactory.setModule(moduleDescriptor);
+        namespaceFactory.setPackageFragmentProvider(mutablePackageFragmentProvider);
+        namespaceFactory.setTrace(bindingTrace);
 
         declarationResolver.setAnnotationResolver(annotationResolver);
         declarationResolver.setContext(topDownAnalysisContext);
@@ -330,7 +332,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
         javaClassResolver.setMemberResolver(javaMemberResolver);
-        javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
+        javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
 
@@ -347,22 +349,22 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
         deserializedDescriptorResolver.setJavaClassResolver(javaClassResolver);
-        deserializedDescriptorResolver.setJavaNamespaceResolver(javaNamespaceResolver);
+        deserializedDescriptorResolver.setJavaPackageFragmentProvider(javaPackageFragmentProvider);
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileKotlinClassFinder);
 
-        javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
-        javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
-        javaNamespaceResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
-        javaNamespaceResolver.setMemberResolver(javaMemberResolver);
+        javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
+        javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
+        javaPackageFragmentProvider.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        javaPackageFragmentProvider.setMemberResolver(javaMemberResolver);
+        javaPackageFragmentProvider.setModule(moduleDescriptor);
 
         javaMemberResolver.setClassResolver(javaClassResolver);
         javaMemberResolver.setConstructorResolver(javaConstructorResolver);
         javaMemberResolver.setFunctionResolver(javaFunctionResolver);
-        javaMemberResolver.setNamespaceResolver(javaNamespaceResolver);
         javaMemberResolver.setPropertyResolver(javaPropertyResolver);
 
         javaConstructorResolver.setCache(traceBasedJavaResolverCache);
@@ -443,10 +445,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     
     public JavaBridgeConfiguration getJavaBridgeConfiguration() {
         return this.javaBridgeConfiguration;
-    }
-    
-    public NamespaceFactoryImpl getNamespaceFactory() {
-        return this.namespaceFactory;
     }
     
 }

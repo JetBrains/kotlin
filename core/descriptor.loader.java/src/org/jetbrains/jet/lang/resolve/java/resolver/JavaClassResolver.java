@@ -65,7 +65,7 @@ public final class JavaClassResolver {
     private JavaMemberResolver memberResolver;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassFinder javaClassFinder;
-    private JavaNamespaceResolver namespaceResolver;
+    private JavaPackageFragmentProvider packageFragmentProvider;
     private JavaSupertypeResolver supertypesResolver;
     private JavaFunctionResolver functionResolver;
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
@@ -105,8 +105,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
-        this.namespaceResolver = namespaceResolver;
+    public void setPackageFragmentProvider(JavaPackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Inject
@@ -385,11 +385,11 @@ public final class JavaClassResolver {
         }
         else {
             FqName parentFqName = childClassFQName.parent();
-            NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(parentFqName, INCLUDE_KOTLIN_SOURCES);
-            if (parentNamespace == null) {
+            PackageFragmentDescriptor parentPackage = packageFragmentProvider.getOrCreatePackage(parentFqName);
+            if (parentPackage == null) {
                 throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
             }
-            return parentNamespace;
+            return parentPackage;
         }
     }
 
