@@ -21,10 +21,14 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.KotlinVersion;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.compiler.runner.*;
+import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -33,6 +37,7 @@ import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
@@ -42,10 +47,14 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
+
+import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler;
+import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
 
@@ -104,6 +113,9 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl(outputDir);
 
+        JpsProject project = representativeTarget.getModule().getProject();
+        CommonCompilerArguments commonSettings = JpsKotlinCompilerSettings.getCommonSettings(project);
+
         if (JpsUtils.isJsKotlinModule(representativeTarget)) {
             if (chunk.getModules().size() > 1) {
                 // We do not support circular dependencies, but if they are present, we do our best should not break the build,
@@ -124,14 +136,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
 
             File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
+            Set<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
+            K2JSCompilerArguments k2JsSettings = JpsKotlinCompilerSettings.getK2JsSettings(project);
 
-            KotlinCompilerRunner.runK2JsCompiler(
-                    messageCollector,
-                    environment,
-                    outputItemCollector,
-                    sourceFiles,
-                    JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget),
-                    outputFile);
+            runK2JsCompiler(commonSettings, k2JsSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile);
         }
         else {
             if (chunk.getModules().size() > 1) {
@@ -148,11 +156,9 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 return ExitCode.NOTHING_DONE;
             }
 
-            KotlinCompilerRunner.runK2JvmCompiler(
-                    messageCollector,
-                    environment,
-                    moduleFile,
-                    outputItemCollector);
+            K2JVMCompilerArguments k2JvmSettings = JpsKotlinCompilerSettings.getK2JvmSettings(project);
+
+            runK2JvmCompiler(commonSettings, k2JvmSettings, messageCollector, environment, moduleFile, outputItemCollector);
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
