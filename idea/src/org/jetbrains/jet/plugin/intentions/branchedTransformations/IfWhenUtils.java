@@ -20,11 +20,11 @@ public class IfWhenUtils {
     }
 
     public static boolean checkIfToWhen(@NotNull JetIfExpression ifExpression) {
-        return ifExpression.getThen() != null && ifExpression.getElse() != null;
+        return ifExpression.getThen() != null;
     }
 
     public static boolean checkWhenToIf(@NotNull JetWhenExpression whenExpression) {
-        return !whenExpression.getEntries().isEmpty() && JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpression);
+        return !whenExpression.getEntries().isEmpty();
     }
 
     private static void assertNotNull(JetExpression expression) {
@@ -85,7 +85,6 @@ public class IfWhenUtils {
             JetExpression elseBranch = currIfExpression.getElse();
 
             assertNotNull(thenBranch);
-            assertNotNull(elseBranch);
 
             List<JetExpression> orBranches = splitExpressionToOrBranches(condition);
 
@@ -97,7 +96,6 @@ public class IfWhenUtils {
                 }
             }
 
-            //noinspection ConstantConditions
             builder.branchExpression(thenBranch);
 
             if (elseBranch instanceof JetIfExpression) {
@@ -105,8 +103,9 @@ public class IfWhenUtils {
             }
             else {
                 currIfExpression = null;
-                //noinspection ConstantConditions
-                builder.elseEntry(elseBranch);
+                if (elseBranch != null) {
+                    builder.elseEntry(elseBranch);
+                }
             }
         } while (currIfExpression != null);
 
