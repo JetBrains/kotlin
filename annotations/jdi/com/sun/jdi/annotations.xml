@@ -1,0 +1,20 @@
+<root>
+    <item name='com.sun.jdi.ClassObjectReference com.sun.jdi.ReferenceType reflectedType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.ReferenceType com.sun.jdi.ClassObjectReference classObject()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.StackFrame com.sun.jdi.Location location()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.Type java.lang.String signature()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.Value com.sun.jdi.Type type()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.VirtualMachine java.util.List&lt;com.sun.jdi.ReferenceType&gt; classesByName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
