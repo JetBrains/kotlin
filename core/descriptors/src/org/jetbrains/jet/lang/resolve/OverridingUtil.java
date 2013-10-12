@@ -46,11 +46,16 @@ public class OverridingUtil {
     private OverridingUtil() {
     }
 
-    public static <D extends CallableDescriptor> Set<D> filterOverrides(Set<D> candidateSet) {
-        return filterOverrides(candidateSet, Function.ID);
+    @NotNull
+    public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
+        return filterOutOverridden(candidateSet, Function.ID);
     }
 
-    public static <D> Set<D> filterOverrides(Set<D> candidateSet, Function<? super D, ? extends CallableDescriptor> transform) {
+    @NotNull
+    public static <D> Set<D> filterOutOverridden(
+            @NotNull Set<D> candidateSet,
+            @NotNull Function<? super D, ? extends CallableDescriptor> transform
+    ) {
         Set<D> candidates = Sets.newLinkedHashSet();
         outerLoop:
         for (D meD : candidateSet) {

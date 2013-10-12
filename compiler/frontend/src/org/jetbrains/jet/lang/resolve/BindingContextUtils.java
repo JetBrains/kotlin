@@ -355,6 +355,6 @@ public class BindingContextUtils {
                 throw new AssertionError("Unexpected callable kind " + kind);
             }
         }
-        return OverridingUtil.filterOverrides(result);
+        return OverridingUtil.filterOutOverridden(result);
     }
 }
