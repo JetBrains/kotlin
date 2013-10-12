@@ -142,8 +142,7 @@ object REFLECTION_EVAL : Eval {
     override fun loadString(str: String): Value = ObjectValue(str, Type.getType(javaClass<String>()))
 
     override fun newInstance(classType: Type): Value {
-        val _class = findClass(classType)
-        return NewObjectValue(_class, classType)
+        return NewObjectValue(classType)
     }
 
     override fun isInstanceOf(value: Value, targetType: Type): Boolean {
@@ -298,7 +297,7 @@ object REFLECTION_EVAL : Eval {
             if (methodDesc.name == "<init>") {
                 // Constructor call
                 [suppress("UNCHECKED_CAST")]
-                val _class = (instance as NewObjectValue)._class as Class<Any>
+                val _class = findClass((instance as NewObjectValue).asmType)
                 val ctor = _class.findConstructor(methodDesc)
                 assertNotNull("Constructor not found: $methodDesc", ctor)
                 val args = arguments.map { v -> v.obj }.copyToArray()
