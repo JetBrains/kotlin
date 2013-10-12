@@ -221,7 +221,7 @@ object REFLECTION_EVAL : Eval {
             }
         }
         catch (e: Throwable) {
-            throw ThrownFromEvalException(ObjectValue(e, Type.getType(e.javaClass)))
+            throwException(e)
         }
     }
 
