@@ -70,15 +70,8 @@ public class OverridingUtil {
                     continue outerLoop;
                 }
             }
-//            System.out.println(me);
             candidates.add(meD);
         }
-//        Set<D> candidates = Sets.newLinkedHashSet(candidateSet);
-//        for (D descriptor : candidateSet) {
-//            Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
-//            getAllOverriddenDescriptors(descriptor.getOriginal(), overriddenDescriptors);
-//            candidates.removeAll(overriddenDescriptors);
-//        }
         return candidates;
     }
 
