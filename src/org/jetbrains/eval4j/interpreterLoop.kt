@@ -67,6 +67,8 @@ fun interpreterLoop(
     val frame = initFrame(ownerClassInternalName, m, interpreter)
     val handlers = computeHandlers(m)
 
+    class ResultException(val result: InterpreterResult): RuntimeException()
+
     fun exceptionCaught(exceptionValue: Value): Boolean {
         val catchBlocks = handlers[m.instructions.indexOf(currentInsn)] ?: listOf()
         for (catch in catchBlocks) {
@@ -74,6 +76,8 @@ fun interpreterLoop(
             if (exceptionTypeInternalName != null) {
                 val exceptionType = Type.getObjectType(exceptionTypeInternalName)
                 if (eval.isInstanceOf(exceptionValue, exceptionType)) {
+                    val handled = handler.exceptionCaught(frame, currentInsn, exceptionValue)
+                    if (handled != null) throw ResultException(handled)
                     frame.clearStack()
                     frame.push(exceptionValue)
                     goto(catch.handler)
@@ -84,102 +88,107 @@ fun interpreterLoop(
         return false
     }
 
-    while (true) {
-        val insnOpcode = currentInsn.getOpcode()
-        val insnType = currentInsn.getType()
+    try {
+        while (true) {
+            val insnOpcode = currentInsn.getOpcode()
+            val insnType = currentInsn.getType()
 
-        when (insnType) {
-            AbstractInsnNode.LABEL,
-            AbstractInsnNode.FRAME,
-            AbstractInsnNode.LINE -> {
-                // skip to the next instruction
-            }
+            when (insnType) {
+                AbstractInsnNode.LABEL,
+                AbstractInsnNode.FRAME,
+                AbstractInsnNode.LINE -> {
+                    // skip to the next instruction
+                }
 
-            else -> {
-                when (insnOpcode) {
-                    GOTO -> {
-                        goto((currentInsn as JumpInsnNode).label)
-                        continue
-                    }
-
-                    RET -> {
-                        val varNode = currentInsn as VarInsnNode
-                        val address = frame.getLocal(varNode.`var`)
-                        goto((address as LabelValue).value)
-                        continue
-                    }
-
-                    // TODO: switch
-                    LOOKUPSWITCH -> UnsupportedByteCodeException("LOOKUPSWITCH is not supported yet")
-                    TABLESWITCH -> UnsupportedByteCodeException("TABLESWITCH is not supported yet")
-
-                    IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
-                        val value = frame.getStack(0)!!
-                        val expectedType = Type.getReturnType(m.desc)
-                        if (expectedType.getSort() == Type.OBJECT) {
-                            val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
-                                                ObjectValue(value.obj, expectedType)
-                                          else value
-                            return ValueReturned(coerced)
+                else -> {
+                    when (insnOpcode) {
+                        GOTO -> {
+                            goto((currentInsn as JumpInsnNode).label)
+                            continue
                         }
-                        if (value.asmType != expectedType) {
-                            assert(insnOpcode == IRETURN, "Only ints should be coerced: " + Printer.OPCODES[insnOpcode])
 
-                            val coerced = when (expectedType.getSort()) {
-                                Type.BOOLEAN -> boolean(value.boolean)
-                                Type.BYTE -> byte(value.int.toByte())
-                                Type.SHORT -> short(value.int.toShort())
-                                Type.CHAR -> char(value.int.toChar())
-                                else -> throw UnsupportedByteCodeException("Should not be coerced: $expectedType")
+                        RET -> {
+                            val varNode = currentInsn as VarInsnNode
+                            val address = frame.getLocal(varNode.`var`)
+                            goto((address as LabelValue).value)
+                            continue
+                        }
+
+                        // TODO: switch
+                        LOOKUPSWITCH -> UnsupportedByteCodeException("LOOKUPSWITCH is not supported yet")
+                        TABLESWITCH -> UnsupportedByteCodeException("TABLESWITCH is not supported yet")
+
+                        IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
+                            val value = frame.getStack(0)!!
+                            val expectedType = Type.getReturnType(m.desc)
+                            if (expectedType.getSort() == Type.OBJECT) {
+                                val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
+                                                    ObjectValue(value.obj, expectedType)
+                                              else value
+                                return ValueReturned(coerced)
                             }
-                            return ValueReturned(coerced)
+                            if (value.asmType != expectedType) {
+                                assert(insnOpcode == IRETURN, "Only ints should be coerced: " + Printer.OPCODES[insnOpcode])
+
+                                val coerced = when (expectedType.getSort()) {
+                                    Type.BOOLEAN -> boolean(value.boolean)
+                                    Type.BYTE -> byte(value.int.toByte())
+                                    Type.SHORT -> short(value.int.toShort())
+                                    Type.CHAR -> char(value.int.toChar())
+                                    else -> throw UnsupportedByteCodeException("Should not be coerced: $expectedType")
+                                }
+                                return ValueReturned(coerced)
+                            }
+                            return ValueReturned(value)
                         }
-                        return ValueReturned(value)
-                    }
-                    RETURN -> return ValueReturned(VOID_VALUE)
-                    IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
-                        if (interpreter.checkUnaryCondition(frame.getStack(0)!!, insnOpcode)) {
-                            frame.execute(currentInsn, interpreter)
-                            goto((currentInsn as JumpInsnNode).label)
-                            continue
+                        RETURN -> return ValueReturned(VOID_VALUE)
+                        IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
+                            if (interpreter.checkUnaryCondition(frame.getStack(0)!!, insnOpcode)) {
+                                frame.execute(currentInsn, interpreter)
+                                goto((currentInsn as JumpInsnNode).label)
+                                continue
+                            }
                         }
-                    }
-                    IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
-                        if (interpreter.checkBinaryCondition(frame.getStack(0)!!, frame.getStack(1)!!, insnOpcode)) {
-                            frame.execute(currentInsn, interpreter)
-                            goto((currentInsn as JumpInsnNode).label)
-                            continue
+                        IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
+                            if (interpreter.checkBinaryCondition(frame.getStack(0)!!, frame.getStack(1)!!, insnOpcode)) {
+                                frame.execute(currentInsn, interpreter)
+                                goto((currentInsn as JumpInsnNode).label)
+                                continue
+                            }
                         }
+
+                        ATHROW -> {
+                            val exceptionValue = frame.getStack(0)!!
+                            val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
+                            if (handled != null) return handled
+                            if (exceptionCaught(exceptionValue)) continue
+                            return ExceptionThrown(exceptionValue)
+                        }
+
+                        // Workaround for a bug in Kotlin: NoPatterMatched exception is thrown otherwise!
+                        else -> {}
                     }
 
-                    ATHROW -> {
-                        val exceptionValue = frame.getStack(0)!!
-                        val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
+                    try {
+                        frame.execute(currentInsn, interpreter)
+                    }
+                    catch (e: ThrownFromEvalException) {
+                        val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                         if (handled != null) return handled
-                        if (exceptionCaught(exceptionValue)) continue
-                        return ExceptionThrown(exceptionValue)
+                        if (exceptionCaught(e.exception)) continue
+                        return ExceptionThrown(e.exception)
                     }
-
-                    // Workaround for a bug in Kotlin: NoPatterMatched exception is thrown otherwise!
-                    else -> {}
-                }
-
-                try {
-                    frame.execute(currentInsn, interpreter)
-                }
-                catch (e: ThrownFromEvalException) {
-                    val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
-                    if (handled != null) return handled
-                    if (exceptionCaught(e.exception)) continue
-                    return ExceptionThrown(e.exception)
                 }
             }
+
+            val handled = handler.instructionProcessed(currentInsn)
+            if (handled != null) return handled
+
+            goto(currentInsn.getNext())
         }
-
-        val handled = handler.instructionProcessed(currentInsn)
-        if (handled != null) return handled
-
-        goto(currentInsn.getNext())
+    }
+    catch(e: ResultException) {
+        return e.result
     }
 }
 
