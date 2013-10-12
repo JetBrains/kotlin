@@ -48,8 +48,8 @@ trait InterpretationEventHandler {
 class ThrownFromEvalException(val exception: Value): RuntimeException()
 
 fun interpreterLoop(
-        ownerClassInternalName: String,
         m: MethodNode,
+        initialState: Frame<Value>,
         eval: Eval,
         handler: InterpretationEventHandler = InterpretationEventHandler.NONE
 ): InterpreterResult {
@@ -64,7 +64,7 @@ fun interpreterLoop(
     }
 
     val interpreter = SingleInstructionInterpreter(eval)
-    val frame = initFrame(ownerClassInternalName, m, interpreter)
+    val frame = Frame(initialState)
     val handlers = computeHandlers(m)
 
     class ResultException(val result: InterpreterResult): RuntimeException()
@@ -193,35 +193,6 @@ fun interpreterLoop(
 }
 
 // Copied from org.objectweb.asm.tree.analysis.Analyzer.analyze()
-fun <V : org.objectweb.asm.tree.analysis.Value> initFrame(
-        owner: String,
-        m: MethodNode,
-        interpreter: Interpreter<V>
-): Frame<V> {
-    val current = Frame<V>(m.maxLocals, m.maxStack)
-    current.setReturn(interpreter.newValue(Type.getReturnType(m.desc)))
-
-    var local = 0
-    if ((m.access and ACC_STATIC) == 0) {
-        val ctype = Type.getObjectType(owner)
-        current.setLocal(local++, interpreter.newValue(ctype))
-    }
-
-    val args = Type.getArgumentTypes(m.desc)
-    for (i in 0..args.size - 1) {
-        current.setLocal(local++, interpreter.newValue(args[i]))
-        if (args[i].getSize() == 2) {
-            current.setLocal(local++, interpreter.newValue(null))
-        }
-    }
-
-    while (local < m.maxLocals) {
-        current.setLocal(local++, interpreter.newValue(null))
-    }
-
-    return current
-}
-
 fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {
     val insns = m.instructions
     val handlers = Array<MutableList<TryCatchBlockNode>?>(insns.size()) {null}

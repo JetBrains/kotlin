@@ -13,6 +13,8 @@ import java.lang.reflect.Field
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Array as JArray
+import org.objectweb.asm.tree.analysis.Interpreter
+import org.objectweb.asm.tree.analysis.Frame
 
 fun suite(): TestSuite {
     val suite = TestSuite()
@@ -72,14 +74,47 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
 
         override fun runTest() {
             val value = interpreterLoop(
-                    ownerClass.getInternalName(),
                     methodNode,
+                    initFrame(
+                            ownerClass.getInternalName(),
+                            methodNode,
+                            SingleInstructionInterpreter(REFLECTION_EVAL)
+                    ),
                     REFLECTION_EVAL
             )
 
             assertEquals(expected, value)
         }
     }
+}
+
+fun <V : org.objectweb.asm.tree.analysis.Value> initFrame(
+        owner: String,
+        m: MethodNode,
+        interpreter: Interpreter<V>
+): Frame<V> {
+    val current = Frame<V>(m.maxLocals, m.maxStack)
+    current.setReturn(interpreter.newValue(Type.getReturnType(m.desc)))
+
+    var local = 0
+    if ((m.access and ACC_STATIC) == 0) {
+        val ctype = Type.getObjectType(owner)
+        current.setLocal(local++, interpreter.newValue(ctype))
+    }
+
+    val args = Type.getArgumentTypes(m.desc)
+    for (i in 0..args.size - 1) {
+        current.setLocal(local++, interpreter.newValue(args[i]))
+        if (args[i].getSize() == 2) {
+            current.setLocal(local++, interpreter.newValue(null))
+        }
+    }
+
+    while (local < m.maxLocals) {
+        current.setLocal(local++, interpreter.newValue(null))
+    }
+
+    return current
 }
 
 fun objectToValue(obj: Any?, expectedType: Type): Value {
