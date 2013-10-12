@@ -43,10 +43,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             return NOT_A_VALUE
         }
 
-        return when (`type`.getSort()) {
-            Type.VOID -> null
-            else -> NotInitialized(`type`)
-        }
+        return makeNotInitializedValue(`type`)
     }
 
     override fun newOperation(insn: AbstractInsnNode): Value? {

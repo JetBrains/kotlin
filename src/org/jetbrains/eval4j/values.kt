@@ -25,6 +25,13 @@ object VOID_VALUE: Value {
     override fun toString() = "VOID_VALUE"
 }
 
+fun makeNotInitializedValue(t: Type): Value? {
+    return when (t.getSort()) {
+        Type.VOID -> null
+        else -> NotInitialized(t)
+    }
+}
+
 class NotInitialized(override val asmType: Type): Value {
     override val valid = false
     override fun toString() = "NotInitialized: $asmType"

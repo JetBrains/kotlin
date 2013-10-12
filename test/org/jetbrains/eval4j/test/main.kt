@@ -77,8 +77,7 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
                     methodNode,
                     initFrame(
                             ownerClass.getInternalName(),
-                            methodNode,
-                            SingleInstructionInterpreter(REFLECTION_EVAL)
+                            methodNode
                     ),
                     REFLECTION_EVAL
             )
@@ -88,30 +87,29 @@ fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
     }
 }
 
-fun <V : org.objectweb.asm.tree.analysis.Value> initFrame(
+fun initFrame(
         owner: String,
-        m: MethodNode,
-        interpreter: Interpreter<V>
-): Frame<V> {
-    val current = Frame<V>(m.maxLocals, m.maxStack)
-    current.setReturn(interpreter.newValue(Type.getReturnType(m.desc)))
+        m: MethodNode
+): Frame<Value> {
+    val current = Frame<Value>(m.maxLocals, m.maxStack)
+    current.setReturn(makeNotInitializedValue(Type.getReturnType(m.desc)))
 
     var local = 0
     if ((m.access and ACC_STATIC) == 0) {
         val ctype = Type.getObjectType(owner)
-        current.setLocal(local++, interpreter.newValue(ctype))
+        current.setLocal(local++, makeNotInitializedValue(ctype))
     }
 
     val args = Type.getArgumentTypes(m.desc)
     for (i in 0..args.size - 1) {
-        current.setLocal(local++, interpreter.newValue(args[i]))
+        current.setLocal(local++, makeNotInitializedValue(args[i]))
         if (args[i].getSize() == 2) {
-            current.setLocal(local++, interpreter.newValue(null))
+            current.setLocal(local++, NOT_A_VALUE)
         }
     }
 
     while (local < m.maxLocals) {
-        current.setLocal(local++, interpreter.newValue(null))
+        current.setLocal(local++, NOT_A_VALUE)
     }
 
     return current
