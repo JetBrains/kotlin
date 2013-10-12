@@ -98,3 +98,10 @@ val Value.obj: Any?
         }
         return (this as AbstractValue<*>).value
     }
+
+fun Any?.checkNull(): Any {
+    if (this == null) {
+        throw ThrownFromEvalException(ObjectValue(NullPointerException(), Type.getType(javaClass<NullPointerException>())))
+    }
+    return this
+}

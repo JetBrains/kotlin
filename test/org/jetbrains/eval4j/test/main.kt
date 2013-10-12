@@ -225,13 +225,6 @@ object REFLECTION_EVAL : Eval {
         }
     }
 
-    fun Any?.checkNull(): Any {
-        if (this == null) {
-            throw ThrownFromEvalException(ObjectValue(NullPointerException(), Type.getType(javaClass<NullPointerException>())))
-        }
-        return this
-    }
-
     override fun getStaticField(fieldDesc: FieldDescription): Value {
         val field = findStaticField(fieldDesc)
 
