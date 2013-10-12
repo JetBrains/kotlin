@@ -1838,7 +1838,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
 
             Collection<CallableMemberDescriptor> filteredOverriddenDeclarations =
-                    OverridingUtil.filterOverrides(Sets.newLinkedHashSet(overriddenDeclarations));
+                    OverridingUtil.filterOutOverridden(Sets.newLinkedHashSet(overriddenDeclarations));
 
             int count = 0;
             CallableMemberDescriptor candidate = null;
