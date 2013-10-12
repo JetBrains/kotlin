@@ -12,6 +12,9 @@ open data class MemberDescription(
         val isStatic: Boolean
 )
 
+val MemberDescription.ownerType: Type
+    get() = Type.getObjectType(ownerInternalName)
+
 class MethodDescription(
         ownerInternalName: String,
         name: String,
