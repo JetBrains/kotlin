@@ -104,15 +104,6 @@ public open class HashMap<K, V>(capacity: Int = 0) : MutableMap<K, V> {
 }
 
 library
-public class StringBuilder() : Appendable {
-    override fun append(c: Char): Appendable? = js.noImpl
-    override fun append(csq: CharSequence?): Appendable? = js.noImpl
-    override fun append(csq: CharSequence?, start: Int, end: Int): Appendable? = js.noImpl
-    public fun append(obj: Any?): StringBuilder = js.noImpl
-    public fun toString(): String = js.noImpl
-}
-
-library
 public class NoSuchElementException() : Exception() {
 }
 
