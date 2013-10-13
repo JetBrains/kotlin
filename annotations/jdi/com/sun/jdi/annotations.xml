@@ -1,14 +1,29 @@
 <root>
+    <item name='com.sun.jdi.Bootstrap com.sun.jdi.VirtualMachineManager virtualMachineManager()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='com.sun.jdi.ClassObjectReference com.sun.jdi.ReferenceType reflectedType()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='com.sun.jdi.Location com.sun.jdi.Method method()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='com.sun.jdi.ReferenceType com.sun.jdi.ClassObjectReference classObject()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.ReferenceType java.util.List&lt;com.sun.jdi.Location&gt; allLineLocations()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='com.sun.jdi.ReferenceType java.util.List&lt;com.sun.jdi.Method&gt; methodsByName(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='com.sun.jdi.StackFrame com.sun.jdi.Location location()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.StackFrame java.util.List&lt;com.sun.jdi.LocalVariable&gt; visibleVariables()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.StackFrame java.util.List&lt;com.sun.jdi.Value&gt; getArgumentValues()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='com.sun.jdi.Type java.lang.String signature()'>
@@ -20,7 +35,22 @@
     <item name='com.sun.jdi.Value com.sun.jdi.Type type()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='com.sun.jdi.VirtualMachine com.sun.jdi.event.EventQueue eventQueue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.VirtualMachine com.sun.jdi.request.EventRequestManager eventRequestManager()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.VirtualMachine java.util.List&lt;com.sun.jdi.ReferenceType&gt; allClasses()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='com.sun.jdi.VirtualMachine java.util.List&lt;com.sun.jdi.ReferenceType&gt; classesByName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.VirtualMachineManager java.util.List&lt;com.sun.jdi.connect.AttachingConnector&gt; attachingConnectors()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.VirtualMachineManager java.util.List&lt;com.sun.jdi.connect.LaunchingConnector&gt; launchingConnectors()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

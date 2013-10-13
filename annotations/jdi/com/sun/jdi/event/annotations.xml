@@ -1,0 +1,8 @@
+<root>
+    <item name='com.sun.jdi.event.EventQueue com.sun.jdi.event.EventSet remove()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.event.LocatableEvent com.sun.jdi.ThreadReference thread()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

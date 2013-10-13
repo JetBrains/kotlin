@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="Reflection Test" type="JUnit" factoryName="JUnit">
     <module name="eval4j" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
