@@ -45,7 +45,9 @@ trait InterpretationEventHandler {
     fun exceptionCaught(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult?
 }
 
-class ThrownFromEvalException(val exception: Value): RuntimeException()
+class ThrownFromEvalException(val exception: Value): RuntimeException() {
+    fun toString(): String = "Thrown by evaluator: $exception"
+}
 
 fun interpreterLoop(
         m: MethodNode,
