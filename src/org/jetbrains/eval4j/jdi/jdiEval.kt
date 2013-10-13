@@ -138,6 +138,20 @@ class JDIEval(
     }
 
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
+        if (invokespecial) {
+            if (methodDesc.name == "<init>") {
+                // Constructor call
+                val ctor = findMethod(methodDesc)
+                val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
+                val result = _class.newInstance(thread, ctor, arguments.map { v -> v.asJdiValue(vm) }, 0)
+                instance.value = result
+                return result.asValue()
+            }
+            else {
+                // TODO
+                throw UnsupportedOperationException("invokespecial is not suported yet")
+            }
+        }
         val method = findMethod(methodDesc)
 
         val obj = instance.jdiObj.checkNull()
