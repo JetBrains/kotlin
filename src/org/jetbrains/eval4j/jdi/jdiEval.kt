@@ -116,7 +116,7 @@ class JDIEval(
 
     override fun getStaticField(fieldDesc: FieldDescription): Value {
         val field = findStaticField(fieldDesc)
-        return field.declaringType().getValue(field).asValue()
+        return mayThrow { field.declaringType().getValue(field) }.asValue()
     }
 
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
@@ -131,7 +131,8 @@ class JDIEval(
             throwException(NoSuchFieldError("Can't a field in a non-class: $field"))
         }
 
-        _class.setValue(field, newValue.asJdiValue(vm))
+        val jdiValue = newValue.asJdiValue(vm)
+        mayThrow { _class.setValue(field, jdiValue) }
     }
 
     private fun findMethod(methodDesc: MethodDescription): jdi.Method {
@@ -157,21 +158,24 @@ class JDIEval(
         val _class = method.declaringType()
         if (_class !is jdi.ClassType) throwException(NoSuchMethodError("Static method is a non-class type: $method"))
 
-        return _class.invokeMethod(thread, method, arguments.map {v -> v.asJdiValue(vm)}, 0).asValue()
+        val args = arguments.map { v -> v.asJdiValue(vm) }
+        val result = mayThrow { _class.invokeMethod(thread, method, args, 0) }
+        return result.asValue()
     }
 
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        return obj.getValue(field).asValue()
+        return mayThrow { obj.getValue(field) }.asValue()
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        return obj.setValue(field, newValue.asJdiValue(vm))
+        val jdiValue = newValue.asJdiValue(vm)
+        mayThrow { obj.setValue(field, jdiValue) }
     }
 
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
@@ -180,7 +184,8 @@ class JDIEval(
                 // Constructor call
                 val ctor = findMethod(methodDesc)
                 val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
-                val result = _class.newInstance(thread, ctor, arguments.map { v -> v.asJdiValue(vm) }, 0)
+                val args = arguments.map { v -> v.asJdiValue(vm) }
+                val result = mayThrow { _class.newInstance(thread, ctor, args, 0) }
                 instance.value = result
                 return result.asValue()
             }
@@ -192,6 +197,17 @@ class JDIEval(
         val method = findMethod(methodDesc)
 
         val obj = instance.jdiObj.checkNull()
-        return obj.invokeMethod(thread, method, arguments.map { v -> v.asJdiValue(vm) }, 0).asValue()
+        val args = arguments.map { v -> v.asJdiValue(vm) }
+        val result = mayThrow { obj.invokeMethod(thread, method, args, 0) }
+        return result.asValue()
+    }
+}
+
+fun <T> mayThrow(f: () -> T): T {
+    try {
+        return f()
+    }
+    catch (e: jdi.InvocationException) {
+        throw ThrownFromEvalException(e.exception().asValue())
     }
 }
