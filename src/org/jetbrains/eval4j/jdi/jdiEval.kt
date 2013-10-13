@@ -124,12 +124,23 @@ class JDIEval(
     }
 
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
-        throw UnsupportedOperationException()
+        val field = findField(fieldDesc)
+        val obj = instance.jdiObj.checkNull()
+
+        return obj.getValue(field).asValue()
     }
+
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
-        throw UnsupportedOperationException()
+        val field = findField(fieldDesc)
+        val obj = instance.jdiObj.checkNull()
+
+        return obj.setValue(field, newValue.asJdiValue(vm))
     }
+
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
-        throw UnsupportedOperationException()
+        val method = findMethod(methodDesc)
+
+        val obj = instance.jdiObj.checkNull()
+        return obj.invokeMethod(thread, method, arguments.map { v -> v.asJdiValue(vm) }, 0).asValue()
     }
 }

@@ -99,7 +99,7 @@ val Value.obj: Any?
         return (this as AbstractValue<*>).value
     }
 
-fun Any?.checkNull(): Any {
+fun <T: Any> T?.checkNull(): T {
     if (this == null) {
         throwException(NullPointerException())
     }
