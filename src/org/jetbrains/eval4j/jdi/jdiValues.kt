@@ -56,3 +56,24 @@ val Value.jdiObj: jdi.ObjectReference?
 
 val Value.jdiClass: jdi.ClassObjectReference?
     get() = this.jdiObj as jdi.ClassObjectReference?
+
+fun Value.asJdiValue(vm: jdi.VirtualMachine): jdi.Value? {
+    return when (this) {
+        NULL_VALUE -> null
+        VOID_VALUE -> vm.mirrorOfVoid()
+        is IntValue -> when (asmType) {
+            Type.BOOLEAN_TYPE -> vm.mirrorOf(boolean)
+            Type.BYTE_TYPE -> vm.mirrorOf(int.toByte())
+            Type.SHORT_TYPE -> vm.mirrorOf(int.toShort())
+            Type.CHAR_TYPE -> vm.mirrorOf(int.toChar())
+            Type.INT_TYPE -> vm.mirrorOf(int)
+            else -> throw JDIFailureException("Unknown value type: $this")
+        }
+        is LongValue -> vm.mirrorOf(value)
+        is FloatValue -> vm.mirrorOf(value)
+        is DoubleValue -> vm.mirrorOf(value)
+        is ObjectValue -> value as jdi.ObjectReference
+        is NewObjectValue -> throw JDIFailureException("Illegal value: $this")
+        else -> throw JDIFailureException("Unknown value: $this")
+    }
+}

@@ -97,8 +97,30 @@ class JDIEval(
         _class.setValue(field, newValue.asJdiValue(vm))
     }
 
+    private fun findMethod(methodDesc: MethodDescription): jdi.Method {
+        val _class = loadClass(methodDesc.ownerType).jdiClass!!.reflectedType()
+        val method = when (_class) {
+            is jdi.ClassType -> {
+                val m = _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
+                if (m == null) listOf() else listOf(m)
+            }
+            else -> _class.methodsByName(methodDesc.name, methodDesc.desc)
+        }
+        if (method.isEmpty()) {
+            throwException(NoSuchMethodError("Method not found: $methodDesc"))
+        }
+        return method[0]
+    }
+
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
-        throw UnsupportedOperationException()
+        val method = findMethod(methodDesc)
+        if (!method.isStatic()) {
+            throwException(NoSuchMethodError("Method is not static: $methodDesc"))
+        }
+        val _class = method.declaringType()
+        if (_class !is jdi.ClassType) throwException(NoSuchMethodError("Static method is a non-class type: $method"))
+
+        return _class.invokeMethod(thread, method, arguments.map {v -> v.asJdiValue(vm)}, 0).asValue()
     }
 
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {

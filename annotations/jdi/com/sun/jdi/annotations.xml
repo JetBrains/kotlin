@@ -5,10 +5,16 @@
     <item name='com.sun.jdi.ReferenceType com.sun.jdi.ClassObjectReference classObject()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='com.sun.jdi.ReferenceType java.util.List&lt;com.sun.jdi.Method&gt; methodsByName(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='com.sun.jdi.StackFrame com.sun.jdi.Location location()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='com.sun.jdi.Type java.lang.String signature()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.TypeComponent com.sun.jdi.ReferenceType declaringType()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='com.sun.jdi.Value com.sun.jdi.Type type()'>
