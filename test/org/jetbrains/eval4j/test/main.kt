@@ -13,79 +13,28 @@ import java.lang.reflect.Field
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Array as JArray
-import org.objectweb.asm.tree.analysis.Interpreter
 import org.objectweb.asm.tree.analysis.Frame
 
-fun suite(): TestSuite {
-    val suite = TestSuite()
+fun suite(): TestSuite = buildTestSuite {
+    methodNode, ownerClass, expected ->
+    object : TestCase("test" + methodNode.name.capitalize()) {
 
-    val ownerClass = javaClass<TestData>()
-    val inputStream = ownerClass.getClassLoader()!!.getResourceAsStream(ownerClass.getInternalName() + ".class")!!
+            override fun runTest() {
+                val value = interpreterLoop(
+                        methodNode,
+                        initFrame(
+                                ownerClass.getInternalName(),
+                                methodNode
+                        ),
+                        REFLECTION_EVAL
+                )
 
-    ClassReader(inputStream).accept(object : ClassVisitor(ASM4) {
-
-        override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-            return object : MethodNode(access, name, desc, signature, exceptions) {
-                override fun visitEnd() {
-                    val testCase = doTest(ownerClass, this)
-                    if (testCase != null) {
-                        suite.addTest(testCase)
-                    }
-                }
+                assertEquals(expected, value)
             }
         }
-    }, 0)
-
-    return suite
 }
 
 fun Class<*>.getInternalName(): String = Type.getType(this).getInternalName()
-
-fun doTest(ownerClass: Class<TestData>, methodNode: MethodNode): TestCase? {
-    var expected: InterpreterResult? = null
-    for (method in ownerClass.getDeclaredMethods()) {
-        if (method.getName() == methodNode.name) {
-            if ((method.getModifiers() and Modifier.STATIC) == 0) {
-                println("Skipping instance method: $method")
-            }
-            else if (method.getParameterTypes()!!.size > 0) {
-                println("Skipping method with parameters: $method")
-            }
-            else {
-                method.setAccessible(true)
-                val result = method.invoke(null)
-                val returnType = Type.getType(method.getReturnType()!!)
-                try {
-                    expected = ValueReturned(objectToValue(result, returnType))
-                }
-                catch (e: UnsupportedOperationException) {
-                    println("Skipping $method: $e")
-                }
-            }
-        }
-    }
-
-    if (expected == null) {
-        println("Method not found: ${methodNode.name}")
-        return null
-    }
-
-    return object : TestCase("test" + methodNode.name.capitalize()) {
-
-        override fun runTest() {
-            val value = interpreterLoop(
-                    methodNode,
-                    initFrame(
-                            ownerClass.getInternalName(),
-                            methodNode
-                    ),
-                    REFLECTION_EVAL
-            )
-
-            assertEquals(expected, value)
-        }
-    }
-}
 
 fun initFrame(
         owner: String,
