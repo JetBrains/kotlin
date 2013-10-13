@@ -44,24 +44,53 @@ class JDIEval(
                 listOf(value)).boolean
     }
 
+    fun Type.asReferenceType(): jdi.ReferenceType = loadClass(this).jdiClass!!.reflectedType()
+    fun Type.asArrayType(): jdi.ArrayType = asReferenceType() as jdi.ArrayType
+
     override fun newArray(arrayType: Type, size: Int): Value {
-        throw UnsupportedOperationException()
+        val jdiArrayType = arrayType.asArrayType()
+        return jdiArrayType.newInstance(size).asValue()
     }
+
+    private val Type.arrayElementType: Type
+        get(): Type {
+            assert(getSort() == Type.ARRAY, "Not an array type: $this")
+            return Type.getType(getDescriptor().substring(1))
+        }
+
+    private fun fillArray(elementType: Type, size: Int, nestedSizes: List<Int>): Value {
+        val arr = newArray(Type.getType("[" + elementType.getDescriptor()), size)
+        if (!nestedSizes.isEmpty()) {
+            val nestedElementType = elementType.arrayElementType
+            val nestedSize = nestedSizes[0]
+            val tail = nestedSizes.tail
+            for (i in 0..size - 1) {
+                setArrayElement(arr, int(i), fillArray(nestedElementType, nestedSize, tail))
+            }
+        }
+        return arr
+    }
+
     override fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value {
-        throw UnsupportedOperationException()
+        return fillArray(arrayType.arrayElementType, dimensionSizes[0], dimensionSizes.tail)
     }
+
+    private fun Value.array() = jdiObj.checkNull() as jdi.ArrayReference
+
     override fun getArrayLength(array: Value): Value {
-        throw UnsupportedOperationException()
+        return int(array.array().length())
     }
+
     override fun getArrayElement(array: Value, index: Value): Value {
-        throw UnsupportedOperationException()
+        return array.array().getValue(index.int).asValue()
     }
+
     override fun setArrayElement(array: Value, index: Value, newValue: Value) {
-        throw UnsupportedOperationException()
+        array.array().setValue(index.int, newValue.asJdiValue(vm))
     }
 
     private fun findField(fieldDesc: FieldDescription): jdi.Field {
-        val _class = loadClass(fieldDesc.ownerType).jdiClass!!.reflectedType()
+        val _class = fieldDesc.ownerType.asReferenceType()
         val field = _class.fieldByName(fieldDesc.name)
         if (field == null) {
             throwException(NoSuchFieldError("Field not found: $fieldDesc"))
@@ -98,7 +127,7 @@ class JDIEval(
     }
 
     private fun findMethod(methodDesc: MethodDescription): jdi.Method {
-        val _class = loadClass(methodDesc.ownerType).jdiClass!!.reflectedType()
+        val _class = methodDesc.ownerType.asReferenceType()
         val method = when (_class) {
             is jdi.ClassType -> {
                 val m = _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
