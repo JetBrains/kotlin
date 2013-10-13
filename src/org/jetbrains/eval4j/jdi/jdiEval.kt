@@ -12,14 +12,22 @@ class JDIEval(
         private val thread: jdi.ThreadReference
 ) : Eval {
     override fun loadClass(classType: Type): Value {
+        val loadedClasses = vm.classesByName(classType.getInternalName())
+        if (!loadedClasses.isEmpty()) {
+            return loadedClasses[0].classObject().asValue()
+        }
         return invokeStaticMethod(
                 MethodDescription(
                         CLASS.getInternalName(),
                         "forName",
-                        "(Ljava/lang/String;Ljava/lang/ClassLoader;)Ljava/lang/Class;",
+                        "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;",
                         true
                 ),
-                listOf(classLoader.asValue())
+                listOf(
+                        vm.mirrorOf(classType.getInternalName().replace('/', '.')).asValue(),
+                        boolean(true),
+                        classLoader.asValue()
+                )
         )
     }
 
