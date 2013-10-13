@@ -46,15 +46,34 @@ public class OverridingUtil {
     private OverridingUtil() {
     }
 
+    private static enum Filtering {
+        RETAIN_OVERRIDING,
+        RETAIN_OVERRIDDEN
+    }
+
     @NotNull
     public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
-        return filterOutOverridden(candidateSet, Function.ID);
+        return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDING);
+    }
+
+    @NotNull
+    public static <D> Set<D> filterOutOverriding(@NotNull Set<D> candidateSet) {
+        return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDDEN);
     }
 
     @NotNull
     public static <D> Set<D> filterOutOverridden(
             @NotNull Set<D> candidateSet,
             @NotNull Function<? super D, ? extends CallableDescriptor> transform
+    ) {
+        return filterOverrides(candidateSet, transform, Filtering.RETAIN_OVERRIDING);
+    }
+
+    @NotNull
+    private static <D> Set<D> filterOverrides(
+            @NotNull Set<D> candidateSet,
+            @NotNull Function<? super D, ? extends CallableDescriptor> transform,
+            @NotNull Filtering filtering
     ) {
         Set<D> candidates = Sets.newLinkedHashSet();
         outerLoop:
@@ -63,8 +82,18 @@ public class OverridingUtil {
             for (D otherD : candidateSet) {
                 CallableDescriptor other = transform.fun(otherD);
                 if (me == other) continue;
-                if (overrides(other, me)) {
-                    continue outerLoop;
+                if (filtering == Filtering.RETAIN_OVERRIDING) {
+                    if (overrides(other, me)) {
+                        continue outerLoop;
+                    }
+                }
+                else if (filtering == Filtering.RETAIN_OVERRIDDEN) {
+                    if (overrides(me, other)) {
+                        continue outerLoop;
+                    }
+                }
+                else {
+                    throw new AssertionError("Unexpected Filtering object: " + filtering);
                 }
             }
             for (D otherD : candidates) {
