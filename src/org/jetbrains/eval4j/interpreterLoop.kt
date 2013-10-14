@@ -5,7 +5,6 @@ import org.objectweb.asm.tree.analysis.Frame
 import org.objectweb.asm.tree.MethodNode
 import org.objectweb.asm.Type
 import org.objectweb.asm.Opcodes.*
-import org.objectweb.asm.tree.analysis.Interpreter
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.VarInsnNode
 import org.objectweb.asm.util.Printer
@@ -45,8 +44,12 @@ trait InterpretationEventHandler {
     fun exceptionCaught(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult?
 }
 
-class ThrownFromEvalException(val exception: Value): RuntimeException() {
-    fun toString(): String = "Thrown by evaluator: $exception"
+class ThrownFromEvalException(cause: Throwable): RuntimeException(cause) {
+    fun toString(): String = "Thrown by evaluator: ${getCause()}"
+}
+
+class ThrownFromEvaluatedCodeException(val exception: Value): RuntimeException() {
+    fun toString(): String = "Thrown from evaluated code: $exception"
 }
 
 fun interpreterLoop(
@@ -71,13 +74,13 @@ fun interpreterLoop(
 
     class ResultException(val result: InterpreterResult): RuntimeException()
 
-    fun exceptionCaught(exceptionValue: Value): Boolean {
+    fun exceptionCaught(exceptionValue: Value, instanceOf: (Type) -> Boolean): Boolean {
         val catchBlocks = handlers[m.instructions.indexOf(currentInsn)] ?: listOf()
         for (catch in catchBlocks) {
             val exceptionTypeInternalName = catch.`type`
             if (exceptionTypeInternalName != null) {
                 val exceptionType = Type.getObjectType(exceptionTypeInternalName)
-                if (eval.isInstanceOf(exceptionValue, exceptionType)) {
+                if (instanceOf(exceptionType)) {
                     val handled = handler.exceptionCaught(frame, currentInsn, exceptionValue)
                     if (handled != null) throw ResultException(handled)
                     frame.clearStack()
@@ -88,6 +91,29 @@ fun interpreterLoop(
             }
         }
         return false
+    }
+
+    fun exceptionCaught(exceptionValue: Value): Boolean = exceptionCaught(exceptionValue) {
+        exceptionType -> eval.isInstanceOf(exceptionValue, exceptionType)
+    }
+
+    fun exceptionFromEvalCaught(exception: Throwable, exceptionValue: Value): Boolean {
+        return exceptionCaught(exceptionValue) {
+            exceptionType ->
+            try {
+                val exceptionClass = exception.javaClass
+                val _class = Class.forName(
+                        exceptionType.getInternalName().replace('/', '.'),
+                        true,
+                        exceptionClass.getClassLoader()
+                )
+                _class.isAssignableFrom(exceptionClass)
+            }
+            catch (e: ClassNotFoundException) {
+                // If the class is not available in this VM, it can not be a superclass of an exception trown in it
+                false
+            }
+        }
     }
 
     try {
@@ -175,6 +201,15 @@ fun interpreterLoop(
                         frame.execute(currentInsn, interpreter)
                     }
                     catch (e: ThrownFromEvalException) {
+                        val exception = e.getCause()!!
+                        val exceptionValue = ObjectValue(exception, Type.getType(exception.javaClass))
+                        val handled = handler.exceptionThrown(frame, currentInsn,
+                                exceptionValue)
+                        if (handled != null) return handled
+                        if (exceptionFromEvalCaught(exception, exceptionValue)) continue
+                        return ExceptionThrown(exceptionValue)
+                    }
+                    catch (e: ThrownFromEvaluatedCodeException) {
                         val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                         if (handled != null) return handled
                         if (exceptionCaught(e.exception)) continue

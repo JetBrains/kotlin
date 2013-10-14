@@ -107,5 +107,5 @@ fun <T: Any> T?.checkNull(): T {
 }
 
 fun throwEvalException(e: Throwable): Nothing {
-    throw ThrownFromEvalException(ObjectValue(e, Type.getType(e.javaClass)))
+    throw ThrownFromEvalException(e)
 }

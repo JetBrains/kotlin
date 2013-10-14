@@ -170,7 +170,7 @@ object REFLECTION_EVAL : Eval {
             }
         }
         catch (e: Throwable) {
-            throwEvalException(e)
+            throw ThrownFromEvaluatedCodeException(ObjectValue(e, Type.getType(e.javaClass)))
         }
     }
 

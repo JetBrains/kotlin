@@ -208,6 +208,6 @@ fun <T> mayThrow(f: () -> T): T {
         return f()
     }
     catch (e: jdi.InvocationException) {
-        throw ThrownFromEvalException(e.exception().asValue())
+        throw ThrownFromEvaluatedCodeException(e.exception().asValue())
     }
 }
