@@ -143,7 +143,6 @@ public class InjectorForTopDownAnalyzerBasic {
         this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
         this.bodyResolver.setDeclarationsChecker(declarationsChecker);
         this.bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
-        this.bodyResolver.setDescriptorResolver(descriptorResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);

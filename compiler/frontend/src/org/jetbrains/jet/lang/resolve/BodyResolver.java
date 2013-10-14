@@ -58,8 +58,6 @@ public class BodyResolver {
     @NotNull
     private TopDownAnalysisParameters topDownAnalysisParameters;
     @NotNull
-    private DescriptorResolver descriptorResolver;
-    @NotNull
     private ScriptBodyResolver scriptBodyResolverResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
@@ -79,11 +77,6 @@ public class BodyResolver {
     @Inject
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
-    }
-
-    @Inject
-    public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
-        this.descriptorResolver = descriptorResolver;
     }
 
     @Inject
