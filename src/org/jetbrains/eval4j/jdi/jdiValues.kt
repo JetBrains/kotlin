@@ -73,7 +73,7 @@ fun Value.asJdiValue(vm: jdi.VirtualMachine): jdi.Value? {
         is FloatValue -> vm.mirrorOf(value)
         is DoubleValue -> vm.mirrorOf(value)
         is ObjectValue -> value as jdi.ObjectReference
-        is NewObjectValue -> throw JDIFailureException("Illegal value: $this")
+        is NewObjectValue -> this.obj as jdi.ObjectReference
         else -> throw JDIFailureException("Unknown value: $this")
     }
 }
