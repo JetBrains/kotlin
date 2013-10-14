@@ -1,3 +1,0 @@
-Import directive (3: 15) import server.foo
-Receiver (8: 35) println("length: ${server.foo.length()}")
-Selector (7: 33) println("foo = ${server.foo}")

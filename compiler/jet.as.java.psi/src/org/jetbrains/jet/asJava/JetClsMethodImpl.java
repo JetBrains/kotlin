@@ -53,4 +53,10 @@ public class JetClsMethodImpl extends ClsMethodImpl implements JetClsMethod {
     public void delete() throws IncorrectOperationException {
         origin.delete();
     }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        if (another instanceof JetClsMethod && getOrigin().equals(((JetClsMethod) another).getOrigin())) return true;
+        return super.isEquivalentTo(another);
+    }
 }
