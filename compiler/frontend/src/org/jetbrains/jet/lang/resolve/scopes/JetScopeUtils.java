@@ -21,10 +21,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
@@ -75,13 +73,12 @@ public final class JetScopeUtils {
     public static JetScope makeScopeForPropertyAccessor(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetScope parentScope,
-            @NotNull DescriptorResolver descriptorResolver,
             @NotNull BindingTrace trace
     ) {
-        JetScope propertyDeclarationInnerScope = descriptorResolver
-                .getPropertyDeclarationInnerScope(propertyDescriptor, parentScope,
-                                                  propertyDescriptor.getTypeParameters(),
-                                                  propertyDescriptor.getReceiverParameter(), trace);
+        JetScope propertyDeclarationInnerScope =
+                getPropertyDeclarationInnerScope(propertyDescriptor, parentScope,
+                                                 propertyDescriptor.getTypeParameters(),
+                                                 propertyDescriptor.getReceiverParameter(), trace);
         WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, parentScope.getContainingDeclaration(),
                                                             new TraceBasedRedeclarationHandler(trace), "Accessor Scope");
         accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
@@ -89,4 +86,48 @@ public final class JetScopeUtils {
         return accessorScope;
     }
 
+    public static JetScope getPropertyDeclarationInnerScope(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetScope outerScope,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor receiver,
+            BindingTrace trace
+    ) {
+        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, true);
+    }
+
+    public static JetScope getPropertyDeclarationInnerScopeForInitializer(
+            @NotNull JetScope outerScope,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor receiver,
+            BindingTrace trace
+    ) {
+        return getPropertyDeclarationInnerScope(null, outerScope, typeParameters, receiver, trace, false);
+    }
+
+    private static JetScope getPropertyDeclarationInnerScope(
+            @Nullable PropertyDescriptor propertyDescriptor,
+            // PropertyDescriptor can be null for property scope which hasn't label to property (in this case addLabelForProperty parameter must be false
+            @NotNull JetScope outerScope,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor receiver,
+            BindingTrace trace,
+            boolean addLabelForProperty
+    ) {
+        WritableScopeImpl result = new WritableScopeImpl(
+                outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace),
+                "Property declaration inner scope");
+        if (addLabelForProperty) {
+            assert propertyDescriptor != null : "PropertyDescriptor can be null for property scope which hasn't label to property";
+            result.addLabeledDeclaration(propertyDescriptor);
+        }
+        for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+            result.addTypeParameterDescriptor(typeParameterDescriptor);
+        }
+        if (receiver != null) {
+            result.setImplicitReceiver(receiver);
+        }
+        result.changeLockLevel(WritableScope.LockLevel.READING);
+        return result;
+    }
 }

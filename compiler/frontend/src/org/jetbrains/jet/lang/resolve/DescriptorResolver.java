@@ -890,50 +890,6 @@ public class DescriptorResolver {
         return variableDescriptor;
     }
 
-    public JetScope getPropertyDeclarationInnerScope(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetScope outerScope,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            BindingTrace trace
-    ) {
-        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, true);
-    }
-
-    public JetScope getPropertyDeclarationInnerScopeForInitializer(
-            @NotNull JetScope outerScope,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            BindingTrace trace
-    ) {
-        return getPropertyDeclarationInnerScope(null, outerScope, typeParameters, receiver, trace, false);
-    }
-
-    private JetScope getPropertyDeclarationInnerScope(
-            @Nullable PropertyDescriptor propertyDescriptor, // PropertyDescriptor can be null for property scope which hasn't label to property (in this case addLabelForProperty parameter must be false
-            @NotNull JetScope outerScope,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            BindingTrace trace,
-            boolean addLabelForProperty
-    ) {
-        WritableScopeImpl result = new WritableScopeImpl(
-                outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace),
-                "Property declaration inner scope");
-        if (addLabelForProperty) {
-            assert propertyDescriptor != null : "PropertyDescriptor can be null for property scope which hasn't label to property";
-            result.addLabeledDeclaration(propertyDescriptor);
-        }
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-            result.addTypeParameterDescriptor(typeParameterDescriptor);
-        }
-        if (receiver != null) {
-            result.setImplicitReceiver(receiver);
-        }
-        result.changeLockLevel(WritableScope.LockLevel.READING);
-        return result;
-    }
-
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -991,8 +947,8 @@ public class DescriptorResolver {
         ReceiverParameterDescriptor receiverDescriptor = DescriptorFactory.createReceiverParameterForCallable(propertyDescriptor,
                                                                                                               receiverType);
 
-        JetScope propertyScope = getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
-                                                                  NO_RECEIVER_PARAMETER, trace);
+        JetScope propertyScope = JetScopeUtils.getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
+                                                                                NO_RECEIVER_PARAMETER, trace);
 
         JetType type = getVariableType(propertyDescriptor, propertyScope, property, dataFlowInfo, true, trace);
 
@@ -1097,7 +1053,7 @@ public class DescriptorResolver {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, this, trace);
+        JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, trace);
 
         JetType type = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, propertyDescriptor, scope, accessorScope, trace, dataFlowInfo);

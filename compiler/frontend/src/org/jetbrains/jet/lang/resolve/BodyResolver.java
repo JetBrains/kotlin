@@ -464,7 +464,7 @@ public class BodyResolver {
     private JetScope makeScopeForPropertyAccessor(@NotNull JetPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor) {
         JetScope accessorDeclaringScope = context.getDeclaringScopes().apply(accessor);
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
-        return JetScopeUtils.makeScopeForPropertyAccessor(descriptor, accessorDeclaringScope, descriptorResolver, trace);
+        return JetScopeUtils.makeScopeForPropertyAccessor(descriptor, accessorDeclaringScope, trace);
     }
 
     public void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor) {
@@ -521,10 +521,10 @@ public class BodyResolver {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 
-        JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
+        JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 propertyScope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
-                propertyDescriptor, parentScopeForAccessor, descriptorResolver, trace);
+                propertyDescriptor, parentScopeForAccessor, trace);
 
         JetType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, jetProperty, propertyDescriptor, propertyDeclarationInnerScope, accessorScope, trace,
@@ -545,7 +545,7 @@ public class BodyResolver {
             @NotNull JetExpression initializer,
             @NotNull JetScope scope
     ) {
-        JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScopeForInitializer(
+        JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, context.getOuterDataFlowInfo(), trace);
