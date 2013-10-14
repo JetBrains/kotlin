@@ -1,18 +1,18 @@
 package org.jetbrains.eval4j.jdi.test
 
+import org.jetbrains.eval4j.*
 import com.sun.jdi
 import junit.framework.TestSuite
 import org.jetbrains.eval4j.test.buildTestSuite
 import junit.framework.TestCase
 import org.jetbrains.eval4j.interpreterLoop
 import org.junit.Assert.*
-import org.jetbrains.eval4j.jdi.makeInitialFrame
-import org.jetbrains.eval4j.jdi.JDIEval
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 import org.jetbrains.eval4j.ExceptionThrown
-import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.MethodDescription
+import org.jetbrains.eval4j.ValueReturned
+import org.jetbrains.eval4j.jdi.*
 
 val DEBUGEE_CLASS = javaClass<Debugee>()
 
@@ -95,20 +95,31 @@ fun suite(): TestSuite {
 
                 if (remainingTests.decrementAndGet() == 0) vm.resume()
 
+                fun jdi.ObjectReference?.callToString(): String? {
+                    if (this == null) return "null"
+                    return (eval.invokeMethod(
+                                                this.asValue(),
+                                                MethodDescription(
+                                                        "java/lang/Object",
+                                                        "toString",
+                                                        "()Ljava/lang/String;",
+                                                        false
+                                                ),
+                                                listOf()).jdiObj as jdi.StringReference).value()
+
+                }
+
                 if (value is ExceptionThrown) {
-                    val str = eval.invokeMethod(
-                            value.exception,
-                            MethodDescription(
-                                    "java/lang/Object",
-                                    "toString",
-                                    "()Ljava/lang/String;",
-                                    false
-                            ),
-                            listOf())
+                    val str = value.exception.jdiObj.callToString()
                     System.err.println("Exception: $str")
                 }
 
-                assertEquals(expected, value)
+                if (expected is ValueReturned && value is ValueReturned && value.result is ObjectValue) {
+                    assertEquals(expected.result.obj.toString(), value.result.jdiObj.callToString())
+                }
+                else {
+                    assertEquals(expected, value)
+                }
             }
         }
     }

@@ -153,7 +153,7 @@ class TestData {
     }
 
     static Object getStaticField() {
-        return String.CASE_INSENSITIVE_ORDER;
+        return C.FOO;
     }
 
     static int FIELD = 0;
@@ -167,6 +167,8 @@ class TestData {
     }
 
     static class C {
+        static String FOO = "FOO";
+
         int y = 15;
 
         C(int y) {
