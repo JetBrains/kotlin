@@ -176,10 +176,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                     ObjectValue(value.obj, targetType)
                 }
                 else {
-                    throw ThrownFromEvalException(ObjectValue(
-                            ClassCastException("Value '$value' cannot be cast to $targetType"),
-                            Type.getType(javaClass<ClassCastException>())
-                    ))
+                    throwException(ClassCastException("Value '$value' cannot be cast to $targetType"))
                 }
             }
 
