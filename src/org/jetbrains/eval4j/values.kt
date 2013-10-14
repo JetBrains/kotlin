@@ -101,11 +101,11 @@ val Value.obj: Any?
 
 fun <T: Any> T?.checkNull(): T {
     if (this == null) {
-        throwException(NullPointerException())
+        throwEvalException(NullPointerException())
     }
     return this
 }
 
-fun throwException(e: Throwable): Nothing {
+fun throwEvalException(e: Throwable): Nothing {
     throw ThrownFromEvalException(ObjectValue(e, Type.getType(e.javaClass)))
 }

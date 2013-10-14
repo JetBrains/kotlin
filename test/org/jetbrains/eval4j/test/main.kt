@@ -170,7 +170,7 @@ object REFLECTION_EVAL : Eval {
             }
         }
         catch (e: Throwable) {
-            throwException(e)
+            throwEvalException(e)
         }
     }
 
