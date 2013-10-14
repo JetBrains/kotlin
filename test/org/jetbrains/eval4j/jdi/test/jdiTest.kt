@@ -93,8 +93,6 @@ fun suite(): TestSuite {
                         eval
                 )
 
-                if (remainingTests.decrementAndGet() == 0) vm.resume()
-
                 fun jdi.ObjectReference?.callToString(): String? {
                     if (this == null) return "null"
                     return (eval.invokeMethod(
@@ -109,17 +107,23 @@ fun suite(): TestSuite {
 
                 }
 
-                if (value is ExceptionThrown) {
-                    val str = value.exception.jdiObj.callToString()
-                    System.err.println("Exception: $str")
+                try {
+                    if (value is ExceptionThrown) {
+                        val str = value.exception.jdiObj.callToString()
+                        System.err.println("Exception: $str")
+                    }
+
+                    if (expected is ValueReturned && value is ValueReturned && value.result is ObjectValue) {
+                        assertEquals(expected.result.obj.toString(), value.result.jdiObj.callToString())
+                    }
+                    else {
+                        assertEquals(expected, value)
+                    }
+                }
+                finally {
+                    if (remainingTests.decrementAndGet() == 0) vm.resume()
                 }
 
-                if (expected is ValueReturned && value is ValueReturned && value.result is ObjectValue) {
-                    assertEquals(expected.result.obj.toString(), value.result.jdiObj.callToString())
-                }
-                else {
-                    assertEquals(expected, value)
-                }
             }
         }
     }
