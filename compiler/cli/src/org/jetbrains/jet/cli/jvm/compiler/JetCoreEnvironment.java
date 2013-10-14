@@ -64,19 +64,38 @@ import java.util.List;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
+@SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
 public class JetCoreEnvironment {
 
     private static final Object APPLICATION_LOCK = new Object();
     private static JavaCoreApplicationEnvironment ourApplicationEnvironment;
+    private static int ourProjectCount = 0;
 
     @NotNull
     public static JetCoreEnvironment createForProduction(@NotNull Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
-        return new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(), configuration);
+        // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
+        // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
+        Disposer.register(parentDisposable, new Disposable() {
+            @Override
+            public void dispose() {
+                synchronized (APPLICATION_LOCK) {
+                    if (--ourProjectCount <= 0) {
+                        disposeApplicationEnvironment();
+                    }
+                }
+            }
+        });
+        JetCoreEnvironment environment = new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(), configuration);
+        synchronized (APPLICATION_LOCK) {
+            ourProjectCount++;
+        }
+        return environment;
     }
 
     @TestOnly
     @NotNull
     public static JetCoreEnvironment createForTests(@NotNull Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
+        // Tests are supposed to create a single project and dispose it right after use
         return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable), configuration);
     }
 
@@ -87,11 +106,11 @@ public class JetCoreEnvironment {
 
             Disposable parentDisposable = Disposer.newDisposable();
             ourApplicationEnvironment = createApplicationEnvironment(parentDisposable);
+            ourProjectCount = 0;
             Disposer.register(parentDisposable, new Disposable() {
                 @Override
                 public void dispose() {
                     synchronized (APPLICATION_LOCK) {
-                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         ourApplicationEnvironment = null;
                     }
                 }
