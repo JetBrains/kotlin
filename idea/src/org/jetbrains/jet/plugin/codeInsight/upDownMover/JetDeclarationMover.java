@@ -107,10 +107,12 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private static PsiElement skipInsignificantElements(@NotNull PsiElement element, boolean down) {
+    private static PsiElement skipInsignificantElements(@Nullable PsiElement element, boolean down) {
+        if (element == null) return null;
+
         PsiElement result = element;
 
-        while (result instanceof PsiWhiteSpace || result.getTextLength() == 0) {
+        while (result instanceof PsiWhiteSpace || result instanceof PsiComment || result.getTextLength() == 0) {
             result = down ? result.getNextSibling() : result.getPrevSibling();
             if (result == null) break;
         }
@@ -120,12 +122,19 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
     @Override
     protected LineRange getElementSourceLineRange(@NotNull PsiElement element, @NotNull Editor editor, @NotNull LineRange oldRange) {
-        JetDeclaration declaration = (JetDeclaration) element;
+        PsiElement first;
+        PsiElement last;
 
-        PsiElement first = skipInsignificantElements(declaration.getFirstChild(), true);
-        PsiElement last = skipInsignificantElements(declaration.getLastChild(), false);
+        if (element instanceof JetDeclaration) {
+            first = skipInsignificantElements(element.getFirstChild(), true);
+            last = skipInsignificantElements(element.getLastChild(), false);
 
-        if (first == null || last == null) return null;
+            if (first == null || last == null) return null;
+        }
+        else {
+            first = last = element;
+        }
+
 
         TextRange textRange1 = first.getTextRange();
         TextRange textRange2 = last.getTextRange();
@@ -137,19 +146,27 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         int startLine = editor.offsetToLogicalPosition(textRange1.getStartOffset()).line;
         int endLine = editor.offsetToLogicalPosition(textRange2.getEndOffset()).line + 1;
 
-        if (startLine == oldRange.startLine || startLine == oldRange.endLine
+        if (element instanceof PsiComment
+            || startLine == oldRange.startLine || startLine == oldRange.endLine
             || endLine == oldRange.startLine || endLine == oldRange.endLine) {
             return new LineRange(startLine, endLine);
         }
 
         TextRange lineTextRange = new TextRange(doc.getLineStartOffset(oldRange.startLine),
                                                 doc.getLineEndOffset(oldRange.endLine));
-        for (PsiElement anchor : getDeclarationAnchors(declaration)) {
-            TextRange suspectTextRange = anchor.getTextRange();
-            if (suspectTextRange != null && lineTextRange.intersects(suspectTextRange)) return new LineRange(startLine, endLine);
+        if (element instanceof JetDeclaration) {
+            for (PsiElement anchor : getDeclarationAnchors((JetDeclaration) element)) {
+                TextRange suspectTextRange = anchor.getTextRange();
+                if (suspectTextRange != null && lineTextRange.intersects(suspectTextRange)) return new LineRange(startLine, endLine);
+            }
         }
 
         return null;
+    }
+
+    @Override
+    protected PsiElement adjustElement(PsiElement element, Editor editor, boolean first) {
+        return first ? getTopmostSiblingCommentOrOriginal(element, editor) : element;
     }
 
     @Nullable
@@ -163,6 +180,10 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         PsiElement end = sibling;
 
         PsiElement nextParent = null;
+
+        if (target instanceof PsiComment) {
+            target = PsiTreeUtil.getNextSiblingOfType(target, JetDeclaration.class);
+        }
 
         // moving out of code block
         if (sibling.getNode().getElementType() == (down ? JetTokens.RBRACE : JetTokens.LBRACE)) {
@@ -181,15 +202,24 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         }
         // moving into code block
         // element may move only into class body
-        else if (sibling instanceof JetClassOrObject) {
-            JetClassOrObject jetClassOrObject = (JetClassOrObject) sibling;
-            JetClassBody classBody = jetClassOrObject.getBody();
+        else {
+            PsiElement adjustedSibling = sibling;
+            if (adjustedSibling instanceof PsiComment || isEmptyNamespaceHeader(adjustedSibling)) {
+                adjustedSibling = PsiTreeUtil.getNextSiblingOfType(adjustedSibling, JetDeclaration.class);
+            }
 
-            // confined elements can't leave their block
-            if (classBody != null) {
-                nextParent = classBody;
-                start = down ? jetClassOrObject : classBody.getRBrace();
-                end = down ? classBody.getLBrace() : classBody.getRBrace();
+            if (adjustedSibling instanceof JetClassOrObject) {
+                JetClassOrObject jetClassOrObject = (JetClassOrObject) adjustedSibling;
+                JetClassBody classBody = jetClassOrObject.getBody();
+
+                // confined elements can't leave their block
+                if (classBody != null) {
+                    nextParent = classBody;
+                    if (!down) {
+                        start = classBody.getRBrace();
+                    }
+                    end = down ? classBody.getLBrace() : classBody.getRBrace();
+                }
             }
         }
 
@@ -208,14 +238,28 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
         if (target instanceof JetPropertyAccessor && !(sibling instanceof JetPropertyAccessor)) return null;
 
-        if (start != null && start.getFirstChild() != null) {
+        if (!down && start instanceof JetDeclaration) {
+            start = getTopmostSiblingCommentOrOriginal(start, editor);
+        }
+        else if (start != null && start.getFirstChild() != null) {
             start = skipInsignificantElements(start.getFirstChild(), true);
         }
-        if (end != null && end.getFirstChild() != null) {
+
+        if (down && end instanceof PsiComment) {
+            PsiElement nextDeclaration = PsiTreeUtil.getNextSiblingOfType(end, JetDeclaration.class);
+            if (nextDeclaration != null) {
+                end = nextDeclaration;
+            }
+        }
+        else if (end != null && end.getFirstChild() != null) {
             end = skipInsignificantElements(end.getLastChild(), false);
         }
 
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
+    }
+
+    private static boolean isEmptyNamespaceHeader(PsiElement adjustedSibling) {
+        return adjustedSibling instanceof JetNamespaceHeader && adjustedSibling.getTextLength() == 0;
     }
 
     @Override
@@ -248,5 +292,20 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         info.toMove = sourceRange;
         info.toMove2 = getTargetRange(editor, sibling, down, sourceRange.firstElement);
         return true;
+    }
+
+    @NotNull
+    private static PsiElement getTopmostSiblingCommentOrOriginal(@NotNull PsiElement originalElement, @NotNull Editor editor) {
+        PsiElement element = originalElement;
+        PsiElement sibling = element.getPrevSibling();
+        while (sibling instanceof PsiComment
+               || (sibling instanceof PsiWhiteSpace && getElementLineCount(sibling, editor) <= 1)
+               || (sibling != null && (sibling.getText() == null || sibling.getText().isEmpty()))) {
+            if (sibling instanceof PsiComment) {
+                element = sibling;
+            }
+            sibling = sibling.getPrevSibling();
+        }
+        return element;
     }
 }

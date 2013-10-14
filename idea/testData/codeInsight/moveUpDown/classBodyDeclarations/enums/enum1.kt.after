@@ -1,7 +1,11 @@
 // MOVE: down
+// class A
 class A {
+    // class B
     enum class B {
+        // Y
         Y
+        // X
         <caret>X
     }
 }
