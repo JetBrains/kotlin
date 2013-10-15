@@ -20,13 +20,14 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
-import org.jetbrains.jet.utils.toMap
+import org.jetbrains.jet.utils.valuesToMap
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
+import org.jetbrains.jet.lang.resolve.name.FqName
 
 trait LazyJavaClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
+    fun resolveClassByFqName(fqName: FqName): ClassDescriptor?
 }
 
 trait TypeParameterResolver {
@@ -44,7 +45,7 @@ class TypeParameterResolverImpl(
         private val parent: TypeParameterResolver = TypeParameterResolver.EMPTY
 ) : TypeParameterResolver {
 
-    private val parameters = _typeParameters.toMap { p -> p.javaTypeParameter }
+    private val parameters = _typeParameters.valuesToMap { p -> p.javaTypeParameter }
 
     override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
         return parameters[javaTypeParameter] ?: parent.resolveTypeParameter(javaTypeParameter)

@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
+import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
 
 class LazyJavaClassDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
@@ -63,8 +64,8 @@ class LazyJavaClassDescriptor(
 
     override fun getClassObjectDescriptor(): ClassDescriptor? = null
 
-    // TODO
-    override fun getAnnotations(): List<AnnotationDescriptor> = Collections.emptyList()
+    private val _annotations = c.resolveAnnotations(jClass.getAnnotations())
+    override fun getAnnotations(): List<AnnotationDescriptor> = _annotations
 
     private inner class LazyJavaClassTypeConstructor : TypeConstructor {
 

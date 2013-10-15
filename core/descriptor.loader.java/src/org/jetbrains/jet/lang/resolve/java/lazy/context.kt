@@ -21,6 +21,9 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDescriptor
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 
 open class LazyJavaResolverContext(
         val storageManager: StorageManager,
@@ -49,3 +52,6 @@ fun LazyJavaResolverContextWithTypes.child(
         containingDeclaration: DeclarationDescriptor,
         typeParameters: Set<JavaTypeParameter>
 ): LazyJavaResolverContextWithTypes = this.withTypes(LazyJavaTypeParameterResolver(this, containingDeclaration, typeParameters))
+
+fun LazyJavaResolverContextWithTypes.resolveAnnotations(javaAnnotations: Collection<JavaAnnotation>): List<AnnotationDescriptor>
+        = javaAnnotations.map {jAnnotation -> LazyJavaAnnotationDescriptor(this, jAnnotation)}

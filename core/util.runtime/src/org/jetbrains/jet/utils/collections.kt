@@ -18,10 +18,29 @@ package org.jetbrains.jet.utils
 
 import java.util.LinkedHashMap
 
-public fun <K, V> Iterable<V>.toMap(key: (V) -> K): Map<K, V> {
+public fun <K, V> Iterable<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (v in this) {
         map[key(v)] = v
+    }
+    return map
+}
+
+public fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
+    val map = LinkedHashMap<K, V>()
+    for (k in this) {
+        map[k] = value(k)
+    }
+    return map
+}
+
+public fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
+    val map = LinkedHashMap<K, V>()
+    for (k in this) {
+        val v = value(k)
+        if (v != null) {
+            map[k] = v
+        }
     }
     return map
 }
