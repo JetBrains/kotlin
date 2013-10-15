@@ -45,7 +45,7 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
 
     public void testInClass() {
         loadFile();
-        assertClassHasAnnotatedSyntheticMethod(generateClass("A"));
+        assertAnnotatedSyntheticMethodExistence(true, generateClass("A"));
     }
 
     public void testTopLevel() {
@@ -55,14 +55,24 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
             if (fileName.startsWith(packageClassName) && !fileName.equals(packageClassName + ".class")) {
                 // This should be package$src class
                 Class<?> a = generateClass(fileName.substring(0, fileName.length() - ".class".length()));
-                assertClassHasAnnotatedSyntheticMethod(a);
+                assertAnnotatedSyntheticMethodExistence(true, a);
             }
         }
     }
 
-    private static void assertClassHasAnnotatedSyntheticMethod(@NotNull Class<?> a) {
-        for (Method method : a.getDeclaredMethods()) {
+    public void testInTrait() throws ClassNotFoundException {
+        loadFile();
+        GeneratedClassLoader loader = generateAndCreateClassLoader();
+        assertAnnotatedSyntheticMethodExistence(false, loader.loadClass("T"));
+        assertAnnotatedSyntheticMethodExistence(true, loader.loadClass("T" + JvmAbi.TRAIT_IMPL_SUFFIX));
+    }
+
+    private static void assertAnnotatedSyntheticMethodExistence(boolean expected, @NotNull Class<?> clazz) {
+        for (Method method : clazz.getDeclaredMethods()) {
             if (TEST_SYNTHETIC_METHOD_NAME.equals(method.getName())) {
+                if (!expected) {
+                    fail("Synthetic method for annotated property found, but not expected: " + method);
+                }
                 assertTrue(method.isSynthetic());
                 int modifiers = method.getModifiers();
                 assertTrue(Modifier.isFinal(modifiers));
@@ -75,6 +85,8 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
                 return;
             }
         }
-        fail("Synthetic method for annotated property not found: " + TEST_SYNTHETIC_METHOD_NAME);
+        if (expected) {
+            fail("Synthetic method for annotated property expected, but not found: " + TEST_SYNTHETIC_METHOD_NAME);
+        }
     }
 }
