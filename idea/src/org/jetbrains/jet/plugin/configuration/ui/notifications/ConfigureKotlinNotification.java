@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.configuration.ui;
+package org.jetbrains.jet.plugin.configuration.ui.notifications;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;

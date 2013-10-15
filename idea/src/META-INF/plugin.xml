@@ -310,7 +310,7 @@
 
     <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.AbsentJdkAnnotationsNotifications"/>
+    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.configuration.ui.AbsentJdkAnnotationsNotifications"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.IncorrectSourceRootNameNotification"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 
