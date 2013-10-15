@@ -16,11 +16,18 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.*;
 
 public class FunctionGenTest extends CodegenTestCase {
     @Override
@@ -53,5 +60,59 @@ public class FunctionGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         assertTrue((Boolean) foo.invoke(null, "lala"));
         assertFalse((Boolean) foo.invoke(null, "mama"));
+    }
+
+    public void testRecursion() throws Exception {
+        loadFile("box/functions/recursion.kt");
+        ClassFileFactory classFileFactory = generateClassesInFile();
+
+        List< JetCallExpression > tailRecursions =
+                new ArrayList<JetCallExpression>(
+                classFileFactory.getState().getBindingTrace().getKeys(BindingContext.TAIL_RECURSION_CALL)
+            );
+
+        Collections.sort(tailRecursions, new Comparator<JetCallExpression>() {
+            @Override
+            public int compare(JetCallExpression o1, JetCallExpression o2) {
+                return o1.getTextOffset() - o2.getTextOffset();
+            }
+        });
+
+        List<String> texts = new ArrayList<String>(tailRecursions.size());
+        for (JetCallExpression recursion : tailRecursions) {
+            texts.add(recursion.getText());
+        }
+
+        System.out.println(Joiner.on(",\n").skipNulls().join(Lists.transform(texts, new Function<String, String>() {
+            @Override
+            public String apply(@Nullable String input) {
+                return input == null ? "" : ("\"" + input.replace("\"", "\\\"") + "\"");
+            }
+        })));
+
+        assertEquals(
+                Arrays.asList(
+                        "a(counter + 1, text, e + 1, \"tail 7\")",
+                        "a2(counter - 1, \"tail 17\")",
+                        "b(acounter + 1, \"tail 25\")",
+                        "b(acounter + 1, \"tail 29\")",
+                        "b(acounter + 1, \"tail 40\")",
+                        "c(counter + 1, \"tail 44\")",
+                        "d(counter + 1, \"tail 48\")",
+                        "e(counter - 1, \"tail 59\")",
+                        "e(counter - 1, \"tail 59\")",
+                        "e2(counter - 1, \"tail 69\")",
+                        "e2(counter - 1, \"tail 69\")",
+                        "g3(counter - 1, \"tail 97\")",
+                        "f1(\"tail 104\")",
+                        "f2(\"tail 108\")",
+                        "h(counter - 1, \"tail 119\")",
+                        "repeat(num - 1, acc.append(this)!!)",
+                        "escape(i + 1, result + escapeChar(get(i)))",
+                        "foldl(foldFunction(next(), acc), foldFunction)",
+                        "withWhen(counter - 1, \"tail\")"
+                ),
+                texts
+        );
     }
 }

@@ -25,10 +25,16 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
+import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.diagnostics.SimpleDiagnostic;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public abstract class FunctionGenerationStrategy {
 
@@ -81,6 +87,17 @@ public abstract class FunctionGenerationStrategy {
         @Override
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             codegen.returnExpression(declaration.getBodyExpression());
+
+            if (TailRecursionGeneratorUtil.hasTailRecursiveAnnotation(callableDescriptor)) {
+                List<JetCallExpression> tailRecursionsFound =
+                        TailRecursionGeneratorUtil.findRecursiveCalls(codegen.context.getContextDescriptor(), state);
+
+                JetExpression bodyExpression = declaration.getBodyExpression();
+                if (tailRecursionsFound.isEmpty() && bodyExpression != null) {
+                    state.getBindingTrace().report(new SimpleDiagnostic<JetExpression>(bodyExpression, DiagnosticFactory0.<JetExpression>create(
+                            Severity.WARNING), Severity.WARNING));
+                }
+            }
         }
     }
 
