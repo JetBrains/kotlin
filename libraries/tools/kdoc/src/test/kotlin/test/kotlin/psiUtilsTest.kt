@@ -33,7 +33,7 @@ class PsiUtilsTest {
 
         val configuration = CompilerConfiguration()
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar())
-        environment = JetCoreEnvironment(rootDisposable, configuration)
+        environment = JetCoreEnvironment.createForTests(rootDisposable, configuration)
     }
 
     [After]
