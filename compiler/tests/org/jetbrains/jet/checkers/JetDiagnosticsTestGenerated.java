@@ -2808,6 +2808,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/generics"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("ClassObjectBoundsAreNotSupported.kt")
+            public void testClassObjectBoundsAreNotSupported() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/generics/ClassObjectBoundsAreNotSupported.kt");
+            }
+            
             @TestMetadata("kt1575-Class.kt")
             public void testKt1575_Class() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/generics/kt1575-Class.kt");

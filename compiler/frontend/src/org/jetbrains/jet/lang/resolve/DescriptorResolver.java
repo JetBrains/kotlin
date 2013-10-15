@@ -633,6 +633,10 @@ public class DescriptorResolver {
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
+            if (constraint.isClassObjectContraint()) {
+                trace.report(UNSUPPORTED.on(constraint, "Class objects constraints are not supported yet"));
+            }
+
             JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
             if (subjectTypeParameterName == null) {
                 continue;

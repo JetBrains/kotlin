@@ -1,1 +1,1 @@
-class CO<T> where class object T : CO<T>
+class CO<T> where <!UNSUPPORTED!>class object T : CO<T><!>
