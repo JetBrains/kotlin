@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DiagnosticMessageTest extends JetLiteFixture {
+public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
     private static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
 
@@ -56,15 +56,16 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
     }
 
-    public void doTest(String name) throws Exception {
-        String fileName = name + ".kt";
-        JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
+    public void doTest(String filePath) throws Exception {
+        File file = new File(filePath);
+        String fileName = file.getName();
 
-        String fileData = JetTestUtils.doLoadFile(new File(getTestDataPath() + fileName));
+        String fileData = JetTestUtils.doLoadFile(file);
         Map<String,String> directives = JetTestUtils.parseDirectives(fileData);
         int diagnosticNumber = computeDiagnosticNumber(directives);
         final Set<DiagnosticFactory> diagnosticFactories = computeDiagnosticFactories(directives);
 
+        JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
@@ -78,6 +79,7 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         assertEquals("Expected diagnostics number mismatch:", diagnosticNumber, diagnostics.size());
 
         int index = 1;
+        String name = FileUtil.getNameWithoutExtension(fileName);
         for (Diagnostic diagnostic : diagnostics) {
             String readableDiagnosticText;
             String extension;
@@ -134,41 +136,5 @@ public class DiagnosticMessageTest extends JetLiteFixture {
             }
         }
         return diagnosticFactories;
-    }
-
-    public void testConflictingSubstitutions() throws Exception {
-        doTest("conflictingSubstitutions");
-    }
-
-    public void testFunctionPlaceholder() throws Exception {
-        doTest("functionPlaceholder");
-    }
-
-    public void testRenderCollectionOfTypes() throws Exception {
-        doTest("renderCollectionOfTypes");
-    }
-
-    public void testInaccessibleOuterClassExpression() throws Exception {
-        doTest("inaccessibleOuterClassExpression");
-    }
-
-    public void testUpperBoundViolated() throws Exception {
-        doTest("upperBoundViolated");
-    }
-
-    public void testTypeMismatchWithNothing() throws Exception {
-        doTest("typeMismatchWithNothing");
-    }
-
-    public void testInvisibleMember() throws Exception {
-        doTest("invisibleMember");
-    }
-
-    public void testNumberValueTypes() throws Exception {
-        doTest("numberValueTypes");
-    }
-
-    public void testTypeInferenceExpectedTypeMismatch() throws Exception {
-        doTest("typeInferenceExpectedTypeMismatch");
     }
 }
