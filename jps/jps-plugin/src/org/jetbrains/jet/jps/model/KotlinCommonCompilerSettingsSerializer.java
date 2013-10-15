@@ -36,7 +36,7 @@ class KotlinCommonCompilerSettingsSerializer extends JpsProjectExtensionSerializ
     public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
         CommonCompilerArguments settings = XmlSerializer.deserialize(componentTag, CommonCompilerArguments.DummyImpl.class);
         if (settings == null) {
-            settings = CommonCompilerArguments.DUMMY;
+            settings = new CommonCompilerArguments.DummyImpl();
         }
 
         JpsKotlinCompilerSettings.setCommonSettings(project, settings);
