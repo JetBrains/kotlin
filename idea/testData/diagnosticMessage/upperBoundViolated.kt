@@ -1,3 +1,6 @@
+// !DIAGNOSTICS_NUMBER: 3
+// !DIAGNOSTICS: TYPE_INFERENCE_UPPER_BOUND_VIOLATED
+
 package i
 
 fun foo<R, T: List<R>>(r: R, list: T) {}

@@ -1,3 +1,6 @@
+// !DIAGNOSTICS_NUMBER: 3
+// !DIAGNOSTICS: TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH
+
 package s
 
 fun <T> id(t: T): T = t

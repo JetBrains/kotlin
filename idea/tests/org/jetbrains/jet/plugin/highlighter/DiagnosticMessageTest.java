@@ -18,9 +18,11 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
@@ -33,11 +35,17 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class DiagnosticMessageTest extends JetLiteFixture {
+    private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
+    private static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
+
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
@@ -48,18 +56,22 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
     }
 
-    public void doTest(String name, int diagnosticNumber, DiagnosticFactory... diagnosticFactories) throws Exception {
+    public void doTest(String name) throws Exception {
         String fileName = name + ".kt";
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
+
+        String fileData = JetTestUtils.doLoadFile(new File(getTestDataPath() + fileName));
+        Map<String,String> directives = JetTestUtils.parseDirectives(fileData);
+        int diagnosticNumber = computeDiagnosticNumber(directives);
+        final Set<DiagnosticFactory> diagnosticFactories = computeDiagnosticFactories(directives);
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
-        final Set<DiagnosticFactory> factoriesSet = Sets.newHashSet(diagnosticFactories);
         List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
             @Override
             public boolean value(Diagnostic diagnostic) {
-                return factoriesSet.contains(diagnostic.getFactory());
+                return diagnosticFactories.contains(diagnostic.getFactory());
             }
         });
 
@@ -86,40 +98,77 @@ public class DiagnosticMessageTest extends JetLiteFixture {
         }
     }
 
+    private int computeDiagnosticNumber(Map<String, String> directives) {
+        String diagnosticsNumber = directives.get(DIAGNOSTICS_NUMBER_DIRECTIVE);
+        assert diagnosticsNumber != null : DIAGNOSTICS_NUMBER_DIRECTIVE + " should be present.";
+        try {
+            return Integer.parseInt(diagnosticsNumber);
+        }
+        catch (NumberFormatException e) {
+            throw new AssertionError(DIAGNOSTICS_NUMBER_DIRECTIVE + " should contain number as its value.");
+        }
+    }
+
+    private Set<DiagnosticFactory> computeDiagnosticFactories(Map<String, String> directives) {
+        String diagnosticsData = directives.get(DIAGNOSTICS_DIRECTIVE);
+        assert diagnosticsData != null : DIAGNOSTICS_DIRECTIVE + " should be present.";
+        Set<DiagnosticFactory> diagnosticFactories = Sets.newHashSet();
+        String[] diagnostics = diagnosticsData.split(" ");
+        for (String diagnosticName : diagnostics) {
+            String errorMessage = "Can't load diagnostic factory for " + diagnosticName;
+            try {
+                Field field = Errors.class.getField(diagnosticName);
+                Object value = field.get(null);
+                if (value instanceof DiagnosticFactory) {
+                    diagnosticFactories.add((DiagnosticFactory)value);
+                }
+                else {
+                    throw new AssertionError(errorMessage);
+                }
+            }
+            catch (NoSuchFieldException e) {
+                throw new AssertionError(errorMessage);
+            }
+            catch (IllegalAccessException e) {
+                throw new AssertionError(errorMessage);
+            }
+        }
+        return diagnosticFactories;
+    }
+
     public void testConflictingSubstitutions() throws Exception {
-        doTest("conflictingSubstitutions", 2, Errors.TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS);
+        doTest("conflictingSubstitutions");
     }
 
     public void testFunctionPlaceholder() throws Exception {
-        doTest("functionPlaceholder", 3, Errors.TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH);
+        doTest("functionPlaceholder");
     }
 
     public void testRenderCollectionOfTypes() throws Exception {
-        doTest("renderCollectionOfTypes", 1, Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH);
+        doTest("renderCollectionOfTypes");
     }
 
     public void testInaccessibleOuterClassExpression() throws Exception {
-        doTest("inaccessibleOuterClassExpression", 1, Errors.INACCESSIBLE_OUTER_CLASS_EXPRESSION);
+        doTest("inaccessibleOuterClassExpression");
     }
 
     public void testUpperBoundViolated() throws Exception {
-        doTest("upperBoundViolated", 3, Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED);
+        doTest("upperBoundViolated");
     }
 
     public void testTypeMismatchWithNothing() throws Exception {
-        doTest("typeMismatchWithNothing", 1, Errors.TYPE_MISMATCH);
+        doTest("typeMismatchWithNothing");
     }
 
     public void testInvisibleMember() throws Exception {
-        doTest("invisibleMember", 3, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER, Errors.INVISIBLE_MEMBER);
+        doTest("invisibleMember");
     }
 
     public void testNumberValueTypes() throws Exception {
-        doTest("numberValueTypes", 4, Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, Errors.TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
-               Errors.TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS);
+        doTest("numberValueTypes");
     }
 
     public void testTypeInferenceExpectedTypeMismatch() throws Exception {
-        doTest("typeInferenceExpectedTypeMismatch", 3, Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
+        doTest("typeInferenceExpectedTypeMismatch");
     }
 }

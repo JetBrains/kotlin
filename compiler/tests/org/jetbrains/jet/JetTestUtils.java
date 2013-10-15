@@ -436,7 +436,7 @@ public class JetTestUtils {
         return testFiles;
     }
 
-    private static Map<String, String> parseDirectives(String expectedText) {
+    public static Map<String, String> parseDirectives(String expectedText) {
         Map<String, String> directives = Maps.newHashMap();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
         int start = 0;
