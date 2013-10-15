@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.jetbrains.jet.cli.common.arguments.CompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 
 /**
@@ -30,7 +30,7 @@ import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
  */
 public class KotlinCompileMojo extends KotlinCompileMojoBase {
     @Override
-    protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
+    protected void configureCompilerArguments(CommonCompilerArguments arguments) throws MojoExecutionException {
         if (arguments instanceof K2JVMCompilerArguments) {
             configureBaseCompilerArguments(getLog(), (K2JVMCompilerArguments) arguments, module, getSources(), classpath, output);
         }

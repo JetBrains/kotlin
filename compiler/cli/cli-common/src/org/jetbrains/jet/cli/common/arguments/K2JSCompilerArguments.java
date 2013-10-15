@@ -45,9 +45,4 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "main", description = "Whether a main function should be called; either '" + CALL +
                                             "' or '" + NO_CALL + "', default '" + CALL + "' (main function will be auto detected)")
     public String main;
-
-    @Override
-    public String getSrc() {
-        throw new IllegalStateException();
-    }
 }

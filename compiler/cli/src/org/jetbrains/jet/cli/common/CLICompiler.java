@@ -24,7 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.sampullara.cli.Args;
 import com.sampullara.cli.ArgumentUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.CompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -34,7 +34,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
-public abstract class CLICompiler<A extends CompilerArguments> {
+public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @NotNull
     private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
@@ -112,7 +112,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      */
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull A arguments) {
-        if (arguments.isHelp()) {
+        if (arguments.help) {
             usage(errStream);
             return OK;
         }
@@ -123,7 +123,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
         printArgumentsIfNeeded(errStream, arguments, messageRenderer);
         printVersionIfNeeded(errStream, arguments, messageRenderer);
 
-        MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
+        MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
 
         if (arguments.suppressAllWarnings()) {
             collector = new FilteringMessageCollector(collector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
@@ -167,7 +167,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
     //TODO: can we make it private?
     @NotNull
     protected MessageRenderer getMessageRenderer(@NotNull A arguments) {
-        return arguments.isTags() ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
+        return arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
     }
 
     protected void printVersionIfNeeded(
@@ -175,7 +175,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             @NotNull A arguments,
             @NotNull MessageRenderer messageRenderer
     ) {
-        if (arguments.isVersion()) {
+        if (arguments.version) {
             String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
                                                            "Kotlin Compiler version " + KotlinVersion.VERSION,
                                                            CompilerMessageLocation.NO_LOCATION);
@@ -188,7 +188,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             @NotNull A arguments,
             @NotNull MessageRenderer messageRenderer
     ) {
-        if (arguments.isPrintArgs()) {
+        if (arguments.printArgs) {
             String freeArgs = StringUtil.join(arguments.freeArgs, "");
             String argumentsAsString = ArgumentUtils.convertArgumentsToString(arguments, createArguments());
             String printArgsMessage = messageRenderer.render(CompilerMessageSeverity.INFO,

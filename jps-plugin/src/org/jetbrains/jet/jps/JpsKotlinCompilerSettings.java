@@ -29,7 +29,7 @@ public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerS
     static final JpsElementChildRole<JpsKotlinCompilerSettings> ROLE = JpsElementChildRoleBase.create("Kotlin Compiler Settings");
 
     @NotNull
-    public CommonCompilerArguments commonCompilerSettings = CommonCompilerArguments.DUMMY;
+    public CommonCompilerArguments commonCompilerSettings = new CommonCompilerArguments.DummyImpl();
     @NotNull
     public K2JVMCompilerArguments k2JvmCompilerSettings = new K2JVMCompilerArguments();
     @NotNull

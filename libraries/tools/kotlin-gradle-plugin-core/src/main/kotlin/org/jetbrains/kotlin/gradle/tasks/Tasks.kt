@@ -90,16 +90,16 @@ public open class KotlinCompile(): AbstractCompile() {
             return
         }
 
-        val customSources = args.getSourceDirs();
+        val customSources = args.src;
         if (customSources == null || customSources.isEmpty()) {
-            args.setSourceDirs(sources.map { it.getAbsolutePath() })
+            args.src = sources.map { it.getAbsolutePath() } .makeString(File.pathSeparator)
         }
 
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             val existingClasspathEntries =  getClasspath().filter(KSpec<File?>({ it != null && it.exists() }))
             val effectiveClassPath = (javaSrcRoots + existingClasspathEntries).makeString(File.pathSeparator)
-            args.setClasspath(effectiveClassPath)
+            args.classpath = effectiveClassPath
         }
 
         args.outputDir = if (StringUtils.isEmpty(kotlinOptions.outputDir)) { kotlinDestinationDir?.getPath() } else { kotlinOptions.outputDir }

@@ -36,7 +36,7 @@ public class KotlinCommonCompilerSettings extends BaseKotlinCompilerSettings<Com
     @NotNull
     @Override
     protected CommonCompilerArguments createSettings() {
-        return CommonCompilerArguments.DUMMY;
+        return new CommonCompilerArguments.DummyImpl();
     }
 
     public static KotlinCommonCompilerSettings getInstance(Project project) {

@@ -21,7 +21,7 @@ import com.google.common.io.InputSupplier;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.jetbrains.jet.cli.common.CLICompiler;
-import org.jetbrains.jet.cli.common.arguments.CompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import com.intellij.openapi.util.io.FileUtil;
@@ -150,7 +150,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
     }
 
     @Override
-    protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
+    protected void configureCompilerArguments(CommonCompilerArguments arguments) throws MojoExecutionException {
         super.configureCompilerArguments(arguments);
 
         if (arguments instanceof K2JSCompilerArguments) {
@@ -168,7 +168,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
     }
 
     @Override
-    protected CompilerArguments createCompilerArguments() {
+    protected CommonCompilerArguments createCompilerArguments() {
         return new K2JSCompilerArguments();
     }
 

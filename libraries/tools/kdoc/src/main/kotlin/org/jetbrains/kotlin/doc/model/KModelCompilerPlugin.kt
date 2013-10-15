@@ -17,7 +17,7 @@ abstract class KModelCompilerPlugin(
     public override fun processFiles(context: CompilerPluginContext) {
         val bindingContext = context.getContext()
         val sources = context.getFiles()
-        val sourceDirs: List<File> = arguments.getSourceDirs().orEmpty().requireNoNulls().map { path -> File(path) }
+        val sourceDirs: List<File> = arguments.src.orEmpty().split(File.pathSeparatorChar).map { path -> File(path) }
         val model = KModel(bindingContext, arguments.apply(), sourceDirs, sources.requireNoNulls())
 
         processModel(model)

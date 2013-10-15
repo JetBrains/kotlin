@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.cli.common.arguments;
 
+import com.intellij.util.SmartList;
 import com.sampullara.cli.Argument;
 
+import java.util.List;
 import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUPPRESS_WARNINGS;
 
-public abstract class CommonCompilerArguments extends CompilerArguments {
-    public static final CommonCompilerArguments DUMMY = new DummyImpl();
-
+public abstract class CommonCompilerArguments {
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
     @Argument(value = "verbose", description = "Enable verbose logging output")
@@ -31,54 +31,17 @@ public abstract class CommonCompilerArguments extends CompilerArguments {
     public boolean version;
     @Argument(value = "help", alias = "h", description = "Show help")
     public boolean help;
-    @Argument(value = "suppress", description = "Suppress compiler messages by severity (warnings)")
+    @Argument(value = "suppress", description = "Suppress compiler messages by severity (" + SUPPRESS_WARNINGS + ")")
     public String suppress;
     @Argument(value = "printArgs", description = "Print commandline arguments")
     public boolean printArgs;
 
-    @Override
-    public boolean isHelp() {
-        return help;
-    }
+    public List<String> freeArgs = new SmartList<String>();
 
-    public void setHelp(boolean help) {
-        this.help = help;
-    }
-
-    @Override
-    public boolean isTags() {
-        return tags;
-    }
-
-    @Override
-    public boolean isVersion() {
-        return version;
-    }
-
-    @Override
-    public boolean isVerbose() {
-        return verbose;
-    }
-
-    @Override
-    public boolean isPrintArgs() {
-        return printArgs;
-    }
-
-    public void setTags(boolean tags) {
-        this.tags = tags;
-    }
-
-    @Override
     public boolean suppressAllWarnings() {
         return SUPPRESS_WARNINGS.equalsIgnoreCase(suppress);
     }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
-    public static final class DummyImpl extends CommonCompilerArguments {
-        @Override
-        public String getSrc() {
-            return null;
-        }
-    }
+    public static final class DummyImpl extends CommonCompilerArguments {}
 }

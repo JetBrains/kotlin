@@ -19,7 +19,7 @@ package org.jetbrains.jet.compiler.runner;
 import com.intellij.util.Function;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.CompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -41,7 +41,7 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERRO
 public class CompilerRunnerUtil {
 
     private static final String STRING_ARRAY_CLASS_NAME = String[].class.getName();
-    private static final String COMPILER_ARGUMENTS_CLASS_NAME = CompilerArguments.class.getName();
+    private static final String COMPILER_ARGUMENTS_CLASS_NAME = CommonCompilerArguments.class.getName();
     private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<ClassLoader>(null);
 
     public static List<File> kompilerClasspath(KotlinPaths paths, MessageCollector messageCollector) {
@@ -112,7 +112,7 @@ public class CompilerRunnerUtil {
     }
 
     public static Object invokeExecMethod(
-            String compilerClassName, CompilerArguments arguments, CompilerEnvironment environment,
+            String compilerClassName, CommonCompilerArguments arguments, CompilerEnvironment environment,
             MessageCollector messageCollector, PrintStream out, boolean usePreloader
     ) throws Exception {
         return invokeExecMethod(compilerClassName, COMPILER_ARGUMENTS_CLASS_NAME, arguments, environment, messageCollector, out, usePreloader);

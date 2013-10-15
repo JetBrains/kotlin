@@ -89,7 +89,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         List<JetFile> sourceFiles = sourceLoader.findSourceFiles();
         environmentForJS.getSourceFiles().addAll(sourceFiles);
 
-        if (arguments.isVerbose()) {
+        if (arguments.verbose) {
             reportCompiledSourcesList(messageCollector, environmentForJS);
         }
 
