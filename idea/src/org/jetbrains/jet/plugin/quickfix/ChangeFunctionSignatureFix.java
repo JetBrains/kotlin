@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -47,11 +46,10 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     protected final FunctionDescriptor functionDescriptor;
 
     public ChangeFunctionSignatureFix(
-            @NotNull PsiElement element,
             @NotNull PsiElement context,
             @NotNull FunctionDescriptor functionDescriptor
     ) {
-        super(element);
+        super(context);
         this.context = context;
         this.functionDescriptor = functionDescriptor;
     }
@@ -99,9 +97,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             BindingContext bindingContext
     ) {
         for (int i = 0; i < parameters.size(); i++) {
-            assert i <
-                   arguments
-                           .size(); // number of parameters must not be greater than the number of arguments (it's called only for TOO_MANY_ARGUMENTS error)
+            assert i < arguments .size(); // number of parameters must not be greater than the number of arguments (it's called only for TOO_MANY_ARGUMENTS error)
             JetExpression argumentExpression = arguments.get(i).getArgumentExpression();
             JetType argumentType =
                     argumentExpression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, argumentExpression) : null;
@@ -192,13 +188,8 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         }
         BindingContext bindingContext =
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) context.getContainingFile()).getBindingContext();
-        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, functionDescriptor);
-
-        if (declaration == null) {
-            return null;
-        }
         if (descriptor instanceof ValueParameterDescriptor) {
-            return new RemoveFunctionParametersFix(declaration, context, functionDescriptor, (ValueParameterDescriptor) descriptor);
+            return new RemoveFunctionParametersFix(context, functionDescriptor, (ValueParameterDescriptor) descriptor);
         }
         else {
             List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
@@ -206,7 +197,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
 
             if (arguments.size() > parameters.size()) {
                 boolean hasTypeMismatches = hasTypeMismatches(parameters, arguments, bindingContext);
-                return new AddFunctionParametersFix(declaration, callElement, functionDescriptor, hasTypeMismatches);
+                return new AddFunctionParametersFix(callElement, functionDescriptor, hasTypeMismatches);
             }
         }
 

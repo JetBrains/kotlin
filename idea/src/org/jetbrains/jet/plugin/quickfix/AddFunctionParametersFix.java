@@ -44,12 +44,11 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final boolean hasTypeMismatches;
 
     public AddFunctionParametersFix(
-            @NotNull PsiElement declaration,
             @NotNull JetCallElement callElement,
             @NotNull FunctionDescriptor functionDescriptor,
             boolean hasTypeMismatches
     ) {
-        super(declaration, callElement, functionDescriptor);
+        super(callElement, functionDescriptor);
         this.callElement = callElement;
         this.hasTypeMismatches = hasTypeMismatches;
     }

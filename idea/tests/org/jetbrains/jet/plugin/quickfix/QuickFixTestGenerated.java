@@ -375,6 +375,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/changeSignature/beforeAddFunctionParameterAndChangeTypes.kt");
         }
         
+        @TestMetadata("beforeAddParameterToFakeOverride.kt")
+        public void testAddParameterToFakeOverride() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeAddParameterToFakeOverride.kt");
+        }
+        
         public void testAllFilesPresentInChangeSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
@@ -432,6 +437,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeRemoveNamedParameter.kt")
         public void testRemoveNamedParameter() throws Exception {
             doTest("idea/testData/quickfix/changeSignature/beforeRemoveNamedParameter.kt");
+        }
+        
+        @TestMetadata("beforeRemoveParameterFromFakeOverride.kt")
+        public void testRemoveParameterFromFakeOverride() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeRemoveParameterFromFakeOverride.kt");
         }
         
         @TestMetadata("beforeRemoveUnusedParameter.kt")

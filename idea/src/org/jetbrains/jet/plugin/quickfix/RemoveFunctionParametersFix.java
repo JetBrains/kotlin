@@ -37,12 +37,11 @@ public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final ValueParameterDescriptor parameterToRemove;
 
     public RemoveFunctionParametersFix(
-            @NotNull PsiElement element,
             @NotNull PsiElement context,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull ValueParameterDescriptor parameterToRemove
     ) {
-        super(element, context, functionDescriptor);
+        super(context, functionDescriptor);
         this.parameterToRemove = parameterToRemove;
     }
 
