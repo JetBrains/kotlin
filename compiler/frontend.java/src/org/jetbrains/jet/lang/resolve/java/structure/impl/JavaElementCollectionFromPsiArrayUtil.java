@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class JavaElementCollectionFromPsiArrayUtil {
@@ -134,9 +135,9 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    private static <Psi, Java> Collection<Java> convert(@NotNull Psi[] elements, @NotNull Factory<Psi, Java> factory) {
+    private static <Psi, Java> List<Java> convert(@NotNull Psi[] elements, @NotNull Factory<Psi, Java> factory) {
         if (elements.length == 0) return Collections.emptyList();
-        Collection<Java> result = new ArrayList<Java>(elements.length);
+        List<Java> result = new ArrayList<Java>(elements.length);
         for (Psi element : elements) {
             result.add(factory.create(element));
         }
@@ -164,8 +165,8 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    public static Collection<JavaValueParameter> valueParameters(@NotNull PsiParameter[] parameters) {
-        return (Collection) convert(parameters, Factories.VALUE_PARAMETERS);
+    public static List<JavaValueParameter> valueParameters(@NotNull PsiParameter[] parameters) {
+        return (List) convert(parameters, Factories.VALUE_PARAMETERS);
     }
 
     @NotNull

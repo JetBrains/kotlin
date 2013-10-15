@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -106,12 +105,10 @@ public final class JavaValueParameterResolver {
             @NotNull JavaMethod method,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
-        Collection<JavaValueParameter> parameters = method.getValueParameters();
+        List<JavaValueParameter> parameters = method.getValueParameters();
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(parameters.size());
-        int index = 0;
-        for (JavaValueParameter parameter : parameters) {
-            result.add(resolveValueParameter(container, index, parameter, typeVariableResolver));
-            index++;
+        for (int i = 0, size = parameters.size(); i < size; i++) {
+            result.add(resolveValueParameter(container, i, parameters.get(i), typeVariableResolver));
         }
         return result;
     }
