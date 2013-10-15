@@ -40,7 +40,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         }
         
         @TestMetadata("compiler/testData/loadKotlin/annotations")
-        @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class})
+        @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class, Annotations.PropertiesWithoutBackingFields.class})
         public static class Annotations extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInAnnotations() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -57,11 +57,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
                 }
                 
-                @TestMetadata("ClassObjectPropertyNoField.kt")
-                public void testClassObjectPropertyNoField() throws Exception {
-                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyNoField.kt");
-                }
-                
                 @TestMetadata("DelegatedProperty.kt")
                 public void testDelegatedProperty() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/DelegatedProperty.kt");
@@ -70,11 +65,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("EnumArgument.kt")
                 public void testEnumArgument() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/EnumArgument.kt");
-                }
-                
-                @TestMetadata("ExtensionPropertiesWithSameNameNoField.kt")
-                public void testExtensionPropertiesWithSameNameNoField() throws Exception {
-                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/ExtensionPropertiesWithSameNameNoField.kt");
                 }
                 
                 @TestMetadata("Function.kt")
@@ -90,11 +80,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("PropertyField.kt")
                 public void testPropertyField() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/PropertyField.kt");
-                }
-                
-                @TestMetadata("PropertyNoField.kt")
-                public void testPropertyNoField() throws Exception {
-                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/classMembers/PropertyNoField.kt");
                 }
                 
                 @TestMetadata("Setter.kt")
@@ -178,11 +163,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/EnumArgument.kt");
                 }
                 
-                @TestMetadata("ExtensionPropertiesWithSameNameNoField.kt")
-                public void testExtensionPropertiesWithSameNameNoField() throws Exception {
-                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/ExtensionPropertiesWithSameNameNoField.kt");
-                }
-                
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Function.kt");
@@ -198,14 +178,42 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/PropertyField.kt");
                 }
                 
-                @TestMetadata("PropertyNoField.kt")
-                public void testPropertyNoField() throws Exception {
-                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/PropertyNoField.kt");
-                }
-                
                 @TestMetadata("Setter.kt")
                 public void testSetter() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Setter.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields")
+            public static class PropertiesWithoutBackingFields extends AbstractLazyResolveNamespaceComparingTest {
+                public void testAllFilesPresentInPropertiesWithoutBackingFields() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("Class.kt")
+                public void testClass() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/Class.kt");
+                }
+                
+                @TestMetadata("ClassObject.kt")
+                public void testClassObject() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ClassObject.kt");
+                }
+                
+                @TestMetadata("ExtensionsWithSameNameClass.kt")
+                public void testExtensionsWithSameNameClass() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNameClass.kt");
+                }
+                
+                @TestMetadata("ExtensionsWithSameNamePackage.kt")
+                public void testExtensionsWithSameNamePackage() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNamePackage.kt");
+                }
+                
+                @TestMetadata("TopLevel.kt")
+                public void testTopLevel() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/TopLevel.kt");
                 }
                 
             }
@@ -216,6 +224,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 suite.addTestSuite(ClassMembers.class);
                 suite.addTestSuite(Classes.class);
                 suite.addTestSuite(PackageMembers.class);
+                suite.addTestSuite(PropertiesWithoutBackingFields.class);
                 return suite;
             }
         }
