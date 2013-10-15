@@ -21,10 +21,7 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
@@ -40,6 +37,8 @@ import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 
 import java.util.List;
+
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 
 public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiElement> {
     protected final PsiElement context;
@@ -186,6 +185,11 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         if (functionDescriptor == null) {
             return null;
         }
+
+        if (functionDescriptor.getKind() == SYNTHESIZED) {
+            return null;
+        }
+
         BindingContext bindingContext =
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) context.getContainingFile()).getBindingContext();
         if (descriptor instanceof ValueParameterDescriptor) {

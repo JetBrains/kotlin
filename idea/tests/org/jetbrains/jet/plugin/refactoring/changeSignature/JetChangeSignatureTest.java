@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,6 +79,17 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.setNewVisibility(Visibilities.PROTECTED);
         doTest(changeInfo);
+    }
+
+    public void testSynthesized() throws Exception {
+        try {
+            getChangeInfo();
+        }
+        catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
+            assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", "component1"), e.getMessage());
+            return;
+        }
+        fail();
     }
 
     public void testPreferContainedInClass() throws Exception {
