@@ -34,7 +34,6 @@ public class ConfigureKotlinNotification extends Notification {
     private static final String GROUP_ID = "Configure Kotlin: balloon";
     private static final String TITLE = "Configure Kotlin";
 
-    @NotNull private final Project project;
     @NotNull private final String notificationText;
 
     public ConfigureKotlinNotification(
@@ -55,17 +54,7 @@ public class ConfigureKotlinNotification extends Notification {
             }
         });
 
-        this.project = project;
         this.notificationText = notificationText;
-    }
-
-    public void showNotification() {
-        super.notify(project);
-    }
-
-    @NotNull
-    public String getNotificationText() {
-        return notificationText;
     }
 
     @NotNull
@@ -101,5 +90,22 @@ public class ConfigureKotlinNotification extends Notification {
                                configurator.getPresentableText(),
                                isOnlyOneModule ? ") module" : ") modules",
                                "</a>");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ConfigureKotlinNotification)) return false;
+
+        ConfigureKotlinNotification that = (ConfigureKotlinNotification) o;
+
+        if (!notificationText.equals(that.notificationText)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return notificationText.hashCode();
     }
 }
