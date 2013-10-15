@@ -25,6 +25,7 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
@@ -157,7 +158,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (ignoreAnnotation(className)) return null;
 
         final ClassDescriptor annotationClass = resolveClass(className);
-        final AnnotationDescriptor annotation = new AnnotationDescriptor();
+        final AnnotationDescriptorImpl annotation = new AnnotationDescriptorImpl();
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
         return new KotlinJvmBinaryClass.AnnotationArgumentVisitor() {
