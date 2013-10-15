@@ -116,6 +116,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
+    protected GeneratedClassLoader generateAndCreateClassLoader() {
+        return createClassLoader(generateClassesInFile());
+    }
+
+    @NotNull
     protected URL[] getClassPathURLs() {
         List<URL> urls = Lists.newArrayList();
         for (File file : myEnvironment.getConfiguration().getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
@@ -159,7 +164,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     @NotNull
     protected Class<?> generateClass(@NotNull String name) {
         try {
-            return createClassLoader(generateClassesInFile()).loadClass(name);
+            return generateAndCreateClassLoader().loadClass(name);
         } catch (ClassNotFoundException e) {
             fail("No class file was generated for: " + name);
             return null;

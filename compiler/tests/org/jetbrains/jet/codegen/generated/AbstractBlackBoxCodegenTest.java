@@ -23,9 +23,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.CodegenTestCase;
-import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -92,22 +90,17 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     private void blackBox() {
-        ClassFileFactory factory = generateClassesInFile();
-        GeneratedClassLoader loader = createClassLoader(factory);
-
         // If there are many files, the first of them should contain the 'box(): String' function
         JetFile firstFile = myFiles.getPsiFiles().get(0);
         String fqName = getPackageClassFqName(JetPsiUtil.getFQName(firstFile)).asString();
 
         try {
-            Class<?> namespaceClass = loader.loadClass(fqName);
-            Method method = namespaceClass.getMethod("box");
-
+            Method method = generateClass(fqName).getMethod("box");
             String r = (String) method.invoke(null);
             assertEquals("OK", r);
         } catch (Throwable e) {
             System.out.println(generateToText());
-            ExceptionUtils.rethrow(e);
+            throw ExceptionUtils.rethrow(e);
         }
     }
 }
