@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface JavaClassifierType extends JavaType {
     @Nullable
@@ -37,5 +38,5 @@ public interface JavaClassifierType extends JavaType {
     boolean isRaw();
 
     @NotNull
-    Collection<JavaType> getTypeArguments();
+    List<JavaType> getTypeArguments();
 }

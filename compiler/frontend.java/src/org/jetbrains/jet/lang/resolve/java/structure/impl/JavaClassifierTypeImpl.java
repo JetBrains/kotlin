@@ -103,7 +103,7 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
     @Override
     @NotNull
-    public Collection<JavaType> getTypeArguments() {
+    public List<JavaType> getTypeArguments() {
         return types(getPsi().getParameters());
     }
 }

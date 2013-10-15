@@ -18,9 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface JavaTypeParameterListOwner extends JavaElement {
     @NotNull
-    Collection<JavaTypeParameter> getTypeParameters();
+    List<JavaTypeParameter> getTypeParameters();
 }

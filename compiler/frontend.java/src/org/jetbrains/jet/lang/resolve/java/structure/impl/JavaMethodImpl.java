@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.typeParameters;
@@ -46,7 +45,7 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
 
     @NotNull
     @Override
-    public Collection<JavaTypeParameter> getTypeParameters() {
+    public List<JavaTypeParameter> getTypeParameters() {
         return typeParameters(getPsi().getTypeParameters());
     }
 

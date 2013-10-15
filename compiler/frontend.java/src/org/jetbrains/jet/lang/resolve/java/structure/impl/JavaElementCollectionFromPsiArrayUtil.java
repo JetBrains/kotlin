@@ -170,13 +170,13 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    public static Collection<JavaTypeParameter> typeParameters(@NotNull PsiTypeParameter[] typeParameters) {
-        return (Collection) convert(typeParameters, Factories.TYPE_PARAMETERS);
+    public static List<JavaTypeParameter> typeParameters(@NotNull PsiTypeParameter[] typeParameters) {
+        return (List) convert(typeParameters, Factories.TYPE_PARAMETERS);
     }
 
     @NotNull
-    public static Collection<JavaType> types(@NotNull PsiType[] types) {
-        return (Collection) convert(types, Factories.TYPES);
+    public static List<JavaType> types(@NotNull PsiType[] types) {
+        return (List) convert(types, Factories.TYPES);
     }
 
     @NotNull

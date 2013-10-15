@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.*;
 
@@ -83,7 +84,7 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
 
     @NotNull
     @Override
-    public Collection<JavaTypeParameter> getTypeParameters() {
+    public List<JavaTypeParameter> getTypeParameters() {
         return typeParameters(getPsi().getTypeParameters());
     }
 
