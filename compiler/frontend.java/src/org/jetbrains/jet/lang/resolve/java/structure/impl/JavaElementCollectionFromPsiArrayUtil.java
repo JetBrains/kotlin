@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("unchecked")
 public class JavaElementCollectionFromPsiArrayUtil {
     private JavaElementCollectionFromPsiArrayUtil() {
     }
@@ -37,77 +36,75 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     private static class Factories {
-        private static final Factory<PsiClass, JavaClassImpl> CLASSES = new Factory<PsiClass, JavaClassImpl>() {
+        private static final Factory<PsiClass, JavaClass> CLASSES = new Factory<PsiClass, JavaClass>() {
             @NotNull
             @Override
-            public JavaClassImpl create(@NotNull PsiClass psiClass) {
+            public JavaClass create(@NotNull PsiClass psiClass) {
                 return new JavaClassImpl(psiClass);
             }
         };
 
-        private static final Factory<PsiPackage, JavaPackageImpl> PACKAGES = new Factory<PsiPackage, JavaPackageImpl>() {
+        private static final Factory<PsiPackage, JavaPackage> PACKAGES = new Factory<PsiPackage, JavaPackage>() {
             @NotNull
             @Override
-            public JavaPackageImpl create(@NotNull PsiPackage psiPackage) {
+            public JavaPackage create(@NotNull PsiPackage psiPackage) {
                 return new JavaPackageImpl(psiPackage);
             }
         };
 
-        private static final Factory<PsiMethod, JavaMethodImpl> METHODS = new Factory<PsiMethod, JavaMethodImpl>() {
+        private static final Factory<PsiMethod, JavaMethod> METHODS = new Factory<PsiMethod, JavaMethod>() {
             @NotNull
             @Override
-            public JavaMethodImpl create(@NotNull PsiMethod psiMethod) {
+            public JavaMethod create(@NotNull PsiMethod psiMethod) {
                 return new JavaMethodImpl(psiMethod);
             }
         };
 
-        private static final Factory<PsiField, JavaFieldImpl> FIELDS = new Factory<PsiField, JavaFieldImpl>() {
+        private static final Factory<PsiField, JavaField> FIELDS = new Factory<PsiField, JavaField>() {
             @NotNull
             @Override
-            public JavaFieldImpl create(@NotNull PsiField psiField) {
+            public JavaField create(@NotNull PsiField psiField) {
                 return new JavaFieldImpl(psiField);
             }
         };
 
-        private static final Factory<PsiParameter, JavaValueParameterImpl> VALUE_PARAMETERS =
-                new Factory<PsiParameter, JavaValueParameterImpl>() {
+        private static final Factory<PsiParameter, JavaValueParameter> VALUE_PARAMETERS = new Factory<PsiParameter, JavaValueParameter>() {
             @NotNull
             @Override
-            public JavaValueParameterImpl create(@NotNull PsiParameter psiParameter) {
+            public JavaValueParameter create(@NotNull PsiParameter psiParameter) {
                 return new JavaValueParameterImpl(psiParameter);
             }
         };
 
-        private static final Factory<PsiTypeParameter, JavaTypeParameterImpl> TYPE_PARAMETERS =
-                new Factory<PsiTypeParameter, JavaTypeParameterImpl>() {
+        private static final Factory<PsiTypeParameter, JavaTypeParameter> TYPE_PARAMETERS =
+                new Factory<PsiTypeParameter, JavaTypeParameter>() {
             @NotNull
             @Override
-            public JavaTypeParameterImpl create(@NotNull PsiTypeParameter psiTypeParameter) {
+            public JavaTypeParameter create(@NotNull PsiTypeParameter psiTypeParameter) {
                 return new JavaTypeParameterImpl(psiTypeParameter);
             }
         };
 
-        private static final Factory<PsiType, JavaTypeImpl<?>> TYPES = new Factory<PsiType, JavaTypeImpl<?>>() {
+        private static final Factory<PsiType, JavaType> TYPES = new Factory<PsiType, JavaType>() {
             @NotNull
             @Override
-            public JavaTypeImpl<?> create(@NotNull PsiType psiType) {
+            public JavaType create(@NotNull PsiType psiType) {
                 return JavaTypeImpl.create(psiType);
             }
         };
 
-        private static final Factory<PsiClassType, JavaClassifierTypeImpl> CLASSIFIER_TYPES =
-                new Factory<PsiClassType, JavaClassifierTypeImpl>() {
+        private static final Factory<PsiClassType, JavaClassifierType> CLASSIFIER_TYPES = new Factory<PsiClassType, JavaClassifierType>() {
             @NotNull
             @Override
-            public JavaClassifierTypeImpl create(@NotNull PsiClassType psiClassType) {
+            public JavaClassifierType create(@NotNull PsiClassType psiClassType) {
                 return new JavaClassifierTypeImpl(psiClassType);
             }
         };
 
-        private static final Factory<PsiAnnotation, JavaAnnotationImpl> ANNOTATIONS = new Factory<PsiAnnotation, JavaAnnotationImpl>() {
+        private static final Factory<PsiAnnotation, JavaAnnotation> ANNOTATIONS = new Factory<PsiAnnotation, JavaAnnotation>() {
             @NotNull
             @Override
-            public JavaAnnotationImpl create(@NotNull PsiAnnotation psiAnnotation) {
+            public JavaAnnotation create(@NotNull PsiAnnotation psiAnnotation) {
                 return new JavaAnnotationImpl(psiAnnotation);
             }
         };
@@ -146,56 +143,56 @@ public class JavaElementCollectionFromPsiArrayUtil {
 
     @NotNull
     public static Collection<JavaClass> classes(@NotNull PsiClass[] classes) {
-        return (Collection) convert(classes, Factories.CLASSES);
+        return convert(classes, Factories.CLASSES);
     }
 
     @NotNull
     public static Collection<JavaPackage> packages(@NotNull PsiPackage[] packages) {
-        return (Collection) convert(packages, Factories.PACKAGES);
+        return convert(packages, Factories.PACKAGES);
     }
 
     @NotNull
     public static Collection<JavaMethod> methods(@NotNull PsiMethod[] methods) {
-        return (Collection) convert(methods, Factories.METHODS);
+        return convert(methods, Factories.METHODS);
     }
 
     @NotNull
     public static Collection<JavaField> fields(@NotNull PsiField[] fields) {
-        return (Collection) convert(fields, Factories.FIELDS);
+        return convert(fields, Factories.FIELDS);
     }
 
     @NotNull
     public static List<JavaValueParameter> valueParameters(@NotNull PsiParameter[] parameters) {
-        return (List) convert(parameters, Factories.VALUE_PARAMETERS);
+        return convert(parameters, Factories.VALUE_PARAMETERS);
     }
 
     @NotNull
     public static List<JavaTypeParameter> typeParameters(@NotNull PsiTypeParameter[] typeParameters) {
-        return (List) convert(typeParameters, Factories.TYPE_PARAMETERS);
+        return convert(typeParameters, Factories.TYPE_PARAMETERS);
     }
 
     @NotNull
     public static List<JavaType> types(@NotNull PsiType[] types) {
-        return (List) convert(types, Factories.TYPES);
+        return convert(types, Factories.TYPES);
     }
 
     @NotNull
     public static Collection<JavaClassifierType> classifierTypes(@NotNull PsiClassType[] classTypes) {
-        return (Collection) convert(classTypes, Factories.CLASSIFIER_TYPES);
+        return convert(classTypes, Factories.CLASSIFIER_TYPES);
     }
 
     @NotNull
     public static Collection<JavaAnnotation> annotations(@NotNull PsiAnnotation[] annotations) {
-        return (Collection) convert(annotations, Factories.ANNOTATIONS);
+        return convert(annotations, Factories.ANNOTATIONS);
     }
 
     @NotNull
     public static List<JavaAnnotationArgument> namelessAnnotationArguments(@NotNull PsiAnnotationMemberValue[] memberValues) {
-        return (List) convert(memberValues, Factories.NAMELESS_ANNOTATION_ARGUMENTS);
+        return convert(memberValues, Factories.NAMELESS_ANNOTATION_ARGUMENTS);
     }
 
     @NotNull
     public static Collection<JavaAnnotationArgument> namedAnnotationArguments(@NotNull PsiNameValuePair[] nameValuePairs) {
-        return (Collection) convert(nameValuePairs, Factories.NAMED_ANNOTATION_ARGUMENTS);
+        return convert(nameValuePairs, Factories.NAMED_ANNOTATION_ARGUMENTS);
     }
 }
