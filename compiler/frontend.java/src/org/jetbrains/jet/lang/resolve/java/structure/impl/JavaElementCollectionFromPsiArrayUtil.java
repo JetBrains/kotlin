@@ -190,8 +190,8 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    public static Collection<JavaAnnotationArgument> namelessAnnotationArguments(@NotNull PsiAnnotationMemberValue[] memberValues) {
-        return (Collection) convert(memberValues, Factories.NAMELESS_ANNOTATION_ARGUMENTS);
+    public static List<JavaAnnotationArgument> namelessAnnotationArguments(@NotNull PsiAnnotationMemberValue[] memberValues) {
+        return (List) convert(memberValues, Factories.NAMELESS_ANNOTATION_ARGUMENTS);
     }
 
     @NotNull

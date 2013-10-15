@@ -18,9 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface JavaArrayAnnotationArgument extends JavaAnnotationArgument {
     @NotNull
-    Collection<JavaAnnotationArgument> getElements();
+    List<JavaAnnotationArgument> getElements();
 }

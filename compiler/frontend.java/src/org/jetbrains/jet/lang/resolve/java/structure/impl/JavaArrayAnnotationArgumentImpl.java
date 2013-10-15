@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayAnnotationArgument;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.namelessAnnotationArguments;
 
@@ -35,7 +35,7 @@ public class JavaArrayAnnotationArgumentImpl extends JavaAnnotationArgumentImpl<
 
     @Override
     @NotNull
-    public Collection<JavaAnnotationArgument> getElements() {
+    public List<JavaAnnotationArgument> getElements() {
         return namelessAnnotationArguments(getPsi().getInitializers());
     }
 }
