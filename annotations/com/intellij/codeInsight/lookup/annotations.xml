@@ -1,0 +1,9 @@
+<root>
+  <item
+      name='com.intellij.codeInsight.lookup.CharFilter com.intellij.codeInsight.lookup.CharFilter.Result acceptChar(char, int, com.intellij.codeInsight.lookup.Lookup) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.codeInsight.lookup.Lookup com.intellij.openapi.editor.Editor getEditor()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

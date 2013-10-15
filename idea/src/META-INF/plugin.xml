@@ -202,7 +202,7 @@
     <completion.skip implementation="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor$Skipper"
                      id="skipLiveTemplate"/>
 
-    <lookup.charFilter implementation="org.jetbrains.jet.plugin.completion.JetReferenceCharFilter"/>
+    <lookup.charFilter implementation="org.jetbrains.jet.plugin.completion.JetCompletionCharFilter"/>
 
     <psi.referenceContributor language="jet" order="after JetCompletionContributor"
                               implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
