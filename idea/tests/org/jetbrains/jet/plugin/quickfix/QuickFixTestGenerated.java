@@ -414,6 +414,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/changeSignature/beforeLinearHierarchy.kt");
         }
         
+        @TestMetadata("beforeNotAvailableForSynthesized.kt")
+        public void testNotAvailableForSynthesized() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeNotAvailableForSynthesized.kt");
+        }
+        
         @TestMetadata("beforeRemoveConstructorParameter.kt")
         public void testRemoveConstructorParameter() throws Exception {
             doTest("idea/testData/quickfix/changeSignature/beforeRemoveConstructorParameter.kt");
