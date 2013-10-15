@@ -43,7 +43,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
             @NotNull JetFunctionLiteral functionLiteral,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull List<JetType> parameterTypes) {
-        super(functionLiteral, functionLiteral, functionDescriptor);
+        super(functionLiteral, functionDescriptor);
         this.parameterTypes = parameterTypes;
     }
 
