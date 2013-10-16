@@ -39,7 +39,6 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
@@ -362,7 +361,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 signatureVisitor.writeClassEnd();
             }
             else {
-                typeMapper.mapType(superClassType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
+                typeMapper.mapSupertype(superClassType, signatureVisitor);
             }
             signatureVisitor.writeSuperclassEnd();
         }
@@ -377,7 +376,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 if (isInterface(superClassDescriptor)) {
                     signatureVisitor.writeInterface();
-                    Type jvmName = typeMapper.mapType(superType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
+                    Type jvmName = typeMapper.mapSupertype(superType, signatureVisitor);
                     signatureVisitor.writeInterfaceEnd();
                     superInterfacesLinkedHashSet.add(jvmName.getInternalName());
                 }

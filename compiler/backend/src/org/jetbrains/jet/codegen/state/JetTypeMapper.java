@@ -65,6 +65,26 @@ public class JetTypeMapper extends BindingTraceAware {
         classBuilderMode = mode;
     }
 
+    private enum JetTypeMapperMode {
+        /**
+         * foo.Bar is mapped to Lfoo/Bar;
+         */
+        IMPL,
+        /**
+         * jet.Int is mapped to I
+         */
+        VALUE,
+        /**
+         * jet.Int is mapped to Ljava/lang/Integer;
+         */
+        TYPE_PARAMETER,
+        /**
+         * jet.Int is mapped to Ljava/lang/Integer;
+         * No projections allowed in immediate arguments
+         */
+        SUPER_TYPE
+    }
+
     @NotNull
     public Type getOwner(@NotNull DeclarationDescriptor descriptor, @NotNull OwnerKind kind, boolean isInsideModule) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
@@ -189,12 +209,17 @@ public class JetTypeMapper extends BindingTraceAware {
             }
             return AsmTypeConstants.OBJECT_TYPE;
         }
-        return mapType(jetType, signatureVisitor, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE);
+        return mapType(jetType, signatureVisitor, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
     }
 
     @NotNull
-    private Type mapType(@NotNull JetType jetType, @NotNull JetTypeMapperMode kind) {
-        return mapType(jetType, null, kind);
+    private Type mapType(@NotNull JetType jetType, @NotNull JetTypeMapperMode mode) {
+        return mapType(jetType, null, mode);
+    }
+
+    @NotNull
+    public Type mapSupertype(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
+        return mapType(jetType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
     }
 
     @NotNull
@@ -214,21 +239,12 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public Type mapType(@NotNull ClassifierDescriptor classifierDescriptor) {
-        return mapType(classifierDescriptor.getDefaultType());
+        return mapType(classifierDescriptor.getDefaultType(), null, JetTypeMapperMode.VALUE);
     }
 
     @NotNull
-    public Type mapType(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode kind) {
-        return mapType(jetType, signatureVisitor, kind, Variance.INVARIANT, false);
-    }
-
-    @NotNull
-    public Type mapType(
-            @NotNull JetType jetType,
-            @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull JetTypeMapperMode kind,
-            @NotNull Variance howThisTypeIsUsed) {
-        return mapType(jetType, signatureVisitor, kind, howThisTypeIsUsed, false);
+    private Type mapType(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode mode) {
+        return mapType(jetType, signatureVisitor, mode, Variance.INVARIANT, false);
     }
 
     @NotNull
@@ -751,7 +767,7 @@ public class JetTypeMapper extends BindingTraceAware {
         writeReceiverIfNeeded(descriptor.getReceiverParameter(), signatureWriter);
 
         signatureWriter.writeReturnType();
-        mapType(descriptor.getType(), signatureWriter, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE);
+        mapType(descriptor.getType(), signatureWriter, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
         signatureWriter.writeReturnTypeEnd();
 
         String name = getPropertyAccessorName(descriptor, true);
