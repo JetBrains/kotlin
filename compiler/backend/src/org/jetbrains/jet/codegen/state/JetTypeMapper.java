@@ -66,41 +66,23 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public Type getOwner(DeclarationDescriptor descriptor, OwnerKind kind, boolean isInsideModule) {
-        JetTypeMapperMode mapTypeMode = ownerKindToMapTypeMode(kind);
-
+    public Type getOwner(@NotNull DeclarationDescriptor descriptor, @NotNull OwnerKind kind, boolean isInsideModule) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
             return asmTypeForNamespace((NamespaceDescriptor) containingDeclaration, descriptor, isInsideModule);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-            if (classDescriptor.getKind() == ClassKind.OBJECT) {
-                mapTypeMode = JetTypeMapperMode.IMPL;
+            if (kind == OwnerKind.TRAIT_IMPL) {
+                return mapTraitImpl(classDescriptor);
             }
-            Type asmType = mapType(classDescriptor.getDefaultType(), mapTypeMode);
-            if (asmType.getSort() != Type.OBJECT) {
-                throw new IllegalStateException();
-            }
-            return asmType;
+            return mapType(classDescriptor.getDefaultType(), JetTypeMapperMode.IMPL);
         }
         else if (containingDeclaration instanceof ScriptDescriptor) {
             return asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) containingDeclaration);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
-        }
-    }
-
-    private static JetTypeMapperMode ownerKindToMapTypeMode(OwnerKind kind) {
-        if (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.NAMESPACE) {
-            return JetTypeMapperMode.IMPL;
-        }
-        else if (kind == OwnerKind.TRAIT_IMPL) {
-            return JetTypeMapperMode.TRAIT_IMPL;
-        }
-        else {
-            throw new IllegalStateException("must not call this method with kind = " + kind);
         }
     }
 
@@ -273,9 +255,6 @@ public class JetTypeMapper extends BindingTraceAware {
             else if (kind == JetTypeMapperMode.TYPE_PARAMETER || kind == JetTypeMapperMode.SUPER_TYPE) {
                 return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, arrayParameter, projectionsAllowed);
             }
-            else if (kind == JetTypeMapperMode.TRAIT_IMPL) {
-                throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
-            }
             else if (kind == JetTypeMapperMode.IMPL) {
                 // TODO: enable and fix tests
                 //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
@@ -330,17 +309,8 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            Type descriptorAsmType = getAsmType(bindingTrace, descriptor);
-            Type asmType;
-            if (kind == JetTypeMapperMode.TRAIT_IMPL) {
-                asmType = Type.getObjectType(descriptorAsmType.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
-            }
-            else {
-                asmType = descriptorAsmType;
-            }
-
+            Type asmType = getAsmType(bindingTrace, descriptor);
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
-
             return asmType;
         }
 
@@ -354,6 +324,11 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
+    }
+
+    @NotNull
+    public Type mapTraitImpl(@NotNull ClassDescriptor descriptor) {
+        return Type.getObjectType(getAsmType(bindingTrace, descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
     }
 
     private String generateErrorMessageForErrorType(@NotNull DeclarationDescriptor descriptor) {

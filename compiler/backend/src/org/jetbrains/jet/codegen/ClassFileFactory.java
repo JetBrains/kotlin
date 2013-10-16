@@ -161,8 +161,7 @@ public final class ClassFileFactory extends GenerationStateAware {
 
     @NotNull
     public ClassBuilder forTraitImplementation(@NotNull ClassDescriptor aClass, @NotNull GenerationState state, @NotNull PsiFile file) {
-        Type type = state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL);
-        return newVisitor(type, file);
+        return newVisitor(state.getTypeMapper().mapTraitImpl(aClass), file);
     }
 
     private static Collection<File> toIoFilesIgnoringNonPhysical(Collection<? extends PsiFile> psiFiles) {

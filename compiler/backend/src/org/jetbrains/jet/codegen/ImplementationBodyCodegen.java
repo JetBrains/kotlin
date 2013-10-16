@@ -1502,9 +1502,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type type = getTraitImplThisParameterType(containingClass, typeMapper);
             String functionDescriptor = methodInTrait.getDescriptor().replace("(", "(" + type.getDescriptor());
 
-            Type tImplType = typeMapper.mapType(containingClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL);
-
-            iv.invokestatic(tImplType.getInternalName(), methodToGenerate.getName(), functionDescriptor);
+            iv.invokestatic(typeMapper.mapTraitImpl(containingClass).getInternalName(), methodToGenerate.getName(), functionDescriptor);
             StackValue.onStack(methodInTrait.getReturnType()).put(returnType, iv);
             iv.areturn(returnType);
 

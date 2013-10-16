@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -47,7 +46,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
     protected void generateDeclaration() {
         v.defineClass(myClass, V1_6,
                       ACC_PUBLIC | ACC_FINAL,
-                      jvmName(),
+                      typeMapper.mapTraitImpl(descriptor).getInternalName(),
                       null,
                       "java/lang/Object",
                       new String[0]
@@ -72,10 +71,5 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
-    }
-
-    @NotNull
-    private String jvmName() {
-        return typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName();
     }
 }

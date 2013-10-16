@@ -22,10 +22,6 @@ public enum JetTypeMapperMode {
      */
     IMPL,
     /**
-     * foo.Bar is mapped to Lfoo/Bar$TImpl;
-     */
-    TRAIT_IMPL,
-    /**
      * jet.Int is mapped to I
      */
     VALUE,

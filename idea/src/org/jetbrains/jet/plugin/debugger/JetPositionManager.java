@@ -169,14 +169,12 @@ public class JetPositionManager implements PositionManager {
         if (classDescriptor == null) {
             return null;
         }
-        JetTypeMapperMode mode;
+
         if (jetClass instanceof JetClass && ((JetClass) jetClass).isTrait()) {
-            mode = JetTypeMapperMode.TRAIT_IMPL;
+            return typeMapper.mapTraitImpl(classDescriptor).getInternalName();
         }
-        else {
-            mode = JetTypeMapperMode.IMPL;
-        }
-        return typeMapper.mapType(classDescriptor.getDefaultType(), mode).getInternalName();
+
+        return typeMapper.mapType(classDescriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
