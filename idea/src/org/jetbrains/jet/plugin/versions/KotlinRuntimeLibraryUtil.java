@@ -56,7 +56,6 @@ import org.jetbrains.jet.utils.PathUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static com.intellij.util.PathUtil.getLocalFile;
@@ -95,19 +94,15 @@ public class KotlinRuntimeLibraryUtil {
         return badRoots;
     }
 
-    public static void addJdkAnnotations(@NotNull Module module) {
-        addAnnotations(module, PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath());
+    public static void addJdkAnnotations(@NotNull Sdk sdk) {
+        addAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath());
     }
 
-    public static void addAndroidSdkAnnotations(@NotNull Module module) {
-        addAnnotations(module, PathUtil.getKotlinPathsForIdeaPlugin().getAndroidSdkAnnotationsPath());
+    public static void addAndroidSdkAnnotations(@NotNull Sdk sdk) {
+        addAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getAndroidSdkAnnotationsPath());
     }
 
-    private static void addAnnotations(@NotNull Module module, @NotNull File annotationsPath) {
-        Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-        if (sdk == null) {
-            return;
-        }
+    private static void addAnnotations(@NotNull Sdk sdk, @NotNull File annotationsPath) {
         if (annotationsPath.exists()) {
             VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsPath);
             if (jdkAnnotationsJar != null) {
@@ -119,17 +114,15 @@ public class KotlinRuntimeLibraryUtil {
         }
     }
 
-    public static boolean jdkAnnotationsArePresent(@NotNull Module module) {
-        return areAnnotationsPresent(module, PathUtil.JDK_ANNOTATIONS_JAR);
+    public static boolean jdkAnnotationsArePresent(@NotNull Sdk sdk) {
+        return areAnnotationsPresent(sdk, PathUtil.JDK_ANNOTATIONS_JAR);
     }
 
-    public static boolean androidSdkAnnotationsArePresent(@NotNull Module module) {
-        return areAnnotationsPresent(module, PathUtil.ANDROID_SDK_ANNOTATIONS_JAR);
+    public static boolean androidSdkAnnotationsArePresent(@NotNull Sdk sdk) {
+        return areAnnotationsPresent(sdk, PathUtil.ANDROID_SDK_ANNOTATIONS_JAR);
     }
 
-    private static boolean areAnnotationsPresent(@NotNull Module module, @NotNull final String jarFileName) {
-        Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-        if (sdk == null) return false;
+    private static boolean areAnnotationsPresent(@NotNull Sdk sdk, @NotNull final String jarFileName) {
         return ContainerUtil.exists(sdk.getRootProvider().getFiles(AnnotationOrderRootType.getInstance()),
                                     new Condition<VirtualFile>() {
                                         @Override

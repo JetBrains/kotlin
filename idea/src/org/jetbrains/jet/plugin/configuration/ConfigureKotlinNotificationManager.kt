@@ -20,10 +20,19 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.jet.plugin.configuration.ui.notifications.ConfigureKotlinNotification
 import com.intellij.notification.NotificationsManager
 import com.intellij.notification.Notification
+import com.intellij.openapi.projectRoots.Sdk
+import org.jetbrains.jet.plugin.configuration.ui.notifications.AbsentSdkAnnotationsNotification
+import org.jetbrains.jet.plugin.configuration.ui.notifications.*
 
 object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<ConfigureKotlinNotification> {
     fun notify(project: Project) {
         notify(project, ConfigureKotlinNotification(project, ConfigureKotlinNotification.getNotificationString(project)))
+    }
+}
+
+object AbsentSdkAnnotationsNotificationManager: KotlinSingleNotificationManager<AbsentSdkAnnotationsNotification> {
+    fun notify(project: Project, sdks: Collection<Sdk>) {
+        notify(project, AbsentSdkAnnotationsNotification(sdks, getNotificationTitle(sdks), getNotificationString(sdks)))
     }
 }
 

@@ -16,83 +16,111 @@
 
 package org.jetbrains.jet.plugin.configuration.ui;
 
-import com.intellij.openapi.compiler.CompilerManager;
-import com.intellij.openapi.fileEditor.FileEditor;
+import com.google.common.collect.Sets;
+import com.intellij.ProjectTopics;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootAdapter;
+import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.ui.EditorNotifications;
+import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.configuration.AbsentSdkAnnotationsNotificationManager;
+import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.jet.plugin.configuration.ui.notifications.NotificationsPackage;
+import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 
-public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provider<EditorNotificationPanel> {
-    private static final Key<EditorNotificationPanel> KEY = Key.create("add.kotlin.jdk.annotations");
+import java.util.Collection;
+import java.util.Set;
 
-    private final Project project;
+public class AbsentJdkAnnotationsNotifications extends AbstractProjectComponent {
 
-    public AbsentJdkAnnotationsNotifications(Project project) {
-        this.project = project;
+    protected AbsentJdkAnnotationsNotifications(Project project) {
+        super(project);
     }
 
     @Override
-    @Nullable
-    public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
-        if (file.getFileType() != JetFileType.INSTANCE) return null;
-        if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
-
-        final Module module = ModuleUtil.findModuleForFile(file, project);
-        if (module == null) return null;
-
-        GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-        if (JavaPsiFacade.getInstance(project).findClass("jet.JetObject", scope) == null) return null;
-
-        Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-        if (sdk == null) return null;
-
-        return createMissingSdkAnnotationsPanelIfNeeded(module, sdk);
-    }
-
-    private EditorNotificationPanel createMissingSdkAnnotationsPanelIfNeeded(final Module module, @NotNull Sdk sdk) {
-        final boolean isAndroidSdk = isAndroidSdk(sdk);
-        if (KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(module)) {
-            if (!isAndroidSdk || KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(module)) {
-                return null;
-            }
-        }
-
-        EditorNotificationPanel panel = new EditorNotificationPanel();
-        String sdkKind = isAndroidSdk ? "Android SDK" : "JDK";
-        panel.setText("Kotlin external annotations for " + sdkKind + " are not set for '" + sdk.getName() + "'.");
-        panel.createActionLabel("Set up Kotlin " + sdkKind + " annotations", new Runnable() {
+    public void projectOpened() {
+        super.projectOpened();
+        MessageBusConnection connection = myProject.getMessageBus().connect();
+        connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
             @Override
-            public void run() {
-                if (!KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(module)) {
-                    KotlinRuntimeLibraryUtil.addJdkAnnotations(module);
-                }
-                if (isAndroidSdk && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(module)) {
-                    KotlinRuntimeLibraryUtil.addAndroidSdkAnnotations(module);
-                }
+            public void enteredDumbMode() {
+            }
+
+            @Override
+            public void exitDumbMode() {
+                showNotificationIfNeeded();
+            }
+        });
+        connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+            @Override
+            public void rootsChanged(ModuleRootEvent event) {
+                showNotificationIfNeeded();
             }
         });
 
-        return panel;
+        connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkVirtualFileListenerAdapter(new VirtualFileAdapter() {
+            @Override
+            public void fileDeleted(VirtualFileEvent event) {
+                showNotificationIfNeeded();
+            }
+
+            @Override
+            public void fileCreated(VirtualFileEvent event) {
+                showNotificationIfNeeded();
+            }
+
+            @Override
+            public void fileMoved(VirtualFileMoveEvent event) {
+                showNotificationIfNeeded();
+            }
+
+            @Override
+            public void fileCopied(VirtualFileCopyEvent event) {
+                showNotificationIfNeeded();
+            }
+        }));
     }
 
-    @Override
-    public Key<EditorNotificationPanel> getKey() {
-        return KEY;
+    public void showNotificationIfNeeded() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Collection<Sdk> sdks = collectSdksWithoutAnnotations();
+                if (sdks.isEmpty()) return;
+                AbsentSdkAnnotationsNotificationManager.instance$.notify(myProject, sdks);
+            }
+        });
     }
 
-    private static boolean isAndroidSdk(@NotNull Sdk sdk) {
-        return sdk.getSdkType().getName().equals("Android SDK");
+    @NotNull
+    private Collection<Sdk> collectSdksWithoutAnnotations() {
+        Set<Sdk> sdks = Sets.newHashSet();
+        for (Module module : ConfigureKotlinInProjectUtils.getModulesWithKotlinFiles(myProject)) {
+            if (KotlinFrameworkDetector.isJavaKotlinModule(module)) {
+                Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+                if (sdk != null && !isAnnotationsArePresent(sdk)) {
+                    sdks.add(sdk);
+                }
+            }
+        }
+        return sdks;
+    }
+
+    private static boolean isAnnotationsArePresent(@NotNull Sdk sdk) {
+        if (!KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk)) {
+            return false;
+        }
+
+        boolean isAndroidSdk = NotificationsPackage.isAndroidSdk(sdk);
+        return !(isAndroidSdk && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk));
     }
 }

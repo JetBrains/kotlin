@@ -34,6 +34,9 @@
     <component>
       <implementation-class>org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
     </component>
+    <component>
+      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.AbsentJdkAnnotationsNotifications</implementation-class>
+    </component>
   </project-components>
 
  <application-components>
@@ -310,7 +313,6 @@
 
     <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.configuration.ui.AbsentJdkAnnotationsNotifications"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.IncorrectSourceRootNameNotification"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 
