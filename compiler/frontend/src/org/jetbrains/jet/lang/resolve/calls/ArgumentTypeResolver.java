@@ -225,20 +225,22 @@ public class ArgumentTypeResolver {
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (resolveArgumentsMode == SKIP_FUNCTION_ARGUMENTS) {
-            JetType type = getFunctionLiteralType(functionLiteralExpression, context.scope, context.trace);
+            JetType type = getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, true);
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
         return expressionTypingServices.getTypeInfo(expression, context);
     }
 
     @Nullable
-    public JetType getFunctionLiteralType(
+    public JetType getShapeTypeOfFunctionLiteral(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull JetScope scope,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            boolean expectedTypeIsUnknown
     ) {
         if (expression.getFunctionLiteral().getValueParameterList() == null) {
-            return PLACEHOLDER_FUNCTION_TYPE;
+            return expectedTypeIsUnknown ? PLACEHOLDER_FUNCTION_TYPE : KotlinBuiltIns.getInstance().getFunctionType(
+                    Collections.<AnnotationDescriptor>emptyList(), null, Collections.<JetType>emptyList(), DONT_CARE);
         }
         List<JetParameter> valueParameters = expression.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(

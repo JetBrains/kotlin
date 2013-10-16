@@ -2715,6 +2715,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/functionLIteralInBlockInIf.kt");
             }
             
+            @TestMetadata("functionLiteralWithoutArgumentList.kt")
+            public void testFunctionLiteralWithoutArgumentList() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/functionLiteralWithoutArgumentList.kt");
+            }
+            
             @TestMetadata("kt2906.kt")
             public void testKt2906() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");
