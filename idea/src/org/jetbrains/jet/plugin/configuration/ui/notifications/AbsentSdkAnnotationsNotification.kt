@@ -22,12 +22,11 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil
 import javax.swing.event.HyperlinkEvent
-
-private val GROUP_ID = "Configure Kotlin: absent sdk annotations"
+import org.jetbrains.jet.plugin.configuration.ui.AbsentJdkAnnotationsComponent
 
 public class AbsentSdkAnnotationsNotification(sdks: Collection<Sdk>, val title: String, val text: String) :
     Notification(
-            GROUP_ID,
+            AbsentJdkAnnotationsComponent.EXTERNAL_ANNOTATIONS_GROUP_ID,
             title, text,
             NotificationType.WARNING,
             AbsentAnnotationsListener(sdks) // Workaround for KT-4086

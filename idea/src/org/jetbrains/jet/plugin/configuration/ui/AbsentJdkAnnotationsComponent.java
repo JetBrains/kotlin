@@ -18,6 +18,8 @@ package org.jetbrains.jet.plugin.configuration.ui;
 
 import com.google.common.collect.Sets;
 import com.intellij.ProjectTopics;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationsConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
@@ -41,9 +43,13 @@ import java.util.Collection;
 import java.util.Set;
 
 public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
+    public static final String EXTERNAL_ANNOTATIONS_GROUP_ID = "Kotlin External annotations";
 
     protected AbsentJdkAnnotationsComponent(Project project) {
         super(project);
+
+        NotificationsConfiguration.getNotificationsConfiguration().
+                register(EXTERNAL_ANNOTATIONS_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true);
     }
 
     @Override

@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.configuration.ui;
 
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationsConfiguration;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -23,9 +25,13 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 
 public class NonConfiguredKotlinProjectNotification extends AbstractProjectComponent {
+    public static final String CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project";
 
     protected NonConfiguredKotlinProjectNotification(Project project) {
         super(project);
+
+        NotificationsConfiguration.getNotificationsConfiguration().
+                register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true);
     }
 
     @Override
