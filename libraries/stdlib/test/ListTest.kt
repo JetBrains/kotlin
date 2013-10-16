@@ -70,10 +70,4 @@ class ListTest {
         assertEquals(-1, emptyData.lastIndex)
         assertEquals(1, data.lastIndex)
     }
-
-    test fun recursion() {
-        fun f(x : Int) : Int = if (x > 0) f(x-1) else 0
-
-	assertEquals(0, f(Integer.MAX_VALUE))
-    }
 }
