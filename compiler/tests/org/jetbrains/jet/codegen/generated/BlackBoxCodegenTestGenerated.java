@@ -1958,6 +1958,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/enum/asReturnExpression.kt");
         }
         
+        @TestMetadata("emptyEnumValuesValueOf.kt")
+        public void testEmptyEnumValuesValueOf() throws Exception {
+            doTest("compiler/testData/codegen/box/enum/emptyEnumValuesValueOf.kt");
+        }
+        
         @TestMetadata("entrywithinner.kt")
         public void testEntrywithinner() throws Exception {
             doTest("compiler/testData/codegen/box/enum/entrywithinner.kt");

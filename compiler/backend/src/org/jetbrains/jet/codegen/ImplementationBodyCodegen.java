@@ -904,41 +904,39 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateEnumMethodsAndConstInitializers() {
-        if (!myEnumConstants.isEmpty()) {
-            generateEnumMethods();
-
-            if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                initializeEnumConstants(createOrGetClInitCodegen());
-            }
+        if (isEnumClass(descriptor)) {
+            generateEnumValuesMethod();
+            generateEnumValueOfMethod();
+            initializeEnumConstants();
         }
     }
 
-    private void generateEnumMethods() {
-        if (myEnumConstants.size() > 0) {
-            {
-                Type type = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
+    private void generateEnumValuesMethod() {
+        Type type = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
 
-                MethodVisitor mv = v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
-                mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, classAsmType.getInternalName(), VALUES, type.getDescriptor());
-                mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;");
-                mv.visitTypeInsn(CHECKCAST, type.getInternalName());
-                mv.visitInsn(ARETURN);
-                FunctionCodegen.endVisit(mv, "values()", myClass);
-            }
-            {
-                MethodVisitor mv =
-                        v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null,
-                                    null);
-                mv.visitCode();
-                mv.visitLdcInsn(classAsmType);
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKESTATIC, "java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;");
-                mv.visitTypeInsn(CHECKCAST, classAsmType.getInternalName());
-                mv.visitInsn(ARETURN);
-                FunctionCodegen.endVisit(mv, "values()", myClass);
-            }
-        }
+        MethodVisitor mv = v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
+        mv.visitCode();
+        mv.visitFieldInsn(GETSTATIC, classAsmType.getInternalName(), VALUES, type.getDescriptor());
+        mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;");
+        mv.visitTypeInsn(CHECKCAST, type.getInternalName());
+        mv.visitInsn(ARETURN);
+        FunctionCodegen.endVisit(mv, "values()", myClass);
+    }
+
+    private void generateEnumValueOfMethod() {
+        MethodVisitor mv =
+                v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null, null);
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
+        mv.visitCode();
+        mv.visitLdcInsn(classAsmType);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;");
+        mv.visitTypeInsn(CHECKCAST, classAsmType.getInternalName());
+        mv.visitInsn(ARETURN);
+        FunctionCodegen.endVisit(mv, "valueOf()", myClass);
     }
 
     protected void generateSyntheticAccessors() {
@@ -1609,63 +1607,71 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();
 
-    private void initializeEnumConstants(ExpressionCodegen codegen) {
-        InstructionAdapter iv = codegen.v;
-        int ordinal = -1;
+    private void initializeEnumConstants() {
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-        assert myEnumConstants.size() > 0;
+        ExpressionCodegen codegen = createOrGetClInitCodegen();
+        InstructionAdapter iv = codegen.v;
+
         Type arrayAsmType = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
         v.newField(myClass, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, VALUES, arrayAsmType.getDescriptor(), null, null);
 
         iv.iconst(myEnumConstants.size());
         iv.newarray(classAsmType);
+
+        if (!myEnumConstants.isEmpty()) {
+            iv.dup();
+            for (int ordinal = 0, size = myEnumConstants.size(); ordinal < size; ordinal++) {
+                initializeEnumConstant(codegen, ordinal);
+            }
+        }
+
+        iv.putstatic(classAsmType.getInternalName(), VALUES, arrayAsmType.getDescriptor());
+    }
+
+    private void initializeEnumConstant(@NotNull ExpressionCodegen codegen, int ordinal) {
+        InstructionAdapter iv = codegen.v;
+        JetEnumEntry enumConstant = myEnumConstants.get(ordinal);
+
+        iv.dup();
+        iv.iconst(ordinal);
+
+        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, enumConstant);
+        assert classDescriptor != null;
+        Type implClass = typeMapper.mapClass(classDescriptor);
+
+        List<JetDelegationSpecifier> delegationSpecifiers = enumConstant.getDelegationSpecifiers();
+        if (delegationSpecifiers.size() > 1) {
+            throw new UnsupportedOperationException("multiple delegation specifiers for enum constant not supported");
+        }
+
+        iv.anew(implClass);
         iv.dup();
 
-        for (JetEnumEntry enumConstant : myEnumConstants) {
-            ordinal++;
+        iv.aconst(enumConstant.getName());
+        iv.iconst(ordinal);
 
-            iv.dup();
-            iv.iconst(ordinal);
-
-            ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, enumConstant);
-            assert classDescriptor != null;
-            Type implClass = typeMapper.mapClass(classDescriptor);
-
-            List<JetDelegationSpecifier> delegationSpecifiers = enumConstant.getDelegationSpecifiers();
-            if (delegationSpecifiers.size() > 1) {
-                throw new UnsupportedOperationException("multiple delegation specifiers for enum constant not supported");
+        if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(state.getBindingContext(), enumConstant)) {
+            JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
+            if (!(specifier instanceof JetDelegatorToSuperCall)) {
+                throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
             }
 
-            iv.anew(implClass);
-            iv.dup();
+            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                    bindingContext.get(BindingContext.RESOLVED_CALL, ((JetDelegatorToSuperCall) specifier).getCalleeExpression());
+            assert resolvedCall != null : "Enum entry delegation specifier is unresolved: " + specifier.getText();
 
-            iv.aconst(enumConstant.getName());
-            iv.iconst(ordinal);
+            CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
 
-            if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(state.getBindingContext(), enumConstant)) {
-                JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
-                if (specifier instanceof JetDelegatorToSuperCall) {
-                    ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                            bindingContext.get(BindingContext.RESOLVED_CALL, ((JetDelegatorToSuperCall) specifier).getCalleeExpression());
-                    assert resolvedCall != null : "Enum entry delegation specifier is unresolved: " + specifier.getText();
-
-                    ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
-                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
-
-                    codegen.invokeMethodWithArguments(method, resolvedCall, null, StackValue.none());
-                }
-                else {
-                    throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
-                }
-            }
-            else {
-                iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
-            }
-            iv.dup();
-            iv.putstatic(classAsmType.getInternalName(), enumConstant.getName(), classAsmType.getDescriptor());
-            iv.astore(OBJECT_TYPE);
+            codegen.invokeMethodWithArguments(method, resolvedCall, null, StackValue.none());
         }
-        iv.putstatic(classAsmType.getInternalName(), VALUES, arrayAsmType.getDescriptor());
+        else {
+            iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
+        }
+
+        iv.dup();
+        iv.putstatic(classAsmType.getInternalName(), enumConstant.getName(), classAsmType.getDescriptor());
+        iv.astore(OBJECT_TYPE);
     }
 
     public static void generateInitializers(
