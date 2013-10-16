@@ -32,7 +32,10 @@ public interface TypeConstructor extends Annotated {
     @NotNull
     Collection<JetType> getSupertypes();
 
-    boolean isSealed();
+    /**
+     * Cannot have subtypes.
+     */
+    boolean isFinal();
 
     /**
      * If the type is non-denotable, it can't be written in code directly, it only can appear internally inside a type checker.

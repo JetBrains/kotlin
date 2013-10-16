@@ -461,7 +461,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         }
 
         @Override
-        public boolean isSealed() {
+        public boolean isFinal() {
             return !getModality().isOverridable();
         }
 

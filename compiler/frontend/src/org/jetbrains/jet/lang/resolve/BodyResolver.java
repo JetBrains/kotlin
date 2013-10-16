@@ -320,7 +320,7 @@ public class BodyResolver {
                 trace.report(SUPERTYPE_APPEARS_TWICE.on(typeReference));
             }
 
-            if (constructor.isSealed() && !allowedFinalSupertypes.contains(constructor)) {
+            if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
                 trace.report(FINAL_SUPERTYPE.on(typeReference));
             }
         }

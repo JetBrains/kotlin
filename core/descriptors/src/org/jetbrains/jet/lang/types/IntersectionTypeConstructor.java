@@ -49,7 +49,7 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
     }
 
     @Override
-    public boolean isSealed() {
+    public boolean isFinal() {
         return false;
     }
 

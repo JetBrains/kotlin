@@ -282,7 +282,7 @@ public class TypeUtils {
         if (type.isNullable()) {
             return true;
         }
-        if (!type.getConstructor().isSealed()) {
+        if (!type.getConstructor().isFinal()) {
             return true;
         }
 

@@ -34,7 +34,7 @@ public abstract class NumberValueTypeConstructor implements TypeConstructor {
     }
 
     @Override
-    public boolean isSealed() {
+    public boolean isFinal() {
         return false;
     }
 
