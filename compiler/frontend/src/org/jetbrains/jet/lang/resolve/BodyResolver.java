@@ -377,16 +377,27 @@ public class BodyResolver {
             annotationResolver.resolveAnnotationsArguments(classDescriptor.getScopeForSupertypeResolution(), klass.getPrimaryConstructorModifierList(), trace);
 
             if (unsubstitutedPrimaryConstructor != null) {
-                WritableScope parameterScope = new WritableScopeImpl(classDescriptor.getScopeForSupertypeResolution(), unsubstitutedPrimaryConstructor,
-                                                                     RedeclarationHandler.DO_NOTHING, "Scope with value parameters of a constructor");
-                for (ValueParameterDescriptor valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
-                    parameterScope.addVariableDescriptor(valueParameterDescriptor);
-                }
-                parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
+                WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForSupertypeResolution(), unsubstitutedPrimaryConstructor);
                 expressionTypingServices.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
                                        parameterScope, context.getOuterDataFlowInfo(), trace);
             }
         }
+    }
+
+    private static WritableScope getPrimaryConstructorParametersScope(
+            JetScope originalScope,
+            ConstructorDescriptor unsubstitutedPrimaryConstructor
+    ) {
+        WritableScope parameterScope = new WritableScopeImpl(
+                originalScope,
+                unsubstitutedPrimaryConstructor,
+                RedeclarationHandler.DO_NOTHING, "Scope with value parameters of a constructor"
+        );
+        for (ValueParameterDescriptor valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
+            parameterScope.addVariableDescriptor(valueParameterDescriptor);
+        }
+        parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
+        return parameterScope;
     }
 
     private void resolvePropertyDeclarationBodies() {
@@ -593,6 +604,22 @@ public class BodyResolver {
         expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, functionInnerScope, context.getOuterDataFlowInfo(), trace);
 
         assert functionDescriptor.getReturnType() != null;
+    }
+
+    public void resolveConstructorParameterDefaultValuesAndAnnotations(
+            @NotNull BindingTrace trace,
+            @NotNull JetClass klass,
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull JetScope declaringScope
+    ) {
+        if (!context.completeAnalysisNeeded(klass)) return;
+
+        List<JetParameter> valueParameters = klass.getPrimaryConstructorParameters();
+        List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
+
+        JetScope scope = getPrimaryConstructorParametersScope(declaringScope, constructorDescriptor);
+
+        expressionTypingServices.resolveValueParameters(valueParameters, valueParameterDescriptors, scope, context.getOuterDataFlowInfo(), trace);
     }
 
     private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {

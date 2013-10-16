@@ -105,6 +105,11 @@ public class ResolveElementCache {
 
         JetParameter parameter = PsiTreeUtil.getTopmostParentOfType(jetElement, JetParameter.class);
         if (parameter != null) {
+            JetClass klass = PsiTreeUtil.getParentOfType(parameter, JetClass.class);
+            if (klass != null && parameter.getParent() == klass.getPrimaryConstructorParameterList()) {
+                return additionalResolveCache.getValue().invoke(klass);
+            }
+
             // Parameters for function literal could be met inside other parameters. We can't make resolveToDescriptors for internal elements.
             jetElement = parameter;
         }
@@ -147,6 +152,9 @@ public class ResolveElementCache {
         }
         else if (resolveElement instanceof JetAnnotationEntry) {
             annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
+        }
+        else if (resolveElement instanceof JetClass) {
+            constructorAdditionalResolve(resolveSession, (JetClass) resolveElement, trace, file);
         }
         else if (resolveElement instanceof JetTypeParameter) {
             typeParameterAdditionalResolve(resolveSession, (JetTypeParameter) resolveElement);
@@ -274,6 +282,22 @@ public class ResolveElementCache {
         JetScope scope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(namedFunction);
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(namedFunction);
         bodyResolver.resolveFunctionBody(trace, namedFunction, functionDescriptor, scope);
+    }
+
+    private static void constructorAdditionalResolve(
+            ResolveSession resolveSession,
+            JetClass klass,
+            BindingTrace trace,
+            JetFile file
+    ) {
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getRootModuleDescriptor());
+        JetScope scope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(klass);
+
+        ClassDescriptor classDescriptor = (ClassDescriptor) resolveSession.resolveToDescriptor(klass);
+        ConstructorDescriptor constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+        assert constructorDescriptor != null;
+
+        bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(trace, klass, constructorDescriptor, scope);
     }
 
     private static boolean initializerAdditionalResolve(
