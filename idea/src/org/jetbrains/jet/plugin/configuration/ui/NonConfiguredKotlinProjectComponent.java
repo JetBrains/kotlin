@@ -24,10 +24,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 
-public class NonConfiguredKotlinProjectNotification extends AbstractProjectComponent {
+public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponent {
     public static final String CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project";
 
-    protected NonConfiguredKotlinProjectNotification(Project project) {
+    protected NonConfiguredKotlinProjectComponent(Project project) {
         super(project);
 
         NotificationsConfiguration.getNotificationsConfiguration().
