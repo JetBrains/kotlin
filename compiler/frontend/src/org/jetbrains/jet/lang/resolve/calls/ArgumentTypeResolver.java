@@ -50,7 +50,7 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfo;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ArgumentTypeResolver {
@@ -85,7 +85,7 @@ public class ArgumentTypeResolver {
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {
-        checkTypesWithNoCallee(context, SKIP_FUNCTION_ARGUMENTS);
+        checkTypesWithNoCallee(context, SHAPE_FUNCTION_ARGUMENTS);
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context, @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
@@ -224,7 +224,7 @@ public class ArgumentTypeResolver {
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
-        if (resolveArgumentsMode == SKIP_FUNCTION_ARGUMENTS) {
+        if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
             JetType type = getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, true);
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
@@ -281,7 +281,7 @@ public class ArgumentTypeResolver {
             if (expression == null) continue;
 
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
-            JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SKIP_FUNCTION_ARGUMENTS);
+            JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SHAPE_FUNCTION_ARGUMENTS);
             infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
         }
     }

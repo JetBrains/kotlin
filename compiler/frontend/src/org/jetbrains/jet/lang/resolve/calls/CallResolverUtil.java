@@ -47,7 +47,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 public class CallResolverUtil {
     public static enum ResolveArgumentsMode {
         RESOLVE_FUNCTION_ARGUMENTS,
-        SKIP_FUNCTION_ARGUMENTS
+        SHAPE_FUNCTION_ARGUMENTS
     }
 
     private CallResolverUtil() {}

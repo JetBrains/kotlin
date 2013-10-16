@@ -54,7 +54,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
@@ -128,7 +128,7 @@ public class CandidateResolver {
                 candidateCall.addStatus(status);
             }
             else {
-                candidateCall.addStatus(checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS).status);
+                candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
             }
         }
         else {
@@ -153,7 +153,7 @@ public class CandidateResolver {
                 TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
                 candidateCall.setResultingSubstitutor(substitutor);
 
-                candidateCall.addStatus(checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS).status);
+                candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
             }
             else {
                 candidateCall.addStatus(OTHER_ERROR);
@@ -557,7 +557,7 @@ public class CandidateResolver {
                 // We'll type check the arguments later, with the inferred types expected
                 boolean[] isErrorType = new boolean[1];
                 addConstraintForValueArgument(valueArgument, valueParameterDescriptor, substituteDontCare, constraintSystem,
-                                              context, isErrorType, SKIP_FUNCTION_ARGUMENTS);
+                                              context, isErrorType, SHAPE_FUNCTION_ARGUMENTS);
                 if (isErrorType[0]) {
                     candidateCall.argumentHasNoType();
                 }
@@ -594,7 +594,7 @@ public class CandidateResolver {
         if (!hasContradiction) {
             return INCOMPLETE_TYPE_INFERENCE;
         }
-        ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS);
+        ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS);
         ResolutionStatus argumentsStatus = checkingResult.status;
         return OTHER_ERROR.combine(argumentsStatus);
     }
