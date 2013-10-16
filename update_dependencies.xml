@@ -1,6 +1,6 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="2123245"/>
-    <property name="public.buildserver.build.id" value="96571"/>
+    <property name="jb.buildserver.build.id" value="2138509"/>
+    <property name="public.buildserver.build.id" value="97997"/>
 
     <condition property="os.tag" value="win.zip">
       <os family="windows" />
@@ -301,6 +301,7 @@
             <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xstream-1.4.3.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/jsr166e.jar" todir="${core}" />
             <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="${core}"/>
             <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="ideaSDK/lib"/>
 
