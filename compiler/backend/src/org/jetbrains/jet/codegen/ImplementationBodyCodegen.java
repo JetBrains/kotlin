@@ -213,12 +213,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
-            return;
-        }
-
-        if (!isTopLevelOrInnerClass(descriptor)) return;
-
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(v.getMemberMap()));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();

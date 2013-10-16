@@ -209,9 +209,24 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNamePackage.kt");
             }
             
+            @TestMetadata("NestedTrait.kt")
+            public void testNestedTrait() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/NestedTrait.kt");
+            }
+            
             @TestMetadata("TopLevel.kt")
             public void testTopLevel() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/TopLevel.kt");
+            }
+            
+            @TestMetadata("Trait.kt")
+            public void testTrait() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/Trait.kt");
+            }
+            
+            @TestMetadata("TraitClassObject.kt")
+            public void testTraitClassObject() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/TraitClassObject.kt");
             }
             
         }

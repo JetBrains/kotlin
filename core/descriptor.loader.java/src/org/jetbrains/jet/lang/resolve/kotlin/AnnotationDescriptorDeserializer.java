@@ -47,6 +47,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
@@ -231,7 +233,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
         if (signature == null) return Collections.emptyList();
 
-        KotlinJvmBinaryClass kotlinClass = findClassWithMemberAnnotations(container, proto, nameResolver);
+        KotlinJvmBinaryClass kotlinClass = findClassWithMemberAnnotations(container, proto, nameResolver, kind);
         if (kotlinClass == null) {
             errorReporter.reportAnnotationLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
             return Collections.emptyList();
@@ -245,33 +247,42 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     private KotlinJvmBinaryClass findClassWithMemberAnnotations(
             @NotNull ClassOrNamespaceDescriptor container,
             @NotNull ProtoBuf.Callable proto,
-            @NotNull NameResolver nameResolver
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind
     ) {
         if (container instanceof NamespaceDescriptor) {
-            Name name = loadSrcClassName(proto, nameResolver);
-            if (name != null) {
-                return kotlinClassFinder.find(getSrcClassFqName((NamespaceDescriptor) container, name));
+            return loadPackageFragmentClassFqName((NamespaceDescriptor) container, proto, nameResolver);
+        }
+        else if (isClassObject(container) && isStaticFieldInOuter(proto)) {
+            // Backing fields of properties of a class object are generated in the outer class
+            return findKotlinClassByDescriptor((ClassOrNamespaceDescriptor) container.getContainingDeclaration());
+        }
+        else if (isTrait(container) && kind == AnnotatedCallableKind.PROPERTY) {
+            NamespaceDescriptor containingPackage = DescriptorUtils.getParentOfType(container, NamespaceDescriptor.class);
+            assert containingPackage != null : "Trait must have a namespace among his parents: " + container;
+
+            if (proto.hasExtension(JavaProtoBuf.implClassName)) {
+                Name tImplName = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
+                return kotlinClassFinder.find(containingPackage.getFqName().child(tImplName));
             }
             return null;
-        }
-        else if (container instanceof ClassDescriptor && ((ClassDescriptor) container).getKind() == ClassKind.CLASS_OBJECT) {
-            // Backing fields of properties of a class object are generated in the outer class
-            if (isStaticFieldInOuter(proto)) {
-                return findKotlinClassByDescriptor((ClassOrNamespaceDescriptor) container.getContainingDeclaration());
-            }
         }
 
         return findKotlinClassByDescriptor(container);
     }
 
-    @NotNull
-    private static FqName getSrcClassFqName(@NotNull NamespaceDescriptor container, @NotNull Name name) {
-        return PackageClassUtils.getPackageClassFqName(DescriptorUtils.getFQName(container).toSafe()).parent().child(name);
-    }
-
     @Nullable
-    private static Name loadSrcClassName(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
-        return proto.hasExtension(JavaProtoBuf.srcClassName) ? nameResolver.getName(proto.getExtension(JavaProtoBuf.srcClassName)) : null;
+    private KotlinJvmBinaryClass loadPackageFragmentClassFqName(
+            @NotNull NamespaceDescriptor container,
+            @NotNull ProtoBuf.Callable proto,
+            @NotNull NameResolver nameResolver
+    ) {
+        if (proto.hasExtension(JavaProtoBuf.implClassName)) {
+            Name name = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
+            FqName fqName = PackageClassUtils.getPackageClassFqName(container.getFqName()).parent().child(name);
+            return kotlinClassFinder.find(fqName);
+        }
+        return null;
     }
 
     private static boolean isStaticFieldInOuter(@NotNull ProtoBuf.Callable proto) {

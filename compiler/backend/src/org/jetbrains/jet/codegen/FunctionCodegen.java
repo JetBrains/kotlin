@@ -111,7 +111,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         if (owner instanceof NamespaceFacadeContext) {
             Type ownerType = ((NamespaceFacadeContext) owner).getDelegateToClassType();
-            v.getMemberMap().recordSrcClassNameForCallable(functionDescriptor, shortNameByAsmType(ownerType));
+            v.getMemberMap().recordImplClassNameForCallable(functionDescriptor, shortNameByAsmType(ownerType));
         }
         else {
             v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);

@@ -92,7 +92,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         if (context instanceof NamespaceFacadeContext) {
             Type ownerType = ((NamespaceFacadeContext) context).getDelegateToClassType();
-            v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerType));
+            v.getMemberMap().recordImplClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerType));
         }
         else if (kind != OwnerKind.TRAIT_IMPL) {
             generateBackingField(p, propertyDescriptor);
@@ -142,11 +142,16 @@ public class PropertyCodegen extends GenerationStateAware {
             AnnotationCodegen.forField(fieldVisitor, typeMapper).genAnnotations(propertyDescriptor);
         }
         else if (!propertyDescriptor.getAnnotations().isEmpty()) {
-            if (!isTrait(context.getContextDescriptor())) {
-                Method method = getSyntheticMethodSignature(typeMapper, propertyDescriptor);
-                generateSyntheticMethodForAnnotatedProperty(v, typeMapper, propertyDescriptor, method);
-                v.getMemberMap().recordSyntheticMethodOfProperty(propertyDescriptor, method);
+            Method method = getSyntheticMethodSignature(typeMapper, propertyDescriptor);
+            DeclarationDescriptor descriptor = context.getContextDescriptor();
+            if (isTrait(descriptor)) {
+                Type tImplType = typeMapper.mapTraitImpl((ClassDescriptor) descriptor);
+                v.getMemberMap().recordImplClassNameForCallable(propertyDescriptor, shortNameByAsmType(tImplType));
             }
+            else {
+                generateSyntheticMethodForAnnotatedProperty(v, typeMapper, propertyDescriptor, method);
+            }
+            v.getMemberMap().recordSyntheticMethodOfProperty(propertyDescriptor, method);
         }
     }
 

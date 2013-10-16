@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -27,8 +28,11 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
@@ -52,6 +56,14 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
                       new String[0]
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
+    }
+
+    @Override
+    protected void generateKotlinAnnotation() {
+        AnnotationVisitor av =
+                v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_TRAIT_IMPL), true);
+        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        av.visitEnd();
     }
 
     @Override

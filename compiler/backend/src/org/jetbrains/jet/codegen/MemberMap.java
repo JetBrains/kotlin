@@ -31,7 +31,7 @@ public final class MemberMap {
     private final Map<FunctionDescriptor, Method> methodForFunction = new HashMap<FunctionDescriptor, Method>();
     private final Map<PropertyDescriptor, Pair<Type, String>> fieldForProperty = new HashMap<PropertyDescriptor, Pair<Type, String>>();
     private final Map<PropertyDescriptor, Method> syntheticMethodForProperty = new HashMap<PropertyDescriptor, Method>();
-    private final Map<CallableMemberDescriptor, String> srcClassNameForCallable = new HashMap<CallableMemberDescriptor, String>();
+    private final Map<CallableMemberDescriptor, String> implClassNameForCallable = new HashMap<CallableMemberDescriptor, String>();
     private final Set<PropertyDescriptor> staticFieldInOuterClass = new HashSet<PropertyDescriptor>();
 
     @NotNull
@@ -50,8 +50,8 @@ public final class MemberMap {
                 result.recordSyntheticMethodOfProperty(entry.getKey(), entry.getValue());
             }
 
-            for (Map.Entry<CallableMemberDescriptor, String> entry : map.srcClassNameForCallable.entrySet()) {
-                result.recordSrcClassNameForCallable(entry.getKey(), entry.getValue());
+            for (Map.Entry<CallableMemberDescriptor, String> entry : map.implClassNameForCallable.entrySet()) {
+                result.recordImplClassNameForCallable(entry.getKey(), entry.getValue());
             }
 
             for (PropertyDescriptor property : map.staticFieldInOuterClass) {
@@ -77,8 +77,8 @@ public final class MemberMap {
         assert old == null : "Duplicate synthetic method for property: " + descriptor + "; " + old;
     }
 
-    public void recordSrcClassNameForCallable(@NotNull CallableMemberDescriptor descriptor, @NotNull String name) {
-        String old = srcClassNameForCallable.put(descriptor, name);
+    public void recordImplClassNameForCallable(@NotNull CallableMemberDescriptor descriptor, @NotNull String name) {
+        String old = implClassNameForCallable.put(descriptor, name);
         assert old == null : "Duplicate src class name for callable: " + descriptor + "; " + old;
     }
 
@@ -103,8 +103,8 @@ public final class MemberMap {
     }
 
     @Nullable
-    public String getSrcClassNameOfCallable(@NotNull CallableMemberDescriptor descriptor) {
-        return srcClassNameForCallable.get(descriptor);
+    public String getImplClassNameOfCallable(@NotNull CallableMemberDescriptor descriptor) {
+        return implClassNameForCallable.get(descriptor);
     }
 
     public boolean isStaticFieldInOuterClass(@NotNull PropertyDescriptor property) {
@@ -116,6 +116,6 @@ public final class MemberMap {
         return "Functions: " + methodForFunction.size() +
                ", fields: " + fieldForProperty.size() +
                ", synthetic methods: " + syntheticMethodForProperty.size() +
-               ", src class names: " + srcClassNameForCallable.size();
+               ", impl class names: " + implClassNameForCallable.size();
     }
 }

@@ -211,9 +211,24 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNamePackage.kt");
                 }
                 
+                @TestMetadata("NestedTrait.kt")
+                public void testNestedTrait() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/NestedTrait.kt");
+                }
+                
                 @TestMetadata("TopLevel.kt")
                 public void testTopLevel() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/TopLevel.kt");
+                }
+                
+                @TestMetadata("Trait.kt")
+                public void testTrait() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/Trait.kt");
+                }
+                
+                @TestMetadata("TraitClassObject.kt")
+                public void testTraitClassObject() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/TraitClassObject.kt");
                 }
                 
             }
