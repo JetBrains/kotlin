@@ -97,7 +97,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Nullable MemberCodegen parentCodegen
     ) {
         super(aClass, context, v, state, parentCodegen);
-        this.classAsmType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
+        this.classAsmType = typeMapper.mapClass(descriptor);
         this.functionCodegen = new FunctionCodegen(context, v, state, this);
         this.propertyCodegen = new PropertyCodegen(context, v, this.functionCodegen, this);
     }
@@ -261,19 +261,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @NotNull
-    private static String getOuterClassName(
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull JetTypeMapper typeMapper
-    ) {
+    private static String getOuterClassName(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
         ClassDescriptor container = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
         if (container != null) {
-            return typeMapper.mapType(container.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+            return typeMapper.mapClass(container).getInternalName();
         }
-        else {
-            JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), classDescriptor);
-            assert containingFile != null : "Containing file should be present for " + classDescriptor;
-            return NamespaceCodegen.getNamespacePartInternalName(containingFile);
-        }
+
+        JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), classDescriptor);
+        assert containingFile != null : "Containing file should be present for " + classDescriptor;
+        return NamespaceCodegen.getNamespacePartInternalName(containingFile);
     }
 
     private void writeInnerClasses() {
@@ -342,7 +338,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @NotNull
     private String getInternalNameForImpl(@NotNull ClassDescriptor descriptor) {
-        return typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+        return typeMapper.mapClass(descriptor).getInternalName();
     }
 
     private JvmClassSignature signature() {
@@ -416,7 +412,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert superClassDescriptor != null;
                 if (!isInterface(superClassDescriptor)) {
                     superClassType = superType;
-                    superClassAsmType = typeMapper.mapType(superClassDescriptor.getDefaultType(), JetTypeMapperMode.IMPL);
+                    superClassAsmType = typeMapper.mapClass(superClassDescriptor);
                     superCall = specifier;
                 }
             }
@@ -921,23 +917,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateEnumMethods() {
         if (myEnumConstants.size() > 0) {
             {
-                Type type =
-                        typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()),
-                                           JetTypeMapperMode.IMPL);
+                Type type = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
 
-                MethodVisitor mv =
-                        v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
+                MethodVisitor mv = v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
                 mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, typeMapper.mapType(descriptor).getInternalName(),
-                                  VALUES,
-                                  type.getDescriptor());
+                mv.visitFieldInsn(GETSTATIC, classAsmType.getInternalName(), VALUES, type.getDescriptor());
                 mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;");
                 mv.visitTypeInsn(CHECKCAST, type.getInternalName());
                 mv.visitInsn(ARETURN);
                 FunctionCodegen.endVisit(mv, "values()", myClass);
             }
             {
-
                 MethodVisitor mv =
                         v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null,
                                     null);
@@ -1623,16 +1613,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void initializeEnumConstants(ExpressionCodegen codegen) {
         InstructionAdapter iv = codegen.v;
         int ordinal = -1;
-        JetType myType = descriptor.getDefaultType();
-        Type myAsmType = typeMapper.mapType(myType, JetTypeMapperMode.IMPL);
 
         assert myEnumConstants.size() > 0;
-        JetType arrayType = KotlinBuiltIns.getInstance().getArrayType(myType);
-        Type arrayAsmType = typeMapper.mapType(arrayType, JetTypeMapperMode.IMPL);
-        v.newField(myClass, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, "$VALUES", arrayAsmType.getDescriptor(), null, null);
+        Type arrayAsmType = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
+        v.newField(myClass, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, VALUES, arrayAsmType.getDescriptor(), null, null);
 
         iv.iconst(myEnumConstants.size());
-        iv.newarray(myAsmType);
+        iv.newarray(classAsmType);
         iv.dup();
 
         for (JetEnumEntry enumConstant : myEnumConstants) {
@@ -1643,14 +1630,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, enumConstant);
             assert classDescriptor != null;
-            String implClass = typeMapper.mapType(classDescriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+            Type implClass = typeMapper.mapClass(classDescriptor);
 
             List<JetDelegationSpecifier> delegationSpecifiers = enumConstant.getDelegationSpecifiers();
             if (delegationSpecifiers.size() > 1) {
                 throw new UnsupportedOperationException("multiple delegation specifiers for enum constant not supported");
             }
 
-            iv.anew(Type.getObjectType(implClass));
+            iv.anew(implClass);
             iv.dup();
 
             iv.aconst(enumConstant.getName());
@@ -1673,13 +1660,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
             else {
-                iv.invokespecial(implClass, "<init>", "(Ljava/lang/String;I)V");
+                iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
             }
             iv.dup();
-            iv.putstatic(myAsmType.getInternalName(), enumConstant.getName(), "L" + myAsmType.getInternalName() + ";");
+            iv.putstatic(classAsmType.getInternalName(), enumConstant.getName(), classAsmType.getDescriptor());
             iv.astore(OBJECT_TYPE);
         }
-        iv.putstatic(myAsmType.getInternalName(), "$VALUES", arrayAsmType.getDescriptor());
+        iv.putstatic(classAsmType.getInternalName(), VALUES, arrayAsmType.getDescriptor());
     }
 
     public static void generateInitializers(

@@ -31,15 +31,12 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
-import org.jetbrains.jet.codegen.context.NamespaceContext;
 import org.jetbrains.jet.codegen.context.NamespaceFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -549,7 +546,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             ownerType = state.getTypeMapper().getOwner(functionDescriptor, kind, true);
         }
         else if (contextClass instanceof ClassDescriptor) {
-            ownerType = state.getTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), JetTypeMapperMode.IMPL);
+            ownerType = state.getTypeMapper().mapClass((ClassDescriptor) contextClass);
         }
         else if (isLocalNamedFun(functionDescriptor)) {
             ownerType = asmTypeForAnonymousClass(state.getBindingContext(), functionDescriptor);

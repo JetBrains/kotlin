@@ -73,10 +73,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-            if (kind == OwnerKind.TRAIT_IMPL) {
-                return mapTraitImpl(classDescriptor);
-            }
-            return mapType(classDescriptor.getDefaultType(), JetTypeMapperMode.IMPL);
+            return kind == OwnerKind.TRAIT_IMPL ? mapTraitImpl(classDescriptor) : mapClass(classDescriptor);
         }
         else if (containingDeclaration instanceof ScriptDescriptor) {
             return asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) containingDeclaration);
@@ -196,8 +193,13 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public Type mapType(@NotNull JetType jetType, @NotNull JetTypeMapperMode kind) {
+    private Type mapType(@NotNull JetType jetType, @NotNull JetTypeMapperMode kind) {
         return mapType(jetType, null, kind);
+    }
+
+    @NotNull
+    public Type mapClass(@NotNull ClassifierDescriptor classifier) {
+        return mapType(classifier.getDefaultType(), null, JetTypeMapperMode.IMPL);
     }
 
     @NotNull
@@ -474,8 +476,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
         else if (functionDescriptor instanceof ConstructorDescriptor) {
             assert !superCall;
-            ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-            owner = mapType(containingClass.getDefaultType(), JetTypeMapperMode.IMPL);
+            owner = mapClass((ClassDescriptor) functionParent);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESPECIAL;
             thisClass = null;
@@ -911,10 +912,10 @@ public class JetTypeMapper extends BindingTraceAware {
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor, @Nullable CalculatedClosure closure) {
         JvmMethodSignature method = mapConstructorSignature(descriptor, closure);
-        JetType defaultType = descriptor.getContainingDeclaration().getDefaultType();
-        Type owner = mapType(defaultType, JetTypeMapperMode.IMPL);
+        ClassDescriptor container = descriptor.getContainingDeclaration();
+        Type owner = mapClass(container);
         if (owner.getSort() != Type.OBJECT) {
-            throw new IllegalStateException("type must have been mapped to object: " + defaultType + ", actual: " + owner);
+            throw new IllegalStateException("type must have been mapped to object: " + container.getDefaultType() + ", actual: " + owner);
         }
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
     }

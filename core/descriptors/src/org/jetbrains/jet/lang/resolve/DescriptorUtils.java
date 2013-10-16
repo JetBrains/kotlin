@@ -220,14 +220,6 @@ public class DescriptorUtils {
         return false;
     }
 
-    public static void addSuperTypes(@NotNull JetType type, @NotNull Set<JetType> set) {
-        set.add(type);
-
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            addSuperTypes(jetType, set);
-        }
-    }
-
     public static boolean isRootNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
     }

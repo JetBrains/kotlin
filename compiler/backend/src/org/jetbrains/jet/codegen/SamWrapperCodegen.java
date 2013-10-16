@@ -23,8 +23,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -79,7 +77,7 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
         cv.visitSource(file.getName(), null);
 
         // e.g. ASM type for Function2
-        Type functionAsmType = state.getTypeMapper().mapType(functionType, JetTypeMapperMode.VALUE);
+        Type functionAsmType = state.getTypeMapper().mapType(functionType);
 
         cv.newField(null,
                     ACC_SYNTHETIC | ACC_PRIVATE | ACC_FINAL,
