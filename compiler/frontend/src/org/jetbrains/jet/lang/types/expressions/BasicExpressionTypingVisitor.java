@@ -139,13 +139,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
                 Long longValue = CompileTimeConstantResolver.parseLongValue(text);
                 if (longValue != null) {
-                    return createNumberValueTypeInfo(IntegerValueTypeConstructor.create(longValue), longValue, context.dataFlowInfo);
+                    return createNumberValueTypeInfo(new IntegerValueTypeConstructor((long) longValue), longValue, context.dataFlowInfo);
                 }
             }
             else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
                 Double doubleValue = CompileTimeConstantResolver.parseDoubleValue(text);
                 if (doubleValue != null) {
-                    return createNumberValueTypeInfo(DoubleValueTypeConstructor.create(doubleValue), doubleValue, context.dataFlowInfo);
+                    return createNumberValueTypeInfo(new DoubleValueTypeConstructor(doubleValue), doubleValue, context.dataFlowInfo);
                 }
             }
         }

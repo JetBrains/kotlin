@@ -29,11 +29,7 @@ public class DoubleValueTypeConstructor extends NumberValueTypeConstructor {
     private final List<JetType> supertypes;
 
 
-    public static DoubleValueTypeConstructor create(double value) {
-        return new DoubleValueTypeConstructor(value);
-    }
-
-    private DoubleValueTypeConstructor(double value) {
+    public DoubleValueTypeConstructor(double value) {
         this.value = value;
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type

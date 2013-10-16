@@ -27,11 +27,7 @@ public class IntegerValueTypeConstructor extends NumberValueTypeConstructor {
     private final long value;
     private final Collection<JetType> supertypes = Lists.newArrayList();
 
-    public static IntegerValueTypeConstructor create(long value) {
-        return new IntegerValueTypeConstructor(value);
-    }
-
-    private IntegerValueTypeConstructor(long value) {
+    public IntegerValueTypeConstructor(long value) {
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Int' should be returned
