@@ -16,14 +16,26 @@
 
 package org.jetbrains.jet.cli.jvm;
 
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.common.CLICompiler;
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.codegen.CompilationException;
+import org.jetbrains.jet.config.CommonConfigurationKeys;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -31,6 +43,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -38,8 +52,8 @@ import org.junit.rules.TestName;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.List;
 
 public class CliTest {
 
@@ -62,6 +76,46 @@ public class CliTest {
         }
         finally {
             System.setOut(origOut);
+        }
+    }
+
+    @Nullable
+    private static Class<?> compileScript(
+            @NotNull String scriptPath,
+            @Nullable List<AnalyzerScriptParameter> scriptParameters,
+            @NotNull List<JetScriptDefinition> scriptDefinitions
+    ) {
+        KotlinPaths paths = new KotlinPathsFromHomeDir(new File("dist/kotlinc"));
+        GroupingMessageCollector messageCollector =
+                new GroupingMessageCollector(new PrintingMessageCollector(System.err, MessageRenderer.PLAIN, false));
+        Disposable rootDisposable = Disposer.newDisposable();
+        try {
+            CompilerConfiguration configuration =
+                    JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
+            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
+            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "compiler/testData/cli/" + scriptPath);
+            configuration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, scriptDefinitions);
+            configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, scriptParameters);
+
+            JetCoreEnvironment environment = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
+
+            try {
+                JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
+                return KotlinToJVMBytecodeCompiler.compileScript(paths, environment);
+            }
+            catch (CompilationException e) {
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+                                        MessageUtil.psiElementToMessageLocation(e.getElement()));
+                return null;
+            }
+            catch (Throwable t) {
+                MessageCollectorUtil.reportException(messageCollector, t);
+                return null;
+            }
+        }
+        finally {
+            messageCollector.flush();
+            Disposer.dispose(rootDisposable);
         }
     }
 
@@ -168,54 +222,30 @@ public class CliTest {
     }
 
     @Test
-    public void testScript() {
-        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
-        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
-        scriptParameters.add(parameter);
-        Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), JetTestUtils.getPathsForTests(), "compiler/testData/cli/fib.ktscript", scriptParameters, null);
+    public void testScript() throws Exception {
+        Class<?> aClass = compileScript("fib.ktscript", numIntParam(), Collections.<JetScriptDefinition>emptyList());
         Assert.assertNotNull(aClass);
-
-        try {
-            aClass.getConstructor(int.class).newInstance(4);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        aClass.getConstructor(int.class).newInstance(4);
     }
 
     @Test
-    public void testScriptStandardExt() {
-        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
-        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
-        scriptParameters.add(parameter);
-        Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), JetTestUtils.getPathsForTests(), "compiler/testData/cli/fib.kt", scriptParameters, null);
+    public void testScriptStandardExt() throws Exception {
+        Class<?> aClass = compileScript("fib.kt", numIntParam(), Collections.<JetScriptDefinition>emptyList());
         Assert.assertNotNull(aClass);
-
-        try {
-            aClass.getConstructor(int.class).newInstance(4);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        aClass.getConstructor(int.class).newInstance(4);
     }
 
     @Test
-    public void testScriptWithScriptDefinition() {
-        LinkedList<AnalyzerScriptParameter> scriptParameters = new LinkedList<AnalyzerScriptParameter>();
-        AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
-        scriptParameters.add(parameter);
-        Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), JetTestUtils.getPathsForTests(), "compiler/testData/cli/fib.fib.kt", null, Arrays.asList(new JetScriptDefinition(".fib.kt",scriptParameters)));
+    public void testScriptWithScriptDefinition() throws Exception {
+        Class<?> aClass = compileScript("fib.fib.kt", null,
+                                        Collections.singletonList(new JetScriptDefinition(".fib.kt", numIntParam())));
         Assert.assertNotNull(aClass);
+        aClass.getConstructor(int.class).newInstance(4);
+    }
 
-        try {
-            aClass.getConstructor(int.class).newInstance(4);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @NotNull
+    private static List<AnalyzerScriptParameter> numIntParam() {
+        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int")));
     }
 
     @Test
