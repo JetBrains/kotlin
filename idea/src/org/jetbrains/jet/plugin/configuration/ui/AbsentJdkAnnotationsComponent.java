@@ -40,9 +40,9 @@ import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import java.util.Collection;
 import java.util.Set;
 
-public class AbsentJdkAnnotationsNotifications extends AbstractProjectComponent {
+public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
 
-    protected AbsentJdkAnnotationsNotifications(Project project) {
+    protected AbsentJdkAnnotationsComponent(Project project) {
         super(project);
     }
 
