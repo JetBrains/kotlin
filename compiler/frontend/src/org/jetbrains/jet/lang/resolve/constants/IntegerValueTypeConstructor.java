@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.Collection;
 
 public class IntegerValueTypeConstructor extends NumberValueTypeConstructor {
+    private final long value;
     private final Collection<JetType> supertypes = Lists.newArrayList();
 
     public static IntegerValueTypeConstructor create(long value) {
@@ -34,6 +35,7 @@ public class IntegerValueTypeConstructor extends NumberValueTypeConstructor {
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Int' should be returned
+        this.value = value;
         checkBoundsAndAddSuperType(value, (long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE, KotlinBuiltIns.getInstance().getIntType());
         checkBoundsAndAddSuperType(value, (long) Byte.MIN_VALUE, (long) Byte.MAX_VALUE, KotlinBuiltIns.getInstance().getByteType());
         checkBoundsAndAddSuperType(value, (long) Short.MIN_VALUE, (long) Short.MAX_VALUE, KotlinBuiltIns.getInstance().getShortType());
@@ -53,19 +55,7 @@ public class IntegerValueTypeConstructor extends NumberValueTypeConstructor {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IntegerValueTypeConstructor that = (IntegerValueTypeConstructor) o;
-
-        if (!supertypes.equals(that.supertypes)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return supertypes.hashCode();
+    public String toString() {
+        return "IntegerValueType(" + value + ")";
     }
 }

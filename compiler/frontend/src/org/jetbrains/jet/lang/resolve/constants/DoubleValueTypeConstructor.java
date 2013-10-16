@@ -25,15 +25,16 @@ import java.util.Collection;
 import java.util.List;
 
 public class DoubleValueTypeConstructor extends NumberValueTypeConstructor {
-    private static final DoubleValueTypeConstructor INSTANCE = new DoubleValueTypeConstructor();
-
-    public static DoubleValueTypeConstructor create(double value) {
-        return INSTANCE;
-    }
-
+    private final double value;
     private final List<JetType> supertypes;
 
-    private DoubleValueTypeConstructor() {
+
+    public static DoubleValueTypeConstructor create(double value) {
+        return new DoubleValueTypeConstructor(value);
+    }
+
+    private DoubleValueTypeConstructor(double value) {
+        this.value = value;
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Double' should be returned
@@ -44,5 +45,17 @@ public class DoubleValueTypeConstructor extends NumberValueTypeConstructor {
     @Override
     public Collection<JetType> getSupertypes() {
         return supertypes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DoubleValueTypeConstructor that = (DoubleValueTypeConstructor) o;
+
+        if (Double.compare(that.value, value) != 0) return false;
+
+        return true;
     }
 }
