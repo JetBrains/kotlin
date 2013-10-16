@@ -167,64 +167,88 @@ public class TailRecursionGeneratorUtil {
                 if (parent instanceof JetFunction) {
                     return true;
                 } else if (parent instanceof JetQualifiedExpression && element == expression) {
-                    JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
-                    if (qualifiedExpression.getReceiverExpression() instanceof JetThisExpression) {
-                        return null;
-                    } else {
-                        return false;
-                    }
+                    return checkQualifiedExpression((JetQualifiedExpression) parent);
                 } else if (parent instanceof JetIfExpression && element instanceof JetContainerNode) {
-                    JetIfExpression ifExpression = (JetIfExpression) parent;
-                    JetContainerNode me = (JetContainerNode) element;
-                    if (!isThenOrElse(ifExpression, me.getLastChild())) {
-                        return false;
-                    }
+                    return checkIfExpression((JetIfExpression) parent, (JetContainerNode) element);
                 } else if (parent instanceof JetWhenEntry) {
-                    JetWhenEntry whenEntry = (JetWhenEntry) parent;
-                    JetExpression entryExpression = whenEntry.getExpression();
-                    if (entryExpression == null) {
-                        return false;
-                    }
-                    if (!isChildrenOf(entryExpression, element)) {
-                        return false;
-                    }
+                    return checkWhenEntry((JetWhenEntry) parent, element);
                 } else if (parent instanceof JetWhenExpression) {
-                    JetWhenExpression when = (JetWhenExpression) parent;
-                    JetExpression subjectExpression = when.getSubjectExpression();
-                    if (subjectExpression != null && isChildrenOf(subjectExpression, element)) {
-                        return false;
-                    }
+                    return checkWhenExpression((JetWhenExpression) parent, element);
                 } else if (parent instanceof JetBlockExpression) {
-                    JetElement last = findLastJetElement(parent.getLastChild());
-                    if (last == element) { // if last statement
-                        // do nothing, continue trace
-                    } else if (last instanceof JetReturnExpression) { // check if last statement before void return
-                        JetReturnExpression returnExpression = (JetReturnExpression) last;
-
-                        if (returnExpression.getReturnedExpression() != null) {
-                            return false; // if there is return expression then no tail recursion here
-                        }
-
-                        return findLastJetElement(returnExpression.getPrevSibling()) == element; // our branch is exact before void return
-                    } else { // our branch is not last in the block so there is no tail recursion here
-                        return false;
-                    }
+                    return checkBlockExpression(parent, element);
                 } else if (parent instanceof JetCatchClause || parent instanceof JetFinallySection || parent instanceof JetTryExpression) {
-                    if (!testTryElement(getTry(parent), element)) {
-                        return false;
-                    }
+                    return checkTryCatchOrFinally(parent, element);
                 } else if (parent instanceof JetContainerNode) {
                     // do nothing, skip it
+                    return null;
                 } else if (parent instanceof JetReturnExpression) {
                     JetReturnExpression returnExpression = (JetReturnExpression) parent;
                     return returnExpression.getReturnedExpression() == expression;
                 } else { // including any jet loops/etc, return and etc
                     return false; // other node types
                 }
-
-                return null;
             }
         }, true) && verifyRecursionAgainstTryFinally(expression);
+    }
+
+    private static Boolean checkTryCatchOrFinally(PsiElement parent, PsiElement element) {
+        if (!testTryElement(getTry(parent), element)) {
+            return false;
+        }
+        return null;
+    }
+
+    private static Boolean checkBlockExpression(PsiElement parent, PsiElement element) {
+        JetElement last = findLastJetElement(parent.getLastChild());
+        if (last == element) { // if last statement
+            // do nothing, continue trace
+            return null;
+        } else if (last instanceof JetReturnExpression) { // check if last statement before void return
+            JetReturnExpression returnExpression = (JetReturnExpression) last;
+
+            if (returnExpression.getReturnedExpression() != null) {
+                return false; // if there is return expression then no tail recursion here
+            }
+
+            return findLastJetElement(returnExpression.getPrevSibling()) == element; // our branch is exact before void return
+        } else { // our branch is not last in the block so there is no tail recursion here
+            return false;
+        }
+    }
+
+    private static Boolean checkWhenExpression(JetWhenExpression when, PsiElement element) {
+        JetExpression subjectExpression = when.getSubjectExpression();
+        if (subjectExpression != null && isChildrenOf(subjectExpression, element)) {
+            return false;
+        }
+        return null;
+    }
+
+    private static Boolean checkWhenEntry(JetWhenEntry parent, PsiElement element) {
+        JetExpression entryExpression = parent.getExpression();
+        if (entryExpression == null) {
+            return false;
+        }
+        if (!isChildrenOf(entryExpression, element)) {
+            return false;
+        }
+
+        return null;
+    }
+
+    private static Boolean checkIfExpression(JetIfExpression ifExpression, JetContainerNode me) {
+        if (!isThenOrElse(ifExpression, me.getLastChild())) {
+            return false;
+        }
+        return null;
+    }
+
+    private static Boolean checkQualifiedExpression(JetQualifiedExpression qualifiedExpression) {
+        if (qualifiedExpression.getReceiverExpression() instanceof JetThisExpression) {
+            return null;
+        } else {
+            return false;
+        }
     }
 
     private static boolean isFunctionElement(PsiElement element) {
@@ -240,11 +264,35 @@ public class TailRecursionGeneratorUtil {
         assert fd instanceof FunctionDescriptor;
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
         List<Type> types = callable.getValueParameterTypes();
-
-        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+        List<ValueParameterDescriptor> parametersStored = prepareParameterValuesOnStack(fd, types, resolvedCall.getValueArgumentsByIndex());
 
         boolean generateNullChecks = AsmUtil.getVisibilityAccessFlag((MemberDescriptor) fd) != ACC_PRIVATE;
+        // we can't store values to the variables in the loop above because it will affect expressions evaluation
+        for (ValueParameterDescriptor parameterDescriptor : Lists.reverse(parametersStored)) {
+            JetType type = parameterDescriptor.getReturnType();
+            Type asmType = types.get(parameterDescriptor.getIndex());
+            int index = getParameterVariableIndex(parameterDescriptor, callExpression);
 
+            if (generateNullChecks) {
+                generateNullCheckIfNeeded(parameterDescriptor, type, asmType);
+            }
+
+            v.store(index, asmType);
+        }
+
+        v.goTo(context.getMethodStartLabel());
+
+
+        state.getBindingTrace().record(TAIL_RECURSION_CALL, callExpression);
+
+        return StackValue.none();
+    }
+
+    private List<ValueParameterDescriptor> prepareParameterValuesOnStack(
+            CallableDescriptor fd,
+            List<Type> types,
+            List<ResolvedValueArgument> valueArguments
+    ) {
         List<ValueParameterDescriptor> descriptorsStored = new ArrayList<ValueParameterDescriptor>(valueArguments.size());
         for (ValueParameterDescriptor parameterDescriptor : fd.getValueParameters()) {
             ResolvedValueArgument arg = valueArguments.get(parameterDescriptor.getIndex());
@@ -276,30 +324,17 @@ public class TailRecursionGeneratorUtil {
 
             descriptorsStored.add(parameterDescriptor);
         }
+        return descriptorsStored;
+    }
 
-        // we can't store values to the variables in the loop above because it will affect expressions evaluation
-        for (ValueParameterDescriptor parameterDescriptor : Lists.reverse(descriptorsStored)) {
-            JetType type = parameterDescriptor.getReturnType();
-            Type asmType = types.get(parameterDescriptor.getIndex());
-            int index = getParameterVariableIndex(parameterDescriptor, callExpression);
-
-            if (type != null && !isNullableType(type)) {
-                if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
-                    v.dup();
-                    v.visitLdcInsn(parameterDescriptor.getName().asString());
-                    v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
-                }
+    private void generateNullCheckIfNeeded(ValueParameterDescriptor parameterDescriptor, JetType type, Type asmType) {
+        if (type != null && !isNullableType(type)) { // we probably may try to analyze the expression has been stored to drop few more null checks
+            if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
+                v.dup();
+                v.visitLdcInsn(parameterDescriptor.getName().asString());
+                v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
             }
-
-            v.store(index, asmType);
         }
-
-        v.goTo(context.getMethodStartLabel());
-
-
-        state.getBindingTrace().record(TAIL_RECURSION_CALL, callExpression);
-
-        return StackValue.none();
     }
 
     private int getParameterVariableIndex(ValueParameterDescriptor parameterDescriptor, PsiElement node) {
