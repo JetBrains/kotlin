@@ -51,7 +51,7 @@ class JSDeclarationsCacheProvider extends DeclarationsCacheProvider {
                 synchronized (declarationAnalysisLock) {
                     LibrarySourcesConfig config = new LibrarySourcesConfig(
                             project, "default",
-                            KotlinFrameworkDetector.getLibLocationAndTargetForProject(project).first,
+                            KotlinFrameworkDetector.getLibLocationForProject(project),
                             EcmaVersion.defaultVersion(), false);
 
                     AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJS.analyzeFiles(

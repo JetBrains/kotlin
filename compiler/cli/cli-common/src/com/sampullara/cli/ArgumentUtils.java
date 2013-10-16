@@ -16,6 +16,8 @@
 
 package com.sampullara.cli;
 
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,12 +68,19 @@ public class ArgumentUtils {
                 name = Args.getName(argument, field);
             }
 
+            Class<?> fieldType = field.getType();
+
+            if (fieldType.isArray()) {
+                Object[] values = (Object[]) value;
+                if (values.length == 0) continue;
+                value = StringUtil.join(values, Function.TO_STRING, argument.delimiter());
+            }
+
             result.add(argument.prefix() + name);
 
-            Class<?> fieldType = field.getType();
-            if (fieldType != boolean.class && fieldType != Boolean.class) {
-                result.add(value.toString());
-            }
+            if (fieldType == boolean.class || fieldType == Boolean.class) continue;
+
+            result.add(value.toString());
         }
     }
 

@@ -202,6 +202,14 @@ public class CliTest {
     }
 
     @Test
+    public void printArgumentsWithManyValue() {
+        executeCompilerCompareOutputJS(new String[] {
+                "-printArgs",
+                "-sourceFiles", "compiler/testData/cli/simple2js.kt,compiler/testData/cli/warnings.kt",
+                "-suppress", "warnings"});
+    }
+
+    @Test
     public void nonExistingClassPathAndAnnotationsPath() {
         String[] args = {
                 "-src", "compiler/testData/cli/simple.kt",

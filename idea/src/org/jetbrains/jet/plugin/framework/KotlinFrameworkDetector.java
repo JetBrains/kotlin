@@ -29,7 +29,6 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -43,8 +42,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
-import org.jetbrains.k2js.config.EcmaVersion;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -82,18 +81,19 @@ public class KotlinFrameworkDetector {
     }
 
     @NotNull
-    public static Pair<List<String>, String> getLibLocationAndTargetForProject(@NotNull Project project) {
+    public static List<String> getLibLocationForProject(@NotNull Project project) {
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules) {
             if (isJsKotlinModule(module)) {
-                return getLibLocationAndTargetForProject(module);
+                return getLibLocationForProject(module);
             }
         }
 
-        return Pair.empty();
+        return Collections.emptyList();
     }
 
-    public static Pair<List<String>, String> getLibLocationAndTargetForProject(final Module module) {
+    @NotNull
+    public static List<String> getLibLocationForProject(@NotNull final Module module) {
         final Set<String> pathsToJSLib = Sets.newHashSet();
 
         ApplicationManager.getApplication().runReadAction(new Runnable() {
@@ -120,7 +120,7 @@ public class KotlinFrameworkDetector {
             }
         });
 
-        return Pair.<List<String>, String>create(Lists.newArrayList(pathsToJSLib), EcmaVersion.defaultVersion().toString());
+        return Lists.newArrayList(pathsToJSLib);
     }
 
 
