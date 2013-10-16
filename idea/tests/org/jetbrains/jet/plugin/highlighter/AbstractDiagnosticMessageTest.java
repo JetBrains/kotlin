@@ -20,6 +20,8 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
@@ -45,6 +47,19 @@ import java.util.Set;
 public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
     private static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
+    private static final String MESSAGE_TYPE_DIRECTIVE = "MESSAGE_TYPE";
+
+    private enum MessageType {
+        TEXT("TEXT", "txt"), HTML("HTML", "html");
+
+        public final String directive;
+        public final String extension;
+
+        MessageType(String directive, String extension) {
+            this.directive = directive;
+            this.extension = extension;
+        }
+    }
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -62,8 +77,9 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
 
         String fileData = JetTestUtils.doLoadFile(file);
         Map<String,String> directives = JetTestUtils.parseDirectives(fileData);
-        int diagnosticNumber = computeDiagnosticNumber(directives);
-        final Set<DiagnosticFactory> diagnosticFactories = computeDiagnosticFactories(directives);
+        int diagnosticNumber = getDiagnosticNumber(directives);
+        final Set<DiagnosticFactory> diagnosticFactories = getDiagnosticFactories(directives);
+        MessageType messageType = getMessageTypeDirective(directives);
 
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
@@ -83,13 +99,13 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         for (Diagnostic diagnostic : diagnostics) {
             String readableDiagnosticText;
             String extension;
-            if (IdeErrorMessages.MAP.get(diagnostic.getFactory()) != null) {
+            if (messageType != MessageType.TEXT && IdeErrorMessages.MAP.get(diagnostic.getFactory()) != null) {
                 readableDiagnosticText = IdeErrorMessages.RENDERER.render(diagnostic).replaceAll(">", ">\n");
-                extension = "html";
+                extension = MessageType.HTML.extension;
             }
             else {
                 readableDiagnosticText = DefaultErrorMessages.RENDERER.render(diagnostic);
-                extension = "txt";
+                extension = MessageType.TEXT.extension;
             }
             String errorMessageFileName = name + index;
             String path = getTestDataPath() + "/" + errorMessageFileName + "." + extension;
@@ -100,7 +116,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         }
     }
 
-    private int computeDiagnosticNumber(Map<String, String> directives) {
+    private static int getDiagnosticNumber(Map<String, String> directives) {
         String diagnosticsNumber = directives.get(DIAGNOSTICS_NUMBER_DIRECTIVE);
         assert diagnosticsNumber != null : DIAGNOSTICS_NUMBER_DIRECTIVE + " should be present.";
         try {
@@ -111,7 +127,8 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         }
     }
 
-    private Set<DiagnosticFactory> computeDiagnosticFactories(Map<String, String> directives) {
+    @NotNull
+    private static Set<DiagnosticFactory> getDiagnosticFactories(Map<String, String> directives) {
         String diagnosticsData = directives.get(DIAGNOSTICS_DIRECTIVE);
         assert diagnosticsData != null : DIAGNOSTICS_DIRECTIVE + " should be present.";
         Set<DiagnosticFactory> diagnosticFactories = Sets.newHashSet();
@@ -136,5 +153,18 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
             }
         }
         return diagnosticFactories;
+    }
+
+    @Nullable
+    private static MessageType getMessageTypeDirective(Map<String, String> directives) {
+        String messageType = directives.get(MESSAGE_TYPE_DIRECTIVE);
+        if (messageType == null) return null;
+        try {
+            return MessageType.valueOf(messageType);
+        }
+        catch (IllegalArgumentException e) {
+            throw new AssertionError(MESSAGE_TYPE_DIRECTIVE + " should be " + MessageType.TEXT.directive + " or " +
+                                     MessageType.HTML.directive + ". But was: \"" + messageType + "\".");
+        }
     }
 }
