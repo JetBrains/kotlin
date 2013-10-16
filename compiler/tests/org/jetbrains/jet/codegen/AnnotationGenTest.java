@@ -38,8 +38,7 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     private ClassLoader loadFileGetClassLoader(@NotNull String text) {
         loadText(text);
-        ClassFileFactory state = generateClassesInFile();
-        return createClassLoader(state);
+        return generateAndCreateClassLoader();
     }
 
     private Class<?> getPackageClass(@NotNull ClassLoader loader) throws ClassNotFoundException {

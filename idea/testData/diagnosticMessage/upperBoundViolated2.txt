@@ -1,0 +1,3 @@
+<!-- upperBoundViolated2 -->
+Type parameter bound for V in fun <V : U, U> bar(v: V, u: jet.MutableSet<U>): jet.MutableSet<U>
+ is not satisfied: inferred type jet.Any is not a subtype of jet.String

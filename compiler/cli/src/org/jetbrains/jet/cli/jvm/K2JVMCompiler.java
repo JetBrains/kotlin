@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.jvm.repl.ReplFromTerminal;
@@ -36,7 +37,6 @@ import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +54,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
     @Override
     @NotNull
-    protected ExitCode doExecute(K2JVMCompilerArguments arguments, MessageCollector messageCollector, Disposable rootDisposable) {
+    protected ExitCode doExecute(
+            @NotNull K2JVMCompilerArguments arguments,
+            @NotNull MessageCollector messageCollector,
+            @NotNull Disposable rootDisposable
+    ) {
         KotlinPaths paths = arguments.kotlinHome != null
                                 ? new KotlinPathsFromHomeDir(new File(arguments.kotlinHome))
                                 : PathUtil.getKotlinPathsForCompiler();
@@ -73,13 +77,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return INTERNAL_ERROR;
         }
 
-        List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
             arguments.module == null &&
             arguments.src == null &&
-            arguments.freeArgs.isEmpty() &&
-            (argumentsSourceDirs == null || argumentsSourceDirs.size() == 0)) {
-
+            arguments.freeArgs.isEmpty()
+        ) {
             ReplFromTerminal.run(rootDisposable, configuration);
             return ExitCode.OK;
         }
@@ -89,21 +91,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, arguments.freeArgs.get(0));
         }
         else {
-            // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
-            if (arguments.getSourceDirs() != null) {
-                for (String source : arguments.getSourceDirs()) {
-                    configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, source);
-                }
+            if (arguments.src != null) {
+                List<String> sourcePathsSplitByPathSeparator
+                        = Arrays.asList(arguments.src.split(StringUtil.escapeToRegexp(File.pathSeparator)));
+                configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourcePathsSplitByPathSeparator);
             }
-            else {
-                if (arguments.src != null) {
-                    List<String> sourcePathsSplitByPathSeparator
-                            = Arrays.asList(arguments.src.split(StringUtil.escapeToRegexp(File.pathSeparator)));
-                    configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, sourcePathsSplitByPathSeparator);
-                }
-                for (String freeArg : arguments.freeArgs) {
-                    configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, freeArg);
-                }
+            for (String freeArg : arguments.freeArgs) {
+                configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, freeArg);
             }
         }
 
@@ -164,21 +158,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @Override
     protected K2JVMCompilerArguments createArguments() {
         return new K2JVMCompilerArguments();
-    }
-
-    // TODO this method is here only to workaround KT-2498
-    @Override
-    protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
-        super.configureEnvironment(configuration, arguments);
-    }
-
-    //TODO: Hacked! Be sure that our kotlin stuff builds correctly before you remove.
-    // our compiler throws method not found error
-    // probably relates to KT-1863... well, may be not
-    @NotNull
-    @Override
-    public ExitCode exec(@NotNull PrintStream errStream, @NotNull K2JVMCompilerArguments arguments) {
-        return super.exec(errStream, arguments);
     }
 
     @NotNull

@@ -51,6 +51,7 @@ import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
 import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
+import org.jetbrains.jet.plugin.highlighter.AbstractDiagnosticMessageTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest;
 import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
 import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
@@ -501,6 +502,13 @@ public class GenerateTests {
                 "JetFormatterTestGenerated",
                 AbstractJetFormatterTest.class,
                 testModelWithPattern("idea/testData/formatter", "^([^\\.]+)\\.kt$", "doTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "DiagnosticMessageTestGenerated",
+                AbstractDiagnosticMessageTest.class,
+                testModel("idea/testData/diagnosticMessage")
         );
     }
 

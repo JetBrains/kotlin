@@ -90,7 +90,7 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bra
         var inBracketsShift = 0
         if (openingBracketIndex == -1) {
             if (braces) {
-                if (completionChar == ' ') {
+                if (completionChar == ' ' || completionChar == '{') {
                     context.setAddCompletionChar(false)
                 }
 

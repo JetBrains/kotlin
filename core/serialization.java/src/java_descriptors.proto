@@ -58,12 +58,12 @@ message JavaFieldSignature {
 }
 
 message JavaPropertySignature {
-  // A property itself is identified either by the field, or by the name of the synthetic method.
-  // If the property is annotated, then either field or synthetic_method_name should be present
+  // A property itself is identified either by the field, or by the synthetic method.
+  // If the property is annotated, then either field or synthetic_method should be present
   optional JavaFieldSignature field = 1;
 
-  // Name of the synthetic method created to store property annotations. Signature is always "()V"
-  optional int32 synthetic_method_name = 2;
+  // Annotations on properties without backing fields are written on a synthetic method with this signature
+  optional JavaMethodSignature synthetic_method = 2;
 
   optional JavaMethodSignature getter = 3;
   optional JavaMethodSignature setter = 4;

@@ -40,7 +40,7 @@ class KDocSampleTest {
         val args = KDocArguments()
         args.kotlinHome = "../../../dist/kotlinc"
 
-        args.setSourceDirs(arrayList("src/test/sample"))
+        args.src = "src/test/sample"
 
         val outputDir = File("target/apidocs-sample")
         outputDir.rmrf()

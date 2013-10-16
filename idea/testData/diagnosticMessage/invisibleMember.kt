@@ -1,3 +1,6 @@
+// !DIAGNOSTICS_NUMBER: 3
+// !DIAGNOSTICS: INVISIBLE_MEMBER
+
 package foo.bar
 
 class A {

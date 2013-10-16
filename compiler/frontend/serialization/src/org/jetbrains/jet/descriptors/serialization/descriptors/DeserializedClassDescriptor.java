@@ -348,7 +348,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         }
 
         @Override
-        public boolean isSealed() {
+        public boolean isFinal() {
             return !getModality().isOverridable();
         }
 

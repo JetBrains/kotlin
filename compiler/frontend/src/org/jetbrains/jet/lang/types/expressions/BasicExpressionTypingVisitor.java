@@ -114,8 +114,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (innerExpression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetTypeInfo typeInfo = facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
-        return DataFlowUtils.checkType(typeInfo, expression, context);
+        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
     }
 
     private static JetTypeInfo createNumberValueTypeInfo(
@@ -140,13 +139,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
                 Long longValue = CompileTimeConstantResolver.parseLongValue(text);
                 if (longValue != null) {
-                    return createNumberValueTypeInfo(IntegerValueTypeConstructor.create(longValue), longValue, context.dataFlowInfo);
+                    return createNumberValueTypeInfo(new IntegerValueTypeConstructor((long) longValue), longValue, context.dataFlowInfo);
                 }
             }
             else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
                 Double doubleValue = CompileTimeConstantResolver.parseDoubleValue(text);
                 if (doubleValue != null) {
-                    return createNumberValueTypeInfo(DoubleValueTypeConstructor.create(doubleValue), doubleValue, context.dataFlowInfo);
+                    return createNumberValueTypeInfo(new DoubleValueTypeConstructor(doubleValue), doubleValue, context.dataFlowInfo);
                 }
             }
         }
@@ -727,7 +726,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // TODO : Some processing for the label?
         JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
         context.labelResolver.exitLabeledElement(baseExpression);
-        return DataFlowUtils.checkType(typeInfo, expression, context);
+        return typeInfo;
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {

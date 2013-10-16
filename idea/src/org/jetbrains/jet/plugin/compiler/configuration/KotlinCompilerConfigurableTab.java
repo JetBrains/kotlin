@@ -16,24 +16,35 @@
 
 package org.jetbrains.jet.plugin.compiler.configuration;
 
+import com.intellij.compiler.options.ComparingUtils;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.ex.ConfigurableWrapper;
+import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 
 import javax.swing.*;
 
-public class KotlinCompilerConfigurableTab extends ConfigurableWrapper implements Configurable.NoScroll  {
-    private JComboBox javaScriptEcmaCombobox;
+import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUPPRESS_WARNINGS;
+
+public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
+    private final CommonCompilerArguments commonCompilerSettings;
+    private final ConfigurableEP extPoint;
     private JPanel contentPane;
+    private JCheckBox generateNoWarningsCheckBox;
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
-        super(ep);
+        this.extPoint = ep;
+        this.commonCompilerSettings = KotlinCommonCompilerSettings.getInstance(ep.getProject()).getSettings();
+    }
 
-        javaScriptEcmaCombobox.setModel(new DefaultComboBoxModel(new Object[] {"Ecma3", "Ecma5"}));
+    @NotNull
+    @Override
+    public String getId() {
+        return extPoint.id;
     }
 
     @Nullable
@@ -50,16 +61,40 @@ public class KotlinCompilerConfigurableTab extends ConfigurableWrapper implement
 
     @Override
     public boolean isModified() {
-        return false;
+        return ComparingUtils.isModified(generateNoWarningsCheckBox, isGenerateNoWarnings());
     }
 
     @Override
     public void apply() throws ConfigurationException {
-        // TODO: Do something
+        setGenerateNoWarnings(generateNoWarningsCheckBox.isSelected());
     }
 
     @Override
     public void reset() {
-        // TODO: Do something
+        generateNoWarningsCheckBox.setSelected(isGenerateNoWarnings());
+    }
+
+    @Override
+    public void disposeUIResources() {
+    }
+
+    @Nls
+    @Override
+    public String getDisplayName() {
+        return extPoint.displayName;
+    }
+
+    @Nullable
+    @Override
+    public String getHelpTopic() {
+        return null;
+    }
+
+    private boolean isGenerateNoWarnings() {
+        return commonCompilerSettings.suppressAllWarnings();
+    }
+
+    private void setGenerateNoWarnings(boolean selected) {
+        commonCompilerSettings.suppress = selected ? SUPPRESS_WARNINGS : "";
     }
 }

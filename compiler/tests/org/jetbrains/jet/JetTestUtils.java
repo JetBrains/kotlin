@@ -65,8 +65,6 @@ import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
-import org.jetbrains.jet.utils.KotlinPaths;
-import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Assert;
 
@@ -438,7 +436,7 @@ public class JetTestUtils {
         return testFiles;
     }
 
-    private static Map<String, String> parseDirectives(String expectedText) {
+    public static Map<String, String> parseDirectives(String expectedText) {
         Map<String, String> directives = Maps.newHashMap();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
         int start = 0;
@@ -624,10 +622,6 @@ public class JetTestUtils {
 
     private static String getSimpleName(String generatorClassFqName) {
         return generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
-    }
-
-    public static KotlinPaths getPathsForTests() {
-        return new KotlinPathsFromHomeDir(new File("dist/kotlinc"));
     }
 
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {

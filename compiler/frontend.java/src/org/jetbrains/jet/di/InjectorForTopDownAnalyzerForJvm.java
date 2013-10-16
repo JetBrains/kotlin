@@ -54,6 +54,7 @@ import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
+import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
@@ -113,6 +114,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
+    private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final ScriptBodyResolver scriptBodyResolver;
     private final JavaClassResolver javaClassResolver;
     private final JavaAnnotationResolver javaAnnotationResolver;
@@ -173,6 +175,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
@@ -207,7 +210,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.bodyResolver.setContext(topDownAnalysisContext);
         this.bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
         this.bodyResolver.setDeclarationsChecker(declarationsChecker);
-        this.bodyResolver.setDescriptorResolver(descriptorResolver);
+        this.bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
@@ -219,6 +222,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.declarationsChecker.setTrace(bindingTrace);
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
+        this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
@@ -306,6 +310,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         typeHierarchyResolver.setNamespaceFactory(namespaceFactory);
         typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
         typeHierarchyResolver.setTrace(bindingTrace);
+
+        delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
         scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);

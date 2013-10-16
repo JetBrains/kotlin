@@ -90,6 +90,8 @@ public class CompletionHandlerTest() : JetLightCodeInsightFixtureTestCase() {
 
     fun testTabInsertInSimpleName() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
 
+    fun testInsertFunctionWithSingleParameterWithBrace() = doTest(CompletionType.BASIC, 0, "some", null, '{')
+
     var fixture by Delegates.notNull<JavaCodeInsightTestFixture>()
 
     protected override fun setUp() {

@@ -31,8 +31,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
-
 public interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
 
@@ -94,10 +92,7 @@ public interface TracingStrategy {
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {}
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData) {}
-
-        @Override
-        public void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
     };
 
     <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall);
@@ -139,7 +134,5 @@ public interface TracingStrategy {
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 
-    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData);
-
-    void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
+    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
 }

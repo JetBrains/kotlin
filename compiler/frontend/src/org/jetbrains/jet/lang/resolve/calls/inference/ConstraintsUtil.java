@@ -18,20 +18,21 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class ConstraintsUtil {
     @Nullable
     public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintSystem constraintSystem) {
         for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
-            TypeConstraints constraints = constraintSystem.getTypeConstraints(typeParameter);
+            TypeBounds constraints = constraintSystem.getTypeBounds(typeParameter);
             if (constraints.getValues().size() > 1) {
                 return typeParameter;
             }
@@ -44,7 +45,7 @@ public class ConstraintsUtil {
         TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintSystem);
         if (firstConflictingParameter == null) return Collections.emptyList();
 
-        Collection<JetType> conflictingTypes = constraintSystem.getTypeConstraints(firstConflictingParameter).getValues();
+        Collection<JetType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingParameter).getValues();
 
         ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (JetType type : conflictingTypes) {
@@ -71,7 +72,7 @@ public class ConstraintsUtil {
 
     @NotNull
     public static JetType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeParameter) {
-        JetType type = constraintSystem.getTypeConstraints(typeParameter).getValue();
+        JetType type = constraintSystem.getTypeBounds(typeParameter).getValue();
         if (type != null) {
             return type;
         }
@@ -84,7 +85,7 @@ public class ConstraintsUtil {
             @NotNull TypeParameterDescriptor typeParameter,
             boolean substituteOtherTypeParametersInBound
     ) {
-        JetType type = constraintSystem.getTypeConstraints(typeParameter).getValue();
+        JetType type = constraintSystem.getTypeBounds(typeParameter).getValue();
         if (type == null) return true;
         for (JetType upperBound : typeParameter.getUpperBounds()) {
             if (!substituteOtherTypeParametersInBound && TypeUtils.dependsOnTypeParameters(upperBound, constraintSystem.getTypeVariables())) {
@@ -111,27 +112,32 @@ public class ConstraintsUtil {
         }
         return true;
     }
-
-    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
-        final Set<TypeConstructor> constructors = Sets.newHashSet();
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
-            constructors.add(typeParameterDescriptor.getTypeConstructor());
+    
+    public static String getDebugMessageForStatus(@NotNull ConstraintSystemStatus status) {
+        StringBuilder sb = new StringBuilder();
+        List<Method> interestingMethods = Lists.newArrayList();
+        for (Method method : status.getClass().getMethods()) {
+            String name = method.getName();
+            boolean isInteresting = name.startsWith("is") || name.startsWith("has") && !name.equals("hashCode");
+            if (method.getParameterTypes().length == 0 && isInteresting) {
+                interestingMethods.add(method);
+            }
         }
-        final TypeProjection projection = new TypeProjection(type);
-
-        return TypeSubstitutor.create(new TypeSubstitution() {
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                if (constructors.contains(key)) {
-                    return projection;
+        for (Iterator<Method> iterator = interestingMethods.iterator(); iterator.hasNext(); ) {
+            Method method = iterator.next();
+            try {
+                sb.append("-").append(method.getName()).append(": ").append(method.invoke(status));
+                if (iterator.hasNext()) {
+                    sb.append("\n");
                 }
-                return null;
             }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
+            catch (IllegalAccessException e) {
+                sb.append(e.getMessage());
             }
-        });
+            catch (InvocationTargetException e) {
+                sb.append(e.getMessage());
+            }
+        }
+        return sb.toString();
     }
 }

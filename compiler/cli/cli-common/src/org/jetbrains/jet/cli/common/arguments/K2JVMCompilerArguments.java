@@ -15,31 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.jet.cli.jvm;
+package org.jetbrains.jet.cli.common.arguments;
 
 import com.sampullara.cli.Argument;
-import org.jetbrains.jet.cli.CommonCompilerArguments;
-
-import java.util.List;
 
 /**
  * Command line arguments for the {@link K2JVMCompiler}
  */
 @SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
-
-
-    // TODO ideally we'd unify this with 'src' to just having a single field that supports multiple files/dirs
-    private List<String> sourceDirs;
-
-    public List<String> getSourceDirs() {
-        return sourceDirs;
-    }
-
-    public void setSourceDirs(List<String> sourceDirs) {
-        this.sourceDirs = sourceDirs;
-    }
-
     @Argument(value = "jar", description = "jar file name")
     public String jar;
 
@@ -81,65 +65,4 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
     public String kotlinHome;
-
-    public String getKotlinHome() {
-        return kotlinHome;
-    }
-
-    public void setKotlinHome(String kotlinHome) {
-        this.kotlinHome = kotlinHome;
-    }
-
-    public String getClasspath() {
-        return classpath;
-    }
-
-    public void setClasspath(String classpath) {
-        this.classpath = classpath;
-    }
-
-    public boolean isIncludeRuntime() {
-        return includeRuntime;
-    }
-
-    public void setIncludeRuntime(boolean includeRuntime) {
-        this.includeRuntime = includeRuntime;
-    }
-
-    public String getJar() {
-        return jar;
-    }
-
-    public void setJar(String jar) {
-        this.jar = jar;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public String getOutputDir() {
-        return outputDir;
-    }
-
-    public void setOutputDir(String outputDir) {
-        this.outputDir = outputDir;
-    }
-
-    @Override
-    public String getSrc() {
-        return src;
-    }
-
-    public void setSrc(String src) {
-        this.src = src;
-    }
-
-    public void setNoStdlib(boolean noStdlib) {
-        this.noStdlib = noStdlib;
-    }
 }

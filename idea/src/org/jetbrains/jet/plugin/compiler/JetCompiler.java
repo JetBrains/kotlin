@@ -31,6 +31,7 @@ import com.intellij.util.Chunk;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.compiler.runner.*;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -41,9 +42,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class JetCompiler implements TranslatingCompiler {
-
-    private static final boolean RUN_OUT_OF_PROCESS = false;
-
     @Override
     public boolean isCompilableFile(VirtualFile virtualFile, CompileContext compileContext) {
         if (!(virtualFile.getFileType() instanceof JetFileType)) {
@@ -136,7 +134,16 @@ public class JetCompiler implements TranslatingCompiler {
             File scriptFile,
             OutputItemsCollector outputItemsCollector
     ) {
-        KotlinCompilerRunner.runK2JvmCompiler(messageCollector, environment, scriptFile, outputItemsCollector, RUN_OUT_OF_PROCESS);
+        K2JVMCompilerArguments commonArguments = new K2JVMCompilerArguments();
+        commonArguments.verbose = true;
+        commonArguments.tags = true;
+        commonArguments.printArgs = true;
+        commonArguments.version = true;
+
+        K2JVMCompilerArguments jvmArguments = new K2JVMCompilerArguments();
+        jvmArguments.module = scriptFile.getAbsolutePath();
+
+        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, jvmArguments, messageCollector, environment, scriptFile, outputItemsCollector);
     }
 
     public static File tryToWriteScriptFile(

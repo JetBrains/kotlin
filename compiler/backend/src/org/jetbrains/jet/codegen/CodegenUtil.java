@@ -290,6 +290,13 @@ public class CodegenUtil {
         //TODO: It's best to use this code also for compilation against sources
         // but sometimes structures that have expectedThisObject (bug?) mapped to static classes
         ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
-        return expectedThisObject != null ? (ClassDescriptor) expectedThisObject.getContainingDeclaration() : null;
+        if (expectedThisObject != null) {
+            ClassDescriptor expectedThisClass = (ClassDescriptor) expectedThisObject.getContainingDeclaration();
+            if (!expectedThisClass.getKind().isObject()) {
+                return expectedThisClass;
+            }
+        }
+
+        return null;
     }
 }

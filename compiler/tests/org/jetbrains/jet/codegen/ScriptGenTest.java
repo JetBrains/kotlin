@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
@@ -52,14 +51,8 @@ public class ScriptGenTest extends CodegenTestCase {
     private void blackBoxScript(String filename) {
         loadFile(filename);
 
-        ClassFileFactory factory = generateClassesInFile();
-
-        GeneratedClassLoader loader = createClassLoader(factory);
-
-        String scriptClassName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile());
-
         try {
-            Class<?> scriptClass = loader.loadClass(scriptClassName);
+            Class<?> scriptClass = generateClass(ScriptNameUtil.classNameForScript(myFiles.getPsiFile()));
 
             Constructor constructor = getConstructor(scriptClass);
             scriptInstance = constructor.newInstance(myFiles.getScriptParameterValues().toArray());
@@ -88,13 +81,14 @@ public class ScriptGenTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(generateToText());
-            ExceptionUtils.rethrow(e);
+            throw ExceptionUtils.rethrow(e);
         }
     }
 
-    protected Constructor getConstructor(@NotNull Class<?> clazz) {
-        Constructor [] constructors = clazz.getConstructors();
-        if (constructors == null || constructors.length != 1) {
+    @NotNull
+    protected static Constructor getConstructor(@NotNull Class<?> clazz) {
+        Constructor[] constructors = clazz.getConstructors();
+        if (constructors.length != 1) {
             throw new IllegalArgumentException("Script class should have one constructor: " + clazz);
         }
         return constructors[0];

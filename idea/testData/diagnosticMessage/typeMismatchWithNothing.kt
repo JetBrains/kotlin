@@ -1,3 +1,6 @@
+// !DIAGNOSTICS_NUMBER: 1
+// !DIAGNOSTICS: TYPE_MISMATCH
+
 package b
 
 trait A<T>

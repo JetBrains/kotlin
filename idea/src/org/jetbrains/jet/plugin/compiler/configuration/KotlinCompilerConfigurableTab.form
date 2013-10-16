@@ -8,24 +8,19 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="608b2" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="JavaScript target version"/>
-        </properties>
-      </component>
       <vspacer id="c5558">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="a858d" class="javax.swing.JComboBox" binding="javaScriptEcmaCombobox">
+      <component id="f842a" class="javax.swing.JCheckBox" binding="generateNoWarningsCheckBox" default-binding="true">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <selected value="false"/>
+          <text value="Generate no warnings"/>
+        </properties>
       </component>
     </children>
   </grid>

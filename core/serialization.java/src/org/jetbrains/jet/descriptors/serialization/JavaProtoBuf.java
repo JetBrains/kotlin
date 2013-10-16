@@ -1945,8 +1945,8 @@ public final class JavaProtoBuf {
      * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
      *
      * <pre>
-     * A property itself is identified either by the field, or by the name of the synthetic method.
-     * If the property is annotated, then either field or synthetic_method_name should be present
+     * A property itself is identified either by the field, or by the synthetic method.
+     * If the property is annotated, then either field or synthetic_method should be present
      * </pre>
      */
     boolean hasField();
@@ -1954,29 +1954,29 @@ public final class JavaProtoBuf {
      * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
      *
      * <pre>
-     * A property itself is identified either by the field, or by the name of the synthetic method.
-     * If the property is annotated, then either field or synthetic_method_name should be present
+     * A property itself is identified either by the field, or by the synthetic method.
+     * If the property is annotated, then either field or synthetic_method should be present
      * </pre>
      */
     org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature getField();
 
-    // optional int32 synthetic_method_name = 2;
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;
     /**
-     * <code>optional int32 synthetic_method_name = 2;</code>
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Name of the synthetic method created to store property annotations. Signature is always "()V"
+     * Annotations on properties without backing fields are written on a synthetic method with this signature
      * </pre>
      */
-    boolean hasSyntheticMethodName();
+    boolean hasSyntheticMethod();
     /**
-     * <code>optional int32 synthetic_method_name = 2;</code>
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Name of the synthetic method created to store property annotations. Signature is always "()V"
+     * Annotations on properties without backing fields are written on a synthetic method with this signature
      * </pre>
      */
-    int getSyntheticMethodName();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSyntheticMethod();
 
     // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature getter = 3;
     /**
@@ -2054,9 +2054,17 @@ public final class JavaProtoBuf {
               bitField0_ |= 0x00000001;
               break;
             }
-            case 16: {
+            case 18: {
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = syntheticMethod_.toBuilder();
+              }
+              syntheticMethod_ = input.readMessage(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(syntheticMethod_);
+                syntheticMethod_ = subBuilder.buildPartial();
+              }
               bitField0_ |= 0x00000002;
-              syntheticMethodName_ = input.readInt32();
               break;
             }
             case 26: {
@@ -2119,8 +2127,8 @@ public final class JavaProtoBuf {
      * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
      *
      * <pre>
-     * A property itself is identified either by the field, or by the name of the synthetic method.
-     * If the property is annotated, then either field or synthetic_method_name should be present
+     * A property itself is identified either by the field, or by the synthetic method.
+     * If the property is annotated, then either field or synthetic_method should be present
      * </pre>
      */
     public boolean hasField() {
@@ -2130,36 +2138,36 @@ public final class JavaProtoBuf {
      * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
      *
      * <pre>
-     * A property itself is identified either by the field, or by the name of the synthetic method.
-     * If the property is annotated, then either field or synthetic_method_name should be present
+     * A property itself is identified either by the field, or by the synthetic method.
+     * If the property is annotated, then either field or synthetic_method should be present
      * </pre>
      */
     public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature getField() {
       return field_;
     }
 
-    // optional int32 synthetic_method_name = 2;
-    public static final int SYNTHETIC_METHOD_NAME_FIELD_NUMBER = 2;
-    private int syntheticMethodName_;
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;
+    public static final int SYNTHETIC_METHOD_FIELD_NUMBER = 2;
+    private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature syntheticMethod_;
     /**
-     * <code>optional int32 synthetic_method_name = 2;</code>
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Name of the synthetic method created to store property annotations. Signature is always "()V"
+     * Annotations on properties without backing fields are written on a synthetic method with this signature
      * </pre>
      */
-    public boolean hasSyntheticMethodName() {
+    public boolean hasSyntheticMethod() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 synthetic_method_name = 2;</code>
+     * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
      *
      * <pre>
-     * Name of the synthetic method created to store property annotations. Signature is always "()V"
+     * Annotations on properties without backing fields are written on a synthetic method with this signature
      * </pre>
      */
-    public int getSyntheticMethodName() {
-      return syntheticMethodName_;
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSyntheticMethod() {
+      return syntheticMethod_;
     }
 
     // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature getter = 3;
@@ -2196,7 +2204,7 @@ public final class JavaProtoBuf {
 
     private void initFields() {
       field_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature.getDefaultInstance();
-      syntheticMethodName_ = 0;
+      syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
       getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
       setter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
     }
@@ -2207,6 +2215,12 @@ public final class JavaProtoBuf {
 
       if (hasField()) {
         if (!getField().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSyntheticMethod()) {
+        if (!getSyntheticMethod().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -2234,7 +2248,7 @@ public final class JavaProtoBuf {
         output.writeMessage(1, field_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(2, syntheticMethodName_);
+        output.writeMessage(2, syntheticMethod_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(3, getter_);
@@ -2256,7 +2270,7 @@ public final class JavaProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, syntheticMethodName_);
+          .computeMessageSize(2, syntheticMethod_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -2359,7 +2373,7 @@ public final class JavaProtoBuf {
         super.clear();
         field_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        syntheticMethodName_ = 0;
+        syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -2395,7 +2409,7 @@ public final class JavaProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.syntheticMethodName_ = syntheticMethodName_;
+        result.syntheticMethod_ = syntheticMethod_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
@@ -2413,8 +2427,8 @@ public final class JavaProtoBuf {
         if (other.hasField()) {
           mergeField(other.getField());
         }
-        if (other.hasSyntheticMethodName()) {
-          setSyntheticMethodName(other.getSyntheticMethodName());
+        if (other.hasSyntheticMethod()) {
+          mergeSyntheticMethod(other.getSyntheticMethod());
         }
         if (other.hasGetter()) {
           mergeGetter(other.getGetter());
@@ -2428,6 +2442,12 @@ public final class JavaProtoBuf {
       public final boolean isInitialized() {
         if (hasField()) {
           if (!getField().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSyntheticMethod()) {
+          if (!getSyntheticMethod().isInitialized()) {
             
             return false;
           }
@@ -2472,8 +2492,8 @@ public final class JavaProtoBuf {
        * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
        *
        * <pre>
-       * A property itself is identified either by the field, or by the name of the synthetic method.
-       * If the property is annotated, then either field or synthetic_method_name should be present
+       * A property itself is identified either by the field, or by the synthetic method.
+       * If the property is annotated, then either field or synthetic_method should be present
        * </pre>
        */
       public boolean hasField() {
@@ -2483,8 +2503,8 @@ public final class JavaProtoBuf {
        * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
        *
        * <pre>
-       * A property itself is identified either by the field, or by the name of the synthetic method.
-       * If the property is annotated, then either field or synthetic_method_name should be present
+       * A property itself is identified either by the field, or by the synthetic method.
+       * If the property is annotated, then either field or synthetic_method should be present
        * </pre>
        */
       public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature getField() {
@@ -2494,8 +2514,8 @@ public final class JavaProtoBuf {
        * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
        *
        * <pre>
-       * A property itself is identified either by the field, or by the name of the synthetic method.
-       * If the property is annotated, then either field or synthetic_method_name should be present
+       * A property itself is identified either by the field, or by the synthetic method.
+       * If the property is annotated, then either field or synthetic_method should be present
        * </pre>
        */
       public Builder setField(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature value) {
@@ -2511,8 +2531,8 @@ public final class JavaProtoBuf {
        * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
        *
        * <pre>
-       * A property itself is identified either by the field, or by the name of the synthetic method.
-       * If the property is annotated, then either field or synthetic_method_name should be present
+       * A property itself is identified either by the field, or by the synthetic method.
+       * If the property is annotated, then either field or synthetic_method should be present
        * </pre>
        */
       public Builder setField(
@@ -2526,8 +2546,8 @@ public final class JavaProtoBuf {
        * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
        *
        * <pre>
-       * A property itself is identified either by the field, or by the name of the synthetic method.
-       * If the property is annotated, then either field or synthetic_method_name should be present
+       * A property itself is identified either by the field, or by the synthetic method.
+       * If the property is annotated, then either field or synthetic_method should be present
        * </pre>
        */
       public Builder mergeField(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature value) {
@@ -2546,8 +2566,8 @@ public final class JavaProtoBuf {
        * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaFieldSignature field = 1;</code>
        *
        * <pre>
-       * A property itself is identified either by the field, or by the name of the synthetic method.
-       * If the property is annotated, then either field or synthetic_method_name should be present
+       * A property itself is identified either by the field, or by the synthetic method.
+       * If the property is annotated, then either field or synthetic_method should be present
        * </pre>
        */
       public Builder clearField() {
@@ -2557,52 +2577,88 @@ public final class JavaProtoBuf {
         return this;
       }
 
-      // optional int32 synthetic_method_name = 2;
-      private int syntheticMethodName_ ;
+      // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
       /**
-       * <code>optional int32 synthetic_method_name = 2;</code>
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Name of the synthetic method created to store property annotations. Signature is always "()V"
+       * Annotations on properties without backing fields are written on a synthetic method with this signature
        * </pre>
        */
-      public boolean hasSyntheticMethodName() {
+      public boolean hasSyntheticMethod() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 synthetic_method_name = 2;</code>
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Name of the synthetic method created to store property annotations. Signature is always "()V"
+       * Annotations on properties without backing fields are written on a synthetic method with this signature
        * </pre>
        */
-      public int getSyntheticMethodName() {
-        return syntheticMethodName_;
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSyntheticMethod() {
+        return syntheticMethod_;
       }
       /**
-       * <code>optional int32 synthetic_method_name = 2;</code>
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Name of the synthetic method created to store property annotations. Signature is always "()V"
+       * Annotations on properties without backing fields are written on a synthetic method with this signature
        * </pre>
        */
-      public Builder setSyntheticMethodName(int value) {
+      public Builder setSyntheticMethod(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        syntheticMethod_ = value;
+
         bitField0_ |= 0x00000002;
-        syntheticMethodName_ = value;
-        
         return this;
       }
       /**
-       * <code>optional int32 synthetic_method_name = 2;</code>
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
        *
        * <pre>
-       * Name of the synthetic method created to store property annotations. Signature is always "()V"
+       * Annotations on properties without backing fields are written on a synthetic method with this signature
        * </pre>
        */
-      public Builder clearSyntheticMethodName() {
+      public Builder setSyntheticMethod(
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder builderForValue) {
+        syntheticMethod_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
+       *
+       * <pre>
+       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * </pre>
+       */
+      public Builder mergeSyntheticMethod(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            syntheticMethod_ != org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance()) {
+          syntheticMethod_ =
+            org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder(syntheticMethod_).mergeFrom(value).buildPartial();
+        } else {
+          syntheticMethod_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;</code>
+       *
+       * <pre>
+       * Annotations on properties without backing fields are written on a synthetic method with this signature
+       * </pre>
+       */
+      public Builder clearSyntheticMethod() {
+        syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+
         bitField0_ = (bitField0_ & ~0x00000002);
-        syntheticMethodName_ = 0;
-        
         return this;
       }
 

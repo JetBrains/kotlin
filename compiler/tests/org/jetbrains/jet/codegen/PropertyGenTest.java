@@ -19,12 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.assertIsCurrentTime;
@@ -263,42 +258,5 @@ public class PropertyGenTest extends CodegenTestCase {
             System.out.println(generateToText());
             throw new RuntimeException(e);
         }
-    }
-
-    private static final String TEST_SYNTHETIC_METHOD_NAME = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(Name.identifier("property"));
-
-    public void testAnnotatedClassPropertyNoField() {
-        loadFile("properties/annotatedClassPropertyNoField.kt");
-        assertClassHasAnnotatedSyntheticMethod(generateClass("A"));
-    }
-
-    public void testAnnotatedPackagePropertyNoField() {
-        loadFile("properties/annotatedPackagePropertyNoField.kt");
-        String packageClassName = PackageClassUtils.getPackageClassName(FqName.ROOT);
-        for (String fileName : generateClassesInFile().files()) {
-            if (fileName.startsWith(packageClassName) && !fileName.equals(packageClassName + ".class")) {
-                // This should be package$src class
-                Class<?> a = generateClass(fileName.substring(0, fileName.length() - ".class".length()));
-                assertClassHasAnnotatedSyntheticMethod(a);
-            }
-        }
-    }
-
-    private static void assertClassHasAnnotatedSyntheticMethod(@NotNull Class<?> a) {
-        for (Method method : a.getDeclaredMethods()) {
-            if (TEST_SYNTHETIC_METHOD_NAME.equals(method.getName())) {
-                assertTrue(method.isSynthetic());
-                int modifiers = method.getModifiers();
-                assertTrue(Modifier.isFinal(modifiers));
-                assertTrue(Modifier.isStatic(modifiers));
-                assertTrue(Modifier.isPrivate(modifiers));
-
-                Annotation[] annotations = method.getDeclaredAnnotations();
-                assertSize(1, annotations);
-                assertEquals("@SomeAnnotation(value=OK)", annotations[0].toString());
-                return;
-            }
-        }
-        fail("Synthetic method for annotated property not found: " + TEST_SYNTHETIC_METHOD_NAME);
     }
 }

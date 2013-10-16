@@ -79,10 +79,11 @@ public class MockLibraryUtil {
 
     @NotNull
     private static Class<?> getCompilerClass() throws MalformedURLException, ClassNotFoundException {
-
         if (compilerClass == null) {
             File kotlinCompilerJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-compiler.jar");
-            URLClassLoader classLoader = new URLClassLoader(new URL[] {kotlinCompilerJar.toURI().toURL()}, Object.class.getClassLoader());
+            File kotlinRuntimeJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-runtime.jar");
+            URLClassLoader classLoader = new URLClassLoader(new URL[] {kotlinCompilerJar.toURI().toURL(), kotlinRuntimeJar.toURI().toURL()},
+                                                            Object.class.getClassLoader());
 
             compilerClass = classLoader.loadClass(K2JVMCompiler.class.getName());
         }

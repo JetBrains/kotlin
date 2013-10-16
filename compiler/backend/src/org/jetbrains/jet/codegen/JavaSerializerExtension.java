@@ -71,22 +71,22 @@ public class JavaSerializerExtension extends SerializerExtension {
             Type fieldType;
             String fieldName;
             boolean isStaticInOuter;
-            String syntheticMethodName;
+            Method syntheticMethod;
             if (field != null) {
                 fieldType = field.first;
                 fieldName = field.second;
                 isStaticInOuter = memberMap.isStaticFieldInOuterClass(property);
-                syntheticMethodName = null;
+                syntheticMethod = null;
             }
             else {
                 fieldType = null;
                 fieldName = null;
                 isStaticInOuter = false;
-                syntheticMethodName = memberMap.getSyntheticMethodNameOfProperty(property);
+                syntheticMethod = memberMap.getSyntheticMethodOfProperty(property);
             }
 
             JavaProtoBuf.JavaPropertySignature signature = new SignatureSerializer(nameTable)
-                            .propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethodName, getterMethod, setterMethod);
+                            .propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethod, getterMethod, setterMethod);
             proto.setExtension(JavaProtoBuf.propertySignature, signature);
         }
     }
@@ -129,7 +129,7 @@ public class JavaSerializerExtension extends SerializerExtension {
                 @Nullable Type fieldType,
                 @Nullable String fieldName,
                 boolean isStaticInOuter,
-                @Nullable String syntheticMethodName,
+                @Nullable Method syntheticMethod,
                 @Nullable Method getter,
                 @Nullable Method setter
         ) {
@@ -140,8 +140,8 @@ public class JavaSerializerExtension extends SerializerExtension {
                 signature.setField(fieldSignature(fieldType, fieldName, isStaticInOuter));
             }
 
-            if (syntheticMethodName != null) {
-                signature.setSyntheticMethodName(nameTable.getSimpleNameIndex(Name.guess(syntheticMethodName)));
+            if (syntheticMethod != null) {
+                signature.setSyntheticMethod(methodSignature(syntheticMethod));
             }
 
             if (getter != null) {

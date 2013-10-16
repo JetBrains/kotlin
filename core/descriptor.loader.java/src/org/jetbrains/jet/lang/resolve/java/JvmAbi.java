@@ -17,6 +17,9 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -25,7 +28,7 @@ public final class JvmAbi {
      * This constant is used to identify binary format (class file) versions
      * If you change class file metadata format and/or naming conventions, please increase this number
      */
-    public static final int VERSION = 9;
+    public static final int VERSION = 10;
 
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;
@@ -39,7 +42,6 @@ public final class JvmAbi {
 
     public static final String DELEGATED_PROPERTY_NAME_SUFFIX = "$delegate";
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
-    public static final String ANNOTATED_PROPERTY_METHOD_SIGNATURE = "()V";
 
     public static final String INSTANCE_FIELD = "instance$";
     public static final String CLASS_OBJECT_FIELD = "object$";
@@ -56,8 +58,12 @@ public final class JvmAbi {
     }
 
     @NotNull
-    public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
-        return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
+    public static Method getSyntheticMethodSignatureForAnnotatedProperty(@NotNull Name propertyName, @Nullable Type receiver) {
+        return new Method(
+                propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX,
+                Type.VOID_TYPE,
+                receiver == null ? new Type[0] : new Type[] {receiver}
+        );
     }
 
     @NotNull

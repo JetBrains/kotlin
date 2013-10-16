@@ -16,32 +16,78 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class ConstraintPosition {
-    public static final ConstraintPosition RECEIVER_POSITION = new ConstraintPosition("RECEIVER_POSITION");
-    public static final ConstraintPosition EXPECTED_TYPE_POSITION = new ConstraintPosition("EXPECTED_TYPE_POSITION");
-    public static final ConstraintPosition BOUND_CONSTRAINT_POSITION = new ConstraintPosition("BOUND_CONSTRAINT_POSITION");
-    public static final ConstraintPosition FROM_COMPLETER = new ConstraintPosition("FROM_COMPLETER");
-    public static final ConstraintPosition SPECIAL = new ConstraintPosition("SPECIAL");
+    public static final ConstraintPosition RECEIVER_POSITION = new ConstraintPosition("RECEIVER_POSITION", true);
+    public static final ConstraintPosition EXPECTED_TYPE_POSITION = new ConstraintPosition("EXPECTED_TYPE_POSITION", true);
+    public static final ConstraintPosition FROM_COMPLETER = new ConstraintPosition("FROM_COMPLETER", true);
+    public static final ConstraintPosition SPECIAL = new ConstraintPosition("SPECIAL", true);
 
     private static final Map<Integer, ConstraintPosition> valueParameterPositions = Maps.newHashMap();
+    private static final Map<Integer, ConstraintPosition> typeBoundPositions = Maps.newHashMap();
 
     public static ConstraintPosition getValueParameterPosition(int index) {
         ConstraintPosition position = valueParameterPositions.get(index);
         if (position == null) {
-            position = new ConstraintPosition("VALUE_PARAMETER_POSITION(" + index + ")");
+            position = new ConstraintPosition("VALUE_PARAMETER_POSITION(" + index + ")", true);
             valueParameterPositions.put(index, position);
         }
         return position;
     }
 
-    private final String debugName;
+    public static ConstraintPosition getTypeBoundPosition(int index) {
+        ConstraintPosition position = typeBoundPositions.get(index);
+        if (position == null) {
+            position = new ConstraintPosition("TYPE_BOUND_POSITION(" + index + ")", false);
+            typeBoundPositions.put(index, position);
+        }
+        return position;
+    }
 
-    private ConstraintPosition(String name) {
+    public static class CompoundConstraintPosition extends ConstraintPosition {
+        private final Collection<ConstraintPosition> positions;
+
+        public CompoundConstraintPosition(Collection<ConstraintPosition> positions) {
+            super("COMPOUND_CONSTRAINT_POSITION", hasConstraint(positions, /*strong=*/true));
+            this.positions = positions;
+        }
+
+        public boolean consistsOfOnlyStrongConstraints() {
+            return !hasConstraint(positions, /*strong=*/false);
+        }
+
+        private static boolean hasConstraint(@NotNull Collection<ConstraintPosition> positions, final boolean strong) {
+            return ContainerUtil.exists(positions, new Condition<ConstraintPosition>() {
+                @Override
+                public boolean value(ConstraintPosition constraintPosition) {
+                    return constraintPosition.isStrong() == strong;
+                }
+            });
+        }
+    }
+
+    public static ConstraintPosition getCompoundConstraintPosition(ConstraintPosition... positions) {
+        return new CompoundConstraintPosition(Lists.newArrayList(positions));
+    }
+
+    private final String debugName;
+    private final boolean isStrong;
+
+    private ConstraintPosition(String name, boolean isStrong) {
         debugName = name;
+        this.isStrong = isStrong;
+    }
+
+    public boolean isStrong() {
+        return isStrong;
     }
 
     @Override

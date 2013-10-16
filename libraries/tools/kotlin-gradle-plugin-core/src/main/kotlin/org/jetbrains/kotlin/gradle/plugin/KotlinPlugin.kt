@@ -24,7 +24,7 @@ import org.gradle.api.internal.DefaultDomainObjectSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.plugins.ExtensionAware
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import java.util.ArrayList
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.LibraryVariant

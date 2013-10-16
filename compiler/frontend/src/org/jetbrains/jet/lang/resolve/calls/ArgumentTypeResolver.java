@@ -50,7 +50,7 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfo;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ArgumentTypeResolver {
@@ -85,7 +85,7 @@ public class ArgumentTypeResolver {
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {
-        checkTypesWithNoCallee(context, SKIP_FUNCTION_ARGUMENTS);
+        checkTypesWithNoCallee(context, SHAPE_FUNCTION_ARGUMENTS);
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context, @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
@@ -165,6 +165,36 @@ public class ArgumentTypeResolver {
         }
     }
 
+    public static boolean isFunctionLiteralArgument(@NotNull JetExpression expression) {
+        return getFunctionLiteralArgumentIfAny(expression) != null;
+    }
+
+    @NotNull
+    public static JetFunctionLiteralExpression getFunctionLiteralArgument(@NotNull JetExpression expression) {
+        assert isFunctionLiteralArgument(expression);
+        //noinspection ConstantConditions
+        return getFunctionLiteralArgumentIfAny(expression);
+    }
+
+    @Nullable
+    private static JetFunctionLiteralExpression getFunctionLiteralArgumentIfAny(@NotNull JetExpression expression) {
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
+        if (deparenthesizedExpression instanceof JetBlockExpression) {
+            // todo
+            // This case is a temporary hack for 'if' branches.
+            // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
+            // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
+            JetElement lastStatementInABlock = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesizedExpression);
+            if (lastStatementInABlock instanceof JetExpression) {
+                deparenthesizedExpression = JetPsiUtil.deparenthesize((JetExpression) lastStatementInABlock, false);
+            }
+        }
+        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
+            return (JetFunctionLiteralExpression) deparenthesizedExpression;
+        }
+        return null;
+    }
+
     @NotNull
     public JetTypeInfo getArgumentTypeInfo(
             @Nullable JetExpression expression,
@@ -174,9 +204,8 @@ public class ArgumentTypeResolver {
         if (expression == null) {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(JetPsiUtil.unwrapFromBlock(expression), false);
-        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
-            return getFunctionLiteralTypeInfo(expression, (JetFunctionLiteralExpression) deparenthesizedExpression, context, resolveArgumentsMode);
+        if (isFunctionLiteralArgument(expression)) {
+            return getFunctionLiteralTypeInfo(expression, getFunctionLiteralArgument(expression), context, resolveArgumentsMode);
         }
         JetTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
@@ -195,21 +224,23 @@ public class ArgumentTypeResolver {
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
-        if (resolveArgumentsMode == SKIP_FUNCTION_ARGUMENTS) {
-            JetType type = getFunctionLiteralType(functionLiteralExpression, context.scope, context.trace);
+        if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
+            JetType type = getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, true);
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
         return expressionTypingServices.getTypeInfo(expression, context);
     }
 
     @Nullable
-    public JetType getFunctionLiteralType(
+    public JetType getShapeTypeOfFunctionLiteral(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull JetScope scope,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            boolean expectedTypeIsUnknown
     ) {
         if (expression.getFunctionLiteral().getValueParameterList() == null) {
-            return PLACEHOLDER_FUNCTION_TYPE;
+            return expectedTypeIsUnknown ? PLACEHOLDER_FUNCTION_TYPE : KotlinBuiltIns.getInstance().getFunctionType(
+                    Collections.<AnnotationDescriptor>emptyList(), null, Collections.<JetType>emptyList(), DONT_CARE);
         }
         List<JetParameter> valueParameters = expression.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
@@ -250,7 +281,7 @@ public class ArgumentTypeResolver {
             if (expression == null) continue;
 
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
-            JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SKIP_FUNCTION_ARGUMENTS);
+            JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SHAPE_FUNCTION_ARGUMENTS);
             infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
         }
     }
