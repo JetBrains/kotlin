@@ -26,18 +26,18 @@ enum class Y(override val foo: Int) : X {
 }
 
 fun box(): String {
-    if (B.a.x != 1) return "B.a.x != 1"
-    if (B.a.y != 0) return "B.a.y != 0"
-    if (B.a.bar != 3) return "B.a.bar != 3"
+    if (B.a.x != 1) return "B.a.x != 1, it: ${B.a.x}"
+    if (B.a.y != 0) return "B.a.y != 0, it: ${B.a.y}"
+    if (B.a.bar != 3) return "B.a.bar != 3, it: ${B.a.bar}"
 
-    if (B.b.bar != 4) return "B.b.bar != 4"
-    if (B.b.y != 12) return "B.b.y != 12"
+    if (B.b.y != 12) return "B.b.y != 12, it: ${B.b.y}"
+    if (B.b.bar != 4) return "B.b.bar != 4, it: ${B.b.bar}"
 
-    if (B.c.bar != 5) return "B.c.bar != 5"
-    if (B.c.y != 12) return "B.c.y != 12"
+    if (B.c.bar != 5) return "B.c.bar != 5, it: ${B.c.bar}"
+    if (B.c.y != 12) return "B.c.y != 12, it: ${B.c.y}"
 
-    if (Y.m.bar() != 3) return "Y.m.bar() != 3"
-    if (Y.n.bar() != 6) return "Y.n.bar() != 6"
+    if (Y.m.bar() != 3) return "Y.m.bar() != 3, it: ${Y.m.bar()}"
+    if (Y.n.bar() != 6) return "Y.n.bar() != 6, it: ${Y.m.bar()}"
 
     return "OK"
 }
