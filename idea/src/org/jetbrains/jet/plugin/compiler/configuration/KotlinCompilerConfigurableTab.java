@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
+import org.jetbrains.jet.plugin.JetBundle;
 
 import javax.swing.*;
 
@@ -51,7 +52,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.additionalCompilerSettings = KotlinAdditionalCompilerSettings.getInstance(ep.getProject()).getSettings();
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
-        additionalArgsOptionsField.setDialogCaption(null);
+        additionalArgsOptionsField.setDialogCaption(JetBundle.message("kotlin.compiler.option.additional.command.line.parameters.dialog.title"));
     }
 
     @NotNull
