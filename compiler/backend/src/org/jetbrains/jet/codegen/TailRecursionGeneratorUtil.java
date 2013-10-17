@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -35,10 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.jet.codegen.AsmUtil.pushDefaultValueOnStack;
@@ -122,141 +117,12 @@ public class TailRecursionGeneratorUtil {
         return false;
     }
 
-    private static boolean verifyRecursionAgainstTryFinally(JetCallExpression expression) {
-        return traceToRoot(expression, TRY_CATCH_FINALLY_ONLY, new TraversalVisitor<Boolean>() {
-            @Nullable
-            @Override
-            public Boolean visit(@NotNull PsiElement parent, @NotNull PsiElement element) {
-                return testTryElement(getTry(parent), element) ? null : false;
-            }
-        }, true);
-    }
-
-    private static JetTryExpression getTry(PsiElement finallyOrCatch) {
-        return (JetTryExpression) JetPsiUtil.getParentByTypeAndPredicate(finallyOrCatch, JetTryExpression.class, Predicates.<PsiElement>alwaysTrue(), false);
-    }
-
-    private static boolean testTryElement(@NotNull JetTryExpression tryExpression, @NotNull PsiElement element) {
-        JetFinallySection finallyBlock = tryExpression.getFinallyBlock();
-        if (finallyBlock != null && isChildrenOf(finallyBlock, element)) {
-            return true;
-        }
-        for (JetCatchClause catchClause : tryExpression.getCatchClauses()) {
-            if (isChildrenOf(catchClause, element)) {
-                return finallyBlock == null;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isChildrenOf(@NotNull final PsiElement possibleParent, @NotNull PsiElement element) {
-        return element == possibleParent || traceToRoot(element, Predicates.<PsiElement>alwaysTrue(), new TraversalVisitor<Boolean>() {
-            @Nullable
-            @Override
-            public Boolean visit(@NotNull PsiElement parent, @NotNull PsiElement e) {
-                return parent == possibleParent ? true : null;
-            }
-        }, false);
-    }
-
-    private static boolean isTailRecursiveCall(@NotNull final JetCallExpression expression) {
-        return traceToRoot(expression, Predicates.<PsiElement>alwaysTrue(), new TraversalVisitor<Boolean>() {
-            @Nullable
-            @Override
-            public Boolean visit(@NotNull PsiElement parent, @NotNull PsiElement element) {
-                if (parent instanceof JetFunction) {
-                    return true;
-                } else if (parent instanceof JetQualifiedExpression && element == expression) {
-                    return checkQualifiedExpression((JetQualifiedExpression) parent);
-                } else if (parent instanceof JetIfExpression && element instanceof JetContainerNode) {
-                    return checkIfExpression((JetIfExpression) parent, (JetContainerNode) element);
-                } else if (parent instanceof JetWhenEntry) {
-                    return checkWhenEntry((JetWhenEntry) parent, element);
-                } else if (parent instanceof JetWhenExpression) {
-                    return checkWhenExpression((JetWhenExpression) parent, element);
-                } else if (parent instanceof JetBlockExpression) {
-                    return checkBlockExpression(parent, element);
-                } else if (parent instanceof JetCatchClause || parent instanceof JetFinallySection || parent instanceof JetTryExpression) {
-                    return checkTryCatchOrFinally(parent, element);
-                } else if (parent instanceof JetContainerNode) {
-                    // do nothing, skip it
-                    return null;
-                } else if (parent instanceof JetReturnExpression) {
-                    JetReturnExpression returnExpression = (JetReturnExpression) parent;
-                    return returnExpression.getReturnedExpression() == expression;
-                } else { // including any jet loops/etc, return and etc
-                    return false; // other node types
-                }
-            }
-        }, true) && verifyRecursionAgainstTryFinally(expression);
-    }
-
-    private static Boolean checkTryCatchOrFinally(PsiElement parent, PsiElement element) {
-        if (!testTryElement(getTry(parent), element)) {
-            return false;
-        }
-        return null;
-    }
-
-    private static Boolean checkBlockExpression(PsiElement parent, PsiElement element) {
-        JetElement last = findLastJetElement(parent.getLastChild());
-        if (last == element) { // if last statement
-            // do nothing, continue trace
-            return null;
-        } else if (last instanceof JetReturnExpression) { // check if last statement before void return
-            JetReturnExpression returnExpression = (JetReturnExpression) last;
-
-            if (returnExpression.getReturnedExpression() != null) {
-                return false; // if there is return expression then no tail recursion here
-            }
-
-            return findLastJetElement(returnExpression.getPrevSibling()) == element; // our branch is exact before void return
-        } else { // our branch is not last in the block so there is no tail recursion here
-            return false;
-        }
-    }
-
-    private static Boolean checkWhenExpression(JetWhenExpression when, PsiElement element) {
-        JetExpression subjectExpression = when.getSubjectExpression();
-        if (subjectExpression != null && isChildrenOf(subjectExpression, element)) {
-            return false;
-        }
-        return null;
-    }
-
-    private static Boolean checkWhenEntry(JetWhenEntry parent, PsiElement element) {
-        JetExpression entryExpression = parent.getExpression();
-        if (entryExpression == null) {
-            return false;
-        }
-        if (!isChildrenOf(entryExpression, element)) {
-            return false;
-        }
-
-        return null;
-    }
-
-    private static Boolean checkIfExpression(JetIfExpression ifExpression, JetContainerNode me) {
-        if (!isThenOrElse(ifExpression, me.getLastChild())) {
-            return false;
-        }
-        return null;
-    }
-
-    private static Boolean checkQualifiedExpression(JetQualifiedExpression qualifiedExpression) {
-        if (qualifiedExpression.getReceiverExpression() instanceof JetThisExpression) {
-            return null;
-        } else {
-            return false;
-        }
+    private static boolean isTailRecursiveCall(@NotNull JetCallExpression expression) {
+        return traceToRoot(expression, new TailRecursionDetectorVisitor(), true);
     }
 
     private static boolean isFunctionElement(PsiElement element) {
         return element instanceof JetFunction;
-    }
-
-    private static boolean isThenOrElse(JetIfExpression ifExpression, PsiElement child) {
-        return ifExpression.getThen() == child || ifExpression.getElse() == child;
     }
 
     public StackValue generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall, JetCallExpression callExpression) {
@@ -350,49 +216,52 @@ public class TailRecursionGeneratorUtil {
         return index;
     }
 
-    @Nullable
-    private static JetElement findLastJetElement(@Nullable PsiElement rightNode) {
-        PsiElement node = rightNode;
-        while (node != null) {
-            if (node instanceof JetElement) {
-                return (JetElement) node;
-            }
-            node = node.getPrevSibling();
+
+    public static class TraceStatus<T> {
+        @NotNull
+        private final T data;
+        private final boolean abortTrace;
+
+        public TraceStatus(@NotNull T data, boolean abortTrace) {
+            this.data = data;
+            this.abortTrace = abortTrace;
         }
 
-        return null;
+        @NotNull
+        public T getData() {
+            return data;
+        }
+
+        public boolean isAbortTrace() {
+            return abortTrace;
+        }
     }
 
     @NotNull
-    private static <T> T traceToRoot(@NotNull PsiElement element, @NotNull Predicate<PsiElement> filterParent, @NotNull TraversalVisitor<T> visitor, @NotNull T def) {
-        do {
-            PsiElement parent = element.getParent();
-            if (parent == null) {
-                return def;
-            }
+    private static <T> T traceToRoot(@NotNull PsiElement element, @NotNull JetVisitor<TraceStatus<T>, List<? extends PsiElement>> visitor, T def) {
+        ArrayList<PsiElement> track = new ArrayList<PsiElement>();
+        List<PsiElement> view = Collections.unmodifiableList(track);
+        @NotNull
+        TraceStatus<T> lastStatus = new TraceStatus<T>(def, true);
 
-            if (filterParent.apply(parent)) {
-                T result = visitor.visit(parent, element);
-                if (result != null) {
-                    return result;
+        do {
+            track.add(element);
+            PsiElement parent = element.getParent();
+            if (parent instanceof JetElement) {
+                JetElement jet = (JetElement) parent;
+                TraceStatus<T> status = jet.accept(visitor, view);
+                if (status == null) {
+                    throw new IllegalStateException("visitor has returned null status");
                 }
+                if (status.isAbortTrace()) {
+                    return status.getData();
+                }
+                lastStatus = status;
             }
 
             element = parent;
-        } while (!isFunctionElement(element));
+        } while (element != null && !isFunctionElement(element));
 
-        return def;
+        return lastStatus.getData();
     }
-
-    private interface TraversalVisitor<T> {
-        @Nullable
-        T visit(@NotNull PsiElement parent, @NotNull PsiElement element);
-    }
-
-    private static final Predicate<PsiElement> TRY_CATCH_FINALLY_ONLY = new Predicate<PsiElement>() {
-        @Override
-        public boolean apply(@Nullable PsiElement element) {
-            return element instanceof JetTryExpression || element instanceof JetCatchClause || element instanceof JetFinallySection;
-        }
-    };
 }
