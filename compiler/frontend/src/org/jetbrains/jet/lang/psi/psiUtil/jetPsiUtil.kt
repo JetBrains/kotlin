@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.psi.psiUtil
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 
 fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
         parentClass : Class<T>, strict : Boolean = false, predicate: (T) -> Boolean
@@ -36,4 +37,21 @@ fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
     }
 
     return null
+}
+
+fun PsiElement.getParentByType<T: PsiElement>(parentClass : Class<T>, strict : Boolean = false) : T? {
+    return PsiTreeUtil.getParentOfType(this, parentClass, strict)
+}
+
+fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
+    return PsiTreeUtil.isAncestor(this, element, strict)
+}
+
+fun <T: PsiElement> T.getIfChildIsInBranch(element: PsiElement, branch: T.() -> PsiElement?): T? {
+    return if (branch().isAncestor(element)) this else null
+}
+
+fun PsiElement.getParentByTypeAndBranch<T: PsiElement>(
+        parentClass : Class<T>, strict : Boolean = false, branch: T.() -> PsiElement?) : T? {
+    return getParentByType(parentClass, strict)?.getIfChildIsInBranch(this, branch)
 }
