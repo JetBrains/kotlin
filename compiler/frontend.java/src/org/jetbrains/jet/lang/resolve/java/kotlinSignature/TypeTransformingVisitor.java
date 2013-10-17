@@ -101,7 +101,11 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().asString(), type);
     }
 
+    @NotNull
     private JetType visitCommonType(@NotNull String qualifiedName, @NotNull JetTypeElement type) {
+        if (originalType.isError()) {
+            return originalType;
+        }
         TypeConstructor originalTypeConstructor = originalType.getConstructor();
         ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
         assert declarationDescriptor != null;
