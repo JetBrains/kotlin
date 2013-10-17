@@ -9,7 +9,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.withTypes
 import org.jetbrains.jet.lang.resolve.java.lazy.TypeParameterResolver
 
 public class LazyJavaPackageFragmentScope(
-        private val c: LazyJavaResolverContext,
+        c: LazyJavaResolverContext,
         containingDeclaration: NamespaceDescriptor
 ) : LazyJavaMemberScope(c.withTypes(), containingDeclaration) {
     

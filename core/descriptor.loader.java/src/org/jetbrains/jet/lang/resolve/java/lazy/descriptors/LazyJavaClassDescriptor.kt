@@ -43,12 +43,8 @@ class LazyJavaClassDescriptor(
     private val _typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
     override fun getTypeConstructor() = _typeConstructor()
 
-    private val _scopeForMemberLookup = c.storageManager.createLazyValue {
-        // TODO
-        throw UnsupportedOperationException()
-    }
-
-    override fun getScopeForMemberLookup() = _scopeForMemberLookup()
+    private val _scopeForMemberLookup = LazyJavaClassMemberScope(c, this, jClass, false)
+    override fun getScopeForMemberLookup() = _scopeForMemberLookup
 
     private val _thisAsReceiverParameter = c.storageManager.createLazyValue { DescriptorFactory.createLazyReceiverParameterDescriptor(this) }
     override fun getThisAsReceiverParameter() = _thisAsReceiverParameter()

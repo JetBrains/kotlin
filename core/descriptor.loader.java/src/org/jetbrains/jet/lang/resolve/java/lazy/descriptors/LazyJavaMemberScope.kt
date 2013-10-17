@@ -6,12 +6,30 @@ import org.jetbrains.jet.lang.resolve.name.LabelName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.utils.emptyList
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.resolve.java.lazy.child
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
+import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
+import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
+import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.resolve.java.lazy.hasNotNullAnnotation
+import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeAttributes
+import org.jetbrains.jet.lang.resolve.java.lazy.hasMutableAnnotation
+import org.jetbrains.kotlin.util.iif
+import org.jetbrains.jet.lang.resolve.java.lazy.hasReadOnlyAnnotation
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.utils.Printer
 
 public abstract class LazyJavaMemberScope(
-        private val c: LazyJavaResolverContext,
+        protected val c: LazyJavaResolverContextWithTypes,
         private val _containingDeclaration: DeclarationDescriptor
 ) : JetScope {
     private val allDescriptors: NotNullLazyValue<MutableCollection<DeclarationDescriptor>> = c.storageManager.createLazyValue{computeAllDescriptors()}
@@ -52,6 +70,7 @@ public abstract class LazyJavaMemberScope(
 
         return result
     }
+
     protected abstract fun getAllClassNames(): Collection<Name>
     protected abstract fun getAllPropertyNames(): Collection<Name>
     protected abstract fun getAllFunctionNames(): Collection<Name>

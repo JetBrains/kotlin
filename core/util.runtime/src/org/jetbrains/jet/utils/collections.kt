@@ -19,6 +19,18 @@ package org.jetbrains.jet.utils
 import java.util.LinkedHashMap
 
 public fun <K, V> Iterable<V>.valuesToMap(key: (V) -> K): Map<K, V> {
+    return iterator().valuesToMap(key)
+}
+
+public fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
+    return iterator().keysToMap(value)
+}
+
+public fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
+    return iterator().keysToMapExceptNulls(value)
+}
+
+public fun <K, V> Iterator<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (v in this) {
         map[key(v)] = v
@@ -26,7 +38,7 @@ public fun <K, V> Iterable<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     return map
 }
 
-public fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
+public fun <K, V> Iterator<K>.keysToMap(value: (K) -> V): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
         map[k] = value(k)
@@ -34,7 +46,7 @@ public fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return map
 }
 
-public fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
+public fun <K, V: Any> Iterator<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
         val v = value(k)
