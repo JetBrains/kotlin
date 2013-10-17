@@ -23,7 +23,11 @@ public class EnumTest  extends SingleFileTranslationTest {
         super("enum/");
     }
 
-    public void testSimple() throws Exception {
+    public void testSimpleEnum() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testEnumWithInheritance() throws Exception {
         checkFooBoxIsOk();
     }
 
