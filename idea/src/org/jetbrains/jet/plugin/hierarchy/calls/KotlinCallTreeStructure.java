@@ -1,6 +1,5 @@
 package org.jetbrains.jet.plugin.hierarchy.calls;
 
-import com.google.common.base.Predicate;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.ide.hierarchy.call.CallHierarchyNodeDescriptor;
@@ -9,10 +8,12 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.containers.HashMap;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 
 import java.util.List;
 import java.util.Map;
@@ -44,9 +45,9 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
                                        : ((KotlinCallHierarchyNodeDescriptor)descriptor).getTargetElement();
     }
 
-    private static final Predicate<PsiElement> IS_NON_LOCAL_DECLARATION = new Predicate<PsiElement>() {
+    private static final Function1<PsiElement, Boolean> IS_NON_LOCAL_DECLARATION = new Function1<PsiElement, Boolean>() {
         @Override
-        public boolean apply(@javax.annotation.Nullable PsiElement input) {
+        public Boolean invoke(@javax.annotation.Nullable PsiElement input) {
             return input instanceof PsiMethod
                    || ((input instanceof JetNamedFunction || input instanceof JetClassOrObject || input instanceof JetProperty)
                        && !JetPsiUtil.isLocal((JetNamedDeclaration) input));
@@ -56,7 +57,7 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     @Nullable
     protected static PsiMethod getRepresentativePsiMethod(PsiElement element) {
         while (true) {
-            element = JetPsiUtil.getParentByTypeAndPredicate(element, PsiElement.class, IS_NON_LOCAL_DECLARATION, false);
+            element = PsiUtilPackage.getParentByTypeAndPredicate(element, PsiElement.class, false, IS_NON_LOCAL_DECLARATION);
             if (element == null) return null;
 
             PsiMethod method = getRepresentativePsiMethodForNonLocalDeclaration(element);

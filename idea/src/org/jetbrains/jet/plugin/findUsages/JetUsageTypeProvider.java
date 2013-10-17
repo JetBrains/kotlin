@@ -16,25 +16,26 @@
 
 package org.jetbrains.jet.plugin.findUsages;
 
-import com.google.common.base.Predicate;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.UsageTarget;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProviderEx;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 public class JetUsageTypeProvider implements UsageTypeProviderEx {
-    private static final Predicate<PsiElement> IS_ASSIGNMENT = new Predicate<PsiElement>() {
+    private static final Function1<PsiElement, Boolean> IS_ASSIGNMENT = new Function1<PsiElement, Boolean>() {
         @Override
-        public boolean apply(@Nullable PsiElement input) {
+        public Boolean invoke(@Nullable PsiElement input) {
             return input != null && JetPsiUtil.isAssignment(input);
         }
     };
@@ -203,7 +204,7 @@ public class JetUsageTypeProvider implements UsageTypeProviderEx {
         }
 
         JetBinaryExpression binaryExpression =
-                (JetBinaryExpression) JetPsiUtil.getParentByTypeAndPredicate(element, JetBinaryExpression.class, IS_ASSIGNMENT, false);
+                PsiUtilPackage.getParentByTypeAndPredicate(element, JetBinaryExpression.class, false, IS_ASSIGNMENT);
         if (binaryExpression != null && PsiTreeUtil.isAncestor(binaryExpression.getLeft(), element, false)) {
             return UsageType.WRITE;
         }
