@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.lazy.types
 
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
@@ -26,8 +25,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.kotlin.util.iif
-import org.jetbrains.jet.utils.*
-import org.jetbrains.jet.storage.*
 import org.jetbrains.kotlin.util.eq
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPrimitiveType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
@@ -37,11 +34,11 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.sure
-import org.jetbrains.jet.lang.resolve.java.lazy.TypeParameterResolver
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.TypeParameterResolverImpl
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
+import org.jetbrains.jet.lang.resolve.java.lazy.*
+import org.jetbrains.jet.storage.*
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -49,7 +46,7 @@ class LazyJavaTypeResolver(
 ) {
     private val NOT_NULL_POSITIONS = setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
 
-    public fun transformJavaType(javaType: JavaType, howThisTypeIsUsed: TypeUsage): JetType {
+    public fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): JetType {
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val canonicalText = javaType.getCanonicalText()
@@ -57,33 +54,36 @@ class LazyJavaTypeResolver(
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
                 return jetType!!
             }
-            is JavaClassifierType -> LazyJavaClassifierType(javaType, howThisTypeIsUsed).applyNullablility(howThisTypeIsUsed)
-            is JavaArrayType -> transformArrayType(javaType, howThisTypeIsUsed).applyNullablility(howThisTypeIsUsed)
+            is JavaClassifierType -> LazyJavaClassifierType(javaType, attr).applyNullablility(attr)
+            is JavaArrayType -> transformArrayType(javaType, attr).applyNullablility(attr)
             else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
         }
     }
 
-    public fun transformArrayType(arrayType: JavaArrayType, howThisTypeIsUsed: TypeUsage, isVararg: Boolean = false): JetType {
+    public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): JetType {
         val javaComponentType = arrayType.getComponentType()
         if (javaComponentType is JavaPrimitiveType) {
             val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
             if (jetType != null) return jetType
         }
 
-        val projectionKind = if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !isVararg) OUT_VARIANCE else INVARIANT
+        val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !isVararg) OUT_VARIANCE else INVARIANT
 
         val howArgumentTypeIsUsed = isVararg.iif(MEMBER_SIGNATURE_CONTRAVARIANT, TYPE_ARGUMENT)
-        val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed)
+        val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes())
         return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType))
     }
 
-    private fun JetType.applyNullablility(howThisTypeIsUsed: TypeUsage): JetType {
-        return TypeUtils.makeNullableAsSpecified(this, howThisTypeIsUsed !in NOT_NULL_POSITIONS)
+    private fun JetType.applyNullablility(attr: JavaTypeAttributes): JetType {
+        if (attr.howThisTypeIsUsed in NOT_NULL_POSITIONS) {
+            return TypeUtils.makeNotNullable(this)
+        }
+        return this
     }
 
     private fun transformToTypeProjection(
             javaType: JavaType,
-            howThisTypeIsUsed: TypeUsage,
+            attr: JavaTypeAttributes,
             typeConstructorBeingApplied: () -> TypeConstructor,
             typeParameterIndex: Int
     ): TypeProjection {
@@ -93,10 +93,10 @@ class LazyJavaTypeResolver(
                 if (bound == null)
                     LazyStarProjection(c, typeConstructorBeingApplied, typeParameterIndex)
                 else {
-                    TypeProjectionImpl(javaType.isExtends().iif(OUT_VARIANCE, IN_VARIANCE), transformJavaType(bound, UPPER_BOUND))
+                    TypeProjectionImpl(javaType.isExtends().iif(OUT_VARIANCE, IN_VARIANCE), transformJavaType(bound, UPPER_BOUND.toAttributes()))
                 }
             }
-            else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, howThisTypeIsUsed))
+            else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
         }
     }
 
@@ -113,7 +113,7 @@ class LazyJavaTypeResolver(
 
     private inner class LazyJavaClassifierType(
             private val javaType: JavaClassifierType,
-            private val howThisTypeIsUsed: TypeUsage
+            private val attr: JavaTypeAttributes
     ) : LazyType(c.storageManager) {
 
 
@@ -126,7 +126,18 @@ class LazyJavaTypeResolver(
                 is JavaClass -> {
                     val fqName = classifier.getFqName()
                             .sure("Class type should have a FQ name: " + classifier)
-                    val classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, howThisTypeIsUsed)
+
+                    val javaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
+                    val howThisTypeIsUsedEffectively = when {
+                        // This case has to be checked before isMarkedReadOnly/isMarkedMutable, because those two are slow
+                        // not mapped, we don't care about being marked mutable/read-only
+                        javaToKotlinClassMap.mapPlatformClass(fqName).isEmpty() -> attr.howThisTypeIsUsed
+
+                        // Read (possibly external) annotations
+                        else -> attr.howThisTypeIsUsedAccordingToAnnotations
+                    }
+
+                    val classData = javaToKotlinClassMap.mapKotlinClass(fqName, howThisTypeIsUsedEffectively)
                                     ?: c.javaClassResolver.resolveClass(classifier)
 
                     classData?.getTypeConstructor()
@@ -141,11 +152,11 @@ class LazyJavaTypeResolver(
         }
 
         override fun computeArguments(): List<TypeProjection> {
-            var howTheProjectionIsUsed = howThisTypeIsUsed.eq(SUPERTYPE).iif(SUPERTYPE_ARGUMENT, TYPE_ARGUMENT)
+            var howTheProjectionIsUsed = attr.howThisTypeIsUsed.eq(SUPERTYPE).iif(SUPERTYPE_ARGUMENT, TYPE_ARGUMENT)
             return javaType.getTypeArguments().withIndices().map {
                 p ->
                 val (i, t) = p
-                transformToTypeProjection(t, howTheProjectionIsUsed, {getConstructor()}, i)
+                transformToTypeProjection(t, howTheProjectionIsUsed.toAttributes(), {getConstructor()}, i)
             }.toList()
         }
 
@@ -156,5 +167,35 @@ class LazyJavaTypeResolver(
 
             return (descriptor as ClassDescriptor).getMemberScope(getArguments())
         }
+
+        private val _nullable = c.storageManager.createLazyValue { !attr.isMarkedNotNull }
+        override fun isNullable(): Boolean = _nullable()
     }
+}
+
+trait JavaTypeAttributes {
+    val howThisTypeIsUsed: TypeUsage
+    val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
+    val isMarkedNotNull: Boolean
+}
+
+class LazyJavaTypeAttributes(
+        c: LazyJavaResolverContext,
+        val annotationOwner: JavaAnnotationOwner,
+        override val howThisTypeIsUsed: TypeUsage,
+        computeHowThisTypeIsUsedAccrodingToAnnotations: () -> TypeUsage
+): JavaTypeAttributes {
+
+    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue(
+        computeHowThisTypeIsUsedAccrodingToAnnotations
+    )
+
+    override val isMarkedNotNull: Boolean by c.storageManager.createLazyValue { annotationOwner.hasNotNullAnnotation() }
+}
+
+fun TypeUsage.toAttributes() = object : JavaTypeAttributes {
+    override val howThisTypeIsUsed: TypeUsage = this@toAttributes
+    override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
+            get() = howThisTypeIsUsed
+    override val isMarkedNotNull: Boolean = false
 }

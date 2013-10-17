@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyType
 import org.jetbrains.jet.utils.valuesToMap
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jet.utils.keysToMapExceptNulls
+import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver
 import org.jetbrains.jet.renderer.DescriptorRenderer
 
@@ -128,7 +129,7 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromJavaClassObjectType(javaType: JavaType): CompileTimeConstant<*>? {
-        val `type` = c.typeResolver.transformJavaType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT)
+        val `type` = c.typeResolver.transformJavaType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes())
         val jlClass = c.javaClassResolver.resolveClassByFqName(JavaAnnotationArgumentResolver.JL_CLASS_FQ_NAME)
         if (jlClass == null) return null
 

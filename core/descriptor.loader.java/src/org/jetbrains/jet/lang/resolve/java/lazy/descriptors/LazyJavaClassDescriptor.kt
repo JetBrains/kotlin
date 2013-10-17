@@ -19,6 +19,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
+import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 
 class LazyJavaClassDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
@@ -82,7 +83,7 @@ class LazyJavaClassDescriptor(
         private val _supertypes = c.storageManager.createLazyValue {
             jClass.getSupertypes().map {
                 supertype ->
-                innerC.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE)
+                innerC.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
             }
         }
 

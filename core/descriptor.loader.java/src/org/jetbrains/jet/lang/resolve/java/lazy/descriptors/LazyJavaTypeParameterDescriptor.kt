@@ -22,9 +22,9 @@ import org.jetbrains.jet.lang.types.Variance
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
+import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 
 class LazyJavaTypeParameterDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
@@ -46,7 +46,7 @@ class LazyJavaTypeParameterDescriptor(
         }
         else {
             return bounds.map {
-                javaType -> c.typeResolver.transformJavaType(javaType, TypeUsage.UPPER_BOUND)
+                javaType -> c.typeResolver.transformJavaType(javaType, TypeUsage.UPPER_BOUND.toAttributes())
             }.toSet()
         }
     }
