@@ -81,7 +81,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
     protected abstract void generateKotlinAnnotation();
 
-    protected abstract void generateSyntheticParts();
+    protected void generateSyntheticParts() {
+    }
 
     private void generateClassBody() {
         FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state, this);
