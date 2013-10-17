@@ -166,7 +166,5 @@ public class KotlinCompilerRunner {
         settings.sourceFiles = ArrayUtil.toStringArray(sourceFilePaths);
         settings.outputFile = outputFile.getPath();
         settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles);
-        //TODO drop later
-        settings.sourcemap = true;
     }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
 
 import javax.swing.*;
@@ -34,16 +35,19 @@ import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUP
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
     private final CommonCompilerArguments commonCompilerSettings;
+    private final K2JSCompilerArguments k2jsCompilerSettings;
     private final AdditionalCompilerSettings additionalCompilerSettings;
     private final ConfigurableEP extPoint;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
     private JLabel additionalArgsLabel;
+    private JCheckBox generateSourceMapsCheckBox;
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
         this.extPoint = ep;
         this.commonCompilerSettings = KotlinCommonCompilerSettings.getInstance(ep.getProject()).getSettings();
+        this.k2jsCompilerSettings = Kotlin2JsCompilerSettings.getInstance(ep.getProject()).getSettings();
         this.additionalCompilerSettings = KotlinAdditionalCompilerSettings.getInstance(ep.getProject()).getSettings();
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
@@ -71,19 +75,22 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, isGenerateNoWarnings()) ||
-               ComparingUtils.isModified(additionalArgsOptionsField, additionalCompilerSettings.getAdditionalArguments());
+               ComparingUtils.isModified(additionalArgsOptionsField, additionalCompilerSettings.getAdditionalArguments()) ||
+               ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerSettings.sourcemap);
     }
 
     @Override
     public void apply() throws ConfigurationException {
         setGenerateNoWarnings(generateNoWarningsCheckBox.isSelected());
         additionalCompilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
+        k2jsCompilerSettings.sourcemap = generateSourceMapsCheckBox.isSelected();
     }
 
     @Override
     public void reset() {
         generateNoWarningsCheckBox.setSelected(isGenerateNoWarnings());
         additionalArgsOptionsField.setText(additionalCompilerSettings.getAdditionalArguments());
+        generateSourceMapsCheckBox.setSelected(k2jsCompilerSettings.sourcemap);
     }
 
     @Override
