@@ -72,13 +72,12 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
             return Collections.emptyList();
         }
 
-        context().classDeclarationTranslator().generateDeclarations();
+        context().classDeclarationTranslator().fixUnresolvedClassReferences();
         for (NamespaceTranslator translator : descriptorToTranslator.values()) {
             translator.add(descriptorToDefineInvocation);
         }
 
         JsVars vars = new JsVars(true);
-        vars.addIfHasInitializer(context().classDeclarationTranslator().getDeclaration());
         vars.addIfHasInitializer(getRootPackageDeclaration(descriptorToDefineInvocation.get(rootNamespaceDescriptor)));
 
         return Collections.<JsStatement>singletonList(vars);

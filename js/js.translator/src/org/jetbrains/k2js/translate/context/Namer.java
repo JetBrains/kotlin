@@ -47,7 +47,6 @@ public final class Namer {
     private static final String SUPER_METHOD_NAME = "baseInitializer";
     private static final String ROOT_NAMESPACE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
-    private static final String CLASSES_OBJECT_NAME = "_c";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
@@ -70,11 +69,6 @@ public final class Namer {
     @NotNull
     public static JsNameRef superMethodNameRef(@NotNull JsName superClassJsName) {
         return new JsNameRef(SUPER_METHOD_NAME, superClassJsName.makeRef());
-    }
-
-    @NotNull
-    public static String nameForClassesVariable() {
-        return CLASSES_OBJECT_NAME;
     }
 
     @NotNull
