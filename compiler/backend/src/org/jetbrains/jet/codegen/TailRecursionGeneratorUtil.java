@@ -178,9 +178,11 @@ public class TailRecursionGeneratorUtil {
                 }
 
                 codegen.gen(argumentExpression, type);
-            } else if (arg instanceof DefaultValueArgument) { // what case is it?
+            }
+            else if (arg instanceof DefaultValueArgument) { // what case is it?
                 pushDefaultValueOnStack(type, v);
-            } else if (arg instanceof VarargValueArgument) {
+            }
+            else if (arg instanceof VarargValueArgument) {
                 VarargValueArgument valueArgument = (VarargValueArgument) arg;
                 codegen.genVarargs(parameterDescriptor, valueArgument);
             }
@@ -215,7 +217,6 @@ public class TailRecursionGeneratorUtil {
 
         return index;
     }
-
 
     public static class TraceStatus<T> {
         @NotNull
