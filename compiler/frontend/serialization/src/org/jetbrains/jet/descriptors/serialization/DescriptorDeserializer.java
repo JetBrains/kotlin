@@ -25,11 +25,11 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -267,7 +267,7 @@ public class DescriptorDeserializer {
                 classDescriptor.getTypeConstructor().getParameters(),
                 local.valueParameters(proto.getValueParameterList()),
                 visibility(Flags.VISIBILITY.get(proto.getFlags())),
-                !classDescriptor.isInner()
+                DescriptorUtils.isConstructorOfStaticNestedClass(descriptor)
         );
         descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()));
         return descriptor;

@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
@@ -48,15 +49,12 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallTransformer.CallForImplicitInvoke;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
@@ -130,7 +128,7 @@ public class CandidateResolver {
                 candidateCall.addStatus(status);
             }
             else {
-                candidateCall.addStatus(checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS).status);
+                candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
             }
         }
         else {
@@ -155,7 +153,7 @@ public class CandidateResolver {
                 TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
                 candidateCall.setResultingSubstitutor(substitutor);
 
-                candidateCall.addStatus(checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS).status);
+                candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
             }
             else {
                 candidateCall.addStatus(OTHER_ERROR);
@@ -232,18 +230,12 @@ public class CandidateResolver {
 
         updateSystemWithConstraintSystemCompleter(context, resolvedCall);
 
-        if (resolvedCall.getConstraintSystem().getStatus().hasContradiction()) {
-            return reportInferenceError(context);
-        }
         updateSystemIfExpectedTypeIsUnit(context, resolvedCall);
 
-        boolean boundsAreSatisfied = updateSystemCheckingBounds(resolvedCall);
+        ((ConstraintSystemImpl)resolvedCall.getConstraintSystem()).processDeclaredBoundConstraints();
+
         if (!resolvedCall.getConstraintSystem().getStatus().isSuccessful()) {
             return reportInferenceError(context);
-        }
-        if (!boundsAreSatisfied) {
-            context.tracing.upperBoundViolated(context.trace, InferenceErrorData.create(
-                    resolvedCall.getCandidateDescriptor(), resolvedCall.getConstraintSystem()));
         }
         resolvedCall.setResultingSubstitutor(resolvedCall.getConstraintSystem().getResultingSubstitutor());
 
@@ -276,14 +268,13 @@ public class CandidateResolver {
                 BindingContext.CONSTRAINT_SYSTEM_COMPLETER, context.call.getCalleeExpression());
         if (constraintSystemCompleter == null) return;
 
-        ConstraintSystemImpl backup = (ConstraintSystemImpl) constraintSystem.copy();
+        ConstraintSystem copy = constraintSystem.copy();
+
+        constraintSystemCompleter.completeConstraintSystem(copy, resolvedCall);
 
         //todo improve error reporting with errors in constraints from completer
-        constraintSystemCompleter.completeConstraintSystem(constraintSystem, resolvedCall);
-        if (constraintSystem.getStatus().hasTypeConstructorMismatchAt(ConstraintPosition.FROM_COMPLETER) ||
-            (constraintSystem.getStatus().hasContradiction() && !backup.getStatus().hasContradiction())) {
-
-            resolvedCall.setConstraintSystem(backup);
+        if (!copy.getStatus().hasOnlyErrorsFromPosition(ConstraintPosition.FROM_COMPLETER)) {
+            resolvedCall.setConstraintSystem(copy);
         }
     }
 
@@ -301,29 +292,9 @@ public class CandidateResolver {
 
             copy.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, ConstraintPosition.EXPECTED_TYPE_POSITION);
             if (copy.getStatus().isSuccessful()) {
-                constraintSystem = copy;
-                resolvedCall.setConstraintSystem(constraintSystem);
+                resolvedCall.setConstraintSystem(copy);
             }
         }
-    }
-
-    private static <D extends CallableDescriptor> boolean updateSystemCheckingBounds(
-            @NotNull ResolvedCallImpl<D> resolvedCall
-    ) {
-        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
-        assert constraintSystem != null;
-
-        if (ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true)
-                && !constraintSystem.getStatus().hasUnknownParameters()) {
-            return true;
-        }
-        ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
-        copy.processDeclaredBoundConstraints();
-        if (copy.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true)) {
-            resolvedCall.setConstraintSystem(copy);
-            return true;
-        }
-        return false;
     }
 
     private <D extends CallableDescriptor> JetType reportInferenceError(
@@ -331,13 +302,14 @@ public class CandidateResolver {
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
+        assert constraintSystem != null;
 
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
         completeNestedCallsInference(context);
         List<JetType> argumentTypes = checkValueArgumentTypes(
                 context, resolvedCall, context.trace, RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
         JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
-        InferenceErrorData.ExtendedInferenceErrorData errorData = InferenceErrorData
+        InferenceErrorData errorData = InferenceErrorData
                 .create(resolvedCall.getCandidateDescriptor(), constraintSystem, argumentTypes, receiverType, context.expectedType);
 
         context.tracing.typeInferenceFailed(context.trace, errorData);
@@ -471,7 +443,8 @@ public class CandidateResolver {
         if (expression == null) return;
 
         DataFlowInfo dataFlowInfoForValueArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(argument);
-        ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType).replaceDataFlowInfo(dataFlowInfoForValueArgument);
+        ResolutionContext<?> newContext = context.replaceExpectedType(context.expectedType).replaceDataFlowInfo(
+                dataFlowInfoForValueArgument);
         DataFlowUtils.checkType(type, expression, newContext);
     }
 
@@ -495,15 +468,14 @@ public class CandidateResolver {
     ) {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         if (argumentExpression == null) return;
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(
-                JetPsiUtil.unwrapFromBlock(argumentExpression), false);
-        if (!(deparenthesizedExpression instanceof JetFunctionLiteralExpression)) return;
-        JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) deparenthesizedExpression;
+        if (!ArgumentTypeResolver.isFunctionLiteralArgument(argumentExpression)) return;
+
+        JetFunctionLiteralExpression functionLiteralExpression = ArgumentTypeResolver.getFunctionLiteralArgument(argumentExpression);
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetType expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT);
         if (expectedType == null || expectedType == DONT_CARE) {
-            expectedType = argumentTypeResolver.getFunctionLiteralType(functionLiteralExpression, context.scope, context.trace);
+            expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteralExpression, context.scope, context.trace, false);
         }
         if (expectedType == null || !KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)
                 || CallResolverUtil.hasUnknownFunctionParameter(expectedType)) {
@@ -562,13 +534,14 @@ public class CandidateResolver {
         // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
         CallableDescriptor candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate);
 
-
+        Map<TypeParameterDescriptor, Variance> typeVariables = Maps.newLinkedHashMap();
         for (TypeParameterDescriptor typeParameterDescriptor : candidateWithFreshVariables.getTypeParameters()) {
-            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
+            typeVariables.put(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
         }
+        constraintSystem.registerTypeVariables(typeVariables);
 
-        TypeSubstitutor substituteDontCare = ConstraintsUtil
-                .makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
+        TypeSubstitutor substituteDontCare =
+                makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
 
         // Value parameters
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
@@ -584,7 +557,7 @@ public class CandidateResolver {
                 // We'll type check the arguments later, with the inferred types expected
                 boolean[] isErrorType = new boolean[1];
                 addConstraintForValueArgument(valueArgument, valueParameterDescriptor, substituteDontCare, constraintSystem,
-                                              context, isErrorType, SKIP_FUNCTION_ARGUMENTS);
+                                              context, isErrorType, SHAPE_FUNCTION_ARGUMENTS);
                 if (isErrorType[0]) {
                     candidateCall.argumentHasNoType();
                 }
@@ -603,25 +576,25 @@ public class CandidateResolver {
             constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         }
 
-        ConstraintSystem constraintSystemWithRightTypeParameters = constraintSystem.replaceTypeVariables(
+        // Restore type variables before alpha-conversion
+        ConstraintSystem constraintSystemWithRightTypeParameters = constraintSystem.substituteTypeVariables(
                 new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
-            @Override
-            public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
-                assert typeParameterDescriptor != null;
-                return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
-            }
-        });
+                    @Override
+                    public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
+                        assert typeParameterDescriptor != null;
+                        return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
+                    }
+                });
         candidateCall.setConstraintSystem(constraintSystemWithRightTypeParameters);
 
 
         // Solution
         boolean hasContradiction = constraintSystem.getStatus().hasContradiction();
-        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/false);
         candidateCall.setHasUnknownTypeParameters(true);
-        if (!hasContradiction && boundsAreSatisfied) {
+        if (!hasContradiction) {
             return INCOMPLETE_TYPE_INFERENCE;
         }
-        ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS);
+        ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS);
         ResolutionStatus argumentsStatus = checkingResult.status;
         return OTHER_ERROR.combine(argumentsStatus);
     }
@@ -664,7 +637,9 @@ public class CandidateResolver {
         if (argumentExpression == null || type == null) return type;
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                JetPsiUtil.unwrapFromBlock(argumentExpression), type, trace.getBindingContext());
+                argumentExpression, type, trace.getBindingContext());
+        if (!dataFlowValue.isStableIdentifier()) return type;
+
         Set<JetType> possibleTypes = dataFlowInfoForArgument.getPossibleTypes(dataFlowValue);
         if (possibleTypes.isEmpty()) return type;
 
@@ -785,7 +760,7 @@ public class CandidateResolver {
             @NotNull JetType actualType,
             @NotNull ResolutionContext<?> context
     ) {
-        ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.unwrapFromBlock(expression), actualType);
+        ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType);
         List<ReceiverValue> variants =
                 AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (ReceiverValue receiverValue : variants) {

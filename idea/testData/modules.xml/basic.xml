@@ -1,6 +1,6 @@
 <modules>
     <!-- Module script for production -->
-    <module name="name">
+    <module name="name" outputDir="output">
         <sources path="s1"/>
         <sources path="s2"/>
         <!-- External annotations -->

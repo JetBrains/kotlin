@@ -23,15 +23,15 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 public interface ConstraintSystem {
 
     /**
-     * Registers a variable in a constraint system.
+     * Registers variables in a constraint system.
      */
-    void registerTypeVariable(@NotNull TypeParameterDescriptor typeVariable, @NotNull Variance positionVariance);
+    void registerTypeVariables(@NotNull Map<TypeParameterDescriptor, Variance> typeVariables);
 
     /**
      * Returns a set of all registered type variables.
@@ -65,7 +65,7 @@ public interface ConstraintSystem {
      * Returns null if the type variable was not registered.
      */
     @NotNull
-    TypeConstraints getTypeConstraints(@NotNull TypeParameterDescriptor typeVariable);
+    TypeBounds getTypeBounds(@NotNull TypeParameterDescriptor typeVariable);
 
     /**
      * Returns a result of solving the constraint system (mapping from the type variable to the resulting type projection). <p/>

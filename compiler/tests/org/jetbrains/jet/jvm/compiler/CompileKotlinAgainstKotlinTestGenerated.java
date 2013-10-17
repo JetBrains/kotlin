@@ -36,6 +36,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.A.kt$"), true);
     }
     
+    @TestMetadata("ClassInObject.A.kt")
+    public void testClassInObject() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/ClassInObject.A.kt");
+    }
+    
     @TestMetadata("ClassObjectMember.A.kt")
     public void testClassObjectMember() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/ClassObjectMember.A.kt");

@@ -31,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
@@ -67,7 +69,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     @Override
-    protected ExitCode doExecute(K2JSCompilerArguments arguments, MessageCollector messageCollector, Disposable rootDisposable) {
+    protected ExitCode doExecute(
+            @NotNull K2JSCompilerArguments arguments,
+            @NotNull MessageCollector messageCollector,
+            @NotNull Disposable rootDisposable
+    ) {
         if (arguments.sourceFiles == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -sourceFiles", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
@@ -75,7 +81,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(arguments.sourceFiles));
-        JetCoreEnvironment environmentForJS = new JetCoreEnvironment(rootDisposable, configuration);
+        JetCoreEnvironment environmentForJS = JetCoreEnvironment.createForProduction(rootDisposable, configuration);
 
         Project project = environmentForJS.getProject();
 
@@ -83,7 +89,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         List<JetFile> sourceFiles = sourceLoader.findSourceFiles();
         environmentForJS.getSourceFiles().addAll(sourceFiles);
 
-        if (arguments.isVerbose()) {
+        if (arguments.verbose) {
             reportCompiledSourcesList(messageCollector, environmentForJS);
         }
 
@@ -98,7 +104,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return ExitCode.INTERNAL_ERROR;
         }
 
-        MainCallParameters mainCallParameters = arguments.createMainCallParameters();
+        MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
         return translateAndGenerateOutputFile(mainCallParameters, environmentForJS, config, outputFile);
     }
 
@@ -161,6 +167,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         else {
             // lets discover the JS library definitions on the classpath
             return new ClassPathLibraryDefintionsConfig(project, moduleId, ecmaVersion, arguments.sourcemap);
+        }
+    }
+
+    public static MainCallParameters createMainCallParameters(String main) {
+        if (K2JsArgumentConstants.NO_CALL.equals(main)) {
+            return MainCallParameters.noCall();
+        }
+        else {
+            return MainCallParameters.mainWithoutArguments();
         }
     }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
@@ -105,7 +106,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     @NotNull
     private static AnnotationDescriptor getAnnotationDescriptorForJavaLangDeprecated(@NotNull ClassDescriptor annotationClass) {
-        AnnotationDescriptor annotation = new AnnotationDescriptor();
+        AnnotationDescriptorImpl annotation = new AnnotationDescriptorImpl();
         annotation.setAnnotationType(annotationClass.getDefaultType());
         ValueParameterDescriptor value = DescriptorResolverUtils.getAnnotationParameterByName(
                 JavaAnnotationResolver.DEFAULT_ANNOTATION_MEMBER_NAME, annotationClass);

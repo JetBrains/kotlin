@@ -9,8 +9,9 @@
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
     <property name="generate.javadoc" value="true"/>
 
-    <property name="boostrap.home" value="dependencies/bootstrap-compiler"/>
-    <property name="boostrap.compiler.home" value="${boostrap.home}/Kotlin/kotlinc"/>
+    <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
+    <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
+    <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
 
     <property name="output.relative" value="dist"/>
     <property name="output" value="${basedir}/${output.relative}"/>
@@ -22,7 +23,7 @@
     <property name="java.target" value="1.6"/>
 
     <path id="classpath">
-        <fileset dir="${boostrap.compiler.home}" includes="lib/kotlin-runtime.jar"/>
+        <file file="${bootstrap.runtime}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${idea.sdk}" includes="lib/protobuf-2.4.1.jar"/>
 
@@ -33,7 +34,7 @@
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
-    <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${boostrap.compiler.home}/lib/kotlin-ant.jar"/>
+    <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
     <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
@@ -67,8 +68,6 @@
         <!--<include name="j2k/src"/>-->
         <include name="compiler/jet.as.java.psi/src"/>
 
-        <include name="runtime/src"/>
-
         <include name="js/js.translator/src"/>
     </dirset>
 
@@ -86,8 +85,6 @@
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="jet.as.java.psi/**"/>
-
-        <include name="runtime/**"/>
 
         <include name="js.translator/**"/>
     </patternset>
@@ -148,7 +145,6 @@
             <fileset dir="compiler/util/src"/>
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/jet.as.java.psi/src"/>
-            <fileset dir="runtime/src"/>
             <fileset dir="js/js.translator/src"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
@@ -286,6 +282,7 @@
                   <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
                   <attribute name="Implementation-Version" value="${build.number}"/>
 
+                  <attribute name="Class-Path" value="kotlin-runtime.jar"/>
                   <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
               </manifest>
           </jar>
@@ -369,6 +366,7 @@
                     -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 
                     -libraryjars '${rtjar}'
+                    -libraryjars '${bootstrap.runtime}'
 
                     -target 1.6
                     -dontoptimize
@@ -415,6 +413,21 @@
                 ]]></proguard>
             </else>
         </if>
+
+        <jar jarfile="${output}/kotlin-compiler-for-maven.jar">
+            <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
+            <zipfileset src="${bootstrap.runtime}" includes="**" excludes="META-INF/**"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+
+                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="antTools">
@@ -429,6 +442,7 @@
             <compilerarg value="-Xlint:all"/>
             <classpath>
                 <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
+                <file file="${bootstrap.runtime}"/>
                 <fileset dir="${basedir}/dependencies" includes="ant.jar"/>
             </classpath>
         </javac2>

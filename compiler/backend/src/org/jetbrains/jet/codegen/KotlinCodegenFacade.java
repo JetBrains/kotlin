@@ -48,8 +48,6 @@ public class KotlinCodegenFacade {
             }
         }
 
-        state.getScriptCodegen().registerEarlierScripts(Collections.<Pair<ScriptDescriptor, Type>>emptyList());
-
         state.beforeCompile();
 
         MultiMap<FqName, JetFile> namespaceGrouping = new MultiMap<FqName, JetFile>();

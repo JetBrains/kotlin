@@ -233,6 +233,7 @@ var Kotlin = {};
         obj.prototype = {};
         Object.defineProperties(obj.prototype, obj.$metadata$.properties);
         copyProperties(obj.prototype, obj.$metadata$.functions);
+        Object.defineProperty(obj, "object", {get: class_object, configurable: true});
         return obj;
     };
 

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -50,6 +51,7 @@ public class InjectorForLazyResolve {
     private final JetImportsFactory jetImportsFactory;
     private final CompositeExtension compositeExtension;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final CallExpressionResolver callExpressionResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -72,12 +74,14 @@ public class InjectorForLazyResolve {
         this.jetImportsFactory = new JetImportsFactory();
         this.compositeExtension = new CompositeExtension();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
+        this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
@@ -97,6 +101,8 @@ public class InjectorForLazyResolve {
         this.annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
         this.jetImportsFactory.setProject(project);
+
+        delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 

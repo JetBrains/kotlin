@@ -1,0 +1,4 @@
+<node text="packageVal  ()" base="true">
+  <node text="JA.getName()(2 usages)  ()"/>
+  <node text="JA  ()"/>
+</node>

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -42,13 +43,17 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-public class SamWrapperCodegen extends GenerationStateAware {
+public class SamWrapperCodegen extends ParentCodegenAwareImpl {
     private static final String FUNCTION_FIELD_NAME = "function";
 
     @NotNull private final ClassDescriptorFromJvmBytecode samInterface;
 
-    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull ClassDescriptorFromJvmBytecode samInterface) {
-        super(state);
+    public SamWrapperCodegen(
+            @NotNull GenerationState state,
+            @NotNull ClassDescriptorFromJvmBytecode samInterface,
+            @Nullable MemberCodegen parentCodegen
+    ) {
+        super(state, parentCodegen);
         this.samInterface = samInterface;
     }
 
@@ -121,7 +126,7 @@ public class SamWrapperCodegen extends GenerationStateAware {
     ) {
 
         // using static context to avoid creating ClassDescriptor and everything else
-        FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC, cv, state);
+        FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC, cv, state, getParentCodegen());
 
         FunctionDescriptor invokeFunction = functionJetType.getMemberScope()
                 .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();

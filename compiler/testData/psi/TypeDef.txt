@@ -16,8 +16,6 @@ JetFile: TypeDef.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -120,8 +118,6 @@ JetFile: TypeDef.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE

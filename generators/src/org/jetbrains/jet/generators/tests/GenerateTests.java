@@ -51,6 +51,7 @@ import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
 import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest;
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
+import org.jetbrains.jet.plugin.highlighter.AbstractDiagnosticMessageTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest;
 import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
 import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
@@ -210,13 +211,6 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
-                "CompileKotlinAgainstCustomBinariesGenerated",
-                AbstractCompileKotlinAgainstCustomBinariesTest.class,
-                testModel("compiler/testData/compileKotlinAgainstCustomBinaries")
-        );
-
-        generateTest(
-                "compiler/tests/",
                 "LazyResolveDescriptorRendererTestGenerated",
                 AbstractLazyResolveDescriptorRendererTest.class,
                 testModel("compiler/testData/renderer")
@@ -323,7 +317,7 @@ public class GenerateTests {
                 "idea/tests",
                 "JetJavaLibCompletionTestGenerated",
                 AbstractJavaWithLibCompletionTest.class,
-                testModel("idea/testData/completion/basic/custom", false, "doTestWithJar"));
+                testModel("idea/testData/completion/basic/custom", false, "doTest"));
 
         generateTest(
                 "idea/tests",
@@ -508,6 +502,13 @@ public class GenerateTests {
                 "JetFormatterTestGenerated",
                 AbstractJetFormatterTest.class,
                 testModelWithPattern("idea/testData/formatter", "^([^\\.]+)\\.kt$", "doTest")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "DiagnosticMessageTestGenerated",
+                AbstractDiagnosticMessageTest.class,
+                testModel("idea/testData/diagnosticMessage")
         );
     }
 

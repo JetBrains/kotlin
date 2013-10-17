@@ -75,7 +75,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
             typeConstructor = new TypeConstructorImpl(
                     this,
                     originalTypeConstructor.getAnnotations(),
-                    originalTypeConstructor.isSealed(),
+                    originalTypeConstructor.isFinal(),
                     originalTypeConstructor.toString(),
                     typeParameters,
                     supertypes

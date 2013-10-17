@@ -1,5 +1,5 @@
 Invalid argument: -wrongArgument
-Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+Usage: org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
   -jar [String] jar file name
   -src [String] source file or directory (allows many paths separated by the system path separator)
   -classpath [String] classpath to use when compiling
@@ -19,4 +19,5 @@ Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -version [flag] Display compiler version
   -help (-h) [flag] Show help
   -suppress [String] Suppress compiler messages by severity (warnings)
+  -printArgs [flag] Print commandline arguments
 INTERNAL_ERROR

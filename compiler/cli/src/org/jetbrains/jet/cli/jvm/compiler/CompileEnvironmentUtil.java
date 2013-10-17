@@ -27,8 +27,7 @@ import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.modules.ModuleDescription;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
@@ -39,19 +38,17 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.jar.*;
 
@@ -59,13 +56,6 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_L
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
-    public static Disposable createMockDisposable() {
-        return new Disposable() {
-            @Override
-            public void dispose() {
-            }
-        };
-    }
 
     @Nullable
     private static File getRuntimeJarPath() {
@@ -74,38 +64,32 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static List<Module> loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
+    public static ModuleChunk loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
         File file = new File(moduleDefinitionFile);
         if (!file.exists()) {
             messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, NO_LOCATION);
-            return Collections.emptyList();
+            return ModuleChunk.EMPTY;
         }
         String extension = FileUtilRt.getExtension(moduleDefinitionFile);
         if ("kts".equalsIgnoreCase(extension)) {
-            return loadModuleScript(paths, moduleDefinitionFile, messageCollector);
+            return new ModuleChunk(loadModuleScript(paths, moduleDefinitionFile, messageCollector));
         }
         if ("xml".equalsIgnoreCase(extension)) {
-            return ContainerUtil.map(
+            return new ModuleChunk(ContainerUtil.map(
                     ModuleXmlParser.parse(moduleDefinitionFile, messageCollector),
                     new Function<ModuleDescription, Module>() {
                         @Override
                         public Module fun(ModuleDescription description) {
                             return new DescriptionToModuleAdapter(description);
                         }
-                    });
+                    }));
         }
         messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, NO_LOCATION);
-        return Collections.emptyList();
+        return ModuleChunk.EMPTY;
     }
 
     @NotNull
     private static List<Module> loadModuleScript(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
-        Disposable disposable = new Disposable() {
-            @Override
-            public void dispose() {
-
-            }
-        };
         CompilerConfiguration configuration = new CompilerConfiguration();
         File runtimePath = paths.getRuntimePath();
         if (runtimePath.exists()) {
@@ -120,8 +104,10 @@ public class CompileEnvironmentUtil {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
         List<Module> modules;
+
+        Disposable disposable = Disposer.newDisposable();
         try {
-            JetCoreEnvironment scriptEnvironment = new JetCoreEnvironment(disposable, configuration);
+            JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.createForProduction(disposable, configuration);
             GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment);
             if (generationState == null) {
                 throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed:\n" +
@@ -182,7 +168,7 @@ public class CompileEnvironmentUtil {
     }
 
     // TODO: includeRuntime should be not a flag but a path to runtime
-    public static void writeToJar(ClassFileFactory factory, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
+    private static void doWriteToJar(ClassFileFactory factory, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
             Attributes mainAttributes = manifest.getMainAttributes();
@@ -203,6 +189,24 @@ public class CompileEnvironmentUtil {
         }
         catch (IOException e) {
             throw new CompileEnvironmentException("Failed to generate jar file", e);
+        }
+    }
+
+    public static void writeToJar(File jarPath, boolean jarRuntime, FqName mainClass, ClassFileFactory moduleFactory) {
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(jarPath);
+            doWriteToJar(moduleFactory, outputStream, mainClass, jarRuntime);
+            outputStream.close();
+        }
+        catch (FileNotFoundException e) {
+            throw new CompileEnvironmentException("Invalid jar path " + jarPath, e);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
+        finally {
+            ExceptionUtils.closeQuietly(outputStream);
         }
     }
 
@@ -231,10 +235,26 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    public static void writeToOutputDirectory(ClassFileFactory factory, @NotNull File outputDir) {
+    public interface OutputDirector {
+        @NotNull
+        File getOutputDirectory(@NotNull Collection<File> sourceFiles);
+    }
+
+    public static OutputDirector singleDirectory(@Nullable final File file) {
+        if (file == null) return null;
+        return new OutputDirector() {
+            @NotNull
+            @Override
+            public File getOutputDirectory(@NotNull Collection<File> sourceFiles) {
+                return file;
+            }
+        };
+    }
+
+    public static void writeToOutputWithDirector(ClassFileFactory factory, @NotNull OutputDirector outputDirector) {
         List<String> files = factory.files();
         for (String file : files) {
-            File target = new File(outputDir, file);
+            File target = new File(outputDirector.getOutputDirectory(factory.getSourceFiles(file)), file);
             try {
                 FileUtil.writeToFile(target, factory.asBytes(file));
             }
@@ -242,6 +262,10 @@ public class CompileEnvironmentUtil {
                 throw new CompileEnvironmentException(e);
             }
         }
+    }
+
+    public static void writeToOutputDirectory(ClassFileFactory factory, @NotNull File outputDir) {
+        writeToOutputWithDirector(factory, singleDirectory(outputDir));
     }
 
     // Used for debug output only
@@ -256,6 +280,37 @@ public class CompileEnvironmentUtil {
         return moduleScriptText;
     }
 
+    static void writeOutputToDirOrJar(
+            @Nullable File jar,
+            @Nullable OutputDirector outputDir,
+            boolean includeRuntime,
+            @Nullable FqName mainClass,
+            @NotNull ClassFileFactory factory,
+            @NotNull MessageCollector messageCollector
+    ) {
+        if (jar != null) {
+            writeToJar(jar, includeRuntime, mainClass, factory);
+        }
+        else if (outputDir != null) {
+            reportOutputs(factory, messageCollector);
+            writeToOutputWithDirector(factory, outputDir);
+        }
+        else {
+            throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
+        }
+    }
+
+    private static void reportOutputs(ClassFileFactory factory, MessageCollector messageCollector) {
+        for (String outputFile : factory.files()) {
+            List<File> sourceFiles = factory.getSourceFiles(outputFile);
+            messageCollector.report(
+                    CompilerMessageSeverity.OUTPUT,
+                    OutputMessageUtil.formatOutputMessage(sourceFiles, new File(outputFile)),
+                    CompilerMessageLocation.NO_LOCATION);
+
+        }
+    }
+
     private static class DescriptionToModuleAdapter implements Module {
         private final ModuleDescription description;
 
@@ -266,6 +321,11 @@ public class CompileEnvironmentUtil {
         @Override
         public String getModuleName() {
             return description.getModuleName();
+        }
+
+        @Override
+        public String getOutputDirectory() {
+            return description.getOutputDir();
         }
 
         @Override

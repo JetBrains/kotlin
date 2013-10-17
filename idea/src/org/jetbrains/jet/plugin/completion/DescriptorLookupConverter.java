@@ -37,14 +37,13 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
-import org.jetbrains.jet.plugin.completion.handlers.*;
+import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
+import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
 
-import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.EMPTY_FUNCTION_HANDLER;
-import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.PARAMS_BRACES_FUNCTION_HANDLER;
-import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.PARAMS_PARENTHESIS_FUNCTION_HANDLER;
+import static org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler.*;
 
 public final class DescriptorLookupConverter {
     private DescriptorLookupConverter() {}
@@ -102,7 +101,7 @@ public final class DescriptorLookupConverter {
     }
 
     @Nullable
-    private static InsertHandler<LookupElement> getInsertHandler(@NotNull DeclarationDescriptor descriptor) {
+    public static InsertHandler<LookupElement> getInsertHandler(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
 

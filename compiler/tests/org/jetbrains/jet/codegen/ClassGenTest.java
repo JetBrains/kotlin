@@ -53,8 +53,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testDelegationToVal() throws Exception {
         loadFile("classes/delegationToVal.kt");
-        ClassFileFactory state = generateClassesInFile();
-        GeneratedClassLoader loader = createClassLoader(state);
+        GeneratedClassLoader loader = generateAndCreateClassLoader();
         Class aClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
         assertEquals("OK", aClass.getMethod("box").invoke(null));
 
@@ -139,7 +138,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testClassObjectIsInnerClass() throws Exception {
         loadFile("classes/classObjectIsInnerClass.kt");
-        GeneratedClassLoader loader = createClassLoader(generateClassesInFile());
+        GeneratedClassLoader loader = generateAndCreateClassLoader();
         Class<?> a = loader.loadClass("A");
         Class<?> aClassObject = loader.loadClass("A" + JvmAbi.CLASS_OBJECT_SUFFIX);
         assertSameElements(a.getDeclaredClasses(), aClassObject);

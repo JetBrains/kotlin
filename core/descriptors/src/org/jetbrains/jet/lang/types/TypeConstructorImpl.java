@@ -32,7 +32,7 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
     private final List<TypeParameterDescriptor> parameters;
     private Collection<JetType> supertypes;
     private final String debugName;
-    private final boolean sealed;
+    private final boolean isFinal;
 
     @Nullable
     private final ClassifierDescriptor classifierDescriptor;
@@ -40,13 +40,13 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
     public TypeConstructorImpl(
             @Nullable ClassifierDescriptor classifierDescriptor,
             @NotNull List<AnnotationDescriptor> annotations,
-            boolean sealed,
+            boolean isFinal,
             @NotNull String debugName,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
             @NotNull Collection<JetType> supertypes) {
         super(annotations);
         this.classifierDescriptor = classifierDescriptor;
-        this.sealed = sealed;
+        this.isFinal = isFinal;
         this.debugName = debugName;
         this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
         this.supertypes = Collections.unmodifiableCollection(supertypes);
@@ -70,8 +70,8 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
     }
 
     @Override
-    public boolean isSealed() {
-        return sealed;
+    public boolean isFinal() {
+        return isFinal;
     }
 
     @Override

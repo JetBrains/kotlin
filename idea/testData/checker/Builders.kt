@@ -15,7 +15,7 @@ import java.util.*
     val attributes = HashMap<String, String>()
 
     protected fun initTag<T : Element>(init :  T.() -> Unit) : T
-      where class object T : Factory<T>{
+      where <error>class object T : Factory<T></error>{
       val tag = T.create()
       tag.init()
       children.add(tag)

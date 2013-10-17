@@ -62,4 +62,8 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
     public void testArrayFactoryMethods() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testStringBuilder() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

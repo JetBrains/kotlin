@@ -16,16 +16,31 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import static org.jetbrains.asm4.Opcodes.*;
 
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
-    public TraitImplBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassBuilder v, GenerationState state) {
-        super(aClass, context, v, state, null);
+
+    public TraitImplBodyCodegen(
+            @NotNull JetClassOrObject aClass,
+            @NotNull ClassContext context,
+            @NotNull ClassBuilder v,
+            @NotNull GenerationState state,
+            @Nullable MemberCodegen parentCodegen
+    ) {
+        super(aClass, context, v, state, parentCodegen);
     }
 
     @Override
@@ -40,6 +55,26 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
         v.visitSource(myClass.getContainingFile().getName(), null);
     }
 
+    @Override
+    protected void generateSyntheticParts() {
+        generateSyntheticMethodsForAnnotatedProperties();
+    }
+
+    private void generateSyntheticMethodsForAnnotatedProperties() {
+        for (JetDeclaration declaration : myClass.getDeclarations()) {
+            if (declaration instanceof JetProperty) {
+                VariableDescriptor variable = bindingContext.get(BindingContext.VARIABLE, declaration);
+                assert variable instanceof PropertyDescriptor : "Variable in trait should be a property: " + variable;
+                PropertyDescriptor property = (PropertyDescriptor) variable;
+                if (!property.getAnnotations().isEmpty()) {
+                    Method method = PropertyCodegen.getSyntheticMethodSignature(typeMapper, property);
+                    PropertyCodegen.generateSyntheticMethodForAnnotatedProperty(v, typeMapper, property, method);
+                }
+            }
+        }
+    }
+
+    @NotNull
     private String jvmName() {
         return typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName();
     }

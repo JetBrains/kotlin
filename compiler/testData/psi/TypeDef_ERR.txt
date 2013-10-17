@@ -6,30 +6,24 @@ JetFile: TypeDef_ERR.kt
     PsiErrorElement:Type name expected
       <empty list>
     PsiWhiteSpace('\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
-    PsiErrorElement:Expecting '='
-      <empty list>
     TYPE_REFERENCE
-      <empty list>
+      PsiErrorElement:Type expected
+        <empty list>
   TYPEDEF
     PsiElement(type)('type')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
+    PsiErrorElement:Expecting '='
+      <empty list>
     PsiWhiteSpace('\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
-    PsiErrorElement:Expecting '='
-      <empty list>
     TYPE_REFERENCE
-      <empty list>
+      PsiErrorElement:Type expected
+        <empty list>
   TYPEDEF
     PsiElement(type)('type')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('\n')
     TYPE_REFERENCE
@@ -40,12 +34,21 @@ JetFile: TypeDef_ERR.kt
     PsiErrorElement:Type name expected
       <empty list>
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
+    TYPE_REFERENCE
+      PsiErrorElement:Type expected
+        <empty list>
+    PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  TYPEDEF
+    PsiElement(type)('type')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
     PsiErrorElement:Expecting '='
       <empty list>
+    PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      <empty list>
+      PsiErrorElement:Type expected
+        <empty list>
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
   TYPEDEF
@@ -53,21 +56,6 @@ JetFile: TypeDef_ERR.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
-    PsiErrorElement:Expecting '='
-      <empty list>
-    TYPE_REFERENCE
-      <empty list>
-    PsiElement(SEMICOLON)(';')
-  PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(type)('type')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('foo')
-    PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -80,8 +68,6 @@ JetFile: TypeDef_ERR.kt
     PsiErrorElement:Type name expected
       <empty list>
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -94,8 +80,6 @@ JetFile: TypeDef_ERR.kt
     PsiErrorElement:Type name expected
       <empty list>
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace('\n')
     TYPE_REFERENCE
@@ -106,8 +90,6 @@ JetFile: TypeDef_ERR.kt
     PsiErrorElement:Type name expected
       <empty list>
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -122,8 +104,6 @@ JetFile: TypeDef_ERR.kt
     PsiErrorElement:Type name expected
       <empty list>
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -200,16 +180,12 @@ JetFile: TypeDef_ERR.kt
     PsiElement(class)('class')
     PsiErrorElement:Class name expected
       <empty list>
-    PsiWhiteSpace('\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
+  PsiWhiteSpace('\n')
   TYPEDEF
     PsiElement(type)('type')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE

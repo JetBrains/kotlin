@@ -535,19 +535,37 @@ public class JetPsiFactory {
     }
 
     @NotNull
-    public static JetBlockExpression wrapInABlock(@NotNull final JetExpression expression) {
+    public static JetBlockExpression wrapInABlock(@NotNull JetExpression expression) {
         if (expression instanceof JetBlockExpression) {
             return (JetBlockExpression) expression;
         }
-        JetNamedFunction function = createFunction(expression.getProject(), "fun f() { " + expression.getText() + "}");
-        JetBlockExpression block = (JetBlockExpression) function.getBodyExpression();
-        assert block != null;
-        return new JetBlockExpression(block.getNode()) {
-            @NotNull
-            @Override
-            public List<JetElement> getStatements() {
-                return Collections.<JetElement>singletonList(expression);
-            }
-        };
+        return BlockWrapper.create(expression);
+    }
+
+    private static class BlockWrapper extends JetBlockExpression implements JetPsiUtil.JetExpressionWrapper {
+        private final JetExpression expression;
+
+        public static BlockWrapper create(@NotNull JetExpression expressionToWrap) {
+            JetNamedFunction function = createFunction(expressionToWrap.getProject(), "fun f() { " + expressionToWrap.getText() + "}");
+            JetBlockExpression block = (JetBlockExpression) function.getBodyExpression();
+            assert block != null;
+            return new BlockWrapper(block, expressionToWrap);
+        }
+
+        private BlockWrapper(@NotNull JetBlockExpression fakeBlockExpression, @NotNull JetExpression expressionToWrap) {
+            super(fakeBlockExpression.getNode());
+            this.expression = expressionToWrap;
+        }
+
+        @NotNull
+        @Override
+        public List<JetElement> getStatements() {
+            return Collections.<JetElement>singletonList(expression);
+        }
+
+        @Override
+        public JetExpression getBaseExpression() {
+            return expression;
+        }
     }
 }

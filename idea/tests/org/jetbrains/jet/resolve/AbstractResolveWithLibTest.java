@@ -18,20 +18,16 @@ package org.jetbrains.jet.resolve;
 
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
-
-import static com.intellij.openapi.util.text.StringUtil.startsWithIgnoreCase;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 public abstract class AbstractResolveWithLibTest extends AbstractResolveBaseTest {
-
-    private static final String TEST_DATA_PATH = "idea/testData/resolve/referenceWithLib";
-    private static final String ALL_FILES_PRESENT_PREFIX = "allFilesPresentIn";
+    private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/resolve/referenceWithLib";
 
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        String testName = getTestName(true);
-        if (startsWithIgnoreCase(testName, ALL_FILES_PRESENT_PREFIX)) {
+        if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
             return null;
         }
-        return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + testName + "Src", false);
+        return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(true) + "Src", false);
     }
 }

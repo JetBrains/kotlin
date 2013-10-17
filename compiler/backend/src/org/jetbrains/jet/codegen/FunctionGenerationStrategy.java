@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.MethodContext;
@@ -38,7 +39,8 @@ public abstract class FunctionGenerationStrategy {
     public abstract void generateBody(
             @NotNull MethodVisitor mv,
             @NotNull JvmMethodSignature signature,
-            @NotNull MethodContext context
+            @NotNull MethodContext context,
+            @Nullable MemberCodegen parentCodegen
     );
 
     protected void addLocalVariableName(@NotNull String name) {
@@ -97,9 +99,10 @@ public abstract class FunctionGenerationStrategy {
         public void generateBody(
                 @NotNull MethodVisitor mv,
                 @NotNull JvmMethodSignature signature,
-                @NotNull MethodContext context
+                @NotNull MethodContext context,
+                @Nullable MemberCodegen parentCodegen
         ) {
-            ExpressionCodegen codegen = initializeExpressionCodegen(signature, context, mv, signature.getAsmMethod().getReturnType());
+            ExpressionCodegen codegen = initializeExpressionCodegen(signature, context, mv, signature.getAsmMethod().getReturnType(), parentCodegen);
             doGenerateBody(codegen, signature);
             generateLocalVarNames(codegen);
         }
@@ -111,9 +114,10 @@ public abstract class FunctionGenerationStrategy {
                 JvmMethodSignature signature,
                 MethodContext context,
                 MethodVisitor mv,
-                Type returnType
+                Type returnType,
+                MemberCodegen parentCodegen
         ) {
-            return new ExpressionCodegen(mv, getFrameMap(state.getTypeMapper(), context), returnType, context, state);
+            return new ExpressionCodegen(mv, getFrameMap(state.getTypeMapper(), context), returnType, context, state, parentCodegen);
         }
 
         public void generateLocalVarNames(@NotNull ExpressionCodegen codegen) {

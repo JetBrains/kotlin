@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.lang.annotation.RetentionPolicy;
@@ -85,9 +84,15 @@ public abstract class AnnotationCodegen {
 
             AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
+            if (isVolatile(annotationDescriptor)) continue;
 
             genAnnotation(annotationDescriptor);
         }
+    }
+
+    private static boolean isVolatile(@NotNull AnnotationDescriptor annotationDescriptor) {
+        ClassifierDescriptor classDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
+        return KotlinBuiltIns.getInstance().getVolatileAnnotationClass().equals(classDescriptor);
     }
 
     public void generateAnnotationDefaultValue(CompileTimeConstant value) {

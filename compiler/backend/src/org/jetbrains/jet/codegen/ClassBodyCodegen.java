@@ -79,11 +79,10 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
     protected void generateKotlinAnnotation() {
     }
 
-    protected void generateSyntheticParts() {
-    }
+    protected abstract void generateSyntheticParts();
 
     private void generateClassBody() {
-        FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
+        FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state, this);
         PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
 
         if (kind != OwnerKind.TRAIT_IMPL) {
@@ -184,7 +183,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                               Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
 
-            clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state);
+            clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
         }
         return clInitCodegen;
     }

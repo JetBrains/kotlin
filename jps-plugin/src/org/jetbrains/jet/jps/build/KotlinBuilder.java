@@ -21,10 +21,17 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.KotlinVersion;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.compiler.runner.*;
+import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
+import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
+import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
+import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
+import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -32,6 +39,7 @@ import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
@@ -39,8 +47,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler;
+import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
 
@@ -75,27 +86,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION);
 
-        if (chunk.getModules().size() > 1) {
-            // We do not support circular dependencies, but if they are present, we should not break the build,
-            // so we simply yield a warning and report NOTHING_DONE
-            messageCollector.report(
-                    WARNING, "Circular dependencies are not supported. " +
-                             "The following modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
-                             "Kotlin is not compiled for these modules",
-                    CompilerMessageLocation.NO_LOCATION);
-            return ExitCode.NOTHING_DONE;
-        }
-
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
 
         // For non-incremental build: take all sources
         if (!dirtyFilesHolder.hasDirtyFiles()) {
-            return ExitCode.NOTHING_DONE;
-        }
-        List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget);
-        //List<File> sourceFiles = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
-
-        if (sourceFiles.isEmpty()) {
             return ExitCode.NOTHING_DONE;
         }
 
@@ -111,26 +105,52 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl(outputDir);
 
-        if (JpsUtils.isJsKotlinModule(representativeTarget)) {
-            File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
+        JpsProject project = representativeTarget.getModule().getProject();
+        CommonCompilerArguments commonSettings = JpsKotlinCompilerSettings.getCommonSettings(project);
 
-            KotlinCompilerRunner.runK2JsCompiler(
-                    messageCollector,
-                    environment,
-                    outputItemCollector,
-                    sourceFiles,
-                    JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget),
-                    outputFile);
+        if (JpsUtils.isJsKotlinModule(representativeTarget)) {
+            if (chunk.getModules().size() > 1) {
+                // We do not support circular dependencies, but if they are present, we do our best should not break the build,
+                // so we simply yield a warning and report NOTHING_DONE
+                messageCollector.report(
+                        WARNING, "Circular dependencies are not supported. " +
+                                 "The following JS modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
+                                 "Kotlin is not compiled for these modules",
+                        CompilerMessageLocation.NO_LOCATION);
+                return ExitCode.NOTHING_DONE;
+            }
+
+            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget);
+            //List<File> sourceFiles = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder);
+
+            if (sourceFiles.isEmpty()) {
+                return ExitCode.NOTHING_DONE;
+            }
+
+            File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
+            Set<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
+            K2JSCompilerArguments k2JsSettings = JpsKotlinCompilerSettings.getK2JsSettings(project);
+
+            runK2JsCompiler(commonSettings, k2JsSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile);
         }
         else {
-            File moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, representativeTarget, sourceFiles);
+            if (chunk.getModules().size() > 1) {
+                messageCollector.report(
+                        WARNING, "Circular dependencies are only partially supported. " +
+                                 "The following modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
+                                 "Kotlin will compile them, but some strange effect may happen",
+                        CompilerMessageLocation.NO_LOCATION);
+            }
 
-            KotlinCompilerRunner.runK2JvmCompiler(
-                    messageCollector,
-                    environment,
-                    moduleFile,
-                    outputItemCollector,
-                    /*runOutOfProcess = */false);
+            File moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk);
+            if (moduleFile == null) {
+                // No Kotlin sources found
+                return ExitCode.NOTHING_DONE;
+            }
+
+            K2JVMCompilerArguments k2JvmSettings = JpsKotlinCompilerSettings.getK2JvmSettings(project);
+
+            runK2JvmCompiler(commonSettings, k2JvmSettings, messageCollector, environment, moduleFile, outputItemCollector);
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {

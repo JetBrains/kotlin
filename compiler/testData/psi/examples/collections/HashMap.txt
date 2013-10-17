@@ -9,8 +9,6 @@ JetFile: HashMap.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('IEquality')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
@@ -102,8 +100,6 @@ JetFile: HashMap.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('IHashable')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST
@@ -302,8 +298,6 @@ JetFile: HashMap.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('HashableWrapper')
-    TYPE_PARAMETER_LIST
-      <empty list>
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER

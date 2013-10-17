@@ -1,0 +1,6 @@
+Import directive (3: 15) import server.foo
+Receiver (8: 35) println("length: ${server.foo.length()}")
+Selector (7: 33) println("foo = ${server.foo}")
+Unclassified usage (7: 53) System.out.println("foo = " + ServerPackage.getFoo());
+Unclassified usage (8: 55) System.out.println("length: " + ServerPackage.getFoo().length());
+Unclassified usage (9: 23) ServerPackage.setFoo("");

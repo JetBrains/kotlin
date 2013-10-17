@@ -1,4 +1,5 @@
 name
+	outputDir=out
 	sources=[foo, foo1, foo2]
 	classpath=[bar1, bar2]
 	annotations=[baz, baz1, baz2]

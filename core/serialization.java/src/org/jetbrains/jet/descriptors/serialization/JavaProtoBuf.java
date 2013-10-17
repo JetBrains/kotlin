@@ -1452,9 +1452,9 @@ public final class JavaProtoBuf {
     boolean hasField();
     org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature getField();
     
-    // optional int32 synthetic_method_name = 2;
-    boolean hasSyntheticMethodName();
-    int getSyntheticMethodName();
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;
+    boolean hasSyntheticMethod();
+    org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSyntheticMethod();
     
     // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature getter = 3;
     boolean hasGetter();
@@ -1493,14 +1493,14 @@ public final class JavaProtoBuf {
       return field_;
     }
     
-    // optional int32 synthetic_method_name = 2;
-    public static final int SYNTHETIC_METHOD_NAME_FIELD_NUMBER = 2;
-    private int syntheticMethodName_;
-    public boolean hasSyntheticMethodName() {
+    // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;
+    public static final int SYNTHETIC_METHOD_FIELD_NUMBER = 2;
+    private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature syntheticMethod_;
+    public boolean hasSyntheticMethod() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
-    public int getSyntheticMethodName() {
-      return syntheticMethodName_;
+    public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSyntheticMethod() {
+      return syntheticMethod_;
     }
     
     // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature getter = 3;
@@ -1525,7 +1525,7 @@ public final class JavaProtoBuf {
     
     private void initFields() {
       field_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature.getDefaultInstance();
-      syntheticMethodName_ = 0;
+      syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
       getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
       setter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
     }
@@ -1536,6 +1536,12 @@ public final class JavaProtoBuf {
       
       if (hasField()) {
         if (!getField().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSyntheticMethod()) {
+        if (!getSyntheticMethod().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -1563,7 +1569,7 @@ public final class JavaProtoBuf {
         output.writeMessage(1, field_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(2, syntheticMethodName_);
+        output.writeMessage(2, syntheticMethod_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(3, getter_);
@@ -1585,7 +1591,7 @@ public final class JavaProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, syntheticMethodName_);
+          .computeMessageSize(2, syntheticMethod_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -1699,7 +1705,7 @@ public final class JavaProtoBuf {
         super.clear();
         field_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaFieldSignature.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
-        syntheticMethodName_ = 0;
+        syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
         getter_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -1745,7 +1751,7 @@ public final class JavaProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.syntheticMethodName_ = syntheticMethodName_;
+        result.syntheticMethod_ = syntheticMethod_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
@@ -1763,8 +1769,8 @@ public final class JavaProtoBuf {
         if (other.hasField()) {
           mergeField(other.getField());
         }
-        if (other.hasSyntheticMethodName()) {
-          setSyntheticMethodName(other.getSyntheticMethodName());
+        if (other.hasSyntheticMethod()) {
+          mergeSyntheticMethod(other.getSyntheticMethod());
         }
         if (other.hasGetter()) {
           mergeGetter(other.getGetter());
@@ -1778,6 +1784,12 @@ public final class JavaProtoBuf {
       public final boolean isInitialized() {
         if (hasField()) {
           if (!getField().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSyntheticMethod()) {
+          if (!getSyntheticMethod().isInitialized()) {
             
             return false;
           }
@@ -1823,9 +1835,13 @@ public final class JavaProtoBuf {
               setField(subBuilder.buildPartial());
               break;
             }
-            case 16: {
-              bitField0_ |= 0x00000002;
-              syntheticMethodName_ = input.readInt32();
+            case 18: {
+              org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder subBuilder = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder();
+              if (hasSyntheticMethod()) {
+                subBuilder.mergeFrom(getSyntheticMethod());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setSyntheticMethod(subBuilder.buildPartial());
               break;
             }
             case 26: {
@@ -1895,24 +1911,46 @@ public final class JavaProtoBuf {
         return this;
       }
       
-      // optional int32 synthetic_method_name = 2;
-      private int syntheticMethodName_ ;
-      public boolean hasSyntheticMethodName() {
+      // optional .org.jetbrains.jet.descriptors.serialization.JavaMethodSignature synthetic_method = 2;
+      private org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+      public boolean hasSyntheticMethod() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
-      public int getSyntheticMethodName() {
-        return syntheticMethodName_;
+      public org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature getSyntheticMethod() {
+        return syntheticMethod_;
       }
-      public Builder setSyntheticMethodName(int value) {
-        bitField0_ |= 0x00000002;
-        syntheticMethodName_ = value;
+      public Builder setSyntheticMethod(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        syntheticMethod_ = value;
         
+        bitField0_ |= 0x00000002;
         return this;
       }
-      public Builder clearSyntheticMethodName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        syntheticMethodName_ = 0;
+      public Builder setSyntheticMethod(
+          org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.Builder builderForValue) {
+        syntheticMethod_ = builderForValue.build();
         
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder mergeSyntheticMethod(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            syntheticMethod_ != org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance()) {
+          syntheticMethod_ =
+            org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.newBuilder(syntheticMethod_).mergeFrom(value).buildPartial();
+        } else {
+          syntheticMethod_ = value;
+        }
+        
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder clearSyntheticMethod() {
+        syntheticMethod_ = org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.JavaMethodSignature.getDefaultInstance();
+        
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
       

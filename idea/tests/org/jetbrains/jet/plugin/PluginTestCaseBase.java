@@ -20,16 +20,17 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.AnnotationOrderRootType;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 
 import java.io.File;
 
 public class PluginTestCaseBase {
-
     public static final String TEST_DATA_PROJECT_RELATIVE = "/idea/testData";
 
     private PluginTestCaseBase() {
@@ -59,4 +60,7 @@ public class PluginTestCaseBase {
         return getSdk(javaHome);
     }
 
+    public static boolean isAllFilesPresentTest(@NotNull String testName) {
+        return StringUtil.startsWithIgnoreCase(testName, "allFilesPresentIn");
+    }
 }

@@ -4,6 +4,8 @@ open class A {
     val B.w: Int by <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>MyProperty<!>()
 }
 
+val B.r: Int by <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>MyProperty<!>()
+
 val A.e: Int by MyProperty()
 
 class B {

@@ -451,6 +451,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
             doTestIfToWhen("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithRangeTestsAndUnparenthesizedMultiConditions.kt");
         }
         
+        @TestMetadata("ifWithoutElse.kt")
+        public void testIfWithoutElse() throws Exception {
+            doTestIfToWhen("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithoutElse.kt");
+        }
+        
         @TestMetadata("whenWithMultipleConditionTypes.kt")
         public void testWhenWithMultipleConditionTypes() throws Exception {
             doTestIfToWhen("idea/testData/intentions/branched/ifWhen/ifToWhen/whenWithMultipleConditionTypes.kt");
@@ -502,6 +507,11 @@ public class CodeTransformationsTestGenerated extends AbstractCodeTransformation
         @TestMetadata("whenWithRangeTestsAndMultiConditions.kt")
         public void testWhenWithRangeTestsAndMultiConditions() throws Exception {
             doTestWhenToIf("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithRangeTestsAndMultiConditions.kt");
+        }
+        
+        @TestMetadata("whenWithoutElse.kt")
+        public void testWhenWithoutElse() throws Exception {
+            doTestWhenToIf("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithoutElse.kt");
         }
         
         @TestMetadata("whenWithoutSubject.kt")

@@ -74,7 +74,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="${kotlin-sdk}/lib/kotlin-compiler.jar"
+                                <copy file="${kotlin-dist}/kotlin-compiler-for-maven.jar"
                                       tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
                                       overwrite="true" verbose="true"/>
                             </tasks>

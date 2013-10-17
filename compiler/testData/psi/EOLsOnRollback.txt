@@ -16,9 +16,7 @@ JetFile: EOLsOnRollback.kt
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace('\n    ')
-        TYPE_PARAMETER_LIST
-          <empty list>
+      PsiWhiteSpace('\n    ')
       FUN
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
@@ -31,16 +29,12 @@ JetFile: EOLsOnRollback.kt
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace('\n\n    ')
-        TYPE_PARAMETER_LIST
-          <empty list>
+      PsiWhiteSpace('\n\n    ')
       TYPEDEF
         PsiElement(type)('type')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE

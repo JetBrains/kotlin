@@ -510,6 +510,7 @@ String.prototype.contains = function (s) {
         }, {
         append:function (obj) {
             this.string = this.string + obj.toString();
+            return this;
         },
         toString:function () {
             return this.string;

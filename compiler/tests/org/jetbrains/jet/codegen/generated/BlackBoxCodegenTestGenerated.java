@@ -3895,6 +3895,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/properties/traitExtendsClass.kt");
         }
         
+        @TestMetadata("twoAnnotatedExtensionPropertiesWithoutBackingFields.kt")
+        public void testTwoAnnotatedExtensionPropertiesWithoutBackingFields() throws Exception {
+            doTest("compiler/testData/codegen/box/properties/twoAnnotatedExtensionPropertiesWithoutBackingFields.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/box/reflection")

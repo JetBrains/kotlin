@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
@@ -46,7 +47,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 public class CallResolverUtil {
     public static enum ResolveArgumentsMode {
         RESOLVE_FUNCTION_ARGUMENTS,
-        SKIP_FUNCTION_ARGUMENTS
+        SHAPE_FUNCTION_ARGUMENTS
     }
 
     private CallResolverUtil() {}
@@ -112,7 +113,7 @@ public class CallResolverUtil {
         if (returnType == null) return false;
 
         for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
-            JetType inferredValueForTypeVariable = constraintSystem.getTypeConstraints(typeVariable).getValue();
+            JetType inferredValueForTypeVariable = constraintSystem.getTypeBounds(typeVariable).getValue();
             if (inferredValueForTypeVariable == null) {
                 if (TypeUtils.dependsOnTypeParameters(returnType, Collections.singleton(typeVariable))) {
                     return true;
@@ -128,7 +129,7 @@ public class CallResolverUtil {
 
         // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
         ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
-        if (constraintSystem != null && constraintSystem.getStatus().hasOnlyExpectedTypeMismatch()) return false;
+        if (constraintSystem != null && constraintSystem.getStatus().hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION)) return false;
         return true;
     }
 

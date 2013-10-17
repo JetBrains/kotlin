@@ -17,20 +17,36 @@
 package org.jetbrains.jet.cli.common;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.sampullara.cli.Args;
+import com.sampullara.cli.ArgumentUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.PrintStream;
+import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
-public abstract class CLICompiler<A extends CompilerArguments> {
+public abstract class CLICompiler<A extends CommonCompilerArguments> {
+
+    @NotNull
+    private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
+
+    @NotNull
+    public List<CompilerPlugin> getCompilerPlugins() {
+        return compilerPlugins;
+    }
+
+    public void setCompilerPlugins(@NotNull List<CompilerPlugin> compilerPlugins) {
+        this.compilerPlugins = compilerPlugins;
+    }
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
@@ -84,9 +100,8 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      * Strategy method to configure the environment, allowing compiler
      * based tools to customise their own plugins
      */
-    //TODO: add parameter annotations when KT-1863 is resolved
     protected void configureEnvironment(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, arguments.getCompilerPlugins());
+        configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, compilerPlugins);
     }
 
     @NotNull
@@ -97,7 +112,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      */
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull A arguments) {
-        if (arguments.isHelp()) {
+        if (arguments.help) {
             usage(errStream);
             return OK;
         }
@@ -105,9 +120,10 @@ public abstract class CLICompiler<A extends CompilerArguments> {
         MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
 
+        printArgumentsIfNeeded(errStream, arguments, messageRenderer);
         printVersionIfNeeded(errStream, arguments, messageRenderer);
 
-        MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
+        MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
 
         if (arguments.suppressAllWarnings()) {
             collector = new FilteringMessageCollector(collector, Predicates.equalTo(CompilerMessageSeverity.WARNING));
@@ -125,7 +141,7 @@ public abstract class CLICompiler<A extends CompilerArguments> {
     public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
-            Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+            Disposable rootDisposable = Disposer.newDisposable();
             try {
                 MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
                 ExitCode code = doExecute(arguments, severityCollector, rootDisposable);
@@ -145,24 +161,41 @@ public abstract class CLICompiler<A extends CompilerArguments> {
         }
     }
 
-    //TODO: can't declare parameters as not null due to KT-1863
     @NotNull
-    protected abstract ExitCode doExecute(A arguments, MessageCollector messageCollector, Disposable rootDisposable);
+    protected abstract ExitCode doExecute(@NotNull A arguments, @NotNull MessageCollector messageCollector, @NotNull Disposable rootDisposable);
 
     //TODO: can we make it private?
     @NotNull
     protected MessageRenderer getMessageRenderer(@NotNull A arguments) {
-        return arguments.isTags() ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
+        return arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
     }
 
-    protected void printVersionIfNeeded(@NotNull PrintStream errStream,
+    protected void printVersionIfNeeded(
+            @NotNull PrintStream errStream,
             @NotNull A arguments,
-            @NotNull MessageRenderer messageRenderer) {
-        if (arguments.isVersion()) {
+            @NotNull MessageRenderer messageRenderer
+    ) {
+        if (arguments.version) {
             String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
                                                            "Kotlin Compiler version " + KotlinVersion.VERSION,
                                                            CompilerMessageLocation.NO_LOCATION);
             errStream.println(versionMessage);
+        }
+    }
+
+    private void printArgumentsIfNeeded(
+            @NotNull PrintStream errStream,
+            @NotNull A arguments,
+            @NotNull MessageRenderer messageRenderer
+    ) {
+        if (arguments.printArgs) {
+            String freeArgs = StringUtil.join(arguments.freeArgs, "");
+            String argumentsAsString = ArgumentUtils.convertArgumentsToString(arguments, createArguments());
+            String printArgsMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
+                                                             "Invoking compiler " + getClass().getName() +
+                                                             " with arguments " + argumentsAsString + freeArgs,
+                                                             CompilerMessageLocation.NO_LOCATION);
+            errStream.println(printArgsMessage);
         }
     }
 
@@ -185,12 +218,6 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
-            }
-            if (Boolean.parseBoolean(System.getProperty("kotlin.print.cmd.args"))) {
-                System.out.println("Command line arguments:");
-                for (String arg : args) {
-                    System.out.println(arg);
-                }
             }
             return rc;
         }

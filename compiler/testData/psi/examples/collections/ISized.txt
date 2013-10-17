@@ -9,8 +9,6 @@ JetFile: ISized.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('ISized')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')

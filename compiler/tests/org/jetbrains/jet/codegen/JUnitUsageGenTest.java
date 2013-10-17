@@ -23,6 +23,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.junit.Test;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class JUnitUsageGenTest extends CodegenTestCase {
@@ -35,7 +36,7 @@ public class JUnitUsageGenTest extends CodegenTestCase {
             throw new AssertionError("JUnit jar wasn't found");
         }
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, junitJar));
     }
 
@@ -49,8 +50,9 @@ public class JUnitUsageGenTest extends CodegenTestCase {
         Class<?> namespaceClass = generateNamespaceClass();
         Method method = namespaceClass.getMethod("foo", Method.class);
         method.setAccessible(true);
-        Test annotation = method.getAnnotation(Test.class);
-        assertEquals(annotation.timeout(), 0l);
-        assertEquals(annotation.expected(), Test.None.class);
+        Annotation annotation = method.getAnnotation(getCorrespondingAnnotationClass(Test.class));
+        assertEquals(ClassLoaderIsolationUtil.getAnnotationAttribute(annotation, "timeout"), 0l);
+        ClassLoaderIsolationUtil.assertEquals(Test.None.class, (Class<?>) ClassLoaderIsolationUtil.getAnnotationAttribute(annotation,
+                                                                                                                          "expected"));
     }
 }

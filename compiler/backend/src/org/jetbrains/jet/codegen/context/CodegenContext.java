@@ -52,6 +52,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @Nullable
     private final CodegenContext parentContext;
+
     private final ClassDescriptor thisDescriptor;
 
     public final MutableClosure closure;
@@ -148,12 +149,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public FieldOwnerContext intoNamespace(@NotNull NamespaceDescriptor descriptor) {
-        return new NamespaceContext(descriptor, this, OwnerKind.NAMESPACE);
+        return new NamespaceContext(descriptor, this);
     }
 
     @NotNull
-    public FieldOwnerContext intoNamespacePart(@NotNull Type delegateTo, @NotNull NamespaceDescriptor descriptor) {
-        return new NamespaceContext(descriptor, this, new OwnerKind.StaticDelegateKind(delegateTo));
+    public FieldOwnerContext intoNamespaceFacade(@NotNull Type delegateTo, @NotNull NamespaceDescriptor descriptor) {
+        return new NamespaceFacadeContext(descriptor, this, delegateTo);
     }
 
     @NotNull
@@ -187,7 +188,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public CodegenContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
+    public ScriptContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
         return new ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
     }
 

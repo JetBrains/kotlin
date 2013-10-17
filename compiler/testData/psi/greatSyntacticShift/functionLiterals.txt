@@ -5,16 +5,12 @@ JetFile: functionLiterals.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
-    PsiWhiteSpace('\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
+  PsiWhiteSpace('\n')
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Bar')
-    PsiWhiteSpace('\n\n')
-    TYPE_PARAMETER_LIST
-      <empty list>
+  PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')

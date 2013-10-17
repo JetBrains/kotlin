@@ -74,8 +74,6 @@ JetFile: PolymorphicClassObjects.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Buildable')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')

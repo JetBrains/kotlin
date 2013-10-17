@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
@@ -97,7 +98,7 @@ public final class JavaAnnotationResolver {
 
     @Nullable
     public AnnotationDescriptor resolveAnnotation(@NotNull JavaAnnotation javaAnnotation, @NotNull PostponedTasks postponedTasks) {
-        final AnnotationDescriptor annotation = new AnnotationDescriptor();
+        final AnnotationDescriptorImpl annotation = new AnnotationDescriptorImpl();
         FqName fqName = javaAnnotation.getFqName();
         if (fqName == null) {
             return null;

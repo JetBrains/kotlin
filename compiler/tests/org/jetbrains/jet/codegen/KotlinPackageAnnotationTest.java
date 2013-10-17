@@ -19,13 +19,11 @@ package org.jetbrains.jet.codegen;
 import jet.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
-import org.jetbrains.jet.descriptors.serialization.NameResolver;
-import org.jetbrains.jet.descriptors.serialization.PackageData;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -51,10 +49,14 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
                  "object C\n");
         Class aClass = generateClass(PackageClassUtils.getPackageClassFqName(NAMESPACE_NAME).asString());
 
-        assertTrue(aClass.isAnnotationPresent(KotlinPackage.class));
-        KotlinPackage kotlinPackage = (KotlinPackage) aClass.getAnnotation(KotlinPackage.class);
+        Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinPackage.class);
+        assertTrue(aClass.isAnnotationPresent(annotationClass));
+        assertTrue(aClass.isAnnotationPresent(annotationClass));
 
-        PackageData data = JavaProtoBufUtil.readPackageDataFrom(kotlinPackage.data());
+        Annotation kotlinPackage = aClass.getAnnotation(annotationClass);
+
+        PackageData data = JavaProtoBufUtil.readPackageDataFrom((String[]) ClassLoaderIsolationUtil.getAnnotationAttribute(kotlinPackage,
+                                                                                                                           "data"));
 
         Set<String> callableNames = collectCallableNames(data.getPackageProto().getMemberList(), data.getNameResolver());
         assertSameElements(Arrays.asList("foo", "bar", "C"), callableNames);

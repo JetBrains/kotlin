@@ -78,6 +78,9 @@ public class ClassPreloadingUtils {
                 // Look in this class loader and then in the parent one
                 Class<?> aClass = super.loadClass(name);
                 if (aClass == null) {
+                    if (parent == null) {
+                        throw new ClassNotFoundException("Class not available in preloader: " + name);
+                    }
                     return parent.loadClass(name);
                 }
                 return aClass;

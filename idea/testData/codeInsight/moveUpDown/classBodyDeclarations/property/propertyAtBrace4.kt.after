@@ -1,6 +1,9 @@
 // MOVE: up
+// class A
 class A {
+    // val y
     <caret>val y = ""
+    // class B
     class B {
     }
 }

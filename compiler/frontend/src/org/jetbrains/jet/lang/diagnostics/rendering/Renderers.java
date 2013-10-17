@@ -28,10 +28,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
-import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraints;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -45,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
 public class Renderers {
     public static final Renderer<Object> TO_STRING = new Renderer<Object>() {
@@ -132,29 +128,29 @@ public class Renderers {
         };
     }
 
-    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderConflictingSubstitutionsInferenceError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderTypeConstructorMismatchError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
-            new Renderer<ExtendedInferenceErrorData>() {
+    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
+            new Renderer<InferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
+                public String render(@NotNull InferenceErrorData inferenceErrorData) {
                     return renderNoInformationForParameterError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
@@ -168,7 +164,7 @@ public class Renderers {
                 }
             };
 
-    public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(ExtendedInferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
         assert inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints();
 
@@ -227,7 +223,7 @@ public class Renderers {
         return result;
     }
 
-    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final ExtendedInferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
             @Override
@@ -245,11 +241,11 @@ public class Renderers {
                                               isErrorPosition));
     }
 
-    public static TabledDescriptorRenderer renderNoInformationForParameterError(ExtendedInferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         TypeParameterDescriptor firstUnknownParameter = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {
-            if (inferenceErrorData.constraintSystem.getTypeConstraints(typeParameter).isEmpty()) {
+            if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).isEmpty()) {
                 firstUnknownParameter = typeParameter;
                 break;
             }
@@ -265,32 +261,47 @@ public class Renderers {
                                .text("Please specify it explicitly."));
     }
 
+    @NotNull
     public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(InferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
+        String errorMessage = "Rendering 'upper bound violated' error for " + inferenceErrorData.descriptor;
+
         TypeParameterDescriptor typeParameterDescriptor = null;
+        ConstraintSystemImpl constraintSystem = (ConstraintSystemImpl) inferenceErrorData.constraintSystem;
+        assert constraintSystem.getStatus().hasViolatedUpperBound();
+
+        ConstraintSystem systemWithoutWeakConstraints = constraintSystem.getSystemWithoutWeakConstraints();
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.descriptor.getTypeParameters()) {
-            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(inferenceErrorData.constraintSystem, typeParameter, true)) {
+            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, typeParameter, true)) {
                 typeParameterDescriptor = typeParameter;
-                break;
             }
         }
-        assert typeParameterDescriptor != null;
+        assert typeParameterDescriptor != null : errorMessage;
+
+        JetType inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).getValue();
+        assert inferredValueForTypeParameter != null : errorMessage;
 
         result.text(newText().normal("Type parameter bound for ").strong(typeParameterDescriptor.getName()).normal(" in "))
                 .table(newTable().
                         descriptor(inferenceErrorData.descriptor));
 
-        JetType inferredValueForTypeParameter = inferenceErrorData.constraintSystem.getTypeConstraints(typeParameterDescriptor).getValue();
-        assert inferredValueForTypeParameter != null;
-        JetType upperBound = typeParameterDescriptor.getUpperBoundsAsType();
-        JetType upperBoundWithSubstitutedInferredTypes = inferenceErrorData.constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
-        assert upperBoundWithSubstitutedInferredTypes != null;
+        JetType violatedUpperBound = null;
+        for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
+            JetType upperBoundWithSubstitutedInferredTypes =
+                    systemWithoutWeakConstraints.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+            if (upperBoundWithSubstitutedInferredTypes != null &&
+                !JetTypeChecker.INSTANCE.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
+                violatedUpperBound = upperBoundWithSubstitutedInferredTypes;
+                break;
+            }
+        }
+        assert violatedUpperBound != null : errorMessage;
 
         Renderer<JetType> typeRenderer = result.getTypeRenderer();
         result.text(newText()
                             .normal(" is not satisfied: inferred type ")
                             .error(typeRenderer.render(inferredValueForTypeParameter))
                             .normal(" is not a subtype of ")
-                            .strong(typeRenderer.render(upperBoundWithSubstitutedInferredTypes)));
+                            .strong(typeRenderer.render(violatedUpperBound)));
         return result;
     }
 

@@ -38,6 +38,7 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
@@ -46,6 +47,8 @@ import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -67,7 +70,9 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
 
+
 import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
 
 public class ReplInterpreter {
 
@@ -88,7 +93,7 @@ public class ReplInterpreter {
     private final ModuleDescriptorImpl module;
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
+        jetCoreEnvironment = JetCoreEnvironment.createForProduction(disposable, configuration);
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
         module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
@@ -232,8 +237,9 @@ public class ReplInterpreter {
         BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), module).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
                                                               bindingContext, Collections.singletonList(psiFile));
-        generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassType, earlierScripts,
-                                                         CompilationErrorHandler.THROW_EXCEPTION);
+
+        compileScript(psiFile.getScript(), scriptClassType, earlierScripts, generationState,
+                      CompilationErrorHandler.THROW_EXCEPTION);
 
         for (String file : generationState.getFactory().files()) {
             classLoader.addClass(JvmClassName.byInternalName(file.replaceFirst("\\.class$", "")), generationState.getFactory().asBytes(file));
@@ -317,4 +323,41 @@ public class ReplInterpreter {
     public void dumpClasses(@NotNull PrintWriter out) {
         classLoader.dumpClasses(out);
     }
+
+    private static void registerEarlierScripts(
+            @NotNull GenerationState state,
+            @NotNull List<Pair<ScriptDescriptor, Type>> earlierScripts
+    ) {
+        for (Pair<ScriptDescriptor, Type> t : earlierScripts) {
+            ScriptDescriptor earlierDescriptor = t.first;
+            Type earlierClassType = t.second;
+            registerClassNameForScript(state.getBindingTrace(), earlierDescriptor, earlierClassType);
+        }
+
+        List<ScriptDescriptor> earlierScriptDescriptors = Lists.newArrayList();
+        for (Pair<ScriptDescriptor, Type> t : earlierScripts) {
+            ScriptDescriptor earlierDescriptor = t.first;
+            earlierScriptDescriptors.add(earlierDescriptor);
+        }
+        state.setEarlierScriptsForReplInterpreter(earlierScriptDescriptors);
+    }
+
+    public static void compileScript(
+            @NotNull JetScript script,
+            @NotNull Type classType,
+            @NotNull List<Pair<ScriptDescriptor, Type>> earlierScripts,
+            @NotNull GenerationState state,
+            @NotNull CompilationErrorHandler errorHandler
+    ) {
+        registerEarlierScripts(state, earlierScripts);
+        registerClassNameForScript(state.getBindingTrace(), script, classType);
+
+        state.beforeCompile();
+        KotlinCodegenFacade.generateNamespace(
+                state,
+                JetPsiUtil.getFQName((JetFile) script.getContainingFile()),
+                Collections.singleton((JetFile) script.getContainingFile()),
+                errorHandler);
+    }
+
 }

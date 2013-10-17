@@ -163,7 +163,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
             }
 
             @Override
-            public boolean isSealed() {
+            public boolean isFinal() {
                 return false;
             }
 

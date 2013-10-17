@@ -96,6 +96,7 @@ public class StubClassBuilder extends ClassBuilder {
         ((StubBase) v.getResult()).putUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT, origin);
     }
 
+    @NotNull
     @Override
     public MethodVisitor newMethod(
             @Nullable PsiElement origin,
@@ -107,7 +108,7 @@ public class StubClassBuilder extends ClassBuilder {
     ) {
         MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
 
-        if (internalVisitor != null) {
+        if (internalVisitor != EMPTY_METHOD_VISITOR) {
             // If stub for method generated
             markLastChild(origin);
         }
@@ -115,6 +116,7 @@ public class StubClassBuilder extends ClassBuilder {
         return internalVisitor;
     }
 
+    @NotNull
     @Override
     public FieldVisitor newField(
             @Nullable PsiElement origin,
@@ -126,7 +128,7 @@ public class StubClassBuilder extends ClassBuilder {
     ) {
         FieldVisitor internalVisitor = super.newField(origin, access, name, desc, signature, value);
 
-        if (internalVisitor != null) {
+        if (internalVisitor != EMPTY_FIELD_VISITOR) {
             // If stub for field generated
             markLastChild(origin);
         }

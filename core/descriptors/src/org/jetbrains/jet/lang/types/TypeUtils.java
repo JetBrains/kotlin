@@ -261,9 +261,7 @@ public class TypeUtils {
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);
             ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
-            for (Map.Entry<TypeParameterDescriptor, Variance> entry : parameters.entrySet()) {
-                constraintSystem.registerTypeVariable(entry.getKey(), entry.getValue());
-            }
+            constraintSystem.registerTypeVariables(parameters);
             constraintSystem.addSubtypeConstraint(withParameters, expected, ConstraintPosition.SPECIAL);
 
             return constraintSystem.getStatus().isSuccessful();
@@ -284,7 +282,7 @@ public class TypeUtils {
         if (type.isNullable()) {
             return true;
         }
-        if (!type.getConstructor().isSealed()) {
+        if (!type.getConstructor().isFinal()) {
             return true;
         }
 
@@ -708,5 +706,28 @@ public class TypeUtils {
                     }
                 }
         );
+    }
+
+    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
+        final Set<TypeConstructor> constructors = Sets.newHashSet();
+        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
+            constructors.add(typeParameterDescriptor.getTypeConstructor());
+        }
+        final TypeProjection projection = new TypeProjection(type);
+
+        return TypeSubstitutor.create(new TypeSubstitution() {
+            @Override
+            public TypeProjection get(TypeConstructor key) {
+                if (constructors.contains(key)) {
+                    return projection;
+                }
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        });
     }
 }

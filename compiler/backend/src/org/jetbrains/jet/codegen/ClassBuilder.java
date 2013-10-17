@@ -19,12 +19,12 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.AnnotationVisitor;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.FieldVisitor;
-import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.*;
 
 public abstract class ClassBuilder {
+    protected static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.ASM4) {};
+    protected static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.ASM4) {};
+
     private String thisName;
 
     private final MemberMap members = new MemberMap();
@@ -43,6 +43,7 @@ public abstract class ClassBuilder {
         }
     }
 
+    @NotNull
     public FieldVisitor newField(
             @Nullable PsiElement origin,
             int access,
@@ -51,9 +52,14 @@ public abstract class ClassBuilder {
             @Nullable String signature,
             @Nullable Object value
     ) {
-        return getVisitor().visitField(access, name, desc, signature, value);
+        FieldVisitor visitor = getVisitor().visitField(access, name, desc, signature, value);
+        if (visitor == null) {
+            return EMPTY_FIELD_VISITOR;
+        }
+        return visitor;
     }
 
+    @NotNull
     public MethodVisitor newMethod(
             @Nullable PsiElement origin,
             int access,
@@ -62,7 +68,11 @@ public abstract class ClassBuilder {
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        return getVisitor().visitMethod(access, name, desc, signature, exceptions);
+        MethodVisitor visitor = getVisitor().visitMethod(access, name, desc, signature, exceptions);
+        if (visitor == null) {
+            return EMPTY_METHOD_VISITOR;
+        }
+        return visitor;
     }
 
     @NotNull

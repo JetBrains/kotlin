@@ -1,5 +1,5 @@
 <modules>
-  <module name="name">
+  <module name="name" outputDir="out">
     <sources path="foo"/>
   </module>
 </modules>

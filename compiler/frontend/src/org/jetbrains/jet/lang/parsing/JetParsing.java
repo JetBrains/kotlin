@@ -1234,9 +1234,9 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private boolean parseTypeParameterList(TokenSet recoverySet) {
-        PsiBuilder.Marker list = mark();
         boolean result = false;
         if (at(LT)) {
+            PsiBuilder.Marker list = mark();
 
             myBuilder.disableNewlines();
             advance(); // LT
@@ -1252,8 +1252,9 @@ public class JetParsing extends AbstractJetParsing {
             expect(GT, "Missing '>'", recoverySet);
             myBuilder.restoreNewlinesState();
             result = true;
+
+            list.done(TYPE_PARAMETER_LIST);
         }
-        list.done(TYPE_PARAMETER_LIST);
         return result;
     }
 

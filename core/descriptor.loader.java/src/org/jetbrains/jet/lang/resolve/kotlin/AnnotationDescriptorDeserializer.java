@@ -25,11 +25,11 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -157,7 +157,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (ignoreAnnotation(className)) return null;
 
         final ClassDescriptor annotationClass = resolveClass(className);
-        final AnnotationDescriptor annotation = new AnnotationDescriptor();
+        final AnnotationDescriptorImpl annotation = new AnnotationDescriptorImpl();
         annotation.setAnnotationType(annotationClass.getDefaultType());
 
         return new KotlinJvmBinaryClass.AnnotationArgumentVisitor() {
@@ -286,23 +286,21 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
     ) {
+        SignatureDeserializer deserializer = new SignatureDeserializer(nameResolver);
         switch (kind) {
             case FUNCTION:
                 if (proto.hasExtension(JavaProtoBuf.methodSignature)) {
-                    JavaProtoBuf.JavaMethodSignature signature = proto.getExtension(JavaProtoBuf.methodSignature);
-                    return new SignatureDeserializer(nameResolver).methodSignature(signature);
+                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.methodSignature));
                 }
                 break;
             case PROPERTY_GETTER:
                 if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
-                    return new SignatureDeserializer(nameResolver).methodSignature(propertySignature.getGetter());
+                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getGetter());
                 }
                 break;
             case PROPERTY_SETTER:
                 if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    JavaProtoBuf.JavaPropertySignature propertySignature = proto.getExtension(JavaProtoBuf.propertySignature);
-                    return new SignatureDeserializer(nameResolver).methodSignature(propertySignature.getSetter());
+                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getSetter());
                 }
                 break;
             case PROPERTY:
@@ -311,13 +309,12 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
                     if (propertySignature.hasField()) {
                         JavaProtoBuf.JavaFieldSignature field = propertySignature.getField();
-                        String type = new SignatureDeserializer(nameResolver).typeDescriptor(field.getType());
+                        String type = deserializer.typeDescriptor(field.getType());
                         Name name = nameResolver.getName(field.getName());
                         return MemberSignature.fromFieldNameAndDesc(name, type);
                     }
-                    else if (propertySignature.hasSyntheticMethodName()) {
-                        Name name = nameResolver.getName(propertySignature.getSyntheticMethodName());
-                        return MemberSignature.fromMethodNameAndDesc(name, JvmAbi.ANNOTATED_PROPERTY_METHOD_SIGNATURE);
+                    else if (propertySignature.hasSyntheticMethod()) {
+                        return deserializer.methodSignature(propertySignature.getSyntheticMethod());
                     }
                 }
                 break;

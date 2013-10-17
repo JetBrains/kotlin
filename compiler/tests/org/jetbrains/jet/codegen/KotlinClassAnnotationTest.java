@@ -23,6 +23,7 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -47,10 +48,11 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
                  "}\n");
         Class aClass = generateClass(NAMESPACE_NAME + "." + CLASS_NAME);
 
-        assertTrue(aClass.isAnnotationPresent(KotlinClass.class));
-        KotlinClass kotlinClass = (KotlinClass) aClass.getAnnotation(KotlinClass.class);
+        Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinClass.class);
+        assertTrue(aClass.isAnnotationPresent(annotationClass));
+        Annotation kotlinClass = aClass.getAnnotation(annotationClass);
 
-        ClassData data = JavaProtoBufUtil.readClassDataFrom(kotlinClass.data());
+        ClassData data = JavaProtoBufUtil.readClassDataFrom((String[]) ClassLoaderIsolationUtil.getAnnotationAttribute(kotlinClass, "data"));
 
         Set<String> callableNames = collectCallableNames(data.getClassProto().getMemberList(), data.getNameResolver());
         assertSameElements(Arrays.asList("foo", "bar"), callableNames);

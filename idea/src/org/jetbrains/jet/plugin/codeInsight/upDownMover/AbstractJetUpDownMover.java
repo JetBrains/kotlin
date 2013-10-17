@@ -21,20 +21,30 @@ public abstract class AbstractJetUpDownMover extends LineMover {
     }
 
     protected abstract boolean checkSourceElement(@NotNull PsiElement element);
-    protected abstract LineRange getElementSourceLineRange(@NotNull PsiElement element, @NotNull Editor editor, @NotNull LineRange oldRange);
+
+    protected abstract LineRange getElementSourceLineRange(
+            @NotNull PsiElement element,
+            @NotNull Editor editor,
+            @NotNull LineRange oldRange
+    );
+
+    protected PsiElement adjustElement(PsiElement element, Editor editor, boolean first) {
+        return element;
+    }
+
+    protected final Pair<PsiElement, PsiElement> adjustElementRange(Pair<PsiElement, PsiElement> elementRange, Editor editor) {
+        PsiElement first = adjustElement(elementRange.first, editor, true);
+        PsiElement second = adjustElement(elementRange.second, editor, false);
+        return new Pair<PsiElement, PsiElement>(first, second);
+    }
 
     @Nullable
-    protected LineRange getSourceRange(@NotNull PsiElement firstElement, @NotNull PsiElement lastElement, @NotNull Editor editor, LineRange oldRange) {
-        if (firstElement == lastElement) {
-            LineRange sourceRange = getElementSourceLineRange(firstElement, editor, oldRange);
-
-            if (sourceRange != null) {
-                sourceRange.firstElement = sourceRange.lastElement = firstElement;
-            }
-
-            return sourceRange;
-        }
-
+    protected LineRange getSourceRange(
+            @NotNull PsiElement firstElement,
+            @NotNull PsiElement lastElement,
+            @NotNull Editor editor,
+            LineRange oldRange
+    ) {
         PsiElement parent = PsiTreeUtil.findCommonParent(firstElement, lastElement);
 
         int topExtension = 0;
@@ -50,7 +60,8 @@ public abstract class AbstractJetUpDownMover extends LineMover {
                     comment = lastElement;
                     extendDown = true;
                     lastElement = block.getLastChild();
-                } else if (checkCommentAtBlockBound(lastElement, firstElement, block)) {
+                }
+                else if (checkCommentAtBlockBound(lastElement, firstElement, block)) {
                     comment = firstElement;
                     firstElement = block.getFirstChild();
                 }
@@ -72,11 +83,12 @@ public abstract class AbstractJetUpDownMover extends LineMover {
 
         if (parent == null) return null;
 
-        Pair<PsiElement, PsiElement> combinedRange = getElementRange(parent, firstElement, lastElement);
+        Pair<PsiElement, PsiElement> originalRange = getElementRange(parent, firstElement, lastElement);
+        Pair<PsiElement, PsiElement> combinedRange = adjustElementRange(originalRange, editor);
 
         if (combinedRange == null
-            || !checkSourceElement(combinedRange.first)
-            || !checkSourceElement(combinedRange.second)) {
+            || !checkSourceElement(originalRange.first)
+            || !checkSourceElement(originalRange.second)) {
             return null;
         }
 
@@ -89,9 +101,14 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         LineRange parentLineRange = getElementSourceLineRange(parent, editor, oldRange);
 
         LineRange sourceRange = new LineRange(lineRange1.startLine - topExtension, lineRange2.endLine + bottomExtension);
-        if (parentLineRange != null && sourceRange.contains(parentLineRange)) {
+
+        if (parentLineRange != null
+            && sourceRange.startLine == parentLineRange.startLine
+            && sourceRange.endLine == parentLineRange.endLine
+        ) {
             sourceRange.firstElement = sourceRange.lastElement = parent;
-        } else {
+        }
+        else {
             sourceRange.firstElement = combinedRange.first;
             sourceRange.lastElement = combinedRange.second;
         }

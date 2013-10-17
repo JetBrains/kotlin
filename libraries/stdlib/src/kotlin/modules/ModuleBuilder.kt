@@ -3,8 +3,8 @@ package kotlin.modules
 import java.util.*
 import jet.modules.*
 
-public fun module(name: String, callback:  ModuleBuilder.() -> Unit) {
-    val builder = ModuleBuilder(name)
+public fun module(name: String, outputDir: String, callback:  ModuleBuilder.() -> Unit) {
+    val builder = ModuleBuilder(name, outputDir)
     builder.callback()
     AllModules.modules.get()?.add(builder)
 }
@@ -27,7 +27,7 @@ class AnnotationsPathBuilder(val parent: ModuleBuilder) {
     }
 }
 
-open class ModuleBuilder(val name: String): Module {
+open class ModuleBuilder(val name: String, val outputDir: String): Module {
     // http://youtrack.jetbrains.net/issue/KT-904
     private val sourceFiles0 = ArrayList<String>()
     private val classpathRoots0 = ArrayList<String>()
@@ -54,6 +54,7 @@ open class ModuleBuilder(val name: String): Module {
         annotationsRoots0.add(name)
     }
 
+    public override fun getOutputDirectory(): String = outputDir
     public override fun getSourceFiles(): List<String> = sourceFiles0
     public override fun getClasspathRoots(): List<String> = classpathRoots0
     public override fun getAnnotationsRoots(): List<String> = annotationsRoots0

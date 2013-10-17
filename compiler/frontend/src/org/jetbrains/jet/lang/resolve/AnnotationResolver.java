@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -111,9 +112,9 @@ public class AnnotationResolver {
         if (annotationEntryElements.isEmpty()) return Collections.emptyList();
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
-            AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
+            AnnotationDescriptorImpl descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
             if (descriptor == null) {
-                descriptor = new AnnotationDescriptor();
+                descriptor = new AnnotationDescriptorImpl();
                 resolveAnnotationStub(scope, entryElement, descriptor, trace);
                 trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
             }
@@ -130,7 +131,7 @@ public class AnnotationResolver {
     public void resolveAnnotationStub(
             @NotNull JetScope scope,
             @NotNull JetAnnotationEntry entryElement,
-            @NotNull AnnotationDescriptor annotationDescriptor,
+            @NotNull AnnotationDescriptorImpl annotationDescriptor,
             @NotNull BindingTrace trace
     ) {
         TemporaryBindingTrace temporaryBindingTrace = new TemporaryBindingTrace(trace, "Trace for resolve annotation type");
@@ -196,14 +197,14 @@ public class AnnotationResolver {
     ) {
         OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(annotationEntry, scope, trace);
         if (results.isSingleResult()) {
-            AnnotationDescriptor annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
+            AnnotationDescriptorImpl annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
             assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
             resolveAnnotationArgument(annotationDescriptor, results.getResultingCall(), trace);
         }
     }
 
     private void resolveAnnotationArgument(
-            @NotNull AnnotationDescriptor annotationDescriptor,
+            @NotNull AnnotationDescriptorImpl annotationDescriptor,
             @NotNull ResolvedCall<? extends CallableDescriptor> call,
             @NotNull BindingTrace trace
     ) {
@@ -336,7 +337,7 @@ public class AnnotationResolver {
                         JetType constructorReturnType = resultingDescriptor.getReturnType();
                         assert constructorReturnType != null : "Constructor should have return type";
                         if (DescriptorUtils.isAnnotationClass(constructorReturnType.getConstructor().getDeclarationDescriptor())) {
-                            AnnotationDescriptor descriptor = new AnnotationDescriptor();
+                            AnnotationDescriptorImpl descriptor = new AnnotationDescriptorImpl();
                             descriptor.setAnnotationType(constructorReturnType);
                             resolveAnnotationArgument(descriptor, call, trace);
                             return new AnnotationValue(descriptor);

@@ -217,9 +217,9 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findPropertyUsages/javaPropertyUsages.0.kt");
         }
         
-        @TestMetadata("kotlinPropertyUsages.0.kt")
-        public void testKotlinPropertyUsages() throws Exception {
-            doTest("idea/testData/findUsages/findPropertyUsages/kotlinPropertyUsages.0.kt");
+        @TestMetadata("kotlinTopLevelPropertyUsages.0.kt")
+        public void testKotlinTopLevelPropertyUsages() throws Exception {
+            doTest("idea/testData/findUsages/findPropertyUsages/kotlinTopLevelPropertyUsages.0.kt");
         }
         
     }

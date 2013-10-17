@@ -36,8 +36,6 @@ JetFile: LocalDeclarations.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foof')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
@@ -60,8 +58,6 @@ JetFile: LocalDeclarations.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foof')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
@@ -105,8 +101,6 @@ JetFile: LocalDeclarations.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f')
         PsiWhiteSpace(' ')
-        TYPE_PARAMETER_LIST
-          <empty list>
         PsiElement(EQ)('=')
         PsiWhiteSpace('  ')
         TYPE_REFERENCE

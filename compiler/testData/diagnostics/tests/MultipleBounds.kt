@@ -18,9 +18,9 @@ class Test1<T : A>()
   where
     T : B,
     <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T, // error
-    class object T : A,
-    class object T : B,
-    class object <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T
+    <!UNSUPPORTED!>class object T : A<!>,
+    <!UNSUPPORTED!>class object T : B<!>,
+    <!UNSUPPORTED!>class object <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T<!>
   {
 
   fun test(t : T) {
@@ -50,9 +50,9 @@ fun <T : A> test2(t : T)
   where
     T : B,
     <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T,
-    class object <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T,
-    class object T : B,
-    class object T : A
+    <!UNSUPPORTED!>class object <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>B<!> : T<!>,
+    <!UNSUPPORTED!>class object T : B<!>,
+    <!UNSUPPORTED!>class object T : A<!>
 {
   T.foo()
   T.bar()
@@ -66,7 +66,7 @@ val t3 = test2<C>(C())
 
 class Test<<!CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS!>T<!>>
   where
-    class object T : <!FINAL_CLASS_OBJECT_UPPER_BOUND!>Foo<!>,
-    class object T : A {}
+    <!UNSUPPORTED!>class object T : <!FINAL_CLASS_OBJECT_UPPER_BOUND!>Foo<!><!>,
+    <!UNSUPPORTED!>class object T : A<!> {}
 
 val <T, B : T> x : Int = 0

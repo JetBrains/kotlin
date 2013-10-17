@@ -38,11 +38,7 @@ public class ReplInterpreterTest {
         System.setProperty("java.awt.headless", "true");
     }
 
-    private final Disposable disposable = new Disposable() {
-        @Override
-        public void dispose() {
-        }
-    };
+    private final Disposable disposable = Disposer.newDisposable();
 
     @After
     public void tearDown() {

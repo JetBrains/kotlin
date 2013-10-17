@@ -19,11 +19,11 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface JavaMethod extends JavaMember, JavaTypeParameterListOwner {
     @NotNull
-    Collection<JavaValueParameter> getValueParameters();
+    List<JavaValueParameter> getValueParameters();
 
     boolean hasAnnotationParameterDefaultValue();
 

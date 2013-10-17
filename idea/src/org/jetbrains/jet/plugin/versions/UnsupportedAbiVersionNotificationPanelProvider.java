@@ -255,7 +255,9 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                EditorNotifications.getInstance(project).updateAllNotifications();
+                if (!project.isDisposed()) {
+                    EditorNotifications.getInstance(project).updateAllNotifications();
+                }
             }
         });
     }

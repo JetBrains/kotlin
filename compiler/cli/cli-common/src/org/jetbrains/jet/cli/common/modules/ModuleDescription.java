@@ -30,6 +30,9 @@ public interface ModuleDescription {
     String getModuleName();
 
     @NotNull
+    String getOutputDir();
+
+    @NotNull
     List<String> getSourceFiles();
 
     @NotNull
@@ -41,12 +44,17 @@ public interface ModuleDescription {
     class Impl implements ModuleDescription {
 
         private String name;
+        private String outputDir;
         private final List<String> sources = new SmartList<String>();
         private final List<String> classpath = new SmartList<String>();
         private final List<String> annotations = new SmartList<String>();
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public void setOutputDir(String outputDir) {
+            this.outputDir = outputDir;
         }
 
         public void addSourcePath(String path) {
@@ -69,6 +77,12 @@ public interface ModuleDescription {
 
         @NotNull
         @Override
+        public String getOutputDir() {
+            return outputDir;
+        }
+
+        @NotNull
+        @Override
         public List<String> getSourceFiles() {
             return sources;
         }
@@ -87,7 +101,11 @@ public interface ModuleDescription {
 
         @Override
         public String toString() {
-            return name + "\n\tsources=" + sources + "\n\tclasspath=" + classpath + "\n\tannotations=" + annotations;
+            return name +
+                   "\n\toutputDir=" + outputDir +
+                   "\n\tsources=" + sources +
+                   "\n\tclasspath=" + classpath +
+                   "\n\tannotations=" + annotations;
         }
     }
 }

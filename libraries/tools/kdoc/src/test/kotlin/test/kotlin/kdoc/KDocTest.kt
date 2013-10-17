@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.doc.KDocArguments
 import org.jetbrains.kotlin.doc.KDocCompiler
 import org.junit.Assert
 import org.junit.Test
+import com.intellij.openapi.util.text.StringUtil
 
 /**
 */
@@ -24,16 +25,15 @@ class KDocTest {
         println("Generating library KDocs to $outDir")
 
         val args = KDocArguments()
-        //args.setModule(moduleName)
+        //args.module = moduleName
         args.kotlinHome = "../../../dist/kotlinc"
-        val sourceDirs = ArrayList<String>()
-        sourceDirs.add("../../stdlib/src")
-        sourceDirs.add("../../kunit/src/main/kotlin")
-        sourceDirs.add("../../kotlin-jdbc/src/main/kotlin")
-        args.setSourceDirs(sourceDirs)
-        args.setOutputDir("target/classes-stdlib")
-        args.setNoStdlib(true)
-        args.setClasspath("../runtime/target/kotlin-runtime-0.1-SNAPSHOT.jar${File.pathSeparator}../../lib/junit-4.9.jar")
+        val sourceDirs = listOf("../../stdlib/src",
+                               "../../kunit/src/main/kotlin",
+                               "../../kotlin-jdbc/src/main/kotlin")
+        args.src = sourceDirs.makeString(File.pathSeparator)
+        args.outputDir = "target/classes-stdlib"
+        args.noStdlib = true
+        args.classpath = "../runtime/target/kotlin-runtime-0.1-SNAPSHOT.jar${File.pathSeparator}../../lib/junit-4.9.jar"
 
         val config = args.docConfig
         config.docOutputDir = outDir.toString()

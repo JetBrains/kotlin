@@ -522,8 +522,6 @@ JetFile: BitArith.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('INumber')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     DELEGATION_SPECIFIER_LIST

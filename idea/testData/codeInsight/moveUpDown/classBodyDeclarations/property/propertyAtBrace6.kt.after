@@ -1,6 +1,9 @@
 // MOVE: up
+// fun foo
 fun foo() {
+    // val y
     <caret>val y = ""
+    // class B
     class B {
     }
 }

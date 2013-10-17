@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.google.common.base.Joiner;
 import com.intellij.openapi.util.text.StringUtil;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -26,14 +25,14 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
-import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.KotlinVersion;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
 import java.io.File;
 import java.io.IOException;
@@ -172,7 +171,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             }
         }
 
-        final CompilerArguments arguments = createCompilerArguments();
+        final CommonCompilerArguments arguments = createCompilerArguments();
         configureCompilerArguments(arguments);
 
         final CLICompiler compiler = createCompiler();
@@ -210,7 +209,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
     }
 
-    private void printCompilerArgumentsIfDebugEnabled(CompilerArguments arguments, CLICompiler compiler) {
+    private void printCompilerArgumentsIfDebugEnabled(CommonCompilerArguments arguments, CLICompiler compiler) {
         if (getLog().isDebugEnabled()) {
             getLog().debug("Invoking compiler " + compiler + " with arguments:");
             try {
@@ -247,14 +246,14 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      * Derived classes can create custom compiler argument implementations
      * such as for KDoc
      */
-    protected CompilerArguments createCompilerArguments() {
+    protected CommonCompilerArguments createCompilerArguments() {
         return new K2JVMCompilerArguments();
     }
 
     /**
      * Derived classes can register custom plugins or configurations
      */
-    protected abstract void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException;
+    protected abstract void configureCompilerArguments(CommonCompilerArguments arguments) throws MojoExecutionException;
 
     protected void configureBaseCompilerArguments(Log log, K2JVMCompilerArguments arguments, String module,
                                                   List<String> sources, List<String> classpath, String output) throws MojoExecutionException {
@@ -265,14 +264,14 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
         if (module != null) {
             log.info("Compiling Kotlin module " + module);
-            arguments.setModule(module);
+            arguments.module = module;
         }
         else {
             if (sources.size() <= 0)
                 throw new MojoExecutionException("No source roots to compile");
 
-            arguments.setSourceDirs(sources);
-            log.info("Compiling Kotlin sources from " + arguments.getSourceDirs());
+            arguments.src = join(sources, File.pathSeparator);
+            log.info("Compiling Kotlin sources from " + arguments.src);
 
             // TODO: Move it compiler
             classpathList.addAll(sources);
@@ -285,13 +284,13 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
 
         if (classpathList.size() > 0) {
-            final String classPathString = Joiner.on(File.pathSeparator).join(classpathList);
+            String classPathString = join(classpathList, File.pathSeparator);
             log.info("Classpath: " + classPathString);
-            arguments.setClasspath(classPathString);
+            arguments.classpath = classPathString;
         }
 
         log.info("Classes directory is " + output);
-        arguments.setOutputDir(output);
+        arguments.outputDir = output;
 
         arguments.noJdkAnnotations = true;
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);

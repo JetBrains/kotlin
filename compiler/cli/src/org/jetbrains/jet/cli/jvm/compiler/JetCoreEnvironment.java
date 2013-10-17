@@ -29,6 +29,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiFile;
@@ -36,6 +37,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.CompilerModeProvider;
 import org.jetbrains.jet.OperationModeProvider;
 import org.jetbrains.jet.asJava.JavaElementFinder;
@@ -62,22 +64,72 @@ import java.util.List;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
 
+@SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
 public class JetCoreEnvironment {
 
-    private final JavaCoreApplicationEnvironment applicationEnvironment;
-    private final JavaCoreProjectEnvironment projectEnvironment;
-    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
-    private final ClassPath classPath = new ClassPath();
+    private static final Object APPLICATION_LOCK = new Object();
+    private static JavaCoreApplicationEnvironment ourApplicationEnvironment;
+    private static int ourProjectCount = 0;
 
-    private final CoreExternalAnnotationsManager annotationsManager;
+    @NotNull
+    public static JetCoreEnvironment createForProduction(@NotNull Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
+        // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
+        // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
+        Disposer.register(parentDisposable, new Disposable() {
+            @Override
+            public void dispose() {
+                synchronized (APPLICATION_LOCK) {
+                    if (--ourProjectCount <= 0) {
+                        disposeApplicationEnvironment();
+                    }
+                }
+            }
+        });
+        JetCoreEnvironment environment = new JetCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(), configuration);
+        synchronized (APPLICATION_LOCK) {
+            ourProjectCount++;
+        }
+        return environment;
+    }
 
-    private final CompilerConfiguration configuration;
+    @TestOnly
+    @NotNull
+    public static JetCoreEnvironment createForTests(@NotNull Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
+        // Tests are supposed to create a single project and dispose it right after use
+        return new JetCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable), configuration);
+    }
 
-    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerConfiguration configuration) {
-        this.configuration = configuration.copy();
-        this.configuration.setReadOnly(true);
+    @NotNull
+    private static JavaCoreApplicationEnvironment getOrCreateApplicationEnvironmentForProduction() {
+        synchronized (APPLICATION_LOCK) {
+            if (ourApplicationEnvironment != null) return ourApplicationEnvironment;
 
-        this.applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
+            Disposable parentDisposable = Disposer.newDisposable();
+            ourApplicationEnvironment = createApplicationEnvironment(parentDisposable);
+            ourProjectCount = 0;
+            Disposer.register(parentDisposable, new Disposable() {
+                @Override
+                public void dispose() {
+                    synchronized (APPLICATION_LOCK) {
+                        ourApplicationEnvironment = null;
+                    }
+                }
+            });
+            return ourApplicationEnvironment;
+        }
+    }
+
+    public static void disposeApplicationEnvironment() {
+        synchronized (APPLICATION_LOCK) {
+            if (ourApplicationEnvironment == null) return;
+            JavaCoreApplicationEnvironment environment = ourApplicationEnvironment;
+            ourApplicationEnvironment = null;
+            Disposer.dispose(environment.getParentDisposable());
+        }
+    }
+
+    private static JavaCoreApplicationEnvironment createApplicationEnvironment(Disposable parentDisposable) {
+        JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
 
         // ability to get text from annotations xml files
         applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml");
@@ -90,6 +142,25 @@ public class JetCoreEnvironment {
         applicationEnvironment.registerParserDefinition(new JetParserDefinition());
 
         applicationEnvironment.getApplication().registerService(OperationModeProvider.class, new CompilerModeProvider());
+
+        return applicationEnvironment;
+    }
+
+    private final JavaCoreProjectEnvironment projectEnvironment;
+    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+    private final ClassPath classPath = new ClassPath();
+
+    private final CoreExternalAnnotationsManager annotationsManager;
+
+    private final CompilerConfiguration configuration;
+
+    private JetCoreEnvironment(
+            @NotNull Disposable parentDisposable,
+            @NotNull JavaCoreApplicationEnvironment applicationEnvironment,
+            @NotNull CompilerConfiguration configuration
+    ) {
+        this.configuration = configuration.copy();
+        this.configuration.setReadOnly(true);
 
         projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 
@@ -134,8 +205,13 @@ public class JetCoreEnvironment {
     }
 
     @NotNull
+    private CoreApplicationEnvironment getMyApplicationEnvironment() {
+        return projectEnvironment.getEnvironment();
+    }
+
+    @NotNull
     public MockApplication getApplication() {
-        return applicationEnvironment.getApplication();
+        return getMyApplicationEnvironment().getApplication();
     }
 
     @NotNull
@@ -161,7 +237,7 @@ public class JetCoreEnvironment {
             }
         }
         else {
-            VirtualFile fileByPath = applicationEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
+            VirtualFile fileByPath = getMyApplicationEnvironment().getLocalFileSystem().findFileByPath(file.getAbsolutePath());
             if (fileByPath != null) {
                 PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(fileByPath);
                 if (psiFile instanceof JetFile) {
@@ -176,7 +252,7 @@ public class JetCoreEnvironment {
             return;
         }
 
-        VirtualFile vFile = applicationEnvironment.getLocalFileSystem().findFileByPath(path);
+        VirtualFile vFile = getMyApplicationEnvironment().getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
             report(ERROR, "Source file or directory not found: " + path);
             return;
@@ -191,7 +267,7 @@ public class JetCoreEnvironment {
 
     private void addToClasspath(File path) {
         if (path.isFile()) {
-            VirtualFile jarFile = applicationEnvironment.getJarFileSystem().findFileByPath(path + "!/");
+            VirtualFile jarFile = getMyApplicationEnvironment().getJarFileSystem().findFileByPath(path + "!/");
             if (jarFile == null) {
                 report(WARNING, "Classpath entry points to a file that is not a JAR archive: " + path);
                 return;
@@ -200,7 +276,7 @@ public class JetCoreEnvironment {
             classPath.add(jarFile);
         }
         else {
-            VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
+            VirtualFile root = getMyApplicationEnvironment().getLocalFileSystem().findFileByPath(path.getAbsolutePath());
             if (root == null) {
                 report(WARNING, "Classpath entry points to a non-existent location: " + path);
                 return;

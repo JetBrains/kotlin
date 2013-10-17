@@ -65,7 +65,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
 
 
     public final ClassDescriptorImpl initialize(
-            boolean sealed,
+            boolean isFinal,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull Collection<JetType> supertypes,
             @NotNull JetScope memberDeclarations,
@@ -73,7 +73,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
             @Nullable ConstructorDescriptor primaryConstructor,
             boolean isInner
     ) {
-        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName().asString(), typeParameters, supertypes);
+        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), isFinal, getName().asString(), typeParameters, supertypes);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;

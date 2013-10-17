@@ -414,10 +414,11 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testIntRange() throws Exception {
         loadText("fun foo() = 1..10");
         Method main = generateFunction();
-        IntRange result = (IntRange) main.invoke(null);
-        assertTrue(result.contains(1));
-        assertTrue(result.contains(10));
-        assertFalse(result.contains(11));
+        Object result = main.invoke(null);
+        Method contains = result.getClass().getMethod("contains", Integer.TYPE);
+        assertTrue((Boolean) contains.invoke(result, 1));
+        assertTrue((Boolean) contains.invoke(result, 10));
+        assertFalse((Boolean) contains.invoke(result, 11));
     }
 
     public void testSubstituteJavaMethodTypeParameters() throws Exception {

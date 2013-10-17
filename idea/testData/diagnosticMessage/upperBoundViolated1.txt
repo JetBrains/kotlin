@@ -1,0 +1,3 @@
+<!-- upperBoundViolated1 -->
+Type parameter bound for T in fun <R, T : jet.List<R>> foo(r: R, list: T): jet.Unit
+ is not satisfied: inferred type jet.Collection<jet.Int> is not a subtype of jet.List<jet.Int>

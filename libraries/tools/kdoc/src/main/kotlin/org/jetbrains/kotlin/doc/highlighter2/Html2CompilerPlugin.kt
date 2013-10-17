@@ -27,9 +27,9 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
 
     private val sourceDirs: List<File> =
         compilerArguments
-                .getSourceDirs()
+                .src
                 .orEmpty()
-                .requireNoNulls()
+                .split(File.pathSeparatorChar)
                 .map { path -> File(path).getCanonicalFile()!! }
 
     private val sourceDirPaths: List<String> = sourceDirs.map { d -> d.getPath()!! }

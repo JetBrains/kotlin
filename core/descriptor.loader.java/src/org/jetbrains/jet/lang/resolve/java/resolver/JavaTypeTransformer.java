@@ -185,7 +185,7 @@ public class JavaTypeTransformer {
             }
         }
         else {
-            Collection<JavaType> javaTypeArguments = classifierType.getTypeArguments();
+            List<JavaType> javaTypeArguments = classifierType.getTypeArguments();
 
             if (parameters.size() != javaTypeArguments.size()) {
                 // Most of the time this means there is an error in the Java code
@@ -194,14 +194,13 @@ public class JavaTypeTransformer {
                 }
             }
             else {
-                int index = 0;
-                for (JavaType typeArgument : javaTypeArguments) {
-                    TypeParameterDescriptor typeParameterDescriptor = parameters.get(index);
-                    index++;
+                for (int i = 0, size = javaTypeArguments.size(); i < size; i++) {
+                    JavaType typeArgument = javaTypeArguments.get(i);
+                    TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
 
                     TypeUsage howTheProjectionIsUsed = howThisTypeIsUsed == SUPERTYPE ? SUPERTYPE_ARGUMENT : TYPE_ARGUMENT;
-                    TypeProjection typeProjection = transformToTypeProjection(typeArgument, typeParameterDescriptor, typeVariableResolver,
-                            howTheProjectionIsUsed);
+                    TypeProjection typeProjection =
+                            transformToTypeProjection(typeArgument, typeParameterDescriptor, typeVariableResolver, howTheProjectionIsUsed);
 
                     if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
                         // remove redundant 'out' and 'in'

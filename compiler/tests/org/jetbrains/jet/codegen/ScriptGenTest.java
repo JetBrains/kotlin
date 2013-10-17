@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
@@ -52,16 +51,10 @@ public class ScriptGenTest extends CodegenTestCase {
     private void blackBoxScript(String filename) {
         loadFile(filename);
 
-        ClassFileFactory factory = generateClassesInFile();
-
-        GeneratedClassLoader loader = createClassLoader(factory);
-
-        String scriptClassName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile());
-
         try {
-            Class<?> scriptClass = loader.loadClass(scriptClassName);
+            Class<?> scriptClass = generateClass(ScriptNameUtil.classNameForScript(myFiles.getPsiFile()));
 
-            Constructor constructor = getConstructor(scriptClass, factory.getState().getScriptCodegen().getScriptConstructorMethod());
+            Constructor constructor = getConstructor(scriptClass);
             scriptInstance = constructor.newInstance(myFiles.getScriptParameterValues().toArray());
 
             assertFalse("expecting at least one expectation", myFiles.getExpectedValues().isEmpty());
@@ -88,47 +81,17 @@ public class ScriptGenTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(generateToText());
-            ExceptionUtils.rethrow(e);
-        }
-    }
-
-    protected Constructor getConstructor(@NotNull Class<?> clazz, org.jetbrains.asm4.commons.Method method) {
-        if (!method.getName().equals("<init>")) {
-            throw new IllegalArgumentException("not constructor: " + method);
-        }
-        Class[] classes = new Class[method.getArgumentTypes().length];
-        for (int i = 0; i < classes.length; ++i) {
-            classes[i] = loadClassFromType(method.getArgumentTypes()[i]);
-        }
-        try {
-            return clazz.getConstructor(classes);
-        }
-        catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw ExceptionUtils.rethrow(e);
         }
     }
 
     @NotNull
-    private Class<?> loadClassFromType(@NotNull Type type) {
-        try {
-            switch (type.getSort()) {
-                case Type.OBJECT:
-                    return Class.forName(type.getClassName());
-                case Type.INT:
-                    return int.class;
-                case Type.LONG:
-                    return long.class;
-                default:
-                    // AFAIK there is no way to create array class from class
-                    if (type.getDescriptor().equals("[Ljava/lang/String;")) {
-                        return String[].class;
-                    }
-                    throw new IllegalStateException("not implemented: " + type.getDescriptor());
-            }
+    protected static Constructor getConstructor(@NotNull Class<?> clazz) {
+        Constructor[] constructors = clazz.getConstructors();
+        if (constructors.length != 1) {
+            throw new IllegalArgumentException("Script class should have one constructor: " + clazz);
         }
-        catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
-        }
+        return constructors[0];
     }
 
     public void testHelloWorld() {

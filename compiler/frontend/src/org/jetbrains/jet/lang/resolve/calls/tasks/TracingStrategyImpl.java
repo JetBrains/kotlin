@@ -21,12 +21,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemStatus;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -213,7 +210,7 @@ public class TracingStrategyImpl implements TracingStrategy {
     }
 
     @Override
-    public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data) {
+    public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData data) {
         ConstraintSystem constraintSystem = data.constraintSystem;
         ConstraintSystemStatus status = constraintSystem.getStatus();
         assert !status.isSuccessful() : "Report error only for not successful constraint system";
@@ -223,15 +220,20 @@ public class TracingStrategyImpl implements TracingStrategy {
             // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
             return;
         }
-        if (status.hasOnlyExpectedTypeMismatch()) {
+        if (status.hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION)) {
             JetType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
-            JetType substitutedReturnType = constraintSystem.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
+            ConstraintSystem systemWithoutExpectedTypeConstraint =
+                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(ConstraintPosition.EXPECTED_TYPE_POSITION);
+            JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(declaredReturnType, Variance.INVARIANT);
             assert substitutedReturnType != null; //todo
 
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
             trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, data.expectedType, substitutedReturnType));
+        }
+        else if (status.hasViolatedUpperBound()) {
+            trace.report(TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, data));
         }
         else if (status.hasTypeConstructorMismatch()) {
             trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
@@ -243,10 +245,5 @@ public class TracingStrategyImpl implements TracingStrategy {
             assert status.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
         }
-    }
-
-    @Override
-    public void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {
-        trace.report(Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, inferenceErrorData));
     }
 }

@@ -52,7 +52,6 @@ import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -66,8 +65,6 @@ import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
-import org.jetbrains.jet.utils.KotlinPaths;
-import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Assert;
 
@@ -241,7 +238,7 @@ public class JetTestUtils {
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        return new JetCoreEnvironment(disposable, compilerConfigurationForTests(
+        return JetCoreEnvironment.createForTests(disposable, compilerConfigurationForTests(
                 configurationKind, jdkKind, getAnnotationsJar(), getAnnotationsExtJar()));
     }
 
@@ -439,7 +436,7 @@ public class JetTestUtils {
         return testFiles;
     }
 
-    private static Map<String, String> parseDirectives(String expectedText) {
+    public static Map<String, String> parseDirectives(String expectedText) {
         Map<String, String> directives = Maps.newHashMap();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
         int start = 0;
@@ -625,10 +622,6 @@ public class JetTestUtils {
 
     private static String getSimpleName(String generatorClassFqName) {
         return generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
-    }
-
-    public static KotlinPaths getPathsForTests() {
-        return new KotlinPathsFromHomeDir(new File("dist/kotlinc"));
     }
 
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {

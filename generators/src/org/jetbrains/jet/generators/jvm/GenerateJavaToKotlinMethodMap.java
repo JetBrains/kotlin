@@ -31,7 +31,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.GeneratorsFileUtil;
@@ -70,9 +69,9 @@ public class GenerateJavaToKotlinMethodMap {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
 
-        Disposable disposable = CompileEnvironmentUtil.createMockDisposable();
+        Disposable disposable = Disposer.newDisposable();
         try {
-            JetCoreEnvironment coreEnvironment = new JetCoreEnvironment(disposable, configuration);
+            JetCoreEnvironment coreEnvironment = JetCoreEnvironment.createForProduction(disposable, configuration);
 
             StringBuilder buf = new StringBuilder();
             Printer printer = new Printer(buf);

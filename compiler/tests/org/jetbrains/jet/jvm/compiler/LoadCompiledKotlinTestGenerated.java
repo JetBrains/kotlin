@@ -38,7 +38,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     }
     
     @TestMetadata("compiler/testData/loadKotlin/annotations")
-    @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class})
+    @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class, Annotations.PropertiesWithoutBackingFields.class})
     public static class Annotations extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -53,11 +53,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("ClassObjectPropertyField.kt")
             public void testClassObjectPropertyField() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
-            }
-            
-            @TestMetadata("ClassObjectPropertyNoField.kt")
-            public void testClassObjectPropertyNoField() throws Exception {
-                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/ClassObjectPropertyNoField.kt");
             }
             
             @TestMetadata("DelegatedProperty.kt")
@@ -83,11 +78,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("PropertyField.kt")
             public void testPropertyField() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/PropertyField.kt");
-            }
-            
-            @TestMetadata("PropertyNoField.kt")
-            public void testPropertyNoField() throws Exception {
-                doTestWithAccessors("compiler/testData/loadKotlin/annotations/classMembers/PropertyNoField.kt");
             }
             
             @TestMetadata("Setter.kt")
@@ -186,14 +176,42 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/PropertyField.kt");
             }
             
-            @TestMetadata("PropertyNoField.kt")
-            public void testPropertyNoField() throws Exception {
-                doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/PropertyNoField.kt");
-            }
-            
             @TestMetadata("Setter.kt")
             public void testSetter() throws Exception {
                 doTestWithAccessors("compiler/testData/loadKotlin/annotations/packageMembers/Setter.kt");
+            }
+            
+        }
+        
+        @TestMetadata("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields")
+        public static class PropertiesWithoutBackingFields extends AbstractLoadCompiledKotlinTest {
+            public void testAllFilesPresentInPropertiesWithoutBackingFields() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("Class.kt")
+            public void testClass() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/Class.kt");
+            }
+            
+            @TestMetadata("ClassObject.kt")
+            public void testClassObject() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ClassObject.kt");
+            }
+            
+            @TestMetadata("ExtensionsWithSameNameClass.kt")
+            public void testExtensionsWithSameNameClass() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNameClass.kt");
+            }
+            
+            @TestMetadata("ExtensionsWithSameNamePackage.kt")
+            public void testExtensionsWithSameNamePackage() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNamePackage.kt");
+            }
+            
+            @TestMetadata("TopLevel.kt")
+            public void testTopLevel() throws Exception {
+                doTestWithAccessors("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields/TopLevel.kt");
             }
             
         }
@@ -204,6 +222,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             suite.addTestSuite(ClassMembers.class);
             suite.addTestSuite(Classes.class);
             suite.addTestSuite(PackageMembers.class);
+            suite.addTestSuite(PropertiesWithoutBackingFields.class);
             return suite;
         }
     }
@@ -1033,6 +1052,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("VarDelegationToTraitImpl.kt")
         public void testVarDelegationToTraitImpl() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/prop/VarDelegationToTraitImpl.kt");
+        }
+        
+        @TestMetadata("VarWithDelegated.kt")
+        public void testVarWithDelegated() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/prop/VarWithDelegated.kt");
         }
         
         @TestMetadata("compiler/testData/loadKotlin/prop/defaultAccessors")

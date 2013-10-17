@@ -237,6 +237,16 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinNestedInnerClass");
         }
         
+        @TestMetadata("kotlinPackageFunction")
+        public void testKotlinPackageFunction() throws Exception {
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPackageFunction");
+        }
+        
+        @TestMetadata("kotlinPackageProperty")
+        public void testKotlinPackageProperty() throws Exception {
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPackageProperty");
+        }
+        
     }
     
     @TestMetadata("idea/testData/hierarchy/calls/callees")
@@ -298,6 +308,16 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("kotlinObject")
         public void testKotlinObject() throws Exception {
             doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinObject");
+        }
+        
+        @TestMetadata("kotlinPackageFunction")
+        public void testKotlinPackageFunction() throws Exception {
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinPackageFunction");
+        }
+        
+        @TestMetadata("kotlinPackageProperty")
+        public void testKotlinPackageProperty() throws Exception {
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinPackageProperty");
         }
         
         @TestMetadata("kotlinProperty")

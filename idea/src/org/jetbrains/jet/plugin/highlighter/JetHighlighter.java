@@ -57,12 +57,13 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.INTEGER_LITERAL, JetHighlightingColors.NUMBER);
         keys1.put(JetTokens.FLOAT_LITERAL, JetHighlightingColors.NUMBER);
 
-        fillMap(keys1, TokenSet.andNot(
-                JetTokens.OPERATIONS,
-                TokenSet.andNot(
-                        TokenSet.create(JetTokens.IDENTIFIER, JetTokens.LABEL_IDENTIFIER),
-                        JetTokens.KEYWORDS)),
+        fillMap(keys1,
+                TokenSet.andNot(JetTokens.OPERATIONS,
+                                TokenSet.orSet(
+                                        TokenSet.create(JetTokens.IDENTIFIER, JetTokens.LABEL_IDENTIFIER),
+                                        JetTokens.KEYWORDS)),
                 JetHighlightingColors.OPERATOR_SIGN);
+
         keys1.put(JetTokens.LPAR, JetHighlightingColors.PARENTHESIS);
         keys1.put(JetTokens.RPAR, JetHighlightingColors.PARENTHESIS);
         keys1.put(JetTokens.LBRACE, JetHighlightingColors.BRACES);

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.jetbrains.jet.cli.common.CompilerArguments;
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 
 import java.util.List;
 
@@ -86,7 +86,7 @@ public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
     }
 
     @Override
-    protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
+    protected void configureCompilerArguments(CommonCompilerArguments arguments) throws MojoExecutionException {
         if (arguments instanceof K2JVMCompilerArguments) {
             configureBaseCompilerArguments(
                     getLog(), (K2JVMCompilerArguments) arguments,

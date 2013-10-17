@@ -1,3 +1,6 @@
+// !DIAGNOSTICS_NUMBER: 1
+// !DIAGNOSTICS: EXPECTED_PARAMETERS_NUMBER_MISMATCH
+
 package aa
 
 import java.util.ArrayList

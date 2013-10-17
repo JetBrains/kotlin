@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.buildtools.core;
 
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
@@ -26,10 +27,7 @@ import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -68,7 +66,7 @@ public class BytecodeCompiler {
     private JetCoreEnvironment env(String stdlib, String[] classpath, String[] sourceRoots) {
         CompilerConfiguration configuration = createConfiguration(stdlib, classpath, sourceRoots);
 
-        return new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration);
+        return JetCoreEnvironment.createForProduction(Disposer.newDisposable(), configuration);
     }
 
     private CompilerConfiguration createConfiguration(String stdlib, String[] classpath, String[] sourceRoots) {
@@ -201,15 +199,15 @@ public class BytecodeCompiler {
             @Nullable String stdlib,
             @Nullable String[] classpath) {
         try {
-            List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(getKotlinPathsForAntTask(), module,
-                                                                                 MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+            ModuleChunk modules = CompileEnvironmentUtil.loadModuleDescriptions(getKotlinPathsForAntTask(), module,
+                                                                                MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
             List<String> sourcesRoots = new ArrayList<String>();
-            for (Module m : modules) {
+            for (Module m : modules.getModules()) {
                 sourcesRoots.addAll(m.getSourceFiles());
             }
             CompilerConfiguration configuration = createConfiguration(stdlib, classpath, sourcesRoots.toArray(new String[0]));
             File directory = new File(module).getParentFile();
-            boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), null, includeRuntime);
+            boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), includeRuntime);
             if (!success) {
                 throw new CompileEnvironmentException(errorMessage(new String[]{module}, false));
             }

@@ -85,7 +85,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     private void doTest(@NotNull String kotlinName, @NotNull String javaName) throws Exception {
         File javaClassesTempDirectory = compileJava("outerClassInfo/outerClassInfo.java");
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
         UrlClassLoader javaClassLoader = new UrlClassLoader(new URL[] {javaClassesTempDirectory.toURI().toURL()}, getClass().getClassLoader());

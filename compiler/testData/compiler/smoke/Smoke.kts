@@ -1,7 +1,7 @@
 import kotlin.modules.*
 
 fun project() {
-    module("smoke") {
+    module("smoke", ".") {
         sources += "Smoke.kt"
     }
 }

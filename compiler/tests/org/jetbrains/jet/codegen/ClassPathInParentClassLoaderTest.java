@@ -32,7 +32,7 @@ public class ClassPathInParentClassLoaderTest extends CodegenTestCase {
     @NotNull
     @Override
     protected GeneratedClassLoader createClassLoader(@NotNull ClassFileFactory factory) {
-        ClassLoader parentClassLoader = new URLClassLoader(getClassPathURLs(), CodegenTestCase.class.getClassLoader());
+        ClassLoader parentClassLoader = new URLClassLoader(getClassPathURLs(), null);
         initializedClassLoader = new GeneratedClassLoader(factory, parentClassLoader);
         return initializedClassLoader;
     }
@@ -40,7 +40,7 @@ public class ClassPathInParentClassLoaderTest extends CodegenTestCase {
     public void testKt2781() throws Exception {
         File javaClassesTempDirectory = compileJava("classPathInParentClassLoader/kt2781.java");
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
         loadFile("classPathInParentClassLoader/kt2781.kt");

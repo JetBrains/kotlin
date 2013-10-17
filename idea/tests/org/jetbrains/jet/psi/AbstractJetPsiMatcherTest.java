@@ -65,6 +65,6 @@ public abstract class AbstractJetPsiMatcherTest extends JetLiteFixture {
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
-        return new JetCoreEnvironment(getTestRootDisposable(), new CompilerConfiguration());
+        return JetCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration());
     }
 }

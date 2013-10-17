@@ -6,8 +6,6 @@ JetFile: kt2172.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
-    TYPE_PARAMETER_LIST
-      <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n    ')
