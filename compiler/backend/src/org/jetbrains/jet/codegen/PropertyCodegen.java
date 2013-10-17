@@ -92,10 +92,10 @@ public class PropertyCodegen extends GenerationStateAware {
 
         if (context instanceof NamespaceFacadeContext) {
             Type ownerType = ((NamespaceFacadeContext) context).getDelegateToClassType();
-            v.getMemberMap().recordSrcClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerType));
+            v.getMemberMap().recordImplClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerType));
         }
-        else if (kind != OwnerKind.TRAIT_IMPL) {
-            generateBackingField(p, propertyDescriptor);
+        else if (!generateBackingField(p, propertyDescriptor)) {
+            generateSyntheticMethodIfNeeded(propertyDescriptor);
         }
 
         generateGetter(p, propertyDescriptor, p.getGetter());
@@ -126,55 +126,55 @@ public class PropertyCodegen extends GenerationStateAware {
         }
     }
 
-    private void generateBackingField(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
-        boolean hasBackingField = Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
-        boolean isDelegated = p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null;
-        if (hasBackingField || isDelegated) {
-            DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-            if (isInterface(containingDeclaration)) {
-                return;
-            }
-
-            FieldVisitor fieldVisitor = hasBackingField
-                           ? generateBackingFieldAccess(p, propertyDescriptor)
-                           : generatePropertyDelegateAccess((JetProperty) p, propertyDescriptor);
-
-            AnnotationCodegen.forField(fieldVisitor, typeMapper).genAnnotations(propertyDescriptor);
+    private boolean generateBackingField(@NotNull JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {
+        if (isInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.TRAIT_IMPL) {
+            return false;
         }
-        else if (!propertyDescriptor.getAnnotations().isEmpty()) {
-            if (!isTrait(context.getContextDescriptor())) {
-                Method method = getSyntheticMethodSignature(typeMapper, propertyDescriptor);
-                generateSyntheticMethodForAnnotatedProperty(v, typeMapper, propertyDescriptor, method);
-                v.getMemberMap().recordSyntheticMethodOfProperty(propertyDescriptor, method);
-            }
+
+        FieldVisitor fv;
+        if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
+            fv = generateBackingFieldAccess(p, descriptor);
         }
+        else if (p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null) {
+            fv = generatePropertyDelegateAccess((JetProperty) p, descriptor);
+        }
+        else {
+            return false;
+        }
+
+        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(descriptor);
+        return true;
     }
 
     // Annotations on properties without backing fields are stored in bytecode on an empty synthetic method. This way they're still
     // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
-    public static void generateSyntheticMethodForAnnotatedProperty(
-            @NotNull ClassBuilder v,
-            @NotNull JetTypeMapper typeMapper,
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Method method
-    ) {
-        MethodVisitor mv = v.newMethod(null,
-                                       ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC,
-                                       method.getName(),
-                                       method.getDescriptor(),
-                                       null,
-                                       null);
-        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(propertyDescriptor);
-        mv.visitCode();
-        mv.visitInsn(Opcodes.RETURN);
-        mv.visitEnd();
-    }
+    private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor) {
+        if (descriptor.getAnnotations().isEmpty()) return;
 
-    @NotNull
-    public static Method getSyntheticMethodSignature(@NotNull JetTypeMapper typeMapper, @NotNull PropertyDescriptor propertyDescriptor) {
-        ReceiverParameterDescriptor receiver = propertyDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
         Type receiverAsmType = receiver == null ? null : typeMapper.mapType(receiver.getType());
-        return JvmAbi.getSyntheticMethodSignatureForAnnotatedProperty(propertyDescriptor.getName(), receiverAsmType);
+        Method method = JvmAbi.getSyntheticMethodSignatureForAnnotatedProperty(descriptor.getName(), receiverAsmType);
+
+        if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
+            MethodVisitor mv = v.newMethod(null,
+                                           ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC,
+                                           method.getName(),
+                                           method.getDescriptor(),
+                                           null,
+                                           null);
+            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor);
+            mv.visitCode();
+            mv.visitInsn(Opcodes.RETURN);
+            mv.visitEnd();
+        }
+        else {
+            Type tImplType = typeMapper.mapTraitImpl((ClassDescriptor) context.getContextDescriptor());
+            v.getMemberMap().recordImplClassNameForCallable(descriptor, shortNameByAsmType(tImplType));
+        }
+
+        if (kind != OwnerKind.TRAIT_IMPL) {
+            v.getMemberMap().recordSyntheticMethodOfProperty(descriptor, method);
+        }
     }
 
     private FieldVisitor generateBackingField(JetNamedDeclaration element, PropertyDescriptor propertyDescriptor, boolean isDelegate, JetType jetType, Object defaultValue) {

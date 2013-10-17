@@ -14,28 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.state;
+package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-public enum JetTypeMapperMode {
-    /**
-     * foo.Bar is mapped to Lfoo/Bar;
-     */
-    IMPL,
-    /**
-     * foo.Bar is mapped to Lfoo/Bar$TImpl;
-     */
-    TRAIT_IMPL,
-    /**
-     * jet.Int is mapped to I
-     */
-    VALUE,
-    /**
-     * jet.Int is mapped to Ljava/lang/Integer;
-     */
-    TYPE_PARAMETER,
-    /**
-     * jet.Int is mapped to Ljava/lang/Integer;
-     * No projections allowed in immediate arguments
-     */
-    SUPER_TYPE
+/* package */ class TraitImplClassHeader extends KotlinClassHeader {
+    protected TraitImplClassHeader(int version) {
+        super(version);
+    }
 }

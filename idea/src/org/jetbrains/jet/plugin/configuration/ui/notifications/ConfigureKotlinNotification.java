@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.configuration.ui;
+package org.jetbrains.jet.plugin.configuration.ui.notifications;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -26,22 +26,21 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.KotlinProjectConfigurator;
+import org.jetbrains.jet.plugin.configuration.ui.NonConfiguredKotlinProjectComponent;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
 
 public class ConfigureKotlinNotification extends Notification {
-    private static final String GROUP_ID = "Configure Kotlin: balloon";
     private static final String TITLE = "Configure Kotlin";
 
-    @NotNull private final Project project;
     @NotNull private final String notificationText;
 
     public ConfigureKotlinNotification(
             @NotNull final Project project,
             @NotNull String notificationText
     ) {
-        super(GROUP_ID, TITLE, notificationText, NotificationType.WARNING, new NotificationListener() {
+        super(NonConfiguredKotlinProjectComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, notificationText, NotificationType.WARNING, new NotificationListener() {
             @Override
             public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -55,17 +54,7 @@ public class ConfigureKotlinNotification extends Notification {
             }
         });
 
-        this.project = project;
         this.notificationText = notificationText;
-    }
-
-    public void showNotification() {
-        super.notify(project);
-    }
-
-    @NotNull
-    public String getNotificationText() {
-        return notificationText;
     }
 
     @NotNull
@@ -101,5 +90,22 @@ public class ConfigureKotlinNotification extends Notification {
                                configurator.getPresentableText(),
                                isOnlyOneModule ? ") module" : ") modules",
                                "</a>");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ConfigureKotlinNotification)) return false;
+
+        ConfigureKotlinNotification that = (ConfigureKotlinNotification) o;
+
+        if (!notificationText.equals(that.notificationText)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return notificationText.hashCode();
     }
 }

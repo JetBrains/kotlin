@@ -451,7 +451,7 @@ public class SignaturesPropagationData {
             JetType type = modifyTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, TYPE_ARGUMENT);
             Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper);
 
-            resultArguments.add(new TypeProjection(projectionKind, type));
+            resultArguments.add(new TypeProjectionImpl(projectionKind, type));
         }
         return resultArguments;
     }

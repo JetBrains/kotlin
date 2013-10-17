@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
@@ -165,7 +164,7 @@ public class TypeDeserializer {
     }
 
     private TypeProjection typeProjection(ProtoBuf.Type.Argument proto) {
-        return new TypeProjection(
+        return new TypeProjectionImpl(
                 variance(proto.getProjection()),
                 type(proto.getType())
         );
@@ -198,7 +197,7 @@ public class TypeDeserializer {
         return debugName;
     }
 
-    private class DeserializedType implements JetType {
+    private class DeserializedType extends AbstractJetType {
         private final ProtoBuf.Type typeProto;
         private final NotNullLazyValue<TypeConstructor> constructor;
         private final List<TypeProjection> arguments;
@@ -264,29 +263,6 @@ public class TypeDeserializer {
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList();
-        }
-
-        @Override
-        public String toString() {
-            return TypeUtils.toString(this);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof JetType)) return false;
-
-            JetType type = (JetType) o;
-
-            return isNullable() == type.isNullable() && JetTypeChecker.INSTANCE.equalTypes(this, type);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = getConstructor().hashCode();
-            result = 31 * result + getArguments().hashCode();
-            result = 31 * result + (isNullable() ? 1 : 0);
-            return result;
         }
     }
 }

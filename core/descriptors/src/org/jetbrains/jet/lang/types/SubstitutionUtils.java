@@ -98,13 +98,13 @@ public class SubstitutionUtils {
     }
 
     @NotNull
-    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull List<TypeParameterDescriptor> parameters, @NotNull List<TypeProjection> contextArguments) {
+    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull List<TypeParameterDescriptor> parameters, @NotNull List<? extends TypeProjection> contextArguments) {
         Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
         fillInSubstitutionContext(parameters, contextArguments, parameterValues);
         return parameterValues;
     }
 
-    private static void fillInSubstitutionContext(List<TypeParameterDescriptor> parameters, List<TypeProjection> contextArguments, Map<TypeConstructor, TypeProjection> parameterValues) {
+    private static void fillInSubstitutionContext(List<TypeParameterDescriptor> parameters, List<? extends TypeProjection> contextArguments, Map<TypeConstructor, TypeProjection> parameterValues) {
         if (parameters.size() != contextArguments.size()) {
             throw new IllegalArgumentException("type parameter count != context arguments");
         }
@@ -117,7 +117,7 @@ public class SubstitutionUtils {
 
     @NotNull
     public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
-        return new TypeProjection(parameterDescriptor.getVariance() == Variance.OUT_VARIANCE
+        return new TypeProjectionImpl(parameterDescriptor.getVariance() == Variance.OUT_VARIANCE
                                   ? Variance.INVARIANT
                                   : Variance.OUT_VARIANCE, parameterDescriptor.getUpperBoundsAsType());
     }

@@ -51,7 +51,7 @@ public class JavaTypeTransformer {
             @NotNull TypeUsage howThisTypeIsUsed
     ) {
         if (!(type instanceof JavaWildcardType)) {
-            return new TypeProjection(transformToType(type, howThisTypeIsUsed, typeVariableResolver));
+            return new TypeProjectionImpl(transformToType(type, howThisTypeIsUsed, typeVariableResolver));
         }
 
         JavaWildcardType wildcardType = (JavaWildcardType) type;
@@ -62,7 +62,7 @@ public class JavaTypeTransformer {
 
         Variance variance = wildcardType.isExtends() ? OUT_VARIANCE : IN_VARIANCE;
 
-        return new TypeProjection(variance, transformToType(bound, UPPER_BOUND, typeVariableResolver));
+        return new TypeProjectionImpl(variance, transformToType(bound, UPPER_BOUND, typeVariableResolver));
     }
 
     @NotNull
@@ -181,7 +181,7 @@ public class JavaTypeTransformer {
                 Variance projectionKind = parameter.getVariance() == OUT_VARIANCE || howThisTypeIsUsed == SUPERTYPE
                                           ? INVARIANT
                                           : OUT_VARIANCE;
-                arguments.add(new TypeProjection(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType()));
+                arguments.add(new TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType()));
             }
         }
         else {
@@ -190,7 +190,7 @@ public class JavaTypeTransformer {
             if (parameters.size() != javaTypeArguments.size()) {
                 // Most of the time this means there is an error in the Java code
                 for (TypeParameterDescriptor parameter : parameters) {
-                    arguments.add(new TypeProjection(ErrorUtils.createErrorType(parameter.getName().asString())));
+                    arguments.add(new TypeProjectionImpl(ErrorUtils.createErrorType(parameter.getName().asString())));
                 }
             }
             else {
@@ -204,7 +204,7 @@ public class JavaTypeTransformer {
 
                     if (typeProjection.getProjectionKind() == typeParameterDescriptor.getVariance()) {
                         // remove redundant 'out' and 'in'
-                        arguments.add(new TypeProjection(INVARIANT, typeProjection.getType()));
+                        arguments.add(new TypeProjectionImpl(INVARIANT, typeProjection.getType()));
                     }
                     else {
                         arguments.add(typeProjection);

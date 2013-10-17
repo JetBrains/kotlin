@@ -45,7 +45,7 @@ public class JavaSerializerExtension extends SerializerExtension {
             @NotNull NameTable nameTable
     ) {
         saveSignature(callable, proto, nameTable);
-        saveSrcClassName(callable, proto, nameTable);
+        saveImplClassName(callable, proto, nameTable);
     }
 
     private void saveSignature(
@@ -91,14 +91,14 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
     }
 
-    private void saveSrcClassName(
+    private void saveImplClassName(
             @NotNull CallableMemberDescriptor callable,
             @NotNull ProtoBuf.Callable.Builder proto,
             @NotNull NameTable nameTable
     ) {
-        String name = memberMap.getSrcClassNameOfCallable(callable);
+        String name = memberMap.getImplClassNameOfCallable(callable);
         if (name != null) {
-            proto.setExtension(JavaProtoBuf.srcClassName, nameTable.getSimpleNameIndex(Name.identifier(name)));
+            proto.setExtension(JavaProtoBuf.implClassName, nameTable.getSimpleNameIndex(Name.identifier(name)));
         }
     }
 

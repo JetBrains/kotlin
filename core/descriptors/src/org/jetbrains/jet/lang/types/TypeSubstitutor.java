@@ -114,7 +114,7 @@ public class TypeSubstitutor {
         }
 
         try {
-            return unsafeSubstitute(new TypeProjection(howThisTypeIsUsed, type), 0).getType();
+            return unsafeSubstitute(new TypeProjectionImpl(howThisTypeIsUsed, type), 0).getType();
         } catch (SubstitutionException e) {
             return ErrorUtils.createErrorType(e.getMessage());
         }
@@ -122,7 +122,7 @@ public class TypeSubstitutor {
 
     @Nullable
     public JetType substitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
-        TypeProjection projection = substitute(new TypeProjection(howThisTypeIsUsed, type));
+        TypeProjection projection = substitute(new TypeProjectionImpl(howThisTypeIsUsed, type));
         return projection == null ? null : projection.getType();
     }
 
@@ -162,7 +162,7 @@ public class TypeSubstitutor {
                     JetType substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
                     Variance resultingProjectionKind = combine(originalProjection.getProjectionKind(), replacement.getProjectionKind());
 
-                    return new TypeProjection(resultingProjectionKind, substitutedType);
+                    return new TypeProjectionImpl(resultingProjectionKind, substitutedType);
                 default:
                     throw new IllegalStateException();
             }
@@ -177,7 +177,7 @@ public class TypeSubstitutor {
                                                type.isNullable(),       // Same nullability
                                                substitutedArguments,
                                                new SubstitutingScope(type.getMemberScope(), this));
-            return new TypeProjection(originalProjection.getProjectionKind(), substitutedType);
+            return new TypeProjectionImpl(originalProjection.getProjectionKind(), substitutedType);
         }
     }
 
@@ -194,7 +194,7 @@ public class TypeSubstitutor {
                 case NO_CONFLICT:
                     // if the corresponding type parameter is already co/contra-variant, there's not need for an explicit projection
                     if (typeParameter.getVariance() != Variance.INVARIANT) {
-                        substitutedTypeArgument = new TypeProjection(Variance.INVARIANT, substitutedTypeArgument.getType());
+                        substitutedTypeArgument = new TypeProjectionImpl(Variance.INVARIANT, substitutedTypeArgument.getType());
                     }
                     break;
                 case OUT_IN_IN_POSITION:

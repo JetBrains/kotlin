@@ -29,10 +29,13 @@
       <implementation-class>org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.NonConfiguredKotlinProjectNotification</implementation-class>
+      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.NonConfiguredKotlinProjectComponent</implementation-class>
     </component>
     <component>
       <implementation-class>org.jetbrains.jet.plugin.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.jet.plugin.configuration.ui.AbsentJdkAnnotationsComponent</implementation-class>
     </component>
   </project-components>
 
@@ -310,7 +313,6 @@
 
     <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor"/>
 
-    <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.AbsentJdkAnnotationsNotifications"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.IncorrectSourceRootNameNotification"/>
     <editorNotificationProvider implementation="org.jetbrains.jet.plugin.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 

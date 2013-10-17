@@ -50,7 +50,7 @@ public class ConstraintsUtil {
         ArrayList<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (JetType type : conflictingTypes) {
             Map<TypeConstructor, TypeProjection> context = Maps.newLinkedHashMap();
-            context.put(firstConflictingParameter.getTypeConstructor(), new TypeProjection(type));
+            context.put(firstConflictingParameter.getTypeConstructor(), new TypeProjectionImpl(type));
             substitutionContexts.add(context);
         }
 
@@ -59,7 +59,7 @@ public class ConstraintsUtil {
 
             JetType safeType = getSafeValue(constraintSystem, typeParameter);
             for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
-                TypeProjection typeProjection = new TypeProjection(safeType);
+                TypeProjection typeProjection = new TypeProjectionImpl(safeType);
                 context.put(typeParameter.getTypeConstructor(), typeProjection);
             }
         }

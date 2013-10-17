@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeProjectionImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
@@ -95,17 +96,17 @@ public class FunctionTypesUtil {
 
         List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(arity + 2);
         if (receiverParameter != null) {
-            typeArguments.add(new TypeProjection(receiverParameter.getType()));
+            typeArguments.add(new TypeProjectionImpl(receiverParameter.getType()));
         }
         else if (kFunction && expectedThisObject != null) {
-            typeArguments.add(new TypeProjection(expectedThisObject.getType()));
+            typeArguments.add(new TypeProjectionImpl(expectedThisObject.getType()));
         }
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
-            typeArguments.add(new TypeProjection(parameter.getType()));
+            typeArguments.add(new TypeProjectionImpl(parameter.getType()));
         }
 
-        typeArguments.add(new TypeProjection(descriptor.getReturnType()));
+        typeArguments.add(new TypeProjectionImpl(descriptor.getReturnType()));
 
         ClassDescriptor classDescriptor;
         if (kFunction) {

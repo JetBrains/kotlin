@@ -40,7 +40,6 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
@@ -1381,8 +1380,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
                 if (captureReceiver != null) {
-                    Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.IMPL);
-                    v.load(context.isStatic() ? 0 : 1, asmType);
+                    v.load(context.isStatic() ? 0 : 1, typeMapper.mapClass(captureReceiver));
                 }
             }
 

@@ -38,6 +38,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
         CLASS(JvmAnnotationNames.KOTLIN_CLASS),
         PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
         PACKAGE_FRAGMENT(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT),
+        TRAIT_IMPL(JvmAnnotationNames.KOTLIN_TRAIT_IMPL),
         OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
         OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION);
 
@@ -92,6 +93,8 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
                 return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE);
             case PACKAGE_FRAGMENT:
                 return new PackageFragmentClassHeader(version);
+            case TRAIT_IMPL:
+                return new TraitImplClassHeader(version);
             default:
                 throw new UnsupportedOperationException("Unknown compatible HeaderType: " + foundType);
         }
@@ -123,8 +126,8 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
         if (newType == HeaderType.CLASS || newType == HeaderType.PACKAGE) {
             return kotlinClassOrPackageVisitor(annotationClassName);
         }
-        else if (newType == HeaderType.PACKAGE_FRAGMENT) {
-            return kotlinPackageFragmentVisitor(annotationClassName);
+        else if (newType == HeaderType.PACKAGE_FRAGMENT || newType == HeaderType.TRAIT_IMPL) {
+            return annotationWithAbiVersionVisitor(annotationClassName);
         }
 
         return null;
@@ -198,7 +201,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.Annotat
     }
 
     @NotNull
-    private AnnotationArgumentVisitor kotlinPackageFragmentVisitor(@NotNull final JvmClassName annotationClassName) {
+    private AnnotationArgumentVisitor annotationWithAbiVersionVisitor(@NotNull final JvmClassName annotationClassName) {
         return new AnnotationArgumentVisitor() {
             @Override
             public void visit(@Nullable Name name, @Nullable Object value) {

@@ -18,18 +18,15 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
@@ -47,7 +44,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
     protected void generateDeclaration() {
         v.defineClass(myClass, V1_6,
                       ACC_PUBLIC | ACC_FINAL,
-                      jvmName(),
+                      typeMapper.mapTraitImpl(descriptor).getInternalName(),
                       null,
                       "java/lang/Object",
                       new String[0]
@@ -56,26 +53,10 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateSyntheticParts() {
-        generateSyntheticMethodsForAnnotatedProperties();
-    }
-
-    private void generateSyntheticMethodsForAnnotatedProperties() {
-        for (JetDeclaration declaration : myClass.getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                VariableDescriptor variable = bindingContext.get(BindingContext.VARIABLE, declaration);
-                assert variable instanceof PropertyDescriptor : "Variable in trait should be a property: " + variable;
-                PropertyDescriptor property = (PropertyDescriptor) variable;
-                if (!property.getAnnotations().isEmpty()) {
-                    Method method = PropertyCodegen.getSyntheticMethodSignature(typeMapper, property);
-                    PropertyCodegen.generateSyntheticMethodForAnnotatedProperty(v, typeMapper, property, method);
-                }
-            }
-        }
-    }
-
-    @NotNull
-    private String jvmName() {
-        return typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName();
+    protected void generateKotlinAnnotation() {
+        AnnotationVisitor av =
+                v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_TRAIT_IMPL), true);
+        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        av.visitEnd();
     }
 }

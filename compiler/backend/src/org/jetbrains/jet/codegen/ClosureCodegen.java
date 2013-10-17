@@ -31,9 +31,7 @@ import org.jetbrains.jet.codegen.context.LocalLookup;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -294,7 +292,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS, true);
         typeMapper.writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), sw);
         sw.writeSuperclass();
-        typeMapper.mapType(supertype, sw, JetTypeMapperMode.SUPER_TYPE);
+        typeMapper.mapSupertype(supertype, sw);
         sw.writeSuperclassEnd();
 
         String signature = sw.makeJavaGenericSignature();

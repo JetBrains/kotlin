@@ -64,7 +64,7 @@ public class FunctionDescriptorUtil {
         for (int i = 0; i < typeArgumentsSize; i++) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
             JetType typeArgument = typeArguments.get(i);
-            result.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjection(typeArgument));
+            result.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjectionImpl(typeArgument));
         }
         return result;
     }
