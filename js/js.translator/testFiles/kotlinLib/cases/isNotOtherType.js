@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-var A = Kotlin.createClass();
-var B = Kotlin.createClass(A);
-var C = Kotlin.createClass();
+var A = Kotlin.createClassNow();
+var B = Kotlin.createClassNow(A);
+var C = Kotlin.createClassNow();
 var c = new C;
 
 test = function() {
-    return ((!isType(c, A)) && !isType(c, B));
-}
+    return ((!Kotlin.isType(c, A)) && !Kotlin.isType(c, B));
+};

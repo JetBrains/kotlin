@@ -385,9 +385,9 @@
     Kotlin.HashTable = Hashtable;
 })();
 
-Kotlin.Map = Kotlin.createClass();
+Kotlin.Map = Kotlin.createClassNow();
 
-Kotlin.HashMap = Kotlin.createClass(Kotlin.Map,
+Kotlin.HashMap = Kotlin.createClassNow(Kotlin.Map,
     function () {
         Kotlin.HashTable.call(this);
     }
@@ -396,7 +396,7 @@ Kotlin.HashMap = Kotlin.createClass(Kotlin.Map,
 Kotlin.ComplexHashMap = Kotlin.HashMap;
 
 (function () {
-    var PrimitiveHashMapValuesIterator = Kotlin.createClass(Kotlin.Iterator,
+    var PrimitiveHashMapValuesIterator = Kotlin.createClassNow(Kotlin.Iterator,
         function (map, keys) {
             this.map = map;
             this.keys = keys;
@@ -411,7 +411,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             }
     });
 
-    var PrimitiveHashMapValues = Kotlin.createClass(Kotlin.Collection,
+    var PrimitiveHashMapValues = Kotlin.createClassNow(Kotlin.Collection,
         function (map) {
             this.map = map;
         }, {
@@ -426,7 +426,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             }
     });
 
-    Kotlin.PrimitiveHashMap = Kotlin.createClass(Kotlin.Map,
+    Kotlin.PrimitiveHashMap = Kotlin.createClassNow(Kotlin.Map,
         function () {
             this.$size = 0;
             this.map = {};
@@ -502,9 +502,9 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
     });
 }());
 
-Kotlin.Set = Kotlin.createClass(Kotlin.Collection);
+Kotlin.Set = Kotlin.createClassNow(Kotlin.Collection);
 
-Kotlin.PrimitiveHashSet = Kotlin.createClass(Kotlin.AbstractCollection,
+Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     function () {
         this.$size = 0;
         this.map = {};
@@ -662,7 +662,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClass(Kotlin.AbstractCollection,
         };
     }
 
-    Kotlin.HashSet = Kotlin.createClass(Kotlin.Set,
+    Kotlin.HashSet = Kotlin.createClassNow(Kotlin.Set,
         function () {
             HashSet.call(this);
         }

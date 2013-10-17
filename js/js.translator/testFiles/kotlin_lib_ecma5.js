@@ -117,7 +117,8 @@ var Kotlin = {};
     Kotlin.TYPE = {
         CLASS: "class",
         TRAIT: "trait",
-        OBJECT: "object"
+        OBJECT: "object",
+        INIT_FUN: "init fun"
     };
 
     Kotlin.classCount = 0;
@@ -185,7 +186,7 @@ var Kotlin = {};
         return object;
     }
 
-    Kotlin.createClass = function (bases, constructor, properties, staticProperties) {
+    Kotlin.createClassNow = function (bases, constructor, properties, staticProperties) {
         if (constructor == null) {
             constructor = emptyFunction();
         }
@@ -214,8 +215,8 @@ var Kotlin = {};
         return constructor;
     };
 
-    Kotlin.createObject = function (bases, constructor, functions) {
-        var noNameClass = Kotlin.createClass(bases, constructor, functions);
+    Kotlin.createObjectNow = function (bases, constructor, functions) {
+        var noNameClass = Kotlin.createClassNow(bases, constructor, functions);
         var obj = new noNameClass();
         obj.$metadata$ = {
             type: Kotlin.TYPE.OBJECT
@@ -223,7 +224,7 @@ var Kotlin = {};
         return  obj;
     };
 
-    Kotlin.createTrait = function (bases, properties, staticProperties) {
+    Kotlin.createTraitNow = function (bases, properties, staticProperties) {
         var obj = function () {};
         copyProperties(obj, staticProperties);
 
@@ -235,6 +236,38 @@ var Kotlin = {};
         copyProperties(obj.prototype, obj.$metadata$.functions);
         Object.defineProperty(obj, "object", {get: class_object, configurable: true});
         return obj;
+    };
+
+    function getBases(basesFun) {
+        if (typeof basesFun === "function") {
+            return basesFun();
+        } else {
+            return basesFun;
+        }
+    }
+
+    Kotlin.createClass = function (basesFun, constructor, properties, staticProperties) {
+        function $o() {
+            var klass = Kotlin.createClassNow(getBases(basesFun), constructor, properties, staticProperties);
+            Object.defineProperty(this, $o.className, {value: klass});
+            return klass;
+        }
+        $o.type = Kotlin.TYPE.INIT_FUN;
+        return $o;
+    };
+
+    Kotlin.createTrait = function (basesFun, properties, staticProperties) {
+        function $o() {
+            var klass = Kotlin.createTraitNow(getBases(basesFun), properties, staticProperties);
+            Object.defineProperty(this, $o.className, {value: klass});
+            return klass;
+        }
+        $o.type = Kotlin.TYPE.INIT_FUN;
+        return $o;
+    };
+
+    Kotlin.createObject = function (basesFun, constructor, functions) {
+        return Kotlin.createObjectNow(getBases(basesFun), constructor, functions);
     };
 
     Kotlin.callGetter = function(thisObject, klass, propertyName) {
@@ -303,7 +336,15 @@ var Kotlin = {};
         for (var p in members) {
             if (members.hasOwnProperty(p)) {
                 if ((typeof members[p]) === "function") {
-                    definition[p] = members[p];
+                    if (members[p].type === Kotlin.TYPE.INIT_FUN) {
+                        members[p].className = p;
+                        Object.defineProperty(definition, p, {
+                          get: members[p],
+                          configurable: true
+                        });
+                    } else {
+                        definition[p] = members[p];
+                    }
                 } else {
                     Object.defineProperty(definition, p, members[p]);
                 }

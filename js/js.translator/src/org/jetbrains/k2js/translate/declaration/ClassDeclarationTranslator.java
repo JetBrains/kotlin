@@ -134,6 +134,9 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
             }
             return;
         }
+        if (!vars.isEmpty() || !propertyInitializers.isEmpty()) {
+            throw new IllegalStateException();  // check, that all class generate as final class
+        }
 
         dummyFunction.setBody(new JsBlock(new JsVars(vars, true), new JsReturn(new JsObjectLiteral(propertyInitializers))));
         classesVar.setInitExpression(new JsInvocation(dummyFunction));
@@ -215,7 +218,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     @Nullable
     public JsNameRef getQualifiedReference(ClassDescriptor descriptor) {
-        if (descriptor.getModality() != Modality.FINAL) {
+        if (descriptor.getModality() != Modality.FINAL && false) {
             //noinspection ConstantConditions
             return classDescriptorToQualifiedLabel.get(descriptor, null);
         }
@@ -226,7 +229,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     public JsPropertyInitializer translate(@NotNull JetClassOrObject declaration, TranslationContext context) {
         ClassDescriptor descriptor = getClassDescriptor(context().bindingContext(), declaration);
         JsExpression value;
-        if (descriptor.getModality() == Modality.FINAL) {
+        if (descriptor.getModality() == Modality.FINAL || true) {
             value = new ClassTranslator(declaration, classDescriptorToQualifiedLabel, context).translate();
         }
         else {

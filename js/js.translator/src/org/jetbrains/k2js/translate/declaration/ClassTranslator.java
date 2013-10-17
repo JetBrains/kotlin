@@ -164,7 +164,7 @@ public final class ClassTranslator extends AbstractTranslator {
                     });
         }
 
-        invocationArguments.add(getSuperclassReferences());
+        invocationArguments.add(getSuperclassReferences(declarationContext));
         if (!isTrait()) {
             JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod();
             invocationArguments.add(initializer.getBody().getStatements().isEmpty() ? JsLiteral.NULL : initializer);
@@ -214,16 +214,12 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    private JsExpression getSuperclassReferences() {
+    private JsExpression getSuperclassReferences(@NotNull TranslationContext declarationContext) {
         List<JsExpression> superClassReferences = getSupertypesNameReferences();
         if (superClassReferences.isEmpty()) {
             return JsLiteral.NULL;
-        }
-        else if (superClassReferences.size() == 1) {
-            return superClassReferences.get(0);
-        }
-        else {
-            return new JsArrayLiteral(superClassReferences);
+        } else {
+            return simpleReturnFunction(declarationContext.scope(), new JsArrayLiteral(superClassReferences));
         }
     }
 

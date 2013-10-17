@@ -16,7 +16,7 @@
 
 {
     var items = function () {
-        var A = Kotlin.createClass(null,
+        var A = Kotlin.createClassNow(null,
             function $fun() {
                 this.$order = '';
                 {
@@ -31,13 +31,13 @@
                     return this.$order;
                 }
             });
-        var B = Kotlin.createClass(A, function $fun() {
+        var B = Kotlin.createClassNow(A, function $fun() {
             $fun.baseInitializer.call(this);
             {
                 this.set_order(this.get_order() + 'B');
             }
         });
-        var C = Kotlin.createClass(B, function $fun() {
+        var C = Kotlin.createClassNow(B, function $fun() {
             $fun.baseInitializer.call(this);
             {
                 this.set_order(this.get_order() + 'C');
