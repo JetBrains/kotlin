@@ -1561,6 +1561,10 @@ public final class String : jet.Comparable<jet.String>, jet.CharSequence {
     public open override /*1*/ fun toString(): jet.String
 }
 
+public final annotation class TailRecursive : jet.Annotation {
+    /*primary*/ public constructor TailRecursive()
+}
+
 public open class Throwable {
     /*primary*/ public constructor Throwable(/*0*/ message: jet.String? = ..., /*1*/ cause: jet.Throwable? = ...)
     public final fun getCause(): jet.Throwable?

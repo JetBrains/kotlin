@@ -1,4 +1,3 @@
-
 TailRecursive fun a(counter : Int, text : String, e : Int, x : jet.Any) : Int {
     if (counter == 1000000) {
         return counter

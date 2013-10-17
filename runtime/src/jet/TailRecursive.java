@@ -19,6 +19,7 @@ package jet;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
+@SuppressWarnings("UnusedDeclaration")
 @Target({ElementType.METHOD})
 public @interface TailRecursive {
 }
