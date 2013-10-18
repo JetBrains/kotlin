@@ -4413,14 +4413,44 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/when/noElseAssigned.kt");
         }
         
+        @TestMetadata("noElseAssignedNoMatch.kt")
+        public void testNoElseAssignedNoMatch() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseAssignedNoMatch.kt");
+        }
+        
+        @TestMetadata("noElseExhaustive.kt")
+        public void testNoElseExhaustive() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseExhaustive.kt");
+        }
+        
+        @TestMetadata("noElseExhaustiveStatement.kt")
+        public void testNoElseExhaustiveStatement() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseExhaustiveStatement.kt");
+        }
+        
+        @TestMetadata("noElseExhaustiveUnitExpected.kt")
+        public void testNoElseExhaustiveUnitExpected() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseExhaustiveUnitExpected.kt");
+        }
+        
         @TestMetadata("noElseInRetunedExpression.kt")
         public void testNoElseInRetunedExpression() throws Exception {
             doTest("compiler/testData/codegen/box/when/noElseInRetunedExpression.kt");
         }
         
+        @TestMetadata("noElseInRetunedExpressionNoMatch.kt")
+        public void testNoElseInRetunedExpressionNoMatch() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseInRetunedExpressionNoMatch.kt");
+        }
+        
         @TestMetadata("noElseInStatement.kt")
         public void testNoElseInStatement() throws Exception {
             doTest("compiler/testData/codegen/box/when/noElseInStatement.kt");
+        }
+        
+        @TestMetadata("noElseNoMatch.kt")
+        public void testNoElseNoMatch() throws Exception {
+            doTest("compiler/testData/codegen/box/when/noElseNoMatch.kt");
         }
         
         @TestMetadata("nullableWhen.kt")

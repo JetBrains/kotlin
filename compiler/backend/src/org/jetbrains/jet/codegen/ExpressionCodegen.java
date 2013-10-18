@@ -3725,7 +3725,17 @@ The "returned" value of try expression with no finally is either the last expres
         }
         if (!hasElse && nextCondition != null) {
             v.mark(nextCondition);
-            throwNewException(CLASS_NO_PATTERN_MATCHED_EXCEPTION);
+            if (!isStatement) {
+                // a result is expected
+                if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
+                    // when() is supposed to be exhaustive
+                    throwNewException(CLASS_NO_PATTERN_MATCHED_EXCEPTION);
+                }
+                else {
+                    // non-exhaustive when() with no else -> Unit must be expected
+                    StackValue.putUnitInstance(v);
+                }
+            }
         }
 
         markLineNumber(expression);

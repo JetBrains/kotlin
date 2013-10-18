@@ -65,7 +65,11 @@ public final class WhenChecker {
                 }
             }
         }
-        return isExhaust && notEmpty;
+        boolean exhaustive = isExhaust && notEmpty;
+        if (exhaustive) {
+            trace.record(BindingContext.EXHAUSTIVE_WHEN, expression);
+        }
+        return exhaustive;
     }
 
     private static boolean containsEnumEntryCase(
