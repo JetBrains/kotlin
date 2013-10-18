@@ -385,7 +385,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getTailRecursiveAnnotationClass() {
-        return getBuiltInClassByName("TailRecursive");
+        return getBuiltInClassByName("tailRecursive");
     }
 
     @NotNull
