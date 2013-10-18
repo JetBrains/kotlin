@@ -19,6 +19,10 @@ class Client(name: String = Server.NAME): Server() {
         super<Server>.work()
         println("Client")
     }
+
+    class object: Server() {
+
+    }
 }
 
 object ClientObject: Server() {

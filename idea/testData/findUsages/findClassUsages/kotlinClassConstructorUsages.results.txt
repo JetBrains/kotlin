@@ -1,2 +1,2 @@
-Unclassified usage (24: 22) object ClientObject: Server() {
-Unclassified usage (5: 15) class Client: Server() {
+Supertype (24: 22) object ClientObject: Server() {
+Supertype (5: 15) class Client: Server() {

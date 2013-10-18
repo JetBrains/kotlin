@@ -112,6 +112,10 @@ public class JetUsageTypeProvider() : UsageTypeProviderEx {
         }
 
         fun getVariableUsageType(): UsageType? {
+            if (element.getParentByTypeAndBranch(javaClass<JetDelegatorByExpressionSpecifier>()) { getDelegateExpression() } != null) {
+                return JetUsageTypes.DELEGATE
+            }
+
             val dotQualifiedExpression = element.getParentByType(javaClass<JetDotQualifiedExpression>())
 
             return if (dotQualifiedExpression != null) {
@@ -143,6 +147,9 @@ public class JetUsageTypeProvider() : UsageTypeProviderEx {
 
         fun getFunctionUsageType(descriptor: FunctionDescriptor): UsageType? {
             return when {
+                element.getParentByTypeAndBranch(javaClass<JetDelegationSpecifier>()) { getTypeReference() } != null ->
+                    JetUsageTypes.SUPER_TYPE
+
                 descriptor is ConstructorDescriptor
                 && element.getParentByTypeAndBranch(javaClass<JetAnnotationEntry>()) { getTypeReference() } != null ->
                     JetUsageTypes.ANNOTATION_TYPE
@@ -178,6 +185,7 @@ public class JetUsageTypeProvider() : UsageTypeProviderEx {
 }
 
 object JetUsageTypes {
+    // types
     val ANNOTATION_TYPE = UsageType(JetBundle.message("usageType.annotation.type"))
     val TYPE_CONSTRAINT = UsageType(JetBundle.message("usageType.type.constraint"))
     val TYPE_ARGUMENT = UsageType(JetBundle.message("usageType.type.argument"))
@@ -192,10 +200,17 @@ object JetUsageTypes {
     val CLASS_OBJECT_ACCESS = UsageType(JetBundle.message("usageType.class.object"))
     val EXTENSION_RECEIVER_TYPE = UsageType(JetBundle.message("usageType.extension.receiver.type"))
     val SUPER_TYPE_QUALIFIER = UsageType(JetBundle.message("usageType.super.type.qualifier"))
+
+    // functions
     val INSTANTIATION = UsageType(JetBundle.message("usageType.instantiation"))
     val FUNCTION_CALL = UsageType(JetBundle.message("usageType.function.call"))
+
+    // values
     val RECEIVER = UsageType(JetBundle.message("usageType.receiver"))
     val SELECTOR = UsageType(JetBundle.message("usageType.selector"))
+    val DELEGATE = UsageType(JetBundle.message("usageType.delegate"))
+
+    // common usage types
     val IMPORT_DIRECTIVE = UsageType(JetBundle.message("usageType.import"))
     val CALLABLE_REFERENCE = UsageType(JetBundle.message("usageType.callable.reference"))
 }
