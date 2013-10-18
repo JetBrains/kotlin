@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.folding;
 
+import com.google.common.base.Function;
 import com.intellij.codeInsight.folding.JavaCodeFoldingSettings;
 import com.intellij.codeInsight.folding.impl.JavaCodeFoldingSettingsImpl;
 import com.intellij.openapi.editor.FoldRegion;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.testing.SettingsConfigurator;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -48,37 +50,50 @@ public abstract class AbstractKotlinFoldingTest extends LightCodeInsightFixtureT
             throw new RuntimeException(e);
         }
 
+        String directText = fileText.replaceAll("~true~", "true").replaceAll("~false~", "false");
+        directText += "\n\n// Generated from: " + path;
+
+        Function<String, Void> doExpandSettingsTestFunction = new Function<String, Void>() {
+            @Nullable
+            @Override
+            public Void apply(@Nullable String fileText) {
+                doExpandSettingsTest(fileText);
+                return null;
+            }
+        };
+
+        doTestWithSettings(directText, doExpandSettingsTestFunction);
+
+        // Clean all regions in model to force IDEA treat all regions as new ones
+        cleanAllFoldedRegions();
+
+        String invertedText = fileText
+                .replaceAll("~false~", "true").replaceAll("~true~", "false")
+                .replaceAll(SettingsConfigurator.SET_TRUE_DIRECTIVE, "~TEMP_TRUE_DIRECTIVE~")
+                .replaceAll(SettingsConfigurator.SET_FALSE_DIRECTIVE, SettingsConfigurator.SET_TRUE_DIRECTIVE)
+                .replaceAll("~TEMP_TRUE_DIRECTIVE~", SettingsConfigurator.SET_FALSE_DIRECTIVE);
+        invertedText += "\n\n// Generated from: " + path + " with !INVERTED! settings";
+
+        doTestWithSettings(invertedText, doExpandSettingsTestFunction);
+    }
+
+    protected static void doTestWithSettings(@NotNull String fileText, @NotNull Function<String, Void> runnable) {
         JavaCodeFoldingSettings settings = JavaCodeFoldingSettings.getInstance();
         JavaCodeFoldingSettingsImpl restoreSettings = new JavaCodeFoldingSettingsImpl();
         restoreSettings.loadState((JavaCodeFoldingSettingsImpl) settings);
 
         try {
-            String directText = fileText.replaceAll("~true~", "true").replaceAll("~false~", "false");
-            directText += "\n\n// Generated from: " + path;
+            SettingsConfigurator configurator = new SettingsConfigurator(fileText, settings);
+            configurator.configureSettings();
 
-            doExpandSettingsTest(directText, settings);
-
-            // Clean all regions in model to force IDEA treat all regions as new ones
-            cleanAllFoldedRegions();
-
-            String invertedText = fileText
-                    .replaceAll("~false~", "true").replaceAll("~true~", "false")
-                    .replaceAll(SettingsConfigurator.SET_TRUE_DIRECTIVE, "~TEMP_TRUE_DIRECTIVE~")
-                    .replaceAll(SettingsConfigurator.SET_FALSE_DIRECTIVE, SettingsConfigurator.SET_TRUE_DIRECTIVE)
-                    .replaceAll("~TEMP_TRUE_DIRECTIVE~", SettingsConfigurator.SET_FALSE_DIRECTIVE);
-            invertedText += "\n\n// Generated from: " + path + " with !INVERTED! settings";
-
-            doExpandSettingsTest(invertedText, settings);
-        }
-        catch (IOException e) {
-            throw new IllegalStateException(e);
+            runnable.apply(fileText);
         }
         finally {
             ((JavaCodeFoldingSettingsImpl) JavaCodeFoldingSettings.getInstance()).loadState(restoreSettings);
         }
     }
 
-    private void cleanAllFoldedRegions() {
+    protected void cleanAllFoldedRegions() {
         final FoldingModelEx model = (FoldingModelEx) myFixture.getEditor().getFoldingModel();
         Runnable runnable = new Runnable() {
             @Override
@@ -91,12 +106,14 @@ public abstract class AbstractKotlinFoldingTest extends LightCodeInsightFixtureT
         model.runBatchFoldingOperation(runnable);
     }
 
-    private void doExpandSettingsTest(String fileText, JavaCodeFoldingSettings settings) throws IOException {
-        SettingsConfigurator configurator = new SettingsConfigurator(fileText, settings);
-        configurator.configureSettings();
-
-        VirtualFile tempFile = PlatformTestCase.createTempFile("kt", null, fileText, Charset.defaultCharset());
-        myFixture.testFoldingWithCollapseStatus(tempFile.getPath());
+    private void doExpandSettingsTest(String fileText) {
+        try {
+            VirtualFile tempFile = PlatformTestCase.createTempFile("kt", null, fileText, Charset.defaultCharset());
+            myFixture.testFoldingWithCollapseStatus(tempFile.getPath());
+        }
+        catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @NotNull
