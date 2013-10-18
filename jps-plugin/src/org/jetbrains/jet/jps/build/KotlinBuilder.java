@@ -97,7 +97,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
 
         // For non-incremental build: take all sources
-        if (!dirtyFilesHolder.hasDirtyFiles()) {
+        if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()) {
             return ExitCode.NOTHING_DONE;
         }
 
