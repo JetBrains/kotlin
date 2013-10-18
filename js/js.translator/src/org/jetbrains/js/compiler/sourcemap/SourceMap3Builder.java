@@ -4,7 +4,6 @@ import com.google.dart.compiler.common.SourceInfo;
 import com.google.dart.compiler.util.TextOutput;
 import com.intellij.util.PairConsumer;
 import gnu.trove.TObjectIntHashMap;
-import org.jetbrains.js.compiler.SourceMapBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
