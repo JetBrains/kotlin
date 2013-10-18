@@ -1561,10 +1561,6 @@ public final class String : jet.Comparable<jet.String>, jet.CharSequence {
     public open override /*1*/ fun toString(): jet.String
 }
 
-public final annotation class tailRecursive : jet.Annotation {
-    /*primary*/ public constructor tailRecursive()
-}
-
 public open class Throwable {
     /*primary*/ public constructor Throwable(/*0*/ message: jet.String? = ..., /*1*/ cause: jet.Throwable? = ...)
     public final fun getCause(): jet.Throwable?
@@ -1596,6 +1592,10 @@ public final annotation class deprecated : jet.Annotation {
 
 public final annotation class suppress : jet.Annotation {
     /*primary*/ public constructor suppress(/*0*/ vararg names: jet.String /*jet.Array<jet.String>*/)
+}
+
+public final annotation class tailRecursive : jet.Annotation {
+    /*primary*/ public constructor tailRecursive()
 }
 
 public final annotation class volatile : jet.Annotation {
