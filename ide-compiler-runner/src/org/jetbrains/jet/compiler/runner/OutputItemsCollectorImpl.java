@@ -18,7 +18,6 @@ package org.jetbrains.jet.compiler.runner;
 
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
@@ -26,16 +25,10 @@ import java.util.List;
 
 public class OutputItemsCollectorImpl implements OutputItemsCollector {
     private final List<SimpleOutputItem> outputs = ContainerUtil.newArrayList();
-    @Nullable
-    private final File outputDir;
-
-    public OutputItemsCollectorImpl(@Nullable File outputDir) {
-        this.outputDir = outputDir;
-    }
 
     @Override
     public void add(Collection<File> sourceFiles, File outputFile) {
-        outputs.add(new SimpleOutputItem(sourceFiles, new File(outputDir, outputFile.getPath())));
+        outputs.add(new SimpleOutputItem(sourceFiles, outputFile));
     }
 
     @NotNull

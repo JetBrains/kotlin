@@ -116,7 +116,7 @@ public class JetCompiler implements TranslatingCompiler {
 
         if (scriptFile == null) return;
 
-        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl(outputDir) {
+        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl() {
             @Override
             public void add(Collection<File> sourceFiles, File outputFile) {
                 super.add(sourceFiles, outputFile);

@@ -90,7 +90,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
     private static void doCompile(@NotNull final MessageCollector messageCollector, @NotNull OutputSink sink, @NotNull final Module module,
             @NotNull final CompilerEnvironment environment) {
-        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl(environment.getOutput());
+        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl();
         outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
             @Override
             public Integer fun(PrintStream stream) {
