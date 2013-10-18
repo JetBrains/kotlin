@@ -192,9 +192,10 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitInstanceOfExpression(@NotNull PsiInstanceOfExpression expression) {
         super.visitInstanceOfExpression(expression);
-        myResult = new IsOperator(
-                getConverter().expressionToExpression(expression.getOperand()),
-                getConverter().elementToElement(expression.getCheckType()));
+
+        TypeElement typeElement = (TypeElement) getConverter().elementToElement(expression.getCheckType());
+        typeElement.getMyType().convertedToNotNull();
+        myResult = new IsOperator(getConverter().expressionToExpression(expression.getOperand()), typeElement);
     }
 
     @Override
