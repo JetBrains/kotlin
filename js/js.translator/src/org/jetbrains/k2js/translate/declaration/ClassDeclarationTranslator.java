@@ -17,10 +17,7 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
-import gnu.trove.THashMap;
-import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -35,46 +32,14 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor
  */
 public final class ClassDeclarationTranslator extends AbstractTranslator {
 
-    private final THashMap<ClassDescriptor, JsNameRef> openClassDescriptorToQualifiedLabel = new THashMap<ClassDescriptor, JsNameRef>();
-
-    private final ClassAliasingMap classDescriptorToQualifiedLabel = new ClassAliasingMap() {
-        @NotNull
-        @Override
-        public JsNameRef get(ClassDescriptor descriptor, ClassDescriptor referencedDescriptor) {
-            JsNameRef ref = openClassDescriptorToQualifiedLabel.get(descriptor);
-            if (ref != null) {
-                return ref;
-            }
-
-            // will be resolved later
-            ref = new JsNameRef("<unresolved class>");
-            openClassDescriptorToQualifiedLabel.put(descriptor, ref);
-            return ref;
-        }
-    };
-
     public ClassDeclarationTranslator(@NotNull TranslationContext context) {
         super(context);
-    }
-
-    public void fixUnresolvedClassReferences() {
-        openClassDescriptorToQualifiedLabel.forEachEntry(new TObjectObjectProcedure<ClassDescriptor, JsNameRef>() {
-            @Override
-            public boolean execute(ClassDescriptor descriptor, JsNameRef ref) {
-                if (ref.getName() == null) {
-                    // from library
-                    ref.resolve(context().getNameForDescriptor(descriptor));
-                    ref.setQualifier(context().getQualifierForDescriptor(descriptor));
-                }
-                return true;
-            }
-        });
     }
 
     @Nullable
     public JsPropertyInitializer translate(@NotNull JetClassOrObject declaration, TranslationContext context) {
         ClassDescriptor descriptor = getClassDescriptor(context().bindingContext(), declaration);
-        JsExpression value = new ClassTranslator(declaration, classDescriptorToQualifiedLabel, context).translate();
+        JsExpression value = new ClassTranslator(declaration, context).translate();
 
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), value);
     }

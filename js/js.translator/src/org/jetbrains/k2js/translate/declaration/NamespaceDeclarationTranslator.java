@@ -72,7 +72,6 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
             return Collections.emptyList();
         }
 
-        context().classDeclarationTranslator().fixUnresolvedClassReferences();
         for (NamespaceTranslator translator : descriptorToTranslator.values()) {
             translator.add(descriptorToDefineInvocation);
         }

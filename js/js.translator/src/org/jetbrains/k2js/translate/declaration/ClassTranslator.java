@@ -21,7 +21,6 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -58,19 +57,16 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private final ClassDescriptor descriptor;
 
-    @Nullable
-    private final ClassAliasingMap aliasingMap;
-
     @NotNull
     public static JsInvocation generateClassCreation(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
-        return new ClassTranslator(classDeclaration, null, context).translate();
+        return new ClassTranslator(classDeclaration, context).translate();
     }
 
     @NotNull
     public static JsInvocation generateClassCreation(@NotNull JetClassOrObject classDeclaration,
             @NotNull ClassDescriptor descriptor,
             @NotNull TranslationContext context) {
-        return new ClassTranslator(classDeclaration, descriptor, null, context).translate();
+        return new ClassTranslator(classDeclaration, descriptor, context).translate();
     }
 
     @NotNull
@@ -78,7 +74,7 @@ public final class ClassTranslator extends AbstractTranslator {
             @NotNull JetObjectDeclaration objectDeclaration,
             @NotNull TranslationContext context
     ) {
-        return new ClassTranslator(objectDeclaration, null, context).translateObjectLiteralExpression();
+        return new ClassTranslator(objectDeclaration, context).translateObjectLiteralExpression();
     }
 
     @NotNull
@@ -87,23 +83,22 @@ public final class ClassTranslator extends AbstractTranslator {
             @NotNull ClassDescriptor descriptor,
             @NotNull TranslationContext context
     ) {
-        return new ClassTranslator(objectDeclaration, descriptor, null, context).translateObjectLiteralExpression();
+        return new ClassTranslator(objectDeclaration, descriptor, context).translateObjectLiteralExpression();
     }
 
     ClassTranslator(
             @NotNull JetClassOrObject classDeclaration,
-            @Nullable ClassAliasingMap aliasingMap,
             @NotNull TranslationContext context
     ) {
-        this(classDeclaration, getClassDescriptor(context.bindingContext(), classDeclaration), aliasingMap, context);
+        this(classDeclaration, getClassDescriptor(context.bindingContext(), classDeclaration), context);
     }
 
-    ClassTranslator(@NotNull JetClassOrObject classDeclaration,
+    ClassTranslator(
+            @NotNull JetClassOrObject classDeclaration,
             @NotNull ClassDescriptor descriptor,
-            @Nullable ClassAliasingMap aliasingMap,
-            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context
+    ) {
         super(context);
-        this.aliasingMap = aliasingMap;
         this.descriptor = descriptor;
         this.classDeclaration = classDeclaration;
     }
@@ -259,15 +254,6 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private JsNameRef getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
-        // aliasing here is needed for the declaration generation step
-        if (aliasingMap != null) {
-            JsNameRef name = aliasingMap.get(superClassDescriptor, descriptor);
-            if (name != null) {
-                return name;
-            }
-        }
-
-        // from library
         return context().getQualifiedReference(superClassDescriptor);
     }
 
