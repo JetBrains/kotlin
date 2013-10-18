@@ -115,7 +115,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         assert outputDir != null : "CompilerEnvironment must have checked for outputDir to be not null, but it didn't";
 
-        OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl(outputDir);
+        OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl();
 
         JpsProject project = representativeTarget.getModule().getProject();
         CommonCompilerArguments commonSettings = JpsKotlinCompilerSettings.getCommonSettings(project);
