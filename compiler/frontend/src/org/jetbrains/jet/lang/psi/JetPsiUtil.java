@@ -1045,20 +1045,24 @@ public class JetPsiUtil {
     @NotNull
     public static <T> T traceToRoot(
             @NotNull PsiElement element,
-            @NotNull JetVisitor<TraceStatus<T>, List<? extends PsiElement>> visitor,
+            @NotNull JetVisitor<TraceStatus<T>, TraceData<T>> visitor,
             T def
     ) {
         ArrayList<PsiElement> track = new ArrayList<PsiElement>();
         List<PsiElement> view = Collections.unmodifiableList(track);
         @NotNull
         TraceStatus<T> lastStatus = new TraceStatus<T>(def, true);
+        TraceData<T> data = new TraceData<T>(view);
 
         do {
             track.add(element);
             PsiElement parent = element.getParent();
             if (parent instanceof JetElement) {
                 JetElement jet = (JetElement) parent;
-                TraceStatus<T> status = jet.accept(visitor, view);
+                data.last = element;
+                data.data = lastStatus.getData();
+
+                TraceStatus<T> status = jet.accept(visitor, data);
                 if (status == null) {
                     throw new IllegalStateException("visitor has returned null status");
                 }

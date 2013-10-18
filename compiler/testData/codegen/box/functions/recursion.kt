@@ -169,6 +169,15 @@ fun tailButNoAnnotation(x : Any) {
   tailButNoAnnotation(x)
 }
 
+TailRecursive fun badTails(x : Int, any : Any) : Int {
+    if (x > 0) {
+        return 1 + badTails(x - 1, "no tail")
+    } else if (x == 50) {
+        return badTails(x - 1, "tail")
+    }
+    return 0
+}
+
 fun dummy() : Unit {
 }
 
