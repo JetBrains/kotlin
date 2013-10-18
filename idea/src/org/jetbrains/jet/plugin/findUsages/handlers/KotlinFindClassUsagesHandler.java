@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.plugin.findUsages.FindUsagesUtils;
+import org.jetbrains.jet.plugin.findUsages.FindUsagesPackage;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
@@ -80,7 +80,7 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                                     new ReferencesSearch.SearchParameters(jetClass, kotlinOptions.searchScope, false)
                             ).findAll();
                             for (PsiReference ref : references) {
-                                boolean constructorUsage = FindUsagesUtils.isConstructorUsage(ref.getElement(), jetClass);
+                                boolean constructorUsage = FindUsagesPackage.isConstructorUsage(ref.getElement(), jetClass);
                                 if ((constructorUsage && !kotlinOptions.searchConstructorUsages)
                                     || (!constructorUsage && !kotlinOptions.isUsages)) continue;
 

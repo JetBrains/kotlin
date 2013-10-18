@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.findUsages.FindUsagesUtils;
+import org.jetbrains.jet.plugin.findUsages.FindUsagesPackage;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
@@ -150,7 +150,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
                     new Condition<PsiReference>() {
                         @Override
                         public boolean value(PsiReference reference) {
-                            return FindUsagesUtils.isConstructorUsage(reference.getElement(), classOrObject);
+                            return FindUsagesPackage.isConstructorUsage(reference.getElement(), classOrObject);
                         }
                     },
                     defaultQueryProcessor(descriptor, methodToDescriptorMap, false)
