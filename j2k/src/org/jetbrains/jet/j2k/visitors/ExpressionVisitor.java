@@ -159,7 +159,11 @@ public class ExpressionVisitor extends StatementVisitor {
     @Override
     public void visitClassObjectAccessExpression(@NotNull PsiClassObjectAccessExpression expression) {
         super.visitClassObjectAccessExpression(expression);
-        myResult = new ClassObjectAccessExpression(getConverter().elementToElement(expression.getOperand()));
+
+
+        TypeElement typeElement = (TypeElement) getConverter().elementToElement(expression.getOperand());
+        typeElement.getMyType().convertedToNotNull();
+        myResult = new ClassObjectAccessExpression(typeElement);
     }
 
     @Override

@@ -28,6 +28,6 @@ public class ClassObjectAccessExpression extends Expression {
     @NotNull
     @Override
     public String toKotlin() {
-        return "getJavaClass" + "<" + myTypeElement.toKotlin() + ">";
+        return "javaClass" + "<" + myTypeElement.toKotlin() + ">()";
     }
 }

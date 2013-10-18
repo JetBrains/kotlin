@@ -25,6 +25,10 @@ public class TypeElement extends Element {
         myType = type;
     }
 
+    public Type getMyType() {
+        return myType;
+    }
+
     @NotNull
     @Override
     public String toKotlin() {
