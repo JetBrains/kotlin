@@ -17,10 +17,14 @@
 package org.jetbrains.jet.plugin.compiler.configuration;
 
 import com.intellij.compiler.options.ComparingUtils;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +48,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private RawCommandLineEditor additionalArgsOptionsField;
     private JLabel additionalArgsLabel;
     private JCheckBox generateSourceMapsCheckBox;
+    private TextFieldWithBrowseButton outputPrefixFile;
+    private TextFieldWithBrowseButton outputPostfixFile;
+    private JLabel labelForOutputPrefixFile;
+    private JLabel labelForOutputPostfixFile;
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
         this.extPoint = ep;
@@ -53,6 +61,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
         additionalArgsOptionsField.setDialogCaption(JetBundle.message("kotlin.compiler.option.additional.command.line.parameters.dialog.title"));
+        
+        setupFileChooser(labelForOutputPrefixFile, outputPrefixFile,
+                         JetBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"));
+        setupFileChooser(labelForOutputPostfixFile, outputPostfixFile,
+                         JetBundle.message("kotlin.compiler.js.option.output.postfix.browse.title"));
     }
 
     @NotNull
@@ -77,7 +90,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, isGenerateNoWarnings()) ||
                ComparingUtils.isModified(additionalArgsOptionsField, additionalCompilerSettings.getAdditionalArguments()) ||
-               ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerSettings.sourcemap);
+               ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerSettings.sourcemap) ||
+               isModified(outputPrefixFile, k2jsCompilerSettings.outputPrefix) ||
+               isModified(outputPostfixFile, k2jsCompilerSettings.outputPostfix);
     }
 
     @Override
@@ -85,6 +100,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         setGenerateNoWarnings(generateNoWarningsCheckBox.isSelected());
         additionalCompilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
         k2jsCompilerSettings.sourcemap = generateSourceMapsCheckBox.isSelected();
+        k2jsCompilerSettings.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
+        k2jsCompilerSettings.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
     }
 
     @Override
@@ -92,6 +109,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         generateNoWarningsCheckBox.setSelected(isGenerateNoWarnings());
         additionalArgsOptionsField.setText(additionalCompilerSettings.getAdditionalArguments());
         generateSourceMapsCheckBox.setSelected(k2jsCompilerSettings.sourcemap);
+        outputPrefixFile.setText(k2jsCompilerSettings.outputPrefix);
+        outputPostfixFile.setText(k2jsCompilerSettings.outputPostfix);
     }
 
     @Override
@@ -116,5 +135,21 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     private void setGenerateNoWarnings(boolean selected) {
         commonCompilerSettings.suppress = selected ? SUPPRESS_WARNINGS : null;
+    }
+
+    private static void setupFileChooser(
+            @NotNull JLabel label,
+            @NotNull TextFieldWithBrowseButton fileChooser,
+            @NotNull String title
+    ) {
+        label.setLabelFor(fileChooser);
+
+        fileChooser.addBrowseFolderListener(title, null, null,
+                                            new FileChooserDescriptor(true, false, false, false, false, false),
+                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT, false);
+    }
+
+    private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
+        return !StringUtil.equals(StringUtil.nullize(chooser.getText(), true), currentValue);
     }
 }
