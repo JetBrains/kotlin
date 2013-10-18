@@ -21,5 +21,5 @@ import java.lang.annotation.Target;
 
 @SuppressWarnings("UnusedDeclaration")
 @Target({ElementType.METHOD})
-public @interface TailRecursive {
+public @interface tailRecursive {
 }

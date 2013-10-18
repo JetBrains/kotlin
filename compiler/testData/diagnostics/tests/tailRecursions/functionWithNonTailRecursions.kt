@@ -1,4 +1,4 @@
-TailRecursive fun badTails(x : Int) : Int {
+tailRecursive fun badTails(x : Int) : Int {
     if (x > 0) {
         return 1 + <!NON_TAIL_RECURSIVE_CALL!>badTails<!>(x - 1)
     }

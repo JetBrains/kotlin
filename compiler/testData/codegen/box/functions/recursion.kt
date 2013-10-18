@@ -1,4 +1,4 @@
-TailRecursive fun a(counter : Int, text : String, e : Int, x : jet.Any) : Int {
+tailRecursive fun a(counter : Int, text : String, e : Int, x : jet.Any) : Int {
     if (counter == 1000000) {
         return counter
     } else if (counter == 50) {
@@ -8,7 +8,7 @@ TailRecursive fun a(counter : Int, text : String, e : Int, x : jet.Any) : Int {
     }
 }
 
-TailRecursive fun a2(counter : Int, x : Any) : Int {
+tailRecursive fun a2(counter : Int, x : Any) : Int {
     if (counter == 0) {
         return 0
     } else if (counter == 100) {
@@ -17,7 +17,7 @@ TailRecursive fun a2(counter : Int, x : Any) : Int {
     return a2(counter - 1, "tail 17") // tail here
 }
 
-TailRecursive fun b(acounter : Int, x : Any) : Unit {
+tailRecursive fun b(acounter : Int, x : Any) : Unit {
     if (acounter == 50) {
         b(acounter + 1, "tail 22") // no tail recursion here
         dummy()
@@ -41,9 +41,9 @@ TailRecursive fun b(acounter : Int, x : Any) : Unit {
     }
 }
 
-TailRecursive fun c(counter : Int, x : Any) : Int = if (counter < 1000000) c(counter + 1, "tail 44") else counter
+tailRecursive fun c(counter : Int, x : Any) : Int = if (counter < 1000000) c(counter + 1, "tail 44") else counter
 
-TailRecursive fun d(counter : Int, x : Any) : Unit {
+tailRecursive fun d(counter : Int, x : Any) : Unit {
     if (counter < 1000000) {
         d(counter + 1, "tail 48")
     } else {
@@ -51,7 +51,7 @@ TailRecursive fun d(counter : Int, x : Any) : Unit {
     }
 }
 
-TailRecursive fun e(counter : Int, x : Any) : Unit {
+tailRecursive fun e(counter : Int, x : Any) : Unit {
     if (counter > 0) {
         try {
             dummy()
@@ -61,7 +61,7 @@ TailRecursive fun e(counter : Int, x : Any) : Unit {
     }
 }
 
-TailRecursive fun e2(counter : Int, a : Any) {
+tailRecursive fun e2(counter : Int, a : Any) {
     if (counter > 0) {
         try {
             dummy()
@@ -75,7 +75,7 @@ TailRecursive fun e2(counter : Int, a : Any) {
     }
 }
 
-TailRecursive fun e3(counter : Int, x : Any) {
+tailRecursive fun e3(counter : Int, x : Any) {
     if (counter > 0) {
         try {
             throw IllegalStateException()
@@ -87,39 +87,39 @@ TailRecursive fun e3(counter : Int, x : Any) {
     }
 }
 
-TailRecursive fun g(counter : Int, x : Any) {
+tailRecursive fun g(counter : Int, x : Any) {
     val z = { g(counter - 1, "no tail 91") }
     z()
 }
 
-TailRecursive fun g2() {
-    [TailRecursive] fun g3(counter : Int, x : Any) {
+tailRecursive fun g2() {
+    [tailRecursive] fun g3(counter : Int, x : Any) {
         if (counter > 0) { g3(counter - 1, "tail 97") }
     }
     g3(1000000, "test")
 }
 
 class A {
-    TailRecursive fun f1(x : Any) {
+    tailRecursive fun f1(x : Any) {
         this.f1("tail 104")
     }
 
-    TailRecursive fun f2(x : Any) {
+    tailRecursive fun f2(x : Any) {
         f2("tail 108")
     }
 
-    TailRecursive fun f3(a : A, x : Any) {
+    tailRecursive fun f3(a : A, x : Any) {
         a.f3(a, "no tail 112") // non-tail recursion, could be potentially resolved by condition if (a == this) f3() else a.f3()
     }
 }
 
 class B {
     inner class C {
-        TailRecursive fun h(counter : Int, x : Any) {
+        tailRecursive fun h(counter : Int, x : Any) {
             if (counter > 0) { this@C.h(counter - 1, "tail 119") }
         }
 
-        TailRecursive fun h2(x : Any) {
+        tailRecursive fun h2(x : Any) {
             this@B.h2("no tail no recursion 123") // keep vigilance
         }
 
@@ -131,7 +131,7 @@ class B {
     }
 }
 
-TailRecursive fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()) : String =
+tailRecursive fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()) : String =
         if (num == 0) acc.toString()
         else repeat(num - 1, acc.append(this)!!) // tail
 
@@ -142,22 +142,22 @@ fun escapeChar(c : Char) : String? = when (c) {
     else -> "" + c
 }
 
-TailRecursive fun String.escape(i : Int = 0, result : String = "") : String =
+tailRecursive fun String.escape(i : Int = 0, result : String = "") : String =
         if (i == length) result
         else escape(i + 1, result + escapeChar(get(i)))
 
-TailRecursive fun <T, A> Iterator<T>.foldl(acc : A, foldFunction : (e : T, acc : A) -> A) : A =
+tailRecursive fun <T, A> Iterator<T>.foldl(acc : A, foldFunction : (e : T, acc : A) -> A) : A =
         if (!hasNext()) acc
         else foldl(foldFunction(next(), acc), foldFunction)
 
-TailRecursive fun withWhen(counter : Int, x : Any) : Int =
+tailRecursive fun withWhen(counter : Int, x : Any) : Int =
     when (counter) {
         0 -> counter
         50 -> 1 + withWhen(counter - 1, "no tail")
         else -> withWhen(counter - 1, "tail")
     }
 
-TailRecursive fun withWhen2(counter : Int, x : Any) : Int =
+tailRecursive fun withWhen2(counter : Int, x : Any) : Int =
   when {
     counter == 0 -> counter
     counter == 50 -> 1 + withWhen2(counter - 1, "no tail")
@@ -169,7 +169,7 @@ fun tailButNoAnnotation(x : Any) {
   tailButNoAnnotation(x)
 }
 
-TailRecursive fun badTails(x : Int, any : Any) : Int {
+tailRecursive fun badTails(x : Int, any : Any) : Int {
     if (x > 0) {
         return 1 + badTails(x - 1, "no tail")
     } else if (x == 50) {
