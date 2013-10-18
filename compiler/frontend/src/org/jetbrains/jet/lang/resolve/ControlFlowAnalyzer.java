@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -130,7 +131,7 @@ public class ControlFlowAnalyzer {
 
     private void checkTailRecursion(JetDeclarationWithBody declarationWithBody) {
         FunctionDescriptor descriptor = (FunctionDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationWithBody);
-        if (descriptor != null && declarationWithBody instanceof JetNamedFunction) {
+        if (descriptor != null && declarationWithBody instanceof JetNamedFunction && (KotlinBuiltIns.getInstance().isTailRecursive(descriptor))) {
             List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIONS, descriptor);
             if (calls == null || calls.isEmpty()) {
                 trace.report(Errors.TAIL_RECURSIVE_FUNCTION_WITH_NO_TAILS.on((JetNamedFunction) declarationWithBody));
