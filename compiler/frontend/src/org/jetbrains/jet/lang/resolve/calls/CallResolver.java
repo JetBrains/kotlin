@@ -53,6 +53,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -566,16 +567,7 @@ public class CallResolver {
                         DeclarationDescriptor descriptor = task.scope.getContainingDeclaration();
                         if (call.getCandidateDescriptor().equals(descriptor)) {
                             // recursion! very interesting...
-                            JetCallExpression callExpression = (JetCallExpression) JetPsiUtil
-                                    .getParentByTypeAndPredicate(task.reference.getOriginalElement(), JetCallExpression.class,
-                                                                 Predicates.<PsiElement>alwaysTrue(), false);
-
-                            assert callExpression != null;
-
-                            if (KotlinBuiltIns.getInstance().isTailRecursive(descriptor)) {
-                                task.trace.record(TAIL_RECURSION_CALL, callExpression,
-                                                  JetPsiUtil.traceToRoot(callExpression, new TailRecursionDetectorVisitor(), true));
-                            }
+                            handleRecursion(task, descriptor);
                         }
                     }
                 }
@@ -588,5 +580,26 @@ public class CallResolver {
             argumentTypeResolver.checkTypesWithNoCallee(task.toBasic());
         }
         return results;
+    }
+
+    private static <D extends CallableDescriptor, F extends D> void handleRecursion(ResolutionTask<D, F> task, DeclarationDescriptor descriptor) {
+        JetCallExpression callExpression = (JetCallExpression) JetPsiUtil
+                .getParentByTypeAndPredicate(task.reference.getOriginalElement(), JetCallExpression.class,
+                                             Predicates.<PsiElement>alwaysTrue(), false);
+
+        assert callExpression != null;
+
+        if (KotlinBuiltIns.getInstance().isTailRecursive(descriptor)) {
+            task.trace.record(TAIL_RECURSION_CALL, callExpression,
+                              JetPsiUtil.traceToRoot(callExpression, new TailRecursionDetectorVisitor(), true));
+
+            List<JetCallExpression> callsList = task.trace.get(FUNCTION_RECURSIONS, descriptor);
+            if (callsList == null) {
+                callsList = new ArrayList<JetCallExpression>(4);
+                task.trace.record(FUNCTION_RECURSIONS, descriptor, callsList);
+            }
+
+            callsList.add(callExpression);
+        }
     }
 }

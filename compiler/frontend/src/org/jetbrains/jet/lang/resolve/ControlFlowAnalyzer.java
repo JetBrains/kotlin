@@ -16,15 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
@@ -125,5 +124,24 @@ public class ControlFlowAnalyzer {
         flowInformationProvider.markUnusedVariables();
 
         flowInformationProvider.markUnusedLiteralsInBlock();
+
+        checkTailRecursion(function);
+    }
+
+    private void checkTailRecursion(JetDeclarationWithBody declarationWithBody) {
+        FunctionDescriptor descriptor = (FunctionDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationWithBody);
+        if (descriptor != null && declarationWithBody instanceof JetNamedFunction) {
+            List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIONS, descriptor);
+            if (calls == null || calls.isEmpty()) {
+                trace.report(Errors.TAIL_RECURSIVE_FUNCTION_WITH_NO_TAILS.on((JetNamedFunction) declarationWithBody));
+            }
+            else {
+                for (JetCallExpression call : calls) {
+                    if (trace.get(BindingContext.TAIL_RECURSION_CALL, call) == Boolean.FALSE) {
+                        trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(call));
+                    }
+                }
+            }
+        }
     }
 }

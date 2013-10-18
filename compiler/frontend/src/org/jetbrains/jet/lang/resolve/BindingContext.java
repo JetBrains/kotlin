@@ -39,6 +39,7 @@ import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
@@ -88,6 +89,8 @@ public interface BindingContext {
             new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
     WritableSlice<JetCallExpression, Boolean> TAIL_RECURSION_CALL =
             new BasicWritableSlice<JetCallExpression, Boolean>(DO_NOTHING, true);
+    WritableSlice<DeclarationDescriptor, List<JetCallExpression>> FUNCTION_RECURSIONS =
+            new BasicWritableSlice<DeclarationDescriptor, List<JetCallExpression>>(DO_NOTHING, false);
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 
