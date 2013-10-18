@@ -23,26 +23,18 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.initializer.InitializerUtils;
-import org.jetbrains.k2js.translate.initializer.InitializerVisitor;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.declaration.DefineInvocation.createDefineInvocation;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
-import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
-import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 
 final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
@@ -61,7 +53,7 @@ final class NamespaceTranslator extends AbstractTranslator {
 
         this.descriptor = descriptor;
 
-        visitor = new FileDeclarationVisitor();
+        visitor = new FileDeclarationVisitor(context());
 
         definitionPlace = new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
             @Override
@@ -98,13 +90,7 @@ final class NamespaceTranslator extends AbstractTranslator {
     }
 
     public void add(@NotNull Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation) {
-        JsExpression initializer;
-        if (visitor.initializerStatements.isEmpty()) {
-            initializer = null;
-        }
-        else {
-            initializer = visitor.initializer;
-        }
+        JsExpression initializer = visitor.computeInitializer();
 
         DefineInvocation defineInvocation = descriptorToDefineInvocation.get(descriptor);
         if (defineInvocation == null) {
@@ -155,54 +141,4 @@ final class NamespaceTranslator extends AbstractTranslator {
         }
     }
 
-    private class FileDeclarationVisitor extends DeclarationBodyVisitor {
-        private final JsFunction initializer;
-        private final TranslationContext initializerContext;
-        private final List<JsStatement> initializerStatements;
-        private final InitializerVisitor initializerVisitor;
-
-        private FileDeclarationVisitor() {
-            initializer = JsAstUtils.createFunctionWithEmptyBody(context().scope());
-            initializerContext = context().contextWithScope(initializer);
-            initializerStatements = initializer.getBody().getStatements();
-            initializerVisitor = new InitializerVisitor(initializerStatements);
-        }
-
-        @Override
-        public Void visitClass(@NotNull JetClass declaration, @NotNull TranslationContext context) {
-            JsPropertyInitializer entry = context.classDeclarationTranslator().translate(declaration, context);
-            if (entry != null) {
-                result.add(entry);
-            }
-            return null;
-        }
-
-        @Override
-        public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, @NotNull TranslationContext context) {
-            InitializerUtils.generateObjectInitializer(declaration, initializerStatements, context);
-            return null;
-        }
-
-        @Override
-        public Void visitProperty(@NotNull JetProperty property, @NotNull TranslationContext context) {
-            super.visitProperty(property, context);
-            JetExpression initializer = property.getInitializer();
-            if (initializer != null) {
-                JsExpression value = Translation.translateAsExpression(initializer, initializerContext);
-                PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), property);
-                initializerStatements.add(generateInitializerForProperty(context, propertyDescriptor, value));
-            }
-
-            JsStatement delegate = generateInitializerForDelegate(context, property);
-            if (delegate != null) initializerStatements.add(delegate);
-
-            return null;
-        }
-
-        @Override
-        public Void visitAnonymousInitializer(@NotNull JetClassInitializer expression, @NotNull TranslationContext context) {
-            expression.accept(initializerVisitor, initializerContext);
-            return null;
-        }
-    }
 }
