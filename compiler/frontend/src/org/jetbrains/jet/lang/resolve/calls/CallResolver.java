@@ -23,6 +23,7 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.RecursionStatus;
 import org.jetbrains.jet.codegen.TailRecursionDetectorVisitor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -591,7 +592,7 @@ public class CallResolver {
 
         if (KotlinBuiltIns.getInstance().isTailRecursive(descriptor)) {
             task.trace.record(TAIL_RECURSION_CALL, callExpression,
-                              JetPsiUtil.traceToRoot(callExpression, new TailRecursionDetectorVisitor(), true));
+                              JetPsiUtil.traceToRoot(callExpression, new TailRecursionDetectorVisitor(), RecursionStatus.MIGHT_BE) != RecursionStatus.NO_TAIL);
 
             List<JetCallExpression> callsList = task.trace.get(FUNCTION_RECURSIONS, descriptor);
             if (callsList == null) {

@@ -114,7 +114,8 @@ public class FunctionGenTest extends CodegenTestCase {
                         "repeat(num - 1, acc.append(this)!!)",
                         "escape(i + 1, result + escapeChar(get(i)))",
                         "foldl(foldFunction(next(), acc), foldFunction)",
-                        "withWhen(counter - 1, \"tail\")"
+                        "withWhen(counter - 1, \"tail\")",
+                        "badTails(x - 1, \"tail\")"
                 ),
                 texts
         );
