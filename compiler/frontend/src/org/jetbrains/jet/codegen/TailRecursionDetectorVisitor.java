@@ -26,19 +26,19 @@ import java.util.List;
 /**
 * Created by cy6ergn0m on 18.10.13.
 */
-class TailRecursionDetectorVisitor extends JetVisitor<TailRecursionGeneratorUtil.TraceStatus<Boolean>, List<? extends PsiElement>> {
+public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Boolean>, List<? extends PsiElement>> {
     @Nullable
     private Boolean isTail = null;
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitNamedFunction(
+    public TraceStatus<Boolean> visitNamedFunction(
             @NotNull JetNamedFunction function, List<? extends PsiElement> data
     ) {
-        return new TailRecursionGeneratorUtil.TraceStatus<Boolean>(true, true);
+        return new TraceStatus<Boolean>(true, true);
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitTryExpression(
+    public TraceStatus<Boolean> visitTryExpression(
             @NotNull JetTryExpression expression, List<? extends PsiElement> track
     ) {
         PsiElement last = last(track);
@@ -46,29 +46,29 @@ class TailRecursionDetectorVisitor extends JetVisitor<TailRecursionGeneratorUtil
             return noTailRecursion();
         }
 
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitCatchSection(
+    public TraceStatus<Boolean> visitCatchSection(
             @NotNull JetCatchClause catchClause, List<? extends PsiElement> data
     ) {
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitFinallySection(
+    public TraceStatus<Boolean> visitFinallySection(
             @NotNull JetFinallySection finallySection, List<? extends PsiElement> data
     ) {
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitBlockExpression(
+    public TraceStatus<Boolean> visitBlockExpression(
             @NotNull JetBlockExpression expression, List<? extends PsiElement> data
     ) {
 
-        if (isTail()) return status();
+        if (isTail()) return contineTrace();
 
         PsiElement child = last(data);
 
@@ -88,58 +88,58 @@ class TailRecursionDetectorVisitor extends JetVisitor<TailRecursionGeneratorUtil
             }
         }
 
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitWhenExpression(
+    public TraceStatus<Boolean> visitWhenExpression(
             @NotNull JetWhenExpression expression, List<? extends PsiElement> data
     ) {
         if (expression.getSubjectExpression() == last(data)) {
             return noTailRecursion();
         }
 
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitWhenEntry(
+    public TraceStatus<Boolean> visitWhenEntry(
             @NotNull JetWhenEntry jetWhenEntry, List<? extends PsiElement> data
     ) {
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitWhenConditionExpression(
+    public TraceStatus<Boolean> visitWhenConditionExpression(
             @NotNull JetWhenConditionWithExpression condition, List<? extends PsiElement> data
     ) {
         return noTailRecursion();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitIfExpression(
+    public TraceStatus<Boolean> visitIfExpression(
             @NotNull JetIfExpression expression, List<? extends PsiElement> track
     ) {
         if (expression.getCondition() == last(track)) {
             return noTailRecursion();
         }
 
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitQualifiedExpression(
+    public TraceStatus<Boolean> visitQualifiedExpression(
             @NotNull JetQualifiedExpression expression, List<? extends PsiElement> data
     ) {
         if (!(expression.getReceiverExpression() instanceof JetThisExpression)) {
             return noTailRecursion();
         }
 
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitReturnExpression(
+    public TraceStatus<Boolean> visitReturnExpression(
             @NotNull JetReturnExpression expression, List<? extends PsiElement> data
     ) {
         JetExpression returned = expression.getReturnedExpression();
@@ -151,31 +151,31 @@ class TailRecursionDetectorVisitor extends JetVisitor<TailRecursionGeneratorUtil
             return noTailRecursion();
         }
 
-        return status();
+        return contineTrace();
     }
 
     @Override
-    public TailRecursionGeneratorUtil.TraceStatus<Boolean> visitJetElement(
+    public TraceStatus<Boolean> visitJetElement(
             @NotNull JetElement element, List<? extends PsiElement> data
     ) {
         if (element instanceof JetContainerNode) {
-            return status();
+            return contineTrace();
         }
 
         if (isTail == null) {
             return noTailRecursion();
         }
 
-        return status();
+        return contineTrace();
     }
 
-    private TailRecursionGeneratorUtil.TraceStatus<Boolean> noTailRecursion() {
+    private TraceStatus<Boolean> noTailRecursion() {
         isTail = false;
-        return status();
+        return contineTrace();
     }
 
-    private TailRecursionGeneratorUtil.TraceStatus<Boolean> status() {
-        return new TailRecursionGeneratorUtil.TraceStatus<Boolean>(mightBeTail(), surelyNoTail());
+    private TraceStatus<Boolean> contineTrace() {
+        return new TraceStatus<Boolean>(mightBeTail(), surelyNoTail());
     }
 
     private boolean surelyNoTail() {

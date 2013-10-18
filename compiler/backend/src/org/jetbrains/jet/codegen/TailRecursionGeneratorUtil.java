@@ -19,31 +19,30 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.MemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.jet.codegen.AsmUtil.pushDefaultValueOnStack;
 import static org.jetbrains.jet.codegen.CodegenUtil.isNullableType;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
 
 public class TailRecursionGeneratorUtil {
-
-    private static final boolean IGNORE_ANNOTATION_ABSENCE = false;
 
     @NotNull
     private final MethodContext context;
@@ -67,62 +66,7 @@ public class TailRecursionGeneratorUtil {
     }
 
     public boolean isTailRecursion(@NotNull JetCallExpression expression) {
-        return isRecursion(expression) && isTailRecursiveCall(expression);
-    }
-
-    public static boolean hasTailRecursiveAnnotation(DeclarationDescriptor descriptor) {
-        if (IGNORE_ANNOTATION_ABSENCE) {
-            return true;
-        }
-
-        ClassDescriptor tailRecursive = KotlinBuiltIns.getInstance().getBuiltInClassByName(FqName.fromSegments(Arrays.asList("jet", "TailRecursive")).shortName());
-        for (AnnotationDescriptor annotation : descriptor.getOriginal().getAnnotations()) {
-            ClassifierDescriptor declarationDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
-            if (declarationDescriptor != null && declarationDescriptor.equals(tailRecursive)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @NotNull
-    public static List<JetCallExpression> findRecursiveCalls(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        List<JetCallExpression> tailRecursionsFound = new ArrayList<JetCallExpression>();
-        Collection<JetCallExpression> calls = state.getBindingTrace().getKeys(BindingContext.TAIL_RECURSION_CALL);
-        for (JetCallExpression callExpression : calls) {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = resolve(callExpression, state.getBindingContext());
-            if (resolvedCall != null) {
-                if (resolvedCall.getCandidateDescriptor().equals(descriptor)) {
-                    tailRecursionsFound.add(callExpression);
-                }
-            }
-        }
-
-        return tailRecursionsFound;
-    }
-
-    @Nullable
-    private static ResolvedCall<? extends CallableDescriptor> resolve(@NotNull JetCallExpression callExpression, BindingContext context) {
-        JetExpression callee = callExpression.getCalleeExpression();
-        return callee == null ? null : context.get(RESOLVED_CALL, callee);
-    }
-
-    private boolean isRecursion(@NotNull JetCallExpression callExpression) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = resolve(callExpression, state.getBindingContext());
-        if (resolvedCall != null && context.getContextDescriptor().equals(resolvedCall.getCandidateDescriptor())) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static boolean isTailRecursiveCall(@NotNull JetCallExpression expression) {
-        return traceToRoot(expression, new TailRecursionDetectorVisitor(), true);
-    }
-
-    private static boolean isFunctionElement(PsiElement element) {
-        return element instanceof JetFunction;
+        return state.getBindingContext().get(TAIL_RECURSION_CALL, expression) == Boolean.TRUE;
     }
 
     public StackValue generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall, JetCallExpression callExpression) {
@@ -147,9 +91,6 @@ public class TailRecursionGeneratorUtil {
         }
 
         v.goTo(context.getMethodStartLabel());
-
-
-        state.getBindingTrace().record(TAIL_RECURSION_CALL, callExpression);
 
         return StackValue.none();
     }
@@ -216,53 +157,5 @@ public class TailRecursionGeneratorUtil {
         }
 
         return index;
-    }
-
-    public static class TraceStatus<T> {
-        @NotNull
-        private final T data;
-        private final boolean abortTrace;
-
-        public TraceStatus(@NotNull T data, boolean abortTrace) {
-            this.data = data;
-            this.abortTrace = abortTrace;
-        }
-
-        @NotNull
-        public T getData() {
-            return data;
-        }
-
-        public boolean isAbortTrace() {
-            return abortTrace;
-        }
-    }
-
-    @NotNull
-    private static <T> T traceToRoot(@NotNull PsiElement element, @NotNull JetVisitor<TraceStatus<T>, List<? extends PsiElement>> visitor, T def) {
-        ArrayList<PsiElement> track = new ArrayList<PsiElement>();
-        List<PsiElement> view = Collections.unmodifiableList(track);
-        @NotNull
-        TraceStatus<T> lastStatus = new TraceStatus<T>(def, true);
-
-        do {
-            track.add(element);
-            PsiElement parent = element.getParent();
-            if (parent instanceof JetElement) {
-                JetElement jet = (JetElement) parent;
-                TraceStatus<T> status = jet.accept(visitor, view);
-                if (status == null) {
-                    throw new IllegalStateException("visitor has returned null status");
-                }
-                if (status.isAbortTrace()) {
-                    return status.getData();
-                }
-                lastStatus = status;
-            }
-
-            element = parent;
-        } while (element != null && !isFunctionElement(element));
-
-        return lastStatus.getData();
     }
 }
