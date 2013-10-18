@@ -27,7 +27,10 @@ import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.compiler.runner.*;
+import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
+import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
+import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
+import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
@@ -49,10 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.INFO;
-import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
-
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler;
 
@@ -105,6 +105,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir);
         if (!environment.success()) {
+            if (!hasKotlinFiles(chunk)) {
+                // Configuration is bad, but there's nothing to compile anyways
+                return ExitCode.NOTHING_DONE;
+            }
             environment.reportErrorsTo(messageCollector);
             return ExitCode.ABORT;
         }
@@ -169,6 +173,18 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         return ExitCode.OK;
+    }
+
+    private static boolean hasKotlinFiles(@NotNull ModuleChunk chunk) {
+        boolean hasKotlinFiles = false;
+        for (ModuleBuildTarget target : chunk.getTargets()) {
+            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
+            if (!sourceFiles.isEmpty()) {
+                hasKotlinFiles = true;
+                break;
+            }
+        }
+        return hasKotlinFiles;
     }
 
     private static boolean isJavaPluginEnabled(@NotNull CompileContext context) {
