@@ -26,6 +26,8 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -49,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.awt.event.MouseEvent;
@@ -83,6 +86,15 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
         Project project = elements.get(0).getProject();
         if (!isMarkersEnabled(project)) {
+            return;
+        }
+
+        Module module = ModuleUtilCore.findModuleForPsiElement(elements.get(0));
+        if (module == null) {
+            return;
+        }
+
+        if (!ProjectStructureUtil.isUsedInKotlinJavaModule(module)) {
             return;
         }
 

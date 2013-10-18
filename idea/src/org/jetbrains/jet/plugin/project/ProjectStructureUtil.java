@@ -47,11 +47,13 @@ import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ProjectStructureUtil {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
+    private static final Key<CachedValue<Boolean>> IS_DEPEND_ON_JVM_KOTLIN = Key.create("KOTLIN_IS_DEPEND_ON_JVM_KOTLIN");
 
     private ProjectStructureUtil() {
     }
@@ -79,6 +81,34 @@ public class ProjectStructureUtil {
             }, false);
 
             module.putUserData(IS_KOTLIN_JS_MODULE, result);
+        }
+
+        return result.getValue();
+    }
+
+    public static boolean isUsedInKotlinJavaModule(@NotNull final Module module) {
+        CachedValue<Boolean> result = module.getUserData(IS_DEPEND_ON_JVM_KOTLIN);
+        if (result == null) {
+            result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
+                @Override
+                public Result<Boolean> compute() {
+                    boolean usedInKotlinModule = false;
+
+                    Set<Module> dependentModules = new HashSet<Module>();
+                    ModuleUtilCore.collectModulesDependsOn(module, dependentModules);
+
+                    for (Module module : dependentModules) {
+                        if (isJavaKotlinModule(module)) {
+                            usedInKotlinModule = true;
+                            break;
+                        }
+                    }
+
+                    return Result.create(usedInKotlinModule, ProjectRootModificationTracker.getInstance(module.getProject()));
+                }
+            }, false);
+
+            module.putUserData(IS_DEPEND_ON_JVM_KOTLIN, result);
         }
 
         return result.getValue();
