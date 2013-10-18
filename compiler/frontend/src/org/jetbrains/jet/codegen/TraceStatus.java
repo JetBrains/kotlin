@@ -18,9 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
-* Created by cy6ergn0m on 18.10.13.
-*/
 public class TraceStatus<T> {
     @NotNull
     private final T data;
