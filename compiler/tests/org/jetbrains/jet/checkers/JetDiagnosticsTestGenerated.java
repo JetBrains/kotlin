@@ -4303,6 +4303,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/objects/ObjectsNested.kt");
             }
             
+            @TestMetadata("upperBoundViolated.kt")
+            public void testUpperBoundViolated() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/objects/upperBoundViolated.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/operatorsOverloading")
