@@ -37,9 +37,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindMethodUsagesDialog;
+import org.jetbrains.jet.plugin.findUsages.KotlinMethodFindUsagesOptions;
 import org.jetbrains.jet.plugin.hierarchy.calls.CalleeReferenceVisitorBase;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
 import org.jetbrains.jet.plugin.search.KotlinExtensionSearch;
 
 import java.util.ArrayList;

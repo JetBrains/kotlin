@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.findUsages.FindUsagesPackage;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog;
-import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
 
 import java.util.Collection;
 
@@ -75,13 +75,13 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                         KotlinClassFindUsagesOptions kotlinOptions = (KotlinClassFindUsagesOptions)options;
                         JetClass jetClass = (JetClass) element;
 
-                        if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
+                        if (kotlinOptions.isUsages || kotlinOptions.getSearchConstructorUsages()) {
                             Collection<PsiReference> references = ReferencesSearch.search(
                                     new ReferencesSearch.SearchParameters(jetClass, kotlinOptions.searchScope, false)
                             ).findAll();
                             for (PsiReference ref : references) {
                                 boolean constructorUsage = FindUsagesPackage.isConstructorUsage(ref.getElement(), jetClass);
-                                if ((constructorUsage && !kotlinOptions.searchConstructorUsages)
+                                if ((constructorUsage && !kotlinOptions.getSearchConstructorUsages())
                                     || (!constructorUsage && !kotlinOptions.isUsages)) continue;
 
                                 processUsage(processor, ref, kotlinOptions);
@@ -91,8 +91,8 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                         PsiClass lightClass = LightClassUtil.getPsiClass(getElement());
                         if (lightClass == null) return true;
 
-                        if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
                         if (!processDeclarationsUsages(jetClass, processor, kotlinOptions)) return false;
+                        if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
 
                         return true;
                     }

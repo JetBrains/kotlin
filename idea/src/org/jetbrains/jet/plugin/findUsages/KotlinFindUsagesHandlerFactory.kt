@@ -22,8 +22,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions
-import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindFunctionUsagesHandler

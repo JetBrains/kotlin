@@ -9,7 +9,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.KotlinMethodFindUsagesOptions;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import javax.swing.*;

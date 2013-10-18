@@ -49,8 +49,8 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
-import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.KotlinMethodFindUsagesOptions;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -67,12 +67,12 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
             public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
                 KotlinClassFindUsagesOptions options = new KotlinClassFindUsagesOptions(project);
                 options.isUsages = false;
-                options.searchConstructorUsages = false;
+                options.setSearchConstructorUsages(false);
                 for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
                     if (parseCommonOptions(options, s)) continue;
 
                     if (s.equals("constructorUsages")) {
-                        options.searchConstructorUsages = true;
+                        options.setSearchConstructorUsages(true);
                     }
                     else if (s.equals("derivedInterfaces")) {
                         options.isDerivedInterfaces = true;
