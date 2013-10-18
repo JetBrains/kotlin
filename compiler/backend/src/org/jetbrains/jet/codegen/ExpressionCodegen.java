@@ -69,7 +69,6 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.functionTypeToImpl;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplType;
-import static org.jetbrains.jet.codegen.TailRecursionGeneratorUtil.hasTailRecursiveAnnotation;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
@@ -1579,7 +1578,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitReturnExpression(@NotNull JetReturnExpression expression, StackValue receiver) {
         JetExpression returnedExpression = expression.getReturnedExpression();
         if (returnedExpression != null) {
-            if (returnedExpression instanceof JetCallExpression && hasTailRecursiveAnnotation(context.getContextDescriptor().getOriginal())) {
+            if (returnedExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) returnedExpression;
                 if (tailRecursionGeneratorUtil.isTailRecursion(callExpression) && callExpression.getCalleeExpression() != null) {
                     ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
@@ -1930,7 +1929,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        if (hasTailRecursiveAnnotation(funDescriptor) && tailRecursionGeneratorUtil.isTailRecursion(expression)) {
+        if (tailRecursionGeneratorUtil.isTailRecursion(expression)) {
             return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, expression);
         }
 

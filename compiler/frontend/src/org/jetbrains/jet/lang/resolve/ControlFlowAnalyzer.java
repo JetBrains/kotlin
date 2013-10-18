@@ -16,12 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
@@ -64,6 +67,7 @@ public class ControlFlowAnalyzer {
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
+            assert expectedReturnType != null;
             checkFunction(function, expectedReturnType);
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
@@ -91,16 +95,18 @@ public class ControlFlowAnalyzer {
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
             assert accessorDescriptor != null;
-            checkFunction(accessor, accessorDescriptor.getReturnType());
+            JetType returnType = accessorDescriptor.getReturnType();
+            assert returnType != null;
+            checkFunction(accessor, returnType);
         }
     }
 
     private void checkFunction(JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
-        assert function instanceof JetDeclaration;
+        assert function != null;
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
 
         boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
         if (!isPropertyAccessor) {
