@@ -2,6 +2,7 @@ package org.jetbrains.js.compiler.sourcemap;
 
 import com.google.dart.compiler.common.SourceInfo;
 import com.google.dart.compiler.util.TextOutput;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PairConsumer;
 import gnu.trove.TObjectIntHashMap;
 
@@ -78,6 +79,11 @@ public class SourceMap3Builder implements SourceMapBuilder {
     }
 
     @Override
+    public void skipLinesInBegin(int count) {
+        out.insert(0, StringUtil.repeatSymbol(';', count));
+    }
+
+    @Override
     public void processSourceInfo(Object sourceInfo) {
         if (sourceInfo instanceof SourceInfo) {
             throw new UnsupportedOperationException("SourceInfo is not yet supported");
@@ -132,7 +138,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
     public void addLink() {
         textOutput.print("\n//@ sourceMappingURL=");
         textOutput.print(generatedFile.getName());
-        textOutput.print(".map");
+        textOutput.print(".map\n");
     }
 
     private static final class Base64VLQ {

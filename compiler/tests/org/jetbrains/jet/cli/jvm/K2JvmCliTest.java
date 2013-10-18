@@ -24,6 +24,9 @@ import org.junit.Test;
 import java.io.File;
 
 public class K2JvmCliTest extends CliBaseTest {
+
+    protected static final String ANOTHER_NOT_EXISTING_PATH = "yet/another/not/existing/path";
+
     @Test
     public void wrongKotlinSignature() throws Exception {
         String[] args = {
@@ -46,8 +49,8 @@ public class K2JvmCliTest extends CliBaseTest {
     public void nonExistingClassPathAndAnnotationsPath() {
         String[] args = {
                 "-src", "compiler/testData/cli/simple.kt",
-                "-classpath", "not/existing/path",
-                "-annotations", "yet/another/not/existing/path",
+                "-classpath", NOT_EXISTING_PATH,
+                "-annotations", ANOTHER_NOT_EXISTING_PATH,
                 "-output", tmpdir.getTmpDir().getPath()};
         executeCompilerCompareOutputJVM(args);
 
@@ -57,7 +60,7 @@ public class K2JvmCliTest extends CliBaseTest {
     @Test
     public void nonExistingSourcePath() {
         String[] args = {
-                "-src", "not/existing/path",
+                "-src", NOT_EXISTING_PATH,
                 "-output", tmpdir.getTmpDir().getPath()};
         executeCompilerCompareOutputJVM(args);
     }

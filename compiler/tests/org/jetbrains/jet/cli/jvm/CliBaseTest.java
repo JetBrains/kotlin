@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 public class CliBaseTest {
+    protected static final String NOT_EXISTING_PATH = "not/existing/path";
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();

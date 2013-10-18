@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.js.compiler.sourcemap;
+package foo
 
-import java.io.File;
-
-public interface SourceMapBuilder {
-    void newLine();
-
-    void skipLinesInBegin(int count);
-
-    void addMapping(String source, int sourceLine, int sourceColumn);
-
-    void processSourceInfo(Object info);
-
-    void addLink();
-
-    File getOutFile();
-
-    String build();
+fun box(): String {
+    return "OK"
 }
