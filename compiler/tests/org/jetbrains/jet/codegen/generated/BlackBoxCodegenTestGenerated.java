@@ -2539,9 +2539,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/multilevelBlocks.kt");
             }
             
+            @TestMetadata("nestedTryFinally.kt")
+            public void testNestedTryFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/nestedTryFinally.kt");
+            }
+            
+            @TestMetadata("recursiveInnerFunction.kt")
+            public void testRecursiveInnerFunction() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveInnerFunction.kt");
+            }
+            
             @TestMetadata("recursiveTryCatchFinally.kt")
             public void testRecursiveTryCatchFinally() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveTryCatchFinally.kt");
+            }
+            
+            @TestMetadata("recursiveTryCatchWithoutFinally.kt")
+            public void testRecursiveTryCatchWithoutFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveTryCatchWithoutFinally.kt");
             }
             
             @TestMetadata("recursiveTryFinally.kt")
