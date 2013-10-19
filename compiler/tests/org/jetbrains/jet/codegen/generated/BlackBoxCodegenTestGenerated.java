@@ -2539,6 +2539,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/multilevelBlocks.kt");
             }
             
+            @TestMetadata("recursiveTryCatchFinally.kt")
+            public void testRecursiveTryCatchFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveTryCatchFinally.kt");
+            }
+            
+            @TestMetadata("recursiveTryFinally.kt")
+            public void testRecursiveTryFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveTryFinally.kt");
+            }
+            
             @TestMetadata("simpleBlock.kt")
             public void testSimpleBlock() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleBlock.kt");
@@ -2552,11 +2562,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("simpleReturnWithElse.kt")
             public void testSimpleReturnWithElse() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleReturnWithElse.kt");
-            }
-            
-            @TestMetadata("tryCatchFinally.kt")
-            public void testTryCatchFinally() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/tryCatchFinally.kt");
             }
             
             @TestMetadata("unitBlocks.kt")

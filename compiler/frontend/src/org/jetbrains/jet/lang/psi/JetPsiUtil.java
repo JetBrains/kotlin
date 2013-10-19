@@ -1066,14 +1066,11 @@ public class JetPsiUtil {
                 if (status == null) {
                     throw new IllegalStateException("visitor has returned null status");
                 }
-                if (status.isAbortTrace()) {
-                    return status.getData();
-                }
                 lastStatus = status;
             }
 
             element = parent;
-        } while (element != null);
+        } while (element != null && !lastStatus.isAbortTrace());
 
         return lastStatus.getData();
     }

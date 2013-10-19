@@ -16,23 +16,33 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
-
 public enum RecursionStatus {
-    MIGHT_BE(true),
-    FOUND_IN_RETURN(true),
-    FOUND_IN_FINALLY(true),
-    FOUND_IN_RETURN_IN_FINALLY(true),
-    NO_TAIL(false);
+    MIGHT_BE(true, false, false),
+    FOUND_IN_RETURN(true, false, true),
+    FOUND_IN_FINALLY(true, true, false),
+    FOUND_IN_RETURN_IN_FINALLY(true, true, true),
+    NO_TAIL(false, false, false);
 
     private final boolean doGenerateTailRecursion;
+    private final boolean isFinally;
+    private final boolean isReturn;
 
-    RecursionStatus(boolean doGenerateTailRecursion) {
+    RecursionStatus(boolean doGenerateTailRecursion, boolean aFinally, boolean aReturn) {
         this.doGenerateTailRecursion = doGenerateTailRecursion;
+        isFinally = aFinally;
+        isReturn = aReturn;
     }
 
     public boolean isDoGenerateTailRecursion() {
         return doGenerateTailRecursion;
+    }
+
+    public boolean isFinally() {
+        return isFinally;
+    }
+
+    public boolean isReturn() {
+        return isReturn;
     }
 
     public RecursionStatus and(RecursionStatus b) {
