@@ -77,16 +77,10 @@ public class TailRecursionGeneratorUtil {
         List<Type> types = callable.getValueParameterTypes();
         List<ValueParameterDescriptor> parametersStored = prepareParameterValuesOnStack(fd, types, resolvedCall.getValueArgumentsByIndex());
 
-        boolean generateNullChecks = AsmUtil.getVisibilityAccessFlag((MemberDescriptor) fd) != ACC_PRIVATE;
         // we can't store values to the variables in the loop above because it will affect expressions evaluation
         for (ValueParameterDescriptor parameterDescriptor : Lists.reverse(parametersStored)) {
-            JetType type = parameterDescriptor.getReturnType();
             Type asmType = types.get(parameterDescriptor.getIndex());
             int index = getParameterVariableIndex(parameterDescriptor, callExpression);
-
-            if (generateNullChecks) {
-                generateNullCheckIfNeeded(parameterDescriptor, type, asmType);
-            }
 
             v.store(index, asmType);
         }
