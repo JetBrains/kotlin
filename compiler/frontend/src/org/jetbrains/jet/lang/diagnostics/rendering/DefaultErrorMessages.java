@@ -409,8 +409,8 @@ public class DefaultErrorMessages {
                 return hasValueParameters ? "..." : "";
             }
         });
-        MAP.put(NON_TAIL_RECURSIVE_CALL, "Function invocation is non tail-recursive");
-        MAP.put(PARTIAL_TAIL_RECURSIVE_CALL, "Function invocation is non always tail-recursive in finally: only in success case when there is no uncaught exception");
+        MAP.put(NON_TAIL_RECURSIVE_CALL, "Function recursive invocation is not optimized (could be non tail-recursive or unsupported case)");
+        MAP.put(TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, "Tail recursion optimization inside try/catch/finally is not supported");
 
         MAP.put(RESULT_TYPE_MISMATCH, "{0} must return {1} but returns {2}", TO_STRING, RENDER_TYPE, RENDER_TYPE);
         MAP.put(UNSAFE_INFIX_CALL,

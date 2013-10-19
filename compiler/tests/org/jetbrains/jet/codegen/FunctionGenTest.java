@@ -106,8 +106,6 @@ public class FunctionGenTest extends CodegenTestCase {
                         "b(acounter + 1, \"tail 40\")",
                         "c(counter + 1, \"tail 44\")",
                         "d(counter + 1, \"tail 48\")",
-                        "e(counter - 1, \"tail 59\")",
-                        "e2(counter - 1, \"tail 69\")",
                         "g3(counter - 1, \"tail 97\")",
                         "f1(\"tail 104\")",
                         "f2(\"tail 108\")",

@@ -17,28 +17,21 @@
 package org.jetbrains.jet.codegen;
 
 public enum RecursionStatus {
-    MIGHT_BE(true, false, false),
-    FOUND_IN_RETURN(true, false, true),
-    FOUND_IN_FINALLY(true, true, false),
-    FOUND_IN_RETURN_IN_FINALLY(true, true, true),
-    NO_TAIL(false, false, false);
+    MIGHT_BE(true, false),
+    FOUND_IN_RETURN(true, true),
+    FOUND_IN_FINALLY(false, false),
+    NO_TAIL(false, false);
 
     private final boolean doGenerateTailRecursion;
-    private final boolean isFinally;
     private final boolean isReturn;
 
-    RecursionStatus(boolean doGenerateTailRecursion, boolean aFinally, boolean aReturn) {
+    RecursionStatus(boolean doGenerateTailRecursion, boolean aReturn) {
         this.doGenerateTailRecursion = doGenerateTailRecursion;
-        isFinally = aFinally;
         isReturn = aReturn;
     }
 
     public boolean isDoGenerateTailRecursion() {
         return doGenerateTailRecursion;
-    }
-
-    public boolean isFinally() {
-        return isFinally;
     }
 
     public boolean isReturn() {
@@ -49,21 +42,15 @@ public enum RecursionStatus {
         if (this == b) {
             return this;
         }
+        if (!this.isDoGenerateTailRecursion()) {
+            return this;
+        }
+        if (!b.isDoGenerateTailRecursion()) {
+            return this;
+        }
 
-        if (isOneOf(this, b, NO_TAIL)) {
-            return NO_TAIL;
-        }
-        if (isOneOf(this, b, FOUND_IN_RETURN_IN_FINALLY)) {
-            return FOUND_IN_RETURN_IN_FINALLY;
-        }
-        if (isCase(this, b, FOUND_IN_RETURN, FOUND_IN_FINALLY)) {
-            return FOUND_IN_RETURN_IN_FINALLY;
-        }
         if (isOneOf(this, b, FOUND_IN_RETURN)) {
             return FOUND_IN_RETURN;
-        }
-        if (isOneOf(this, b, FOUND_IN_FINALLY)) {
-            return FOUND_IN_FINALLY;
         }
 
         return this;
@@ -73,7 +60,4 @@ public enum RecursionStatus {
         return a == value || b == value;
     }
 
-    private static boolean isCase(RecursionStatus a, RecursionStatus b, RecursionStatus value1, RecursionStatus value2) {
-        return (a == value1 && b == value2) || (a == value2 && b == value1);
-    }
 }

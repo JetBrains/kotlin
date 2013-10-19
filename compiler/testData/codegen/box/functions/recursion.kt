@@ -51,42 +51,6 @@ tailRecursive fun d(counter : Int, x : Any) : Unit {
     }
 }
 
-tailRecursive fun e(counter : Int, x : Any) : Unit {
-    if (counter > 0) {
-        try {
-            dummy()
-        } finally {
-            e(counter - 1, "tail 59")
-        }
-    }
-}
-
-tailRecursive fun e2(counter : Int, a : Any) {
-    if (counter > 0) {
-        try {
-            dummy()
-        } finally {
-            try {
-                throw IllegalStateException()
-            } catch (e : Exception) {
-                e2(counter - 1, "tail 69")
-            }
-        }
-    }
-}
-
-tailRecursive fun e3(counter : Int, x : Any) {
-    if (counter > 0) {
-        try {
-            throw IllegalStateException()
-        } catch (e : Exception) {
-            e3(counter - 1, "no tail 80")
-        } finally {
-            dummy()
-        }
-    }
-}
-
 tailRecursive fun g(counter : Int, x : Any) {
     val z = { g(counter - 1, "no tail 91") }
     z()
@@ -189,8 +153,6 @@ fun box() : String {
     b(1, "test")
     c(1, "test")
     d(1, "test")
-    e(1000000, "test")
-    e2(1000000, "test")
     g2()
     B().makeC().h(1000000, "test")
     if (!"abrakadabra".repeat(5).equals("abrakadabraabrakadabraabrakadabraabrakadabraabrakadabra")) {
