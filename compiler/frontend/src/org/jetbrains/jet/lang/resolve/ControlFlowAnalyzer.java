@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.RecursionStatus;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
@@ -138,8 +139,19 @@ public class ControlFlowAnalyzer {
             }
             else {
                 for (JetCallExpression call : calls) {
-                    if (trace.get(BindingContext.TAIL_RECURSION_CALL, call) == Boolean.FALSE) {
-                        trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(call));
+                    RecursionStatus status = trace.get(BindingContext.TAIL_RECURSION_CALL, call);
+                    if (status != null) {
+                        switch (status) {
+                            case NO_TAIL:
+                                trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(call));
+                                break;
+                            case FOUND_IN_FINALLY:
+                            case FOUND_IN_RETURN_IN_FINALLY:
+                                trace.report(Errors.PARTIAL_TAIL_RECURSIVE_CALL.on(call));
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }

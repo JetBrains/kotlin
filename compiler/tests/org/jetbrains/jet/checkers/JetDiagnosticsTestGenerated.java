@@ -5911,6 +5911,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/tailRecursions/functionWithoutAnnotation.kt");
             }
             
+            @TestMetadata("tailRecursionInFinally.kt")
+            public void testTailRecursionInFinally() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailRecursions/tailRecursionInFinally.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")

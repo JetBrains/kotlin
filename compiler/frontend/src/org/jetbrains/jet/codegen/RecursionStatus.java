@@ -16,25 +16,54 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
+
 public enum RecursionStatus {
-    MIGHT_BE,
-    FOUND_IN_RETURN,
-    NO_TAIL;
+    MIGHT_BE(true),
+    FOUND_IN_RETURN(true),
+    FOUND_IN_FINALLY(true),
+    FOUND_IN_RETURN_IN_FINALLY(true),
+    NO_TAIL(false);
+
+    private final boolean doGenerateTailRecursion;
+
+    RecursionStatus(boolean doGenerateTailRecursion) {
+        this.doGenerateTailRecursion = doGenerateTailRecursion;
+    }
+
+    public boolean isDoGenerateTailRecursion() {
+        return doGenerateTailRecursion;
+    }
 
     public RecursionStatus and(RecursionStatus b) {
         if (this == b) {
             return this;
         }
 
-        switch (this) {
-            case NO_TAIL:
-                return NO_TAIL;
-            case FOUND_IN_RETURN:
-                return FOUND_IN_RETURN;
-            case MIGHT_BE:
-                return b.and(this);
-            default:
-                throw new UnsupportedOperationException(this.toString());
+        if (isOneOf(this, b, NO_TAIL)) {
+            return NO_TAIL;
         }
+        if (isOneOf(this, b, FOUND_IN_RETURN_IN_FINALLY)) {
+            return FOUND_IN_RETURN_IN_FINALLY;
+        }
+        if (isCase(this, b, FOUND_IN_RETURN, FOUND_IN_FINALLY)) {
+            return FOUND_IN_RETURN_IN_FINALLY;
+        }
+        if (isOneOf(this, b, FOUND_IN_RETURN)) {
+            return FOUND_IN_RETURN;
+        }
+        if (isOneOf(this, b, FOUND_IN_FINALLY)) {
+            return FOUND_IN_FINALLY;
+        }
+
+        return this;
+    }
+
+    private static boolean isOneOf(RecursionStatus a, RecursionStatus b, RecursionStatus value) {
+        return a == value || b == value;
+    }
+
+    private static boolean isCase(RecursionStatus a, RecursionStatus b, RecursionStatus value1, RecursionStatus value2) {
+        return (a == value1 && b == value2) || (a == value2 && b == value1);
     }
 }

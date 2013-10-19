@@ -103,6 +103,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Nullable
     private final MemberCodegen parentCodegen;
 
+    private int worstCaseFinallyBlocksCount = 0;
+
     /*
      * When we create a temporary variable to hold some value not to compute it many times
      * we put it into this map to emit access to that variable instead of evaluating the whole expression
@@ -1557,8 +1559,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.mark(finallyStart);
             finallyBlockStackElement.addGapLabel(finallyStart);
 
+            if (tryCatchBlockEnd == null) {
+                worstCaseFinallyBlocksCount++;
+            }
             //noinspection ConstantConditions
             gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+
+            if (tryCatchBlockEnd == null) {
+                worstCaseFinallyBlocksCount--;
+            }
         }
 
         if (tryCatchBlockEnd != null) {
@@ -1929,7 +1938,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        if (tailRecursionGeneratorUtil.isTailRecursion(expression)) {
+        if (worstCaseFinallyBlocksCount == 0 && tailRecursionGeneratorUtil.isTailRecursion(expression)) {
             return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, expression);
         }
 
