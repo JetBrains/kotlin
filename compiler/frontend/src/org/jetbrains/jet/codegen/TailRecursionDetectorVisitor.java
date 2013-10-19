@@ -34,18 +34,7 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
     public TraceStatus<RecursionStatus> visitTryExpression(
             @NotNull JetTryExpression expression, TraceData<RecursionStatus> data
     ) {
-        PsiElement last = data.last;
-        if (last instanceof JetCatchClause && expression.getFinallyBlock() != null) {
-            return noTailRecursion();
-        }
-        else if (last == expression.getTryBlock()) {
-            return noTailRecursion();
-        }
-        else if (last == expression.getFinallyBlock()) {
-            return continueTrace(data, RecursionStatus.FOUND_IN_FINALLY);
-        }
-
-        return continueTrace(data);
+        return noTailRecursion(RecursionStatus.FOUND_IN_FINALLY);
     }
 
     @Override
@@ -161,7 +150,7 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
             return continueTrace(state);
         }
 
-        if (state.data == RecursionStatus.MIGHT_BE || state.data ==  RecursionStatus.FOUND_IN_FINALLY) {
+        if (state.data == RecursionStatus.MIGHT_BE) {
             return noTailRecursion();
         }
 
@@ -170,6 +159,10 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
 
     private static TraceStatus<RecursionStatus> noTailRecursion() {
         return new TraceStatus<RecursionStatus>(RecursionStatus.NO_TAIL, true);
+    }
+
+    private static TraceStatus<RecursionStatus> noTailRecursion(RecursionStatus status) {
+        return new TraceStatus<RecursionStatus>(status, true);
     }
 
     private static TraceStatus<RecursionStatus> continueTrace(TraceData<RecursionStatus> data) {

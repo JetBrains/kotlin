@@ -1,6 +1,9 @@
 tailRecursive fun test() : Unit {
     try {
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>test<!>()
+    } catch (any : Exception) {
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>test<!>()
     } finally {
-        <!PARTIAL_TAIL_RECURSIVE_CALL!>test<!>()
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>test<!>()
     }
 }

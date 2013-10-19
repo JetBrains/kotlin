@@ -146,8 +146,7 @@ public class ControlFlowAnalyzer {
                                 trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(call));
                                 break;
                             case FOUND_IN_FINALLY:
-                            case FOUND_IN_RETURN_IN_FINALLY:
-                                trace.report(Errors.PARTIAL_TAIL_RECURSIVE_CALL.on(call));
+                                trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(call));
                                 break;
                             default:
                                 break;
