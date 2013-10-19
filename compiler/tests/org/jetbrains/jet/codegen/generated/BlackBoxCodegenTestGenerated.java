@@ -2529,6 +2529,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/tail-recursion"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("labeledThisReferences.kt")
+            public void testLabeledThisReferences() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/labeledThisReferences.kt");
+            }
+            
             @TestMetadata("loops.kt")
             public void testLoops() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/loops.kt");
@@ -2559,9 +2564,34 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleReturnWithElse.kt");
             }
             
+            @TestMetadata("thisReferences.kt")
+            public void testThisReferences() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/thisReferences.kt");
+            }
+            
             @TestMetadata("unitBlocks.kt")
             public void testUnitBlocks() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/unitBlocks.kt");
+            }
+            
+            @TestMetadata("whenWithCondition.kt")
+            public void testWhenWithCondition() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithCondition.kt");
+            }
+            
+            @TestMetadata("whenWithInRange.kt")
+            public void testWhenWithInRange() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithInRange.kt");
+            }
+            
+            @TestMetadata("whenWithIs.kt")
+            public void testWhenWithIs() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithIs.kt");
+            }
+            
+            @TestMetadata("whenWithoutCondition.kt")
+            public void testWhenWithoutCondition() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithoutCondition.kt");
             }
             
         }
