@@ -2544,6 +2544,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/multilevelBlocks.kt");
             }
             
+            @TestMetadata("realIteratorFoldl.kt")
+            public void testRealIteratorFoldl() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/realIteratorFoldl.kt");
+            }
+            
+            @TestMetadata("realStringEscape.kt")
+            public void testRealStringEscape() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/realStringEscape.kt");
+            }
+            
+            @TestMetadata("realStringRepeat.kt")
+            public void testRealStringRepeat() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/realStringRepeat.kt");
+            }
+            
             @TestMetadata("recursiveInnerFunction.kt")
             public void testRecursiveInnerFunction() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveInnerFunction.kt");
