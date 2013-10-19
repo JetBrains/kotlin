@@ -2286,7 +2286,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
     
     @TestMetadata("compiler/testData/codegen/box/functions")
-    @InnerTestClasses({Functions.Invoke.class, Functions.LocalFunctions.class})
+    @InnerTestClasses({Functions.Invoke.class, Functions.LocalFunctions.class, Functions.Tail_recursion.class})
     public static class Functions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFunctions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2523,11 +2523,55 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
         }
         
+        @TestMetadata("compiler/testData/codegen/box/functions/tail-recursion")
+        public static class Tail_recursion extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInTail_recursion() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/tail-recursion"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("loops.kt")
+            public void testLoops() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/loops.kt");
+            }
+            
+            @TestMetadata("multilevelBlocks.kt")
+            public void testMultilevelBlocks() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/multilevelBlocks.kt");
+            }
+            
+            @TestMetadata("simpleBlock.kt")
+            public void testSimpleBlock() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleBlock.kt");
+            }
+            
+            @TestMetadata("simpleReturn.kt")
+            public void testSimpleReturn() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleReturn.kt");
+            }
+            
+            @TestMetadata("simpleReturnWithElse.kt")
+            public void testSimpleReturnWithElse() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleReturnWithElse.kt");
+            }
+            
+            @TestMetadata("tryCatchFinally.kt")
+            public void testTryCatchFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/tryCatchFinally.kt");
+            }
+            
+            @TestMetadata("unitBlocks.kt")
+            public void testUnitBlocks() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/unitBlocks.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Functions");
             suite.addTestSuite(Functions.class);
             suite.addTestSuite(Invoke.class);
             suite.addTestSuite(LocalFunctions.class);
+            suite.addTestSuite(Tail_recursion.class);
             return suite;
         }
     }

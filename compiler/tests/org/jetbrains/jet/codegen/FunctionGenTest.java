@@ -72,7 +72,8 @@ public class FunctionGenTest extends CodegenTestCase {
                 Collections2.filter(bindingTrace.getKeys(BindingContext.TAIL_RECURSION_CALL), new Predicate<JetCallExpression>() {
                     @Override
                     public boolean apply(JetCallExpression input) {
-                        return Boolean.TRUE == bindingTrace.get(BindingContext.TAIL_RECURSION_CALL, input);
+                        //noinspection ConstantConditions
+                        return bindingTrace.get(BindingContext.TAIL_RECURSION_CALL, input).isDoGenerateTailRecursion();
                     }
                 })
             );

@@ -410,6 +410,7 @@ public class DefaultErrorMessages {
             }
         });
         MAP.put(NON_TAIL_RECURSIVE_CALL, "Function invocation is non tail-recursive");
+        MAP.put(PARTIAL_TAIL_RECURSIVE_CALL, "Function invocation is non always tail-recursive in finally: only in success case when there is no uncaught exception");
 
         MAP.put(RESULT_TYPE_MISMATCH, "{0} must return {1} but returns {2}", TO_STRING, RENDER_TYPE, RENDER_TYPE);
         MAP.put(UNSAFE_INFIX_CALL,

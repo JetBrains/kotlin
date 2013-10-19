@@ -27,7 +27,7 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
     public TraceStatus<RecursionStatus> visitNamedFunction(
             @NotNull JetNamedFunction function, TraceData<RecursionStatus> data
     ) {
-        return new TraceStatus<RecursionStatus>(RecursionStatus.MIGHT_BE, true);
+        return new TraceStatus<RecursionStatus>(data.data, true);
     }
 
     @Override
@@ -37,6 +37,12 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
         PsiElement last = data.last;
         if (last instanceof JetCatchClause && expression.getFinallyBlock() != null) {
             return noTailRecursion();
+        }
+        else if (last == expression.getTryBlock()) {
+            return noTailRecursion();
+        }
+        else if (last == expression.getFinallyBlock()) {
+            return continueTrace(data, RecursionStatus.FOUND_IN_FINALLY);
         }
 
         return continueTrace(data);
@@ -155,7 +161,7 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
             return continueTrace(state);
         }
 
-        if (state.data == RecursionStatus.MIGHT_BE) {
+        if (state.data == RecursionStatus.MIGHT_BE || state.data ==  RecursionStatus.FOUND_IN_FINALLY) {
             return noTailRecursion();
         }
 
@@ -167,8 +173,12 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
     }
 
     private static TraceStatus<RecursionStatus> continueTrace(TraceData<RecursionStatus> data) {
-        RecursionStatus newStatus = data.data.and(RecursionStatus.MIGHT_BE);
-        return new TraceStatus<RecursionStatus>(newStatus, newStatus == RecursionStatus.NO_TAIL);
+        return continueTrace(data, RecursionStatus.MIGHT_BE);
+    }
+
+    private static TraceStatus<RecursionStatus> continueTrace(TraceData<RecursionStatus> data, RecursionStatus desiredStatus) {
+        RecursionStatus newStatus = data.data.and(desiredStatus);
+        return new TraceStatus<RecursionStatus>(newStatus, !newStatus.isDoGenerateTailRecursion());
     }
 
     @Nullable
