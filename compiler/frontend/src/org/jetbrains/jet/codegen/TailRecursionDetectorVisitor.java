@@ -67,7 +67,7 @@ public class TailRecursionDetectorVisitor extends JetVisitor<TraceStatus<Recursi
             @NotNull JetBlockExpression expression, TraceData<RecursionStatus> data
     ) {
 
-        if (data.data == RecursionStatus.FOUND_IN_RETURN) return continueTrace(data);
+        if (data.data.isReturn()) return continueTrace(data);
 
         PsiElement child = data.last;
 

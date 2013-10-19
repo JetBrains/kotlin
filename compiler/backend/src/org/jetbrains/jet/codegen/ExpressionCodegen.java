@@ -1589,7 +1589,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (returnedExpression != null) {
             if (returnedExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) returnedExpression;
-                if (tailRecursionGeneratorUtil.isTailRecursion(callExpression) && callExpression.getCalleeExpression() != null) {
+                if (worstCaseFinallyBlocksCount == 0 && tailRecursionGeneratorUtil.isTailRecursion(callExpression) && callExpression.getCalleeExpression() != null) {
                     ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
                     if (resolvedCall != null) {
                         return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, callExpression);
