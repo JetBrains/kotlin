@@ -655,7 +655,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return result.toArray(new UsageInfo[result.size()]);
     }
 
-    static void removeOverrideModifier(@NotNull PsiElement element) {
+    public static void removeOverrideModifier(@NotNull PsiElement element) {
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
             JetModifierList modifierList = ((JetModifierListOwner) element).getModifierList();
             if (modifierList == null) return;
