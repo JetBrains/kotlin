@@ -64,6 +64,10 @@ public class Slices {
         return new BasicWritableSlice<K, V>(ONLY_REWRITE_TO_EQUAL);
     }
 
+    public static <K, V> WritableSlice<K, V> createCollectiveSlice() {
+        return new BasicWritableSlice<K, V>(ONLY_REWRITE_TO_EQUAL, true);
+    }
+
     public static <K> WritableSlice<K, Boolean> createSimpleSetSlice() {
         return createRemovableSetSlice();
     }
