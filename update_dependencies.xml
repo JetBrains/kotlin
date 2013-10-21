@@ -260,12 +260,12 @@
             </if>
 
             <if>
-                <os family="windows"/>
+                <matches pattern=".+\.win\.zip" string="@{build.zip}"/>
                 <then>
                     <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
                 </then>
                 <elseif>
-                    <os family="mac"/>
+                    <matches pattern=".+\.mac\.zip" string="@{build.zip}"/>
                     <then>
                         <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK">
                             <cutdirsmapper dirs="1"/>
