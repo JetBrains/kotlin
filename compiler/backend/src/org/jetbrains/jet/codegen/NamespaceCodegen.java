@@ -186,7 +186,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (!generateSrcClass) return null;
 
-        Type packageFragmentType = getNamespacePartType(getPackageClassFqName(name), file);
+        Type packageFragmentType = getNamespacePartType(getPackageClassFqName(name), file.getVirtualFile());
         ClassBuilder builder = state.getFactory().forPackageFragment(packageFragmentType, file);
 
         new NamespacePartCodegen(builder, file, packageFragmentType, packageFragmentContext, state).generate();
@@ -247,7 +247,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    private static Type getNamespacePartType(@NotNull FqName facadeFqName, @NotNull PsiFile file) {
+    public static Type getNamespacePartType(@NotNull FqName facadeFqName, @NotNull VirtualFile file) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // path hashCode to prevent same name / different path collision
@@ -267,6 +267,6 @@ public class NamespaceCodegen extends MemberCodegen {
     @NotNull
     public static String getNamespacePartInternalName(@NotNull JetFile file) {
         FqName packageFqName = JetPsiUtil.getFQName(file);
-        return getNamespacePartType(getPackageClassFqName(packageFqName), file).getInternalName();
+        return getNamespacePartType(getPackageClassFqName(packageFqName), file.getVirtualFile()).getInternalName();
     }
 }

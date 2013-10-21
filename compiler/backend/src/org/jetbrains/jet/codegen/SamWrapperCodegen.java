@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
@@ -134,11 +135,12 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
 
     private String getWrapperName(@NotNull JetFile containingFile) {
         NamespaceDescriptor namespace = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, containingFile);
-        assert namespace != null : "couldn't find namespace for file: " + containingFile.getVirtualFile();
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        assert namespace != null : "couldn't find namespace for file: " + virtualFile;
         FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
         String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(
                 PackageClassUtils.getPackageClassFqName(fqName)).getInternalName();
         return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
-               Integer.toHexString(CodegenUtil.getPathHashCode(containingFile) * 31 + DescriptorUtils.getFQName(samInterface).hashCode());
+               Integer.toHexString(CodegenUtil.getPathHashCode(virtualFile) * 31 + DescriptorUtils.getFQName(samInterface).hashCode());
     }
 }
