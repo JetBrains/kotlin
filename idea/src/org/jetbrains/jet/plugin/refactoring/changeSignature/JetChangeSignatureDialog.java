@@ -31,10 +31,7 @@ import com.intellij.psi.PsiCodeFragment;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.changeSignature.CallerChooserBase;
-import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase;
-import com.intellij.refactoring.changeSignature.MethodDescriptor;
-import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
+import com.intellij.refactoring.changeSignature.*;
 import com.intellij.refactoring.ui.ComboBoxVisibilityPanel;
 import com.intellij.refactoring.ui.VisibilityPanelBase;
 import com.intellij.ui.DottedBorder;
@@ -418,5 +415,17 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         return new JetChangeInfo(myMethod, getMethodName(), getReturnType(), returnTypeText,
                                  getVisibility(), parameters, myDefaultValueContext, generatedInfo
         );
+    }
+
+    @Override
+    protected int getSelectedIdx() {
+        List<JetParameterInfo> parameters = myMethod.getParameters();
+        for (int i = 0; i < parameters.size(); i++) {
+            JetParameterInfo info = parameters.get(i);
+            if (info.isNewParameter()) {
+                return i;
+            }
+        }
+        return super.getSelectedIdx();
     }
 }
