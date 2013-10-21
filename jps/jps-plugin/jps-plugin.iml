@@ -14,6 +14,8 @@
     <orderEntry type="library" name="jps" level="project" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
+    <orderEntry type="module" module-name="backend" scope="TEST" />
+    <orderEntry type="module" module-name="descriptors" scope="TEST" />
   </component>
 </module>
 

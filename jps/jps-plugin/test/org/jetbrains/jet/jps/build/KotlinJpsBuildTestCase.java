@@ -18,7 +18,10 @@ package org.jetbrains.jet.jps.build;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
@@ -26,6 +29,7 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "kotlinProject";
@@ -36,12 +40,18 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         super.setUp();
         File sourceFilesRoot = new File(TEST_DATA_PATH + getTestName(false));
         workDir = copyTestDataToTmpDir(sourceFilesRoot);
+        getOrCreateProjectDir();
     }
 
     @Override
     public void tearDown() throws Exception {
         FileUtil.delete(workDir);
         super.tearDown();
+    }
+
+    @Override
+    protected File doGetProjectDir() throws IOException {
+        return workDir;
     }
 
     private void initProject() {
@@ -62,6 +72,15 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
 
     public void testKotlinProject() {
         doTest();
+
+        assertOutputDeleted("src/test1.kt", "_DefaultPackage", "kotlinProject");
+    }
+
+    public void testKotlinProjectTwoFilesInOnePackage() {
+        doTest();
+
+        assertOutputDeleted("src/test1.kt", "_DefaultPackage", "kotlinProject");
+        assertOutputDeleted("src/test2.kt", "_DefaultPackage", "kotlinProject");
     }
 
     public void testKotlinJavaProject() {
@@ -106,14 +125,9 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
             }
         }
         result.assertSuccessful();
-    }
 
-    public void testTestDependencyLibrary() throws Throwable {
-        initProject();
-        addKotlinRuntimeDependency(JpsJavaDependencyScope.TEST, myProject.getModules(), false);
-        makeAll().assertSuccessful();
-        change(workDir + "/src/src.kt", "fun foo() { println() }");
-        makeAll().assertFailed();
+        assertOutputDeleted("src/kt2.kt", "kt2.Kt2Package", "kotlinProject");
+        assertOutputDeleted("module2/src/kt1.kt", "kt1.Kt1Package", "module2");
     }
 
     public void testReexportedDependency() {
@@ -133,7 +147,10 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         assertNotNull(outputUrl);
         File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
         File outputFile = new File(outputDir, relativePath);
-        assertTrue("Output not written: " + outputFile.getAbsolutePath() + "\n Directory contents: \n" + dirContents(outputFile.getParentFile()),
+        assertTrue("Output not written: " +
+                   outputFile.getAbsolutePath() +
+                   "\n Directory contents: \n" +
+                   dirContents(outputFile.getParentFile()),
                    outputFile.exists());
     }
 
@@ -147,5 +164,26 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
             builder.append(" * ").append(file.getName()).append("\n");
         }
         return builder.toString();
+    }
+
+    private void assertOutputDeleted(String sourceFileName, String packageClassFqName, String moduleName) {
+        File file = new File(workDir, sourceFileName);
+        change(file.getAbsolutePath());
+        makeAll();
+
+        String outputDirPrefix = "out/production/" + moduleName + "/";
+        assertDeleted(outputDirPrefix + packageClassFqName.replace('.', '/') + ".class",
+                      outputDirPrefix + getInternalNameForPackagePartClass(file, packageClassFqName) + ".class");
+    }
+
+    private static String getInternalNameForPackagePartClass(File sourceFile, String packageClassFqName) {
+        LightVirtualFile fakeVirtualFile = new LightVirtualFile(sourceFile.getPath()) {
+            @Override
+            public String getPath() {
+                // strip extra "/" from the beginning
+                return super.getPath().substring(1);
+            }
+        };
+        return NamespaceCodegen.getNamespacePartType(new FqName(packageClassFqName), fakeVirtualFile).getInternalName();
     }
 }

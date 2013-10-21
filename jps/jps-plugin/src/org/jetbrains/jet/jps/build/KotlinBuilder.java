@@ -34,6 +34,7 @@ import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
+import org.jetbrains.jps.builders.BuildTarget;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
@@ -47,10 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler;
@@ -165,9 +163,20 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             runK2JvmCompiler(commonSettings, k2JvmSettings, messageCollector, environment, moduleFile, outputItemCollector);
         }
 
+        // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
+        Map<File, BuildTarget<?>> sourceToTarget = new HashMap<File, BuildTarget<?>>();
+        if (chunk.getTargets().size() > 1) {
+            for (ModuleBuildTarget target : chunk.getTargets()) {
+                for (File file : KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
+                    sourceToTarget.put(file, target);
+                }
+            }
+        }
+
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
+            BuildTarget<?> target = sourceToTarget.get(outputItem.getSourceFiles().iterator().next());
             outputConsumer.registerOutputFile(
-                    representativeTarget,
+                    target != null ? target : representativeTarget,
                     outputItem.getOutputFile(),
                     paths(outputItem.getSourceFiles()));
         }
