@@ -169,7 +169,7 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     private void assertOutputDeleted(String sourceFileName, String packageClassFqName, String moduleName) {
         File file = new File(workDir, sourceFileName);
         change(file.getAbsolutePath());
-        makeAll();
+        makeAll().assertSuccessful();
 
         String outputDirPrefix = "out/production/" + moduleName + "/";
         assertDeleted(outputDirPrefix + packageClassFqName.replace('.', '/') + ".class",
