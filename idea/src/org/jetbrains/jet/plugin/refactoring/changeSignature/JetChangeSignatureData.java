@@ -52,6 +52,7 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
     private final BindingContext bindingContext;
     @NotNull
     private final Collection<FunctionDescriptor> descriptorsForSignatureChange;
+    private Collection<PsiElement> affectedFunctions = null;
 
     public JetChangeSignatureData(
             @NotNull FunctionDescriptor baseDescriptor,
@@ -98,11 +99,13 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
     @Override
     @NotNull
     public Collection<PsiElement> getAffectedFunctions() {
-        Set<PsiElement> result = Sets.newHashSet();
-        for (FunctionDescriptor descriptor : descriptorsForSignatureChange) {
-            result.addAll(computeHierarchyFrom(descriptor));
+        if (affectedFunctions == null) {
+            affectedFunctions = Sets.newHashSet();
+            for (FunctionDescriptor descriptor : descriptorsForSignatureChange) {
+                affectedFunctions.addAll(computeHierarchyFrom(descriptor));
+            }
         }
-        return result;
+        return affectedFunctions;
     }
 
     @NotNull
