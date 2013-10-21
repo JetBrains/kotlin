@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update">
-  <property name="jb.buildserver.build.id" value="2124737"/>
+  <property name="jb.buildserver.build.id" value="2148289"/>
   <property name="public.buildserver.build.id" value="96811"/>
 
     <condition property="os.tag" value="win.zip">
@@ -19,7 +19,9 @@
       </and>
     </condition>
 
-    <property name="idea.archive.name" value="ideaIC-129.SNAPSHOT.${os.tag}"/>
+    <property name="idea.build.number" value="129.SNAPSHOT"/>
+
+    <property name="idea.archive.name" value="ideaIC-${idea.build.number}.${os.tag}"/>
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
@@ -34,7 +36,7 @@
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/Kotlin_IdeaCommunityDist_CloneIdea121InstallersBuild/${jb.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
         />
     </target>
@@ -258,12 +260,12 @@
             </if>
 
             <if>
-                <os family="windows"/>
+                <matches pattern=".+\.win\.zip" string="@{build.zip}"/>
                 <then>
                     <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK"/>
                 </then>
                 <elseif>
-                    <os family="mac"/>
+                  <matches pattern=".+\.mac\.zip" string="@{build.zip}"/>
                     <then>
                         <unzip src="dependencies/download/@{build.zip}" dest="ideaSDK">
                             <cutdirsmapper dirs="1"/>
