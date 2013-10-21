@@ -25,21 +25,17 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.MemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
-import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.asm4.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.jet.codegen.AsmUtil.pushDefaultValueOnStack;
-import static org.jetbrains.jet.codegen.CodegenUtil.isNullableType;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
 
 public class TailRecursionGeneratorUtil {
@@ -129,16 +125,6 @@ public class TailRecursionGeneratorUtil {
             descriptorsStored.add(parameterDescriptor);
         }
         return descriptorsStored;
-    }
-
-    private void generateNullCheckIfNeeded(ValueParameterDescriptor parameterDescriptor, JetType type, Type asmType) {
-        if (type != null && !isNullableType(type)) { // we probably may try to analyze the expression has been stored to drop few more null checks
-            if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
-                v.dup();
-                v.visitLdcInsn(parameterDescriptor.getName().asString());
-                v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
-            }
-        }
     }
 
     private int getParameterVariableIndex(ValueParameterDescriptor parameterDescriptor, PsiElement node) {
