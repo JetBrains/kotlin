@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +49,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
+import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
@@ -92,7 +94,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         if (context instanceof NamespaceFacadeContext) {
             Type ownerType = ((NamespaceFacadeContext) context).getDelegateToClassType();
-            v.getMemberMap().recordImplClassNameForCallable(propertyDescriptor, shortNameByAsmType(ownerType));
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, propertyDescriptor, shortNameByAsmType(ownerType));
         }
         else if (!generateBackingField(p, propertyDescriptor)) {
             generateSyntheticMethodIfNeeded(propertyDescriptor);
@@ -169,11 +171,11 @@ public class PropertyCodegen extends GenerationStateAware {
         }
         else {
             Type tImplType = typeMapper.mapTraitImpl((ClassDescriptor) context.getContextDescriptor());
-            v.getMemberMap().recordImplClassNameForCallable(descriptor, shortNameByAsmType(tImplType));
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(tImplType));
         }
 
         if (kind != OwnerKind.TRAIT_IMPL) {
-            v.getMemberMap().recordSyntheticMethodOfProperty(descriptor, method);
+            v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, method);
         }
     }
 
@@ -202,7 +204,7 @@ public class PropertyCodegen extends GenerationStateAware {
             ImplementationBodyCodegen codegen = getParentBodyCodegen(classBodyCodegen);
             builder = codegen.v;
             backingFieldContext = codegen.context;
-            v.getMemberMap().recordStaticFieldInOuterClass(propertyDescriptor);
+            v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
         } else {
             if (kind != OwnerKind.NAMESPACE || isDelegate) {
                 modifiers |= ACC_PRIVATE;
@@ -216,7 +218,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
 
-        v.getMemberMap().recordFieldOfProperty(propertyDescriptor, type, name);
+        v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
         return builder.newField(element, modifiers, name, type.getDescriptor(),
                                 typeMapper.mapFieldSignature(jetType), defaultValue);

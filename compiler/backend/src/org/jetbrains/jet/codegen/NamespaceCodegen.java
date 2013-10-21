@@ -102,17 +102,17 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
-        List<MemberMap> namespaceMembers = new ArrayList<MemberMap>(files.size() + 1);
+        List<JvmSerializationBindings> bindings = new ArrayList<JvmSerializationBindings>(files.size() + 1);
         boolean shouldGeneratePackageClass = shouldGenerateNSClass(files);
         if (shouldGeneratePackageClass) {
-            namespaceMembers.add(v.getClassBuilder().getMemberMap());
+            bindings.add(v.getClassBuilder().getSerializationBindings());
         }
 
         for (JetFile file : files) {
             try {
                 ClassBuilder builder = generate(file);
                 if (builder != null) {
-                    namespaceMembers.add(builder.getMemberMap());
+                    bindings.add(builder.getSerializationBindings());
                 }
             }
             catch (ProcessCanceledException e) {
@@ -130,14 +130,14 @@ public class NamespaceCodegen extends MemberCodegen {
         }
 
         if (shouldGeneratePackageClass) {
-            writeKotlinPackageAnnotationIfNeeded(MemberMap.union(namespaceMembers));
+            writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
         }
 
         assert v.isActivated() == shouldGeneratePackageClass :
                 "Different algorithms for generating namespace class and for heuristics for: " + name.asString();
     }
 
-    private void writeKotlinPackageAnnotationIfNeeded(@NotNull MemberMap members) {
+    private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
             return;
         }
@@ -146,7 +146,7 @@ public class NamespaceCodegen extends MemberCodegen {
             if (file.isScript()) return;
         }
 
-        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(members));
+        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(bindings));
         ProtoBuf.Package packageProto = serializer.packageProto(descriptor).build();
 
         if (packageProto.getMemberCount() == 0) return;
@@ -163,7 +163,6 @@ public class NamespaceCodegen extends MemberCodegen {
         array.visitEnd();
         av.visitEnd();
     }
-
 
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file) {

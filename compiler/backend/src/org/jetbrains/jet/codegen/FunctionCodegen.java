@@ -48,6 +48,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -111,10 +112,10 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         if (owner instanceof NamespaceFacadeContext) {
             Type ownerType = ((NamespaceFacadeContext) owner).getDelegateToClassType();
-            v.getMemberMap().recordImplClassNameForCallable(functionDescriptor, shortNameByAsmType(ownerType));
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, shortNameByAsmType(ownerType));
         }
         else {
-            v.getMemberMap().recordMethodOfDescriptor(functionDescriptor, asmMethod);
+            v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);
         }
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
@@ -152,7 +153,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
-                v.getMemberMap().recordIndexForValueParameter(parameter, i);
+                v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
                 AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter);
             }
         }
