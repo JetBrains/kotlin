@@ -19,7 +19,9 @@
       </and>
     </condition>
 
-    <property name="idea.archive.name" value="ideaIC-132.SNAPSHOT.${os.tag}"/>
+    <property name="idea.build.number" value="132.SNAPSHOT"/>
+
+    <property name="idea.archive.name" value="ideaIC-${idea.build.number}.${os.tag}"/>
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
