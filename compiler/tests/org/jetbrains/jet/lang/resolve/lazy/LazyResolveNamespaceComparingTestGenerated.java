@@ -40,7 +40,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         }
         
         @TestMetadata("compiler/testData/loadKotlin/annotations")
-        @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class, Annotations.PropertiesWithoutBackingFields.class})
+        @InnerTestClasses({Annotations.ClassMembers.class, Annotations.Classes.class, Annotations.PackageMembers.class, Annotations.Parameters.class, Annotations.PropertiesWithoutBackingFields.class})
         public static class Annotations extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInAnnotations() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -185,6 +185,54 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 
             }
             
+            @TestMetadata("compiler/testData/loadKotlin/annotations/parameters")
+            public static class Parameters extends AbstractLazyResolveNamespaceComparingTest {
+                public void testAllFilesPresentInParameters() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("Constructor.kt")
+                public void testConstructor() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/Constructor.kt");
+                }
+                
+                @TestMetadata("EnumConstructor.kt")
+                public void testEnumConstructor() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/EnumConstructor.kt");
+                }
+                
+                @TestMetadata("ExtensionFunction.kt")
+                public void testExtensionFunction() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/ExtensionFunction.kt");
+                }
+                
+                @TestMetadata("ExtensionFunctionInClass.kt")
+                public void testExtensionFunctionInClass() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/ExtensionFunctionInClass.kt");
+                }
+                
+                @TestMetadata("FunctionInClass.kt")
+                public void testFunctionInClass() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/FunctionInClass.kt");
+                }
+                
+                @TestMetadata("FunctionInTrait.kt")
+                public void testFunctionInTrait() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/FunctionInTrait.kt");
+                }
+                
+                @TestMetadata("ManyAnnotations.kt")
+                public void testManyAnnotations() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/ManyAnnotations.kt");
+                }
+                
+                @TestMetadata("TopLevelFunction.kt")
+                public void testTopLevelFunction() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/TopLevelFunction.kt");
+                }
+                
+            }
+            
             @TestMetadata("compiler/testData/loadKotlin/annotations/propertiesWithoutBackingFields")
             public static class PropertiesWithoutBackingFields extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInPropertiesWithoutBackingFields() throws Exception {
@@ -239,6 +287,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 suite.addTestSuite(ClassMembers.class);
                 suite.addTestSuite(Classes.class);
                 suite.addTestSuite(PackageMembers.class);
+                suite.addTestSuite(Parameters.class);
                 suite.addTestSuite(PropertiesWithoutBackingFields.class);
                 return suite;
             }

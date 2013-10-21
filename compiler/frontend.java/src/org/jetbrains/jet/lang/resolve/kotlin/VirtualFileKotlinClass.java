@@ -141,13 +141,19 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
 
                 @Override
                 public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                    final AnnotationVisitor v = memberVisitor.visitMethod(Name.guess(name), desc);
+                    final MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.guess(name), desc);
                     if (v == null) return null;
 
                     return new MethodVisitor(ASM4) {
                         @Override
                         public org.jetbrains.asm4.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                             return convertAnnotationVisitor(v, desc);
+                        }
+
+                        @Override
+                        public org.jetbrains.asm4.AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
+                            AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameter, classNameFromAsmDesc(desc));
+                            return av == null ? null : convertAnnotationVisitor(av);
                         }
 
                         @Override

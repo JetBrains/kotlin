@@ -1,0 +1,20 @@
+package test
+
+internal fun bar(/*0*/ test.A() test.B() test.C() test.D() x: jet.Int): jet.Unit
+internal fun foo(/*0*/ test.A() test.B() x: jet.Int, /*1*/ test.A() test.C() y: jet.Double, /*2*/ test.B() test.C() test.D() z: jet.String): jet.Unit
+
+internal final annotation class A : jet.Annotation {
+    /*primary*/ public constructor A()
+}
+
+internal final annotation class B : jet.Annotation {
+    /*primary*/ public constructor B()
+}
+
+internal final annotation class C : jet.Annotation {
+    /*primary*/ public constructor C()
+}
+
+internal final annotation class D : jet.Annotation {
+    /*primary*/ public constructor D()
+}
