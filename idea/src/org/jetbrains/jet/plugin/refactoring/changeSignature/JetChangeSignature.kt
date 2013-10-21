@@ -35,6 +35,10 @@ import org.jetbrains.annotations.TestOnly
 
 public trait JetChangeSignatureConfiguration {
     fun configure(changeSignatureData: JetChangeSignatureData, bindingContext: BindingContext)
+
+    fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean {
+        return false
+    }
 }
 
 public fun runChangeSignature(project: Project,
@@ -42,9 +46,8 @@ public fun runChangeSignature(project: Project,
                               configuration: JetChangeSignatureConfiguration,
                               bindingContext: BindingContext,
                               defaultValueContext: PsiElement,
-                              commandName: String? = null,
-                              performSilently: Boolean = false): Unit {
-    JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, commandName, performSilently).run()
+                              commandName: String? = null): Unit {
+    JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, commandName).run()
 }
 
 public class JetChangeSignature(val project: Project,
@@ -52,8 +55,7 @@ public class JetChangeSignature(val project: Project,
                                 val configuration: JetChangeSignatureConfiguration,
                                 val bindingContext: BindingContext,
                                 val defaultValueContext: PsiElement,
-                                val commandName: String?,
-                                val performSilently: Boolean) {
+                                val commandName: String?) {
 
     private val LOG = Logger.getInstance(javaClass<JetChangeSignature>())
 
@@ -117,6 +119,8 @@ public class JetChangeSignature(val project: Project,
         if (dialog == null) {
             return
         }
+
+        val performSilently = configuration.performSilently(dialog.getMethodDescriptor().getAffectedFunctions())
 
         if (performSilently || ApplicationManager.getApplication()!!.isUnitTestMode()) {
             performRefactoringSilently(dialog)
@@ -201,6 +205,6 @@ TestOnly public fun getChangeSignatureDialog(project: Project,
                                              configuration: JetChangeSignatureConfiguration,
                                              bindingContext: BindingContext,
                                              defaultValueContext: PsiElement): JetChangeSignatureDialog? {
-    val jetChangeSignature = JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, null, true)
+    val jetChangeSignature = JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, null)
     return jetChangeSignature.createChangeSignatureDialog(jetChangeSignature.getDeepestSuperDeclarations())
 }

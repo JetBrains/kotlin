@@ -400,6 +400,11 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         return new JetChangeSignatureProcessor(myProject, evaluateChangeInfo(), commandName != null ? commandName : getTitle());
     }
 
+    @NotNull
+    public JetMethodDescriptor getMethodDescriptor() {
+        return myMethod;
+    }
+
     public JetChangeInfo evaluateChangeInfo() {
         List<JetParameterInfo> parameters = getParameters();
 

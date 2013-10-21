@@ -38,6 +38,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
+import java.util.Collection;
+
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class JetChangeSignatureHandler implements ChangeSignatureHandler {
@@ -93,7 +96,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         if (functionDescriptor == null) {
             return;
         }
-        runChangeSignature(project, functionDescriptor, emptyConfiguration(), bindingContext, context, null, false);
+        runChangeSignature(project, functionDescriptor, emptyConfiguration(), bindingContext, context, null);
     }
 
     @TestOnly
@@ -108,6 +111,11 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
                     @NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext
             ) {
                 //do nothing
+            }
+
+            @Override
+            public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
+                return false;
             }
         };
     }

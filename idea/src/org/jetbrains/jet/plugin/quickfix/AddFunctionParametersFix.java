@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
@@ -62,7 +64,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
         assert newParametersCnt > 0;
         String subjectSuffix = newParametersCnt > 1 ? "s" : "";
 
-        if (functionDescriptor instanceof ConstructorDescriptor) {
+        if (isConstructor()) {
             String className = functionDescriptor.getContainingDeclaration().getName().asString();
 
             if (hasTypeMismatches)
@@ -83,16 +85,13 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) callElement.getContainingFile()).getBindingContext();
-        boolean performSilently = !hasTypeMismatches && !(functionDescriptor instanceof ConstructorDescriptor) && !hasOtherUsages();
-        runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText(), performSilently);
+        runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText());
     }
 
     private JetChangeSignatureConfiguration addParameterConfiguration() {
         return new JetChangeSignatureConfiguration() {
             @Override
-            public void configure(
-                    @NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext
-            ) {
+            public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
                 List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
                 List<? extends ValueArgument> arguments = callElement.getValueArguments();
                 JetNameValidator validator = JetNameValidator.getCollectingValidator(callElement.getProject());
@@ -119,18 +118,30 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                     }
                 }
             }
+
+            @Override
+            public boolean performSilently(@NotNull Collection<? extends PsiElement> affectedFunctions) {
+                if (affectedFunctions.size() != 1) {
+                    return false;
+                }
+                PsiElement onlyFunction = affectedFunctions.iterator().next();
+                return !hasTypeMismatches && !isConstructor() && !hasOtherUsages(onlyFunction);
+            }
         };
     }
 
-    private boolean hasOtherUsages() {
-        for (PsiReference reference : ReferencesSearch.search(element)) {
-            PsiElement referenceElement = reference.getElement();
-
-            if (referenceElement != null && referenceElement.getParent() instanceof JetReferenceExpression &&
-                !callElement.equals(referenceElement.getParent().getParent()))
+    private boolean hasOtherUsages(@NotNull PsiElement function) {
+        for (PsiReference reference : ReferencesSearch.search(function)) {
+            JetCallElement call = PsiTreeUtil.getParentOfType(reference.getElement(), JetCallElement.class);
+            if (call != null && !callElement.equals(call)) {
                 return true;
+            }
         }
 
         return false;
+    }
+
+    private boolean isConstructor() {
+        return functionDescriptor instanceof ConstructorDescriptor;
     }
 }

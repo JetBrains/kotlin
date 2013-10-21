@@ -29,6 +29,7 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
@@ -62,6 +63,11 @@ public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
                 List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
                 changeSignatureData.removeParameter(parameters.indexOf(parameterToRemove));
             }
-        }, bindingContext, context, getText(), false);
+
+            @Override
+            public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
+                return false;
+            }
+        }, bindingContext, context, getText());
     }
 }
