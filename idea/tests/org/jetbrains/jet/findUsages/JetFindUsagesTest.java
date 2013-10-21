@@ -163,6 +163,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findClassUsages/kotlinDerivedInterfaceUsages2.0.kt");
         }
         
+        @TestMetadata("kotlinPrivateClassUsages.0.kt")
+        public void testKotlinPrivateClassUsages() throws Exception {
+            doTest("idea/testData/findUsages/findClassUsages/kotlinPrivateClassUsages.0.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/findUsages/findMethodUsages")
@@ -191,6 +196,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findMethodUsages/kotlinOverloadAndExtensionUsages.0.kt");
         }
         
+        @TestMetadata("kotlinPrivateMethodUsages.0.kt")
+        public void testKotlinPrivateMethodUsages() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinPrivateMethodUsages.0.kt");
+        }
+        
         @TestMetadata("kotlinTopLevelMethodUsages.0.kt")
         public void testKotlinTopLevelMethodUsages() throws Exception {
             doTest("idea/testData/findUsages/findMethodUsages/kotlinTopLevelMethodUsages.0.kt");
@@ -214,6 +224,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findObjectUsages/kotlinObjectUsages.0.kt");
         }
         
+        @TestMetadata("kotlinPrivateObjectUsages.0.kt")
+        public void testKotlinPrivateObjectUsages() throws Exception {
+            doTest("idea/testData/findUsages/findObjectUsages/kotlinPrivateObjectUsages.0.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/findUsages/findPropertyUsages")
@@ -225,6 +240,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
         @TestMetadata("javaPropertyUsages.0.kt")
         public void testJavaPropertyUsages() throws Exception {
             doTest("idea/testData/findUsages/findPropertyUsages/javaPropertyUsages.0.kt");
+        }
+        
+        @TestMetadata("kotlinPrivatePropertyUsages.0.kt")
+        public void testKotlinPrivatePropertyUsages() throws Exception {
+            doTest("idea/testData/findUsages/findPropertyUsages/kotlinPrivatePropertyUsages.0.kt");
         }
         
         @TestMetadata("kotlinTopLevelPropertyUsages.0.kt")
