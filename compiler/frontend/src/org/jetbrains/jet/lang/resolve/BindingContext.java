@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.codegen.RecursionStatus;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
@@ -86,6 +88,10 @@ public interface BindingContext {
             new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL =
             new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
+    WritableSlice<JetCallExpression, RecursionStatus> TAIL_RECURSION_CALL =
+            new BasicWritableSlice<JetCallExpression, RecursionStatus>(DO_NOTHING, true);
+    WritableSlice<DeclarationDescriptor, List<JetCallExpression>> FUNCTION_RECURSIONS =
+            new BasicWritableSlice<DeclarationDescriptor, List<JetCallExpression>>(DO_NOTHING, false);
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 

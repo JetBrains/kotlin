@@ -17,12 +17,16 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.RecursionStatus;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -64,6 +68,7 @@ public class ControlFlowAnalyzer {
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
+            assert expectedReturnType != null;
             checkFunction(function, expectedReturnType);
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
@@ -91,16 +96,18 @@ public class ControlFlowAnalyzer {
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
             assert accessorDescriptor != null;
-            checkFunction(accessor, accessorDescriptor.getReturnType());
+            JetType returnType = accessorDescriptor.getReturnType();
+            assert returnType != null;
+            checkFunction(accessor, returnType);
         }
     }
 
     private void checkFunction(JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
-        assert function instanceof JetDeclaration;
+        assert function != null;
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
 
         boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
         if (!isPropertyAccessor) {
@@ -119,5 +126,34 @@ public class ControlFlowAnalyzer {
         flowInformationProvider.markUnusedVariables();
 
         flowInformationProvider.markUnusedLiteralsInBlock();
+
+        checkTailRecursion(function);
+    }
+
+    private void checkTailRecursion(JetDeclarationWithBody declarationWithBody) {
+        FunctionDescriptor descriptor = (FunctionDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationWithBody);
+        if (descriptor != null && declarationWithBody instanceof JetNamedFunction && (KotlinBuiltIns.getInstance().isTailRecursive(descriptor))) {
+            List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIONS, descriptor);
+            if (calls == null || calls.isEmpty()) {
+                trace.report(Errors.TAIL_RECURSIVE_FUNCTION_WITH_NO_TAILS.on((JetNamedFunction) declarationWithBody));
+            }
+            else {
+                for (JetCallExpression call : calls) {
+                    RecursionStatus status = trace.get(BindingContext.TAIL_RECURSION_CALL, call);
+                    if (status != null) {
+                        switch (status) {
+                            case NO_TAIL:
+                                trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(call));
+                                break;
+                            case FOUND_IN_FINALLY:
+                                trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(call));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

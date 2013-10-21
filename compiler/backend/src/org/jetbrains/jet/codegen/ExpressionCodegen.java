@@ -108,6 +108,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      * we put it into this map to emit access to that variable instead of evaluating the whole expression
      */
     private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
+    @NotNull
+    private final TailRecursionGeneratorUtil tailRecursionGeneratorUtil;
 
     public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
@@ -177,6 +179,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.statementVisitor = new CodegenStatementVisitor(this);
+        this.tailRecursionGeneratorUtil = new TailRecursionGeneratorUtil(context, this, this.v, state);
     }
 
     protected InstructionAdapter createInstructionAdapter(MethodVisitor mv) {
@@ -1575,6 +1578,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitReturnExpression(@NotNull JetReturnExpression expression, StackValue receiver) {
         JetExpression returnedExpression = expression.getReturnedExpression();
         if (returnedExpression != null) {
+            if (returnedExpression instanceof JetCallExpression) {
+                JetCallExpression callExpression = (JetCallExpression) returnedExpression;
+                if (tailRecursionGeneratorUtil.isTailRecursion(callExpression) && callExpression.getCalleeExpression() != null) {
+                    ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
+                    if (resolvedCall != null) {
+                        return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, callExpression);
+                    }
+                }
+            }
+
             gen(returnedExpression, returnType);
             doFinallyOnReturn();
             v.areturn(returnType);
@@ -1914,6 +1927,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (original instanceof SamConstructorDescriptor) {
                 return invokeSamConstructor(expression, resolvedCall, ((SamConstructorDescriptor) original).getBaseForSynthesized());
             }
+        }
+
+        if (tailRecursionGeneratorUtil.isTailRecursion(expression)) {
+            return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, expression);
         }
 
         return invokeFunction(call, receiver, resolvedCall);

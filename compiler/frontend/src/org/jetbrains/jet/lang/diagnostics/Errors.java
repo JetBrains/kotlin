@@ -279,6 +279,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<JetNamedFunction> TAIL_RECURSIVE_FUNCTION_WITH_NO_TAILS = DiagnosticFactory0.create(WARNING, NAMED_ELEMENT);
+
     // Named parameters
 
     DiagnosticFactory0<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
@@ -332,6 +334,9 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> CALLEE_NOT_A_FUNCTION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetReferenceExpression, JetExpression, JetType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetExpression, JetExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
+
+    DiagnosticFactory0<JetCallExpression> NON_TAIL_RECURSIVE_CALL = DiagnosticFactory0.create(WARNING, CALL_EXPRESSION);
+    DiagnosticFactory0<JetCallExpression> TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED = DiagnosticFactory0.create(WARNING, CALL_EXPRESSION);
 
     DiagnosticFactory0<PsiElement> NO_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS = DiagnosticFactory0.create(ERROR);

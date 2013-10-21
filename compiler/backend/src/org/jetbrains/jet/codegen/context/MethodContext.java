@@ -18,15 +18,19 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.asm4.Label;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
-public class MethodContext extends CodegenContext {
+public class MethodContext extends CodegenContext<CallableDescriptor> {
+    private Label methodStartLabel;
+
     public MethodContext(
             @NotNull FunctionDescriptor contextType,
             @NotNull OwnerKind contextKind,
@@ -60,8 +64,18 @@ public class MethodContext extends CodegenContext {
         return getParentContext().getOuterExpression(prefix, false);
     }
 
+    @Nullable
+    public Label getMethodStartLabel() {
+        return methodStartLabel;
+    }
+
+    public void setMethodStartLabel(@NotNull Label methodStartLabel) {
+        this.methodStartLabel = methodStartLabel;
+    }
+
     @Override
     public String toString() {
         return "Method: " + getContextDescriptor();
     }
+
 }

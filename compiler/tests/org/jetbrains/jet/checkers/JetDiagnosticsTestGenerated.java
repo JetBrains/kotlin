@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class})
 public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEagerResolve {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.TailRecursions.class, Tests.ThisAndSuper.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractDiagnosticsTestWithEagerResolve {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -5890,6 +5890,34 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             }
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/tailRecursions")
+        public static class TailRecursions extends AbstractDiagnosticsTestWithEagerResolve {
+            public void testAllFilesPresentInTailRecursions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/tailRecursions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("functionWithNoTails.kt")
+            public void testFunctionWithNoTails() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailRecursions/functionWithNoTails.kt");
+            }
+            
+            @TestMetadata("functionWithNonTailRecursions.kt")
+            public void testFunctionWithNonTailRecursions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailRecursions/functionWithNonTailRecursions.kt");
+            }
+            
+            @TestMetadata("functionWithoutAnnotation.kt")
+            public void testFunctionWithoutAnnotation() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailRecursions/functionWithoutAnnotation.kt");
+            }
+            
+            @TestMetadata("tailRecursionInFinally.kt")
+            public void testTailRecursionInFinally() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailRecursions/tailRecursionInFinally.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
         public static class ThisAndSuper extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInThisAndSuper() throws Exception {
@@ -6119,6 +6147,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Substitutions.class);
             suite.addTestSuite(Subtyping.class);
             suite.addTest(Suppress.innerSuite());
+            suite.addTestSuite(TailRecursions.class);
             suite.addTestSuite(ThisAndSuper.class);
             suite.addTestSuite(Varargs.class);
             suite.addTestSuite(When.class);

@@ -31,6 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.codegen.TraceStatus;
 import org.jetbrains.jet.kdoc.psi.api.KDocElement;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -41,10 +42,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class JetPsiUtil {
 
@@ -1042,5 +1040,38 @@ public class JetPsiUtil {
 
     public static boolean isLocal(@NotNull JetNamedDeclaration declaration) {
         return getEnclosingBlockForLocalDeclaration(declaration) != null;
+    }
+
+    @NotNull
+    public static <T> T traceToRoot(
+            @NotNull PsiElement element,
+            @NotNull JetVisitor<TraceStatus<T>, TraceData<T>> visitor,
+            T def
+    ) {
+        ArrayList<PsiElement> track = new ArrayList<PsiElement>();
+        List<PsiElement> view = Collections.unmodifiableList(track);
+        @NotNull
+        TraceStatus<T> lastStatus = new TraceStatus<T>(def, true);
+        TraceData<T> data = new TraceData<T>(view);
+
+        do {
+            track.add(element);
+            PsiElement parent = element.getParent();
+            if (parent instanceof JetElement) {
+                JetElement jet = (JetElement) parent;
+                data.last = element;
+                data.data = lastStatus.getData();
+
+                TraceStatus<T> status = jet.accept(visitor, data);
+                if (status == null) {
+                    throw new IllegalStateException("visitor has returned null status");
+                }
+                lastStatus = status;
+            }
+
+            element = parent;
+        } while (element != null && !lastStatus.isAbortTrace());
+
+        return lastStatus.getData();
     }
 }

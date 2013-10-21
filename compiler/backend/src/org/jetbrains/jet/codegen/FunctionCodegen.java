@@ -259,6 +259,9 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                 frameMap.enter(parameter, typeMapper.mapType(parameter));
             }
 
+            Label methodEntry = new Label();
+            mv.visitLabel(methodEntry);
+            context.setMethodStartLabel(methodEntry);
             labelsForSharedVars.putAll(createSharedVarsForParameters(mv, functionDescriptor, frameMap));
 
             if (!JetTypeMapper.isAccessor(functionDescriptor)) {
