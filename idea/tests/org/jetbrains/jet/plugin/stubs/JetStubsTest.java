@@ -27,7 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -76,7 +78,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         doBuildTest("class C { class object { fun foo() {} }}",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=C fqn=C superNames=[]]\n" +
-                    "    OBJECT_DECLARATION:PsiJetObjectStubImpl[class-object name=null fqName=null]\n" +
+                    "    OBJECT_DECLARATION:PsiJetObjectStubImpl[class-object name=null fqName=null superNames=[]]\n" +
                     "      FUN:PsiJetFunctionStubImpl[name=foo]\n" +
                     "        VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
@@ -174,9 +176,11 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testNamedObject() {
-        doBuildTest("object Test {}",
+        doBuildTest("class A\ntrait T\nobject Test: A(), T {}",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  OBJECT_DECLARATION:PsiJetObjectStubImpl[top name=Test fqName=Test]\n");
+                    "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
+                    "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
+                    "  OBJECT_DECLARATION:PsiJetObjectStubImpl[top name=Test fqName=Test superNames=[AT]]\n");
     }
 
     public void testAnnotationOnClass() {

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -35,7 +36,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class JetClassElementType extends JetStubElementType<PsiJetClassStub, JetClass> {
-
     public JetClassElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
@@ -54,8 +54,9 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = JetPsiUtil.getFQName(psi);
         boolean isEnumEntry = psi instanceof JetEnumEntry;
+        List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, fqName != null ? fqName.asString() : null, psi.getName(),
-                                       psi.getSuperNames(), psi.isTrait(), psi.isEnum(), isEnumEntry, psi.isAnnotation(), psi.isInner());
+                                       superNames, psi.isTrait(), psi.isEnum(), isEnumEntry, psi.isAnnotation(), psi.isInner());
     }
 
     @Override

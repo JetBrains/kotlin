@@ -27,11 +27,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetObjectStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
+import java.util.List;
 
 public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, JetObjectDeclaration> {
     public JetObjectElementType(@NotNull @NonNls String debugName) {
@@ -62,19 +64,30 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
     }
 
     @Override
-    public PsiJetObjectStub createStub(@NotNull JetObjectDeclaration psi, @NotNull StubElement parentStub) {
+    public PsiJetObjectStub createStub(@NotNull JetObjectDeclaration psi, StubElement parentStub) {
         String name = psi.getName();
         FqName fqName = psi.getFqName();
-        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, psi.isTopLevel(), isClassObject(psi));
+        List<String> superNames = PsiUtilPackage.getSuperNames(psi);
+        return new PsiJetObjectStubImpl(
+                JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, superNames, psi.isTopLevel(), isClassObject(psi)
+        );
     }
 
     @Override
     public void serialize(@NotNull PsiJetObjectStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
+
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.toString() : null);
+
         dataStream.writeBoolean(stub.isTopLevel());
         dataStream.writeBoolean(stub.isClassObject());
+
+        List<String> superNames = stub.getSuperNames();
+        dataStream.writeVarInt(superNames.size());
+        for (String name : superNames) {
+            dataStream.writeName(name);
+        }
     }
 
     @NotNull
@@ -83,10 +96,17 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         StringRef name = dataStream.readName();
         StringRef fqNameStr = dataStream.readName();
         FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
+
         boolean isTopLevel = dataStream.readBoolean();
         boolean isClassObject = dataStream.readBoolean();
 
-        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, isTopLevel, isClassObject);
+        int superCount = dataStream.readVarInt();
+        StringRef[] superNames = StringRef.createArray(superCount);
+        for (int i = 0; i < superCount; i++) {
+            superNames[i] = dataStream.readName();
+        }
+
+        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, superNames, isTopLevel, isClassObject);
     }
 
     @Override

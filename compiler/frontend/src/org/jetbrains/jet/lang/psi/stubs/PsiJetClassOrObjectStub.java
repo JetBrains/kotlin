@@ -16,16 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 
-public interface PsiJetClassStub extends PsiJetClassOrObjectStub<JetClass> {
-    boolean isTrait();
+import java.util.List;
 
-    boolean isAnnotation();
-
-    boolean isEnumClass();
-    
-    boolean isInner();
-
-    boolean isEnumEntry();
+public interface PsiJetClassOrObjectStub<T extends JetClassOrObject> extends PsiJetStubWithFqName<T> {
+    @NotNull
+    List<String> getSuperNames();
 }

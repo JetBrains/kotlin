@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi.stubs;
+package org.jetbrains.jet.lang.psi.stubs.impl
 
-import org.jetbrains.jet.lang.psi.JetClass;
+import com.intellij.util.io.StringRef
 
-public interface PsiJetClassStub extends PsiJetClassOrObjectStub<JetClass> {
-    boolean isTrait();
-
-    boolean isAnnotation();
-
-    boolean isEnumClass();
-    
-    boolean isInner();
-
-    boolean isEnumEntry();
+object Utils {
+    fun wrapStrings(names : List<String>) : Array<StringRef> {
+        return Array<StringRef>(names.size()) { i -> StringRef.fromString(names.get(i))!! }
+    }
 }

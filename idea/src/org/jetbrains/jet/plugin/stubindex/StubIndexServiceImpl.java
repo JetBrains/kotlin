@@ -53,11 +53,15 @@ public class StubIndexServiceImpl implements StubIndexService {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn.asString());
         }
 
+        indexSuperNames(stub, sink);
+
+        recordClassOrObjectByPackage(stub, sink);
+    }
+
+    private static <T extends JetClassOrObject> void indexSuperNames(PsiJetClassOrObjectStub<T> stub, IndexSink sink) {
         for (String superName : stub.getSuperNames()) {
             sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
         }
-
-        recordClassOrObjectByPackage(stub, sink);
     }
 
     @Override
@@ -89,6 +93,8 @@ public class StubIndexServiceImpl implements StubIndexService {
         if (fqName != null) {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.asString());
         }
+
+        indexSuperNames(stub, sink);
 
         recordClassOrObjectByPackage(stub, sink);
     }
