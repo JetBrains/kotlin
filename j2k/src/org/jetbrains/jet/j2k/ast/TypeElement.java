@@ -25,7 +25,7 @@ public class TypeElement extends Element {
         myType = type;
     }
 
-    public Type getMyType() {
+    public Type getType() {
         return myType;
     }
 

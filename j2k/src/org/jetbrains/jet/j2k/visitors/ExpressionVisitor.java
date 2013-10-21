@@ -162,7 +162,7 @@ public class ExpressionVisitor extends StatementVisitor {
 
 
         TypeElement typeElement = (TypeElement) getConverter().elementToElement(expression.getOperand());
-        typeElement.getMyType().convertedToNotNull();
+        typeElement.getType().convertedToNotNull();
         myResult = new ClassObjectAccessExpression(typeElement);
     }
 
@@ -194,7 +194,7 @@ public class ExpressionVisitor extends StatementVisitor {
         super.visitInstanceOfExpression(expression);
 
         TypeElement typeElement = (TypeElement) getConverter().elementToElement(expression.getCheckType());
-        typeElement.getMyType().convertedToNotNull();
+        typeElement.getType().convertedToNotNull();
         myResult = new IsOperator(getConverter().expressionToExpression(expression.getOperand()), typeElement);
     }
 
