@@ -272,7 +272,8 @@ public class DescriptorSerializer {
         return ProtoBuf.Callable.CallableKind.FUN;
     }
 
-    private ProtoBuf.Callable.ValueParameter.Builder valueParameter(ValueParameterDescriptor descriptor) {
+    @NotNull
+    private ProtoBuf.Callable.ValueParameter.Builder valueParameter(@NotNull ValueParameterDescriptor descriptor) {
         ProtoBuf.Callable.ValueParameter.Builder builder = ProtoBuf.Callable.ValueParameter.newBuilder();
 
         builder.setFlags(Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue()));
@@ -285,6 +286,8 @@ public class DescriptorSerializer {
         if (varargElementType != null) {
             builder.setVarargElementType(type(varargElementType));
         }
+
+        extension.serializeValueParameter(descriptor, builder, nameTable);
 
         return builder;
     }

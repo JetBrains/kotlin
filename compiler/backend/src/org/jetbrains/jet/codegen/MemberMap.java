@@ -24,6 +24,7 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 
 import java.util.*;
 
@@ -33,6 +34,7 @@ public final class MemberMap {
     private final Map<PropertyDescriptor, Method> syntheticMethodForProperty = new HashMap<PropertyDescriptor, Method>();
     private final Map<CallableMemberDescriptor, String> implClassNameForCallable = new HashMap<CallableMemberDescriptor, String>();
     private final Set<PropertyDescriptor> staticFieldInOuterClass = new HashSet<PropertyDescriptor>();
+    private final Map<ValueParameterDescriptor, Integer> indexForValueParameter = new HashMap<ValueParameterDescriptor, Integer>();
 
     @NotNull
     public static MemberMap union(@NotNull Collection<MemberMap> maps) {
@@ -56,6 +58,10 @@ public final class MemberMap {
 
             for (PropertyDescriptor property : map.staticFieldInOuterClass) {
                 result.recordStaticFieldInOuterClass(property);
+            }
+
+            for (Map.Entry<ValueParameterDescriptor, Integer> entry : map.indexForValueParameter.entrySet()) {
+                result.recordIndexForValueParameter(entry.getKey(), entry.getValue());
             }
         }
 
@@ -87,6 +93,11 @@ public final class MemberMap {
         assert added : "Duplicate static field in outer class: " + property;
     }
 
+    public void recordIndexForValueParameter(@NotNull ValueParameterDescriptor descriptor, int index) {
+        Integer old = indexForValueParameter.put(descriptor, index);
+        assert old == null || old == index : "Duplicate index for value parameter: " + descriptor;
+    }
+
     @Nullable
     public Method getMethodOfDescriptor(@NotNull FunctionDescriptor descriptor) {
         return methodForFunction.get(descriptor);
@@ -111,11 +122,17 @@ public final class MemberMap {
         return staticFieldInOuterClass.contains(property);
     }
 
+    @Nullable
+    public Integer getIndexForValueParameter(@NotNull ValueParameterDescriptor descriptor) {
+        return indexForValueParameter.get(descriptor);
+    }
+
     @Override
     public String toString() {
         return "Functions: " + methodForFunction.size() +
                ", fields: " + fieldForProperty.size() +
                ", synthetic methods: " + syntheticMethodForProperty.size() +
-               ", impl class names: " + implClassNameForCallable.size();
+               ", impl class names: " + implClassNameForCallable.size() +
+               ", value parameters: " + indexForValueParameter.size();
     }
 }

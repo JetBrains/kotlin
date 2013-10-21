@@ -48,6 +48,18 @@ public class JavaSerializerExtension extends SerializerExtension {
         saveImplClassName(callable, proto, nameTable);
     }
 
+    @Override
+    public void serializeValueParameter(
+            @NotNull ValueParameterDescriptor descriptor,
+            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto,
+            @NotNull NameTable nameTable
+    ) {
+        Integer index = memberMap.getIndexForValueParameter(descriptor);
+        if (index != null) {
+            proto.setExtension(JavaProtoBuf.index, index);
+        }
+    }
+
     private void saveSignature(
             @NotNull CallableMemberDescriptor callable,
             @NotNull ProtoBuf.Callable.Builder proto,

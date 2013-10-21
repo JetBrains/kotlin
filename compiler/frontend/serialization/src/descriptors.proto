@@ -189,6 +189,7 @@ message Callable {
     required Type type = 3;
     optional Type vararg_element_type = 4;
 
+    extensions 100 to 199;
   }
 
   repeated ValueParameter value_parameter = 7;

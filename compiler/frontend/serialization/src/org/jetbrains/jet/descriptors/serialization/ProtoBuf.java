@@ -7515,8 +7515,9 @@ public final class ProtoBuf {
       // @@protoc_insertion_point(enum_scope:org.jetbrains.jet.descriptors.serialization.Callable.CallableKind)
     }
 
-    public interface ValueParameterOrBuilder
-        extends com.google.protobuf.MessageLiteOrBuilder {
+    public interface ValueParameterOrBuilder extends 
+         com.google.protobuf.GeneratedMessageLite.
+              ExtendableMessageOrBuilder<ValueParameter> {
 
       // optional int32 flags = 1;
       /**
@@ -7574,10 +7575,10 @@ public final class ProtoBuf {
      * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter}
      */
     public static final class ValueParameter extends
-        com.google.protobuf.GeneratedMessageLite
-        implements ValueParameterOrBuilder {
+        com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
+          ValueParameter> implements ValueParameterOrBuilder {
       // Use ValueParameter.newBuilder() to construct.
-      private ValueParameter(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+      private ValueParameter(com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter, ?> builder) {
         super(builder);
 
       }
@@ -7781,6 +7782,10 @@ public final class ProtoBuf {
             return false;
           }
         }
+        if (!extensionsAreInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
         memoizedIsInitialized = 1;
         return true;
       }
@@ -7788,6 +7793,9 @@ public final class ProtoBuf {
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
         getSerializedSize();
+        com.google.protobuf.GeneratedMessageLite
+          .ExtendableMessage<org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter>.ExtensionWriter extensionWriter =
+            newExtensionWriter();
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           output.writeInt32(1, flags_);
         }
@@ -7800,6 +7808,7 @@ public final class ProtoBuf {
         if (((bitField0_ & 0x00000008) == 0x00000008)) {
           output.writeMessage(4, varargElementType_);
         }
+        extensionWriter.writeUntil(200, output);
       }
 
       private int memoizedSerializedSize = -1;
@@ -7824,6 +7833,7 @@ public final class ProtoBuf {
           size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(4, varargElementType_);
         }
+        size += extensionsSerializedSize();
         memoizedSerializedSize = size;
         return size;
       }
@@ -7899,9 +7909,8 @@ public final class ProtoBuf {
        * Protobuf type {@code org.jetbrains.jet.descriptors.serialization.Callable.ValueParameter}
        */
       public static final class Builder extends
-          com.google.protobuf.GeneratedMessageLite.Builder<
-            org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter, Builder>
-          implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameterOrBuilder {
+          com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
+            org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter, Builder> implements org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameterOrBuilder {
         // Construct using org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
@@ -7980,6 +7989,7 @@ public final class ProtoBuf {
           if (other.hasVarargElementType()) {
             mergeVarargElementType(other.getVarargElementType());
           }
+          this.mergeExtensionFields(other);
           return this;
         }
 
@@ -8001,6 +8011,10 @@ public final class ProtoBuf {
               
               return false;
             }
+          }
+          if (!extensionsAreInitialized()) {
+            
+            return false;
           }
           return true;
         }

@@ -152,6 +152,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
+                v.getMemberMap().recordIndexForValueParameter(parameter, i);
                 AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter);
             }
         }
