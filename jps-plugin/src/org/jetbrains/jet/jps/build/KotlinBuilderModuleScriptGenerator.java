@@ -41,9 +41,7 @@ import org.jetbrains.jps.model.module.JpsSdkDependency;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProcessor;
 import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProvider;
@@ -61,6 +59,10 @@ public class KotlinBuilderModuleScriptGenerator {
 
         boolean noSources = true;
 
+        Set<File> outputDirs = new HashSet<File>();
+        for (ModuleBuildTarget target : chunk.getTargets()) {
+            outputDirs.add(getOutputDir(target));
+        }
         for (ModuleBuildTarget target : chunk.getTargets()) {
             File outputDir = getOutputDir(target);
 
@@ -73,8 +75,8 @@ public class KotlinBuilderModuleScriptGenerator {
                     getKotlinModuleDependencies(context, target),
                     sourceFiles,
                     target.isTests(),
-                    // this excludes the output directory from the class path, to be removed for true incremental compilation
-                    Collections.singleton(outputDir)
+                    // this excludes the output directories from the class path, to be removed for true incremental compilation
+                    outputDirs
             );
         }
 
