@@ -19,7 +19,7 @@ internal final enum class E : jet.Enum<test.E> {
     
     internal class object <class-object-for-E> {
         /*primary*/ private constructor <class-object-for-E>()
-        public final fun valueOf(/*0*/ value: jet.String): test.E
-        public final fun values(): jet.Array<test.E>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.E
+        public final /*synthesized*/ fun values(): jet.Array<test.E>
     }
 }

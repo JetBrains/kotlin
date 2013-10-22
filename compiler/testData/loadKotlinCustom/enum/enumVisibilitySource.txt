@@ -8,8 +8,8 @@ internal final enum class In : jet.Enum<test.In> {
     internal class object <class-object-for-In> {
         /*primary*/ private constructor <class-object-for-In>()
         public final val A: test.In
-        public final fun valueOf(/*0*/ value: jet.String): test.In
-        public final fun values(): jet.Array<test.In>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.In
+        public final /*synthesized*/ fun values(): jet.Array<test.In>
         
         private enum entry A : test.In {
             /*primary*/ private constructor A()
@@ -27,8 +27,8 @@ private final enum class Pr : jet.Enum<test.Pr> {
     private class object <class-object-for-Pr> {
         /*primary*/ private constructor <class-object-for-Pr>()
         public final val A: test.Pr
-        public final fun valueOf(/*0*/ value: jet.String): test.Pr
-        public final fun values(): jet.Array<test.Pr>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.Pr
+        public final /*synthesized*/ fun values(): jet.Array<test.Pr>
         
         private enum entry A : test.Pr {
             /*primary*/ private constructor A()
@@ -46,8 +46,8 @@ public final enum class Pu : jet.Enum<test.Pu> {
     public class object <class-object-for-Pu> {
         /*primary*/ private constructor <class-object-for-Pu>()
         public final val A: test.Pu
-        public final fun valueOf(/*0*/ value: jet.String): test.Pu
-        public final fun values(): jet.Array<test.Pu>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.Pu
+        public final /*synthesized*/ fun values(): jet.Array<test.Pu>
         
         private enum entry A : test.Pu {
             /*primary*/ private constructor A()

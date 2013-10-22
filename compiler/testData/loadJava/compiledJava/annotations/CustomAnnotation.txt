@@ -15,8 +15,8 @@ public trait CustomAnnotation : java.lang.Object {
         public class object <class-object-for-MyEnum> {
             private constructor <class-object-for-MyEnum>()
             public final val ONE: test.CustomAnnotation.MyEnum
-            public final fun valueOf(/*0*/ value: jet.String): test.CustomAnnotation.MyEnum
-            public final fun values(): jet.Array<test.CustomAnnotation.MyEnum>
+            public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.CustomAnnotation.MyEnum
+            public final /*synthesized*/ fun values(): jet.Array<test.CustomAnnotation.MyEnum>
         }
     }
     
