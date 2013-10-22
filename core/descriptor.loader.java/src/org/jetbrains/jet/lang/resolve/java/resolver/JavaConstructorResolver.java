@@ -172,7 +172,7 @@ public final class JavaConstructorResolver {
     }
 
     @NotNull
-    private static Visibility getConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+    public static Visibility getConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         Visibility visibility = classDescriptor.getVisibility();
         if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
             return JavaVisibilities.PROTECTED_AND_PACKAGE;

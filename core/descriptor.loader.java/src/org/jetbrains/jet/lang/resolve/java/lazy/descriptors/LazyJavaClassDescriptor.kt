@@ -23,6 +23,13 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
+import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
+import org.jetbrains.jet.utils.*
 
 class LazyJavaClassDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
@@ -44,9 +51,9 @@ class LazyJavaClassDescriptor(
     override fun isInner() = _isInner
 
     private val _typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
-    override fun getTypeConstructor() = _typeConstructor()
+    override fun getTypeConstructor(): TypeConstructor = _typeConstructor()
 
-    private val _scopeForMemberLookup = LazyJavaClassMemberScope(c, this, jClass, false)
+    private val _scopeForMemberLookup = LazyJavaClassMemberScope(innerC, this, jClass, false)
     override fun getScopeForMemberLookup() = _scopeForMemberLookup
 
     private val _thisAsReceiverParameter = c.storageManager.createLazyValue { DescriptorFactory.createLazyReceiverParameterDescriptor(this) }
@@ -57,8 +64,7 @@ class LazyJavaClassDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
-    // TODO
-    override fun getConstructors() = emptyOrSingletonList(getUnsubstitutedPrimaryConstructor())
+    override fun getConstructors() = _scopeForMemberLookup._constructors()
 
     override fun getClassObjectType(): JetType? = null
 
