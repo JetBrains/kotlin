@@ -56,3 +56,5 @@ public fun <K, V: Any> Iterator<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K
     }
     return map
 }
+
+public fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
