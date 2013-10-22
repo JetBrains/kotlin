@@ -26,16 +26,25 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDe
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver
 
-open class LazyJavaResolverContext(
+open class GlobalJavaResolverContext(
         val storageManager: StorageManager,
         val finder: JavaClassFinder,
         val javaClassResolver: LazyJavaClassResolver,
         val externalAnnotationResolver: ExternalAnnotationResolver 
 )
 
+open class LazyJavaResolverContext(
+        val subModule: LazyJavaSubModule,
+        storageManager: StorageManager,
+        finder: JavaClassFinder,
+        javaClassResolver: LazyJavaClassResolver,
+        externalAnnotationResolver: ExternalAnnotationResolver
+) : GlobalJavaResolverContext(storageManager, finder, javaClassResolver, externalAnnotationResolver)
+
 fun LazyJavaResolverContext.withTypes(
         typeParameterResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 )  =  LazyJavaResolverContextWithTypes(
+        subModule,
         storageManager,
         finder,
         javaClassResolver,
@@ -44,13 +53,14 @@ fun LazyJavaResolverContext.withTypes(
         typeParameterResolver)
 
 class LazyJavaResolverContextWithTypes(
+        subModule: LazyJavaSubModule,
         storageManager: StorageManager,
         finder: JavaClassFinder,
         javaClassResolver: LazyJavaClassResolver,
         externalAnnotationResolver: ExternalAnnotationResolver,
         val typeResolver: LazyJavaTypeResolver,
         val typeParameterResolver: TypeParameterResolver
-) : LazyJavaResolverContext(storageManager, finder, javaClassResolver, externalAnnotationResolver)
+) : LazyJavaResolverContext(subModule, storageManager, finder, javaClassResolver, externalAnnotationResolver)
 
 fun LazyJavaResolverContextWithTypes.child(
         containingDeclaration: DeclarationDescriptor,

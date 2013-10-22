@@ -9,10 +9,11 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 
 public open class LazyJavaSubModule(
-        private val outerContext: LazyJavaResolverContext,
-        module: ModuleDescriptor
+        private val outerContext: GlobalJavaResolverContext,
+        private val module: ModuleDescriptor
 ) {
     private val c = LazyJavaResolverContext(
+            this,
             outerContext.storageManager,
             outerContext.finder,
             SubModuleClassResolver(),

@@ -22,8 +22,8 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaSubModule;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import javax.inject.Inject;
-
 import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
@@ -79,7 +78,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private LazyJavaSubModule getSubModule() {
         if (subModule == null) {
             subModule = new LazyJavaSubModule(
-                    new LazyJavaResolverContext(
+                    new GlobalJavaResolverContext(
                             new LockBasedStorageManager(),
                             javaClassFinder,
                             new LazyJavaClassResolver() {
