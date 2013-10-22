@@ -22,26 +22,18 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.CodegenTestFiles;
 import org.jetbrains.jet.codegen.RecursionStatus;
-import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
-import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.File;
@@ -90,6 +82,13 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
 
                     Collections.sort(expectedRecursions, new CallComparator());
                     Collections.sort(realRecursions, new CallComparator());
+
+                    //System.out.println(Joiner.on(",\n").skipNulls().join(Lists.transform(texts, new Function<String, String>() {
+                    //    @Override
+                    //    public String apply(@Nullable String input) {
+                    //        return input == null ? "" : ("\"" + input.replace("\"", "\\\"") + "\"");
+                    //    }
+                    //}))); // useful for debugging and fixing list
 
                     assertEquals(expectedRecursions, realRecursions);
                 }

@@ -2467,11 +2467,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
         }
         
-        @TestMetadata("recursion.kt")
-        public void testRecursion() throws Exception {
-            doTest("compiler/testData/codegen/box/functions/recursion.kt");
-        }
-        
         @TestMetadata("compiler/testData/codegen/box/functions/invoke")
         public static class Invoke extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInInvoke() throws Exception {
