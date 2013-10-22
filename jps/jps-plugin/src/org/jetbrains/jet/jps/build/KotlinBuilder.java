@@ -138,7 +138,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
 
             File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
-            Set<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
+            List<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
             K2JSCompilerArguments k2JsSettings = JpsKotlinCompilerSettings.getK2JsSettings(project);
 
             runK2JsCompiler(commonSettings, k2JsSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile);
