@@ -170,6 +170,7 @@ public class DataFlowValueFactory {
         if (declarationDescriptor instanceof VariableDescriptor) {
             ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, simpleNameExpression);
             // todo uncomment assert
+            // KT-4113
             // for now it fails for resolving 'invoke' convention, return it after 'invoke' algorithm changes
             // assert resolvedCall != null : "Cannot create right identifier info if the resolved call is not known yet for " + declarationDescriptor;
 
