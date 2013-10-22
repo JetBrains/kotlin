@@ -128,6 +128,11 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         }
     }
 
+    @Override
+    public boolean isForceHighlightParents(@NotNull PsiFile file) {
+        return file instanceof JetFile;
+    }
+
     private static void registerDiagnosticAnnotations(
             @NotNull PsiElement element, @NotNull Diagnostic diagnostic,
             @NotNull AnnotationHolder holder, Ref<Boolean> isMarkedWithRedeclaration
@@ -145,17 +150,13 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
                     MultiRangeReference mrr = (MultiRangeReference)reference;
                     for (TextRange range : mrr.getRanges()) {
                         Annotation annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic));
-                        annotation.setTooltip(getMessage(diagnostic));
-                        registerQuickFix(annotation, diagnostic);
-                        annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                     }
                 }
                 else {
                     for (TextRange textRange : textRanges) {
                         Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                        annotation.setTooltip(getMessage(diagnostic));
-                        registerQuickFix(annotation, diagnostic);
-                        annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                     }
                 }
 
@@ -174,31 +175,36 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
             if (!isMarkedWithRedeclaration.get() && Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 isMarkedWithRedeclaration.set(true);
                 Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
-                annotation.setTooltip(getMessage(diagnostic));
+                setUpAnnotation(diagnostic, annotation, null);
                 return;
             }
 
             // Generic annotation
             for (TextRange textRange : textRanges) {
                 Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                errorAnnotation.setTooltip(getMessage(diagnostic));
-                registerQuickFix(errorAnnotation, diagnostic);
-
-                if (diagnostic.getFactory() == Errors.INVISIBLE_REFERENCE) {
-                    errorAnnotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
-                }
+                setUpAnnotation(diagnostic, errorAnnotation,
+                                diagnostic.getFactory() == Errors.INVISIBLE_REFERENCE
+                                    ? ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
+                                    : null);
             }
         }
         else if (diagnostic.getSeverity() == Severity.WARNING) {
             for (TextRange textRange : textRanges) {
                 Annotation annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic));
-                annotation.setTooltip(getMessage(diagnostic));
-                registerQuickFix(annotation, diagnostic);
-
-                if (Errors.UNUSED_ELEMENT_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                    annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
-                }
+                setUpAnnotation(diagnostic, annotation,
+                                Errors.UNUSED_ELEMENT_DIAGNOSTICS.contains(diagnostic.getFactory())
+                                    ? ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                                    : null);
             }
+        }
+    }
+
+    private static void setUpAnnotation(Diagnostic diagnostic, Annotation annotation, @Nullable ProblemHighlightType highlightType) {
+        annotation.setTooltip(getMessage(diagnostic));
+        registerQuickFix(annotation, diagnostic);
+
+        if (highlightType != null) {
+            annotation.setHighlightType(highlightType);
         }
     }
 
@@ -263,10 +269,5 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
             return String.format("[%s] %s", diagnostic.getFactory().getName(), message);
         }
         return message;
-    }
-
-    @Override
-    public boolean isForceHighlightParents(@NotNull PsiFile file) {
-        return file instanceof JetFile;
     }
 }
