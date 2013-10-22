@@ -277,13 +277,13 @@ public class LockBasedStorageManager implements StorageManager {
                 try {
                     V typedValue = compute.invoke(input);
                     Object oldValue = cache.put(input, WrappedValues.escapeNull(typedValue));
-                    assert oldValue == null : "Race condition detected";
+                    assert oldValue == null : "Race condition or recursion detected. Old value is " + oldValue;
 
                     return typedValue;
                 }
                 catch (Throwable throwable) {
                     Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
-                    assert oldValue == null : "Race condition detected";
+                    assert oldValue == null : "Race condition or recursion detected. Old value is " + oldValue;
 
                     throw ExceptionUtils.rethrow(throwable);
                 }
