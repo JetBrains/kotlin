@@ -33,7 +33,6 @@ import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Set;
 
 public class KotlinCompilerRunner {
     private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
@@ -62,7 +61,7 @@ public class KotlinCompilerRunner {
             CompilerEnvironment environment,
             OutputItemsCollector collector,
             List<File> sourceFiles,
-            Set<String> libraryFiles,
+            List<String> libraryFiles,
             File outputFile
     ) {
         K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
@@ -147,7 +146,7 @@ public class KotlinCompilerRunner {
     private static void setupK2JsSettings(
             File outputFile,
             List<File> sourceFiles,
-            Set<String> libraryFiles,
+            List<String> libraryFiles,
             K2JSCompilerArguments settings
     ) {
         setupCommonSettings(settings);
