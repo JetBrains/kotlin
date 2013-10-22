@@ -57,7 +57,7 @@ public interface ValueParameterDescriptor extends VariableDescriptor {
     ValueParameterDescriptor getOriginal();
 
     @NotNull
-    ValueParameterDescriptor copy(DeclarationDescriptor newOwner, Name newName);
+    ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner, @NotNull Name newName);
 
     /**
      * Parameter p1 overrides p2 iff
