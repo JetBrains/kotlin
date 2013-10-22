@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
+import org.jetbrains.jet.checkers.AbstractTailRecursionTest;
 import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
 import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
@@ -214,6 +215,13 @@ public class GenerateTests {
                 "LazyResolveDescriptorRendererTestGenerated",
                 AbstractLazyResolveDescriptorRendererTest.class,
                 testModel("compiler/testData/renderer")
+        );
+
+        generateTest(
+                "compiler/tests",
+                "TailRecursionDetectorTestGenerated",
+                AbstractTailRecursionTest.class,
+                testModel("compiler/testData/codegen/box/functions/tail-recursion")
         );
 
         generateTest("compiler/tests",
