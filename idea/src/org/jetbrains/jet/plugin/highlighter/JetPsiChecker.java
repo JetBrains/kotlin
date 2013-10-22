@@ -26,7 +26,6 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
@@ -116,9 +115,9 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         }
 
         if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false)) {
-            Ref<Boolean> isMarkedWithRedeclaration = Ref.create(false);
+            ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
             for (Diagnostic diagnostic : bindingContext.getDiagnostics().forElement(element)) {
-                registerDiagnosticAnnotations(element, diagnostic, holder, isMarkedWithRedeclaration);
+                elementAnnotator.registerDiagnosticAnnotations(diagnostic);
             }
         }
 
@@ -133,141 +132,150 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         return file instanceof JetFile;
     }
 
-    private static void registerDiagnosticAnnotations(
-            @NotNull PsiElement element, @NotNull Diagnostic diagnostic,
-            @NotNull AnnotationHolder holder, Ref<Boolean> isMarkedWithRedeclaration
-    ) {
-        if (!diagnostic.isValid()) return;
+    private static class ElementAnnotator {
+        @NotNull private final PsiElement element;
+        @NotNull private final AnnotationHolder holder;
 
-        assert diagnostic.getPsiElement() == element;
+        private boolean isMarkedWithRedeclaration;
 
-        List<TextRange> textRanges = diagnostic.getTextRanges();
-        if (diagnostic.getSeverity() == Severity.ERROR) {
-            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                JetReferenceExpression referenceExpression = (JetReferenceExpression)diagnostic.getPsiElement();
-                PsiReference reference = referenceExpression.getReference();
-                if (reference instanceof MultiRangeReference) {
-                    MultiRangeReference mrr = (MultiRangeReference)reference;
-                    for (TextRange range : mrr.getRanges()) {
-                        Annotation annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic));
-                        setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+        ElementAnnotator(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+            this.element = element;
+            this.holder = holder;
+        }
+
+        void registerDiagnosticAnnotations(@NotNull Diagnostic diagnostic) {
+            if (!diagnostic.isValid()) return;
+
+            assert diagnostic.getPsiElement() == element;
+
+            List<TextRange> textRanges = diagnostic.getTextRanges();
+            if (diagnostic.getSeverity() == Severity.ERROR) {
+                if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
+                    JetReferenceExpression referenceExpression = (JetReferenceExpression)diagnostic.getPsiElement();
+                    PsiReference reference = referenceExpression.getReference();
+                    if (reference instanceof MultiRangeReference) {
+                        MultiRangeReference mrr = (MultiRangeReference)reference;
+                        for (TextRange range : mrr.getRanges()) {
+                            Annotation annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic));
+                            setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        }
                     }
+                    else {
+                        for (TextRange textRange : textRanges) {
+                            Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
+                            setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        }
+                    }
+
+                    return;
                 }
-                else {
-                    for (TextRange textRange : textRanges) {
+
+                if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE) {
+                    for (TextRange textRange : diagnostic.getTextRanges()) {
                         Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                        setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        annotation.setTooltip(getMessage(diagnostic));
+                        annotation.setTextAttributes(JetHighlightingColors.INVALID_STRING_ESCAPE);
                     }
+                    return;
                 }
 
-                return;
-            }
-
-            if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE) {
-                for (TextRange textRange : diagnostic.getTextRanges()) {
-                    Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                    annotation.setTooltip(getMessage(diagnostic));
-                    annotation.setTextAttributes(JetHighlightingColors.INVALID_STRING_ESCAPE);
+                if (!isMarkedWithRedeclaration && Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
+                    isMarkedWithRedeclaration = true;
+                    Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
+                    setUpAnnotation(diagnostic, annotation, null);
+                    return;
                 }
-                return;
-            }
 
-            if (!isMarkedWithRedeclaration.get() && Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                isMarkedWithRedeclaration.set(true);
-                Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
-                setUpAnnotation(diagnostic, annotation, null);
-                return;
-            }
-
-            // Generic annotation
-            for (TextRange textRange : textRanges) {
-                Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
-                setUpAnnotation(diagnostic, errorAnnotation,
-                                diagnostic.getFactory() == Errors.INVISIBLE_REFERENCE
+                // Generic annotation
+                for (TextRange textRange : textRanges) {
+                    Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
+                    setUpAnnotation(diagnostic, errorAnnotation,
+                                    diagnostic.getFactory() == Errors.INVISIBLE_REFERENCE
                                     ? ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
                                     : null);
+                }
             }
-        }
-        else if (diagnostic.getSeverity() == Severity.WARNING) {
-            for (TextRange textRange : textRanges) {
-                Annotation annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic));
-                setUpAnnotation(diagnostic, annotation,
-                                Errors.UNUSED_ELEMENT_DIAGNOSTICS.contains(diagnostic.getFactory())
+            else if (diagnostic.getSeverity() == Severity.WARNING) {
+                for (TextRange textRange : textRanges) {
+                    Annotation annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic));
+                    setUpAnnotation(diagnostic, annotation,
+                                    Errors.UNUSED_ELEMENT_DIAGNOSTICS.contains(diagnostic.getFactory())
                                     ? ProblemHighlightType.LIKE_UNUSED_SYMBOL
                                     : null);
-            }
-        }
-    }
-
-    private static void setUpAnnotation(Diagnostic diagnostic, Annotation annotation, @Nullable ProblemHighlightType highlightType) {
-        annotation.setTooltip(getMessage(diagnostic));
-        registerQuickFix(annotation, diagnostic);
-
-        if (highlightType != null) {
-            annotation.setHighlightType(highlightType);
-        }
-    }
-
-    /*
-     * Add a quick fix if and return modified annotation.
-     */
-    @Nullable
-    private static Annotation registerQuickFix(@Nullable Annotation annotation, @NotNull Diagnostic diagnostic) {
-        if (annotation == null) {
-            return null;
-        }
-
-        Collection<JetIntentionActionsFactory> intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory());
-        for (JetIntentionActionsFactory intentionActionsFactory : intentionActionsFactories) {
-            if (intentionActionsFactory != null) {
-                for (IntentionAction action: intentionActionsFactory.createActions(diagnostic)) {
-                    annotation.registerFix(action);
                 }
             }
         }
 
-        Collection<IntentionAction> actions = QuickFixes.getActions(diagnostic.getFactory());
-        for (IntentionAction action : actions) {
-            annotation.registerFix(action);
-        }
+        private static void setUpAnnotation(Diagnostic diagnostic, Annotation annotation, @Nullable ProblemHighlightType highlightType) {
+            annotation.setTooltip(getMessage(diagnostic));
+            registerQuickFix(annotation, diagnostic);
 
-        // Making warnings suppressable
-        if (diagnostic.getSeverity() == Severity.WARNING) {
-            annotation.setProblemGroup(new KotlinSuppressableWarningProblemGroup(diagnostic.getFactory()));
-
-            List<Annotation.QuickFixInfo> fixes = annotation.getQuickFixes();
-            if (fixes == null || fixes.isEmpty()) {
-                // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
-                annotation.registerFix(new EmptyIntentionAction(diagnostic.getFactory().getName()));
+            if (highlightType != null) {
+                annotation.setHighlightType(highlightType);
             }
         }
 
-        return annotation;
-    }
-
-    @NotNull
-    private static String getMessage(@NotNull Diagnostic diagnostic) {
-        String message = IdeErrorMessages.RENDERER.render(diagnostic);
-        if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
-            String factoryName = diagnostic.getFactory().getName();
-            if (message.startsWith("<html>")) {
-                message = String.format("<html>[%s] %s", factoryName, message.substring("<html>".length()));
-            } else {
-                message = String.format("[%s] %s", factoryName, message);
+        /*
+         * Add a quick fix if and return modified annotation.
+         */
+        @Nullable
+        private static Annotation registerQuickFix(@Nullable Annotation annotation, @NotNull Diagnostic diagnostic) {
+            if (annotation == null) {
+                return null;
             }
-        }
-        if (!message.startsWith("<html>")) {
-            message = "<html><body>" + XmlStringUtil.escapeString(message) + "</body></html>";
-        }
-        return message;
-    }
 
-    @NotNull
-    private static String getDefaultMessage(@NotNull Diagnostic diagnostic) {
-        String message = DefaultErrorMessages.RENDERER.render(diagnostic);
-        if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
-            return String.format("[%s] %s", diagnostic.getFactory().getName(), message);
+            Collection<JetIntentionActionsFactory> intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory());
+            for (JetIntentionActionsFactory intentionActionsFactory : intentionActionsFactories) {
+                if (intentionActionsFactory != null) {
+                    for (IntentionAction action: intentionActionsFactory.createActions(diagnostic)) {
+                        annotation.registerFix(action);
+                    }
+                }
+            }
+
+            Collection<IntentionAction> actions = QuickFixes.getActions(diagnostic.getFactory());
+            for (IntentionAction action : actions) {
+                annotation.registerFix(action);
+            }
+
+            // Making warnings suppressable
+            if (diagnostic.getSeverity() == Severity.WARNING) {
+                annotation.setProblemGroup(new KotlinSuppressableWarningProblemGroup(diagnostic.getFactory()));
+
+                List<Annotation.QuickFixInfo> fixes = annotation.getQuickFixes();
+                if (fixes == null || fixes.isEmpty()) {
+                    // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
+                    annotation.registerFix(new EmptyIntentionAction(diagnostic.getFactory().getName()));
+                }
+            }
+
+            return annotation;
         }
-        return message;
+
+        @NotNull
+        private static String getMessage(@NotNull Diagnostic diagnostic) {
+            String message = IdeErrorMessages.RENDERER.render(diagnostic);
+            if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
+                String factoryName = diagnostic.getFactory().getName();
+                if (message.startsWith("<html>")) {
+                    message = String.format("<html>[%s] %s", factoryName, message.substring("<html>".length()));
+                } else {
+                    message = String.format("[%s] %s", factoryName, message);
+                }
+            }
+            if (!message.startsWith("<html>")) {
+                message = "<html><body>" + XmlStringUtil.escapeString(message) + "</body></html>";
+            }
+            return message;
+        }
+
+        @NotNull
+        private static String getDefaultMessage(@NotNull Diagnostic diagnostic) {
+            String message = DefaultErrorMessages.RENDERER.render(diagnostic);
+            if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
+                return String.format("[%s] %s", diagnostic.getFactory().getName(), message);
+            }
+            return message;
+        }
     }
 }
