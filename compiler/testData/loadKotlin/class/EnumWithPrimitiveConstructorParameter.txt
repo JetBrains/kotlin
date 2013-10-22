@@ -7,7 +7,7 @@ internal final enum class EnumWithPrimitiveConstructorParameter : jet.Enum<test.
     
     internal class object <class-object-for-EnumWithPrimitiveConstructorParameter> {
         /*primary*/ private constructor <class-object-for-EnumWithPrimitiveConstructorParameter>()
-        public final fun valueOf(/*0*/ value: jet.String): test.EnumWithPrimitiveConstructorParameter
-        public final fun values(): jet.Array<test.EnumWithPrimitiveConstructorParameter>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.EnumWithPrimitiveConstructorParameter
+        public final /*synthesized*/ fun values(): jet.Array<test.EnumWithPrimitiveConstructorParameter>
     }
 }

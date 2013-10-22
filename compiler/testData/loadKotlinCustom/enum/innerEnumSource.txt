@@ -11,8 +11,8 @@ internal final class A {
         internal class object <class-object-for-E> {
             /*primary*/ private constructor <class-object-for-E>()
             public final val ENTRY: test.A.E
-            public final fun valueOf(/*0*/ value: jet.String): test.A.E
-            public final fun values(): jet.Array<test.A.E>
+            public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.A.E
+            public final /*synthesized*/ fun values(): jet.Array<test.A.E>
             
             private enum entry ENTRY : test.A.E {
                 /*primary*/ private constructor ENTRY()
