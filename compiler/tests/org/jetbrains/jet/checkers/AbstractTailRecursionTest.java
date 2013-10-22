@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.checkers;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -77,20 +80,19 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
                         calls = Collections.emptyList();
                     }
 
-                    List<JetCallExpression> expectedRecursions = new ArrayList<JetCallExpression>(calls);
-                    List<JetCallExpression> realRecursions = new ArrayList<JetCallExpression>(data.visitedCalls);
+                    List<JetCallExpression> detectedRecursions = new ArrayList<JetCallExpression>(calls);
+                    List<JetCallExpression> expectedRecursions = new ArrayList<JetCallExpression>(data.visitedCalls);
 
+                    Collections.sort(detectedRecursions, new CallComparator());
                     Collections.sort(expectedRecursions, new CallComparator());
-                    Collections.sort(realRecursions, new CallComparator());
 
-                    //System.out.println(Joiner.on(",\n").skipNulls().join(Lists.transform(texts, new Function<String, String>() {
-                    //    @Override
-                    //    public String apply(@Nullable String input) {
-                    //        return input == null ? "" : ("\"" + input.replace("\"", "\\\"") + "\"");
-                    //    }
-                    //}))); // useful for debugging and fixing list
+                    assertEquals(
+                            "Bad detected tail recursions list for " + descriptor,
+                            Joiner.on(",\n").skipNulls().join(Lists.transform(expectedRecursions, new CallExpressionToText())),
+                            Joiner.on(",\n").skipNulls().join(Lists.transform(detectedRecursions, new CallExpressionToText()))
+                    );
 
-                    assertEquals(expectedRecursions, realRecursions);
+                    assertEquals(detectedRecursions, expectedRecursions);
                 }
 
                 return null;
@@ -163,6 +165,14 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
         @Override
         public int compare(@NotNull JetCallExpression o1, @NotNull JetCallExpression o2) {
             return o1.getTextOffset() - o2.getTextOffset();
+        }
+    }
+
+    private static class CallExpressionToText implements Function<JetCallExpression, String> {
+        @Override
+        public String apply(JetCallExpression input) {
+            if (input == null) return null;
+            return ("\"" + input.getText().replace("\"", "\\\"") + "\"");
         }
     }
 }
