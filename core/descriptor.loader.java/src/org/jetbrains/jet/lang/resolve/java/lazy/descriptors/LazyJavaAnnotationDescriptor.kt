@@ -67,10 +67,12 @@ class LazyJavaAnnotationDescriptor(
 
     private val _allValueArguments = c.storageManager.createLazyValue {
         val constructors = getAnnotationClass().getConstructors()
-        if (constructors.isEmpty()) mapOf<ValueParameterDescriptor, CompileTimeConstant<out Any?>>()
-        constructors.first().getValueParameters().keysToMapExceptNulls {
-            vp -> getValueArgument(vp)
-        }
+        if (constructors.isEmpty())
+            mapOf<ValueParameterDescriptor, CompileTimeConstant<out Any?>>()
+        else
+            constructors.first().getValueParameters().keysToMapExceptNulls {
+                vp -> getValueArgument(vp)
+            }
     }
 
     override fun getAllValueArguments() = _allValueArguments()

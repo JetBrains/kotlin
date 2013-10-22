@@ -20,11 +20,12 @@ import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
+import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper
 
 class LazyJavaClassDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
         containingDeclaration: DeclarationDescriptor,
-        fqName: FqName,
+        internal val fqName: FqName,
         private val jClass: JavaClass
 ) : ClassDescriptorBase(containingDeclaration, fqName.shortName()), LazyJavaDescriptor {
 
@@ -49,8 +50,8 @@ class LazyJavaClassDescriptor(
     private val _thisAsReceiverParameter = c.storageManager.createLazyValue { DescriptorFactory.createLazyReceiverParameterDescriptor(this) }
     override fun getThisAsReceiverParameter() = _thisAsReceiverParameter()
 
-    // TODO
-    override fun getUnsubstitutedInnerClassesScope(): JetScope = JetScope.EMPTY
+    private val _innerClassesScope = InnerClassesScopeWrapper(getScopeForMemberLookup())
+    override fun getUnsubstitutedInnerClassesScope(): JetScope = _innerClassesScope
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
