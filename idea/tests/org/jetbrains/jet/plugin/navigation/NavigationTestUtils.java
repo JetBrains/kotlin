@@ -86,7 +86,7 @@ public final class NavigationTestUtils {
         String[] names = model.getNames(false);
         for (String name : names) {
             if (name != null && name.startsWith(searchText)) {
-                elementsByName.addAll(Arrays.asList(model.getElementsByName(name, false, name + "*", new ProgressIndicatorBase())));
+                elementsByName.addAll(Arrays.asList(model.getElementsByName(name, false, name + "*")));
             }
         }
 
