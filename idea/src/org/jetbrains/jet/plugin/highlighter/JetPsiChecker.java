@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension;
 import com.intellij.codeInsight.intention.EmptyIntentionAction;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -25,11 +24,14 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.util.containers.MultiMap;
+import com.intellij.psi.MultiRangeReference;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,14 +51,9 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class JetPsiChecker implements Annotator, HighlightRangeExtension {
-    private static final Logger LOG = Logger.getInstance(JetPsiChecker.class);
-
     private static boolean isNamesHighlightingEnabled = true;
-
-    private HighlightingPassCache passCache = null;
 
     @TestOnly
     public static void setNamesHighlightingEnabled(boolean namesHighlightingEnabled) {
@@ -104,36 +101,41 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
         JetFile file = (JetFile) element.getContainingFile();
 
-        if (passCache == null || passCache.isOutdated(file)) {
-            passCache = new HighlightingPassCache(AnalyzerFacadeWithCache.analyzeFileWithCache(file), file);
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
+        if (analyzeExhaust.isError()) {
+            //noinspection StaticMethodReferencedViaSubclass
+            HighlighterPackage.updateHighlightingResult(file, true);
+
+            // Force stop highlighting annotate cycle
+            throw new ProcessCanceledException(analyzeExhaust.getError());
         }
 
-        if (!passCache.analyzeExhaust.isError()) {
-            BindingContext bindingContext = passCache.analyzeExhaust.getBindingContext();
-            for (HighlightingVisitor visitor : getAfterAnalysisVisitor(holder, bindingContext)) {
-                element.accept(visitor);
-            }
+        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        for (HighlightingVisitor visitor : getAfterAnalysisVisitor(holder, bindingContext)) {
+            element.accept(visitor);
+        }
 
-            if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false)) {
-                for (Diagnostic diagnostic : passCache.elementToDiagnostic.get(element)) {
-                    registerDiagnosticAnnotations(diagnostic, passCache.redeclarations, holder);
-                }
+        if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false)) {
+            Ref<Boolean> isMarkedWithRedeclaration = Ref.create(false);
+            for (Diagnostic diagnostic : bindingContext.getDiagnostics().forElement(element)) {
+                registerDiagnosticAnnotations(element, diagnostic, holder, isMarkedWithRedeclaration);
             }
         }
-        else if (element instanceof JetFile) {
-            Throwable error = passCache.analyzeExhaust.getError();
-            if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false)) {
-                holder.createErrorAnnotation(file, error.getClass().getCanonicalName() + ": " + error.getMessage());
-            }
 
-            LOG.error(error);
+        if (element instanceof JetFile) {
+            //noinspection StaticMethodReferencedViaSubclass
+            HighlighterPackage.updateHighlightingResult(file, false);
         }
     }
 
-    private static void registerDiagnosticAnnotations(@NotNull Diagnostic diagnostic,
-                                                      @NotNull Set<PsiElement> redeclarations,
-                                                      @NotNull AnnotationHolder holder) {
+    private static void registerDiagnosticAnnotations(
+            @NotNull PsiElement element, @NotNull Diagnostic diagnostic,
+            @NotNull AnnotationHolder holder, Ref<Boolean> isMarkedWithRedeclaration
+    ) {
         if (!diagnostic.isValid()) return;
+
+        assert diagnostic.getPsiElement() == element;
+
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (diagnostic.getSeverity() == Severity.ERROR) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
@@ -144,9 +146,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
                     for (TextRange range : mrr.getRanges()) {
                         Annotation annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic));
                         annotation.setTooltip(getMessage(diagnostic));
-
                         registerQuickFix(annotation, diagnostic);
-
                         annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                     }
                 }
@@ -171,8 +171,10 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
                 return;
             }
 
-            if (Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                registerQuickFix(markRedeclaration(redeclarations, diagnostic, holder), diagnostic);
+            if (!isMarkedWithRedeclaration.get() && Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
+                isMarkedWithRedeclaration.set(true);
+                Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
+                annotation.setTooltip(getMessage(diagnostic));
                 return;
             }
 
@@ -263,53 +265,8 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         return message;
     }
 
-    @Nullable
-    private static Annotation markRedeclaration(@NotNull Set<PsiElement> redeclarations,
-                                                @NotNull Diagnostic redeclarationDiagnostic,
-                                                @NotNull AnnotationHolder holder) {
-        if (!redeclarations.add(redeclarationDiagnostic.getPsiElement())) return null;
-        List<TextRange> textRanges = redeclarationDiagnostic.getTextRanges();
-        if (!redeclarationDiagnostic.isValid()) return null;
-        Annotation annotation = holder.createErrorAnnotation(textRanges.get(0), "");
-        annotation.setTooltip(getMessage(redeclarationDiagnostic));
-        return annotation;
-    }
-
     @Override
     public boolean isForceHighlightParents(@NotNull PsiFile file) {
         return file instanceof JetFile;
-    }
-
-    private static class HighlightingPassCache {
-        private final AnalyzeExhaust analyzeExhaust;
-        private final MultiMap<PsiElement, Diagnostic> elementToDiagnostic;
-
-        private final Set<PsiElement> redeclarations = Sets.newHashSet();
-        private final JetFile jetFile;
-        private final long modificationCount;
-
-        public HighlightingPassCache(AnalyzeExhaust analyzeExhaust, JetFile jetFile) {
-            this.analyzeExhaust = analyzeExhaust;
-            this.jetFile = jetFile;
-            this.elementToDiagnostic = buildElementToDiagnosticCache(analyzeExhaust, jetFile);
-            this.modificationCount = PsiManager.getInstance(jetFile.getProject()).getModificationTracker().getModificationCount();
-        }
-
-        public boolean isOutdated(JetFile jetFile) {
-            return this.jetFile != jetFile || PsiManager.getInstance(jetFile.getProject()).getModificationTracker().getModificationCount() != modificationCount;
-        }
-
-        private static MultiMap<PsiElement, Diagnostic> buildElementToDiagnosticCache(AnalyzeExhaust analyzeExhaust, JetFile jetFile) {
-            MultiMap<PsiElement, Diagnostic> elementToDiagnostic = MultiMap.create();
-            Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(analyzeExhaust.getBindingContext().getDiagnostics());
-
-            for (Diagnostic diagnostic : diagnostics) {
-                if (diagnostic.getPsiFile() == jetFile) {
-                    elementToDiagnostic.putValue(diagnostic.getPsiElement(), diagnostic);
-                }
-            }
-
-            return elementToDiagnostic;
-        }
     }
 }
