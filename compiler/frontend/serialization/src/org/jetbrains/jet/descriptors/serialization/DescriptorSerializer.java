@@ -145,6 +145,8 @@ public class DescriptorSerializer {
     public ProtoBuf.Callable.Builder callableProto(@NotNull CallableMemberDescriptor descriptor) {
         ProtoBuf.Callable.Builder builder = ProtoBuf.Callable.newBuilder();
 
+        DescriptorSerializer local = createChildSerializer();
+
         boolean hasGetter = false;
         boolean hasSetter = false;
         if (descriptor instanceof PropertyDescriptor) {
@@ -175,9 +177,9 @@ public class DescriptorSerializer {
                 }
 
                 if (!setter.isDefault()) {
-                    List<ValueParameterDescriptor> parameters = setter.getValueParameters();
-                    assert parameters.size() == 1 : "Unexpected number of setter parameters: " + setter;
-                    builder.setSetterParameterName(nameTable.getSimpleNameIndex(parameters.get(0).getName()));
+                    for (ValueParameterDescriptor valueParameterDescriptor : setter.getValueParameters()) {
+                        builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
+                    }
                 }
             }
         }
@@ -194,8 +196,6 @@ public class DescriptorSerializer {
                 hasSetter
         ));
         //TODO builder.setExtraVisibility()
-
-        DescriptorSerializer local = createChildSerializer();
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));

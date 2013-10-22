@@ -507,16 +507,15 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @NotNull ClassOrNamespaceDescriptor container,
             @NotNull ProtoBuf.Callable callable,
             @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind,
             @NotNull ProtoBuf.Callable.ValueParameter proto
     ) {
-        // Kind = FUNCTION because properties and getters don't have any value parameters, and property setters are not supported yet
-        // TODO: support annotations on property setter value parameters
-        MemberSignature methodSignature = getCallableSignature(callable, nameResolver, AnnotatedCallableKind.FUNCTION);
+        MemberSignature methodSignature = getCallableSignature(callable, nameResolver, kind);
         if (methodSignature != null) {
             if (proto.hasExtension(JavaProtoBuf.index)) {
                 MemberSignature paramSignature =
                         MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension(JavaProtoBuf.index));
-                return findClassAndLoadMemberAnnotations(container, callable, nameResolver, AnnotatedCallableKind.FUNCTION, paramSignature);
+                return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature);
             }
         }
 

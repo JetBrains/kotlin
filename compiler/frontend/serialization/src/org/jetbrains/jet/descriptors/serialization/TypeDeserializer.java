@@ -138,15 +138,23 @@ public class TypeDeserializer {
 
                 return classDescriptor.getTypeConstructor();
             case TYPE_PARAMETER:
-                TypeParameterDescriptor descriptor = typeParameterDescriptors.get(proto.getId());
-                if (descriptor == null && parent != null) {
-                    descriptor = parent.typeParameterDescriptors.get(proto.getId());
-                }
-                if (descriptor == null) return null;
-
-                return descriptor.getTypeConstructor();
+                return typeParameterTypeConstructor(proto);
         }
         throw new IllegalStateException("Unknown kind " + proto.getKind());
+    }
+
+    @Nullable
+    private TypeConstructor typeParameterTypeConstructor(@NotNull ProtoBuf.Type.Constructor proto) {
+        TypeParameterDescriptor descriptor = typeParameterDescriptors.get(proto.getId());
+        if (descriptor != null) {
+            return descriptor.getTypeConstructor();
+        }
+
+        if (parent != null) {
+            return parent.typeParameterTypeConstructor(proto);
+        }
+
+        return null;
     }
 
     @Nullable

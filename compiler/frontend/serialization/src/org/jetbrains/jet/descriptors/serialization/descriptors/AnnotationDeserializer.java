@@ -50,6 +50,7 @@ public interface AnnotationDeserializer {
                 @NotNull ClassOrNamespaceDescriptor container,
                 @NotNull ProtoBuf.Callable callable,
                 @NotNull NameResolver nameResolver,
+                @NotNull AnnotatedCallableKind kind,
                 @NotNull ProtoBuf.Callable.ValueParameter proto
         ) {
             return notSupported();
@@ -84,6 +85,7 @@ public interface AnnotationDeserializer {
             @NotNull ClassOrNamespaceDescriptor container,
             @NotNull ProtoBuf.Callable callable,
             @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind,
             @NotNull ProtoBuf.Callable.ValueParameter proto
     );
 }

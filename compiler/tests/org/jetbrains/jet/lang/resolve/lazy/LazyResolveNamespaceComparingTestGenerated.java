@@ -211,6 +211,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/ExtensionFunctionInClass.kt");
                 }
                 
+                @TestMetadata("ExtensionPropertySetter.kt")
+                public void testExtensionPropertySetter() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/ExtensionPropertySetter.kt");
+                }
+                
                 @TestMetadata("FunctionInClass.kt")
                 public void testFunctionInClass() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/FunctionInClass.kt");
@@ -226,9 +231,19 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/ManyAnnotations.kt");
                 }
                 
+                @TestMetadata("PropertySetterInClass.kt")
+                public void testPropertySetterInClass() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/PropertySetterInClass.kt");
+                }
+                
                 @TestMetadata("TopLevelFunction.kt")
                 public void testTopLevelFunction() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/TopLevelFunction.kt");
+                }
+                
+                @TestMetadata("TopLevelPropertySetter.kt")
+                public void testTopLevelPropertySetter() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/annotations/parameters/TopLevelPropertySetter.kt");
                 }
                 
             }
