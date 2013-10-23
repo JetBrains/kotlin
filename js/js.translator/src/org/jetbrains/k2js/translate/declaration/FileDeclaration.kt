@@ -48,11 +48,10 @@ class FileDeclarationVisitor(val context: TranslationContext) : DeclarationBodyV
     }
 
     public override fun visitClass(expression: JetClass, context: TranslationContext?): Void? {
-        val entry = context!!.classDeclarationTranslator().translate(expression, context)
-        if (entry != null) {
-            result.add(entry)
-        }
-
+        val classDescriptor = getClassDescriptor(context!!.bindingContext(), expression)
+        val value = ClassTranslator(expression, context).translate()
+        val entry = JsPropertyInitializer(context.getNameForDescriptor(classDescriptor).makeRef()!!, value)
+        result.add(entry)
         return null
     }
 
