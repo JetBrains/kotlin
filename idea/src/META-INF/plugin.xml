@@ -128,6 +128,9 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerSettings"
                     serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerSettings"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinAdditionalCompilerSettings"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinAdditionalCompilerSettings"/>
+
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

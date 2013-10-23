@@ -21,10 +21,12 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
 
 import javax.swing.*;
 
@@ -32,13 +34,20 @@ import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUP
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
     private final CommonCompilerArguments commonCompilerSettings;
+    private final AdditionalCompilerSettings additionalCompilerSettings;
     private final ConfigurableEP extPoint;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
+    private RawCommandLineEditor additionalArgsOptionsField;
+    private JLabel additionalArgsLabel;
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
         this.extPoint = ep;
         this.commonCompilerSettings = KotlinCommonCompilerSettings.getInstance(ep.getProject()).getSettings();
+        this.additionalCompilerSettings = KotlinAdditionalCompilerSettings.getInstance(ep.getProject()).getSettings();
+
+        additionalArgsOptionsField.attachLabel(additionalArgsLabel);
+        additionalArgsOptionsField.setDialogCaption(null);
     }
 
     @NotNull
@@ -61,17 +70,20 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @Override
     public boolean isModified() {
-        return ComparingUtils.isModified(generateNoWarningsCheckBox, isGenerateNoWarnings());
+        return ComparingUtils.isModified(generateNoWarningsCheckBox, isGenerateNoWarnings()) ||
+               ComparingUtils.isModified(additionalArgsOptionsField, additionalCompilerSettings.getAdditionalArguments());
     }
 
     @Override
     public void apply() throws ConfigurationException {
         setGenerateNoWarnings(generateNoWarningsCheckBox.isSelected());
+        additionalCompilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
     }
 
     @Override
     public void reset() {
         generateNoWarningsCheckBox.setSelected(isGenerateNoWarnings());
+        additionalArgsOptionsField.setText(additionalCompilerSettings.getAdditionalArguments());
     }
 
     @Override
@@ -95,6 +107,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     private void setGenerateNoWarnings(boolean selected) {
-        commonCompilerSettings.suppress = selected ? SUPPRESS_WARNINGS : "";
+        commonCompilerSettings.suppress = selected ? SUPPRESS_WARNINGS : null;
     }
 }

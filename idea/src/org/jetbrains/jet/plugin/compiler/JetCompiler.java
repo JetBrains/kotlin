@@ -35,9 +35,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
 import org.jetbrains.jet.compiler.runner.*;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerSettings;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinAdditionalCompilerSettings;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerSettings;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
@@ -142,8 +144,10 @@ public class JetCompiler implements TranslatingCompiler {
     ) {
         CommonCompilerArguments commonArguments = KotlinCommonCompilerSettings.getInstance(project).getSettings();
         K2JVMCompilerArguments k2jvmArguments = Kotlin2JvmCompilerSettings.getInstance(project).getSettings();
+        AdditionalCompilerSettings additionalSettings = KotlinAdditionalCompilerSettings.getInstance(project).getSettings();
 
-        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2jvmArguments, messageCollector, environment, scriptFile, outputItemsCollector);
+        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2jvmArguments, additionalSettings,
+                                              messageCollector, environment, scriptFile, outputItemsCollector);
     }
 
     public static File tryToWriteScriptFile(

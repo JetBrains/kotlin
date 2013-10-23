@@ -29,6 +29,7 @@ public class KotlinModelSerializerService extends JpsModelSerializerExtension {
     public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
         return Arrays.asList(new KotlinCommonCompilerSettingsSerializer(),
                              new Kotlin2JvmCompilerSettingsSerializer(),
-                             new Kotlin2JsCompilerSettingsSerializer());
+                             new Kotlin2JsCompilerSettingsSerializer(),
+                             new KotlinAdditionalCompilerSettingsSerializer());
     }
 }

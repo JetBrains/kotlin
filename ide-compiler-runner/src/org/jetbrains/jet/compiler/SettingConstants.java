@@ -24,6 +24,7 @@ public class SettingConstants {
     public static final String KOTLIN_COMMON_COMPILER_SETTINGS_SECTION = "KotlinCommonCompilerSettings";
     public static final String KOTLIN_TO_JS_COMPILER_SETTINGS_SECTION = "Kotlin2JsCompilerSettings";
     public static final String KOTLIN_TO_JVM_COMPILER_SETTINGS_SECTION = "Kotlin2JvmCompilerSettings";
+    public static final String KOTLIN_ADDITIONAL_COMPILER_SETTINGS_SECTION = "KotlinAdditionalCompilerSettings";
 
     public static final String KOTLIN_COMPILER_SETTINGS_FILE = "kotlinc.xml";
     public static final String KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + KOTLIN_COMPILER_SETTINGS_FILE;
