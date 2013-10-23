@@ -22,6 +22,8 @@ abstract class LazyJavaPackageFragment(
     protected abstract val _memberScope: JetScope
 
     override fun getMemberScope() = _memberScope
+
+    override fun toString() = "lazy java package fragment: " + getFqName()
 }
 
 public class LazyPackageFragmentForJavaPackage(

@@ -73,6 +73,8 @@ class LazyJavaClassDescriptor(
     private val _annotations = c.resolveAnnotations(jClass.getAnnotations())
     override fun getAnnotations(): List<AnnotationDescriptor> = _annotations
 
+    override fun toString() = "lazy java class $fqName"
+
     private inner class LazyJavaClassTypeConstructor : TypeConstructor {
 
         private val _parameters = c.storageManager.createLazyValue {

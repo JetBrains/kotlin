@@ -78,6 +78,8 @@ public abstract class LazyJavaMemberScope(
     protected abstract fun getAllFunctionNames(): Collection<Name>
     protected abstract fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>)
 
+    override fun toString() = "Lazy scope for ${getContainingDeclaration()}"
+    
     TestOnly
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
