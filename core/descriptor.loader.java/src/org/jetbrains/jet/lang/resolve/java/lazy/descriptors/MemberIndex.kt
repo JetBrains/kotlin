@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import org.jetbrains.jet.lang.descriptors.Visibilities
 
 trait MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
@@ -30,12 +32,20 @@ object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun getAllMetodNames() = listOf<Name>()
 }
 
-class ClassMemberIndex(jClass: JavaClass, mustBeStatic: Boolean) : MemberIndex {
-    private val methods = jClass.getMethods().iterator().filter { m -> m.isStatic() == mustBeStatic && !m.isConstructor() }.groupBy { m -> m.getName() }
+class ClassMemberIndex(val jClass: JavaClass, mustBeStatic: Boolean) : MemberIndex {
+    private val methodFilter = {
+        (m: JavaMethod) ->
+        m.isStatic() == mustBeStatic &&
+        !m.isConstructor() &&
+        !DescriptorResolverUtils.isObjectMethodInInterface(m) &&
+        m.getVisibility() != Visibilities.PRIVATE
+    }
+
+    private val methods = jClass.getMethods().iterator().filter(methodFilter).groupBy { m -> m.getName() }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> {
         return methods[name] ?: listOf()
     }
 
-    override fun getAllMetodNames(): Collection<Name> = methods.keySet()
+    override fun getAllMetodNames(): Collection<Name> = jClass.getAllMethods().iterator().filter(methodFilter).map { m -> m.getName() }.toList()
 }

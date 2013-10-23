@@ -261,7 +261,7 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
+    public static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
         Set<SimpleFunctionDescriptor> result = new LinkedHashSet<SimpleFunctionDescriptor>();
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(name)) {

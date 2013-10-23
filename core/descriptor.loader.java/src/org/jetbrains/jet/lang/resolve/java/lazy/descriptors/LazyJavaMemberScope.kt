@@ -25,6 +25,10 @@ import org.jetbrains.jet.lang.resolve.java.lazy.hasMutableAnnotation
 import org.jetbrains.kotlin.util.iif
 import org.jetbrains.jet.lang.resolve.java.lazy.hasReadOnlyAnnotation
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver
+import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.utils.Printer
@@ -47,7 +51,7 @@ public abstract class LazyJavaMemberScope(
         (name: Name): Collection<FunctionDescriptor>
         ->
         val methods = memberIndex().findMethodsByName(name)
-        val functions = methods.map {
+        val functions = LinkedHashSet<FunctionDescriptor>(methods.map {
             method ->
             val function = JavaMethodDescriptor(
                     _containingDeclaration,
@@ -74,6 +78,12 @@ public abstract class LazyJavaMemberScope(
                 false
             )
             function
+        })
+
+        if (_containingDeclaration is ClassDescriptor) {
+            val functionsFromSupertypes = JavaFunctionResolver.getFunctionsFromSupertypes(name, _containingDeclaration);
+
+            functions.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, functions, _containingDeclaration, c.errorReporter));
         }
 
         // Make sure that lazy things are computed before we release the lock
@@ -141,7 +151,7 @@ public abstract class LazyJavaMemberScope(
     override fun getAllDescriptors() = allDescriptors()
 
     private fun computeAllDescriptors(): MutableCollection<DeclarationDescriptor> {
-        val result = arrayListOf<DeclarationDescriptor>()
+        val result = LinkedHashSet<DeclarationDescriptor>()
 
         for (name in getAllPackageNames()) {
             val descriptor = getNamespace(name)
