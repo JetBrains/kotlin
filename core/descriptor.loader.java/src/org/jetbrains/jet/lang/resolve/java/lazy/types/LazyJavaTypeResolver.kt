@@ -105,7 +105,13 @@ class LazyJavaTypeResolver(
             typeConstructor: () -> TypeConstructor,
             typeParameterIndex: Int
     ) : TypeProjectionBase() {
-        private val typeParameter by c.storageManager.createLazyValue {typeConstructor().getParameters()[typeParameterIndex]}
+        private val typeParameter by c.storageManager.createLazyValue {
+            val typeConstructor = typeConstructor()
+            val parameters = typeConstructor.getParameters()
+            if (typeParameterIndex >= parameters.size)
+                ErrorUtils.createErrorTypeParameter("#$typeParameterIndex for ${typeConstructor}")
+            else parameters[typeParameterIndex]
+        }
 
         override fun getProjectionKind() = typeParameter.getVariance().eq(OUT_VARIANCE).iif(INVARIANT, OUT_VARIANCE)
         override fun getType() = typeParameter.getUpperBoundsAsType()
