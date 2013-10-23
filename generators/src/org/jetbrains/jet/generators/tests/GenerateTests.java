@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparing
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
 import org.jetbrains.jet.parsing.AbstractJetParsingTest;
+import org.jetbrains.jet.plugin.codeInsight.AbstractOutOfBlockModificationTest;
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
@@ -510,6 +511,13 @@ public class GenerateTests {
                 "DiagnosticMessageTestGenerated",
                 AbstractDiagnosticMessageTest.class,
                 testModel("idea/testData/diagnosticMessage")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "OutOfBlockModificationTestGenerated",
+                AbstractOutOfBlockModificationTest.class,
+                testModel("idea/testData/codeInsight/outOfBlock")
         );
     }
 

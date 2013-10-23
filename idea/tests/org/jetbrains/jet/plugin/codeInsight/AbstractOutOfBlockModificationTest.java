@@ -21,72 +21,15 @@ import com.intellij.psi.impl.JavaCodeBlockModificationListener;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-public class OutOfBlockModificationTest extends LightCodeInsightFixtureTestCase {
-
-    public void testFunInFun() {
-        doTest();
-    }
-
-    public void testFunNoBody() {
-        doTest();
-    }
-
-    public void testInAntonymsObjectDeclaration() {
-        doTest();
-    }
-
-    public void testInClass() {
-        doTest();
-    }
-
-    public void testInClassPropertyAccessor() {
-        doTest();
-    }
-
-    public void testInFunctionLiteral() {
-        doTest();
-    }
-
-    public void testInFunInFunWithBody() {
-        doTest();
-    }
-
-    public void testInFunInMultiDeclaration() {
-        doTest();
-    }
-
-    public void testInFunWithInference() {
-        doTest();
-    }
-
-    public void testInGlobalPropertyWithGetter() {
-        doTest();
-    }
-
-    public void testInMethod() {
-        doTest();
-    }
-
-    public void testInPropertyAccessorWithInference() {
-        doTest();
-    }
-
-    public void testInPropertyWithFunctionLiteral() {
-        doTest();
-    }
-
-    public void testInPropertyWithInference() {
-        doTest();
-    }
-
+public abstract class AbstractOutOfBlockModificationTest extends LightCodeInsightFixtureTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock");
     }
 
-    protected void doTest() {
-        myFixture.configureByFile(getTestName(false) + ".kt");
+    protected void doTest(String path) {
+        myFixture.configureByFile(path);
         String text = myFixture.getDocument(myFixture.getFile()).getText();
 
         boolean expectedOutOfBlock = false;
