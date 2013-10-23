@@ -1,0 +1,2 @@
+Instantiation (7: 16) return Bar()
+

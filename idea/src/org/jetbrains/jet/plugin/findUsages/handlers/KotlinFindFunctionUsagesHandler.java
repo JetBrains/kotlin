@@ -33,13 +33,18 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindMethodUsagesDialog;
+import org.jetbrains.jet.plugin.hierarchy.calls.CalleeReferenceVisitorBase;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.findUsages.options.KotlinMethodFindUsagesOptions;
 import org.jetbrains.jet.plugin.search.KotlinExtensionSearch;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<JetNamedFunction> {
     public KotlinFindFunctionUsagesHandler(
@@ -69,12 +74,47 @@ public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<Jet
 
     @Override
     public boolean searchReferences(
-            @NotNull PsiElement element,
+            @NotNull final PsiElement element,
             @NotNull final Processor<UsageInfo> processor,
             @NotNull FindUsagesOptions options
     ) {
-        final KotlinMethodFindUsagesOptions kotlinOptions = (KotlinMethodFindUsagesOptions)options;
+        final KotlinMethodFindUsagesOptions kotlinOptions = (KotlinMethodFindUsagesOptions) options;
         SearchScope searchScope = kotlinOptions.searchScope;
+
+        JetElement blockForLocalDeclaration = JetPsiUtil.getEnclosingBlockForLocalDeclaration((JetNamedFunction) element);
+        if (blockForLocalDeclaration != null && kotlinOptions.isUsages) {
+            BindingContext bindingContext =
+                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+
+            final List<PsiReference> result = new ArrayList<PsiReference>();
+            CalleeReferenceVisitorBase visitor = new CalleeReferenceVisitorBase(bindingContext, true) {
+                private boolean isAcceptable(PsiElement declaration) {
+                    if (kotlinOptions.isIncludeOverloadUsages) {
+                        //noinspection ConstantConditions
+                        return declaration instanceof JetNamedFunction &&
+                               ((JetNamedFunction) element).getName()
+                                       .equals(((JetNamedFunction) declaration).getName());
+                    }
+
+                    return declaration.equals(element);
+                }
+
+                @Override
+                protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
+                    if (isAcceptable(declaration)) {
+                        result.add(reference.getReference());
+                    }
+                }
+            };
+
+            blockForLocalDeclaration.accept(visitor);
+
+            for (PsiReference ref : result) {
+                if (!processUsage(processor, ref, kotlinOptions)) return false;
+            }
+
+            return true;
+        }
 
         final PsiMethod lightMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
             @Override
@@ -114,18 +154,18 @@ public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<Jet
         if (isAbstract && kotlinOptions.isImplementingMethods || kotlinOptions.isOverridingMethods) {
             OverridingMethodsSearch.search(lightMethod, options.searchScope, kotlinOptions.isCheckDeepInheritance).forEach(
                     new PsiElementProcessorAdapter<PsiMethod>(
-                        new PsiElementProcessor<PsiMethod>() {
-                            @Override
-                            public boolean execute(@NotNull PsiMethod element) {
-                                return processUsage(processor, element.getNavigationElement(), kotlinOptions);
+                            new PsiElementProcessor<PsiMethod>() {
+                                @Override
+                                public boolean execute(@NotNull PsiMethod element) {
+                                    return processUsage(processor, element.getNavigationElement(), kotlinOptions);
+                                }
                             }
-                        }
                     )
             );
         }
 
         if (kotlinOptions.isIncludeOverloadUsages) {
-            String name = ((PsiNamedElement)element).getName();
+            String name = ((PsiNamedElement) element).getName();
             if (name == null) return true;
 
             for (PsiReference ref : KotlinExtensionSearch.search(lightMethod, searchScope).findAll()) {
@@ -147,6 +187,4 @@ public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<Jet
     public FindUsagesOptions getFindUsagesOptions(@Nullable DataContext dataContext) {
         return getFactory().getFindMethodOptions();
     }
-
-
 }

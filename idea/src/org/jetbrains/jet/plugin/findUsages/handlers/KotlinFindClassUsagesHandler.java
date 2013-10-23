@@ -71,9 +71,6 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                         KotlinClassFindUsagesOptions kotlinOptions = (KotlinClassFindUsagesOptions)options;
                         JetClass jetClass = (JetClass) element;
 
-                        PsiClass lightClass = LightClassUtil.getPsiClass(getElement());
-                        if (lightClass == null) return true;
-
                         if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
                             Collection<PsiReference> references = ReferencesSearch.search(
                                     new ReferencesSearch.SearchParameters(jetClass, kotlinOptions.searchScope, false)
@@ -89,6 +86,9 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                                 );
                             }
                         }
+
+                        PsiClass lightClass = LightClassUtil.getPsiClass(getElement());
+                        if (lightClass == null) return true;
 
                         if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
                         if (!processDeclarationsUsages(jetClass, processor, kotlinOptions)) return false;
