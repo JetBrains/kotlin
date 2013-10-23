@@ -113,6 +113,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findClassUsages/kotlinClassAllUsages3.0.kt");
         }
         
+        @TestMetadata("kotlinClassAllUsagesNoImport.0.kt")
+        public void testKotlinClassAllUsagesNoImport() throws Exception {
+            doTest("idea/testData/findUsages/findClassUsages/kotlinClassAllUsagesNoImport.0.kt");
+        }
+        
         @TestMetadata("kotlinClassConstructorUsages.0.kt")
         public void testKotlinClassConstructorUsages() throws Exception {
             doTest("idea/testData/findUsages/findClassUsages/kotlinClassConstructorUsages.0.kt");
@@ -224,6 +229,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
         @TestMetadata("kotlinTopLevelMethodUsages.0.kt")
         public void testKotlinTopLevelMethodUsages() throws Exception {
             doTest("idea/testData/findUsages/findMethodUsages/kotlinTopLevelMethodUsages.0.kt");
+        }
+        
+        @TestMetadata("kotlinTopLevelMethodUsagesNoImport.0.kt")
+        public void testKotlinTopLevelMethodUsagesNoImport() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinTopLevelMethodUsagesNoImport.0.kt");
         }
         
     }

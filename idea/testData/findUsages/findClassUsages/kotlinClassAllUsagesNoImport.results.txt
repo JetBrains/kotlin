@@ -1,0 +1,2 @@
+Super type qualifier (7: 15) super<Server>.work()
+Supertype (5: 17) class Client(): Server() {

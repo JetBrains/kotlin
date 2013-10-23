@@ -24,8 +24,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
@@ -35,7 +36,10 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.findUsages.FindUsagesUtils;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog;
@@ -80,10 +84,7 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                                 if ((constructorUsage && !kotlinOptions.searchConstructorUsages)
                                     || (!constructorUsage && !kotlinOptions.isUsages)) continue;
 
-                                TextRange rangeInElement = ref.getRangeInElement();
-                                processor.process(
-                                        new UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false)
-                                );
+                                processUsage(processor, ref, kotlinOptions);
                             }
                         }
 

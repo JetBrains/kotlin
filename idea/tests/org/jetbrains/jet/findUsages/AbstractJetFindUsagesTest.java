@@ -24,6 +24,7 @@ import com.google.common.collect.Ordering;
 import com.intellij.find.FindManager;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.find.findUsages.JavaFindUsagesOptions;
 import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
@@ -68,10 +69,9 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                 options.isUsages = false;
                 options.searchConstructorUsages = false;
                 for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                    if (s.equals("usages")) {
-                        options.isUsages = true;
-                    }
-                    else if (s.equals("constructorUsages")) {
+                    if (parseCommonOptions(options, s)) continue;
+
+                    if (s.equals("constructorUsages")) {
                         options.searchConstructorUsages = true;
                     }
                     else if (s.equals("derivedInterfaces")) {
@@ -99,10 +99,9 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                 KotlinMethodFindUsagesOptions options = new KotlinMethodFindUsagesOptions(project);
                 options.isUsages = false;
                 for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
-                    if (s.equals("usages")) {
-                        options.isUsages = true;
-                    }
-                    else if (s.equals("overrides")) {
+                    if (parseCommonOptions(options, s)) continue;
+
+                    if (s.equals("overrides")) {
                         options.isOverridingMethods = true;
                         options.isImplementingMethods = true;
                     }
@@ -116,6 +115,20 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                 return options;
             }
         };
+
+        protected static boolean parseCommonOptions(JavaFindUsagesOptions options, String s) {
+            if (s.equals("usages")) {
+                options.isUsages = true;
+                return true;
+            }
+
+            if (s.equals("skipImports")) {
+                options.isSkipImportStatements = true;
+                return true;
+            }
+
+            return false;
+        }
 
         @NotNull
         public abstract FindUsagesOptions parse(@NotNull String text, @NotNull Project project);
@@ -172,7 +185,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         File[] extraFiles = rootDir.listFiles(
                 new FilenameFilter() {
                     @Override
-                    public boolean accept(File dir, String name) {
+                    public boolean accept(@NotNull File dir, @NotNull String name) {
                         if (!name.startsWith(prefix) || name.equals(mainFileName)) return false;
 
                         String ext = name.substring(name.lastIndexOf('.') + 1);
