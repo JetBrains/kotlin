@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
@@ -70,6 +71,8 @@ public class ExpressionTypingServices {
     private AnnotationResolver annotationResolver;
     @NotNull
     private PlatformToKotlinClassMap platformToKotlinClassMap;
+    @NotNull
+    private CallResolverExtension defaultExtension;
 
     @NotNull
     public Project getProject() {
@@ -142,6 +145,16 @@ public class ExpressionTypingServices {
         return platformToKotlinClassMap;
     }
 
+    @Inject
+    public void setDefaultExtension(@NotNull CallResolverExtension extension) {
+        this.defaultExtension = extension;
+    }
+
+    @NotNull
+    public CallResolverExtension getDefaultExtension() {
+        return defaultExtension;
+    }
+
     @NotNull
     public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
@@ -179,7 +192,8 @@ public class ExpressionTypingServices {
             }
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
-                this, trace, functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, ExpressionPosition.FREE
+                this, trace, functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE,
+                ExpressionPosition.FREE
         ));
     }
 
@@ -342,8 +356,8 @@ public class ExpressionTypingServices {
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
         return ExpressionTypingContext.newContext(this, trace, scope, dataFlowInfo, expectedType, oldContext.expressionPosition,
-                                                  oldContext.contextDependency, oldContext.resolutionResultsCache, oldContext.labelResolver
-        );
+                                                  oldContext.contextDependency, oldContext.resolutionResultsCache, oldContext.labelResolver,
+                                                  oldContext.callResolverExtension);
     }
 
     @Nullable

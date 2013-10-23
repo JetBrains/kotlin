@@ -141,7 +141,7 @@ public class CallResolver {
     ) {
         return resolveFunctionCall(BasicCallResolutionContext.create(
                 trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null));
+                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null, expressionTypingServices.getDefaultExtension()));
     }
 
     @NotNull
