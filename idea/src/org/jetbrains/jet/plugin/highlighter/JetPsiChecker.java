@@ -179,10 +179,12 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
                     return;
                 }
 
-                if (!isMarkedWithRedeclaration && Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                    isMarkedWithRedeclaration = true;
-                    Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
-                    setUpAnnotation(diagnostic, annotation, null);
+                if (Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
+                    if (!isMarkedWithRedeclaration) {
+                        isMarkedWithRedeclaration = true;
+                        Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
+                        setUpAnnotation(diagnostic, annotation, null);
+                    }
                     return;
                 }
 
