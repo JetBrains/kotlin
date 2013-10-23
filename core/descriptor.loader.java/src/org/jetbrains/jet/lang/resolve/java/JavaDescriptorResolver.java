@@ -25,9 +25,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaSubModule;
-import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -53,6 +51,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private JavaClassFinder javaClassFinder;
     private ExternalAnnotationResolver externalAnnotationResolver;
     private LazyJavaSubModule subModule;
+    private ExternalSignatureResolver externalSignatureResolver;
+    private ErrorReporter errorReporter;
+    private MethodSignatureChecker signatureChecker;
+    private JavaResolverCache javaResolverCache;
 
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
@@ -74,6 +76,26 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         this.externalAnnotationResolver = externalAnnotationResolver;
     }
 
+    @Inject
+    public void setExternalSignatureResolver(ExternalSignatureResolver externalSignatureResolver) {
+        this.externalSignatureResolver = externalSignatureResolver;
+    }
+
+    @Inject
+    public void setErrorReporter(ErrorReporter errorReporter) {
+        this.errorReporter = errorReporter;
+    }
+
+    @Inject
+    public void setSignatureChecker(MethodSignatureChecker signatureChecker) {
+        this.signatureChecker = signatureChecker;
+    }
+
+    @Inject
+    public void setJavaResolverCache(JavaResolverCache javaResolverCache) {
+        this.javaResolverCache = javaResolverCache;
+    }
+
     @NotNull
     private LazyJavaSubModule getSubModule() {
         if (subModule == null) {
@@ -92,7 +114,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                                     return null;
                                 }
                             },
-                            externalAnnotationResolver
+                            externalAnnotationResolver,
+                            externalSignatureResolver,
+                            errorReporter,
+                            signatureChecker,
+                            javaResolverCache
                     ),
                     new ModuleDescriptorImpl(Name.special("<java module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY)
             );
