@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.RecursionStatus;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 
 import java.util.ArrayList;

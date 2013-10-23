@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.codegen.RecursionStatus;
+import org.jetbrains.jet.lang.resolve.calls.RecursionStatus;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-public class TraceStatus<T> {
+public class BacktraceVisitorStatus<T> {
     @NotNull
     private final T data;
     private final boolean abortTrace;
 
-    public TraceStatus(@NotNull T data, boolean abortTrace) {
+    public BacktraceVisitorStatus(@NotNull T data, boolean abortTrace) {
         this.data = data;
         this.abortTrace = abortTrace;
     }

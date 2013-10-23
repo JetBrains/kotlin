@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.RecursionStatus;
+import org.jetbrains.jet.lang.resolve.calls.RecursionStatus;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;

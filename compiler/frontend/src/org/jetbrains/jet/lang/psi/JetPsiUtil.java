@@ -31,7 +31,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.codegen.TraceStatus;
 import org.jetbrains.jet.kdoc.psi.api.KDocElement;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -1045,13 +1044,13 @@ public class JetPsiUtil {
     @NotNull
     public static <T> T traceToRoot(
             @NotNull PsiElement element,
-            @NotNull JetVisitor<TraceStatus<T>, TraceData<T>> visitor,
+            @NotNull JetVisitor<BacktraceVisitorStatus<T>, TraceData<T>> visitor,
             T def
     ) {
         ArrayList<PsiElement> track = new ArrayList<PsiElement>();
         List<PsiElement> view = Collections.unmodifiableList(track);
         @NotNull
-        TraceStatus<T> lastStatus = new TraceStatus<T>(def, true);
+        BacktraceVisitorStatus<T> lastStatus = new BacktraceVisitorStatus<T>(def, true);
         TraceData<T> data = new TraceData<T>(view);
 
         do {
@@ -1062,7 +1061,7 @@ public class JetPsiUtil {
                 data.last = element;
                 data.data = lastStatus.getData();
 
-                TraceStatus<T> status = jet.accept(visitor, data);
+                BacktraceVisitorStatus<T> status = jet.accept(visitor, data);
                 if (status == null) {
                     throw new IllegalStateException("visitor has returned null status");
                 }

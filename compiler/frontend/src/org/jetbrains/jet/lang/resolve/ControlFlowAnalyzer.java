@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.RecursionStatus;
+import org.jetbrains.jet.lang.resolve.calls.RecursionStatus;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;

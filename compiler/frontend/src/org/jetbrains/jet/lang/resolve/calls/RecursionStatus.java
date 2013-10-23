@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.lang.resolve.calls;
 
 public enum RecursionStatus {
     MIGHT_BE(true, false),
