@@ -62,7 +62,6 @@ public class JetPsiUtilTest extends JetLiteFixture {
         Assert.assertEquals(new ImportPath(new FqName("some.test"), true), getImportPathFromParsed("import some.test.*"));
         Assert.assertEquals(new ImportPath(new FqName("some.test"), false, Name.identifier("SomeTest")), getImportPathFromParsed("import some.test as SomeTest"));
 
-        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.\nTest"));
         Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some./* hello world */Test"));
         Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.    Test"));
 

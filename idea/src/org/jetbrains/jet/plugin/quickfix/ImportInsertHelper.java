@@ -125,21 +125,20 @@ public class ImportInsertHelper {
         writeImportToFile(importPath, file);
     }
 
-    public static void writeImportToFile(ImportPath importPath, JetFile file) {
-        JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
-        List<JetImportDirective> importDirectives = file.getImportDirectives();
-
-        if (!importDirectives.isEmpty()) {
-            JetImportDirective lastDirective = importDirectives.get(importDirectives.size() - 1);
-            lastDirective.getParent().addAfter(newDirective, lastDirective);
+    public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        JetImportList importList = file.getImportList();
+        if (importList != null) {
+            JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
+            importList.add(newDirective);
         }
         else {
+            JetImportList newDirective = JetPsiFactory.createImportDirectiveWithImportList(file.getProject(), importPath);
             JetNamespaceHeader header = file.getNamespaceHeader();
             if (header == null) {
                 throw new IllegalStateException("Scripts are not supported: " + file.getName());
             }
 
-            header.getParent().addAfter(newDirective, file.getNamespaceHeader());
+            header.getParent().addAfter(newDirective, header);
         }
     }
 

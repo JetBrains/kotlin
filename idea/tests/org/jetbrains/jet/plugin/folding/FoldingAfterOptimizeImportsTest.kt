@@ -42,6 +42,10 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
         doTest()
     }
 
+    fun testFoldingAfterOptimizeImportsRemoveFirst() {
+        doTest()
+    }
+
     private fun doTest() {
         fixture.configureByFile(getTestName(true) + ".kt")
 

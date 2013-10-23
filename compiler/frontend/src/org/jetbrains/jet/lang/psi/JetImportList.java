@@ -19,45 +19,27 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
-public class JetScript extends JetDeclarationImpl {
+public class JetImportList extends JetElementImpl {
 
-    public JetScript(@NotNull ASTNode node) {
+    public JetImportList(@NotNull ASTNode node) {
         super(node);
-    }
-
-    @NotNull
-    public JetBlockExpression getBlockExpression() {
-        return findNotNullChildByClass(JetBlockExpression.class);
-    }
-
-    @Nullable
-    public JetImportList getImportList() {
-        return findChildByClass(JetImportList.class);
-    }
-
-    @NotNull
-    public List<JetImportDirective> getImportDirectives() {
-        JetImportList importList = getImportList();
-        return importList != null ? importList.getImports() : Collections.<JetImportDirective>emptyList();
-    }
-
-    @NotNull
-    public List<JetDeclaration> getDeclarations() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(getBlockExpression(), JetDeclaration.class);
     }
 
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitScript(this);
+        visitor.visitImportList(this);
     }
 
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitScript(this, data);
+        return visitor.visitImportList(this, data);
+    }
+
+    @NotNull
+    public List<JetImportDirective> getImports() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
     }
 }

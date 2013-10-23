@@ -11,11 +11,12 @@ JetFile: SoftKeywords.kt
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('goo')
   PsiWhiteSpace('\n\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST

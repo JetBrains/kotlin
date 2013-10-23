@@ -59,6 +59,10 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitJetElement(importDirective);
     }
 
+    public void visitImportList(JetImportList importList) {
+        visitJetElement(importList);
+    }
+
     public void visitClassBody(JetClassBody classBody) {
         visitJetElement(classBody);
     }

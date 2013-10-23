@@ -86,7 +86,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * [start] jetlFile
-     *   : preamble toplevelObject[| import]* [eof]
+     *   : preamble toplevelObject* [eof]
      *   ;
      */
     void parseFile() {
@@ -94,7 +94,9 @@ public class JetParsing extends AbstractJetParsing {
 
         parsePreamble(true);
 
-        parseToplevelDeclarations(false);
+        while (!eof()) {
+            parseTopLevelObject();
+        }
 
         fileMarker.done(JET_FILE);
     }
@@ -138,20 +140,6 @@ public class JetParsing extends AbstractJetParsing {
         blockMarker.done(BLOCK);
         scriptMarker.done(SCRIPT);
         fileMarker.done(JET_FILE);
-    }
-
-    /*
-     * toplevelObject[| import]*
-     */
-    private void parseToplevelDeclarations(boolean insideBlock) {
-        while (!eof() && (!insideBlock || !at(RBRACE))) {
-            if (at(IMPORT_KEYWORD)) {
-                parseImportDirective();
-            }
-            else {
-                parseTopLevelObject();
-            }
-        }
     }
 
     /*
@@ -230,6 +218,10 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker importDirective = mark();
         advance(); // IMPORT_KEYWORD
 
+        if (closeImportWithErrorIfNewline(importDirective, "Expecting qualified name")) {
+            return;
+        }
+
         PsiBuilder.Marker qualifiedName = mark();
 
         PsiBuilder.Marker reference = mark();
@@ -238,6 +230,11 @@ public class JetParsing extends AbstractJetParsing {
 
         while (at(DOT) && lookahead(1) != MUL) {
             advance(); // DOT
+
+            if (closeImportWithErrorIfNewline(importDirective, "Import must be placed on a single line")) {
+                qualifiedName.drop();
+                return;
+            }
 
             reference = mark();
             if (expect(IDENTIFIER, "Qualified name must be a '.'-separated identifier list", IMPORT_RECOVERY_SET)) {
@@ -257,29 +254,44 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // DOT
             assert _at(MUL);
             advance(); // MUL
-            handleUselessRename();
+            if (at(AS_KEYWORD)) {
+                PsiBuilder.Marker as = mark();
+                advance(); // AS_KEYWORD
+                if (closeImportWithErrorIfNewline(importDirective, "Expecting identifier")) {
+                    as.drop();
+                    return;
+                }
+                consumeIf(IDENTIFIER);
+                as.error("Cannot rename all imported items to one identifier");
+            }
         }
         if (at(AS_KEYWORD)) {
             advance(); // AS_KEYWORD
+            if (closeImportWithErrorIfNewline(importDirective, "Expecting identifier")) {
+                return;
+            }
             expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
         }
         consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
     }
 
-    private void parseImportDirectives() {
-        // TODO: Duplicate with parsing imports in parseToplevelDeclarations
-        while (at(IMPORT_KEYWORD)) {
-            parseImportDirective();
+    private boolean closeImportWithErrorIfNewline(PsiBuilder.Marker importDirective, String errorMessage) {
+        if (myBuilder.newlineBeforeCurrentToken()) {
+            error(errorMessage);
+            importDirective.done(IMPORT_DIRECTIVE);
+            return true;
         }
+        return false;
     }
 
-    private void handleUselessRename() {
-        if (at(AS_KEYWORD)) {
-            PsiBuilder.Marker as = mark();
-            advance(); // AS_KEYWORD
-            consumeIf(IDENTIFIER);
-            as.error("Cannot rename a all imported items to one identifier");
+    private void parseImportDirectives() {
+        if (at(IMPORT_KEYWORD)) {
+            PsiBuilder.Marker importList = mark();
+            while (at(IMPORT_KEYWORD)) {
+                parseImportDirective();
+            }
+            importList.done(IMPORT_LIST);
         }
     }
 

@@ -52,7 +52,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .after(NAMESPACE_HEADER).blankLines(1)
 
                 .between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
-                .after(IMPORT_DIRECTIVE).blankLines(1)
+                .after(IMPORT_LIST).blankLines(1)
 
                 .before(DOC_COMMENT).lineBreakInCode()
                 .before(FUN).lineBreakInCode()
