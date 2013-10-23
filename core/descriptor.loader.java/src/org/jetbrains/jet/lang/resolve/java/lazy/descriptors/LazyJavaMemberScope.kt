@@ -40,9 +40,6 @@ public abstract class LazyJavaMemberScope(
     override fun getObjectDescriptor(name: Name): ClassDescriptor? = null
     override fun getObjectDescriptors() = emptyList<ClassDescriptor>()
 
-    // namespaces should be resolved elsewhere
-    override fun getNamespace(name: Name): NamespaceDescriptor? = null
-
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
     override fun getDeclarationsByLabel(labelName: LabelName) = emptyList<DeclarationDescriptor>()
 
@@ -52,10 +49,14 @@ public abstract class LazyJavaMemberScope(
     private fun computeAllDescriptors(): MutableCollection<DeclarationDescriptor> {
         val result = arrayListOf<DeclarationDescriptor>()
 
+        for (name in getAllPackageNames()) {
+            val descriptor = getNamespace(name)
+            result.add(descriptor ?: throw IllegalStateException("Descriptor not found for name $name in " + getContainingDeclaration()))
+        }
+
         for (name in getAllClassNames()) {
             val descriptor = getClassifier(name)
-            assert(descriptor != null) {"Descriptor not found for name " + name + " in " + getContainingDeclaration()}
-            result.add(descriptor!!)
+            result.add(descriptor ?: throw IllegalStateException("Descriptor not found for name $name in " + getContainingDeclaration()))
         }
 
         for (name in getAllFunctionNames()) {
@@ -71,6 +72,7 @@ public abstract class LazyJavaMemberScope(
         return result
     }
 
+    protected abstract fun getAllPackageNames(): Collection<Name>
     protected abstract fun getAllClassNames(): Collection<Name>
     protected abstract fun getAllPropertyNames(): Collection<Name>
     protected abstract fun getAllFunctionNames(): Collection<Name>

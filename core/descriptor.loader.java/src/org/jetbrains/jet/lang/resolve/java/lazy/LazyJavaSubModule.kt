@@ -2,11 +2,12 @@ package org.jetbrains.jet.lang.resolve.java.lazy
 
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaPackage
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
 
 public open class LazyJavaSubModule(
         private val outerContext: GlobalJavaResolverContext,
@@ -22,9 +23,22 @@ public open class LazyJavaSubModule(
 
     private val _packageFragments: MemoizedFunctionToNullable<FqName, NamespaceDescriptor> = c.storageManager.createMemoizedFunctionWithNullableValues {
         fqName ->
-        val parent = if (fqName.isRoot()) module else getPackageFragment(fqName.parent()) ?: throw IllegalStateException("Cannot resolve parent package for: $fqName")
-        LazyJavaPackageFragment(c, parent, fqName)
+        val jPackage = c.finder.findPackage(fqName)
+        if (jPackage != null) {
+            LazyPackageFragmentForJavaPackage(c, findParent(fqName), jPackage)
+        }
+        else {
+            val jClass = c.finder.findClass(fqName)
+            if (jClass != null && (jClass.getOuterClass() == null || jClass.isStatic())) {
+                LazyPackageFragmentForJavaClass(c, findParent(fqName), jClass)
+            }
+            else null
+        }
     }
+
+    private fun findParent(fqName: FqName) =
+            if (fqName.isRoot()) module else getPackageFragment(fqName.parent())
+                            ?: throw IllegalStateException("Cannot resolve parent package for: $fqName")
 
     fun getPackageFragment(fqName: FqName): NamespaceDescriptor? = _packageFragments(fqName)
 

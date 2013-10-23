@@ -267,4 +267,8 @@ public class LazyJavaClassMemberScope(
     override fun getContainingDeclaration(): LazyJavaClassDescriptor {
         return super.getContainingDeclaration() as LazyJavaClassDescriptor
     }
+
+    // namespaces should be resolved elsewhere
+    override fun getNamespace(name: Name): NamespaceDescriptor? = null
+    override fun getAllPackageNames(): Collection<Name> = listOf()
 }
