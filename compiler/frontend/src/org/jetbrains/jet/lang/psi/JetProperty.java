@@ -89,16 +89,6 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return getParent() instanceof JetFile;
     }
 
-    @NotNull
-    @Override
-    public SearchScope getUseScope() {
-        if (isLocal()) {
-            @SuppressWarnings("unchecked") PsiElement block = PsiTreeUtil.getParentOfType(this, JetBlockExpression.class, JetClassInitializer.class);
-            if (block == null) return super.getUseScope();
-            else return new LocalSearchScope(block);
-        }   else return super.getUseScope();
-    }
-
     @Nullable
     @Override
     public JetParameterList getValueParameterList() {

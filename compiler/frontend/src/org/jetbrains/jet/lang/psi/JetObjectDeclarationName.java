@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class JetObjectDeclarationName extends JetNamedDeclarationNotStubbed {
@@ -33,5 +35,12 @@ public class JetObjectDeclarationName extends JetNamedDeclarationNotStubbed {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitObjectDeclarationName(this, data);
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(this, JetObjectDeclaration.class);
+        return objectDeclaration != null ? objectDeclaration.getUseScope() : super.getUseScope();
     }
 }
