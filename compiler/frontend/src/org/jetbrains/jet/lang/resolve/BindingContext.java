@@ -90,7 +90,7 @@ public interface BindingContext {
             new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
     WritableSlice<JetCallExpression, RecursionStatus> TAIL_RECURSION_CALL =
             new BasicWritableSlice<JetCallExpression, RecursionStatus>(DO_NOTHING, true);
-    WritableSlice<DeclarationDescriptor, List<JetCallExpression>> FUNCTION_RECURSIONS =
+    WritableSlice<DeclarationDescriptor, List<JetCallExpression>> FUNCTION_RECURSIVE_CALL_EXPRESSIONS =
             new BasicWritableSlice<DeclarationDescriptor, List<JetCallExpression>>(DO_NOTHING, false);
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);

@@ -75,7 +75,7 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
                 super.visitNamedFunction(function, data);
 
                 if (data.isTail) {
-                    List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIONS, descriptor);
+                    List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor);
                     if (calls == null) {
                         calls = Collections.emptyList();
                     }

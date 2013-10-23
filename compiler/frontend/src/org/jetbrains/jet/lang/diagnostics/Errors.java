@@ -279,7 +279,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetNamedFunction> TAIL_RECURSIVE_FUNCTION_WITH_NO_TAILS = DiagnosticFactory0.create(WARNING, NAMED_ELEMENT);
+    DiagnosticFactory0<JetNamedFunction> NO_TAIL_RECURSIONS_FOUND = DiagnosticFactory0.create(WARNING, NAMED_ELEMENT);
 
     // Named parameters
 

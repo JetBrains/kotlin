@@ -133,9 +133,9 @@ public class ControlFlowAnalyzer {
     private void checkTailRecursion(JetDeclarationWithBody declarationWithBody) {
         FunctionDescriptor descriptor = (FunctionDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationWithBody);
         if (descriptor != null && declarationWithBody instanceof JetNamedFunction && (KotlinBuiltIns.getInstance().isTailRecursive(descriptor))) {
-            List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIONS, descriptor);
+            List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor);
             if (calls == null || calls.isEmpty()) {
-                trace.report(Errors.TAIL_RECURSIVE_FUNCTION_WITH_NO_TAILS.on((JetNamedFunction) declarationWithBody));
+                trace.report(Errors.NO_TAIL_RECURSIONS_FOUND.on((JetNamedFunction) declarationWithBody));
             }
             else {
                 for (JetCallExpression call : calls) {
