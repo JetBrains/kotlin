@@ -1,0 +1,7 @@
+package test
+
+internal fun jet.Int.foo(/*0*/ test.A() x: jet.Int): jet.Unit
+
+internal final annotation class A : jet.Annotation {
+    /*primary*/ public constructor A()
+}

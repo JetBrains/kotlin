@@ -1,0 +1,10 @@
+package test
+
+internal final annotation class Anno : jet.Annotation {
+    /*primary*/ public constructor Anno()
+}
+
+internal final class Class {
+    /*primary*/ public constructor Class()
+    internal final fun jet.String.foo(/*0*/ test.Anno() x: jet.Int): jet.Int
+}

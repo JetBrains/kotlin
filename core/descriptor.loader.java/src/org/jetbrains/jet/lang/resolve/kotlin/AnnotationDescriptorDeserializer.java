@@ -233,6 +233,17 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
         if (signature == null) return Collections.emptyList();
 
+        return findClassAndLoadMemberAnnotations(container, proto, nameResolver, kind, signature);
+    }
+
+    @NotNull
+    private List<AnnotationDescriptor> findClassAndLoadMemberAnnotations(
+            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ProtoBuf.Callable proto,
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind,
+            @NotNull MemberSignature signature
+    ) {
         KotlinJvmBinaryClass kotlinClass = findClassWithMemberAnnotations(container, proto, nameResolver, kind);
         if (kotlinClass == null) {
             errorReporter.reportAnnotationLoadingError("Kotlin class for loading member annotations is not found: " + container, null);
@@ -342,34 +353,54 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         kotlinClass.loadMemberAnnotations(new KotlinJvmBinaryClass.MemberVisitor() {
             @Nullable
             @Override
-            public KotlinJvmBinaryClass.AnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc) {
-                return annotationVisitor(MemberSignature.fromMethodNameAndDesc(name, desc));
+            public KotlinJvmBinaryClass.MethodAnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc) {
+                return new AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name, desc));
             }
 
             @Nullable
             @Override
             public KotlinJvmBinaryClass.AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc) {
-                return annotationVisitor(MemberSignature.fromFieldNameAndDesc(name, desc));
+                return new MemberAnnotationVisitor(MemberSignature.fromFieldNameAndDesc(name, desc));
             }
 
-            @NotNull
-            private KotlinJvmBinaryClass.AnnotationVisitor annotationVisitor(@NotNull final MemberSignature signature) {
-                return new KotlinJvmBinaryClass.AnnotationVisitor() {
-                    private final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
+            class AnnotationVisitorForMethod extends MemberAnnotationVisitor implements KotlinJvmBinaryClass.MethodAnnotationVisitor {
+                public AnnotationVisitorForMethod(@NotNull MemberSignature signature) {
+                    super(signature);
+                }
 
-                    @Nullable
-                    @Override
-                    public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
-                        return resolveAnnotation(className, result);
+                @Nullable
+                @Override
+                public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull JvmClassName className) {
+                    MemberSignature paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index);
+                    List<AnnotationDescriptor> result = memberAnnotations.get(paramSignature);
+                    if (result == null) {
+                        result = new ArrayList<AnnotationDescriptor>();
+                        memberAnnotations.put(paramSignature, result);
                     }
+                    return resolveAnnotation(className, result);
+                }
+            }
 
-                    @Override
-                    public void visitEnd() {
-                        if (!result.isEmpty()) {
-                            memberAnnotations.put(signature, result);
-                        }
+            class MemberAnnotationVisitor implements KotlinJvmBinaryClass.AnnotationVisitor {
+                private final List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
+                protected final MemberSignature signature;
+
+                public MemberAnnotationVisitor(@NotNull MemberSignature signature) {
+                    this.signature = signature;
+                }
+
+                @Nullable
+                @Override
+                public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
+                    return resolveAnnotation(className, result);
+                }
+
+                @Override
+                public void visitEnd() {
+                    if (!result.isEmpty()) {
+                        memberAnnotations.put(signature, result);
                     }
-                };
+                }
             }
         });
 
@@ -393,6 +424,11 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         @NotNull
         public static MemberSignature fromFieldNameAndDesc(@NotNull Name name, @NotNull String desc) {
             return new MemberSignature(name.asString() + "#" + desc);
+        }
+
+        @NotNull
+        public static MemberSignature fromMethodSignatureAndParameterIndex(@NotNull MemberSignature signature, int index) {
+            return new MemberSignature(signature.signature + "@" + index);
         }
 
         @Override
@@ -467,7 +503,22 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> loadValueParameterAnnotations(@NotNull ProtoBuf.Callable.ValueParameter parameterProto) {
-        throw new UnsupportedOperationException(); // TODO
+    public List<AnnotationDescriptor> loadValueParameterAnnotations(
+            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ProtoBuf.Callable callable,
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind,
+            @NotNull ProtoBuf.Callable.ValueParameter proto
+    ) {
+        MemberSignature methodSignature = getCallableSignature(callable, nameResolver, kind);
+        if (methodSignature != null) {
+            if (proto.hasExtension(JavaProtoBuf.index)) {
+                MemberSignature paramSignature =
+                        MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, proto.getExtension(JavaProtoBuf.index));
+                return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature);
+            }
+        }
+
+        return Collections.emptyList();
     }
 }

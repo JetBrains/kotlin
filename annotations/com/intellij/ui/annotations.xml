@@ -1,0 +1,9 @@
+<root>
+  <item name='com.intellij.ui.EditorNotificationPanel myLabel'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.ui.EditorNotifications.Provider T createNotificationPanel(com.intellij.openapi.vfs.VirtualFile, com.intellij.openapi.fileEditor.FileEditor) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

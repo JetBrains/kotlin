@@ -1,0 +1,12 @@
+package test
+
+internal final annotation class A : jet.Annotation {
+    /*primary*/ public constructor A()
+}
+
+internal final class Class {
+    /*primary*/ public constructor Class()
+    internal final var jet.Int.foo: jet.Int
+        internal final fun jet.Int.<get-foo>(): jet.Int
+        internal final fun jet.Int.<set-foo>(/*0*/ test.A() value: jet.Int): jet.Unit
+}

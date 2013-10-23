@@ -16,31 +16,46 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl {
-    public AccessorForFunctionDescriptor(DeclarationDescriptor descriptor, DeclarationDescriptor containingDeclaration, int index) {
+    public AccessorForFunctionDescriptor(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            int index
+    ) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(),
-              Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName())+ "$b$" + index),
+              Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName()) + "$b$" + index),
               Kind.DECLARATION);
 
-        FunctionDescriptor fd = (FunctionDescriptor) descriptor;
-
-        initialize(DescriptorUtils.getReceiverParameterType(fd.getReceiverParameter()),
-                descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : fd.getExpectedThisObject(),
-                Collections.<TypeParameterDescriptor>emptyList(),
-                fd.getValueParameters(),
-                fd.getReturnType(),
-                Modality.FINAL,
-                Visibilities.INTERNAL,
+        initialize(DescriptorUtils.getReceiverParameterType(descriptor.getReceiverParameter()),
+                   descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : descriptor.getExpectedThisObject(),
+                   Collections.<TypeParameterDescriptor>emptyList(),
+                   copyValueParameters(descriptor),
+                   descriptor.getReturnType(),
+                   Modality.FINAL,
+                   Visibilities.INTERNAL,
                    /*isInline = */ false);
+    }
+
+    @NotNull
+    private List<ValueParameterDescriptor> copyValueParameters(@NotNull FunctionDescriptor descriptor) {
+        List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(valueParameters.size());
+        for (ValueParameterDescriptor valueParameter : valueParameters) {
+            result.add(valueParameter.copy(this, valueParameter.getName()));
+        }
+        return result;
     }
 }

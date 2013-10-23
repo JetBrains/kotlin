@@ -33,7 +33,7 @@ public interface KotlinJvmBinaryClass {
         // TODO: abstract signatures for methods and fields instead of ASM 'desc' strings?
 
         @Nullable
-        AnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc);
+        MethodAnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc);
 
         @Nullable
         AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc);
@@ -44,6 +44,11 @@ public interface KotlinJvmBinaryClass {
         AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className);
 
         void visitEnd();
+    }
+
+    interface MethodAnnotationVisitor extends AnnotationVisitor {
+        @Nullable
+        AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull JvmClassName className);
     }
 
     interface AnnotationArgumentVisitor {

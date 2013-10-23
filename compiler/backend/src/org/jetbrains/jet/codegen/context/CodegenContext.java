@@ -253,7 +253,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof ConstructorDescriptor) {
-            accessor = new AccessorForFunctionDescriptor(descriptor, contextDescriptor, accessors.size());
+            accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, accessors.size());
         }
         else if (descriptor instanceof PropertyDescriptor) {
             accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor, accessors.size());

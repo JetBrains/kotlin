@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.plugin.intentions.declarations;
 
-import com.google.common.base.Predicate;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -40,9 +40,9 @@ public class SplitPropertyDeclarationIntention extends AbstractCodeTransformatio
         }
     };
 
-    private static final Predicate<PsiElement> IS_APPLICABLE = new Predicate<PsiElement>() {
+    private static final Function1<PsiElement, Boolean> IS_APPLICABLE = new Function1<PsiElement, Boolean>() {
         @Override
-        public boolean apply(@Nullable PsiElement input) {
+        public Boolean invoke(@Nullable PsiElement input) {
             return (input instanceof JetProperty) && DeclarationUtils.checkSplitProperty((JetProperty) input);
         }
     };

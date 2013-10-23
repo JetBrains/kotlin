@@ -1,0 +1,15 @@
+package test
+
+internal final annotation class A : jet.Annotation {
+    /*primary*/ public constructor A()
+}
+
+internal final annotation class B : jet.Annotation {
+    /*primary*/ public constructor B()
+}
+
+internal final class Class {
+    /*primary*/ public constructor Class(/*0*/ test.A() x: jet.Int, /*1*/ test.B() y: jet.String)
+    test.A() internal final val x: jet.Int
+        internal final fun <get-x>(): jet.Int
+}

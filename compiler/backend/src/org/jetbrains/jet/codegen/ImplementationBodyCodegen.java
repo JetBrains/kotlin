@@ -213,7 +213,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(v.getMemberMap()));
+        DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(v.getSerializationBindings()));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 

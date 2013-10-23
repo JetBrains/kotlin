@@ -747,27 +747,6 @@ public class JetPsiUtil {
         return checkElement.apply(lastElement) ? lastElement : null;
     }
 
-    @Nullable
-    public static PsiElement getParentByTypeAndPredicate(
-            @Nullable PsiElement element, @NotNull Class<? extends PsiElement> aClass, @NotNull Predicate<PsiElement> predicate, boolean strict) {
-        if (element == null) return null;
-        if (strict) {
-            element = element.getParent();
-        }
-
-        while (element != null) {
-            //noinspection unchecked
-            if (aClass.isInstance(element) && predicate.apply(element)) {
-                //noinspection unchecked
-                return element;
-            }
-            if (element instanceof PsiFile) return null;
-            element = element.getParent();
-        }
-
-        return null;
-    }
-
     public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
         for (JetElement element : block.getStatements()) {
             if (element instanceof JetVariableDeclaration) {

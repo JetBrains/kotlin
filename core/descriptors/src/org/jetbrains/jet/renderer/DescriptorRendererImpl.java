@@ -547,6 +547,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append("/*").append(valueParameter.getIndex()).append("*/ ");
         }
 
+        renderAnnotations(valueParameter, builder);
         renderVariable(valueParameter, builder, topLevel);
         boolean withDefaultValue = debugMode ? valueParameter.declaresDefaultValue() : valueParameter.hasDefaultValue();
         if (withDefaultValue) {

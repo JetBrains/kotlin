@@ -1,0 +1,25 @@
+package test
+
+internal final annotation class A : jet.Annotation {
+    /*primary*/ public constructor A()
+}
+
+internal final annotation class B : jet.Annotation {
+    /*primary*/ public constructor B()
+}
+
+internal final enum class E : jet.Enum<test.E> {
+    /*primary*/ private constructor E(/*0*/ test.A() x: jet.String, /*1*/ test.B() y: jet.Int)
+    test.A() internal final val x: jet.String
+        internal final fun <get-x>(): jet.String
+    test.B() internal final val y: jet.Int
+        internal final fun <get-y>(): jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+    
+    internal class object <class-object-for-E> {
+        /*primary*/ private constructor <class-object-for-E>()
+        public final fun valueOf(/*0*/ value: jet.String): test.E
+        public final fun values(): jet.Array<test.E>
+    }
+}

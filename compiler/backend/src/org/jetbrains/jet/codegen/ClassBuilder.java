@@ -27,7 +27,7 @@ public abstract class ClassBuilder {
 
     private String thisName;
 
-    private final MemberMap members = new MemberMap();
+    private final JvmSerializationBindings serializationBindings = new JvmSerializationBindings();
 
     public static class Concrete extends ClassBuilder {
         private final ClassVisitor v;
@@ -76,8 +76,8 @@ public abstract class ClassBuilder {
     }
 
     @NotNull
-    public MemberMap getMemberMap() {
-        return members;
+    public JvmSerializationBindings getSerializationBindings() {
+        return serializationBindings;
     }
 
     @NotNull
