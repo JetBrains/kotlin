@@ -20,22 +20,28 @@ import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArgumentUtils {
 
     private ArgumentUtils() {}
 
     @NotNull
-    public static <T> String convertArgumentsToString(T arguments, T defaultArguments) {
-        StringBuilder result = new StringBuilder();
-        convertArgumentsToString(arguments, defaultArguments, arguments.getClass(), result);
-        return result.toString();
+    public static <T> List<String> convertArgumentsToStringList(@NotNull T arguments, @NotNull T defaultArguments) {
+        List<String> result = new ArrayList<String>();
+        convertArgumentsToStringList(arguments, defaultArguments, result);
+        return result;
     }
 
-    public static <T> void convertArgumentsToString(T arguments, T defaultArguments, Class clazz, StringBuilder result) {
+    public static <T> void convertArgumentsToStringList(@NotNull T arguments, @NotNull T defaultArguments, @NotNull List<String> result) {
+        convertArgumentsToStringList(arguments, defaultArguments, arguments.getClass(), result);
+    }
+
+    private static <T> void convertArgumentsToStringList(T arguments, T defaultArguments, Class clazz, List<String> result) {
         Class superClazz = clazz.getSuperclass();
         if (superClazz != null) {
-            convertArgumentsToString(arguments, defaultArguments, superClazz, result);
+            convertArgumentsToStringList(arguments, defaultArguments, superClazz, result);
         }
 
         for (Field field : clazz.getDeclaredFields()) {
@@ -60,11 +66,11 @@ public class ArgumentUtils {
                 name = Args.getName(argument, field);
             }
 
-            result.append("-").append(name).append(" ");
+            result.add(argument.prefix() + name);
 
             Class<?> fieldType = field.getType();
             if (fieldType != boolean.class && fieldType != Boolean.class) {
-                result.append(value).append(" ");
+                result.add(value.toString());
             }
         }
     }

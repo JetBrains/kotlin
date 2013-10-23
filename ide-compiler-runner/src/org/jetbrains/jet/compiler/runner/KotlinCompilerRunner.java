@@ -21,6 +21,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.sampullara.cli.ArgumentUtils;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
@@ -37,6 +38,8 @@ import java.util.Set;
 public class KotlinCompilerRunner {
     private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
     private static final String K2JS_COMPILER = "org.jetbrains.jet.cli.js.K2JSCompiler";
+    private static final K2JVMCompilerArguments DEFAULT_K2JVM_ARGUMENTS = new K2JVMCompilerArguments();
+    private static final K2JSCompilerArguments DEFAULT_K2JS_ARGUMENTS = new K2JSCompilerArguments();
 
     public static void runK2JvmCompiler(
             CommonCompilerArguments commonArguments,
@@ -49,7 +52,7 @@ public class KotlinCompilerRunner {
         K2JVMCompilerArguments arguments = mergeBeans(commonArguments, k2jvmArguments);
         setupK2JvmSettings(moduleFile, arguments);
 
-        runCompiler(K2JVM_COMPILER, arguments, messageCollector, collector, environment);
+        runCompiler(K2JVM_COMPILER, arguments, DEFAULT_K2JVM_ARGUMENTS, messageCollector, collector, environment);
     }
 
     public static void runK2JsCompiler(
@@ -65,27 +68,30 @@ public class KotlinCompilerRunner {
         K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
         setupK2JsSettings(outputFile, sourceFiles, libraryFiles, arguments);
 
-        runCompiler(K2JS_COMPILER, arguments, messageCollector, collector, environment);
+        runCompiler(K2JS_COMPILER, arguments, DEFAULT_K2JS_ARGUMENTS, messageCollector, collector, environment);
     }
 
     private static void runCompiler(
             final String compilerClassName,
-            final CommonCompilerArguments arguments,
+            CommonCompilerArguments arguments,
+            CommonCompilerArguments defaultArguments,
             final MessageCollector messageCollector,
             OutputItemsCollector collector,
             final CompilerEnvironment environment
     ) {
+        final List<String> argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments, defaultArguments);
+
         CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
             @Override
             public Integer fun(PrintStream stream) {
-                return execCompiler(compilerClassName, arguments, environment, stream, messageCollector);
+                return execCompiler(compilerClassName, ArrayUtil.toStringArray(argumentsList), environment, stream, messageCollector);
             }
         });
     }
 
     private static int execCompiler(
             String compilerClassName,
-            CommonCompilerArguments arguments,
+            String[] arguments,
             CompilerEnvironment environment,
             PrintStream out,
             MessageCollector messageCollector
