@@ -133,8 +133,8 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
     }
 
     private static class ElementAnnotator {
-        @NotNull private final PsiElement element;
-        @NotNull private final AnnotationHolder holder;
+        private final PsiElement element;
+        private final AnnotationHolder holder;
 
         private boolean isMarkedWithRedeclaration;
 
@@ -179,7 +179,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
                     return;
                 }
 
-                if (Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
+                if (diagnostic.getFactory() == Errors.REDECLARATION) {
                     if (!isMarkedWithRedeclaration) {
                         isMarkedWithRedeclaration = true;
                         Annotation annotation = holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), "");
