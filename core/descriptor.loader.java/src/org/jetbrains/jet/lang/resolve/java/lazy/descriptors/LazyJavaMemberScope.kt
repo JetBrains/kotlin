@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeAttributes
 import org.jetbrains.jet.lang.resolve.java.lazy.hasMutableAnnotation
 import org.jetbrains.kotlin.util.iif
 import org.jetbrains.jet.lang.resolve.java.lazy.hasReadOnlyAnnotation
+import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.utils.Printer
@@ -35,6 +36,99 @@ public abstract class LazyJavaMemberScope(
     private val allDescriptors: NotNullLazyValue<MutableCollection<DeclarationDescriptor>> = c.storageManager.createLazyValue{computeAllDescriptors()}
 
     override fun getContainingDeclaration() = _containingDeclaration
+
+    private val memberIndex = c.storageManager.createLazyValue {
+        computeMemberIndex()
+    }
+
+    protected abstract fun computeMemberIndex(): MemberIndex
+
+    private val _functions = c.storageManager.createMemoizedFunction {
+        (name: Name): Collection<FunctionDescriptor>
+        ->
+        val methods = memberIndex().findMethodsByName(name)
+        val functions = methods.map {
+            method ->
+            val function = JavaMethodDescriptor(
+                    _containingDeclaration,
+                    c.resolveAnnotations(method.getAnnotations()),
+                    name
+            )
+            val innerC = c.child(function, method.getTypeParameters().toSet())
+            val valueParameters = resolveValueParameters(innerC, function, method.getValueParameters())
+            val returnTypeAttrs = LazyJavaTypeAttributes(c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
+                if (method.hasReadOnlyAnnotation() && !method.hasMutableAnnotation())
+                    TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
+                else
+                    TypeUsage.MEMBER_SIGNATURE_COVARIANT
+            }
+
+            function.initialize(
+                null,
+                DescriptorUtils.getExpectedThisObjectIfNeeded(_containingDeclaration),
+                method.getTypeParameters().map { p -> innerC.typeParameterResolver.resolveTypeParameter(p) },
+                valueParameters,
+                c.typeResolver.transformJavaType(method.getReturnType()!!, returnTypeAttrs),
+                Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
+                method.getVisibility(),
+                false
+            )
+            function
+        }
+
+        // Make sure that lazy things are computed before we release the lock
+        for (f in functions) {
+            for (p in f.getValueParameters()) {
+                p.hasDefaultValue()
+            }
+        }
+
+        functions
+    }
+
+    protected fun resolveValueParameters(
+            c: LazyJavaResolverContextWithTypes,
+            function: FunctionDescriptor,
+            jValueParameters: List<JavaValueParameter>
+    ): List<ValueParameterDescriptor> {
+        return jValueParameters.withIndices().map {
+            pair ->
+            val (index, javaParameter) = pair
+
+            val typeUsage = LazyJavaTypeAttributes(c, javaParameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT) {
+                    javaParameter.hasMutableAnnotation().iif(TypeUsage.MEMBER_SIGNATURE_COVARIANT, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT)
+            }
+
+            val (outType, varargElementType) =
+                if (javaParameter.isVararg()) {
+                    val paramType = javaParameter.getType()
+                    assert (paramType is JavaArrayType, "Vararg parameter should be an array: $paramType")
+                    val arrayType = c.typeResolver.transformArrayType(paramType as JavaArrayType, typeUsage, true)
+                    val outType = TypeUtils.makeNotNullable(arrayType)
+                    Pair(outType, KotlinBuiltIns.getInstance().getArrayElementType(outType))
+                }
+                else {
+                    val jetType = c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage)
+                    if (jetType.isNullable() && javaParameter.hasNotNullAnnotation())
+                        Pair(TypeUtils.makeNotNullable(jetType), null)
+                    else Pair(jetType, null)
+                }
+
+            ValueParameterDescriptorImpl(
+                    function,
+                    index,
+                    c.resolveAnnotations(javaParameter.getAnnotations()),
+                    // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
+                    javaParameter.getName() ?: Name.identifier("p$index"),
+                    outType,
+                    false,
+                    varargElementType
+            )
+        }.toList()
+    }
+
+    override fun getFunctions(name: Name) = _functions(name)
+    protected open fun getAllFunctionNames(): Collection<Name> = memberIndex().getAllMetodNames()
 
     // No object can be defined in Java
     override fun getObjectDescriptor(name: Name): ClassDescriptor? = null
@@ -75,7 +169,6 @@ public abstract class LazyJavaMemberScope(
     protected abstract fun getAllPackageNames(): Collection<Name>
     protected abstract fun getAllClassNames(): Collection<Name>
     protected abstract fun getAllPropertyNames(): Collection<Name>
-    protected abstract fun getAllFunctionNames(): Collection<Name>
     protected abstract fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>)
 
     override fun toString() = "Lazy scope for ${getContainingDeclaration()}"

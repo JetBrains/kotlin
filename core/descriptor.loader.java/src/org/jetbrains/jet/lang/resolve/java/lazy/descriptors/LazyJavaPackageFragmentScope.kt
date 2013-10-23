@@ -48,6 +48,8 @@ public class LazyPackageFragmentScopeForJavaPackage(
         packageFragment: LazyJavaPackageFragment
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
+    override fun computeMemberIndex(): MemberIndex = EMPTY_MEMBER_INDEX
+
     override fun getAllClassNames(): Collection<Name> {
         val javaPackage = c.finder.findPackage(fqName)
         assert(javaPackage != null) { "Package not found:  $fqName" }
@@ -63,9 +65,6 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = Collections.emptyList()
     override fun getAllPropertyNames() = Collections.emptyList<Name>()
-
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = Collections.emptyList()
-    override fun getAllFunctionNames() = Collections.emptyList<Name>()
 }
 
 public class LazyPackageFragmentScopeForJavaClass(
@@ -73,6 +72,8 @@ public class LazyPackageFragmentScopeForJavaClass(
         private val jClass: JavaClass,
         packageFragment: LazyJavaPackageFragment
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
+
+    override fun computeMemberIndex(): MemberIndex = ClassMemberIndex(jClass, mustBeStatic = true)
 
     override fun getAllClassNames(): Collection<Name> = listOf() // nested classes are loaded as members of their outer classes, not packages
     override fun getAllPackageNames(): Collection<Name> = jClass.getInnerClasses().iterator()
@@ -82,8 +83,4 @@ public class LazyPackageFragmentScopeForJavaClass(
     // TODO
     override fun getProperties(name: Name): Collection<VariableDescriptor> = Collections.emptyList()
     override fun getAllPropertyNames() = Collections.emptyList<Name>()
-
-    // TODO
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = Collections.emptyList()
-    override fun getAllFunctionNames() = Collections.emptyList<Name>()
 }
