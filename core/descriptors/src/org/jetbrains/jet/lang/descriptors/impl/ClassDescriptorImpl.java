@@ -98,7 +98,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     @Override
     @NotNull
     public JetScope getMemberScope(List<? extends TypeProjection> typeArguments) {
-        assert typeArguments.size() == typeConstructor.getParameters().size() : typeArguments;
+        assert typeArguments.size() == typeConstructor.getParameters().size() : "Wrong number or arguments: " + typeArguments + " for " + this;
         if (typeConstructor.getParameters().isEmpty()) {
             return  memberDeclarations;
         }
