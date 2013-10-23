@@ -17,6 +17,7 @@
 package org.jetbrains.jet.utils
 
 import java.util.LinkedHashMap
+import java.util.ArrayList
 
 public fun <K, V> Iterable<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     return iterator().valuesToMap(key)
@@ -58,3 +59,7 @@ public fun <K, V: Any> Iterator<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K
 }
 
 public fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
+
+public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
+    return flatMapTo(ArrayList<T>(), {it})
+}
