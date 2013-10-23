@@ -144,11 +144,6 @@ public class LazyJavaClassMemberScope(
         return result
     }
 
-
-    // TODO
-    override fun getProperties(name: Name): Collection<VariableDescriptor> = listOf()
-    override fun getAllPropertyNames(): Collection<Name> = listOf()
-
     private val nestedClassIndex = c.storageManager.createLazyValue {
         jClass.getInnerClasses().valuesToMap { c -> c.getName() }
     }

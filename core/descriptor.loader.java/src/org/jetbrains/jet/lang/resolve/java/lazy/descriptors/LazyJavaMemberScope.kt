@@ -29,6 +29,13 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import java.util.LinkedHashSet
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver
+import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
+import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
+import java.util.Collections
+import org.jetbrains.jet.utils.emptyOrSingletonList
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.utils.Printer
@@ -140,12 +147,71 @@ public abstract class LazyJavaMemberScope(
     override fun getFunctions(name: Name) = _functions(name)
     protected open fun getAllFunctionNames(): Collection<Name> = memberIndex().getAllMetodNames()
 
+    val _properties = c.storageManager.createMemoizedFunction {
+        (name: Name) ->
+        val properties = ArrayList<PropertyDescriptor>()
+
+        val field = memberIndex().findFieldByName(name)
+        if (field != null) {
+            properties.add(resolveProperty(field))
+        }
+
+        if (_containingDeclaration is ClassDescriptor) {
+            val propertiesFromSupertypes = JavaPropertyResolver.getPropertiesFromSupertypes(name, _containingDeclaration);
+
+            properties.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, properties, _containingDeclaration,
+                                               c.errorReporter));
+
+        }
+
+        properties
+    }
+
+    private fun resolveProperty(field: JavaField): PropertyDescriptor {
+        val isVar = !field.isFinal()
+        val propertyDescriptor = JavaPropertyDescriptor(
+                getContainingDeclaration(),
+                c.resolveAnnotations(field.getAnnotations()),
+                field.getVisibility(),
+                isVar,
+                field.getName()
+        )
+        propertyDescriptor.initialize(null, null)
+
+        val propertyType = getPropertyType(field)
+        val effectiveSignature = c.externalSignatureResolver.resolveAlternativeFieldSignature(field, propertyType, isVar)
+        val signatureErrors = effectiveSignature.getErrors()
+        if (!signatureErrors.isEmpty()) {
+            c.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
+        }
+
+        propertyDescriptor.setType(effectiveSignature.getReturnType(), Collections.emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(getContainingDeclaration()), null : JetType?)
+
+        c.javaResolverCache.recordField(field, propertyDescriptor);
+
+        return propertyDescriptor
+    }
+
+    private fun getPropertyType(field: JavaField): JetType {
+        // Fields do not have their own generic parameters
+        val propertyType = c.typeResolver.transformJavaType(field.getType(), TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes())
+        if (JavaPropertyResolver.isStaticFinalField(field)) {
+            return TypeUtils.makeNotNullable(propertyType)
+        }
+        return propertyType
+    }
+
+    override fun getProperties(name: Name): Collection<VariableDescriptor> = _properties(name)
+    protected open fun getAllPropertyNames(): Collection<Name> = memberIndex().getAllFieldNames()
+
     // No object can be defined in Java
     override fun getObjectDescriptor(name: Name): ClassDescriptor? = null
     override fun getObjectDescriptors() = emptyList<ClassDescriptor>()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
     override fun getDeclarationsByLabel(labelName: LabelName) = emptyList<DeclarationDescriptor>()
+
+    override fun getClassifiers(name: Name) = emptyOrSingletonList(getClassifier(name))
 
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
     override fun getAllDescriptors() = allDescriptors()
@@ -178,7 +244,6 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun getAllPackageNames(): Collection<Name>
     protected abstract fun getAllClassNames(): Collection<Name>
-    protected abstract fun getAllPropertyNames(): Collection<Name>
     protected abstract fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>)
 
     override fun toString() = "Lazy scope for ${getContainingDeclaration()}"

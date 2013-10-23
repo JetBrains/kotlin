@@ -79,8 +79,4 @@ public class LazyPackageFragmentScopeForJavaClass(
     override fun getAllPackageNames(): Collection<Name> = jClass.getInnerClasses().iterator()
                                                                 .filter { c -> c.isStatic() && JavaNamespaceResolver.hasStaticMembers(c) }
                                                                 .map { c -> c.getName() }.toList()
-
-    // TODO
-    override fun getProperties(name: Name): Collection<VariableDescriptor> = Collections.emptyList()
-    override fun getAllPropertyNames() = Collections.emptyList<Name>()
 }

@@ -21,31 +21,49 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMember
+import org.jetbrains.jet.utils.valuesToMap
 
 trait MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
     fun getAllMetodNames(): Collection<Name>
+
+    fun findFieldByName(name: Name): JavaField?
+    fun getAllFieldNames(): Collection<Name>
 }
 
 object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
     override fun getAllMetodNames() = listOf<Name>()
+
+    override fun findFieldByName(name: Name): JavaField? = null
+    override fun getAllFieldNames() = listOf<Name>()
 }
 
 class ClassMemberIndex(val jClass: JavaClass, mustBeStatic: Boolean) : MemberIndex {
-    private val methodFilter = {
-        (m: JavaMethod) ->
+    private val memberFilter = {
+        (m: JavaMember) ->
         m.isStatic() == mustBeStatic &&
-        !m.isConstructor() &&
-        !DescriptorResolverUtils.isObjectMethodInInterface(m) &&
         m.getVisibility() != Visibilities.PRIVATE
     }
 
+    private val methodFilter = {
+        (m: JavaMethod) ->
+        memberFilter(m) &&
+        !m.isConstructor() &&
+        !DescriptorResolverUtils.isObjectMethodInInterface(m)
+    }
+
     private val methods = jClass.getMethods().iterator().filter(methodFilter).groupBy { m -> m.getName() }
+    private val fields = jClass.getFields().iterator().filter(memberFilter).valuesToMap { m -> m.getName() }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> {
         return methods[name] ?: listOf()
     }
 
     override fun getAllMetodNames(): Collection<Name> = jClass.getAllMethods().iterator().filter(methodFilter).map { m -> m.getName() }.toList()
+
+    override fun findFieldByName(name: Name): JavaField? = fields[name]
+    override fun getAllFieldNames() = jClass.getAllFields().iterator().filter(memberFilter).map { m -> m.getName() }.toList()
 }
