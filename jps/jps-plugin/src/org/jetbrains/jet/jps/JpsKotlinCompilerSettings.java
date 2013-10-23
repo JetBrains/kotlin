@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
 import org.jetbrains.jps.model.JpsElementChildRole;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
@@ -34,6 +35,8 @@ public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerS
     public K2JVMCompilerArguments k2JvmCompilerSettings = new K2JVMCompilerArguments();
     @NotNull
     public K2JSCompilerArguments k2JsCompilerSettings = new K2JSCompilerArguments();
+    @NotNull
+    public AdditionalCompilerSettings additionalCompilerSettings = new AdditionalCompilerSettings();
 
     @NotNull
     @Override
@@ -42,6 +45,7 @@ public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerS
         copy.commonCompilerSettings = this.commonCompilerSettings;
         copy.k2JvmCompilerSettings = this.k2JvmCompilerSettings;
         copy.k2JsCompilerSettings = this.k2JsCompilerSettings;
+        copy.additionalCompilerSettings = this.additionalCompilerSettings;
         return copy;
     }
 
@@ -94,5 +98,14 @@ public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerS
 
     public static void setK2JsSettings(@NotNull JpsProject project, @NotNull K2JSCompilerArguments k2JsCompilerSettings) {
         getOrCreateSettings(project).k2JsCompilerSettings = k2JsCompilerSettings;
+    }
+
+    @NotNull
+    public static AdditionalCompilerSettings getAdditionalSettings(@NotNull JpsProject project) {
+        return getSettings(project).additionalCompilerSettings;
+    }
+
+    public static void setAdditionalSettings(@NotNull JpsProject project, @NotNull AdditionalCompilerSettings additionalCompilerSettings) {
+        getOrCreateSettings(project).additionalCompilerSettings = additionalCompilerSettings;
     }
 }

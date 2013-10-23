@@ -27,6 +27,7 @@ import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
@@ -117,6 +118,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         JpsProject project = representativeTarget.getModule().getProject();
         CommonCompilerArguments commonSettings = JpsKotlinCompilerSettings.getCommonSettings(project);
+        AdditionalCompilerSettings additionalSettings = JpsKotlinCompilerSettings.getAdditionalSettings(project);
 
         if (JpsUtils.isJsKotlinModule(representativeTarget)) {
             if (chunk.getModules().size() > 1) {
@@ -141,7 +143,8 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             List<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
             K2JSCompilerArguments k2JsSettings = JpsKotlinCompilerSettings.getK2JsSettings(project);
 
-            runK2JsCompiler(commonSettings, k2JsSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile);
+            runK2JsCompiler(commonSettings, k2JsSettings, additionalSettings, messageCollector, environment,
+                            outputItemCollector, sourceFiles, libraryFiles, outputFile);
         }
         else {
             if (chunk.getModules().size() > 1) {
@@ -160,7 +163,8 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
             K2JVMCompilerArguments k2JvmSettings = JpsKotlinCompilerSettings.getK2JvmSettings(project);
 
-            runK2JvmCompiler(commonSettings, k2JvmSettings, messageCollector, environment, moduleFile, outputItemCollector);
+            runK2JvmCompiler(commonSettings, k2JvmSettings, additionalSettings, messageCollector, environment,
+                             moduleFile, outputItemCollector);
         }
 
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
