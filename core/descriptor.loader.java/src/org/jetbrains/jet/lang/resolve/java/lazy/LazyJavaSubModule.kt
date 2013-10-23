@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaPackage
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver
 
 public open class LazyJavaSubModule(
         private val outerContext: GlobalJavaResolverContext,
@@ -29,7 +30,7 @@ public open class LazyJavaSubModule(
         }
         else {
             val jClass = c.finder.findClass(fqName)
-            if (jClass != null && (jClass.getOuterClass() == null || jClass.isStatic())) {
+            if (jClass != null && JavaNamespaceResolver.hasStaticMembers(jClass)) {
                 LazyPackageFragmentForJavaClass(c, findParent(fqName), jClass)
             }
             else null

@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -55,7 +56,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun getAllPackageNames(): Collection<Name> =
             listOf(
-                jPackage.getClasses().map { c -> c.getName() },
+                jPackage.getClasses().iterator().filter { c -> JavaNamespaceResolver.hasStaticMembers(c) }.map { c -> c.getName() }.toList(),
                 jPackage.getSubPackages().map { sp -> sp.getFqName().shortName() }
             ).flatten()
 
@@ -73,8 +74,10 @@ public class LazyPackageFragmentScopeForJavaClass(
         packageFragment: LazyJavaPackageFragment
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
-    override fun getAllClassNames(): Collection<Name> = jClass.getInnerClasses().map { c -> c.getName() }
-    override fun getAllPackageNames(): Collection<Name> = jClass.getInnerClasses().filter { c -> c.isStatic() }.map { c -> c.getName() }
+    override fun getAllClassNames(): Collection<Name> = listOf() // nested classes are loaded as members of their outer classes, not packages
+    override fun getAllPackageNames(): Collection<Name> = jClass.getInnerClasses().iterator()
+                                                                .filter { c -> c.isStatic() && JavaNamespaceResolver.hasStaticMembers(c) }
+                                                                .map { c -> c.getName() }.toList()
 
     // TODO
     override fun getProperties(name: Name): Collection<VariableDescriptor> = Collections.emptyList()
