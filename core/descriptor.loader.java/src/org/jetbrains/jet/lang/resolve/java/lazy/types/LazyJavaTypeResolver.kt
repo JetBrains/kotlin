@@ -76,38 +76,10 @@ class LazyJavaTypeResolver(
         return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType))
     }
 
-    private fun transformToTypeProjection(
-            javaType: JavaType,
-            attr: JavaTypeAttributes,
-            typeConstructorBeingApplied: () -> TypeConstructor,
-            typeParameterIndex: Int
-    ): TypeProjection {
-        return when (javaType) {
-            is JavaWildcardType -> {
-                val bound = javaType.getBound()
-                if (bound == null)
-                    LazyStarProjection(c, typeConstructorBeingApplied, typeParameterIndex)
-                else {
-                    TypeProjectionImpl(javaType.isExtends().iif(OUT_VARIANCE, IN_VARIANCE), transformJavaType(bound, UPPER_BOUND.toAttributes()))
-                }
-            }
-            else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
-        }
-    }
-
     private class LazyStarProjection(
             c: LazyJavaResolverContext,
-            typeConstructor: () -> TypeConstructor,
-            typeParameterIndex: Int
+            val typeParameter: TypeParameterDescriptor
     ) : TypeProjectionBase() {
-        private val typeParameter by c.storageManager.createLazyValue {
-            val typeConstructor = typeConstructor()
-            val parameters = typeConstructor.getParameters()
-            if (typeParameterIndex >= parameters.size)
-                ErrorUtils.createErrorTypeParameter("#$typeParameterIndex for ${typeConstructor}")
-            else parameters[typeParameterIndex]
-        }
-
         override fun getProjectionKind() = typeParameter.getVariance().eq(OUT_VARIANCE).iif(INVARIANT, OUT_VARIANCE)
         override fun getType() = typeParameter.getUpperBoundsAsType()
     }
@@ -165,13 +137,71 @@ class LazyJavaTypeResolver(
             }
         }
 
+        private fun isRaw(): Boolean {
+            if (javaType.isRaw()) return true
+
+            // This option is needed because sometimes we get weird versions of JDK classes in the class path,
+            // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
+            // their Kotlin analogs, so we treat them as raw to avoid exceptions
+            // No type arguments, but some are expected => raw
+            return javaType.getTypeArguments().isEmpty() && !getConstructor().getParameters().isEmpty()
+        }
+
         override fun computeArguments(): List<TypeProjection> {
+            val typeConstructor = getConstructor()
+            val typeParameters = typeConstructor.getParameters()
+            if (isRaw()) {
+                return typeParameters.map {
+                    parameter ->
+                    // not making a star projection because of this case:
+                    // Java:
+                    // class C<T extends C> {}
+                    // The upper bound is raw here, and we can't compute the projection: it would be infinite:
+                    // C<*> = C<out C<out C<...>>>
+                    // this way we loose some type information, even when the case is not so bad, but it doesn't seem to matter
+
+                    // projections are not allowed in immediate arguments of supertypes
+                    val projectionKind = if (parameter.getVariance() == OUT_VARIANCE || attr.howThisTypeIsUsed == SUPERTYPE)
+                                              INVARIANT
+                                         else OUT_VARIANCE
+                    TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType())
+                }
+            }
+            if (typeParameters.size() != javaType.getTypeArguments().size()) {
+                // Most of the time this means there is an error in the Java code
+                return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.getName().asString())) }
+            }
             var howTheProjectionIsUsed = attr.howThisTypeIsUsed.eq(SUPERTYPE).iif(SUPERTYPE_ARGUMENT, TYPE_ARGUMENT)
             return javaType.getTypeArguments().withIndices().map {
-                p ->
-                val (i, t) = p
-                transformToTypeProjection(t, howTheProjectionIsUsed.toAttributes(), {getConstructor()}, i)
+                javaTypeParameter ->
+                val (i, t) = javaTypeParameter
+                val parameter = if (i >= typeParameters.size)
+                                    ErrorUtils.createErrorTypeParameter(i, "#$i for ${typeConstructor}")
+                                else typeParameters[i]
+                transformToTypeProjection(t, howTheProjectionIsUsed.toAttributes(), parameter)
             }.toList()
+        }
+
+        private fun transformToTypeProjection(
+                javaType: JavaType,
+                attr: JavaTypeAttributes,
+                typeParameter: TypeParameterDescriptor
+        ): TypeProjection {
+            return when (javaType) {
+                is JavaWildcardType -> {
+                    val bound = javaType.getBound()
+                    if (bound == null)
+                        LazyStarProjection(c, typeParameter)
+                    else {
+                        var projectionKind = javaType.isExtends().iif(OUT_VARIANCE, IN_VARIANCE)
+                        if (projectionKind == typeParameter.getVariance()) {
+                            projectionKind = Variance.INVARIANT
+                        }
+                        TypeProjectionImpl(projectionKind, transformJavaType(bound, UPPER_BOUND.toAttributes()))
+                    }
+                }
+                else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
+            }
         }
 
         override fun computeMemberScope(): JetScope {
