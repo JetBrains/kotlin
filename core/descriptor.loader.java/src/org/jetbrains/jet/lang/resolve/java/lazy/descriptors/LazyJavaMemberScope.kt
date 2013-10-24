@@ -39,6 +39,7 @@ import org.jetbrains.jet.utils.emptyOrSingletonList
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.utils.Printer
+import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -58,34 +59,7 @@ public abstract class LazyJavaMemberScope(
         (name: Name): Collection<FunctionDescriptor>
         ->
         val methods = memberIndex().findMethodsByName(name)
-        val functions = LinkedHashSet<FunctionDescriptor>(methods.map {
-            method ->
-            val function = JavaMethodDescriptor(
-                    _containingDeclaration,
-                    c.resolveAnnotations(method.getAnnotations()),
-                    name
-            )
-            val innerC = c.child(function, method.getTypeParameters().toSet())
-            val valueParameters = resolveValueParameters(innerC, function, method.getValueParameters())
-            val returnTypeAttrs = LazyJavaTypeAttributes(c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
-                if (method.hasReadOnlyAnnotation() && !method.hasMutableAnnotation())
-                    TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
-                else
-                    TypeUsage.MEMBER_SIGNATURE_COVARIANT
-            }
-
-            function.initialize(
-                null,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(_containingDeclaration),
-                method.getTypeParameters().map { p -> innerC.typeParameterResolver.resolveTypeParameter(p) },
-                valueParameters,
-                c.typeResolver.transformJavaType(method.getReturnType()!!, returnTypeAttrs),
-                Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
-                method.getVisibility(),
-                false
-            )
-            function
-        })
+        val functions = LinkedHashSet(methods.map {m -> resolveMethodToFunctionDescriptor(m, true)})
 
         if (_containingDeclaration is ClassDescriptor) {
             val functionsFromSupertypes = JavaFunctionResolver.getFunctionsFromSupertypes(name, _containingDeclaration);
@@ -101,6 +75,67 @@ public abstract class LazyJavaMemberScope(
         }
 
         functions
+    }
+
+    private fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): SimpleFunctionDescriptor {
+
+        val functionDescriptorImpl = JavaMethodDescriptor(_containingDeclaration, c.resolveAnnotations(method.getAnnotations()), method.getName())
+
+        val innerC = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
+
+        val methodTypeParameters = method.getTypeParameters().map { p -> innerC.typeParameterResolver.resolveTypeParameter(p)!! }
+        val valueParameters = resolveValueParameters(innerC, functionDescriptorImpl, method.getValueParameters())
+
+        val returnTypeAttrs = LazyJavaTypeAttributes(c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
+            if (method.hasReadOnlyAnnotation() && !method.hasMutableAnnotation())
+                TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
+            else
+                TypeUsage.MEMBER_SIGNATURE_COVARIANT
+        }
+
+        val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
+        val returnType = innerC.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs)
+
+        val signatureErrors: MutableList<String>
+        val superFunctions: List<FunctionDescriptor>
+        val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature
+        if (_containingDeclaration is NamespaceDescriptor) {
+            superFunctions = Collections.emptyList()
+            effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(method, false, returnType, null, valueParameters, methodTypeParameters)
+            signatureErrors = effectiveSignature.getErrors()
+        }
+        else if (_containingDeclaration is ClassDescriptor) {
+            val propagated = c.externalSignatureResolver.resolvePropagatedSignature(method, _containingDeclaration, returnType, null, valueParameters, methodTypeParameters)
+            superFunctions = propagated.getSuperMethods()
+            effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
+                    method, !superFunctions.isEmpty(), propagated.getReturnType(),
+                    propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters())
+
+            signatureErrors = ArrayList<String>(propagated.getErrors())
+            signatureErrors.addAll(effectiveSignature.getErrors())
+        }
+        else {
+            throw IllegalStateException("Unknown class or namespace descriptor: " + _containingDeclaration)
+        }
+
+        functionDescriptorImpl.initialize(
+                effectiveSignature.getReceiverType(),
+                DescriptorUtils.getExpectedThisObjectIfNeeded(_containingDeclaration),
+                effectiveSignature.getTypeParameters(),
+                effectiveSignature.getValueParameters(),
+                effectiveSignature.getReturnType(),
+                Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
+                method.getVisibility(),
+                false
+        )
+
+        if (record) {
+            c.javaResolverCache.recordMethod(method, functionDescriptorImpl)
+        }
+
+        c.methodSignatureChecker.checkSignature(method, record, functionDescriptorImpl, signatureErrors, superFunctions)
+
+        return functionDescriptorImpl
     }
 
     protected fun resolveValueParameters(
