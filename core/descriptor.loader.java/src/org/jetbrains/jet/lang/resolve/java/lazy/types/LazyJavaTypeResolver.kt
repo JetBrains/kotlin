@@ -39,6 +39,9 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
 import org.jetbrains.jet.lang.resolve.java.lazy.*
 import org.jetbrains.jet.storage.*
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
+import java.util.HashSet
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -142,8 +145,21 @@ class LazyJavaTypeResolver(
                         ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.getPresentableText())
                 }
                 is JavaTypeParameter -> {
-                    typeParameterResolver.resolveTypeParameter(classifier)?.getTypeConstructor()
-                        ?: ErrorUtils.createErrorTypeConstructor("Unresolved Java type parameter: " + javaType.getPresentableText())
+                    val owner = classifier.getOwner()
+                    if (owner is JavaMethod && owner.isConstructor()) {
+                        // If a Java-constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
+                        // so we replace thwm by intersections of their upper bounds
+                        var supertypesJet = HashSet<JetType>()
+                        for (supertype in classifier.getUpperBounds()) {
+                            supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))
+                        }
+                        TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet)?.getConstructor()
+                            ?: ErrorUtils.createErrorTypeConstructor("Can't intersect upper bounds of " + javaType.getPresentableText())
+                    }
+                    else {
+                        typeParameterResolver.resolveTypeParameter(classifier)?.getTypeConstructor()
+                            ?: ErrorUtils.createErrorTypeConstructor("Unresolved Java type parameter: " + javaType.getPresentableText())
+                    }
                 }
                 else -> throw IllegalStateException("Unknown classifier kind: $classifier")
             }
