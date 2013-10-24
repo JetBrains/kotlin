@@ -19,27 +19,27 @@ package org.jetbrains.jet.jps.model;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_ADDITIONAL_COMPILER_SETTINGS_SECTION;
+import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
 import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
 
-class KotlinAdditionalCompilerSettingsSerializer extends JpsProjectExtensionSerializer {
-    KotlinAdditionalCompilerSettingsSerializer() {
-        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_ADDITIONAL_COMPILER_SETTINGS_SECTION);
+class KotlinCommonCompilerArgumentsSerializer extends JpsProjectExtensionSerializer {
+    KotlinCommonCompilerArgumentsSerializer() {
+        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION);
     }
 
     @Override
     public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
-        AdditionalCompilerSettings settings = XmlSerializer.deserialize(componentTag, AdditionalCompilerSettings.class);
+        CommonCompilerArguments settings = XmlSerializer.deserialize(componentTag, CommonCompilerArguments.DummyImpl.class);
         if (settings == null) {
-            settings = new AdditionalCompilerSettings();
+            settings = new CommonCompilerArguments.DummyImpl();
         }
 
-        JpsKotlinCompilerSettings.setAdditionalSettings(project, settings);
+        JpsKotlinCompilerSettings.setCommonCompilerArguments(project, settings);
     }
 
     @Override

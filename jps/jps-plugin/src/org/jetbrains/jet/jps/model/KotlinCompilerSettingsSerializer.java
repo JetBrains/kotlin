@@ -19,27 +19,27 @@ package org.jetbrains.jet.jps.model;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 
+import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
 import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_TO_JS_COMPILER_SETTINGS_SECTION;
 
-class Kotlin2JsCompilerSettingsSerializer extends JpsProjectExtensionSerializer {
-    Kotlin2JsCompilerSettingsSerializer() {
-        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_TO_JS_COMPILER_SETTINGS_SECTION);
+class KotlinCompilerSettingsSerializer extends JpsProjectExtensionSerializer {
+    KotlinCompilerSettingsSerializer() {
+        super(KOTLIN_COMPILER_SETTINGS_FILE, KOTLIN_COMPILER_SETTINGS_SECTION);
     }
 
     @Override
     public void loadExtension(@NotNull JpsProject project, @NotNull Element componentTag) {
-        K2JSCompilerArguments settings = XmlSerializer.deserialize(componentTag, K2JSCompilerArguments.class);
+        CompilerSettings settings = XmlSerializer.deserialize(componentTag, CompilerSettings.class);
         if (settings == null) {
-            settings = new K2JSCompilerArguments();
+            settings = new CompilerSettings();
         }
 
-        JpsKotlinCompilerSettings.setK2JsSettings(project, settings);
+        JpsKotlinCompilerSettings.setCompilerSettings(project, settings);
     }
 
     @Override
