@@ -74,46 +74,18 @@ public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<Jet
 
     @Override
     public boolean searchReferences(
-            @NotNull final PsiElement element,
+            @NotNull PsiElement element,
             @NotNull final Processor<UsageInfo> processor,
             @NotNull FindUsagesOptions options
     ) {
+        JetNamedFunction function = (JetNamedFunction) element;
+
         final KotlinMethodFindUsagesOptions kotlinOptions = (KotlinMethodFindUsagesOptions) options;
         SearchScope searchScope = kotlinOptions.searchScope;
 
-        JetElement blockForLocalDeclaration = JetPsiUtil.getEnclosingBlockForLocalDeclaration((JetNamedFunction) element);
+        JetElement blockForLocalDeclaration = JetPsiUtil.getEnclosingBlockForLocalDeclaration(function);
         if (blockForLocalDeclaration != null && kotlinOptions.isUsages) {
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-
-            final List<PsiReference> result = new ArrayList<PsiReference>();
-            CalleeReferenceVisitorBase visitor = new CalleeReferenceVisitorBase(bindingContext, true) {
-                private boolean isAcceptable(PsiElement declaration) {
-                    if (kotlinOptions.isIncludeOverloadUsages) {
-                        //noinspection ConstantConditions
-                        return declaration instanceof JetNamedFunction &&
-                               ((JetNamedFunction) element).getName()
-                                       .equals(((JetNamedFunction) declaration).getName());
-                    }
-
-                    return declaration.equals(element);
-                }
-
-                @Override
-                protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
-                    if (isAcceptable(declaration)) {
-                        result.add(reference.getReference());
-                    }
-                }
-            };
-
-            blockForLocalDeclaration.accept(visitor);
-
-            for (PsiReference ref : result) {
-                if (!processUsage(processor, ref, kotlinOptions)) return false;
-            }
-
-            return true;
+            return searchLocalFunction(element, processor, function, kotlinOptions, blockForLocalDeclaration);
         }
 
         final PsiMethod lightMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
@@ -171,6 +143,46 @@ public class KotlinFindFunctionUsagesHandler extends KotlinFindUsagesHandler<Jet
             for (PsiReference ref : KotlinExtensionSearch.search(lightMethod, searchScope).findAll()) {
                 processUsage(processor, ref, kotlinOptions);
             }
+        }
+
+        return true;
+    }
+
+    private static boolean searchLocalFunction(
+            final PsiElement element,
+            Processor<UsageInfo> processor,
+            final JetNamedFunction function,
+            final KotlinMethodFindUsagesOptions kotlinOptions,
+            JetElement blockForLocalDeclaration
+    ) {
+        BindingContext bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+
+        final List<PsiReference> result = new ArrayList<PsiReference>();
+        CalleeReferenceVisitorBase visitor = new CalleeReferenceVisitorBase(bindingContext, true) {
+            private boolean isAcceptable(PsiElement declaration) {
+                if (kotlinOptions.isIncludeOverloadUsages) {
+                    //noinspection ConstantConditions
+                    return declaration instanceof JetNamedFunction &&
+                           function.getName()
+                                   .equals(((JetNamedFunction) declaration).getName());
+                }
+
+                return declaration.equals(element);
+            }
+
+            @Override
+            protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
+                if (isAcceptable(declaration)) {
+                    result.add(reference.getReference());
+                }
+            }
+        };
+
+        blockForLocalDeclaration.accept(visitor);
+
+        for (PsiReference ref : result) {
+            if (!processUsage(processor, ref, kotlinOptions)) return false;
         }
 
         return true;
