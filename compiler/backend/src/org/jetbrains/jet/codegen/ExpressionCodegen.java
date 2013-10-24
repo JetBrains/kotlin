@@ -3021,10 +3021,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
+        //TODO: similar logic exists in visitSimpleNameExpression - extract common logic
         int functionLocalIndex = lookupLocalIndex(op);
         if (functionLocalIndex >= 0) {
             stackValueForLocal(op, functionLocalIndex).put(callable.getOwner(), v);
+        } else {
+            StackValue stackValue = context.lookupInContext(op, StackValue.local(0, OBJECT_TYPE), state, true);
+            if (stackValue != null) {
+                stackValue.put(callable.getOwner(), v);
+            }
         }
+
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
         assert resolvedCall != null;
