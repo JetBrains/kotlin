@@ -14,40 +14,6 @@ JetFile: Imports_ERR.kt
   IMPORT_DIRECTIVE
     PsiElement(import)('import')
     PsiWhiteSpace(' ')
-    PsiElement(package)('package')
-    PsiErrorElement:Expecting '.'
-      <empty list>
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiErrorElement:Expecting qualified name
-        <empty list>
-    PsiElement(SEMICOLON)(';')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    PsiElement(package)('package')
-    PsiElement(DOT)('.')
-    REFERENCE_EXPRESSION
-      PsiErrorElement:Expecting qualified name
-        <empty list>
-  PsiErrorElement:Expecting package directive or top level declaration
-    PsiElement(MUL)('*')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    PsiElement(package)('package')
-    PsiElement(DOT)('.')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiErrorElement:Expecting qualified name
-        <empty list>
-    PsiElement(SEMICOLON)(';')
-  PsiWhiteSpace('\n\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')

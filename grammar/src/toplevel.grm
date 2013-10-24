@@ -24,7 +24,7 @@ packageHeader
   ;
 
 import
-  : "import" ("package" ".")? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
+  : "import" SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
   ;
 
 /**

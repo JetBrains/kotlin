@@ -14,14 +14,6 @@ JetFile: Imports.kt
   IMPORT_DIRECTIVE
     PsiElement(import)('import')
     PsiWhiteSpace(' ')
-    PsiElement(package)('package')
-    PsiElement(DOT)('.')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')
   PsiWhiteSpace('\n')

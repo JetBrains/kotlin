@@ -1,9 +1,5 @@
 package foo.bar.goo
 
-import package ;
-import package.*
-import package. ;
-
 import foo as
 import foo.
 import foo.bar.

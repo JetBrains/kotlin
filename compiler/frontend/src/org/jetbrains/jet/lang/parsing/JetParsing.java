@@ -222,7 +222,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * import
-     *   : "import" ("namespace" ".")? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
+     *   : "import" SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
      *   ;
      */
     private void parseImportDirective() {
@@ -231,10 +231,6 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // IMPORT_KEYWORD
 
         PsiBuilder.Marker qualifiedName = mark();
-        if (at(PACKAGE_KEYWORD)) {
-            advance(); // PACKAGE_KEYWORD
-            expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER, MUL, SEMICOLON));
-        }
 
         PsiBuilder.Marker reference = mark();
         expect(IDENTIFIER, "Expecting qualified name");
