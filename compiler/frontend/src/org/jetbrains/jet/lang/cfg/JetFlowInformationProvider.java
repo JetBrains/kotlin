@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
@@ -591,7 +592,7 @@ public class JetFlowInformationProvider {
                         VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
                                 instruction, false, trace.getBindingContext());
                         if (variableDescriptor == null || !declaredVariables.contains(variableDescriptor)
-                                || !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) {
+                                || !ExpressionTypingUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) {
                             return;
                         }
                         PseudocodeVariablesData.VariableUseState variableUseState = in.get(variableDescriptor);

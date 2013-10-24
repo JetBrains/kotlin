@@ -498,7 +498,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType type = components.reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,
-                DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType(),
                 receiverParameter != null
         );

@@ -89,7 +89,7 @@ public class BindingContextUtils {
     public static JetFile getContainingFile(@NotNull BindingContext context, @NotNull DeclarationDescriptor declarationDescriptor) {
         // declarationDescriptor may describe a synthesized element which doesn't have PSI
         // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
-        DeclarationDescriptor descriptor = DescriptorUtils.findTopLevelParent(declarationDescriptor);
+        DeclarationDescriptor descriptor = findTopLevelParent(declarationDescriptor);
         if (descriptor == null) return null;
 
         PsiElement declaration = descriptorToDeclaration(context, descriptor);
@@ -98,6 +98,18 @@ public class BindingContextUtils {
         PsiFile containingFile = declaration.getContainingFile();
         if (!(containingFile instanceof JetFile)) return null;
         return (JetFile) containingFile;
+    }
+
+    @Nullable
+    private static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
+        DeclarationDescriptor descriptor = declarationDescriptor;
+        if (declarationDescriptor instanceof PropertyAccessorDescriptor) {
+            descriptor = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
+        }
+        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return descriptor;
     }
 
     @Nullable

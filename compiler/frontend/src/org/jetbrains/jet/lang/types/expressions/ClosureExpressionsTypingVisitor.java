@@ -111,7 +111,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         functionDescriptor.setReturnType(safeReturnType);
 
         JetType receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getReceiverParameter());
-        List<JetType> valueParametersTypes = DescriptorUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
+        List<JetType> valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
                 Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType);
         if (!noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)) {
@@ -187,7 +187,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (expectedValueParameters != null && declaredValueParameters.size() != expectedValueParameters.size()) {
-                List<JetType> expectedParameterTypes = DescriptorUtils.getValueParametersTypes(expectedValueParameters);
+                List<JetType> expectedParameterTypes = ExpressionTypingUtils.getValueParametersTypes(expectedValueParameters);
                 context.trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(functionLiteral, expectedParameterTypes.size(), expectedParameterTypes));
             }
             for (int i = 0; i < declaredValueParameters.size(); i++) {

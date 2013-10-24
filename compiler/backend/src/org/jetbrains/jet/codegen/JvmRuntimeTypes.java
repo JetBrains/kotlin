@@ -23,12 +23,12 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
@@ -117,7 +117,7 @@ public class JvmRuntimeTypes {
         JetType functionType = KotlinBuiltIns.getInstance().getFunctionType(
                 Annotations.EMPTY,
                 receiverParameter == null ? null : receiverParameter.getType(),
-                DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType()
         );
 
@@ -162,7 +162,7 @@ public class JvmRuntimeTypes {
         JetType kFunctionType = reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,
-                DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType(),
                 receiverParameter != null
         );

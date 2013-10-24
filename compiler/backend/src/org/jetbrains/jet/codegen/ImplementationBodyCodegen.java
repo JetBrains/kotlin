@@ -43,6 +43,7 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -838,7 +839,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.anew(thisDescriptorType);
                     iv.dup();
 
-                    ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
+                    ConstructorDescriptor constructor = DeclarationResolver.getConstructorOfDataClass(descriptor);
                     assert function.getValueParameters().size() == constructor.getValueParameters().size() :
                             "Number of parameters of copy function and constructor are different. " +
                             "Copy: " + function.getValueParameters().size() + ", " +
@@ -1124,9 +1125,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     protected void genInitSingleton(ClassDescriptor fieldTypeDescriptor, StackValue.Field field) {
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            ConstructorDescriptor constructorDescriptor = DescriptorUtils.getConstructorOfSingletonObject(fieldTypeDescriptor);
+            Collection<ConstructorDescriptor> constructors = fieldTypeDescriptor.getConstructors();
+            assert constructors.size() == 1 : "Class of singleton object must have only one constructor: " + constructors;
+
             ExpressionCodegen codegen = createOrGetClInitCodegen();
-            FunctionDescriptor fd = codegen.accessibleFunctionDescriptor(constructorDescriptor);
+            FunctionDescriptor fd = codegen.accessibleFunctionDescriptor(constructors.iterator().next());
             generateMethodCallTo(fd, codegen.v);
             field.store(field.type, codegen.v);
         }

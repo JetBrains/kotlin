@@ -21,7 +21,7 @@ import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
@@ -36,7 +36,7 @@ public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitial
         if (evaluatedExpression != null) {
             return ConstantsPackage.createCompileTimeConstant(
                     evaluatedExpression,
-                    DescriptorUtils.isPropertyCompileTimeConstant(descriptor),
+                    ConstantExpressionEvaluator.object$.isPropertyCompileTimeConstant(descriptor),
                     false,
                     true,
                     descriptor.getType());

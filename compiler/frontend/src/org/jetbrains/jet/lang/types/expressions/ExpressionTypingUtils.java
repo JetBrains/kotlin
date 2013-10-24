@@ -427,7 +427,7 @@ public class ExpressionTypingUtils {
     }
 
     public static void checkVariableShadowing(@NotNull ExpressionTypingContext context, @NotNull VariableDescriptor variableDescriptor, VariableDescriptor oldDescriptor) {
-        if (oldDescriptor != null && DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
+        if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
             PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
             if (declaration != null) {
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
@@ -485,5 +485,45 @@ public class ExpressionTypingUtils {
 
     public static boolean isUnaryExpressionDependentOnExpectedType(@NotNull JetUnaryExpression expression) {
         return expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL;
+    }
+
+    @NotNull
+    public static List<JetType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        List<JetType> parameterTypes = new ArrayList<JetType>(valueParameters.size());
+        for (ValueParameterDescriptor parameter : valueParameters) {
+            parameterTypes.add(parameter.getType());
+        }
+        return parameterTypes;
+    }
+
+    /**
+     * The primary case for local extensions is the following:
+     *
+     * I had a locally declared extension function or a local variable of function type called foo
+     * And I called it on my x
+     * Now, someone added function foo() to the class of x
+     * My code should not change
+     *
+     * thus
+     *
+     * local extension prevail over members (and members prevail over all non-local extensions)
+     */
+    public static boolean isLocal(DeclarationDescriptor containerOfTheCurrentLocality, DeclarationDescriptor candidate) {
+        if (candidate instanceof ValueParameterDescriptor) {
+            return true;
+        }
+        DeclarationDescriptor parent = candidate.getContainingDeclaration();
+        if (!(parent instanceof FunctionDescriptor)) {
+            return false;
+        }
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) parent;
+        DeclarationDescriptor current = containerOfTheCurrentLocality;
+        while (current != null) {
+            if (current == functionDescriptor) {
+                return true;
+            }
+            current = current.getContainingDeclaration();
+        }
+        return false;
     }
 }

@@ -395,7 +395,7 @@ public class ExpressionTypingServices {
             JetExpression defaultValue = jetParameter.getDefaultValue();
             if (defaultValue != null) {
                 getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), dataFlowInfo, trace);
-                if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
+                if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(declaringScope))) {
                     ConstantExpressionEvaluator.object$.evaluate(defaultValue, trace, valueParameterDescriptor.getType());
                 }
             }

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
@@ -113,7 +114,7 @@ public final class DecompiledNavigationUtils {
         }
         if (containerDescriptor instanceof ClassDescriptor) {
             if (containerDescriptor.getContainingDeclaration() instanceof ClassDescriptor
-                || DescriptorUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
+                || ExpressionTypingUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
                 return getContainerFqName(containerDescriptor.getContainingDeclaration());
             }
             return getFqNameSafe(containerDescriptor);

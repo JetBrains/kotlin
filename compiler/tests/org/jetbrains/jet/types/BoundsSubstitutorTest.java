@@ -23,11 +23,11 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.BoundsSubstitutor;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collection;
@@ -76,7 +76,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
         assert functions.size() == 1 : "Many functions defined";
         FunctionDescriptor function = ContainerUtil.getFirstItem(functions);
 
-        FunctionDescriptor substituted = DescriptorUtils.substituteBounds(function);
+        FunctionDescriptor substituted = BoundsSubstitutor.substituteBounds(function);
         String actual = DescriptorRenderer.COMPACT.render(substituted);
         assertEquals(expected, actual);
     }

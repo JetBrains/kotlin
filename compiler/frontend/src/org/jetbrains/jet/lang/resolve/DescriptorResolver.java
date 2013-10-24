@@ -546,7 +546,7 @@ public class DescriptorResolver {
         JetType variableType = type;
         if (valueParameter.hasModifier(VARARG_KEYWORD)) {
             varargElementType = type;
-            variableType = DescriptorUtils.getVarargParameterType(type);
+            variableType = getVarargParameterType(type);
         }
         ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
@@ -561,6 +561,15 @@ public class DescriptorResolver {
 
         trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
         return valueParameterDescriptor;
+    }
+
+    @NotNull
+    private static JetType getVarargParameterType(@NotNull JetType elementType) {
+        JetType primitiveArrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+        if (primitiveArrayType != null) {
+            return primitiveArrayType;
+        }
+        return KotlinBuiltIns.getInstance().getArrayType(Variance.INVARIANT, elementType);
     }
 
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(
@@ -791,7 +800,7 @@ public class DescriptorResolver {
             type = ErrorUtils.createErrorType("Annotation is absent");
         }
         if (parameter.hasModifier(VARARG_KEYWORD)) {
-            return DescriptorUtils.getVarargParameterType(type);
+            return getVarargParameterType(type);
         }
         return type;
     }
@@ -1259,7 +1268,7 @@ public class DescriptorResolver {
                         parameterScope,
                         valueParameters, trace),
                 resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
-                DescriptorUtils.isConstructorOfStaticNestedClass(constructorDescriptor));
+                isConstructorOfStaticNestedClass(constructorDescriptor));
         if (isAnnotationClass(classDescriptor)) {
             CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace);
         }
@@ -1423,6 +1432,19 @@ public class DescriptorResolver {
             classDescriptor = getParentOfType(classDescriptor, ClassDescriptor.class, true);
         }
         return true;
+    }
+
+    private static boolean isInsideOuterClassOrItsSubclass(@Nullable DeclarationDescriptor nested, @NotNull ClassDescriptor outer) {
+        if (nested == null) return false;
+
+        if (nested instanceof ClassDescriptor && isSubclass((ClassDescriptor) nested, outer)) return true;
+
+        return isInsideOuterClassOrItsSubclass(nested.getContainingDeclaration(), outer);
+    }
+
+    @Nullable
+    public static ClassDescriptor getContainingClass(@NotNull JetScope scope) {
+        return getParentOfType(scope.getContainingDeclaration(), ClassDescriptor.class, false);
     }
 
     public static void checkParameterHasNoValOrVar(

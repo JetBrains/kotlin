@@ -38,8 +38,11 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
 import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*;
@@ -54,7 +57,7 @@ public class TaskPrioritizer {
             @NotNull Collection<ResolutionCandidate<D>> nonlocal
     ) {
         for (ResolutionCandidate<D> resolvedCall : allDescriptors) {
-            if (DescriptorUtils.isLocal(containerOfTheCurrentLocality, resolvedCall.getDescriptor())) {
+            if (ExpressionTypingUtils.isLocal(containerOfTheCurrentLocality, resolvedCall.getDescriptor())) {
                 local.add(resolvedCall);
             }
             else {
