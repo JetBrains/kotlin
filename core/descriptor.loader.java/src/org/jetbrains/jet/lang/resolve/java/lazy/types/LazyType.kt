@@ -22,6 +22,8 @@ import org.jetbrains.jet.lang.types.TypeProjection
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.AbstractJetType
+import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.kotlin.util.inn
 
 abstract class LazyType(storageManager: StorageManager) : AbstractJetType() {
 
@@ -42,7 +44,7 @@ abstract class LazyType(storageManager: StorageManager) : AbstractJetType() {
 
     override fun isNullable() = false
 
-    override fun isError() = false
+    override fun isError()= getConstructor().getDeclarationDescriptor().inn({ d -> ErrorUtils.isError(d)}, false)
 
     override fun getAnnotations(): List<AnnotationDescriptor> = listOf()
 }

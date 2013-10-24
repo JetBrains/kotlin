@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.util
 
 fun Boolean.iif<T>(then: T, _else: T): T = if (this) then else _else
 
+fun <T: Any, R> T?.inn(then: (T) -> R, _else: R): R = if (this != null) then(this) else _else
+
 // These two functions are needed in conjunction with iif:
 // foo.eq(bar).iif(a, b)
 fun <T> T.eq(eq: T): Boolean = this == eq
