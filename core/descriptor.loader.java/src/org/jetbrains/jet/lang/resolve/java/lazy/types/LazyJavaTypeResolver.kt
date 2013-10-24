@@ -44,8 +44,7 @@ class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
         private val typeParameterResolver: TypeParameterResolver
 ) {
-    private val NOT_NULL_POSITIONS = setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
-
+    
     public fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): JetType {
         return when (javaType) {
             is JavaPrimitiveType -> {
@@ -54,8 +53,8 @@ class LazyJavaTypeResolver(
                 assert(jetType != null, "Primitive type is not found: " + canonicalText)
                 return jetType!!
             }
-            is JavaClassifierType -> LazyJavaClassifierType(javaType, attr).applyNullablility(attr)
-            is JavaArrayType -> transformArrayType(javaType, attr).applyNullablility(attr)
+            is JavaClassifierType -> LazyJavaClassifierType(javaType, attr)
+            is JavaArrayType -> transformArrayType(javaType, attr)
             else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
         }
     }
@@ -72,13 +71,6 @@ class LazyJavaTypeResolver(
         val howArgumentTypeIsUsed = isVararg.iif(MEMBER_SIGNATURE_CONTRAVARIANT, TYPE_ARGUMENT)
         val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes())
         return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType))
-    }
-
-    private fun JetType.applyNullablility(attr: JavaTypeAttributes): JetType {
-        if (attr.howThisTypeIsUsed in NOT_NULL_POSITIONS) {
-            return TypeUtils.makeNotNullable(this)
-        }
-        return this
     }
 
     private fun transformToTypeProjection(
@@ -174,7 +166,12 @@ class LazyJavaTypeResolver(
             return (descriptor as ClassDescriptor).getMemberScope(getArguments())
         }
 
-        private val _nullable = c.storageManager.createLazyValue { !attr.isMarkedNotNull }
+        private val _nullable = c.storageManager.createLazyValue {
+            !attr.isMarkedNotNull &&
+            // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
+            // nullability will be taken care of in individual member signatures
+            (attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE))
+        }
         override fun isNullable(): Boolean = _nullable()
     }
 }
