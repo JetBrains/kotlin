@@ -209,7 +209,7 @@ public class BodyResolver {
                     if (type != null && supertype != null) {
                         SimpleResolutionContext simpleResolutionContext = new SimpleResolutionContext(
                                 trace, scope, supertype, context.getOuterDataFlowInfo(), ExpressionPosition.FREE, ContextDependency.INDEPENDENT,
-                                ResolutionResultsCacheImpl.create(), LabelResolver.create(), expressionTypingServices.getDefaultExtension());
+                                ResolutionResultsCacheImpl.create(), LabelResolver.create(), expressionTypingServices.createExtension(scope));
                         DataFlowUtils.checkType(type, delegateExpression, simpleResolutionContext);
                     }
                 }

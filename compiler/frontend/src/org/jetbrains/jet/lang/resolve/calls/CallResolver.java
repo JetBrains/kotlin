@@ -71,9 +71,6 @@ public class CallResolver {
     private CandidateResolver candidateResolver;
     @NotNull
     private ArgumentTypeResolver argumentTypeResolver;
-    @Nullable
-    private CallResolverExtension extension;
-
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
@@ -92,11 +89,6 @@ public class CallResolver {
     @Inject
     public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {
         this.argumentTypeResolver = argumentTypeResolver;
-    }
-
-    @Inject
-    public void setExtension(@NotNull CallResolverExtension extension) {
-        this.extension = extension;
     }
 
     @NotNull
@@ -141,7 +133,7 @@ public class CallResolver {
     ) {
         return resolveFunctionCall(BasicCallResolutionContext.create(
                 trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null, expressionTypingServices.getDefaultExtension()));
+                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null, expressionTypingServices.createExtension(scope)));
     }
 
     @NotNull
@@ -322,9 +314,7 @@ public class CallResolver {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
         }
 
-        if (extension != null) {
-            extension.run(results, context);
-        }
+        context.callResolverExtension.run(results, context);
 
         return results;
     }

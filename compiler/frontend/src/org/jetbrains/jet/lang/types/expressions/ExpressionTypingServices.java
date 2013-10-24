@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
@@ -72,7 +73,7 @@ public class ExpressionTypingServices {
     @NotNull
     private PlatformToKotlinClassMap platformToKotlinClassMap;
     @NotNull
-    private CallResolverExtension defaultExtension;
+    private CallResolverExtensionProvider extensionProvider;
 
     @NotNull
     public Project getProject() {
@@ -146,13 +147,8 @@ public class ExpressionTypingServices {
     }
 
     @Inject
-    public void setDefaultExtension(@NotNull CallResolverExtension extension) {
-        this.defaultExtension = extension;
-    }
-
-    @NotNull
-    public CallResolverExtension getDefaultExtension() {
-        return defaultExtension;
+    public void setExtensionProvider(@NotNull CallResolverExtensionProvider extensionProvider) {
+        this.extensionProvider = extensionProvider;
     }
 
     @NotNull
@@ -411,5 +407,10 @@ public class ExpressionTypingServices {
                 }
             }
         }
+    }
+
+    @NotNull
+    public CallResolverExtension createExtension(@NotNull JetScope scope) {
+        return extensionProvider.createExtension(scope == JetScope.EMPTY ? null : scope.getContainingDeclaration());
     }
 }
