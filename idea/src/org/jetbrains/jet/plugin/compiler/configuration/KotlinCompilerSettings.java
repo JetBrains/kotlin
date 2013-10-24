@@ -19,27 +19,27 @@ package org.jetbrains.jet.plugin.compiler.configuration;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.compiler.CompilerSettings;
 
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMMON_COMPILER_SETTINGS_SECTION;
+import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
 import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
 
 @State(
-    name = KOTLIN_COMMON_COMPILER_SETTINGS_SECTION,
+    name = KOTLIN_COMPILER_SETTINGS_SECTION,
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_FILE),
         @Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
-public class KotlinCommonCompilerSettings extends BaseKotlinCompilerSettings<CommonCompilerArguments> {
+public class KotlinCompilerSettings extends BaseKotlinCompilerSettings<CompilerSettings> {
 
     @NotNull
     @Override
-    protected CommonCompilerArguments createSettings() {
-        return new CommonCompilerArguments.DummyImpl();
+    protected CompilerSettings createSettings() {
+        return new CompilerSettings();
     }
 
-    public static KotlinCommonCompilerSettings getInstance(Project project) {
-        return ServiceManager.getService(project, KotlinCommonCompilerSettings.class);
+    public static KotlinCompilerSettings getInstance(Project project) {
+        return ServiceManager.getService(project, KotlinCompilerSettings.class);
     }
 }

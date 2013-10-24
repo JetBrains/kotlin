@@ -119,17 +119,17 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"
                     serviceImplementation="org.jetbrains.jet.plugin.configuration.ModuleTypeCacheManager"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerSettings"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerSettings"/>
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerSettings"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerSettings"/>
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerSettings"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerSettings"/>
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinAdditionalCompilerSettings"
-                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinAdditionalCompilerSettings"/>
+    <projectService serviceInterface="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings"
+                    serviceImplementation="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings"/>
 
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 

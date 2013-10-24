@@ -18,7 +18,7 @@ package org.jetbrains.jet.compiler;
 
 import org.jetbrains.annotations.NotNull;
 
-public class AdditionalCompilerSettings {
+public class CompilerSettings {
     private static final String DEFAULT_ADDITIONAL_ARGUMENTS = "-version -printArgs";
 
     @NotNull

@@ -19,27 +19,27 @@ package org.jetbrains.jet.plugin.compiler.configuration;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 
+import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
 import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_TO_JS_COMPILER_SETTINGS_SECTION;
 
 @State(
-    name = KOTLIN_TO_JS_COMPILER_SETTINGS_SECTION,
+    name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION,
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_FILE),
         @Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
-public class Kotlin2JsCompilerSettings extends BaseKotlinCompilerSettings<K2JSCompilerArguments> {
+public class KotlinCommonCompilerArgumentsHolder extends BaseKotlinCompilerSettings<CommonCompilerArguments> {
 
     @NotNull
     @Override
-    protected K2JSCompilerArguments createSettings() {
-        return new K2JSCompilerArguments();
+    protected CommonCompilerArguments createSettings() {
+        return new CommonCompilerArguments.DummyImpl();
     }
 
-    public static Kotlin2JsCompilerSettings getInstance(Project project) {
-        return ServiceManager.getService(project, Kotlin2JsCompilerSettings.class);
+    public static KotlinCommonCompilerArgumentsHolder getInstance(Project project) {
+        return ServiceManager.getService(project, KotlinCommonCompilerArgumentsHolder.class);
     }
 }

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.plugin.JetBundle;
 
 import javax.swing.*;
@@ -39,9 +39,9 @@ import javax.swing.*;
 import static org.jetbrains.jet.cli.common.arguments.CommonArgumentConstants.SUPPRESS_WARNINGS;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
-    private final CommonCompilerArguments commonCompilerSettings;
-    private final K2JSCompilerArguments k2jsCompilerSettings;
-    private final AdditionalCompilerSettings additionalCompilerSettings;
+    private final CommonCompilerArguments commonCompilerArguments;
+    private final K2JSCompilerArguments k2jsCompilerArguments;
+    private final CompilerSettings compilerSettings;
     private final ConfigurableEP extPoint;
     private JPanel contentPane;
     private JCheckBox generateNoWarningsCheckBox;
@@ -55,9 +55,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     public KotlinCompilerConfigurableTab(ConfigurableEP ep) {
         this.extPoint = ep;
-        this.commonCompilerSettings = KotlinCommonCompilerSettings.getInstance(ep.getProject()).getSettings();
-        this.k2jsCompilerSettings = Kotlin2JsCompilerSettings.getInstance(ep.getProject()).getSettings();
-        this.additionalCompilerSettings = KotlinAdditionalCompilerSettings.getInstance(ep.getProject()).getSettings();
+        this.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(ep.getProject()).getSettings();
+        this.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(ep.getProject()).getSettings();
+        this.compilerSettings = KotlinCompilerSettings.getInstance(ep.getProject()).getSettings();
 
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
         additionalArgsOptionsField.setDialogCaption(JetBundle.message("kotlin.compiler.option.additional.command.line.parameters.dialog.title"));
@@ -89,28 +89,28 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @Override
     public boolean isModified() {
         return ComparingUtils.isModified(generateNoWarningsCheckBox, isGenerateNoWarnings()) ||
-               ComparingUtils.isModified(additionalArgsOptionsField, additionalCompilerSettings.getAdditionalArguments()) ||
-               ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerSettings.sourcemap) ||
-               isModified(outputPrefixFile, k2jsCompilerSettings.outputPrefix) ||
-               isModified(outputPostfixFile, k2jsCompilerSettings.outputPostfix);
+               ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.getAdditionalArguments()) ||
+               ComparingUtils.isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.sourcemap) ||
+               isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
+               isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix);
     }
 
     @Override
     public void apply() throws ConfigurationException {
         setGenerateNoWarnings(generateNoWarningsCheckBox.isSelected());
-        additionalCompilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
-        k2jsCompilerSettings.sourcemap = generateSourceMapsCheckBox.isSelected();
-        k2jsCompilerSettings.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
-        k2jsCompilerSettings.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
+        compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
+        k2jsCompilerArguments.sourcemap = generateSourceMapsCheckBox.isSelected();
+        k2jsCompilerArguments.outputPrefix = StringUtil.nullize(outputPrefixFile.getText(), true);
+        k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
     }
 
     @Override
     public void reset() {
         generateNoWarningsCheckBox.setSelected(isGenerateNoWarnings());
-        additionalArgsOptionsField.setText(additionalCompilerSettings.getAdditionalArguments());
-        generateSourceMapsCheckBox.setSelected(k2jsCompilerSettings.sourcemap);
-        outputPrefixFile.setText(k2jsCompilerSettings.outputPrefix);
-        outputPostfixFile.setText(k2jsCompilerSettings.outputPostfix);
+        additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
+        generateSourceMapsCheckBox.setSelected(k2jsCompilerArguments.sourcemap);
+        outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
+        outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
     }
 
     @Override
@@ -130,11 +130,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     private boolean isGenerateNoWarnings() {
-        return commonCompilerSettings.suppressAllWarnings();
+        return commonCompilerArguments.suppressAllWarnings();
     }
 
     private void setGenerateNoWarnings(boolean selected) {
-        commonCompilerSettings.suppress = selected ? SUPPRESS_WARNINGS : null;
+        commonCompilerArguments.suppress = selected ? SUPPRESS_WARNINGS : null;
     }
 
     private static void setupFileChooser(

@@ -19,27 +19,27 @@ package org.jetbrains.jet.plugin.compiler.configuration;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 
 import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_COMPILER_SETTINGS_PATH;
-import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_TO_JVM_COMPILER_SETTINGS_SECTION;
+import static org.jetbrains.jet.compiler.SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION;
 
 @State(
-    name = KOTLIN_TO_JVM_COMPILER_SETTINGS_SECTION,
+    name = KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION,
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_FILE),
         @Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
     }
 )
-public class Kotlin2JvmCompilerSettings extends BaseKotlinCompilerSettings<K2JVMCompilerArguments> {
+public class Kotlin2JsCompilerArgumentsHolder extends BaseKotlinCompilerSettings<K2JSCompilerArguments> {
 
     @NotNull
     @Override
-    protected K2JVMCompilerArguments createSettings() {
-        return new K2JVMCompilerArguments();
+    protected K2JSCompilerArguments createSettings() {
+        return new K2JSCompilerArguments();
     }
 
-    public static Kotlin2JvmCompilerSettings getInstance(Project project) {
-        return ServiceManager.getService(project, Kotlin2JvmCompilerSettings.class);
+    public static Kotlin2JsCompilerArgumentsHolder getInstance(Project project) {
+        return ServiceManager.getService(project, Kotlin2JsCompilerArgumentsHolder.class);
     }
 }

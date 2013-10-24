@@ -35,12 +35,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.compiler.runner.*;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerSettings;
-import org.jetbrains.jet.plugin.compiler.configuration.KotlinAdditionalCompilerSettings;
-import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerSettings;
+import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
 import java.io.File;
@@ -142,11 +142,11 @@ public class JetCompiler implements TranslatingCompiler {
             File scriptFile,
             OutputItemsCollector outputItemsCollector
     ) {
-        CommonCompilerArguments commonArguments = KotlinCommonCompilerSettings.getInstance(project).getSettings();
-        K2JVMCompilerArguments k2jvmArguments = Kotlin2JvmCompilerSettings.getInstance(project).getSettings();
-        AdditionalCompilerSettings additionalSettings = KotlinAdditionalCompilerSettings.getInstance(project).getSettings();
+        CommonCompilerArguments commonArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
+        K2JVMCompilerArguments k2jvmArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings();
+        CompilerSettings compilerSettings = KotlinCompilerSettings.getInstance(project).getSettings();
 
-        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2jvmArguments, additionalSettings,
+        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2jvmArguments, compilerSettings,
                                               messageCollector, environment, scriptFile, outputItemsCollector);
     }
 

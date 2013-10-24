@@ -34,14 +34,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.compiler.AdditionalCompilerSettings;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerSettings;
-import org.jetbrains.jet.plugin.compiler.configuration.KotlinAdditionalCompilerSettings;
-import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerSettings;
+import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings;
 import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
 import java.io.File;
@@ -101,11 +101,11 @@ public final class K2JSCompiler implements TranslatingCompiler {
         OutputItemsCollectorImpl outputItemsCollector = new OutputItemsCollectorImpl();
 
         Project project = module.getProject();
-        CommonCompilerArguments commonArguments = KotlinCommonCompilerSettings.getInstance(project).getSettings();
-        K2JSCompilerArguments k2jsArguments = Kotlin2JsCompilerSettings.getInstance(project).getSettings();
-        AdditionalCompilerSettings additionalSettings = KotlinAdditionalCompilerSettings.getInstance(project).getSettings();
+        CommonCompilerArguments commonArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
+        K2JSCompilerArguments k2jsArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings();
+        CompilerSettings compilerSettings = KotlinCompilerSettings.getInstance(project).getSettings();
 
-        KotlinCompilerRunner.runK2JsCompiler(commonArguments, k2jsArguments, additionalSettings, messageCollector, environment,
+        KotlinCompilerRunner.runK2JsCompiler(commonArguments, k2jsArguments, compilerSettings, messageCollector, environment,
                                              outputItemsCollector, srcFiles, libraryFiles, outFile);
 
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
