@@ -106,7 +106,9 @@ public class SubstitutionUtils {
 
     private static void fillInSubstitutionContext(List<TypeParameterDescriptor> parameters, List<? extends TypeProjection> contextArguments, Map<TypeConstructor, TypeProjection> parameterValues) {
         if (parameters.size() != contextArguments.size()) {
-            throw new IllegalArgumentException("type parameter count != context arguments");
+            throw new IllegalArgumentException("type parameter count != context arguments: \n" +
+                                               "parameters=" + parameters + "\n" +
+                                               "contextArgs=" + contextArguments);
         }
         for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
             TypeParameterDescriptor parameter = parameters.get(i);
