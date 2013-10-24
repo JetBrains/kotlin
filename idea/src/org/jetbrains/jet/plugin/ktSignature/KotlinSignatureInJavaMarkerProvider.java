@@ -214,7 +214,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     private static class MyLineMarkerInfo extends LineMarkerInfo<PsiModifierListOwner> {
         public MyLineMarkerInfo(PsiModifierListOwner element, @Nullable List<String> errors, boolean hasAnnotation) {
-            super(element, element.getTextOffset(), errors != null ? AllIcons.Ide.Error : JetIcons.SMALL_LOGO, Pass.UPDATE_ALL,
+            super(element, element.getTextOffset(), errors != null ? AllIcons.Ide.Error : JetIcons.SMALL_LOGO, Pass.UPDATE_OVERRIDEN_MARKERS,
                   new TooltipProvider(errors), hasAnnotation ? NAVIGATION_HANDLER : null);
         }
 
@@ -249,13 +249,11 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             if (annotation == null) return errorsString();
 
             String signature = KotlinSignatureUtil.getKotlinSignature(annotation);
-            String text = "Alternative Kotlin signature is available for this method:\n"
-                       + StringUtil.escapeXml(signature);
+            String text = "Alternative Kotlin signature is available for this method:\n" + StringUtil.escapeXml(signature);
             if (errors == null) {
                 return text;
             }
-            return text + "\nIt has the following " + StringUtil.pluralize("error", errors.size()) + ":\n"
-                   + errorsString();
+            return text + "\nIt has the following " + StringUtil.pluralize("error", errors.size()) + ":\n" + errorsString();
         }
 
         @NotNull
