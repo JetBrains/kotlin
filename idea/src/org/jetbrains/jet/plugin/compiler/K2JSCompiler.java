@@ -42,7 +42,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerArgumentsHolder;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
         if (module == null) {
             return false;
         }
-        return KotlinFrameworkDetector.isJsKotlinModule(module);
+        return ProjectStructureUtil.isJsKotlinModule(module);
     }
 
     @Override
@@ -156,7 +156,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
     private static List<String> getLibraryFiles(@NotNull Module module) {
         List<String> result = new ArrayList<String>();
 
-        List<String> libLocationAndTarget = KotlinFrameworkDetector.getLibLocationForProject(module);
+        List<String> libLocationAndTarget = ProjectStructureUtil.getLibLocationForProject(module);
 
         THashSet<Module> modules = new THashSet<Module>();
         collectModuleDependencies(module, modules);

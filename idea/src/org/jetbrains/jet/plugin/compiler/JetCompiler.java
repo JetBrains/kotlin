@@ -41,7 +41,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
 import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class JetCompiler implements TranslatingCompiler {
             return false;
         }
         Module module = compileContext.getModuleByFile(virtualFile);
-        if (module != null && KotlinFrameworkDetector.isJsKotlinModule(module)) {
+        if (module != null && ProjectStructureUtil.isJsKotlinModule(module)) {
             return false;
         }
         return true;

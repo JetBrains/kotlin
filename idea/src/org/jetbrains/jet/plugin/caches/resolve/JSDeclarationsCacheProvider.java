@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -51,7 +51,7 @@ class JSDeclarationsCacheProvider extends DeclarationsCacheProvider {
                 synchronized (declarationAnalysisLock) {
                     LibrarySourcesConfig config = new LibrarySourcesConfig(
                             project, "default",
-                            KotlinFrameworkDetector.getLibLocationForProject(project),
+                            ProjectStructureUtil.getLibLocationForProject(project),
                             EcmaVersion.defaultVersion(), false);
 
                     AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJS.analyzeFiles(

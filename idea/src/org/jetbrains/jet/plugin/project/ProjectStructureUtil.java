@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.framework;
+package org.jetbrains.jet.plugin.project;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -41,16 +41,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.jet.plugin.framework.JSLibraryStdPresentationProvider;
+import org.jetbrains.jet.plugin.framework.JsHeaderLibraryPresentationProvider;
+import org.jetbrains.jet.plugin.framework.LibraryPresentationProviderUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class KotlinFrameworkDetector {
+public class ProjectStructureUtil {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
 
-    private KotlinFrameworkDetector() {
+    private ProjectStructureUtil() {
     }
 
     public static boolean isJsKotlinModule(@NotNull JetFile file) {
@@ -70,7 +73,8 @@ public class KotlinFrameworkDetector {
             result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
                 @Override
                 public Result<Boolean> compute() {
-                    return Result.create(getJSStandardLibrary(module) != null, ProjectRootModificationTracker.getInstance(module.getProject()));
+                    return Result.create(getJSStandardLibrary(module) != null, ProjectRootModificationTracker
+                            .getInstance(module.getProject()));
                 }
             }, false);
 
@@ -122,7 +126,6 @@ public class KotlinFrameworkDetector {
 
         return Lists.newArrayList(pathsToJSLib);
     }
-
 
     @Nullable
     private static Library getJSStandardLibrary(final Module module) {

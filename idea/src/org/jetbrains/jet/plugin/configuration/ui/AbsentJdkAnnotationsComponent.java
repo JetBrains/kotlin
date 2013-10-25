@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.configuration.AbsentSdkAnnotationsNotificationManager;
 import org.jetbrains.jet.plugin.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.jet.plugin.configuration.ui.notifications.NotificationsPackage;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 
 import java.util.Collection;
@@ -111,7 +111,7 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
     private Collection<Sdk> collectSdksWithoutAnnotations() {
         Set<Sdk> sdks = Sets.newHashSet();
         for (Module module : ConfigureKotlinInProjectUtils.getModulesWithKotlinFiles(myProject)) {
-            if (KotlinFrameworkDetector.isJavaKotlinModule(module)) {
+            if (ProjectStructureUtil.isJavaKotlinModule(module)) {
                 Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
                 if (sdk != null && !isAnnotationsArePresent(sdk)) {
                     sdks.add(sdk);
