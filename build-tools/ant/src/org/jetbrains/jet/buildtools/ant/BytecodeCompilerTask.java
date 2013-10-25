@@ -43,6 +43,7 @@ public class BytecodeCompilerTask extends Task {
     private File jar;
     private File stdlib;
     private Path src;
+    private Path externalAnnotations;
     private File module;
     private Path compileClasspath;
     private boolean includeRuntime = true;
@@ -68,6 +69,17 @@ public class BytecodeCompilerTask extends Task {
             src = new Path(getProject());
         }
         return src.createPath();
+    }
+
+    public void setExternalAnnotations(Path externalAnnotations) {
+        this.externalAnnotations = externalAnnotations;
+    }
+
+    public Path createExternalAnnotations() {
+        if (externalAnnotations == null) {
+            externalAnnotations = new Path(getProject());
+        }
+        return externalAnnotations.createPath();
     }
 
     public void setModule(File module) {
@@ -123,6 +135,7 @@ public class BytecodeCompilerTask extends Task {
         BytecodeCompiler compiler = new BytecodeCompiler();
         String stdlibPath = (this.stdlib != null ? getPath(this.stdlib) : null);
         String[] classpath = (this.compileClasspath != null ? this.compileClasspath.list() : null);
+        String[] externalAnnotationsPath = (this.externalAnnotations != null) ? this.externalAnnotations.list() : null;
 
         if (this.src != null) {
 
@@ -136,10 +149,10 @@ public class BytecodeCompilerTask extends Task {
             log(String.format("Compiling [%s] => [%s]", Arrays.toString(source), destination));
 
             if (this.output != null) {
-                compiler.sourcesToDir(source, destination, stdlibPath, classpath);
+                compiler.sourcesToDir(source, destination, stdlibPath, classpath, externalAnnotationsPath);
             }
             else {
-                compiler.sourcesToJar(source, destination, this.includeRuntime, stdlibPath, classpath);
+                compiler.sourcesToJar(source, destination, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath);
             }
         }
         else if (this.module != null) {
@@ -154,7 +167,7 @@ public class BytecodeCompilerTask extends Task {
             log(jarPath != null ? String.format("Compiling [%s] => [%s]", modulePath, jarPath) :
                 String.format("Compiling [%s]", modulePath));
 
-            compiler.moduleToJar(modulePath, jarPath, this.includeRuntime, stdlibPath, classpath);
+            compiler.moduleToJar(modulePath, jarPath, this.includeRuntime, stdlibPath, classpath, externalAnnotationsPath);
         }
         else {
             throw new CompileEnvironmentException("\"src\" or \"module\" should be specified");

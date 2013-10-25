@@ -20,8 +20,22 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.DefaultCompilerAdapter;
 import org.apache.tools.ant.taskdefs.compilers.Javac13;
+import org.apache.tools.ant.types.Path;
 
 public class KotlinCompilerAdapter extends DefaultCompilerAdapter {
+    private Path externalAnnotations;
+
+    public void setExternalAnnotations(Path externalAnnotations) {
+        this.externalAnnotations = externalAnnotations;
+    }
+
+    public Path createExternalAnnotations() {
+        if (externalAnnotations == null) {
+            externalAnnotations = new Path(getProject());
+        }
+        return externalAnnotations.createPath();
+    }
+
     @Override
     public boolean execute() throws BuildException {
         Javac javac = getJavac();
@@ -30,6 +44,7 @@ public class KotlinCompilerAdapter extends DefaultCompilerAdapter {
         kotlinTask.setOutput(javac.getDestdir());
         kotlinTask.setClasspath(javac.getClasspath());
         kotlinTask.setSrc(javac.getSrcdir());
+        kotlinTask.setExternalAnnotations(externalAnnotations);
 
         kotlinTask.execute();
 
