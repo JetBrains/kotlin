@@ -222,8 +222,7 @@ public class CodegenBinding {
         bindingTrace.record(ASM_TYPE, classDescriptor, asmType);
         bindingTrace.record(CLOSURE, classDescriptor, closure);
 
-        // TODO: this is temporary before we have proper inner classes
-        if (canHaveOuter(bindingTrace.getBindingContext(), classDescriptor) && !functionLiteral) {
+        if (classDescriptor.isInner()) {
             closure.setCaptureThis();
         }
 
