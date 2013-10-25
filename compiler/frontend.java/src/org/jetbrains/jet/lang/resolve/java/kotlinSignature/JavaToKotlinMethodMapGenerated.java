@@ -53,6 +53,11 @@ class JavaToKotlinMethodMapGenerated {
             pair("ordinal()", "fun ordinal(): jet.Int")            
         );
         
+        put(b, "java.lang.Object", "Hashable",
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int")            
+        );
+        
         put(b, "java.lang.Iterable", "Iterable",
             pair("iterator()", "fun iterator(): jet.Iterator<T>")            
         );
