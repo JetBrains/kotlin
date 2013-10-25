@@ -29,8 +29,9 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.*;
-import com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.*;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.configuration.AbsentSdkAnnotationsNotificationManager;
@@ -40,6 +41,7 @@ import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
@@ -73,27 +75,18 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
             }
         });
 
-        connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkVirtualFileListenerAdapter(new VirtualFileAdapter() {
+        connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener.Adapter() {
             @Override
-            public void fileDeleted(VirtualFileEvent event) {
-                showNotificationIfNeeded();
+            public void after(@NotNull List<? extends VFileEvent> events) {
+                for (VFileEvent event : events) {
+                    if (event instanceof VFileCreateEvent || event instanceof VFileDeleteEvent ||
+                            event instanceof VFileMoveEvent || event instanceof VFileCopyEvent) {
+                        showNotificationIfNeeded();
+                        break;
+                    }
+                }
             }
-
-            @Override
-            public void fileCreated(VirtualFileEvent event) {
-                showNotificationIfNeeded();
-            }
-
-            @Override
-            public void fileMoved(VirtualFileMoveEvent event) {
-                showNotificationIfNeeded();
-            }
-
-            @Override
-            public void fileCopied(VirtualFileCopyEvent event) {
-                showNotificationIfNeeded();
-            }
-        }));
+        });
     }
 
     public void showNotificationIfNeeded() {
@@ -102,6 +95,8 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
             public void run() {
                 Collection<Sdk> sdks = collectSdksWithoutAnnotations();
                 if (sdks.isEmpty()) return;
+
+                //noinspection StaticFieldReferencedViaSubclass
                 AbsentSdkAnnotationsNotificationManager.instance$.notify(myProject, sdks);
             }
         });
@@ -126,6 +121,7 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
             return false;
         }
 
+        @SuppressWarnings("StaticMethodReferencedViaSubclass")
         boolean isAndroidSdk = NotificationsPackage.isAndroidSdk(sdk);
         return !(isAndroidSdk && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk));
     }
