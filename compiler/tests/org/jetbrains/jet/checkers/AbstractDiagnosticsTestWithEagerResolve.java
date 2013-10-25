@@ -48,7 +48,7 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
             ok &= testFile.getActualText(bindingContext, actualText);
         }
 
-        assertEquals(expectedText, actualText.toString());
+        assertSameLinesWithFile(testDataFile.getAbsolutePath(), actualText.toString());
 
         assertTrue("Diagnostics mismatch. See the output above", ok);
     }

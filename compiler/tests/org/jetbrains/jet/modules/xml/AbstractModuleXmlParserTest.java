@@ -19,6 +19,7 @@ package org.jetbrains.jet.modules.xml;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
@@ -56,6 +57,6 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
             fail("Expected data file does not exist. A new file created: " + txtFile);
         }
 
-        assertEquals(FileUtil.loadFile(txtFile, true), actual);
+        JetTestUtils.assertEqualsToFile(txtFile, actual);
     }
 }

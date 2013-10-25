@@ -18,9 +18,7 @@ package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.BaseRefactoringProcessor;
@@ -217,8 +215,7 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
             List<String> messages = new ArrayList<String>(e.getMessages());
             Collections.sort(messages);
             File conflictsFile = new File(getTestDataPath() + getTestName(false) + "Messages.txt");
-            String fileText = FileUtil.loadFile(conflictsFile, CharsetToolkit.UTF8, true);
-            assertEquals(fileText, StringUtil.join(messages, "\n"));
+            assertSameLinesWithFile(conflictsFile.getAbsolutePath(), StringUtil.join(messages, "\n"));
             return;
         }
 
