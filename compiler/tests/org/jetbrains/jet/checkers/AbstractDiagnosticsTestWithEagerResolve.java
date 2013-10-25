@@ -32,7 +32,7 @@ import java.util.List;
 public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJetDiagnosticsTest {
 
     @Override
-    protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> testFiles) {
+    protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {
         List<JetFile> jetFiles = getJetFiles(testFiles);
 
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
