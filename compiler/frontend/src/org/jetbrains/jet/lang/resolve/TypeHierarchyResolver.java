@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -478,11 +479,18 @@ public class TypeHierarchyResolver {
 
         @Override
         public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-            MutableClassDescriptor objectDescriptor =
-                    createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()),
-                                                   ClassKind.OBJECT);
-            owner.addObjectDescriptor(objectDescriptor);
-            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
+            if (declaration.isObjectLiteral()) {
+                MutableClassDescriptor descriptor =
+                        createClassDescriptorForObject(declaration, SpecialNames.NO_NAME_PROVIDED, ClassKind.CLASS);
+                context.getClasses().put(declaration, descriptor);
+                return;
+            }
+
+            MutableClassDescriptor descriptor =
+                    createClassDescriptorForObject(declaration, JetPsiUtil.safeName(declaration.getName()), ClassKind.OBJECT);
+            context.getObjects().put(declaration, descriptor);
+            owner.addObjectDescriptor(descriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), descriptor);
         }
 
         @Override
@@ -504,11 +512,10 @@ public class TypeHierarchyResolver {
         public void visitClassObject(@NotNull JetClassObject classObject) {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             if (objectDeclaration != null) {
-                Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());
-
-                MutableClassDescriptor classObjectDescriptor = createClassDescriptorForObject(
-                        objectDeclaration, owner, outerScope,
-                        classObjectName, ClassKind.CLASS_OBJECT);
+                MutableClassDescriptor classObjectDescriptor =
+                        createClassDescriptorForObject(objectDeclaration, getClassObjectName(owner.getOwnerForChildren().getName()),
+                                                       ClassKind.CLASS_OBJECT);
+                context.getObjects().put(objectDeclaration, classObjectDescriptor);
 
                 NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
                 switch (status) {
@@ -571,21 +578,17 @@ public class TypeHierarchyResolver {
 
         @NotNull
         private MutableClassDescriptor createClassDescriptorForObject(
-                @NotNull JetObjectDeclaration declaration, @NotNull NamespaceLikeBuilder owner,
-                @NotNull JetScope scope, @NotNull Name name, @NotNull ClassKind kind
+                @NotNull JetObjectDeclaration declaration,
+                @NotNull Name name,
+                @NotNull ClassKind kind
         ) {
-            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                    owner.getOwnerForChildren(), scope, kind, false, name);
+            MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name);
 
-            context.getObjects().put(declaration, mutableClassDescriptor);
+            prepareForDeferredCall(descriptor.getScopeForMemberResolution(), descriptor, declaration);
 
-            JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-
-            prepareForDeferredCall(classScope, mutableClassDescriptor, declaration);
-
-            createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
-            trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
-            return mutableClassDescriptor;
+            createPrimaryConstructorForObject(declaration, descriptor);
+            trace.record(BindingContext.CLASS, declaration, descriptor);
+            return descriptor;
         }
 
         private MutableClassDescriptor createClassDescriptorForEnumEntry(

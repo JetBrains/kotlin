@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -230,8 +231,12 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS_OBJECT);
     }
 
-    public static boolean isAnonymousObject(@NotNull ClassifierDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.OBJECT) && descriptor.getName().isSpecial();
+    public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
+        return isClass(descriptor) && descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED);
+    }
+
+    public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
+        return isKindOf(descriptor, ClassKind.OBJECT);
     }
 
     public static boolean isEnumEntry(@NotNull DeclarationDescriptor descriptor) {
@@ -325,10 +330,7 @@ public class DescriptorUtils {
     @NotNull
     public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
-        if (classKind == ClassKind.ENUM_CLASS) {
-            return Visibilities.PRIVATE;
-        }
-        if (classKind.isSingleton()) {
+        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isAnonymousObject(classDescriptor)) {
             return Visibilities.PRIVATE;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;

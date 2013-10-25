@@ -19,12 +19,13 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-import java.util.List;
+import static org.jetbrains.jet.lang.descriptors.ClassKind.TRAIT;
 
 /**
  * Encapuslates different types of constants and naming conventions.
@@ -267,19 +268,17 @@ public final class Namer {
     }
 
     @NotNull
-    public JsInvocation classCreateInvocation(@NotNull ClassDescriptor descriptor, @NotNull List<JsExpression> arguments) {
-        switch (descriptor.getKind()) {
-            case TRAIT:
-                return new JsInvocation(traitCreationMethodReference(), arguments);
-
-            case OBJECT:
-            case CLASS_OBJECT:
-            case ENUM_ENTRY:
-                return new JsInvocation(objectCreationMethodReference(), arguments);
-
-            default:
-                return new JsInvocation(classCreationMethodReference(), arguments);
+    public JsExpression classCreateInvocation(@NotNull ClassDescriptor descriptor) {
+        ClassKind kind = descriptor.getKind();
+        if (kind == TRAIT) {
+            return traitCreationMethodReference();
         }
+
+        if (kind.isSingleton() || DescriptorUtils.isAnonymousObject(descriptor)) {
+            return objectCreationMethodReference();
+        }
+
+        return classCreationMethodReference();
     }
 
     @NotNull

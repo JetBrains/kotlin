@@ -1028,34 +1028,34 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(0, OBJECT_TYPE);
         }
 
-        for (int paramIndex = 0; paramIndex < argTypes.length; paramIndex++) {
-            Type argType = argTypes[paramIndex];
+        for (Type argType : argTypes) {
             iv.load(reg, argType);
-            //noinspection AssignmentToForLoopParameter
             reg += argType.getSize();
         }
         callableMethod.invokeWithoutAssertions(iv);
     }
 
     private void generateFieldForSingleton() {
-        boolean hasClassObject = descriptor.getClassObjectDescriptor() != null;
-        boolean isEnumClass = DescriptorUtils.isEnumClass(descriptor);
-        boolean isObjectDeclaration = descriptor.getKind() == ClassKind.OBJECT && isNonLiteralObject(myClass) ;
+        if (isEnumClass(descriptor)) return;
 
-        if (!isObjectDeclaration && !hasClassObject || isEnumClass) return;
-
-        ClassDescriptor fieldTypeDescriptor = hasClassObject ? descriptor.getClassObjectDescriptor() : descriptor;
-        assert fieldTypeDescriptor != null;
-        StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
+        ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
+        ClassDescriptor fieldTypeDescriptor;
         JetClassOrObject original;
-        if (hasClassObject) {
+        if (isObject(descriptor)) {
+            original = myClass;
+            fieldTypeDescriptor = descriptor;
+        }
+        else if (classObjectDescriptor != null) {
             JetClassObject classObject = ((JetClass) myClass).getClassObject();
-            assert classObject != null : myClass.getText();
+            assert classObject != null : "Class object not found: " + myClass.getText();
             original = classObject.getObjectDeclaration();
+            fieldTypeDescriptor = classObjectDescriptor;
         }
         else {
-            original = myClass;
+            return;
         }
+
+        StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
 
         v.newField(original, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 

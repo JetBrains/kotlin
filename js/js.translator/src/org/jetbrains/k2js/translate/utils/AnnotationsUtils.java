@@ -19,7 +19,6 @@ package org.jetbrains.k2js.translate.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -28,8 +27,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 
 public final class AnnotationsUtils {
-
-    private static final String ENUMERABLE = "js.enumerable";
 
     private AnnotationsUtils() {
     }
@@ -106,16 +103,6 @@ public final class AnnotationsUtils {
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
         return hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.NATIVE);
-    }
-
-    public static boolean isEnumerable(@NotNull DeclarationDescriptor descriptor) {
-        if (getAnnotationByName(descriptor, ENUMERABLE) != null) {
-            return true;
-        }
-        ClassDescriptor containingClass = getContainingClass(descriptor);
-        return containingClass != null &&
-               ((containingClass.getKind().equals(ClassKind.OBJECT) && containingClass.getName().isSpecial()) ||
-                getAnnotationByName(containingClass, ENUMERABLE) != null);
     }
 
     public static boolean isLibraryObject(@NotNull DeclarationDescriptor descriptor) {
