@@ -89,6 +89,22 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="get-ant-library">
+      <attribute name="version"/>
+      <attribute name="folderName"/>
+      <sequential>
+        <get src="http://archive.apache.org/dist/ant/binaries/apache-ant-@{version}-bin.tar.gz"
+             dest="dependencies/download/apache-ant-@{version}-bin.tar.gz" usetimestamp="true"/>
+
+        <get src="http://archive.apache.org/dist/ant/source/apache-ant-@{version}-src.zip"
+             dest="dependencies/apache-ant-@{version}-src.zip" usetimestamp="true"/>
+
+        <delete dir="dependencies/@{folderName}" failonerror="false"/>
+        <untar src="dependencies/download/apache-ant-@{version}-bin.tar.gz" dest="dependencies" compression="gzip"/>
+        <move file="dependencies/apache-ant-@{version}" tofile="dependencies/@{folderName}"/>
+      </sequential>
+    </macrodef>
+
     <target name="fetch-third-party">
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
@@ -121,16 +137,9 @@
         <get src="http://jarjar.googlecode.com/files/jarjar-1.2.jar" dest="dependencies/download/jarjar-1.2.jar" usetimestamp="true"/>
         <copy file="dependencies/download/jarjar-1.2.jar" tofile="dependencies/jarjar.jar" overwrite="true"/>
 
-        <!-- ant 1.7.0 -->
-        <get src="http://archive.apache.org/dist/ant/binaries/apache-ant-1.7.0-bin.tar.gz"
-             dest="dependencies/download/apache-ant-1.7.0-bin.tar.gz" usetimestamp="true"/>
-
-        <get src="http://archive.apache.org/dist/ant/source/apache-ant-1.7.0-src.zip"
-             dest="dependencies/apache-ant-1.7.0-src.zip" usetimestamp="true"/>
-
-        <delete dir="dependencies/ant-1.7" failonerror="false"/>
-        <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip"/>
-        <move file="dependencies/apache-ant-1.7.0" tofile="dependencies/ant-1.7"/>
+        <!-- ant 1.7.0, 1.8.0 -->
+        <get-ant-library version="1.7.0" folderName="ant-1.7"/>
+        <get-ant-library version="1.8.0" folderName="ant-1.8"/>
 
         <!-- dx.jar -->
         <get-maven-library prefix="com/google/android/tools" lib="dx" version="1.7" target.jar.name.base="dx"/>
