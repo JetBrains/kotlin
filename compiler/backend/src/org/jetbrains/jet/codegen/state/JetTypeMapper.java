@@ -197,18 +197,6 @@ public class JetTypeMapper extends BindingTraceAware {
             }
             return Type.VOID_TYPE;
         }
-        else if (jetType.equals(KotlinBuiltIns.getInstance().getNothingType())) {
-            if (signatureVisitor != null) {
-                signatureVisitor.writeNothing();
-            }
-            return Type.VOID_TYPE;
-        }
-        if (jetType.equals(KotlinBuiltIns.getInstance().getNullableNothingType())) {
-            if (signatureVisitor != null) {
-                signatureVisitor.writeNullableNothing();
-            }
-            return AsmTypeConstants.OBJECT_TYPE;
-        }
         return mapType(jetType, signatureVisitor, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
     }
 
