@@ -70,6 +70,6 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
     }
 
     private static String getAntHome() {
-        return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant";
+        return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.7";
     }
 }

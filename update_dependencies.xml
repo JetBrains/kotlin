@@ -128,17 +128,9 @@
         <get src="http://archive.apache.org/dist/ant/source/apache-ant-1.7.0-src.zip"
              dest="dependencies/apache-ant-1.7.0-src.zip" usetimestamp="true"/>
 
-        <delete file="dependencies/ant.jar" failonerror="false"/>
-        <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip">
-            <patternset>
-                <include name="apache-ant-1.7.0/lib/ant.jar"/>
-            </patternset>
-            <mapper type="flatten"/>
-        </untar>
-
-        <delete dir="dependencies/ant" failonerror="false"/>
+        <delete dir="dependencies/ant-1.7" failonerror="false"/>
         <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip"/>
-        <move file="dependencies/apache-ant-1.7.0" tofile="dependencies/ant"/>
+        <move file="dependencies/apache-ant-1.7.0" tofile="dependencies/ant-1.7"/>
 
         <!-- dx.jar -->
         <get-maven-library prefix="com/google/android/tools" lib="dx" version="1.7" target.jar.name.base="dx"/>

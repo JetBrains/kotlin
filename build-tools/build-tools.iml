@@ -13,7 +13,7 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="library" name="ant" level="project" />
+    <orderEntry type="library" name="ant-1.7" level="project" />
   </component>
 </module>
 
