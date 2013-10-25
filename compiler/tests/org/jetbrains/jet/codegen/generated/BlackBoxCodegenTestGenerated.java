@@ -4357,6 +4357,26 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/typeMapping/hashable.kt");
         }
         
+        @TestMetadata("kt2831.kt")
+        public void testKt2831() throws Exception {
+            doTest("compiler/testData/codegen/box/typeMapping/kt2831.kt");
+        }
+        
+        @TestMetadata("kt3286.kt")
+        public void testKt3286() throws Exception {
+            doTest("compiler/testData/codegen/box/typeMapping/kt3286.kt");
+        }
+        
+        @TestMetadata("kt3863.kt")
+        public void testKt3863() throws Exception {
+            doTest("compiler/testData/codegen/box/typeMapping/kt3863.kt");
+        }
+        
+        @TestMetadata("kt3976.kt")
+        public void testKt3976() throws Exception {
+            doTest("compiler/testData/codegen/box/typeMapping/kt3976.kt");
+        }
+        
         @TestMetadata("nothing.kt")
         public void testNothing() throws Exception {
             doTest("compiler/testData/codegen/box/typeMapping/nothing.kt");
