@@ -47,10 +47,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
-import org.jetbrains.jet.plugin.findUsages.KotlinMethodFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.KotlinFunctionFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.KotlinPropertyFindUsagesOptions;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -92,11 +94,11 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                 return options;
             }
         },
-        METHOD {
+        FUNCTION {
             @NotNull
             @Override
             public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
-                KotlinMethodFindUsagesOptions options = new KotlinMethodFindUsagesOptions(project);
+                KotlinFunctionFindUsagesOptions options = new KotlinFunctionFindUsagesOptions(project);
                 options.isUsages = false;
                 for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
                     if (parseCommonOptions(options, s)) continue;
@@ -108,6 +110,30 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                     else if (s.equals("overloadUsages")) {
                         options.isIncludeOverloadUsages = true;
                         options.isUsages = true;
+                    }
+                    else fail("Invalid option: " + s);
+                }
+
+                return options;
+            }
+        },
+        PROPERTY {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                KotlinPropertyFindUsagesOptions options = new KotlinPropertyFindUsagesOptions(project);
+                options.isUsages = false;
+                for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
+                    if (parseCommonOptions(options, s)) continue;
+
+                    if (s.equals("overrides")) {
+                        options.setSearchOverrides(true);
+                    }
+                    else if (s.equals("skipRead")) {
+                        options.isReadAccess = false;
+                    }
+                    else if (s.equals("skipWrite")) {
+                        options.isWriteAccess = false;
                     }
                     else fail("Invalid option: " + s);
                 }
@@ -136,7 +162,10 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         @Nullable
         public static OptionsParser getParserByPsiElementClass(@NotNull Class<? extends PsiElement> klass) {
             if (klass == JetNamedFunction.class) {
-                return METHOD;
+                return FUNCTION;
+            }
+            if (klass == JetProperty.class) {
+                return PROPERTY;
             }
             if (klass == JetClass.class) {
                 return CLASS;
@@ -217,7 +246,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         };
 
         Collection<String> finalUsages = Ordering.natural().sortedCopy(Collections2.transform(filteredUsages, convertToString));
-        String expectedText = FileUtil.loadFile(new File(rootPath + prefix + "results.txt"), true);
+        String expectedText = FileUtil.loadFile(new File(rootPath, prefix + "results.txt"), true);
         assertOrderedEquals(finalUsages, Ordering.natural().sortedCopy(StringUtil.split(expectedText, "\n")));
     }
 

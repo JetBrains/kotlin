@@ -1,0 +1,4 @@
+Unclassified usage (13: 9) set(value: String) {
+Unclassified usage (3: 19) public String getFoo() {
+Unclassified usage (8: 17) public void setFoo(String s) {
+Unclassified usage (9: 9) get() {

@@ -8,17 +8,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.findUsages.KotlinMethodFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import javax.swing.*;
 
-public class KotlinFindMethodUsagesDialog extends FindMethodUsagesDialog {
-    public KotlinFindMethodUsagesDialog(
+public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
+    public KotlinFindFunctionUsagesDialog(
             PsiMethod method,
             Project project,
-            KotlinMethodFindUsagesOptions findUsagesOptions,
+            KotlinFunctionFindUsagesOptions findUsagesOptions,
             boolean toShowInNewTab,
             boolean mustOpenInNewTab,
             boolean isSingleFile,
@@ -28,8 +29,8 @@ public class KotlinFindMethodUsagesDialog extends FindMethodUsagesDialog {
     }
 
     @Override
-    protected KotlinMethodFindUsagesOptions getFindUsagesOptions() {
-        return (KotlinMethodFindUsagesOptions) super.getFindUsagesOptions();
+    protected KotlinFunctionFindUsagesOptions getFindUsagesOptions() {
+        return (KotlinFunctionFindUsagesOptions) myFindUsagesOptions;
     }
 
     @Override
@@ -40,6 +41,7 @@ public class KotlinFindMethodUsagesDialog extends FindMethodUsagesDialog {
     @Override
     protected JPanel createFindWhatPanel() {
         JPanel findWhatPanel = super.createFindWhatPanel();
+
         if (findWhatPanel != null) {
             Utils.renameCheckbox(
                     findWhatPanel,

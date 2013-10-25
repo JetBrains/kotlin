@@ -1,5 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetProperty
-// OPTIONS: usages
+// OPTIONS: usages, skipWrite
 package server;
 
 open class A<T>(t: T) {

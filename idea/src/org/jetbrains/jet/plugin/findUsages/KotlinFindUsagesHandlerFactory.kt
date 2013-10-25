@@ -24,30 +24,35 @@ import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler
-import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindFunctionUsagesHandler
+import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindCallableUsagesHandler
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
-    val findMethodOptions = KotlinMethodFindUsagesOptions(project)
+    val findFunctionOptions = KotlinFunctionFindUsagesOptions(project)
+    val findPropertyOptions = KotlinPropertyFindUsagesOptions(project)
     val findClassOptions = KotlinClassFindUsagesOptions(project)
 
     public override fun canFindUsages(element: PsiElement): Boolean =
-            element is JetClass || element is JetNamedFunction
+            element is JetClass || element is JetNamedFunction || element is JetProperty
 
     public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
         when(element) {
             is JetClass ->
                 return KotlinFindClassUsagesHandler(element, this)
 
-            is JetNamedFunction -> {
-                return if (forHighlightUsages) KotlinFindFunctionUsagesHandler(element, this)
-                else JetRefactoringUtil.checkSuperMethods(element, null, "super.methods.action.key.find.usages")?.let { methods ->
-                    when (methods.size()) {
+            is JetNamedFunction, is JetProperty -> {
+                val declaration = element as JetCallableDeclaration
+
+                return if (forHighlightUsages) KotlinFindCallableUsagesHandler.getInstance(declaration, this)
+                else JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
+                    when (callables.size()) {
                         0 -> null
                         1 ->
-                            KotlinFindFunctionUsagesHandler(methods.get(0) as JetNamedFunction, this)
+                            KotlinFindCallableUsagesHandler.getInstance(callables.get(0) as JetCallableDeclaration, this)
                         else ->
-                            KotlinFindFunctionUsagesHandler(element as JetNamedFunction, methods, this)
+                            KotlinFindCallableUsagesHandler.getInstance(declaration, callables, this)
                     }
                 } ?: FindUsagesHandler.NULL_HANDLER
             }

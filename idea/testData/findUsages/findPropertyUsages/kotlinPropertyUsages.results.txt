@@ -1,0 +1,6 @@
+Value read (11: 30) println("b.foo = ${b.foo}")
+Value read (13: 29) return super<A>.foo
+Value read (7: 30) println("a.foo = ${a.foo}")
+Value write (10: 11) b.foo = "b"
+Value write (17: 22) super<A>.foo = value
+Value write (6: 11) a.foo = "a"
